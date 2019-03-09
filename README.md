@@ -3,7 +3,7 @@
 FUXA is a web-based Process Visualization (SCADA/HMI) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.
 
 ## Installing and Running
-`Fuxa` is develop with NodeJS (backend) and Angular (frontend). You need to have installed Node and NPM.
+FUXA is develop with NodeJS (backend) and Angular (frontend). You need to have installed [Node](https://nodejs.org) and NPM.
 
 Clone this repository or download it
 ```
