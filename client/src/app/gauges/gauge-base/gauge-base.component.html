@@ -1,0 +1,10 @@
+<div class="svg-property-split2" *ngIf="settings">
+  <div class="svg-property" title="Gauge name">
+    <span>name</span>
+    <input type="text" id="gaugename" [(ngModel)]="settings.name"  type="text" readonly />
+  </div>
+  <div class="svg-property" style="display:block !important; padding: 0px 10px 5px 10px;" title="Change rectangle height">
+    <!-- <span>settings</span> -->
+    <button mat-button color="primary" style="background-color: dimgrey;color:white; display: inline-block" (click)="onEdit()">Property</button>
+  </div>
+</div>

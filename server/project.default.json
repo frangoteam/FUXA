@@ -1,0 +1,11 @@
+{
+    "version": "1.00",
+    "devices": {},
+    "hmi": {},
+    "server": {
+        "id": "0",
+        "name": "Fuxa Server",
+        "type": "FuxaServer",
+        "property": {}
+    }
+}

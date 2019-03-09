@@ -1,0 +1,74 @@
+<div class="grid-conta">
+  <div *ngFor="let item of ranges; index as i" class="item">
+    <div *ngIf="isWithRange()">
+      <div *ngIf="slideView" class="item-range">
+        <div class="my-form-field">
+          <span>Min</span>
+          <input [(ngModel)]="item.min" type="number" style="width: 80px">
+        </div>
+        <div class="my-form-field" style="padding-left: 20px;">
+          <span>Max</span>
+          <input [(ngModel)]="item.max" type="number" style="width: 80px">
+        </div>
+      </div>
+      <div class="item-range input-slider" *ngIf="!slideView">
+        <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
+      </div>
+      <div class="my-form-field" style="width: 60px;" *ngIf="isWithRangeColor()">
+        <span>Color</span>
+        <mat-select class="panel-color" style="padding: 8px 0 0 0;" disableOptionCentering panelClass="panel-color-class"
+          [(value)]="selected" (change)="item.color = selected" [style.background-color]="item.color">
+          <mat-option class="option-color" value="green" style="background-color:limegreen"></mat-option>
+          <mat-option class="option-color" value="yellow" style="background-color: yellow"></mat-option>
+          <mat-option class="option-color" value="red" style="background-color: red"></mat-option>
+          <mat-option class="option-color" value="blue" style="background-color: blue"></mat-option>
+          <mat-option class="option-color" value="gray" style="background-color: gray"></mat-option>
+        </mat-select>
+      </div>
+      <div class="item-remove">
+        <button mat-icon-button (click)="onRemoveInput(i)" class="remove">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div *ngIf="isMinMax()">
+      <div class="item-minmax">
+        <div class="my-form-field">
+          <span>Min</span>
+          <input [(ngModel)]="item.min" type="number" style="width: 80px">
+        </div>
+        <div class="my-form-field" style="padding-left: 20px;">
+          <span>Max</span>
+          <input [(ngModel)]="item.max" type="number" style="width: 80px">
+        </div>
+        <div class="my-form-field" style="padding-left: 30px">
+          <span>Unit</span>
+          <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important">
+        </div>
+        <div class="my-form-field" style="width: 60px;padding-left: 20px">
+          <span>Color</span>
+          <mat-select class="panel-color" style="padding: 8px 0 0 0;" disableOptionCentering panelClass="panel-color-class"
+            [(value)]="selected" (change)="item.color = selected" [style.background-color]="item.color">
+            <mat-option class="option-color" value="green" style="background-color:limegreen"></mat-option>
+            <mat-option class="option-color" value="yellow" style="background-color: yellow"></mat-option>
+            <mat-option class="option-color" value="red" style="background-color: red"></mat-option>
+            <mat-option class="option-color" value="blue" style="background-color: blue"></mat-option>
+            <mat-option class="option-color" value="gray" style="background-color: gray"></mat-option>
+          </mat-select>
+        </div>
+        <mat-checkbox class="input-minmax-cb" style="padding-left: 30px" [(ngModel)]="withLabel">Range</mat-checkbox>
+        <mat-checkbox class="input-minmax-cb" style="padding-left: 20px" [(ngModel)]="withValue">Value</mat-checkbox>
+      </div>
+    </div>
+    <div *ngIf="isWithStep()" class="item-step">
+      <div class="my-form-field">
+        <span>Value</span>
+        <input [(ngModel)]="item.min" type="number" style="width: 80px">
+      </div>
+      <div class="my-form-field" style="padding-left: 20px;">
+        <span>Label</span>
+        <input [(ngModel)]="item.text" type="text" style="width: 160px;text-align: left !important">
+      </div>
+    </div>
+  </div>
+</div>

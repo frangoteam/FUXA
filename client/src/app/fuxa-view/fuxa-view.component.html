@@ -1,0 +1,17 @@
+<div #dataContainer class="view-container">
+</div>
+<div class="fab-card" draggable [draggableHeight]="22" *ngFor="let card of cards; let i = index" [style.top]="card.y +'px'"
+    [style.left]="card.x + 'px'" [style.width]="card.width +'px'" [style.height]="card.height + 'px'">
+    <a (click)="onCloseCard(card);" class="card-close">
+        <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+    </a>
+    <app-fuxa-view [view]="card.view" [hmi]="hmi" [gaugesManager]="gaugesManager" [parentcards]="cards"></app-fuxa-view>
+</div>
+<div *ngIf="dialog" class="dialog-modal">
+    <div [style.width]="dialog.width +'px'" [style.height]="dialog.height + 'px'" class="dialog-modal-content" [style.background-color]="dialog.bkcolor">
+        <a (click)="onCloseDialog();" class="dialog-modal-close">
+            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+        </a>
+        <app-fuxa-view [view]="dialog.view" [hmi]="hmi" [gaugesManager]="gaugesManager" ></app-fuxa-view>
+    </div>
+</div>

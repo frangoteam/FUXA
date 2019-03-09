@@ -1,0 +1,106 @@
+<div class="container">
+  <div class="filter" *ngIf="deviceSelected">
+    <div class="my-form-field" style="">
+      <span>Device</span>
+      <mat-select [(value)]="deviceSelected" style="width: 300px" (selectionChange)="onDeviceChange($event.source)">
+        <mat-option *ngFor="let device of devicesValue()" [value]="device">
+          {{ device.name }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div class="my-form-field" style="">
+      <span>Filter</span>
+      <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
+    </div>
+    <!-- <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field> -->
+    <!-- <div class="my-form-field" style="padding: 10 20 10 20">
+      <input (keyup)="applyFilter($event.target.value)" placeholder="Filter" type="text" style="width: 100%">
+    </div> -->
+  </div>
+  <mat-table #table [dataSource]="dataSource" matSort>
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+        <button mat-icon-button (click)="onAddTag()" class="remove">
+          <mat-icon>add</mat-icon>
+        </button>
+        <!-- <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox> -->
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+        <button mat-icon-button (click)="onEditRow(element)" class="remove">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        </mat-checkbox> -->
+      </mat-cell>
+    </ng-container>
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+    </ng-container>
+
+    <!-- Address Column -->
+    <ng-container matColumnDef="address">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Address </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
+    </ng-container>
+
+    <!-- Device Column -->
+    <ng-container matColumnDef="device">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Device </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{deviceSelected.name}} </mat-cell>
+    </ng-container>
+
+    <!-- Device Column -->
+    <ng-container matColumnDef="type">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
+    </ng-container>
+
+    <!-- Min Column -->
+    <ng-container matColumnDef="min">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Min </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.min}} </mat-cell>
+    </ng-container>
+
+    <!-- Max Column -->
+    <ng-container matColumnDef="max">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Max </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.max}} </mat-cell>
+    </ng-container>
+
+    <!-- Value Column -->
+    <ng-container matColumnDef="value">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Value </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
+    </ng-container>
+
+    <!-- Button remove Column -->
+    <ng-container matColumnDef="remove">
+      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+  </mat-table>
+</div>
+
+<button mat-fab color="primary" (click)="onAddTag()" style="position: absolute; right: 20px; bottom: 30px; z-index: 9999;">
+    <mat-icon class="">add</mat-icon>
+</button>

@@ -1,0 +1,33 @@
+{
+  // Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+  // Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+  // Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "compounds": [
+    {
+        "name": "Server & Client",
+        "configurations": [
+            "Server Process",
+            "Client Chrome localhost"
+        ]
+    }
+  ],  
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server Process",
+      "program": "${workspaceRoot}/server/main.js",
+      "args": [
+        "."
+      ]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Client Chrome localhost",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}

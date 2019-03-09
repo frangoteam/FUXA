@@ -1,0 +1,125 @@
+$line-size: 6px;
+$line-height: 60px;
+$card-width: 160px;
+$card-height: 90px;
+$card-center: calc((#{$card-width} - #{$line-size}) / 2);
+$main-pos-left: calc((100% - #{$card-width}) / 2);
+$main-pos-top: calc((100% - #{$card-height}) / 4);
+$main-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height});
+$main-color: rgba(76,83,88,0.7);
+$device-color: rgba(76,83,88,1);
+$line-color: rgba(76,83,88,1);
+$device-pos-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + (#{$line-height} * 2));
+$device-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + #{$line-height});
+
+
+.main-device {
+    position: absolute;
+    left: $main-pos-left;
+    top: $main-pos-top;
+    width: $card-width;
+    height: $card-height;
+    min-height: $card-height;
+    text-align: center;
+    background-color:$main-color;
+    color: white;
+    /* border: 0.5px solid rgba(0,0,0,0.5); */
+    /* border-radius: 8px;  */
+}
+
+.node-device {
+    position: absolute;
+    top: $device-pos-top;
+    width: $card-width;
+    height: $card-height;
+    background-color: $device-color;
+    color: white;
+    text-align: center;
+    padding-top: 17px;
+    left: 100px;
+}
+
+.main-line {
+    position: absolute;
+    left: calc(#{$main-pos-left} + #{$card-center});
+    top: $main-line-top;
+    height: $line-height;
+    width: $line-size;
+    background-color: $line-color;
+}
+
+.device-line {
+    position: absolute;
+    top: $device-line-top;
+    height: $line-height;
+    width: $line-size;
+    background-color: $line-color;
+}
+
+.connection-line {
+    position: absolute;
+    top: $device-line-top;
+    height: $line-size;
+    background-color: $line-color;
+}
+
+.main-device mat-icon {
+    font-size: 0px;
+}
+.main-device:hover mat-icon {
+    font-size: 17px;
+}
+
+.device-header {
+    display: block;
+    font-size: 17px;
+    padding-bottom: 7px;
+    padding-top: 0px;
+}
+
+.device-pro {
+    display: block;
+    font-size: 12px;
+    padding-top: 0px;
+}
+
+.device-pro-line {
+    display: inline-block;
+    font-size: 12px;
+    padding-top: 5px;
+}
+
+.node-device mat-icon {
+    font-size: 0px;
+}
+.node-device:hover mat-icon {
+    font-size: 17px;
+}
+.device-icon {
+    position: absolute;
+    font-size: 17px;
+    color: rgba(255,255,255,0.8);
+    cursor:pointer;
+}
+.device-edit {
+    bottom: 0px;
+    right: 2px;
+}
+
+.device-delete {
+    top: 2px;
+    right: 2px;
+}
+.device-list {
+    bottom: 0px;
+    right: 26px;
+}
+
+.device-status {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 4px;
+}

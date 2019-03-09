@@ -1,0 +1,19 @@
+<div class="header-panel" *ngIf="ineditor">
+  <button mat-button title="Save Project" [matMenuTriggerFor]="prjview" class="main-btn">
+    <mat-icon aria-label="Save Project">save</mat-icon>
+  </button>
+  <mat-menu #prjview="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
+    <button mat-menu-item (click)="onSaveProject()">Save</button>
+    <button mat-menu-item (click)="onSaveProjectAs()">Save as...</button>
+    <button mat-menu-item (click)="onOpenProject();$event.stopPropagation()">Open Project</button>
+    <button mat-menu-item (click)="onImportVariable();$event.stopPropagation()">Import Variable</button>
+    <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)"
+      accept=".fuxap" />
+  </mat-menu>
+  <button mat-button title="View pages editor" class="main-btn" (click)="goTo('/editor')">
+      <mat-icon aria-label="View pages editor">widgets</mat-icon>
+  </button>
+  <button mat-button title="View Devices settings" class="main-btn" (click)="goTo('/device')">
+      <mat-icon aria-label="View Devices settings">link</mat-icon>
+  </button>  
+</div>

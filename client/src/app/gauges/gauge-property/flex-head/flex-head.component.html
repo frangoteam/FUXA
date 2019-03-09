@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="head" style="padding-top: 10px;">
+    <div class="my-form-field" style="width: 220px;">
+      <span>Device</span>
+      <mat-select [formControl]="deviceCtrl" (selectionChange)="onDeviceChange($event.source)">
+        <mat-select-search [formControl]="deviceFilterCtrl"></mat-select-search>
+        <mat-option *ngFor="let device of filteredDevice | async" [value]="device">
+          {{ device.name }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div class="my-form-field" style="width: 400px;float: right;margin-right: 10px;">
+      <span>Variable</span>
+      <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
+        <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
+        <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
+          {{ vari.name }}
+        </mat-option>
+      </mat-select>
+    </div>
+  </div>
+  <flex-input [ranges]="property.ranges" #flexinput *ngIf="withInput" [inputType]="withInput" style="padding-bottom: 5px"></flex-input>
+  <div *ngIf="withAlarm" class="head" style="padding-top: 15px;">
+    <div class="my-form-field" style="width: 220px;">
+      <span>Device</span>
+      <mat-select [formControl]="alarmDeviceCtrl" (selectionChange)="onAlarmDeviceChange($event.source)" class="select-item">
+        <mat-select-search [formControl]="alarmDeviceFilterCtrl"></mat-select-search>
+        <mat-option *ngFor="let device of filteredAlarmDevice | async" [value]="device">
+          {{ device.name }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div class="my-form-field" style="width: 400px;float: right;margin-right: 10px;">
+      <span>Alarm</span>
+      <mat-select [formControl]="alarmCtrl" (selectionChange)="onAlarmChange($event.source)">
+        <mat-select-search [formControl]="alarmFilterCtrl"></mat-select-search>
+        <mat-option *ngFor="let vari of filteredAlarm | async" [value]="vari">
+          {{ vari.name }}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div style="display: block; width:100%">
+      <div class="my-form-field" style="width: 60px;float: right;margin-right: 10px;">
+        <span>Color</span>
+        <mat-select class="panel-color" style="padding: 10px 0 0 0;" disableOptionCentering panelClass="panel-color-class" [(value)]="property.alarmColor"
+          [style.background-color]="property.alarmColor" (selectionChange)="onAlarmColorChange($event.source)">
+          <mat-option class="option-color" value="green" style="background-color: green"></mat-option>
+          <mat-option class="option-color" value="yellow" style="background-color: yellow"></mat-option>
+          <mat-option class="option-color" value="red" style="background-color: red"></mat-option>
+          <mat-option class="option-color" value="blue" style="background-color: blue"></mat-option>
+          <mat-option class="option-color" value="gray" style="background-color: gray"></mat-option>
+        </mat-select>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    left:0px;
+    right:0px;
+    background-color: white;
+}
+
+.filter {
+    display: inline-block;
+    min-height: 64px;
+    padding: 8px 24px 0;
+}
+
+.filter .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.mat-table {
+    overflow: auto;
+    margin: 5px;
+    /* max-height: 500px; */
+}
+  
+.mat-header-cell.mat-sort-header-sorted {
+    color: black;
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+}
+.mat-header-cell {
+    color: white;
+    font-size: 14px;
+}
+
+.mat-column-select {
+    overflow: visible;
+}
+
+.selectidthClass{
+    flex: 0 0 50px;
+ }

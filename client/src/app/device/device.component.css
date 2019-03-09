@@ -1,0 +1,36 @@
+.header-panel {
+    /* z-index: 9999 !important; */
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(33,33,33,1);
+    /* background-color: rgba(33,33,33,0.92); */
+    color: rgba(255,255,255,1);
+    height: 40px;
+    width: 100%;
+}
+
+.device-btn {
+    height: 34px;
+    width: 34px;
+    min-width: unset !important;
+    padding:unset !important;
+    line-height: 34px;
+    margin-left: 5px;
+    margin-right: 5px;
+    float: right;
+}
+  
+.device-btn mat-icon {
+    font-size: 24px;
+    height: unset;
+    width: unset;
+}
+
+.work-panel {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}

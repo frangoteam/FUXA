@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="21px"
+   height="15px"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="progress-v.svg"
+   inkscape:version="0.92.1 r15371">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview10"
+     showgrid="false"
+     inkscape:zoom="44.53"
+     inkscape:cx="7.4578261"
+     inkscape:cy="7.7140571"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <metadata
+     id="metadata2">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <rect
+     x="6.2755132"
+     y="0.5991773"
+     width="8.1770391"
+     height="13.928946"
+     id="rect4"
+     style="fill:none;stroke:#ffffff;stroke-width:0.64889067" />
+  <path
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:0.78770381px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 2.1653644,14.524373 H 14.745803"
+     id="path3707"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:0.78559184px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 2.2456346,0.62651805 H 14.758703"
+     id="path3707-0"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:1.21514809px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 14.706958,7.0012444 h 5.136081 l -0.177108,-0.038661"
+     id="path3735"
+     inkscape:connector-curvature="0" />
+  <rect
+     style="fill:#ffffff;stroke:#ffffff;stroke-width:0.85983527;stroke-opacity:1"
+     id="rect3752"
+     width="7.0884056"
+     height="6.8507047"
+     x="6.6220355"
+     y="6.9802213" />
+</svg>

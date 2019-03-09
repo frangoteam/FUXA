@@ -1,0 +1,24 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$my-header-primary: mat-palette($mat-grey, 100);
+$my-header-accent: mat-palette($mat-pink);
+$my-header-theme: mat-light-theme($my-header-primary, $my-header-accent);
+@include mat-menu-theme($my-header-theme);
+
+$my-checkbox-primary: mat-palette($mat-grey, 800);
+$my-checkbox-accent: mat-palette($mat-grey, 800);
+$my-checkbox-theme:  mat-light-theme($my-checkbox-primary, $my-checkbox-accent);
+@include mat-checkbox-theme($my-checkbox-theme);
+
+$my-button-primary: mat-palette($mat-blue, A200);
+$my-button-accent: mat-palette($mat-red, 600);
+$my-button-theme:  mat-light-theme($my-button-primary, $my-button-accent);
+@include mat-button-theme($my-button-theme);
+
+$my-slide-toggle-primary: mat-palette($mat-blue, 700);
+$my-slide-toggle-accent: mat-palette($mat-green, 600);
+$my-slide-toggle-warn: mat-palette($mat-red, 600);
+$my-slide-toggle-theme:  mat-light-theme($my-slide-toggle-primary, $my-slide-toggle-accent, $my-slide-toggle-warn);
+@include mat-slide-toggle-theme($my-slide-toggle-theme);
+

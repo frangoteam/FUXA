@@ -1,0 +1,12 @@
+
+.content {
+  border: 1px solid rgba(0,0,0,0.1);
+  position: absolute;
+  background: rgba(255,255,255,1);
+}
+
+.close {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+}

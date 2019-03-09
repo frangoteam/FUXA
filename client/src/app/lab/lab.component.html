@@ -1,0 +1,7 @@
+<div>
+  <app-fuxa-view class="lab-body" id="lab" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+  <template #messagecontainer>
+  </template>    
+  <button mat-mini-fab color="warn" class="fab-btn" (click)="onTest()">Test</button>
+  <app-tester #tester></app-tester>
+</div>

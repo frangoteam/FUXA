@@ -1,0 +1,13 @@
+<div>
+  <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>Rename</h1>
+  <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+  <div mat-dialog-content>
+    <div style="display: grid; margin-bottom: 20px;">
+      <input [(ngModel)]="data.name" type="text" width="100%" [readonly]="data.readonly">
+    </div>
+  </div>
+  <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+    <button mat-raised-button (click)="onNoClick()">CANCEL</button>
+    <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>OK</button>
+  </div>
+</div>
