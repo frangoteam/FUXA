@@ -30,11 +30,11 @@ export enum DeviceType {
 }
 
 export enum TagType {
-    Boolean = 'Bool',
+    Bool = 'Bool',
     Byte = 'Byte',
-    Integer = 'Integer',
+    Int = 'Int',
     Word = 'Word',
-    DInteger = 'DInteger',
+    DInt = 'DInt',
     DWord = 'DWord',
     Real = 'Real'
 }
