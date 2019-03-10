@@ -12,7 +12,7 @@ import { Utils } from '../../_helpers/utils';
 export class DevicePropertyComponent implements OnInit {
 
   // @Input() name: any;
-  deviceType: any;
+  deviceType: any = {};
   isFuxaServer: boolean = false;
   isToRemove: boolean = false;
 
@@ -21,11 +21,12 @@ export class DevicePropertyComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
-    this.deviceType = DeviceType;
     this.isToRemove = this.data.remove;
     this.isFuxaServer = (this.data.device.type && this.data.device.type === DeviceType.FuxaServer) ? true : false;
-    if (!this.isFuxaServer) {
-      delete this.deviceType.FuxaServer;
+    for (let key in DeviceType) {
+      if (!this.isFuxaServer && key !== DeviceType.FuxaServer) {
+        this.deviceType[key] = DeviceType[key];
+      }
     }
   }
 
