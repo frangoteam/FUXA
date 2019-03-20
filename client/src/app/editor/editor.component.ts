@@ -12,9 +12,11 @@ import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-propert
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
+import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
+import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 
 declare var Gauge: any;
 
@@ -51,6 +53,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // @ViewChild('fillcolor') fillcolor: ElementRef;
     @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
 
+    defaultColor = Utils.defaultColor;
     colorFill: string = '#FFFFFF'
     colorStroke: string = '#000000'
     currentView: View = null;
@@ -166,7 +169,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 (type, color) => {
                     if (type == 'fill') {
                         this.colorFill = color;
-                        this.onChangeFillColor(this.colorFill);
+                        this.setFillColor(this.colorFill);
                         this.checkMySelectedToSetColor(this.colorFill, null, this.winRef.nativeWindow.svgEditor.getSelectedElements());
                         // console.log('fill ' + color);
                     } else if (type == 'stroke') {
@@ -197,8 +200,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             console.log(Error);
         }
         // mycontextmenu.initContextmenu();
-        this.onChangeFillColor(this.colorFill);
-        this.onChangeFillColor(this.colorStroke);
+        this.setFillColor(this.colorFill);
+        this.setFillColor(this.colorStroke);
     }
 
     /**
@@ -215,6 +218,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             // this.selectView(this.hmi.views[0].name);
         } else {
             let oldsel = localStorage.getItem("@frango.webeditor.currentview");
+            if (!oldsel && this.hmi.views.length) {
+                oldsel = this.hmi.views[0].name;
+            }
             for (let i = 0; i < this.hmi.views.length; i++) {
                 if (this.hmi.views[i].name === oldsel) {
                     this.onSelectView(this.hmi.views[i]);
@@ -272,17 +278,30 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private checkColors(ele) {
         let eles = this.winRef.nativeWindow.svgEditor.getSelectedElements();
+        let clrfill = null;
+        let clrstroke = null;
         if (eles && (eles.length <= 1 || !eles[1]) && eles[0]) {
-            if (eles[0].attributes['fill']) {
-                let clrfill = eles[0].attributes['fill'].value;
-                this.colorFill = clrfill;
+            // check for gauge fill and stroke color
+            let colors = { fill: clrfill, stroke: clrstroke };
+            if (GaugesManager.checkGaugeColor(ele, eles, colors)) {
+                if (colors.fill) {
+                    this.colorFill = colors.fill;
+                }
+                if (colors.stroke) {
+                    this.colorStroke = colors.stroke;
+                }
+            } else {
+                if (eles[0].attributes['fill']) {
+                    clrfill = eles[0].attributes['fill'].value;
+                    this.colorFill = clrfill;
+                }
+                if (eles[0].attributes['stroke']) {
+                    clrstroke = eles[0].attributes['stroke'].value;
+                    this.colorStroke = clrstroke;
+                }
+                // this.setFillColor(this.colorFill);
+                // console.log('f:' + this.colorFill + ' s:' + this.colorStroke);
             }
-            if (eles[0].attributes['stroke']) {
-                let clrstroke = eles[0].attributes['stroke'].value;
-                this.colorStroke = clrstroke;
-            }
-            // this.onChangeFillColor(this.colorFill);
-            // console.log('f:' + this.colorFill + ' s:' + this.colorStroke);
         }
     }
 
@@ -393,13 +412,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param event color code
      */
     private onChangeFillColor(event) {
-        let color = event;
-        if (color.charAt(0) === '#')
-            color = color.slice(1);
-        let alfa = 100;
-        this.winRef.nativeWindow.svgEditor.setColor(color, alfa, "fill");
-        // this.fillcolor;
+        this.setFillColor(event);
+        this.checkMySelectedToSetColor(this.colorFill, null, this.winRef.nativeWindow.svgEditor.getSelectedElements());
     }
+
+    /**
+     * event change stroke color (from bottom color panel)
+     * @param event color code
+     */
+    onChangeStrokeColor(event) {
+        this.setStrokeColor(event);
+        this.checkMySelectedToSetColor(null, this.colorStroke, this.winRef.nativeWindow.svgEditor.getSelectedElements());
+    }
+
 
     /**
      * event from svg-editor: svg element removed
@@ -414,6 +439,32 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
+    }
+
+    /**
+     * set the fill color (to svg-editor)
+     * @param event color code
+     */
+    private setFillColor(event) {
+        let color = event;
+        if (color.charAt(0) === '#')
+            color = color.slice(1);
+        let alfa = 100;
+        this.winRef.nativeWindow.svgEditor.setColor(color, alfa, "fill");
+        // this.fillcolor;
+    }
+
+    /**
+     * set stroke color (to svg-editor)
+     * @param event color code
+     */
+    setStrokeColor(event) {
+        let color = event;
+        if (color.charAt(0) === '#')
+            color = color.slice(1);
+        let alfa = 100;
+        this.winRef.nativeWindow.svgEditor.setColor(color, alfa, "stroke");
+        // this.fillcolor;
     }
 
     /**
@@ -514,23 +565,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.winRef.nativeWindow.svgEditor.setTextAlign(align);
     }
 
-    /**
-     * change stroke color (from bottom color panel)
-     * @param event color code
-     */
-    onChangeStrokeColor(event) {
-        let color = event;
-        if (color.charAt(0) === '#')
-            color = color.slice(1);
-        let alfa = 100;
-        this.winRef.nativeWindow.svgEditor.setColor(color, alfa, "stroke");
-        // this.fillcolor;
-    }
-
     checkMySelectedToSetColor(bkcolor, color, elems) {
-        for (let i = 0; i < elems.length; i++) {
-            HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
-        }
+        GaugesManager.initElementColor(bkcolor, color, elems);
+        // for (let i = 0; i < elems.length; i++) {
+        //     HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
+        //     GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
+        // }
     }
 
     //#endregion
@@ -658,8 +698,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.currentView.svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
             // this.hmi.views[this.currentView].svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
         } else {
-            this.onChangeFillColor(this.colorFill);
-            // this.onChangeFillColor(this.colorStroke);
+            this.setFillColor(this.colorFill);
+            // this.setFillColor(this.colorStroke);
         }
         if (this.currentView) {
             this.saveHmi();
@@ -744,13 +784,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
         let eventsSupported = this.isWithEvents(settings.type);
+        let defaultValue = GaugesManager.getDefaultValue(settings.type);
         // settings.property = JSON.parse(settings.property);
         let dialogRef = this.dialog.open(GaugePropertyComponent, {
             // data: { settings: tempsettings, signals: this.signals, views: hmi.views }
             minWidth: '700px',
             minHeight: '700px',
             panelClass: 'dialog-property',
-            data: { settings: tempsettings, devices: Object.values(this.projectService.getDevices()), views: hmi.views, dlgType: dlgType, withEvents: eventsSupported },
+            data: { settings: tempsettings, devices: Object.values(this.projectService.getDevices()), 
+                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue },
             position: { top: '80px' }
             // data: data
 
@@ -806,7 +848,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     templateUrl: 'docproperty.dialog.html',
 })
 export class DialogDocProperty {
-    baseThemeColors = ['#ffffff', '#000000', '#eeece1', '#1f497d', '#4f81bd', '#c0504d', '#9bbb59', '#8064a2', '#4bacc6', '#f79646'];
+    defaultColor = Utils.defaultColor;
     constructor(
         public dialogRef: MatDialogRef<DialogDocProperty>,
         @Inject(MAT_DIALOG_DATA) public data: any) { }

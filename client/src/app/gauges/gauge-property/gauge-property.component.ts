@@ -22,6 +22,7 @@ export class GaugePropertyComponent implements OnInit {
   dialogType: GaugeDialogType = GaugeDialogType.RangeWithAlarm;
   eventsSupported: boolean;
   views: View[];
+  defaultValue: any;
 
   constructor(
     public dialogRef: MatDialogRef<GaugePropertyComponent>,
@@ -32,9 +33,14 @@ export class GaugePropertyComponent implements OnInit {
     this.eventsSupported = this.data.withEvents;
     this.views = this.data.views;
     this.property = JSON.parse(JSON.stringify(this.data.settings.property));
+    this.defaultValue = this.data.default;
+
     if (this.dialogType === GaugeDialogType.OnlyValue) {
-      this.flexHead.withInput = null;
+      this.flexHead.withInput = null;      
+    } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
+      this.flexHead.withInput = 'unit';
     } else {
+      this.flexHead.defaultValue = this.defaultValue;
       if (this.property && this.property.alarmSrc) {
         this.withAlarm = true;
       }
@@ -103,6 +109,7 @@ export enum GaugeDialogType {
   Range,
   RangeWithAlarm,
   OnlyValue,
+  ValueAndUnit,
   ValueWithRef,
   Step,
   MinMax

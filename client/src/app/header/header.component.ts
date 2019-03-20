@@ -34,6 +34,17 @@ export class HeaderComponent implements OnInit {
     }
 
     //#region Project Events
+    onNewProject() {
+        try {
+            if (window.confirm('You want to save the Project change?')) {
+                this.onSaveProject();
+                this.projectService.setNewProject();
+            }
+        } catch (e) {
+
+        }
+    }
+
     /**
      * save Project and Download in Browser 
      */

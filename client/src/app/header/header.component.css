@@ -33,3 +33,7 @@
 .header-icon {
     padding: 0 14px;
 }
+
+.menu-separator {
+    border-top-color: rgba(0,0,0,1);
+}

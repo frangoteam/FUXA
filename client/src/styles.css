@@ -284,3 +284,47 @@ mat-toolbar, mat-toolbar-row {
 ::-webkit-scrollbar-thumb {
     background: rgba(108,108,108,0.6);
 }
+
+/* Color Picker */
+
+.preset-color {
+  margin: unset !important;
+  border: unset !important;
+  border-radius: unset !important;
+}
+
+.cpOKButtonClass {
+  margin-top: 5px !important;;
+  padding: 4px 10px 4px 10px;
+  background-color: transparent;
+  color: #000;
+  font-size: 14px !important;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  /* box-shadow: 0 1px 4px rgba(0, 0, 0, .6); */
+  border-radius: 4px;
+}
+
+.cpOKButtonClass:hover {
+  background-color: #F0F0F0;
+}
+
+.cpCancelButtonClass {
+  margin-top: 5px !important;;
+  padding: 4px 10px 4px 10px;
+  background-color: transparent;
+  color: #000;
+  font-size: 14px !important;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  /* box-shadow: 0 1px 4px rgba(0, 0, 0, .6); */
+  border-radius: 4px;
+}
+
+.cpCancelButtonClass:hover {
+  background-color: #F0F0F0;
+}

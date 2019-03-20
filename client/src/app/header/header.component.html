@@ -3,10 +3,13 @@
     <mat-icon aria-label="Save Project">save</mat-icon>
   </button>
   <mat-menu #prjview="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
-    <button mat-menu-item (click)="onSaveProject()">Save</button>
-    <button mat-menu-item (click)="onSaveProjectAs()">Save as...</button>
+    <button mat-menu-item (click)="onNewProject()">New Project</button>
+    <mat-divider class="menu-separator"></mat-divider>
+    <button mat-menu-item (click)="onSaveProject()">Save Project</button>
+    <button mat-menu-item (click)="onSaveProjectAs()">Save Project As...</button>
+    <mat-divider class="menu-separator"></mat-divider>
     <button mat-menu-item (click)="onOpenProject();$event.stopPropagation()">Open Project</button>
-    <button mat-menu-item (click)="onImportVariable();$event.stopPropagation()">Import Variable</button>
+    <!-- <button mat-menu-item (click)="onImportVariable();$event.stopPropagation()">Import Variable</button> -->
     <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)"
       accept=".fuxap" />
   </mat-menu>

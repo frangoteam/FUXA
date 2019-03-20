@@ -1,7 +1,7 @@
 <div #dataContainer class="view-container">
 </div>
 <div class="fab-card" draggable [draggableHeight]="22" *ngFor="let card of cards; let i = index" [style.top]="card.y +'px'"
-    [style.left]="card.x + 'px'" [style.width]="card.width +'px'" [style.height]="card.height + 'px'">
+    [style.left]="card.x + 'px'" [style.width]="card.width +'px'" [style.height]="card.height + 4 + 'px'">
     <a (click)="onCloseCard(card);" class="card-close">
         <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
     </a>

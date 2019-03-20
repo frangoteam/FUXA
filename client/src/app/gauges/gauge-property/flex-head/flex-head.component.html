@@ -19,7 +19,7 @@
       </mat-select>
     </div>
   </div>
-  <flex-input [ranges]="property.ranges" #flexinput *ngIf="withInput" [inputType]="withInput" style="padding-bottom: 5px"></flex-input>
+  <flex-input [ranges]="property.ranges" [default]="defaultValue" #flexinput *ngIf="withInput" [inputType]="withInput" style="padding-bottom: 5px"></flex-input>
   <div *ngIf="withAlarm" class="head" style="padding-top: 15px;">
     <div class="my-form-field" style="width: 220px;">
       <span>Device</span>
@@ -40,16 +40,20 @@
       </mat-select>
     </div>
     <div style="display: block; width:100%">
-      <div class="my-form-field" style="width: 60px;float: right;margin-right: 10px;">
+      <div class="my-form-field" style="width: 60px;float: right;margin-right: 10px; top: 5px;">
         <span>Color</span>
-        <mat-select class="panel-color" style="padding: 10px 0 0 0;" disableOptionCentering panelClass="panel-color-class" [(value)]="property.alarmColor"
+        <input [(colorPicker)]="property.alarmColor" [style.background]="property.alarmColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
+            [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
+            [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 10px 0 0 0;"
+            [cpPosition]="'left'"/>        
+        <!-- <mat-select class="panel-color" style="padding: 10px 0 0 0;" disableOptionCentering panelClass="panel-color-class" [(value)]="property.alarmColor"
           [style.background-color]="property.alarmColor" (selectionChange)="onAlarmColorChange($event.source)">
           <mat-option class="option-color" value="green" style="background-color: green"></mat-option>
           <mat-option class="option-color" value="yellow" style="background-color: yellow"></mat-option>
           <mat-option class="option-color" value="red" style="background-color: red"></mat-option>
           <mat-option class="option-color" value="blue" style="background-color: blue"></mat-option>
           <mat-option class="option-color" value="gray" style="background-color: gray"></mat-option>
-        </mat-select>
+        </mat-select> -->
       </div>
     </div>
   </div>

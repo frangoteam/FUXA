@@ -381,6 +381,7 @@ color: rgba(255,255,255,1);
 .zoom-menu {
   float: left;
   padding-left: 5px;
+  width: 90px;  
 }
 
 .zoom-value {
@@ -448,7 +449,7 @@ color: rgba(255,255,255,1);
 }
 
 .color-fill {
-  position: absolute;
+  position: relative;
   top: 3px;
   left: 10px;
   cursor: pointer;

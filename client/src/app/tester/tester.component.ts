@@ -74,7 +74,7 @@ export class TesterComponent implements OnInit {
   }
 
   addOutput(item: string) {
-    this.output.push(item);
+    this.output.unshift(item);
   }
 
   close() {

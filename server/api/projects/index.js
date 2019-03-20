@@ -41,7 +41,18 @@ module.exports = {
                 }
             })
         });
-
+        prjApp.get("/api/projectdemo", function (req, res) {
+            console.log('/api/projectdemo');
+            const data = runtime.project.getProjectDemo();
+            // res.header("Access-Control-Allow-Origin", "*");
+            // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            if (data) {
+                res.json(data);
+            } else {
+                res.status(404).end();
+            }
+        });
+ 
         return prjApp;
     }
 }

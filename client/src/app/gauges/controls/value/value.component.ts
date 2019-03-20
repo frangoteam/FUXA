@@ -34,7 +34,11 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
     if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
       let g = svgele.node.children[0];
       let val = parseInt(sig.value, 10);
+      let unit = GaugeBaseComponent.getUnit(ga.property);
       g.textContent = val;
+      if (unit) {
+        g.textContent += unit;
+      }
     }
   }
 }

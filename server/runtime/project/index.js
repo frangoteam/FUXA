@@ -82,6 +82,10 @@ function updateProject() {
     return false;
 }
 
+function getProjectDemo() {
+    var demoProject = path.join(settings.appDir, "project.demo.fuxap");
+    return JSON.parse(fs.readFileSync(demoProject, 'utf8'));;
+} 
 
 module.exports = {
     init: init,
@@ -89,4 +93,5 @@ module.exports = {
     updateProject: updateProject,
     getProject: getProject,
     setProjectFile: setProjectFile,
+    getProjectDemo: getProjectDemo,
 };

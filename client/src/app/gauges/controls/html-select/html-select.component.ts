@@ -71,4 +71,36 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
       }
     }    
   }
+
+  static initElementColor(bkcolor, color, ele) {
+    let select = Utils.searchTreeStartWith(ele, this.prefix);
+    if (select) {
+      if (bkcolor) {
+        select.style.backgroundColor = bkcolor;
+      }
+      if (color) {
+        select.style.color = color;
+      }
+    }
+  }
+
+  static getFillColor(ele) {
+    if (ele.children && ele.children[0]) {
+      let select = Utils.searchTreeStartWith(ele, this.prefix);
+      if (select) {
+        return select.style.backgroundColor;
+      }
+    }
+    return ele.getAttribute('fill');
+  }
+
+  static getStrokeColor(ele) {
+    if (ele.children && ele.children[0]) {
+      let select = Utils.searchTreeStartWith(ele, this.prefix);
+      if (select) {
+        return select.style.color;
+      }
+    }
+    return ele.getAttribute('stroke');
+  }
 }

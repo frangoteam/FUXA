@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorPickerModule } from 'ngx-color-picker';
+
 import { Ng5SliderModule } from 'ng5-slider';
 import { ToastrModule } from 'ngx-toastr';
 

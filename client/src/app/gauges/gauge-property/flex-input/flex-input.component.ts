@@ -15,11 +15,13 @@ export class FlexInputComponent implements OnInit {
   @Input() ranges: GaugeRangeProperty[];
   @Input() type: string;
   @Input() inputType: string;
+  @Input() default: any;
   
   tag: Tag = null;
   withLabel = true;
   withValue = true;
   slideView = true;
+  defaultColor = Utils.defaultColor;
   options: Options = {
     floor: 0,
     ceil: 100
@@ -92,6 +94,14 @@ export class FlexInputComponent implements OnInit {
     return result;
   }
 
+  getColor(item) {
+    if (item && item.color) {
+      return item.color;
+    } else if (this.default && this.default.color) {
+      return this.default.color;
+    }
+  }
+
   changeTag(_tag) {
     this.tag = _tag;
     if (this.tag) {
@@ -139,6 +149,13 @@ export class FlexInputComponent implements OnInit {
 
   isWithStep() {
     if (this.inputType === 'step') {
+      return true;
+    }
+    return false;
+  }
+
+  isWithUnit() {
+    if (this.inputType === 'unit') {
       return true;
     }
     return false;

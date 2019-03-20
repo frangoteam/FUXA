@@ -1,7 +1,7 @@
 
 .tester-panel {
   width: 300px;
-  height: 560px;
+  height: 563px;
   z-index: 99999 !important;
   position: absolute;
   right: 10px;
@@ -15,7 +15,6 @@
 .tester-header {
   height: 30px;
   background-color: rgb(230, 230, 230);
-  margin-bottom: 10px;
   padding-left: 10px;
   cursor: move;
   line-height: 30px;
@@ -31,15 +30,20 @@
     top: 0px;
 }
 
+.tester-body {
+  overflow-y: auto;
+  height: 350px;
+}
+
 .tester-output {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
+  /* position: absolute; */
+  /* bottom: 0px; */
+  /* left: 0px; */
+  /* right: 0px; */
   overflow-y: auto;
   height: 180px;
   border-top: 1px solid gray;
-  padding: 2px 2px 2px 2px;
+  padding: 2px 2px 0px 2px;
 }
 
 .output-item {

@@ -64,6 +64,13 @@ export class ProjectService {
                 let res = localStorage.getItem(this.prjresource);
                 if (res) {
                     this.projectData = JSON.parse(res);
+                } else if (environment.demo) {
+                    // load demo from server
+                    this.getDemoProject().subscribe(prj => {
+                        this.projectData = prj;
+                    }, err => {
+                        console.log(err);
+                    });
                 } else {
                     this.projectData = new ProjectData();
                     let server = new Device();
@@ -211,6 +218,17 @@ export class ProjectService {
         }
     }
 
+    setNewProject() {
+        this.projectData = new ProjectData();
+        let server = new Device();
+        server.name = 'Fuxa Server';
+        server.id = '0';
+        server.type = DeviceType.FuxaServer;
+        server.property = new DeviceNetProperty();
+        this.setServer(server);
+        this.notifyToLoadHmi();
+    }
+
     getProject() {
         return this.projectData;
     }
@@ -254,6 +272,10 @@ export class ProjectService {
 
     checkServer() {
         return this.http.get<any>(this.endPointConfig + '/api/settings');
+    }
+
+    getDemoProject() {
+        return this.http.get<any>(this.endPointConfig + '/api/projectdemo');
     }
 }
 

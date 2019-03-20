@@ -20,6 +20,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
   static prefixMax = 'M-GXP_';
   static prefixMin = 'm-GXP_';
   static prefixValue = 'V-GXP_';
+  static barColor = '#1565c0';
 
   constructor() {
     super();
@@ -92,5 +93,41 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
         rect.setAttribute('fill', gap.color);
       }
     }
+  }
+
+  static initElementColor(bkcolor, color, ele) {
+    let rectArea = Utils.searchTreeStartWith(ele, this.prefixA);
+    if (rectArea) {
+      if (bkcolor) {
+        rectArea.setAttribute('fill', bkcolor);
+      }
+      if (color) {
+        rectArea.setAttribute('stroke', color);
+      }
+    }
+    rectArea = Utils.searchTreeStartWith(ele, this.prefixB);
+    if (rectArea) {
+      if (color) {
+        rectArea.setAttribute('stroke', color);
+      }
+    }
+  }
+
+  static getFillColor(ele) {
+    let rectArea = Utils.searchTreeStartWith(ele, this.prefixA);
+    if (rectArea) {
+        return rectArea.getAttribute('fill');
+    }
+  }
+
+  static getStrokeColor(ele) {
+    let rectArea = Utils.searchTreeStartWith(ele, this.prefixA);
+    if (rectArea) {
+        return rectArea.getAttribute('stroke');
+    }
+  }
+
+  static getDefaultValue() {
+    return {color: this.barColor };
   }
 }

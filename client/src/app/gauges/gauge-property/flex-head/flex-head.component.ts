@@ -8,6 +8,7 @@ import { FlexInputComponent } from '../flex-input/flex-input.component';
 import { GaugeProperty } from '../../../_models/hmi';
 import { Device, Tag } from '../../../_models/device';
 import { HmiService } from '../../../_services/hmi.service';
+import { Utils } from '../../../_helpers/utils';
 
 interface Variable {
   id: string;
@@ -30,6 +31,9 @@ export class FlexHeadComponent implements OnInit {
   withInput = null;
   alarme: any;
   currentTag: Tag = null;
+  defaultValue: any;
+  defaultColor = Utils.defaultColor;
+
   // alarm: string;
 
   public deviceCtrl: FormControl = new FormControl();

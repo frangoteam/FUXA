@@ -55,4 +55,36 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
       }
     }
   }
+
+  static initElementColor(bkcolor, color, ele) {
+    let htmlInput = Utils.searchTreeStartWith(ele, this.prefix);
+    if (htmlInput) {
+      if (bkcolor) {
+        htmlInput.style.backgroundColor = bkcolor;
+      }
+      if (color) {
+        htmlInput.style.color = color;
+      }
+    }
+  }
+
+  static getFillColor(ele) {
+    if (ele.children && ele.children[0]) {
+      let htmlInput = Utils.searchTreeStartWith(ele, this.prefix);
+      if (htmlInput) {
+        return htmlInput.style.backgroundColor;
+      }
+    }
+    return ele.getAttribute('fill');
+  }
+
+  static getStrokeColor(ele) {
+    if (ele.children && ele.children[0]) {
+      let htmlInput = Utils.searchTreeStartWith(ele, this.prefix);
+      if (htmlInput) {
+        return htmlInput.style.color;
+      }
+    }
+    return ele.getAttribute('stroke');
+  }
 }

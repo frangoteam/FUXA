@@ -44,4 +44,18 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
       }
     }
   }
+
+  static getFillColor(ele) {
+    if (ele.children && ele.children[0]) {
+      return ele.children[0].getAttribute('fill');
+    }
+    return ele.getAttribute('fill');
+  }
+
+  static getStrokeColor(ele) {
+    if (ele.children && ele.children[0]) {
+      return ele.children[0].getAttribute('stroke');
+    }
+    return ele.getAttribute('stroke');
+  }
 }

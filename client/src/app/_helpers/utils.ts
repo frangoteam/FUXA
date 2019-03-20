@@ -4,6 +4,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Injectable()
 export class Utils {
 
+    static defaultColor = ['#FFFFFF', '#000000', '#EEECE1', '#1F497D', '#4F81BD', '#C0504D', '#9BBB59', '#8064A2', '#4BACC6',
+       '#F79646', '#C00000', '#FF0000', '#FFC000', '#FFD04A', '#FFFF00', '#92D050', '#0AC97D', '#00B050', '#00B0F0', '#4484EF', '#3358C0',
+       '#002060', '#7030A0', '#D8D8D8', '#BFBFBF', '#A5A5A5', '#7F7F7F', '#595959', '#3F3F3F', '#262626'];
+
     static searchTreeStartWith(element, matchingStart) {
         if (element.id.startsWith(matchingStart)) {
             return element;

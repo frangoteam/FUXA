@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
 
 import { HmiService } from '../_services/hmi.service';
@@ -18,9 +18,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscriptionLoad: Subscription;
 
-  constructor(private projectService: ProjectService, 
-              private hmiService: HmiService, 
-              private gaugesManager: GaugesManager) { }
+  constructor(private projectService: ProjectService,
+    private hmiService: HmiService,
+    private gaugesManager: GaugesManager) { }
 
   ngOnInit() {
     this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
@@ -30,12 +30,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       catch (e) {
         console.log(e);
       }
-    });    
+    });
   }
 
   ngAfterViewInit() {
     try {
       this.loadHmi();
+      if (!this.homeView) {
+        setTimeout(() => {
+          this.loadHmi();
+        }, 4000);
+      }
     }
     catch (e) {
       console.log(e);

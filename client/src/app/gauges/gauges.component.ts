@@ -319,7 +319,7 @@ export class GaugesManager {
     } else if (type === MotorComponent.TypeTag) {
       return GaugeDialogType.RangeWithAlarm;
     } else if (type === ValueComponent.TypeTag) {
-      return GaugeDialogType.OnlyValue;
+      return GaugeDialogType.ValueAndUnit;
     } else if (type === CompressorComponent.TypeTag) {
       return GaugeDialogType.RangeWithAlarm;
     } else if (type === ExchangerComponent.TypeTag) {
@@ -334,6 +334,55 @@ export class GaugesManager {
       return GaugeDialogType.MinMax;
     } else if (type === GaugeSemaphoreComponent.TypeTag) {
       return GaugeDialogType.Range;
+    }
+  }
+
+  public static getDefaultValue(type: string): any {
+    if (type === GaugeProgressComponent.TypeTag) {
+      return GaugeProgressComponent.getDefaultValue();
+    }
+    return null;
+  }
+
+  public static checkGaugeColor(ele: any, eles: any, colors: any): boolean {
+    if (ele && eles && (eles.length <= 1 || !eles[1])) {
+      if (ele.type === GaugeProgressComponent.TypeTag) {
+        colors.fill = GaugeProgressComponent.getFillColor(eles[0]);
+        colors.stroke = GaugeProgressComponent.getStrokeColor(eles[0]);
+        return true;
+      } else if (ele.type === GaugeSemaphoreComponent.TypeTag) {
+        colors.fill = GaugeSemaphoreComponent.getFillColor(eles[0]);
+        colors.stroke = GaugeSemaphoreComponent.getStrokeColor(eles[0]);
+        return true;
+      } else if (ele.type === HtmlButtonComponent.TypeTag) {
+        colors.fill = HtmlButtonComponent.getFillColor(eles[0]);
+        colors.stroke = HtmlButtonComponent.getStrokeColor(eles[0]);
+        return true;
+      } else if (ele.type === HtmlInputComponent.TypeTag) {
+        colors.fill = HtmlInputComponent.getFillColor(eles[0]);
+        colors.stroke = HtmlInputComponent.getStrokeColor(eles[0]);
+        return true;
+      } else if (ele.type === HtmlSelectComponent.TypeTag) {
+        colors.fill = HtmlSelectComponent.getFillColor(eles[0]);
+        colors.stroke = HtmlSelectComponent.getStrokeColor(eles[0]);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public static initElementColor(bkcolor, color, elems) {
+    for (let i = 0; i < elems.length; i++) {
+      let type = elems[i].getAttribute('type');
+      if (type === GaugeProgressComponent.TypeTag) {
+        GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
+      } else if (type === HtmlButtonComponent.TypeTag) {
+        HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
+      } else if (type === HtmlInputComponent.TypeTag) {
+        HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
+      } else if (type === HtmlSelectComponent.TypeTag) {
+        HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
+      }
     }
   }
 }

@@ -15,6 +15,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
   static TypeTag = 'svg-ext-html_button';
   static LabelTag = 'HtmlButton';
   static prefixB = 'B-HXB_';
+  static prefixRect = 'svg_';
 
   constructor() {
     super();
@@ -65,5 +66,25 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     //     input.value = val;
     //   }
     // }
+  }
+
+  static getFillColor(ele) {
+    if (ele.children && ele.children[0]) {
+      let htmlButton = Utils.searchTreeStartWith(ele, this.prefixRect);
+      if (htmlButton) {
+        return htmlButton.getAttribute('fill');
+      }
+    }
+    return ele.getAttribute('fill');
+  }
+
+  static getStrokeColor(ele) {
+    if (ele.children && ele.children[0]) {
+      let htmlButton = Utils.searchTreeStartWith(ele, this.prefixRect);
+      if (htmlButton) {
+        return htmlButton.getAttribute('stroke');
+      }
+    }
+    return ele.getAttribute('stroke');
   }
 }

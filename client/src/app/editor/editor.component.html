@@ -872,10 +872,14 @@
           </div>
 
           <div id="tools_bottom_2" class="colors">
-            <input readonly [(colorPicker)]="colorFill" class="color-fill" title="Change fill color" [style.background]="colorFill" [cpAlphaChannel]="'always'"
-              [cpPosition]="'top'" (colorPickerChange)="onChangeFillColor($event)" />
+            <input readonly [(colorPicker)]="colorFill" class="color-fill" title="Change fill color" [style.background]="colorFill" 
+              [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeFillColor($event)" [cpPresetColors]="defaultColor" 
+              [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
+              [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"/>
             <input readonly [(colorPicker)]="colorStroke" class="color-stroke" title="Change stroke color" [style.background]="colorStroke"
-              [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeStrokeColor($event)" />
+              [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeStrokeColor($event)" [cpPresetColors]="defaultColor" 
+              [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
+              [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"/>
             <!-- <div id="color_tools"> -->
             <div class="color_tool" id="tool_fill" hidden>
               <label class="icon_label" for="fill_color" title="Change fill color"></label>
