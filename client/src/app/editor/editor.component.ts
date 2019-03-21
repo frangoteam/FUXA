@@ -383,6 +383,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private onSelectedElement(event) {
         this.selectedElement = null;
+        try {
+            // to remove some strange effects
+            if (document.activeElement != document.body) (document.activeElement as HTMLElement).blur();
+        } catch (e) { }
         // console.log('selected: ' + this.selectedElement);
         if (event) {
             for (let i = 0; i < event.length; i++) {
