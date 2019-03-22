@@ -20,7 +20,7 @@
       <mat-icon aria-label="View Devices settings">device_hub</mat-icon>
   </button>  
 </div>
-<div class="header-help">
+<div class="header-help" *ngIf="ineditor">
     <button mat-button title="Help" [matMenuTriggerFor]="helpmenu" class="device-btn" style="padding-top: 3px !important;">
         <mat-icon aria-label="Show FUXA Help">help_outline</mat-icon>
     </button>

@@ -128,6 +128,8 @@ app.use(allowCrossDomain);
 app.use("/", express.static(settings.httpStatic));
 app.use("/home", express.static(settings.httpStatic));
 app.use("/lab", express.static(settings.httpStatic));
+app.use("/editor", express.static(settings.httpStatic));
+app.use("/device", express.static(settings.httpStatic));
 // app.use(express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
