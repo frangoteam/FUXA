@@ -10,6 +10,18 @@
     width: 200px;
 }
 
+.header-help {
+    z-index: 9999 !important;
+    position: fixed;
+    top: 0px;
+    right: 30px;
+    /* background-color: rgba(33,33,33,0.92); */
+    color: rgba(255,255,255,1);
+    height: 36px;
+    width: 36px;
+
+}
+
 .main-btn {
     height: 34px;
     width: 34px;
@@ -37,3 +49,13 @@
 .menu-separator {
     border-top-color: rgba(0,0,0,1);
 }
+
+::ng-deep .leftbar-item-menu {
+    background-color: rgba(47,47,47,1);
+}
+::ng-deep .mat-menu-item {
+    font-size: 11px;
+    color: rgba(255,255,255,1);
+    height: 30px !important;
+    line-height: unset !important;
+  }

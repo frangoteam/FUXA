@@ -117,6 +117,11 @@ export class Event {
     ga: GaugeSettings;
 }
 
+export class HelpData {
+    page: string;
+    tag: string;
+}
+
 interface DictionaryGaugeSettings {
     [x: string]: GaugeSettings
 }

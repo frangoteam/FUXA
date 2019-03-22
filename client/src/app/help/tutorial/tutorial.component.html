@@ -1,41 +1,53 @@
-<div style="display: block">
-  <div class="title">
-      FUXA-editor Tutorial
-  </div>
-  <mat-accordion multi="true">
-      <mat-expansion-panel class="my-expansion-panel">
-          <mat-expansion-panel-header class="header">
-              <mat-panel-title>
-                  Basic Layout
-              </mat-panel-title>
-              <mat-panel-description>
+<div draggable [draggableHeight]="30" class="tutorial-panel" *ngIf="show">
+    <style>
+        pre {
+            white-space: pre-line;
+        }
+    </style>
+    <div class="tutorial-header">
+        <div class="tutorial-title">
+            FUXA-editor Tutorial
+        </div>
+        <div class="tutorial-close" (click)="close()">
+            &times;
+        </div>
+    </div>
+    <div class="tutorial-body">
+        <mat-accordion multi="true">
+            <mat-expansion-panel class="my-expansion-panel">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        Basic Layout
+                    </mat-panel-title>
+                    <mat-panel-description>
 
-              </mat-panel-description>
-          </mat-expansion-panel-header>
-          Tutorial content
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                Basic content
 
-      </mat-expansion-panel>
-      <mat-expansion-panel class="my-expansion-panel" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-          <mat-expansion-panel-header class="header">
-              <mat-panel-title>
-                  Device
-              </mat-panel-title>
-              <mat-panel-description>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="my-expansion-panel">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        Page editor
+                    </mat-panel-title>
+                    <mat-panel-description>
 
-              </mat-panel-description>
-          </mat-expansion-panel-header>
-          <p>I'm visible because I am open adsfasdfasdf asdfasdf asf asf asdf asdf asdf asdasdf asd fghshgh fghh fgg dfgh </p>
-      </mat-expansion-panel>
-      <mat-expansion-panel class="my-expansion-panel" (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-          <mat-expansion-panel-header class="header">
-              <mat-panel-title>
-                  HMI
-              </mat-panel-title>
-              <mat-panel-description>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                Page editor content
+            </mat-expansion-panel>
+            <mat-expansion-panel class="my-expansion-panel">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        Device
+                    </mat-panel-title>
+                    <mat-panel-description>
 
-              </mat-panel-description>
-          </mat-expansion-panel-header>
-          <p>I'm visible because I am open</p>
-      </mat-expansion-panel>
-  </mat-accordion>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                Device content
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
 </div>

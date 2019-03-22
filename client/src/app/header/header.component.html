@@ -17,6 +17,17 @@
       <mat-icon aria-label="View pages editor">widgets</mat-icon>
   </button>
   <button mat-button title="View Devices settings" class="main-btn" (click)="goTo('/device')">
-      <mat-icon aria-label="View Devices settings">link</mat-icon>
+      <mat-icon aria-label="View Devices settings">device_hub</mat-icon>
   </button>  
 </div>
+<div class="header-help">
+    <button mat-button title="Help" [matMenuTriggerFor]="helpmenu" class="device-btn" style="padding-top: 3px !important;">
+        <mat-icon aria-label="Show FUXA Help">help_outline</mat-icon>
+    </button>
+    <mat-menu #helpmenu="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
+        <button mat-menu-item (click)="onShowHelp('help')">Tutorial</button>
+        <mat-divider class="menu-separator"></mat-divider>
+        <button mat-menu-item (click)="onShowHelp('info')">Info</button>
+    </mat-menu>
+</div>
+<app-tutorial #tutorial></app-tutorial>

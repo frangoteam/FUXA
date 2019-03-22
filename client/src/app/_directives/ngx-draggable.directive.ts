@@ -48,7 +48,6 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
     }
 
     onDragStart(event: MouseEvent) {
-        console.log(event.offsetY);
         this.active = false;
         if (this.draggableHeight && this.draggableHeight < event.offsetY) {
             return;
@@ -67,7 +66,6 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
     }
 
     onDragEnd(event: MouseEvent) {
-        console.log(event.offsetY);
         if (!this.active) {
             return;
         }

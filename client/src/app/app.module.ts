@@ -15,7 +15,7 @@ import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
 import { HomeComponent } from './home/home.component';
-import { HeaderComponent } from './header/header.component';
+import { HeaderComponent, DialogInfo } from './header/header.component';
 import { EditorComponent, DialogDocProperty, DialogDocName } from './editor/editor.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
@@ -29,6 +29,7 @@ import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
 import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
+import { TutorialComponent } from './help/tutorial/tutorial.component';
 import { WindowRef } from './_helpers/windowref';
 import { Utils, EnumToArrayPipe } from './_helpers/utils';
 import { Dictionary } from './_helpers/dictionary';
@@ -75,6 +76,7 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     FuxaViewComponent,
     DialogDocProperty,
     DialogDocName,
+    DialogInfo,
     GaugeBaseComponent,
     SwitchComponent,
     CompressorComponent,
@@ -88,6 +90,7 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     GaugeSemaphoreComponent,
     GaugePropertyComponent,
     TesterComponent,
+    TutorialComponent,
     FlexInputComponent,
     FlexHeadComponent,
     FlexEventComponent,
@@ -130,6 +133,7 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
   entryComponents: [
     DialogDocProperty, 
     DialogDocName,
+    DialogInfo,
     DynamicComponent,
     GaugePropertyComponent,
     DevicePropertyComponent,

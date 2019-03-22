@@ -19,14 +19,16 @@ html {
     position: relative;
     /*min-height: 100%;*/
     background-color:#F1F1F1;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', "Helvetica Neue", sans-serif;
+    /* font-family: 'Open Sans', sans-serif; */
     font-weight: 300;
 }
 
 body {
     height: 100%;
     margin: 0px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Roboto', "Helvetica Neue", sans-serif;
+    /* font-family: 'Open Sans', sans-serif; */
     font-weight: 300;
 }
 
@@ -44,6 +46,7 @@ app-root {
   }
   
 /* toaster overwrite */
+/*-------------------*/
 #toast-container > div {
     font-size: 13px !important;
     -moz-border-radius: unset !important;
@@ -172,7 +175,14 @@ app-root {
   } */
 
 
-
+.logo {
+  display: block;
+  text-indent: -9999px;
+  width: 30px;
+  height: 30px;
+  background: url(assets/images/logo.svg);
+  background-size: 30px 30px;
+}
 
 /* Layout form */
 .my-form-field {

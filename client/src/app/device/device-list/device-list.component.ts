@@ -17,7 +17,7 @@ import { HmiService } from '../../_services/hmi.service';
 export class DeviceListComponent implements OnInit {
 
 
-  displayedColumns = ['select', 'position', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
+  displayedColumns = ['select', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
   dataSource = new MatTableDataSource([]);
   selection = new SelectionModel<Element>(true, []);
   devices: Device[];
@@ -25,6 +25,7 @@ export class DeviceListComponent implements OnInit {
 
   @Input() deviceSelected: Device;
   @Output() save = new EventEmitter();
+  @Output() goto = new EventEmitter();
 
   @ViewChild(MatTable) table: MatTable<any>;
   @ViewChild(MatSort) sort: MatSort;
@@ -35,14 +36,10 @@ export class DeviceListComponent implements OnInit {
             private projectService: ProjectService) { }
 
   ngOnInit() {
-    this.devices = this.projectService.getDevices();//JSON.parse(JSON.stringify(this.projectService.getDevices()));
+    this.devices = this.projectService.getDevices();
     if (!this.deviceSelected && this.devices) {
       this.deviceSelected = this.devices[0];
     }
-    // for (let i = 3; i < 100; i++) {
-    //   this.dataSource.data.push({ position: i, name: 'Hydrogen', address: '', device: '', type: '', min: '', max: '', value: '' })
-    // }
-
   }
 
   ngAfterViewInit() {
@@ -52,11 +49,6 @@ export class DeviceListComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.table.renderRows();
   }
-
- 
-  // saveDeviceList() {
-  //   this.projectService.setDevices(this.devices, true);
-  // }
 
   private bindToTable(tags) {
     this.dataSource.data = Object.values(tags); 
@@ -80,6 +72,10 @@ export class DeviceListComponent implements OnInit {
         this.bindToTable(this.deviceSelected.tags);
       }
     });
+  }
+
+  onGoBack() {
+    this.goto.emit();
   }
 
   onRemoveRow(row) {

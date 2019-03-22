@@ -1,7 +1,13 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from "rxjs/Subscription";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+
+import { environment } from '../../environments/environment';
 
 import { ProjectService } from '../_services/project.service';
+import { HelpData } from '../_models/hmi';
+import { TutorialComponent } from '../help/tutorial/tutorial.component';
 
 @Component({
     moduleId: module.id,
@@ -9,24 +15,64 @@ import { ProjectService } from '../_services/project.service';
     templateUrl: 'header.component.html',
     styleUrls: ['header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
+
+    @ViewChild('sidenav')sidenav: any; 
+    @ViewChild('tutorial') tutorial: TutorialComponent;
 
     ineditor: boolean = false;
+    private subscriptionShowHelp: Subscription;
     
     constructor(private router: Router,
+                public dialog: MatDialog,
                 private projectService: ProjectService){
+
         this.router.events.subscribe(()=> {
             this.ineditor = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0) ? true : false;
         });
     }
 
-    @ViewChild('sidenav')sidenav: any; 
+    ngOnInit() {
+    }
+
+    ngOnDestroy() {
+        try {
+          if (this.subscriptionShowHelp) {
+            this.subscriptionShowHelp.unsubscribe();
+          } 
+        } catch (e) {
+        }
+      }
 
     public onClick(targetElement) {
         this.sidenav.close();
     }
 
-    ngOnInit() {
+    
+    onShowHelp(page) {
+        let data = new HelpData();
+        data.page = page;
+        data.tag = 'device';
+        this.showHelp(data);
+    }
+
+    showHelp(data: HelpData) {
+        console.log('show help: ' + data.page);
+        if (data.page === 'help') {
+            this.tutorial.show = true;
+        } else if (data.page === 'info') {
+            this.showInfo();
+        }
+    }
+
+    showInfo() {
+        let dialogRef = this.dialog.open(DialogInfo, {
+            minWidth: '250px',
+            data: { name: 'Info', version: environment.version }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+        });
     }
 
     goTo(destination:string) {
@@ -93,5 +139,19 @@ export class HeaderComponent implements OnInit {
         }
     }
     //#endregion
+}
 
+
+@Component({
+    selector: 'dialog-info',
+    templateUrl: 'info.dialog.html',
+})
+export class DialogInfo {
+    constructor(
+        public dialogRef: MatDialogRef<DialogInfo>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
 }

@@ -7,9 +7,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TutorialComponent implements OnInit {
 
+  show: boolean = false;
+
   constructor() { }
 
   ngOnInit() {
   }
 
+  close() {
+    this.show = false;
+  }
 }

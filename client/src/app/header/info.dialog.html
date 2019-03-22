@@ -1,0 +1,18 @@
+<div>
+  <div mat-dialog-title style="display:inline-block">
+      <div class="logo" style="display: inline-block"></div>
+      <div style="font-size: 18px;display: inline-block;vertical-align: super;padding-left: 5px;">FUXA</div>
+  </div>
+  <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+  <div mat-dialog-content style="margin-bottom: 10px;">
+    <div style="display: block">
+      Version: {{data.version}}
+    </div>
+    <div style="display: block; font-size: 13px;margin-top: 10px;">
+        developed by <span><b>frango</b>team</span>
+      </div>
+  </div>
+  <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+    <button mat-raised-button [mat-dialog-close]="data">OK</button>
+  </div>
+</div>

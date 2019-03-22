@@ -1,5 +1,8 @@
 <div class="container">
   <div class="filter" *ngIf="deviceSelected">
+    <button mat-icon-button title="Device Map" (click)="onGoBack()" style="margin-right:10px;margin-left:-10px;">
+      <mat-icon aria-label="Show devices map">arrow_back</mat-icon>
+    </button>
     <div class="my-form-field" style="">
       <span>Device</span>
       <mat-select [(value)]="deviceSelected" style="width: 300px" (selectionChange)="onDeviceChange($event.source)">
@@ -37,11 +40,6 @@
         <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
         </mat-checkbox> -->
       </mat-cell>
-    </ng-container>
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
     </ng-container>
 
     <!-- Name Column -->
@@ -102,5 +100,5 @@
 </div>
 
 <button mat-fab color="primary" (click)="onAddTag()" style="position: absolute; right: 20px; bottom: 30px; z-index: 9999;">
-    <mat-icon class="">add</mat-icon>
+  <mat-icon class="">add</mat-icon>
 </button>

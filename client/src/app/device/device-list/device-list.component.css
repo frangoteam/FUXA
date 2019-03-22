@@ -45,6 +45,27 @@
 
 .mat-column-select {
     overflow: visible;
+    flex: 0 0 100px;
+}
+
+.mat-column-name {
+    flex: 0 0 400px;
+}
+
+.mat-column-type {
+    flex: 0 0 180px;
+}
+
+.mat-column-value {
+    flex: 0 0 180px;
+}
+
+.mat-column-min {
+    flex: 0 0 120px;
+}
+
+.mat-column-max {
+    flex: 0 0 120px;
 }
 
 .selectidthClass{

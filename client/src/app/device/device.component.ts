@@ -100,6 +100,10 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
   //   }
   // }
 
+  gotoMap() {
+    this.show('map');
+  }
+
   gotoList(device: Device) {
     this.show('tags');
     this.deviceList.setSelectedDevice(device);
