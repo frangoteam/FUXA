@@ -26,6 +26,10 @@ Open up a browser (better Chrome) and navigate to http://localhost:1881
 ## Usage
 First define your Device and bind the Variable or Signals
 
+## Test
+Teste with:
+- Windows 10, nodejs version 10.8.0, npm version 6.2.0
+- Raspberry PI (Raspbian 2018-11-13, Kernel 4.14), nodejs version 10.15.3, npm version 6.4.1
 
 ## License
 MIT.
