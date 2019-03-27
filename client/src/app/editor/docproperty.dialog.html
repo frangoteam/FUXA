@@ -4,12 +4,12 @@
   <div mat-dialog-content>
     <div style="display: inline-block; margin-right: 30px">
       <mat-form-field style="max-width:100px">
-        <input matInput [(ngModel)]="data.width" placeholder="Width" type="number">
+        <input matInput numberOnly [(ngModel)]="data.width" placeholder="Width" type="text">
       </mat-form-field>
     </div>
     <div style="display: inline-block">
       <mat-form-field style="max-width:100px">
-        <input matInput [(ngModel)]="data.height" placeholder="Height" type="number">
+        <input matInput numberOnly [(ngModel)]="data.height" placeholder="Height" type="text">
       </mat-form-field>
     </div>
     <div style="display: block; margin-top: 10px;margin-bottom:10px">

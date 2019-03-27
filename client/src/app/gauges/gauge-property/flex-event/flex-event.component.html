@@ -23,7 +23,7 @@
   </div>
   <div class="my-form-field" style="padding-left: 20px;" *ngIf="withSetValue(item.action)">
     <span>Value</span>
-    <input [(ngModel)]="item.actparam" type="number" style="width: 100px">
+    <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 100px">
   </div>
   <div class="item-remove">
     <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">

@@ -4,11 +4,11 @@
       <div *ngIf="slideView" class="item-range">
         <div class="my-form-field">
           <span>Min</span>
-          <input [(ngModel)]="item.min" type="number" style="width: 80px">
+          <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
         </div>
         <div class="my-form-field" style="padding-left: 20px;">
           <span>Max</span>
-          <input [(ngModel)]="item.max" type="number" style="width: 80px">
+          <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
         </div>
       </div>
       <div class="item-range input-slider" *ngIf="!slideView">
@@ -39,11 +39,11 @@
       <div class="item-minmax">
         <div class="my-form-field">
           <span>Min</span>
-          <input [(ngModel)]="item.min" type="number" style="width: 80px">
+          <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
         </div>
         <div class="my-form-field" style="padding-left: 20px;">
           <span>Max</span>
-          <input [(ngModel)]="item.max" type="number" style="width: 80px">
+          <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
         </div>
         <div class="my-form-field" style="padding-left: 30px">
           <!-- <span>Unit</span>
@@ -63,7 +63,7 @@
     <div *ngIf="isWithStep()" class="item-step">
       <div class="my-form-field">
         <span>Value</span>
-        <input [(ngModel)]="item.min" type="number" style="width: 80px">
+        <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
       </div>
       <div class="my-form-field" style="padding-left: 20px;">
         <span>Label</span>

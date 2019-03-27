@@ -35,11 +35,11 @@
       </div>
       <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
         <span>Min</span>
-        <input [(ngModel)]="data.tag.min" style="width: 80px" type="number">
+        <input numberOnly [(ngModel)]="data.tag.min" style="width: 80px" type="text">
       </div>
       <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
         <span>Max</span>
-        <input [(ngModel)]="data.tag.max" style="width: 80px" type="number">
+        <input numberOnly [(ngModel)]="data.tag.max" style="width: 80px" type="text">
       </div>
       <div class="error" *ngIf="error">
           <span>{{error}}</span>

@@ -39,6 +39,7 @@ import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
 import { DraggableDirective } from './_directives/ngx-draggable.directive';
+import { NumberOnlyDirective } from './_directives/number.directive';
 
 import { GaugesManager } from './gauges/gauges.component';
 import { GaugeBaseComponent } from './gauges/gauge-base/gauge-base.component';
@@ -99,6 +100,7 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     DialogDraggableDirective,
     EnumToArrayPipe,
     DraggableDirective,
+    NumberOnlyDirective,
     NgxFabButtonComponent,
     NgxFabItemButtonComponent
   ],
