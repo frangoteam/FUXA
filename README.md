@@ -37,7 +37,7 @@ Now you can test by change the values to PLC or manually with the testbench
 ![fuxa test](/screenshot/fuxa-test.gif)
 
 ## Test
-Teste with:
+Tested with:
 - Windows 10, nodejs version 10.8.0, npm version 6.2.0
 - Raspberry PI (Raspbian 2018-11-13, Kernel 4.14), nodejs version 10.15.3, npm version 6.4.1
 
