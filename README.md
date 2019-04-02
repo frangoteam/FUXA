@@ -41,5 +41,12 @@ Tested with:
 - Windows 10, nodejs version 10.8.0, npm version 6.2.0
 - Raspberry PI (Raspbian 2018-11-13, Kernel 4.14), nodejs version 10.15.3, npm version 6.4.1
 
+## Issues
+If you identify any errors, or have an idea for an improvement, please open an [issue](/issues)).
+
+## Thank you!
+- [SVG-edit](https://github.com/SVG-Edit/svgedit)
+- [node-snap7](https://github.com/mathiask88/node-snap7)
+
 ## License
 MIT.
