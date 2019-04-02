@@ -266,6 +266,71 @@ var DraggableDirective = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/_directives/number.directive.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NumberOnlyDirective; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var NumberOnlyDirective = (function () {
+    function NumberOnlyDirective(el) {
+        this.el = el;
+        // Allow decimal numbers and negative values
+        this.regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g); ///^-?[0-9]+(\.[0-9]*){0,1}$/g);
+        // Allow key codes for special events. Reflect :
+        // Backspace, tab, end, home
+        this.specialKeys = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
+    }
+    NumberOnlyDirective.prototype.onKeyDown = function (event) {
+        // Allow Backspace, tab, end, and home keys
+        if (this.specialKeys.indexOf(event.key) !== -1) {
+            return;
+        }
+        var current = this.el.nativeElement.value;
+        var next = '';
+        if (event.key === '-') {
+            event.preventDefault();
+            if (!current.startsWith('-')) {
+                next = event.key + current;
+                this.el.nativeElement.value = next;
+            }
+        }
+        else {
+            next = current.concat(event.key);
+        }
+        if (next && !String(next).match(this.regex)) {
+            event.preventDefault();
+        }
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* HostListener */])('keydown', ['$event']),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [KeyboardEvent]),
+        __metadata("design:returntype", void 0)
+    ], NumberOnlyDirective.prototype, "onKeyDown", null);
+    NumberOnlyDirective = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* Directive */])({
+            selector: '[numberOnly]'
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */]])
+    ], NumberOnlyDirective);
+    return NumberOnlyDirective;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/_helpers/custom-http.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1524,25 +1589,26 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1550,6 +1616,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -1624,28 +1691,29 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_36__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
-                __WEBPACK_IMPORTED_MODULE_38__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_40__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_41__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_49__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_50__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_44__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_37__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
+                __WEBPACK_IMPORTED_MODULE_39__gauges_switch_switch_component__["a" /* SwitchComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
+                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
+                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
+                __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
+                __WEBPACK_IMPORTED_MODULE_50__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_21__tester_tester_component__["a" /* TesterComponent */],
                 __WEBPACK_IMPORTED_MODULE_26__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
-                __WEBPACK_IMPORTED_MODULE_37__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_39__gauges_controls_value_value_component__["a" /* ValueComponent */],
+                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_38__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__gauges_controls_value_value_component__["a" /* ValueComponent */],
                 __WEBPACK_IMPORTED_MODULE_32__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["a" /* EnumToArrayPipe */],
                 __WEBPACK_IMPORTED_MODULE_34__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_35__directives_number_directive__["a" /* NumberOnlyDirective */],
                 __WEBPACK_IMPORTED_MODULE_30__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
                 __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */]
             ],
@@ -1659,7 +1727,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_48__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_49__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
                     positionClass: 'toast-bottom-right',
@@ -1671,7 +1739,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_24__services_project_service__["a" /* ProjectService */],
                 __WEBPACK_IMPORTED_MODULE_23__tester_tester_service__["a" /* TesterService */],
                 __WEBPACK_IMPORTED_MODULE_22__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_35__gauges_gauges_component__["a" /* GaugesManager */],
+                __WEBPACK_IMPORTED_MODULE_36__gauges_gauges_component__["a" /* GaugesManager */],
                 __WEBPACK_IMPORTED_MODULE_27__helpers_windowref__["a" /* WindowRef */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["b" /* Utils */],
                 __WEBPACK_IMPORTED_MODULE_29__helpers_dictionary__["a" /* Dictionary */],
@@ -1681,8 +1749,8 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_37__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_44__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_38__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_16__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_17__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */]
             ],
@@ -2228,7 +2296,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-property/device-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Device '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      Device Property</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">FUXA\n      Server Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Name</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>Enable</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Port</span>\n          <input [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"number\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Rack</span>\n          <input [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"number\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Slot</span>\n          <input [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"number\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
+module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Device '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      Device Property</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">FUXA\n      Server Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Name</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>Enable</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Port</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Rack</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Slot</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2474,7 +2542,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/tag-property/tag-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Tag Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Device</span>\n        <mat-select [(value)]=\"data.device.name\" style=\"width: 300px\" [disabled]=\"true\">\n          <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device.name\">\n            {{ device.name }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Tagname</span>\n        <input [(ngModel)]=\"data.tag.name\" style=\"width: 300px\" type=\"text\" (input)=\"onCheckValue($event)\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.tag.type\" style=\"width: 300px\">\n          <mat-option *ngFor=\"let type of tagType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\"style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.tag.address\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Min</span>\n        <input [(ngModel)]=\"data.tag.min\" style=\"width: 80px\" type=\"number\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Max</span>\n        <input [(ngModel)]=\"data.tag.max\" style=\"width: 80px\" type=\"number\">\n      </div>\n      <div class=\"error\" *ngIf=\"error\">\n          <span>{{error}}</span>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button [disabled]=\"(error) ? 'true' : 'false'\" color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
+module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Tag Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Device</span>\n        <mat-select [(value)]=\"data.device.name\" style=\"width: 300px\" [disabled]=\"true\">\n          <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device.name\">\n            {{ device.name }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Tagname</span>\n        <input [(ngModel)]=\"data.tag.name\" style=\"width: 300px\" type=\"text\" (input)=\"onCheckValue($event)\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.tag.type\" style=\"width: 300px\">\n          <mat-option *ngFor=\"let type of tagType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\"style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.tag.address\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Min</span>\n        <input numberOnly [(ngModel)]=\"data.tag.min\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Max</span>\n        <input numberOnly [(ngModel)]=\"data.tag.max\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"error\" *ngIf=\"error\">\n          <span>{{error}}</span>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button [disabled]=\"(error) ? 'true' : 'false'\" color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2647,7 +2715,7 @@ module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\"
 /***/ "../../../../../src/app/editor/docproperty.dialog.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>Properties</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div style=\"display: inline-block; margin-right: 30px\">\r\n      <mat-form-field style=\"max-width:100px\">\r\n        <input matInput [(ngModel)]=\"data.width\" placeholder=\"Width\" type=\"number\">\r\n      </mat-form-field>\r\n    </div>\r\n    <div style=\"display: inline-block\">\r\n      <mat-form-field style=\"max-width:100px\">\r\n        <input matInput [(ngModel)]=\"data.height\" placeholder=\"Height\" type=\"number\">\r\n      </mat-form-field>\r\n    </div>\r\n    <div style=\"display: block; margin-top: 10px;margin-bottom:10px\">\r\n      <span style=\"font-size:12px;color:darkgray\">Background</span>\r\n      <input style=\"width:100%;height:24px;border:1px solid rgba(0,0,0,0.2);margin-top: 4px;\" readonly [(colorPicker)]=\"data.bkcolor\" class=\"color-stroke\" title=\"Change stroke color\"\r\n          [style.background]=\"data.bkcolor\"  [cpPresetColors]=\"defaultColor\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" [value]=\"data.bkcolor\"\r\n          [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\r\n          [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\"/>\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n  </div>\r\n</div>"
+module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>Properties</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div style=\"display: inline-block; margin-right: 30px\">\r\n      <mat-form-field style=\"max-width:100px\">\r\n        <input matInput numberOnly [(ngModel)]=\"data.width\" placeholder=\"Width\" type=\"text\">\r\n      </mat-form-field>\r\n    </div>\r\n    <div style=\"display: inline-block\">\r\n      <mat-form-field style=\"max-width:100px\">\r\n        <input matInput numberOnly [(ngModel)]=\"data.height\" placeholder=\"Height\" type=\"text\">\r\n      </mat-form-field>\r\n    </div>\r\n    <div style=\"display: block; margin-top: 10px;margin-bottom:10px\">\r\n      <span style=\"font-size:12px;color:darkgray\">Background</span>\r\n      <input style=\"width:100%;height:24px;border:1px solid rgba(0,0,0,0.2);margin-top: 4px;\" readonly [(colorPicker)]=\"data.bkcolor\" class=\"color-stroke\" title=\"Change stroke color\"\r\n          [style.background]=\"data.bkcolor\"  [cpPresetColors]=\"defaultColor\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" [value]=\"data.bkcolor\"\r\n          [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\r\n          [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\"/>\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -3536,7 +3604,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/fuxa-view/fuxa-view.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div #dataContainer class=\"view-container\">\n</div>\n<div class=\"fab-card\" draggable [draggableHeight]=\"22\" *ngFor=\"let card of cards; let i = index\" [style.top]=\"card.y +'px'\"\n    [style.left]=\"card.x + 'px'\" [style.width]=\"card.width +'px'\" [style.height]=\"card.height + 4 + 'px'\">\n    <a (click)=\"onCloseCard(card);\" class=\"card-close\">\n        <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">close</i>\n    </a>\n    <app-fuxa-view [view]=\"card.view\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\" [parentcards]=\"cards\"></app-fuxa-view>\n</div>\n<div *ngIf=\"dialog\" class=\"dialog-modal\">\n    <div [style.width]=\"dialog.width +'px'\" [style.height]=\"dialog.height + 'px'\" class=\"dialog-modal-content\" [style.background-color]=\"dialog.bkcolor\">\n        <a (click)=\"onCloseDialog();\" class=\"dialog-modal-close\">\n            <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">close</i>\n        </a>\n        <app-fuxa-view [view]=\"dialog.view\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\" ></app-fuxa-view>\n    </div>\n</div>"
+module.exports = "<div #dataContainer class=\"view-container\">\n</div>\n<div class=\"fab-card\" draggable [draggableHeight]=\"22\" *ngFor=\"let card of cards; let i = index\" [style.top]=\"card.y +'px'\"\n    [style.left]=\"card.x + 'px'\" [style.width]=\"card.width +'px'\" [style.height]=\"getCardHeight(card.height) + 'px'\">\n    <a (click)=\"onCloseCard(card);\" class=\"card-close\">\n        <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">close</i>\n    </a>\n    <app-fuxa-view [view]=\"card.view\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\" [parentcards]=\"cards\"></app-fuxa-view>\n</div>\n<div *ngIf=\"dialog\" class=\"dialog-modal\">\n    <div [style.width]=\"dialog.width +'px'\" [style.height]=\"dialog.height + 'px'\" class=\"dialog-modal-content\" [style.background-color]=\"dialog.bkcolor\">\n        <a (click)=\"onCloseDialog();\" class=\"dialog-modal-close\">\n            <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">close</i>\n        </a>\n        <app-fuxa-view [view]=\"dialog.view\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\" ></app-fuxa-view>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -3784,6 +3852,9 @@ var FuxaViewComponent = (function () {
             console.log('onSetValue ' + ga.property.variableId);
             this.gaugesManager.putSignalValue(ga.property.variableId, paramValue);
         }
+    };
+    FuxaViewComponent.prototype.getCardHeight = function (height) {
+        return parseInt(height) + 4;
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
@@ -4839,7 +4910,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngFor=\"let item of events; index as i\" class=\"item\">\n  <div class=\"my-form-field\" style=\"width: 140px;\">\n    <span>Type</span>\n    <mat-select [(value)]=\"item.type\" >\n      <mat-option *ngFor=\"let ev of eventType | enumToArray\" [value]=\"ev.key\">\n        {{ ev.value }}\n      </mat-option>\n    </mat-select>\n  </div>\n  <div class=\"my-form-field\" style=\"width: 140px;padding-left: 20px\">\n    <span>Action</span>\n    <mat-select [(value)]=\"item.action\" (change)=\"item.actparam = '';\">\n      <mat-option *ngFor=\"let type of actionType | enumToArray\" [value]=\"type.key\">\n        {{ type.value }}\n      </mat-option>\n    </mat-select>\n  </div>\n  <div class=\"my-form-field\" style=\"width: 200px;padding-left: 20px\" *ngIf=\"withDestination(item.action)\">\n    <span>Destination</span>\n    <mat-select [(value)]=\"item.actparam\">\n      <mat-option *ngFor=\"let v of views; index as i\" [(value)]=\"v.id\">{{v.name}}</mat-option>\n    </mat-select>\n  </div>\n  <div class=\"my-form-field\" style=\"padding-left: 20px;\" *ngIf=\"withSetValue(item.action)\">\n    <span>Value</span>\n    <input [(ngModel)]=\"item.actparam\" type=\"number\" style=\"width: 100px\">\n  </div>\n  <div class=\"item-remove\">\n    <button mat-icon-button (click)=\"onRemoveEvent(i)\" class=\"remove\">\n      <mat-icon>clear</mat-icon>\n    </button>\n  </div>\n</div>"
+module.exports = "<div *ngFor=\"let item of events; index as i\" class=\"item\">\n  <div class=\"my-form-field\" style=\"width: 140px;\">\n    <span>Type</span>\n    <mat-select [(value)]=\"item.type\" >\n      <mat-option *ngFor=\"let ev of eventType | enumToArray\" [value]=\"ev.key\">\n        {{ ev.value }}\n      </mat-option>\n    </mat-select>\n  </div>\n  <div class=\"my-form-field\" style=\"width: 140px;padding-left: 20px\">\n    <span>Action</span>\n    <mat-select [(value)]=\"item.action\" (change)=\"item.actparam = '';\">\n      <mat-option *ngFor=\"let type of actionType | enumToArray\" [value]=\"type.key\">\n        {{ type.value }}\n      </mat-option>\n    </mat-select>\n  </div>\n  <div class=\"my-form-field\" style=\"width: 200px;padding-left: 20px\" *ngIf=\"withDestination(item.action)\">\n    <span>Destination</span>\n    <mat-select [(value)]=\"item.actparam\">\n      <mat-option *ngFor=\"let v of views; index as i\" [(value)]=\"v.id\">{{v.name}}</mat-option>\n    </mat-select>\n  </div>\n  <div class=\"my-form-field\" style=\"padding-left: 20px;\" *ngIf=\"withSetValue(item.action)\">\n    <span>Value</span>\n    <input numberOnly [(ngModel)]=\"item.actparam\" type=\"text\" style=\"width: 100px\">\n  </div>\n  <div class=\"item-remove\">\n    <button mat-icon-button (click)=\"onRemoveEvent(i)\" class=\"remove\">\n      <mat-icon>clear</mat-icon>\n    </button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -5312,7 +5383,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"grid-conta\">\n  <div *ngFor=\"let item of ranges; index as i\" class=\"item\">\n    <div *ngIf=\"isWithRange()\">\n      <div *ngIf=\"slideView\" class=\"item-range\">\n        <div class=\"my-form-field\">\n          <span>Min</span>\n          <input [(ngModel)]=\"item.min\" type=\"number\" style=\"width: 80px\">\n        </div>\n        <div class=\"my-form-field\" style=\"padding-left: 20px;\">\n          <span>Max</span>\n          <input [(ngModel)]=\"item.max\" type=\"number\" style=\"width: 80px\">\n        </div>\n      </div>\n      <div class=\"item-range input-slider\" *ngIf=\"!slideView\">\n        <ng5-slider [(value)]=\"item.min\" [(highValue)]=\"item.max\" [options]=\"options\"></ng5-slider>\n      </div>\n      <div class=\"my-form-field\" style=\"width: 60px; top: 6px;\" *ngIf=\"isWithRangeColor()\">\n        <span>Color</span>\n        <input [(colorPicker)]=\"item.color\" [style.background]=\"item.color\" [cpPresetColors]=\"defaultColor\" [cpOKButton]=\"true\" \n            [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\n            [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" class=\"panel-color\" style=\"padding: 8px 0 0 0;\"\n            [cpPosition]=\"'left'\"/>\n        <!-- <mat-select class=\"panel-color\" style=\"padding: 8px 0 0 0;\" disableOptionCentering panelClass=\"panel-color-class\"\n          [(value)]=\"selected\" (change)=\"item.color = selected\" [style.background-color]=\"item.color\">\n          <mat-option class=\"option-color\" value=\"green\" style=\"background-color:limegreen\"></mat-option>\n          <mat-option class=\"option-color\" value=\"yellow\" style=\"background-color: yellow\"></mat-option>\n          <mat-option class=\"option-color\" value=\"red\" style=\"background-color: red\"></mat-option>\n          <mat-option class=\"option-color\" value=\"blue\" style=\"background-color: blue\"></mat-option>\n          <mat-option class=\"option-color\" value=\"gray\" style=\"background-color: gray\"></mat-option>\n        </mat-select> -->\n      </div>\n      <div class=\"item-remove\">\n        <button mat-icon-button (click)=\"onRemoveInput(i)\" class=\"remove\">\n          <mat-icon>clear</mat-icon>\n        </button>\n      </div>\n    </div>\n    <div *ngIf=\"isMinMax()\">\n      <div class=\"item-minmax\">\n        <div class=\"my-form-field\">\n          <span>Min</span>\n          <input [(ngModel)]=\"item.min\" type=\"number\" style=\"width: 80px\">\n        </div>\n        <div class=\"my-form-field\" style=\"padding-left: 20px;\">\n          <span>Max</span>\n          <input [(ngModel)]=\"item.max\" type=\"number\" style=\"width: 80px\">\n        </div>\n        <div class=\"my-form-field\" style=\"padding-left: 30px\">\n          <!-- <span>Unit</span>\n          <input [(ngModel)]=\"item.text\" type=\"text\" style=\"width: 60px;text-align: center !important\"> -->\n        </div>\n        <div class=\"my-form-field\" style=\"width: 60px;padding-left: 20px; top: 4px;\">\n          <span>Color</span>\n          <input [(colorPicker)]=\"item.color\" [style.background]=\"getColor(item)\" [cpPresetColors]=\"defaultColor\" [cpOKButton]=\"true\" \n          [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\n          [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" class=\"panel-color\" style=\"padding: 8px 0 0 0;\"\n          [cpPosition]=\"'left'\"/>          \n        </div>\n        <!-- <mat-checkbox class=\"input-minmax-cb\" style=\"padding-left: 30px\" [(ngModel)]=\"withLabel\">Range</mat-checkbox> -->\n        <!-- <mat-checkbox class=\"input-minmax-cb\" style=\"padding-left: 20px\" [(ngModel)]=\"withValue\">Value</mat-checkbox> -->\n      </div>\n    </div>\n    <div *ngIf=\"isWithStep()\" class=\"item-step\">\n      <div class=\"my-form-field\">\n        <span>Value</span>\n        <input [(ngModel)]=\"item.min\" type=\"number\" style=\"width: 80px\">\n      </div>\n      <div class=\"my-form-field\" style=\"padding-left: 20px;\">\n        <span>Label</span>\n        <input [(ngModel)]=\"item.text\" type=\"text\" style=\"width: 160px;text-align: left !important\">\n      </div>\n    </div>\n    <div *ngIf=\"isWithUnit()\" class=\"item-step\">\n      <div class=\"my-form-field\">\n          <span>Unit</span>\n          <input [(ngModel)]=\"item.text\" type=\"text\" style=\"width: 60px;text-align: center !important\">\n      </div>\n    </div>    \n  </div>\n</div>"
+module.exports = "<div class=\"grid-conta\">\n  <div *ngFor=\"let item of ranges; index as i\" class=\"item\">\n    <div *ngIf=\"isWithRange()\">\n      <div *ngIf=\"slideView\" class=\"item-range\">\n        <div class=\"my-form-field\">\n          <span>Min</span>\n          <input numberOnly [(ngModel)]=\"item.min\" type=\"text\" style=\"width: 80px\">\n        </div>\n        <div class=\"my-form-field\" style=\"padding-left: 20px;\">\n          <span>Max</span>\n          <input numberOnly [(ngModel)]=\"item.max\" type=\"text\" style=\"width: 80px\">\n        </div>\n      </div>\n      <div class=\"item-range input-slider\" *ngIf=\"!slideView\">\n        <ng5-slider [(value)]=\"item.min\" [(highValue)]=\"item.max\" [options]=\"options\"></ng5-slider>\n      </div>\n      <div class=\"my-form-field\" style=\"width: 60px; top: 6px;\" *ngIf=\"isWithRangeColor()\">\n        <span>Color</span>\n        <input [(colorPicker)]=\"item.color\" [style.background]=\"item.color\" [cpPresetColors]=\"defaultColor\" [cpOKButton]=\"true\" \n            [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\n            [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" class=\"panel-color\" style=\"padding: 8px 0 0 0;\"\n            [cpPosition]=\"'left'\"/>\n        <!-- <mat-select class=\"panel-color\" style=\"padding: 8px 0 0 0;\" disableOptionCentering panelClass=\"panel-color-class\"\n          [(value)]=\"selected\" (change)=\"item.color = selected\" [style.background-color]=\"item.color\">\n          <mat-option class=\"option-color\" value=\"green\" style=\"background-color:limegreen\"></mat-option>\n          <mat-option class=\"option-color\" value=\"yellow\" style=\"background-color: yellow\"></mat-option>\n          <mat-option class=\"option-color\" value=\"red\" style=\"background-color: red\"></mat-option>\n          <mat-option class=\"option-color\" value=\"blue\" style=\"background-color: blue\"></mat-option>\n          <mat-option class=\"option-color\" value=\"gray\" style=\"background-color: gray\"></mat-option>\n        </mat-select> -->\n      </div>\n      <div class=\"item-remove\">\n        <button mat-icon-button (click)=\"onRemoveInput(i)\" class=\"remove\">\n          <mat-icon>clear</mat-icon>\n        </button>\n      </div>\n    </div>\n    <div *ngIf=\"isMinMax()\">\n      <div class=\"item-minmax\">\n        <div class=\"my-form-field\">\n          <span>Min</span>\n          <input numberOnly [(ngModel)]=\"item.min\" type=\"text\" style=\"width: 80px\">\n        </div>\n        <div class=\"my-form-field\" style=\"padding-left: 20px;\">\n          <span>Max</span>\n          <input numberOnly [(ngModel)]=\"item.max\" type=\"text\" style=\"width: 80px\">\n        </div>\n        <div class=\"my-form-field\" style=\"padding-left: 30px\">\n          <!-- <span>Unit</span>\n          <input [(ngModel)]=\"item.text\" type=\"text\" style=\"width: 60px;text-align: center !important\"> -->\n        </div>\n        <div class=\"my-form-field\" style=\"width: 60px;padding-left: 20px; top: 4px;\">\n          <span>Color</span>\n          <input [(colorPicker)]=\"item.color\" [style.background]=\"getColor(item)\" [cpPresetColors]=\"defaultColor\" [cpOKButton]=\"true\" \n          [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\n          [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" class=\"panel-color\" style=\"padding: 8px 0 0 0;\"\n          [cpPosition]=\"'left'\"/>          \n        </div>\n        <!-- <mat-checkbox class=\"input-minmax-cb\" style=\"padding-left: 30px\" [(ngModel)]=\"withLabel\">Range</mat-checkbox> -->\n        <!-- <mat-checkbox class=\"input-minmax-cb\" style=\"padding-left: 20px\" [(ngModel)]=\"withValue\">Value</mat-checkbox> -->\n      </div>\n    </div>\n    <div *ngIf=\"isWithStep()\" class=\"item-step\">\n      <div class=\"my-form-field\">\n        <span>Value</span>\n        <input numberOnly [(ngModel)]=\"item.min\" type=\"text\" style=\"width: 80px\">\n      </div>\n      <div class=\"my-form-field\" style=\"padding-left: 20px;\">\n        <span>Label</span>\n        <input [(ngModel)]=\"item.text\" type=\"text\" style=\"width: 160px;text-align: left !important\">\n      </div>\n    </div>\n    <div *ngIf=\"isWithUnit()\" class=\"item-step\">\n      <div class=\"my-form-field\">\n          <span>Unit</span>\n          <input [(ngModel)]=\"item.text\" type=\"text\" style=\"width: 60px;text-align: center !important\">\n      </div>\n    </div>    \n  </div>\n</div>"
 
 /***/ }),
 

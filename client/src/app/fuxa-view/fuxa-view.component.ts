@@ -257,6 +257,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
       this.gaugesManager.putSignalValue(ga.property.variableId, paramValue);
     }
   }
+
+  getCardHeight(height) {
+    return parseInt(height) + 4; 
+  }
 }
 
 export class CardModel {
