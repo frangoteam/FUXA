@@ -130,7 +130,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   devicesValue(): Array<Device> {
     if (this.devices && Object.values(this.devices).length) {
-      return Object.values(this.devices);
+      let result = [];
+      Object.values(this.devices).forEach((value) => {
+        result.push(value);
+      });
+      return result.sort((a,b) => (a.name > b.name) ? 1 : -1);
     }
     return [];
   }
@@ -179,9 +183,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
           device.enabled = tempdevice.enabled;
           if (device.property && tempdevice.property) {
             device.property.address = tempdevice.property.address;
-            device.property.port = tempdevice.property.port;
-            device.property.slot = tempdevice.property.slot;
-            device.property.rack = tempdevice.property.rack;
+            device.property.port = parseInt(tempdevice.property.port);
+            device.property.slot = parseInt(tempdevice.property.slot);
+            device.property.rack = parseInt(tempdevice.property.rack);
           }
           if (device.type === DeviceType.SiemensS7) {
             this.checkToAddDevice(device);

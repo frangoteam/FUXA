@@ -40,7 +40,7 @@ export class HmiService {
      * @param sig
      */
     setSignalValue(sig: Variable) {
-        console.log('end set ' + sig.id + ' ' + sig.value);
+        // console.log('end set ' + sig.id + ' ' + sig.value);
         // update the signals array value 
 
         // notify the gui
@@ -97,7 +97,7 @@ export class HmiService {
                         this.setSignalValue(this.variables[varid]);
                     }
                 // }
-                console.log(message);
+                // console.log(message);
 
                 // this.setSignalValue
             });

@@ -935,7 +935,7 @@ var HmiService = (function () {
      * @param sig
      */
     HmiService.prototype.setSignalValue = function (sig) {
-        console.log('end set ' + sig.id + ' ' + sig.value);
+        // console.log('end set ' + sig.id + ' ' + sig.value);
         // update the signals array value 
         // notify the gui
         this.onVariableChanged.emit(sig);
@@ -989,7 +989,7 @@ var HmiService = (function () {
                     _this.setSignalValue(_this.variables[varid]);
                 }
                 // }
-                console.log(message);
+                // console.log(message);
                 // this.setSignalValue
             });
             this.askDeviceValues();
@@ -2186,7 +2186,11 @@ var DeviceMapComponent = (function () {
     };
     DeviceMapComponent.prototype.devicesValue = function () {
         if (this.devices && Object.values(this.devices).length) {
-            return Object.values(this.devices);
+            var result_1 = [];
+            Object.values(this.devices).forEach(function (value) {
+                result_1.push(value);
+            });
+            return result_1.sort(function (a, b) { return (a.name > b.name) ? 1 : -1; });
         }
         return [];
     };
@@ -2235,9 +2239,9 @@ var DeviceMapComponent = (function () {
                     device.enabled = tempdevice.enabled;
                     if (device.property && tempdevice.property) {
                         device.property.address = tempdevice.property.address;
-                        device.property.port = tempdevice.property.port;
-                        device.property.slot = tempdevice.property.slot;
-                        device.property.rack = tempdevice.property.rack;
+                        device.property.port = parseInt(tempdevice.property.port);
+                        device.property.slot = parseInt(tempdevice.property.slot);
+                        device.property.rack = parseInt(tempdevice.property.rack);
                     }
                     if (device.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].SiemensS7) {
                         _this.checkToAddDevice(device);

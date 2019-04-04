@@ -9,7 +9,7 @@ const datatypes = require('./datatypes');
 function S7client(_data, _logger, _events) {
 
     var db = {};                        // Loaded Signal in DB format { DB index, start, size, ... }
-    var data = _data;                   // Current Device data { id, name, tags, enabled, ... }
+    var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;               // Logger
     var s7client = new snap7.S7Client();// Client node-S7
     var working = false;                // Working flag to manage overloading polling and connection
@@ -116,7 +116,7 @@ function S7client(_data, _logger, _events) {
     }
 
     this.load = function (_data) {
-        data = _data;
+        data = JSON.parse(JSON.stringify(_data));
         db = {};
         varsValue = [];
         varsItemsMap = {};
@@ -181,7 +181,7 @@ function S7client(_data, _logger, _events) {
         return s7client.Connected();
     }
 
-    _clearVarsValue = function () {
+    var _clearVarsValue = function () {
         for (let id in varsValue) {
             varsValue[id].value = null;
         }
@@ -193,7 +193,7 @@ function S7client(_data, _logger, _events) {
         _emitValues(varsValue);
     }
 
-    _updateVarsValue = function (dbvalues) {
+    var _updateVarsValue = function (dbvalues) {
         var someval = false;
         var result = [];
         for (var dbid in dbvalues) {
@@ -214,7 +214,7 @@ function S7client(_data, _logger, _events) {
                     }
                     someval = true;
                 });
-                console.log(value);
+                // console.log(value);
             }
         }
         if (someval) {
@@ -248,16 +248,17 @@ function S7client(_data, _logger, _events) {
     }
     //#endregion
 
-    _emitValues = function (values) {
+    var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.name, values: values });
     }
 
-    _emitStatus = function (status) {
+    var _emitStatus = function (status) {
         lastStatus = status;
+        // console.log('device-status ' + data.name + ' ' + status);
         events.emit('device-status:changed', { id: data.name, status: status });
     }
 
-    _checkWorking = function (check) {
+    var _checkWorking = function (check) {
         if (check && working) {
             logger.error(data.name + ' working (polling) overload!');
             return false;
@@ -275,7 +276,7 @@ function S7client(_data, _logger, _events) {
      * @param {Datatype} vars[].type - Data type (BYTE, WORD, INT, etc), see {@link /s7client/?api=Datatypes|Datatypes}
      * @returns {Promise} - Resolves to the vars array with populate *value* property
      */
-    _readDB = function (DBNr, vars) {
+    var _readDB = function (DBNr, vars) {
         return new Promise((resolve, reject) => {
             if (vars.length === 0) return resolve([]);
 
@@ -324,7 +325,7 @@ function S7client(_data, _logger, _events) {
      * @param {Datatype} vars[].type - Data type (BYTE, WORD, INT, etc), see {@link /s7client/?api=Datatypes|Datatypes}
      * @returns {Promise} - Resolves to the vars array with populate *value* property
      */
-    _writeDB = function (DBNr, vars) {
+    var _writeDB = function (DBNr, vars) {
         return new Promise((resolve, reject) => {
             if (vars.length === 0) return resolve([]);
             let end = 0;
@@ -353,7 +354,7 @@ function S7client(_data, _logger, _events) {
      * @param vars[].value - Value
      * @returns {Promise} - Resolves to the vars array with populate *value* property
      */
-    _writeVars = function (vars) {
+    var _writeVars = function (vars) {
         let toWrite = vars.map(v => ({
             Area: s7client['S7AreaDB'],
             WordLen: datatypes[v.type].S7WordLen,
@@ -381,7 +382,7 @@ function S7client(_data, _logger, _events) {
     /**
      * DB X DBX 10.3 = Bool, DB X DBB 10 = Byte/Char, DB X DBW 10 = Int/Word, DB X DBD 10 = DInt/DWord, DB X DBD 10 = Real
      */
-    _getDBValue = function (tag) {
+    var _getDBValue = function (tag) {
         // uint mDB;
         // uint mByte;
         // uint mBit;
@@ -487,7 +488,7 @@ function S7client(_data, _logger, _events) {
         return null;
     }
 
-    _getErr = function (s7err) {
+    var _getErr = function (s7err) {
         if (Array.isArray(s7err)) return new Error('Errors: ' + s7err.join('; '));
         return new Error(s7client.ErrorText(s7err));
     }

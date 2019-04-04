@@ -124,7 +124,7 @@ function updateDevice(event) {
  * @param {*} event 
  */
 function updateDeviceValues(event) {
-    console.log('emit updateDeviceValues: ' + event);
+    // console.log('emit updateDeviceValues: ' + event);
     try {
         let values = Object.values(event.values);
         io.emit('device-values', { id: event.id, values: values });
