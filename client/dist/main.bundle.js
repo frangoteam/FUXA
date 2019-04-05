@@ -7962,7 +7962,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/lab/lab.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n  <app-fuxa-view class=\"lab-body\" id=\"lab\" [view]=\"currentView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n  <template #messagecontainer>\r\n  </template>    \r\n  <button mat-mini-fab color=\"warn\" class=\"fab-btn\" (click)=\"onTest()\">Test</button>\r\n  <app-tester #tester></app-tester>\r\n</div>"
+module.exports = "<div>\r\n  <app-fuxa-view *ngIf=\"labView\" class=\"lab-body\" id=\"lab\" [view]=\"currentView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n  <div *ngIf=\"!labView\">\r\n      Loading...\r\n  </div>\r\n  <template #messagecontainer>\r\n  </template>    \r\n  <button mat-mini-fab color=\"warn\" class=\"fab-btn\" (click)=\"onTest()\">Test</button>\r\n  <app-tester #tester></app-tester>\r\n</div>"
 
 /***/ }),
 
@@ -8001,6 +8001,7 @@ var LabComponent = (function () {
         this.testerService = testerService;
         this.currentView = null;
         this.hmi = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["i" /* Hmi */]();
+        this.labView = null;
     }
     LabComponent.prototype.ngOnInit = function () {
         try {
@@ -8012,16 +8013,33 @@ var LabComponent = (function () {
             console.log(e);
         }
     };
+    LabComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        try {
+            this.loadHmi();
+            if (!this.labView) {
+                setTimeout(function () {
+                    _this.loadHmi();
+                }, 3000);
+            }
+        }
+        catch (e) {
+            console.log(e);
+        }
+    };
     LabComponent.prototype.onTest = function () {
         this.tester.setSignals(this.gaugesManager.getMappedGaugesSignals());
         this.testerService.toggle(true);
     };
     LabComponent.prototype.loadHmi = function () {
+        console.log('lab load ' + this.projectService);
         this.hmi = this.projectService.getHmi();
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.currentView = this.hmi.views[0];
+            this.labView = this.hmi.views[0];
             var oldsel = localStorage.getItem("@frango.webeditor.currentview");
             if (oldsel) {
+                console.log('lab hmi ' + this.currentView);
                 for (var i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {
                         this.currentView = this.hmi.views[i];

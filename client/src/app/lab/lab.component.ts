@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
 import { ViewContainerRef } from '@angular/core';
 
@@ -17,12 +17,13 @@ declare var Raphael: any;
     styleUrls: ['lab.component.css']
 })
 
-export class LabComponent implements OnInit {
+export class LabComponent implements OnInit, AfterViewInit {
 
     currentView: View = null;
     hmi: Hmi = new Hmi();
     svgMain: any;
     componentRef: any;
+    labView: View = null;
 
     @ViewChild('messagecontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
     @ViewChild('tester') tester: TesterComponent;
@@ -36,8 +37,21 @@ export class LabComponent implements OnInit {
         try {
             // this.gaugesManager.stopDemo();
             this.loadHmi();
-
             // this.gaugesManager.startDemo();
+        }
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    ngAfterViewInit() {
+        try {
+            this.loadHmi();
+            if (!this.labView) {
+                setTimeout(() => {
+                    this.loadHmi();
+                }, 3000);
+            }
         }
         catch (e) {
             console.log(e);
@@ -50,11 +64,14 @@ export class LabComponent implements OnInit {
     }
 
     private loadHmi() {
+        console.log('lab load ' + this.projectService);
         this.hmi = this.projectService.getHmi();
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.currentView = this.hmi.views[0];
+            this.labView = this.hmi.views[0];
             let oldsel = localStorage.getItem("@frango.webeditor.currentview");
             if (oldsel) {
+                console.log('lab hmi ' + this.currentView);
                 for (let i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {
                         this.currentView = this.hmi.views[i];

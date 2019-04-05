@@ -1,5 +1,8 @@
 <div>
-  <app-fuxa-view class="lab-body" id="lab" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+  <app-fuxa-view *ngIf="labView" class="lab-body" id="lab" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+  <div *ngIf="!labView">
+      Loading...
+  </div>
   <template #messagecontainer>
   </template>    
   <button mat-mini-fab color="warn" class="fab-btn" (click)="onTest()">Test</button>
