@@ -361,7 +361,7 @@ function S7client(_data, _logger, _events) {
             DBNumber: v.dbnum,
             Start: v.type === 'BOOL' ? v.start * 8 + v.bit : v.start,
             Amount: 1,
-            Data: datatypes[v.type].formatter(v.value)
+            Data: datatypes[v.type].formatter(parseInt(v.value))
         }));
 
         return new Promise((resolve, reject) => {
