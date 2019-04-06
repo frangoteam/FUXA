@@ -8,7 +8,9 @@ FUXA is a web-based Process Visualization (SCADA/HMI) software. With FUXA you ca
 Here is a [live demo](http://frango.internet-box.ch:1881/) example of FUXA editor.
 
 ## Installing and Running
-FUXA is develop with NodeJS (backend) and Angular (frontend). You need to have installed [Node](https://nodejs.org) and NPM.
+FUXA is developed with NodeJS (backend) and Angular (frontend). You can use the Windows desktop version [Release](/../../releases) or follow the installation.
+
+You need to have installed [Node](https://nodejs.org) and NPM.
 
 Clone this repository or download it
 ```
