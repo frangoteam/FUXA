@@ -64,7 +64,7 @@ export class ProjectService {
                 let res = localStorage.getItem(this.prjresource);
                 if (res) {
                     this.projectData = JSON.parse(res);
-                } else if (environment.demo) {
+                } else if (environment.type === 'demo') {
                     // load demo from server
                     this.getDemoProject().subscribe(prj => {
                         this.projectData = prj;

@@ -21,6 +21,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     @ViewChild('tutorial') tutorial: TutorialComponent;
 
     ineditor: boolean = false;
+    winele: boolean = false;
     private subscriptionShowHelp: Subscription;
     
     constructor(private router: Router,
@@ -33,6 +34,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        if (environment.type === 'winele') {
+            this.winele = true;
+            console.log('env ' + environment.type);
+        }
     }
 
     ngOnDestroy() {

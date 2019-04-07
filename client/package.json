@@ -8,6 +8,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --dev",
+    "start-ele": "ng serve --env=winele",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

@@ -5,5 +5,5 @@ export const environment = {
   apiEndpoint: null,
   apiPort: null,
   serverEnabled: true,
-  demo: false
+  type: null
 };

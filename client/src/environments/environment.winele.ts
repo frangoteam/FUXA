@@ -3,7 +3,7 @@ export const environment = {
   version: require('../../package.json').version,
   production: false,
   apiEndpoint: null,
-  apiPort: 1881,
-  serverEnabled: false,
-  type: 'demo'
+  apiPort: null,
+  serverEnabled: true,
+  type: 'winele'
 };

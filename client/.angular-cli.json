@@ -28,7 +28,8 @@
       "environments": {
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts",
-        "demo": "environments/environment.demo.ts"
+        "demo": "environments/environment.demo.ts",
+        "winele": "environments/environment.winele.ts"
       }
     }
   ],
