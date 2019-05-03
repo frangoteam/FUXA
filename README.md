@@ -49,6 +49,7 @@ If you identify any errors, or have an idea for an improvement, please open an [
 ## Thank you!
 - [SVG-edit](https://github.com/SVG-Edit/svgedit)
 - [node-snap7](https://github.com/mathiask88/node-snap7)
+- [node-opcua](https://github.com/node-opcua/node-opcua)
 
 ## License
 MIT.
