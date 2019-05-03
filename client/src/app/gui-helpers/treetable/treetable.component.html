@@ -1,0 +1,25 @@
+<div #treetable class="container" [style.height]="containerProperty.height" [style.width]="containerProperty.width">
+  <div *ngFor="let node of nodeToItems(); index as i" class="item">
+    <div *ngIf="node.visible">
+      <div class="item-text" [style.left.px]="node.childPos * 15" [style.width.px]="500 - node.childPos * 15">
+        <button mat-icon-button (click)="onExpandToggle(node)" enabled="node.childs" *ngIf="node.class === nodeType.Object">
+          <mat-icon *ngIf="node.expanded">expand_more</mat-icon>
+          <mat-icon *ngIf="!node.expanded">chevron_right</mat-icon>
+        </button>
+        <button mat-icon-button enabled="false" *ngIf="node.class !== nodeType.Object">
+          <mat-icon >label</mat-icon>
+        </button>
+          {{node.text}}
+      </div>
+      <div class="item-property" [style.left.px]="node.childPos * 15">
+        {{node.property}}
+      </div>
+      <div class="item-check">
+        <mat-checkbox [(ngModel)]="node.checked" [disabled]="!node.enabled"  (change)="changeStatus(node,$event)" *ngIf="node.class === nodeType.Variable"></mat-checkbox>
+      </div>
+      <div *ngIf="!node.childs.length" class="item-waiting" [ngStyle]="{'height': (node.expanded) ? '40px' : '0px'}" style="padding-left: 80px">
+          <mat-spinner diameter="30"></mat-spinner>
+      </div>
+    </div>
+  </div>
+</div>

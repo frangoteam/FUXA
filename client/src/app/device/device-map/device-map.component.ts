@@ -134,13 +134,19 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
       Object.values(this.devices).forEach((value) => {
         result.push(value);
       });
-      return result.sort((a,b) => (a.name > b.name) ? 1 : -1);
+      return result.sort((a, b) => (a.name > b.name) ? 1 : -1);
     }
     return [];
   }
 
   onListDevice(device) {
     this.goto.emit(device);
+  }
+
+  isDevicePropertyToShow(device) {
+    if (device.property && device.type !== 'OPCUA') {
+      return true;
+    }
   }
 
   getDeviceStatusColor(device) {
@@ -151,14 +157,14 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (st === 'connect-error') {
         return '#ff2d2d';
       } else if (st === 'connect-off') {
-        return '#ffc000';        
+        return '#ffc000';
       }
     }
   }
 
   setDeviceStatus(event) {
     console.log('device set: ' + event.id + ' ' + event.status);
-    this.devicesStatus[event.id] = event.status; 
+    this.devicesStatus[event.id] = event.status;
   }
 
   editDevice(device: Device, toremove: boolean) {
@@ -188,6 +194,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             device.property.rack = parseInt(tempdevice.property.rack);
           }
           if (device.type === DeviceType.SiemensS7) {
+            this.checkToAddDevice(device);
+          } else if (device.type === DeviceType.OPCUA) {
             this.checkToAddDevice(device);
           }
           this.save.emit();

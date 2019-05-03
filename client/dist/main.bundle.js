@@ -3,7 +3,7 @@ webpackJsonp(["main"],{
 /***/ "../../../../../package.json":
 /***/ (function(module, exports) {
 
-module.exports = {"name":"fuxa-editor","version":"1.0.0","keywords":[],"author":"","description":"","private":true,"scripts":{"ng":"ng","start":"ng serve --dev","build":"ng build","test":"ng test","lint":"ng lint","e2e":"ng e2e"},"dependencies":{"@angular/animations":"5.2.0","@angular/cdk":"^5.2.5","@angular/common":"5.2.0","@angular/compiler":"5.2.0","@angular/core":"5.2.0","@angular/forms":"5.2.0","@angular/http":"5.2.0","@angular/material":"^5.2.5","@angular/platform-browser":"5.2.0","@angular/platform-browser-dynamic":"5.2.0","@angular/router":"5.2.0","@codebyjordan/scrollbar":"^2.1.6","bcryptjs":"^2.4.3","body-parser":"^1.18.2","core-js":"^2.4.1","express":"^4.16.4","file-saver":"^1.3.8","gulp-autoprefixer":"^5.0.0","gulp-concat":"^2.6.1","gulp-csso":"^3.0.1","gulp-htmlmin":"^4.0.0","gulp-minify":"^3.0.2","gulp-sass":"^4.0.1","gulp-sourcemaps":"^2.6.4","gulp-uglify":"^3.0.0","material-design-icons":"^3.0.1","ng5-slider":"^1.1.7","ngx-color-picker":"^7.4.0","ngx-toastr":"^8.10.2","rxjs":"^5.5.2","socket.io-client":"^2.2.0","zone.js":"^0.8.14"},"devDependencies":{"@angular-devkit/core":"^0.7.3","@angular/cli":"1.6.3","@angular/compiler-cli":"^5.0.0","@angular/language-service":"5.2.0","@types/jasmine":"~2.5.53","@types/jasminewd2":"~2.0.2","@types/node":"~6.0.60","codelyzer":"^4.0.2","gulp":"^4.0.0","jasmine-core":"~2.6.2","jasmine-spec-reporter":"~4.1.0","karma":"^4.0.1","karma-chrome-launcher":"~2.1.1","karma-cli":"~1.0.1","karma-coverage-istanbul-reporter":"^1.2.1","karma-jasmine":"~1.1.0","karma-jasmine-html-reporter":"^0.2.2","protractor":"^5.4.0","ts-node":"~3.2.0","tslint":"~5.7.0","typescript":"~2.4.2"},"repository":{}}
+module.exports = {"name":"fuxa-editor","version":"1.0.0","keywords":[],"author":"","description":"","private":true,"scripts":{"ng":"ng","start":"ng serve --dev","start-ele":"ng serve --env=winele","build":"ng build","test":"ng test","lint":"ng lint","e2e":"ng e2e"},"dependencies":{"@angular/animations":"5.2.0","@angular/cdk":"^5.2.5","@angular/common":"5.2.0","@angular/compiler":"5.2.0","@angular/core":"5.2.0","@angular/forms":"5.2.0","@angular/http":"5.2.0","@angular/material":"^5.2.5","@angular/platform-browser":"5.2.0","@angular/platform-browser-dynamic":"5.2.0","@angular/router":"5.2.0","@codebyjordan/scrollbar":"^2.1.6","bcryptjs":"^2.4.3","body-parser":"^1.18.2","core-js":"^2.4.1","express":"^4.16.4","file-saver":"^1.3.8","gulp-autoprefixer":"^5.0.0","gulp-concat":"^2.6.1","gulp-csso":"^3.0.1","gulp-htmlmin":"^4.0.0","gulp-minify":"^3.0.2","gulp-sass":"^4.0.1","gulp-sourcemaps":"^2.6.4","gulp-uglify":"^3.0.0","material-design-icons":"^3.0.1","ng5-slider":"^1.1.7","ngx-color-picker":"^7.4.0","ngx-toastr":"^8.10.2","rxjs":"^5.5.2","socket.io-client":"^2.2.0","zone.js":"^0.8.14"},"devDependencies":{"@angular-devkit/core":"^0.7.3","@angular/cli":"1.6.3","@angular/compiler-cli":"^5.0.0","@angular/language-service":"5.2.0","@types/jasmine":"~2.5.53","@types/jasminewd2":"~2.0.2","@types/node":"~6.0.60","codelyzer":"^4.0.2","gulp":"^4.0.0","jasmine-core":"~2.6.2","jasmine-spec-reporter":"~4.1.0","karma":"^4.0.1","karma-chrome-launcher":"~2.1.1","karma-cli":"~1.0.1","karma-coverage-istanbul-reporter":"^1.2.1","karma-jasmine":"~1.1.0","karma-jasmine-html-reporter":"^0.2.2","protractor":"^5.4.0","ts-node":"~3.2.0","tslint":"~5.7.0","typescript":"~2.4.2"},"repository":{}}
 
 /***/ }),
 
@@ -697,6 +697,7 @@ var DeviceType;
 (function (DeviceType) {
     DeviceType["FuxaServer"] = "FuxaServer";
     DeviceType["SiemensS7"] = "SiemensS7";
+    DeviceType["OPCUA"] = "OPCUA";
 })(DeviceType || (DeviceType = {}));
 var TagType;
 (function (TagType) {
@@ -918,6 +919,8 @@ var HmiService = (function () {
         // @Output() onSaveCurrent: EventEmitter<boolean> = new EventEmitter();
         this.onVariableChanged = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onDeviceChanged = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.onDeviceBrowse = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.onDeviceNodeAttribute = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.version = "1.00";
         this.hmiresource = "hmi-config";
         this.viewSignalGaugeMap = new ViewSignalGaugeMap();
@@ -977,9 +980,7 @@ var HmiService = (function () {
                 // console.log('dev-st ' + message);
             });
             // devices values
-            var self_1 = this;
             this.socket.on('device-values', function (message) {
-                // if (this.devices[message.id]) {
                 for (var idx = 0; idx < message.values.length; idx++) {
                     var varid = message.id + HmiService_1.separator + message.values[idx].id;
                     if (!_this.variables[varid]) {
@@ -988,9 +989,14 @@ var HmiService = (function () {
                     _this.variables[varid].value = message.values[idx].value;
                     _this.setSignalValue(_this.variables[varid]);
                 }
-                // }
-                // console.log(message);
-                // this.setSignalValue
+            });
+            // device browse
+            this.socket.on('device-browse', function (message) {
+                _this.onDeviceBrowse.emit(message);
+            });
+            // device node attribute
+            this.socket.on('device-node-attribute', function (message) {
+                _this.onDeviceNodeAttribute.emit(message);
             });
             this.askDeviceValues();
         }
@@ -1027,6 +1033,24 @@ var HmiService = (function () {
             if (this.variables[sigsToEmit[idx]]) {
                 this.setSignalValue(this.variables[sigsToEmit[idx]]);
             }
+        }
+    };
+    /**
+     * Ask device browse to backend
+     */
+    HmiService.prototype.askDeviceBrowse = function (deviceId, node) {
+        if (this.socket) {
+            var msg = { device: deviceId, node: node };
+            this.socket.emit('device-browse', msg);
+        }
+    };
+    /**
+     * Ask device node attribute to backend
+     */
+    HmiService.prototype.askNodeAttributes = function (deviceId, node) {
+        if (this.socket) {
+            var msg = { device: deviceId, node: node };
+            this.socket.emit('device-node-attribute', msg);
         }
     };
     //#endregion
@@ -1096,6 +1120,14 @@ var HmiService = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
     ], HmiService.prototype, "onDeviceChanged", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
+    ], HmiService.prototype, "onDeviceBrowse", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
+    ], HmiService.prototype, "onDeviceNodeAttribute", void 0);
     HmiService = HmiService_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__services_project_service__["a" /* ProjectService */],
@@ -1230,7 +1262,7 @@ var ProjectService = (function () {
                 if (res) {
                     this.projectData = JSON.parse(res);
                 }
-                else if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].demo) {
+                else if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].type === 'demo') {
                     // load demo from server
                     this.getDemoProject().subscribe(function (prj) {
                         _this.projectData = prj;
@@ -1586,29 +1618,30 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__helpers_dictionary__ = __webpack_require__("../../../../../src/app/_helpers/dictionary.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__gui_helpers_fab_button_ngx_fab_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-button.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-item-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1616,6 +1649,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -1691,31 +1725,32 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_37__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
-                __WEBPACK_IMPORTED_MODULE_39__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_41__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_50__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_38__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__gauges_switch_switch_component__["a" /* SwitchComponent */],
+                __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
+                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
+                __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
+                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
+                __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_21__tester_tester_component__["a" /* TesterComponent */],
                 __WEBPACK_IMPORTED_MODULE_26__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
-                __WEBPACK_IMPORTED_MODULE_38__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_40__gauges_controls_value_value_component__["a" /* ValueComponent */],
-                __WEBPACK_IMPORTED_MODULE_32__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_39__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__gauges_controls_value_value_component__["a" /* ValueComponent */],
+                __WEBPACK_IMPORTED_MODULE_33__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["a" /* EnumToArrayPipe */],
-                __WEBPACK_IMPORTED_MODULE_34__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
-                __WEBPACK_IMPORTED_MODULE_35__directives_number_directive__["a" /* NumberOnlyDirective */],
+                __WEBPACK_IMPORTED_MODULE_35__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_36__directives_number_directive__["a" /* NumberOnlyDirective */],
                 __WEBPACK_IMPORTED_MODULE_30__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */]
+                __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_32__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__["a" /* BrowserModule */],
@@ -1727,7 +1762,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_49__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_50__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
                     positionClass: 'toast-bottom-right',
@@ -1739,18 +1774,18 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_24__services_project_service__["a" /* ProjectService */],
                 __WEBPACK_IMPORTED_MODULE_23__tester_tester_service__["a" /* TesterService */],
                 __WEBPACK_IMPORTED_MODULE_22__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_36__gauges_gauges_component__["a" /* GaugesManager */],
+                __WEBPACK_IMPORTED_MODULE_37__gauges_gauges_component__["a" /* GaugesManager */],
                 __WEBPACK_IMPORTED_MODULE_27__helpers_windowref__["a" /* WindowRef */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["b" /* Utils */],
                 __WEBPACK_IMPORTED_MODULE_29__helpers_dictionary__["a" /* Dictionary */],
-                __WEBPACK_IMPORTED_MODULE_33__directives_modal_position_cache__["a" /* ModalPositionCache */]
+                __WEBPACK_IMPORTED_MODULE_34__directives_modal_position_cache__["a" /* ModalPositionCache */]
             ],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_38__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_45__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_39__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_16__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_17__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */]
             ],
@@ -1899,11 +1934,15 @@ var DeviceListComponent = (function () {
     };
     DeviceListComponent.prototype.onRemoveRow = function (row) {
         var index = this.dataSource.data.indexOf(row, 0);
-        if (index > -1) {
-            this.dataSource.data.splice(index, 1);
-            this.dirty = true;
+        // if (index > -1) {
+        //   this.dataSource.data.splice(index, 1);
+        //   this.dirty = true;
+        // }
+        if (this.dataSource.data[index]) {
+            delete this.deviceSelected.tags[this.dataSource.data[index].id];
         }
         this.bindToTable(this.deviceSelected.tags);
+        this.save.emit();
     };
     /** Whether the number of selected elements matches the total number of rows. */
     DeviceListComponent.prototype.isAllSelected = function () {
@@ -1927,8 +1966,38 @@ var DeviceListComponent = (function () {
         this.editTag(row, false);
     };
     DeviceListComponent.prototype.onAddTag = function () {
-        var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* Tag */]();
-        this.editTag(tag, true);
+        if (this.deviceSelected.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].OPCUA) {
+            this.addOpcTags(null);
+        }
+        else {
+            var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* Tag */]();
+            this.editTag(tag, true);
+        }
+    };
+    DeviceListComponent.prototype.addOpcTags = function (tag) {
+        var _this = this;
+        // console.log('The Edit Tag open');
+        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_3__tag_property_tag_property_component__["a" /* TagPropertyComponent */], {
+            minWidth: '1200px',
+            minHeight: '900px',
+            panelClass: 'dialog-property',
+            data: { device: this.deviceSelected, tag: tag, devices: this.devices },
+            position: { top: '80px' }
+        });
+        dialogRef.afterClosed().subscribe(function (result) {
+            if (result) {
+                _this.dirty = true;
+                result.nodes.forEach(function (n) {
+                    var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* Tag */]();
+                    tag.id = n.id;
+                    tag.name = n.text;
+                    tag.type = n.type;
+                    tag.address = n.id;
+                    _this.checkToAdd(tag, result.device);
+                });
+                _this.save.emit();
+            }
+        });
     };
     DeviceListComponent.prototype.editTag = function (tag, checkToAdd) {
         var _this = this;
@@ -1946,6 +2015,7 @@ var DeviceListComponent = (function () {
             if (result) {
                 _this.dirty = true;
                 // console.log('The Edit Tag was closed');
+                tag.id = temptag.name;
                 tag.name = temptag.name;
                 tag.type = temptag.type;
                 tag.address = temptag.address;
@@ -1954,7 +2024,7 @@ var DeviceListComponent = (function () {
                 if (checkToAdd) {
                     _this.checkToAdd(tag, result.device);
                 }
-                else if (tag.name !== oldtag) {
+                else if (tag.id !== oldtag) {
                     //remove old tag device reference
                     delete result.device.tags[oldtag];
                     _this.checkToAdd(tag, result.device);
@@ -1964,19 +2034,19 @@ var DeviceListComponent = (function () {
         });
     };
     DeviceListComponent.prototype.checkToAdd = function (tag, device) {
-        // if (device.tags[tag.name]) {
-        //   return false;
-        // } else {
-        //   device.tags[tag.name] = tag;
-        // }
         var exist = false;
         Object.keys(device.tags).forEach(function (key) {
-            if (device.tags[key].name === tag.name) {
+            if (device.tags[key].id) {
+                if (device.tags[key].id === tag.id) {
+                    exist = true;
+                }
+            }
+            else if (device.tags[key].name === tag.id) {
                 exist = true;
             }
         });
         if (!exist) {
-            device.tags[tag.name] = tag;
+            device.tags[tag.id] = tag;
         }
         this.bindToTable(this.deviceSelected.tags);
     };
@@ -2036,7 +2106,7 @@ var DeviceListComponent = (function () {
 /***/ "../../../../../src/app/device/device-map/device-map.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"main-line\"></div>\n<div *ngFor=\"let device of devicesValue(); index as i\" class=\"device-line\" [style.left]=\"getDeviceLinePosition(i) + 'px'\"></div>\n<div class=\"connection-line\" [style.left]=\"getDeviceConnectionLeftPosition(devicesValue().length) + 'px'\" [style.width]=\"getDeviceConnectionWidth(devicesValue().length) + 'px'\"></div>\n<div class=\"container\">\n  <div class=\"main-device\" *ngIf=\"server && server.property\">\n    <span class=\"device-header\" style=\"padding-top: 10px;\">{{ server.name }}</span>\n    <span class=\"device-pro\">{{ server.property.address }}</span>\n    <mat-icon (click)=\"onEditDevice(server)\" class=\"device-icon device-edit\">edit</mat-icon>\n  </div>\n  <div *ngFor=\"let device of devicesValue(); index as i\" class=\"node-device\" [style.color]=\"(device.enabled) ? '#FFFFFF' : '#C5C5C5'\" [style.left]=\"getDevicePosition(i) + 'px'\">\n    <span class=\"device-header\">{{ device.name }}</span>\n    <span class=\"device-pro\" *ngIf=\"device.property\">{{ device.property.address }}</span>\n    <div *ngIf=\"device.property\" style=\"padding-bottom: 10px;\">\n      <span class=\"device-pro-line\" *ngIf=\"device.property.port\">Port: {{ device.property.port }}</span>\n      <span class=\"device-pro-line\" *ngIf=\"device.property.rack || device.property.rack === 0\"> / Rack: {{device.property.rack}}</span>\n      <span class=\"device-pro-line\" *ngIf=\"device.property.slot || device.property.slot === 0\"> / Slot: {{device.property.slot}}</span>\n    </div>\n    <div class=\"device-status\" *ngIf=\"device.enabled\" [style.background-color]=\"getDeviceStatusColor(device)\"></div>\n    <mat-icon (click)=\"onListDevice(device)\" class=\"device-icon device-list\">list_alt</mat-icon>\n    <mat-icon (click)=\"onEditDevice(device)\" class=\"device-icon device-edit\">edit</mat-icon>\n    <mat-icon (click)=\"onRemoveDevice(device)\" class=\"device-icon device-delete\">clear</mat-icon>\n  </div>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"addDevice()\" style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n  <mat-icon class=\"\">add</mat-icon>\n</button>"
+module.exports = "<div class=\"main-line\"></div>\n<div *ngFor=\"let device of devicesValue(); index as i\" class=\"device-line\" [style.left]=\"getDeviceLinePosition(i) + 'px'\"></div>\n<div class=\"connection-line\" [style.left]=\"getDeviceConnectionLeftPosition(devicesValue().length) + 'px'\" [style.width]=\"getDeviceConnectionWidth(devicesValue().length) + 'px'\"></div>\n<div class=\"container\">\n  <div class=\"main-device\" *ngIf=\"server && server.property\">\n    <span class=\"device-header\" style=\"padding-top: 10px;\">{{ server.name }}</span>\n    <span class=\"device-pro\">{{ server.property.address }}</span>\n    <mat-icon (click)=\"onEditDevice(server)\" class=\"device-icon device-edit\">edit</mat-icon>\n  </div>\n  <div *ngFor=\"let device of devicesValue(); index as i\" class=\"node-device\" [style.color]=\"(device.enabled) ? '#FFFFFF' : '#C5C5C5'\" [style.left]=\"getDevicePosition(i) + 'px'\">\n    <span class=\"device-header\">{{ device.name }}</span>\n    <span class=\"device-pro\" *ngIf=\"device.property\">{{ device.property.address }}</span>\n    <div *ngIf=\"isDevicePropertyToShow(device)\" style=\"padding-bottom: 10px;\">\n      <span class=\"device-pro-line\" *ngIf=\"device.property.port\">Port: {{ device.property.port }}</span>\n      <span class=\"device-pro-line\" *ngIf=\"device.property.rack || device.property.rack === 0\"> / Rack: {{device.property.rack}}</span>\n      <span class=\"device-pro-line\" *ngIf=\"device.property.slot || device.property.slot === 0\"> / Slot: {{device.property.slot}}</span>\n    </div>\n    <div class=\"device-status\" *ngIf=\"device.enabled\" [style.background-color]=\"getDeviceStatusColor(device)\"></div>\n    <mat-icon (click)=\"onListDevice(device)\" class=\"device-icon device-list\">list_alt</mat-icon>\n    <mat-icon (click)=\"onEditDevice(device)\" class=\"device-icon device-edit\">edit</mat-icon>\n    <mat-icon (click)=\"onRemoveDevice(device)\" class=\"device-icon device-delete\">clear</mat-icon>\n  </div>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"addDevice()\" style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n  <mat-icon class=\"\">add</mat-icon>\n</button>"
 
 /***/ }),
 
@@ -2197,6 +2267,11 @@ var DeviceMapComponent = (function () {
     DeviceMapComponent.prototype.onListDevice = function (device) {
         this.goto.emit(device);
     };
+    DeviceMapComponent.prototype.isDevicePropertyToShow = function (device) {
+        if (device.property && device.type !== 'OPCUA') {
+            return true;
+        }
+    };
     DeviceMapComponent.prototype.getDeviceStatusColor = function (device) {
         var st = this.devicesStatus[device.name];
         if (this.devicesStatus[device.name]) {
@@ -2244,6 +2319,9 @@ var DeviceMapComponent = (function () {
                         device.property.rack = parseInt(tempdevice.property.rack);
                     }
                     if (device.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].SiemensS7) {
+                        _this.checkToAddDevice(device);
+                    }
+                    else if (device.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].OPCUA) {
                         _this.checkToAddDevice(device);
                     }
                     _this.save.emit();
@@ -2546,7 +2624,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/tag-property/tag-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Tag Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Device</span>\n        <mat-select [(value)]=\"data.device.name\" style=\"width: 300px\" [disabled]=\"true\">\n          <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device.name\">\n            {{ device.name }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Tagname</span>\n        <input [(ngModel)]=\"data.tag.name\" style=\"width: 300px\" type=\"text\" (input)=\"onCheckValue($event)\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.tag.type\" style=\"width: 300px\">\n          <mat-option *ngFor=\"let type of tagType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\"style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.tag.address\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Min</span>\n        <input numberOnly [(ngModel)]=\"data.tag.min\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Max</span>\n        <input numberOnly [(ngModel)]=\"data.tag.max\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"error\" *ngIf=\"error\">\n          <span>{{error}}</span>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button [disabled]=\"(error) ? 'true' : 'false'\" color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
+module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 *ngIf=\"!withtree\" mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Tag Property\n    </h1>\n    <h1 *ngIf=\"withtree\" mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Browse Tags in OPC UA Server\n    </h1>    \n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove && !withtree\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Device</span>\n        <mat-select [(value)]=\"data.device.name\" style=\"width: 300px\" [disabled]=\"true\">\n          <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device.name\">\n            {{ device.name }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Tagname</span>\n        <input [(ngModel)]=\"data.tag.name\" style=\"width: 300px\" type=\"text\" (input)=\"onCheckValue($event)\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.tag.type\" style=\"width: 300px\">\n          <mat-option *ngFor=\"let type of tagType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\"style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.tag.address\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Min</span>\n        <input numberOnly [(ngModel)]=\"data.tag.min\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Max</span>\n        <input numberOnly [(ngModel)]=\"data.tag.max\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"error\" *ngIf=\"error\">\n          <span>{{error}}</span>\n      </div>\n    </div>\n  </div>\n\n  <div style=\"overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" [hidden]=\"isToRemove && !withtree\">\n    <ngx-treetable #treetable [config]=\"config\" (expand)=\"queryNext($event)\"></ngx-treetable>\n  </div>\n\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button [disabled]=\"(error) ? 'true' : 'false'\" color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2558,6 +2636,8 @@ module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_device__ = __webpack_require__("../../../../../src/app/_models/device.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2573,26 +2653,94 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
+
+
 var TagPropertyComponent = (function () {
-    function TagPropertyComponent(dialogRef, data) {
+    function TagPropertyComponent(hmiService, dialogRef, data) {
         var _this = this;
+        this.hmiService = hmiService;
         this.dialogRef = dialogRef;
         this.data = data;
         this.existing = [];
-        Object.keys(this.data.device.tags).forEach(function (key) {
-            var tag = _this.data.device.tags[key];
-            if (tag.name !== _this.data.tag.name) {
-                _this.existing.push(tag.name);
-            }
-        });
+        this.withtree = false;
+        this.config = { width: '100%', height: '600px' };
+        if (this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].OPCUA) {
+            this.withtree = true;
+        }
+        else {
+            this.config.height = '0px';
+            Object.keys(this.data.device.tags).forEach(function (key) {
+                var tag = _this.data.device.tags[key];
+                if (tag.id) {
+                    if (tag.id !== _this.data.tag.id) {
+                        _this.existing.push(tag.name);
+                    }
+                }
+                else if (tag.name !== _this.data.tag.name) {
+                    _this.existing.push(tag.name);
+                }
+            });
+        }
     }
     TagPropertyComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.tagType = __WEBPACK_IMPORTED_MODULE_2__models_device__["e" /* TagType */];
+        if (this.withtree) {
+            if (this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].OPCUA) {
+                this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(function (values) {
+                    if (_this.data.device.name === values.device) {
+                        if (values.error) {
+                            _this.addError(values.node, values.error);
+                        }
+                        else {
+                            _this.addNodes(values.node, values.result);
+                        }
+                    }
+                    // console.log(values);
+                });
+                this.subscriptionNodeAttribute = this.hmiService.onDeviceNodeAttribute.subscribe(function (values) {
+                    if (_this.data.device.name === values.device) {
+                        if (values.error) {
+                            //   this.addError(values.node, values.error);
+                        }
+                        else if (values.node) {
+                            if (values.node.attribute[14]) {
+                                values.node.type = values.node.attribute[14];
+                            }
+                            _this.treetable.setNodeProperty(values.node, _this.attributeToString(values.node.attribute));
+                        }
+                    }
+                    console.log(values);
+                });
+            }
+            this.queryNext(null);
+        }
+    };
+    TagPropertyComponent.prototype.ngOnDestroy = function () {
+        // this.checkToSave();
+        try {
+            if (this.subscriptionBrowse) {
+                this.subscriptionBrowse.unsubscribe();
+            }
+            if (this.subscriptionNodeAttribute) {
+                this.subscriptionNodeAttribute.unsubscribe();
+            }
+        }
+        catch (e) {
+        }
     };
     TagPropertyComponent.prototype.onNoClick = function () {
         this.dialogRef.close();
     };
     TagPropertyComponent.prototype.onOkClick = function () {
+        var _this = this;
+        this.data.nodes = [];
+        Object.keys(this.treetable.nodes).forEach(function (key) {
+            var n = _this.treetable.nodes[key];
+            if (n.checked) {
+                _this.data.nodes.push(_this.treetable.nodes[key]);
+            }
+        });
     };
     TagPropertyComponent.prototype.onCheckValue = function (tag) {
         if (this.existing.indexOf(tag.target.value) !== -1) {
@@ -2602,17 +2750,69 @@ var TagPropertyComponent = (function () {
             this.error = "";
         }
     };
+    TagPropertyComponent.prototype.addNodes = function (parent, nodes) {
+        var _this = this;
+        nodes.forEach(function (n) {
+            var node = new __WEBPACK_IMPORTED_MODULE_3__gui_helpers_treetable_treetable_component__["a" /* Node */](n.id, n.name);
+            node.class = n.class;
+            node.property = _this.getProperty(n);
+            var enabled = true;
+            if (_this.data.device.tags[n.id] && node.class === 'Variable') {
+                // node allready selected
+                enabled = false;
+            }
+            _this.treetable.addNode(node, parent, enabled);
+            if (node.class === 'Variable') {
+                _this.hmiService.askNodeAttributes(_this.data.device.name, n);
+            }
+        });
+    };
+    TagPropertyComponent.prototype.getProperty = function (n) {
+        if (n.class === 'Object') {
+            return '';
+        }
+        else if (n.class === 'Variable') {
+            return "Variable";
+        }
+        else if (n.class === 'Method') {
+            return "Method";
+        }
+        return '';
+    };
+    TagPropertyComponent.prototype.addError = function (parent, error) {
+    };
     TagPropertyComponent.prototype.devicesValue = function () {
         return Object.values(this.data.devices);
     };
+    TagPropertyComponent.prototype.queryNext = function (node) {
+        var n = (node) ? { id: node.id } : null;
+        this.hmiService.askDeviceBrowse(this.data.device.name, n);
+    };
+    TagPropertyComponent.prototype.attributeToString = function (attribute) {
+        var result = '';
+        if (attribute) {
+            Object.values(attribute).forEach(function (x) {
+                if (result.length) {
+                    result += ', ';
+                }
+                result += x;
+            });
+        }
+        return result;
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_3__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_3__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */])
+    ], TagPropertyComponent.prototype, "treetable", void 0);
     TagPropertyComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
             selector: 'app-tag-property',
             template: __webpack_require__("../../../../../src/app/device/tag-property/tag-property.component.html"),
             styles: [__webpack_require__("../../../../../src/app/device/tag-property/tag-property.component.css")]
         }),
-        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+        __param(2, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__services_hmi_service__["a" /* HmiService */],
+            __WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
     ], TagPropertyComponent);
     return TagPropertyComponent;
 }());
@@ -5160,7 +5360,7 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onVariableChange = function (event) {
         if (event.value) {
-            this.property.variable = event.value.name;
+            this.property.variable = (event.value.id) ? event.value.id : event.value.name;
             this.property.variableId = __WEBPACK_IMPORTED_MODULE_7__services_hmi_service__["a" /* HmiService */].toVariableId(this.property.variableSrc, this.property.variable);
         }
         this.currentTag = event.value;
@@ -5186,7 +5386,7 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onAlarmChange = function (event) {
         if (event.value) {
-            this.property.alarm = event.value.name;
+            this.property.alarm = (event.value.id) ? event.value.id : event.value.name;
             this.property.alarmId = __WEBPACK_IMPORTED_MODULE_7__services_hmi_service__["a" /* HmiService */].toVariableId(this.property.alarmSrc, this.property.alarm);
             ;
         }
@@ -5271,7 +5471,7 @@ var FlexHeadComponent = (function () {
         if (toset) {
             var idx_1 = -1;
             this.variable.every(function (value, index, _arr) {
-                if (value.name === toset) {
+                if (value.id === toset) {
                     idx_1 = index;
                     return false;
                 }
@@ -5295,7 +5495,7 @@ var FlexHeadComponent = (function () {
         if (toset) {
             var idx_2 = -1;
             this.alarme.every(function (value, index, _arr) {
-                if (value.name === toset) {
+                if (value.id === toset) {
                     idx_2 = index;
                     return false;
                 }
@@ -7541,6 +7741,189 @@ var MatSelectSearchModule = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/gui-helpers/treetable/treetable.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".container {\r\n    overflow: auto;\r\n}\r\n\r\n.item {\r\n    width: 100%\r\n}\r\n.item:hover {\r\n    background-color: rgba(0,0,0,0.1);\r\n}\r\n\r\n.item-text {\r\n    width: 500px;\r\n    position: relative;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-text div {\r\n    display: inline-block;\r\n    overflow-wrap: break-word;\r\n    text-overflow: ellipsis;\r\n    /* word-wrap: break-word; */\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-property {\r\n    position: relative;\r\n    /* left: 400px; */\r\n    width: 400px;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    line-height: 40px;\r\n}\r\n\r\n.item-check {\r\n    float: right;\r\n    margin-right: 20px;\r\n    line-height: 32px;\r\n    /* display: inline-block; */\r\n}\r\n\r\n.item-waiting {\r\n    /* -moz-transition: height .5s;\r\n    -ms-transition: height .5s;\r\n    -o-transition: height .5s;\r\n    -webkit-transition: height .5s;\r\n    transition: height .5s; */\r\n    display: block;\r\n    height: 0;\r\n    width: 80%;\r\n    overflow: hidden;\r\n}\r\n   ", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/gui-helpers/treetable/treetable.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n  <div *ngFor=\"let node of nodeToItems(); index as i\" class=\"item\">\n    <div *ngIf=\"node.visible\">\n      <div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n        <button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\" *ngIf=\"node.class === nodeType.Object\">\n          <mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n          <mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n        </button>\n        <button mat-icon-button enabled=\"false\" *ngIf=\"node.class !== nodeType.Object\">\n          <mat-icon >label</mat-icon>\n        </button>\n          {{node.text}}\n      </div>\n      <div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n        {{node.property}}\n      </div>\n      <div class=\"item-check\">\n        <mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\"  (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n      </div>\n      <div *ngIf=\"!node.childs.length\" class=\"item-waiting\" [ngStyle]=\"{'height': (node.expanded) ? '40px' : '0px'}\" style=\"padding-left: 80px\">\n          <mat-spinner diameter=\"30\"></mat-spinner>\n      </div>\n    </div>\n  </div>\n</div>"
+
+/***/ }),
+
+/***/ "../../../../../src/app/gui-helpers/treetable/treetable.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return TreetableComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Node; });
+/* unused harmony export NodeType */
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var TreetableComponent = (function () {
+    function TreetableComponent() {
+        this.expand = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.nodeType = NodeType;
+        this.nodes = {};
+        this.containerProperty = { width: '100%', height: '100%' };
+    }
+    TreetableComponent.prototype.ngOnInit = function () {
+        if (this.config) {
+            if (this.config.width) {
+                this.containerProperty.width = this.config.width;
+            }
+            if (this.config.height) {
+                this.containerProperty.height = this.config.height;
+            }
+        }
+    };
+    TreetableComponent.prototype.onExpandToggle = function (node) {
+        node.expanded = (node.expanded) ? false : true;
+        if (node.expanded) {
+            this.expand.emit(node);
+            this.hideNode(node, true);
+        }
+        else {
+            node;
+            this.hideNode(node, false);
+        }
+    };
+    TreetableComponent.prototype.hideNode = function (node, visible) {
+        var _this = this;
+        Object.values(node.childs).forEach(function (node) {
+            node.visible = visible;
+            _this.hideNode(node, (visible) ? node.expanded : visible);
+        });
+    };
+    TreetableComponent.prototype.addNode = function (node, parent, enabled) {
+        if (parent) {
+            var refp = this.nodes[parent.id];
+            node.setParent(refp);
+            node.parent.waiting = false;
+            node.enabled = enabled;
+            if (!enabled) {
+                node.checked = true;
+            }
+        }
+        if (Object.keys(this.nodes).indexOf(node.id) < 0) {
+            this.nodes[node.id] = node;
+        }
+    };
+    TreetableComponent.prototype.setNodeProperty = function (node, pro) {
+        if (this.nodes[node.id]) {
+            this.nodes[node.id].property = pro;
+            this.nodes[node.id].type = node.type;
+        }
+    };
+    TreetableComponent.prototype.nodeToItems = function () {
+        if (this.nodes && Object.values(this.nodes).length) {
+            var result_1 = [];
+            Object.values(this.nodes).forEach(function (value) {
+                result_1.push(value);
+            });
+            return result_1.sort(function (a, b) { return (a.path > b.path) ? 1 : -1; });
+        }
+        return [];
+    };
+    TreetableComponent.prototype.changeStatus = function (node, $event) {
+        console.log(node);
+    };
+    TreetableComponent.prototype.expandable = function (type) {
+        if (type === NodeType.Object) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+        __metadata("design:type", Object)
+    ], TreetableComponent.prototype, "config", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
+        __metadata("design:type", Object)
+    ], TreetableComponent.prototype, "expand", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('treetable'),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */])
+    ], TreetableComponent.prototype, "treetable", void 0);
+    TreetableComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'ngx-treetable',
+            template: __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.css")]
+        }),
+        __metadata("design:paramtypes", [])
+    ], TreetableComponent);
+    return TreetableComponent;
+}());
+
+var Node = (function () {
+    function Node(id, text) {
+        this.id = '';
+        this.path = '';
+        this.text = '';
+        this.childPos = 0;
+        this.expanded = false;
+        this.visible = true;
+        this.parent = null;
+        this.property = '';
+        this.type = ''; // boolean, int ...
+        this.checked = false;
+        this.childs = [];
+        this.waiting = true;
+        this.enabled = true;
+        this.id = id;
+        this.text = text;
+        this.path = this.text;
+    }
+    Node.prototype.setParent = function (parent) {
+        if (parent) {
+            this.parent = parent;
+            this.path = parent.path + Node.SEPARATOR + this.text;
+            this.childPos = parent.childPos + 1;
+            this.parent.childs.push(this);
+        }
+    };
+    Node.SEPARATOR = '>';
+    return Node;
+}());
+
+var NodeType;
+(function (NodeType) {
+    NodeType["Object"] = "Object";
+    NodeType["Variable"] = "Variable";
+    NodeType["Methode"] = "Methode";
+})(NodeType || (NodeType = {}));
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/header/header.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7562,7 +7945,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/header/header.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button mat-button title=\"Save Project\" [matMenuTriggerFor]=\"prjview\" class=\"main-btn\">\r\n    <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n  </button>\r\n  <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"onNewProject()\">New Project</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onSaveProject()\">Save Project</button>\r\n    <button mat-menu-item (click)=\"onSaveProjectAs()\">Save Project As...</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">Open Project</button>\r\n    <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n    <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\"\r\n      accept=\".fuxap\" />\r\n  </mat-menu>\r\n  <button mat-button title=\"View pages editor\" class=\"main-btn\" (click)=\"goTo('/editor')\">\r\n      <mat-icon aria-label=\"View pages editor\">widgets</mat-icon>\r\n  </button>\r\n  <button mat-button title=\"View Devices settings\" class=\"main-btn\" (click)=\"goTo('/device')\">\r\n      <mat-icon aria-label=\"View Devices settings\">device_hub</mat-icon>\r\n  </button>  \r\n</div>\r\n<div class=\"header-help\" *ngIf=\"ineditor\">\r\n    <button mat-button title=\"Help\" [matMenuTriggerFor]=\"helpmenu\" class=\"device-btn\" style=\"padding-top: 3px !important;\">\r\n        <mat-icon aria-label=\"Show FUXA Help\">help_outline</mat-icon>\r\n    </button>\r\n    <mat-menu #helpmenu=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n        <button mat-menu-item (click)=\"onShowHelp('help')\">Tutorial</button>\r\n        <mat-divider class=\"menu-separator\"></mat-divider>\r\n        <button mat-menu-item (click)=\"onShowHelp('info')\">Info</button>\r\n    </mat-menu>\r\n</div>\r\n<app-tutorial #tutorial></app-tutorial>\r\n"
+module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button mat-button title=\"Save Project\" [matMenuTriggerFor]=\"prjview\" class=\"main-btn\">\r\n    <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n  </button>\r\n  <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"onNewProject()\">New Project</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onSaveProject()\">Save Project</button>\r\n    <button mat-menu-item (click)=\"onSaveProjectAs()\">Save Project As...</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">Open Project</button>\r\n    <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n    <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\"\r\n      accept=\".fuxap\" />\r\n  </mat-menu>\r\n  <button mat-button title=\"View pages editor\" class=\"main-btn\" (click)=\"goTo('/editor')\">\r\n      <mat-icon aria-label=\"View pages editor\">widgets</mat-icon>\r\n  </button>\r\n  <button mat-button title=\"View Devices settings\" class=\"main-btn\" (click)=\"goTo('/device')\">\r\n      <mat-icon aria-label=\"View Devices settings\">device_hub</mat-icon>\r\n  </button>  \r\n</div>\r\n<div class=\"header-help\" *ngIf=\"ineditor && !winele\">\r\n    <button mat-button title=\"Help\" [matMenuTriggerFor]=\"helpmenu\" class=\"device-btn\" style=\"padding-top: 3px !important;\">\r\n        <mat-icon aria-label=\"Show FUXA Help\">help_outline</mat-icon>\r\n    </button>\r\n    <mat-menu #helpmenu=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n        <button mat-menu-item (click)=\"onShowHelp('help')\">Tutorial</button>\r\n        <mat-divider class=\"menu-separator\"></mat-divider>\r\n        <button mat-menu-item (click)=\"onShowHelp('info')\">Info</button>\r\n    </mat-menu>\r\n</div>\r\n<app-tutorial #tutorial></app-tutorial>\r\n"
 
 /***/ }),
 
@@ -7605,11 +7988,16 @@ var HeaderComponent = (function () {
         this.dialog = dialog;
         this.projectService = projectService;
         this.ineditor = false;
+        this.winele = false;
         this.router.events.subscribe(function () {
             _this.ineditor = (_this.router.url.indexOf('editor') >= 0 || _this.router.url.indexOf('device') >= 0) ? true : false;
         });
     }
     HeaderComponent.prototype.ngOnInit = function () {
+        if (__WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].type === 'winele') {
+            this.winele = true;
+            console.log('env ' + __WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].type);
+        }
     };
     HeaderComponent.prototype.ngOnDestroy = function () {
         try {
@@ -7829,7 +8217,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".home-body {\r\n    display: table;\r\n    margin: 0 auto;\r\n}", ""]);
+exports.push([module.i, ".home-body {\r\n    display: table;\r\n    margin: 0 auto;\r\n}\r\n\r\n.home-info {\r\n    \r\n}", ""]);
 
 // exports
 
@@ -7842,7 +8230,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<app-fuxa-view *ngIf=\"homeView\" class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n<div *ngIf=\"!homeView\">\n  <p>\n    Wait...or go to editor!\n  </p>\n</div>"
+module.exports = "<app-fuxa-view *ngIf=\"homeView\" class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n<div *ngIf=\"!homeView\" class=\"home-body home-info\">\n  <p>\n    Wait...go to editor, map the devices, design your visualization and bind the devices variables.\n  </p>\n</div>"
 
 /***/ }),
 
@@ -8381,7 +8769,7 @@ var environment = {
     apiEndpoint: null,
     apiPort: null,
     serverEnabled: true,
-    demo: false
+    type: null
 };
 
 

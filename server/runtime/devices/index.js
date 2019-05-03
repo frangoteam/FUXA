@@ -118,6 +118,34 @@ function setDeviceValue(deviceid, sigid, value) {
     }
 }
 
+function browseDevice(deviceid, node) {
+    return new Promise(function (resolve, reject) {
+        if (activeDevices[deviceid] && activeDevices[deviceid].browse) {
+            activeDevices[deviceid].browse(node).then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else {
+            reject('Device not found!');
+        }
+    });
+}
+
+function readNodeAttribute(deviceid, node) {
+    return new Promise(function (resolve, reject) {
+        if (activeDevices[deviceid] && activeDevices[deviceid].readNodeAttribute) {
+            activeDevices[deviceid].readNodeAttribute(node).then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else {
+            reject('Device not found!');
+        }
+    });
+}
+
 var devices = module.exports = {
     init: init,
     start: start,
@@ -127,5 +155,7 @@ var devices = module.exports = {
     getDevicesStatus: getDevicesStatus,
     getDevicesValues: getDevicesValues,
     setDeviceValue: setDeviceValue,
+    browseDevice: browseDevice,
+    readNodeAttribute: readNodeAttribute,
     isWoking: isWoking
 }

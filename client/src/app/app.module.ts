@@ -35,6 +35,7 @@ import { Utils, EnumToArrayPipe } from './_helpers/utils';
 import { Dictionary } from './_helpers/dictionary';
 import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.component';
 import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item-button.component';
+import { TreetableComponent } from './gui-helpers/treetable/treetable.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -102,7 +103,8 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     DraggableDirective,
     NumberOnlyDirective,
     NgxFabButtonComponent,
-    NgxFabItemButtonComponent
+    NgxFabItemButtonComponent,
+    TreetableComponent
   ],
   imports: [
     BrowserModule,

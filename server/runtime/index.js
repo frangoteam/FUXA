@@ -60,6 +60,44 @@ function init(_io, _api, _settings, log) {
             } catch (err) {
                 logger.error('socket.on:device-values error: ' + err);
             }
+        });
+        // client ask device browse
+        socket.on('device-browse', (message) => {
+            try {
+                if (message) {
+                    if (message.device) {
+                        devices.browseDevice(message.device, message.node).then(result => {
+                            message.result = result;
+                            io.emit("device-browse", message);
+                        }).catch(function (err) {
+                            logger.error('devices browse error: ' + err);
+                            message.error = err;
+                            io.emit("device-browse", message);
+                        });
+                    }
+                }
+            } catch (err) {
+                logger.error('socket.on:device-values error: ' + err);
+            }
+        });
+        // client ask device node attribute
+        socket.on('device-node-attribute', (message) => {
+            try {
+                if (message) {
+                    if (message.device) {
+                        devices.readNodeAttribute(message.device, message.node).then(result => {
+                            // message.result = result;
+                            io.emit("device-node-attribute", message);
+                        }).catch(function (err) {
+                            logger.error('device node attribute error: ' + err);
+                            message.error = err;
+                            io.emit("device-node-attribute", message);
+                        });
+                    }
+                }
+            } catch (err) {
+                logger.error('socket.on:device-values error: ' + err);
+            }
         });        
     });
 }

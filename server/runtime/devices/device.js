@@ -5,7 +5,7 @@ var OpcUAclient = require('./opcua');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
-var DEVICE_POLLING_INTERVAL  = 1000;
+var DEVICE_POLLING_INTERVAL = 1000;
 
 function Device(data, logger, _events) {
     var property = { id: data.id, name: data.name };
@@ -65,7 +65,7 @@ function Device(data, logger, _events) {
             if (devicePolling) {
                 clearInterval(devicePolling);
                 devicePolling = null;
-            }            
+            }
         }
     }
 
@@ -90,16 +90,44 @@ function Device(data, logger, _events) {
         return comm.load(data);
     }
 
-    this.getValues = function() {
+    this.getValues = function () {
         return comm.getValues();
     }
 
-    this.getStatus = function() {
+    this.getStatus = function () {
         return comm.getStatus();
     }
 
-    this.setValue = function(sigid, value) {
+    this.setValue = function (sigid, value) {
         return comm.setValue(sigid, value);
+    }
+
+    this.browse = function (path) {
+        return new Promise(function (resolve, reject) {
+            if (data.type === DeviceEnum.OPCUA) {
+                comm.browse(path).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } else {
+                reject('Browse not supported!');
+            }
+        });
+    }
+
+    this.readNodeAttribute = function(node) {
+        return new Promise(function (resolve, reject) {
+            if (data.type === DeviceEnum.OPCUA) {
+                comm.readAttribute(node).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } else {
+                reject('Read Node attribute not supported!');
+            }
+        });
     }
 
     this.load(data);
@@ -116,7 +144,7 @@ module.exports = {
 
 var DeviceEnum = {
     S7: "SiemensS7",
-    OPCUA: "OpcUa"
+    OPCUA: "OPCUA"
 }
 
 var DeviceStatusEnum = {

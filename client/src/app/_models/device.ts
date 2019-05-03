@@ -9,12 +9,14 @@ export class Device {
 }
 
 export class Tag {
+    id: string;
     name: string;
     value: string;
     type: string;
     address: string;
     min: string;
     max: string;
+    access: string;
 }
 
 export class DeviceNetProperty {
@@ -26,7 +28,8 @@ export class DeviceNetProperty {
 
 export enum DeviceType {
     FuxaServer = 'FuxaServer',
-    SiemensS7 = 'SiemensS7'
+    SiemensS7 = 'SiemensS7',
+    OPCUA = 'OPCUA'
 }
 
 export enum TagType {

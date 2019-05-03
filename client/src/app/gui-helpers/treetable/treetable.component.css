@@ -1,0 +1,58 @@
+.container {
+    overflow: auto;
+}
+
+.item {
+    width: 100%
+}
+.item:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.item-text {
+    width: 500px;
+    position: relative;
+    display: inline-block;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-text div {
+    display: inline-block;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    /* word-wrap: break-word; */
+    white-space: nowrap;
+}
+
+.item-property {
+    position: relative;
+    /* left: 400px; */
+    width: 400px;
+    display: inline-block;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 40px;
+}
+
+.item-check {
+    float: right;
+    margin-right: 20px;
+    line-height: 32px;
+    /* display: inline-block; */
+}
+
+.item-waiting {
+    /* -moz-transition: height .5s;
+    -ms-transition: height .5s;
+    -o-transition: height .5s;
+    -webkit-transition: height .5s;
+    transition: height .5s; */
+    display: block;
+    height: 0;
+    width: 80%;
+    overflow: hidden;
+}
+   

@@ -143,7 +143,7 @@ export class FlexHeadComponent implements OnInit {
 
   onVariableChange(event) {
     if (event.value) {
-      this.property.variable = event.value.name;
+      this.property.variable = (event.value.id) ? event.value.id : event.value.name;
       this.property.variableId = HmiService.toVariableId(this.property.variableSrc, this.property.variable);
     }
     this.currentTag = event.value;
@@ -172,7 +172,7 @@ export class FlexHeadComponent implements OnInit {
 
   onAlarmChange(event) {
     if (event.value) {
-      this.property.alarm = event.value.name;
+      this.property.alarm =  (event.value.id) ? event.value.id : event.value.name;
       this.property.alarmId = HmiService.toVariableId(this.property.alarmSrc, this.property.alarm);;
     }
   }
@@ -262,7 +262,7 @@ export class FlexHeadComponent implements OnInit {
     if (toset) {
       let idx = -1;
       this.variable.every(function(value, index, _arr) {
-        if (value.name === toset) {
+        if (value.id === toset) {
           idx = index;
           return false;
         }
@@ -286,7 +286,7 @@ export class FlexHeadComponent implements OnInit {
     if (toset) {
       let idx = -1;
       this.alarme.every(function(value, index, _arr) {
-        if (value.name === toset) {
+        if (value.id === toset) {
           idx = index;
           return false;
         }

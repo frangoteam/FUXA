@@ -4,9 +4,10 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatDialog } from '@angular/material';
 
 import { TagPropertyComponent } from './../tag-property/tag-property.component';
-import { Tag, Device } from '../../_models/device';
+import { Tag, Device, DeviceType } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
+import { Node } from '../../gui-helpers/treetable/treetable.component';
 
 @Component({
   selector: 'app-device-list',
@@ -32,8 +33,8 @@ export class DeviceListComponent implements OnInit {
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
 
   constructor(private dialog: MatDialog,
-            private hmiService: HmiService,
-            private projectService: ProjectService) { }
+    private hmiService: HmiService,
+    private projectService: ProjectService) { }
 
   ngOnInit() {
     this.devices = this.projectService.getDevices();
@@ -51,7 +52,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   private bindToTable(tags) {
-    this.dataSource.data = Object.values(tags); 
+    this.dataSource.data = Object.values(tags);
   }
 
   onDeviceChange(source) {
@@ -64,7 +65,7 @@ export class DeviceListComponent implements OnInit {
 
   setSelectedDevice(device: Device) {
     this.devices = this.projectService.getDevices();//JSON.parse(JSON.stringify(this.projectService.getDevices()));
-    this.updateDeviceValue();    
+    this.updateDeviceValue();
     // this.devices = JSON.parse(JSON.stringify(this.projectService.getDevices()));
     Object.values(this.devices).forEach(d => {
       if (d.name === device.name) {
@@ -80,11 +81,15 @@ export class DeviceListComponent implements OnInit {
 
   onRemoveRow(row) {
     const index = this.dataSource.data.indexOf(row, 0);
-    if (index > -1) {
-      this.dataSource.data.splice(index, 1);
-      this.dirty = true;
+    // if (index > -1) {
+    //   this.dataSource.data.splice(index, 1);
+    //   this.dirty = true;
+    // }
+    if (this.dataSource.data[index]) {
+      delete this.deviceSelected.tags[this.dataSource.data[index].id];
     }
     this.bindToTable(this.deviceSelected.tags);
+    this.save.emit();
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -112,8 +117,38 @@ export class DeviceListComponent implements OnInit {
   }
 
   onAddTag() {
-    let tag = new Tag();
-    this.editTag(tag, true);
+    if (this.deviceSelected.type === DeviceType.OPCUA) {
+      this.addOpcTags(null);
+    } else {
+      let tag = new Tag();
+      this.editTag(tag, true);
+    }
+  }
+
+  addOpcTags(tag: Tag) {
+    // console.log('The Edit Tag open');
+    let dialogRef = this.dialog.open(TagPropertyComponent, {
+      minWidth: '1200px',
+      minHeight: '900px',
+      panelClass: 'dialog-property',
+      data: { device: this.deviceSelected, tag: tag, devices: this.devices },
+      position: { top: '80px' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.dirty = true;
+        result.nodes.forEach((n: Node) => {
+          let tag: Tag = new Tag();
+          tag.id = n.id;
+          tag.name = n.text;
+          tag.type = n.type;
+          tag.address = n.id;
+          this.checkToAdd(tag, result.device);
+        });
+
+        this.save.emit();
+      }
+    });
   }
 
   editTag(tag: Tag, checkToAdd: boolean) {
@@ -130,38 +165,38 @@ export class DeviceListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.dirty = true;
-          // console.log('The Edit Tag was closed');
-          tag.name = temptag.name;
-          tag.type = temptag.type;
-          tag.address = temptag.address;
-          tag.min = temptag.min;
-          tag.max = temptag.max;
-          if (checkToAdd) {
-            this.checkToAdd(tag, result.device);
-          } else if (tag.name !== oldtag) {
-            //remove old tag device reference
-            delete result.device.tags[oldtag];
-            this.checkToAdd(tag, result.device);
-          }
-          this.save.emit();
+        // console.log('The Edit Tag was closed');
+        tag.id = temptag.name;
+        tag.name = temptag.name;
+        tag.type = temptag.type;
+        tag.address = temptag.address;
+        tag.min = temptag.min;
+        tag.max = temptag.max;
+        if (checkToAdd) {
+          this.checkToAdd(tag, result.device);
+        } else if (tag.id !== oldtag) {
+          //remove old tag device reference
+          delete result.device.tags[oldtag];
+          this.checkToAdd(tag, result.device);
+        }
+        this.save.emit();
       }
     });
   }
 
   checkToAdd(tag: Tag, device: Device) {
-    // if (device.tags[tag.name]) {
-    //   return false;
-    // } else {
-    //   device.tags[tag.name] = tag;
-    // }
     let exist = false;
     Object.keys(device.tags).forEach((key) => {
-      if (device.tags[key].name === tag.name) {
+      if (device.tags[key].id) {
+        if (device.tags[key].id === tag.id){
+          exist = true;
+        }
+      } else if (device.tags[key].name === tag.id) {
         exist = true;
       }
     })
     if (!exist) {
-      device.tags[tag.name] = tag;
+      device.tags[tag.id] = tag;
     }
     this.bindToTable(this.deviceSelected.tags);
   }
@@ -175,8 +210,8 @@ export class DeviceListComponent implements OnInit {
       }
     }
   }
-  
-  devicesValue() : Array<Device> {
+
+  devicesValue(): Array<Device> {
     return Object.values(this.devices);
   }
 }

@@ -16,6 +16,8 @@ export class HmiService {
     // @Output() onSaveCurrent: EventEmitter<boolean> = new EventEmitter();
     @Output() onVariableChanged: EventEmitter<Variable> = new EventEmitter();
     @Output() onDeviceChanged: EventEmitter<boolean> = new EventEmitter();
+    @Output() onDeviceBrowse: EventEmitter<any> = new EventEmitter();
+    @Output() onDeviceNodeAttribute: EventEmitter<any> = new EventEmitter();
 
     public version = "1.00";
     public static separator = '^~^';
@@ -58,7 +60,7 @@ export class HmiService {
         if (this.variables[sigId]) {
             this.variables[sigId].value = value;
             if (this.socket) {
-                this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId]} );
+                this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
             }
             // this.onVariableChanged.emit(this.variables[sigId]);
         }
@@ -85,23 +87,25 @@ export class HmiService {
                 // console.log('dev-st ' + message);
             });
             // devices values
-            let self = this;
             this.socket.on('device-values', (message) => {
-                // if (this.devices[message.id]) {
-                    for(let idx = 0; idx < message.values.length; idx++) {
-                        let varid = message.id + HmiService.separator + message.values[idx].id;
-                        if (!this.variables[varid]) {
-                            this.variables[varid] = new Variable(varid, message.id, message.values[idx].id);
-                        }
-                        this.variables[varid].value = message.values[idx].value;
-                        this.setSignalValue(this.variables[varid]);
+                for (let idx = 0; idx < message.values.length; idx++) {
+                    let varid = message.id + HmiService.separator + message.values[idx].id;
+                    if (!this.variables[varid]) {
+                        this.variables[varid] = new Variable(varid, message.id, message.values[idx].id);
                     }
-                // }
-                // console.log(message);
-
-                // this.setSignalValue
+                    this.variables[varid].value = message.values[idx].value;
+                    this.setSignalValue(this.variables[varid]);
+                }
             });
-            this.askDeviceValues();   
+            // device browse
+            this.socket.on('device-browse', (message) => {
+                this.onDeviceBrowse.emit(message);
+            });
+            // device node attribute
+            this.socket.on('device-node-attribute', (message) => {
+                this.onDeviceNodeAttribute.emit(message);
+            });
+            this.askDeviceValues();
         }
     }
 
@@ -143,6 +147,25 @@ export class HmiService {
         }
     }
 
+    /**
+     * Ask device browse to backend
+     */
+    public askDeviceBrowse(deviceId: string, node: any) {
+        if (this.socket) {
+            let msg = { device: deviceId, node: node };
+            this.socket.emit('device-browse', msg);
+        }
+    }
+
+    /**
+     * Ask device node attribute to backend
+     */
+    public askNodeAttributes(deviceId: string, node: any) {
+        if (this.socket) {
+            let msg = { device: deviceId, node: node };
+            this.socket.emit('device-node-attribute', msg);
+        }
+    }    
     //#endregion
 
     //#region Signals Gauges Mapping
@@ -182,14 +205,14 @@ export class HmiService {
      * @param domViewId 
      * @param sigid 
      */
-    getMappedSignalsGauges(domViewId: string, sigid: string) : GaugeSettings[] {
+    getMappedSignalsGauges(domViewId: string, sigid: string): GaugeSettings[] {
         return Object.values(this.viewSignalGaugeMap.signalsGauges(domViewId, sigid));
     }
 
     /**
      * get all signals mapped in all dom views
      */
-    getMappedVariables() : Variable[] {
+    getMappedVariables(): Variable[] {
         let result: Variable[] = [];
         this.viewSignalGaugeMap.getAllSignalIds().forEach(sigid => {
             if (this.variables[sigid]) {
@@ -209,18 +232,18 @@ export class HmiService {
 
 class ViewSignalGaugeMap {
     views = {};
-  
+
     public add(domViewId: string, signalId: string, ga: GaugeSettings) {
-      if (!this.views[domViewId]) {
-        this.views[domViewId] = {};
-      }
-      if (!this.views[domViewId][signalId]) {
-        this.views[domViewId][signalId] = [];
-      }
-      this.views[domViewId][signalId].push(ga);
-      return true;
+        if (!this.views[domViewId]) {
+            this.views[domViewId] = {};
+        }
+        if (!this.views[domViewId][signalId]) {
+            this.views[domViewId][signalId] = [];
+        }
+        this.views[domViewId][signalId].push(ga);
+        return true;
     }
-  
+
     public remove(domViewId: string) {
         delete this.views[domViewId];
     }
@@ -228,24 +251,24 @@ class ViewSignalGaugeMap {
     public signalsGauges(domViewId: string, sigid: string) {
         return this.views[domViewId][sigid];
     }
-    
+
     public getSignalIds(domViewId: string) {
         let result: string[] = [];
         if (this.views[domViewId]) {
             result = Object.keys(this.views[domViewId]);
         }
         return result;
-      }
+    }
 
     public getAllSignalIds() {
-      let result: string[] = [];
-      Object.values(this.views).forEach(evi => {
-        Object.keys(evi).forEach(key => {
-          if (result.indexOf(key) === -1) {
-            result.push(key);
-          }
+        let result: string[] = [];
+        Object.values(this.views).forEach(evi => {
+            Object.keys(evi).forEach(key => {
+                if (result.indexOf(key) === -1) {
+                    result.push(key);
+                }
+            });
         });
-      });
-      return result;
+        return result;
     }
-  }
+}

@@ -3,11 +3,15 @@
     Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?
   </div>
   <div *ngIf="!isToRemove">
-    <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
-      Tag Property</h1>
+    <h1 *ngIf="!withtree" mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+      Tag Property
+    </h1>
+    <h1 *ngIf="withtree" mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+      Browse Tags in OPC UA Server
+    </h1>    
     <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
   </div>
-  <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove">
+  <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove && !withtree">
     <div style="display: block;">
       <div class="my-form-field" style="display: block;margin-bottom: 10px;">
         <span>Device</span>
@@ -46,6 +50,11 @@
       </div>
     </div>
   </div>
+
+  <div style="overflow-y: auto; overflow-x: hidden; padding-top: 5px;" [hidden]="isToRemove && !withtree">
+    <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
+  </div>
+
   <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
     <button mat-raised-button (click)="onNoClick()">CANCEL</button>
     <button mat-raised-button [disabled]="(error) ? 'true' : 'false'" color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>OK</button>
