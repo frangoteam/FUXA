@@ -174,7 +174,17 @@ function OpcUAclient(_data, _logger, _events) {
                             node.class = reference.nodeClass;
                             opcNodes.push(node);
                         });
-                        resolve(opcNodes);
+
+                        if (browseResult.continuationPoint) {
+                            var nextresult = _browseNext(browseResult.continuationPoint).then(nodes => {
+                                for (let i = 0; i < nodes.length; i++) {
+                                    opcNodes.push(nodes[i]);
+                                }
+                                resolve(opcNodes);
+                            });
+                        } else {
+                            resolve(opcNodes);
+                        }
                     } else {
                         reject(err);
                     }
@@ -182,6 +192,46 @@ function OpcUAclient(_data, _logger, _events) {
             } else {
                 reject('Session Error');
             }
+        });
+    }
+
+    var _browseNext = function (contipoint) {
+        var opcNodes = [];
+        var browseNextRequest = new opcua.browse_service.BrowseNextRequest({
+            continuationPoints: [contipoint]
+        });
+        return new Promise(function (resolve, reject) {
+            the_session.performMessageTransaction(browseNextRequest, function (err, response) {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (response.results && response.results[0]) {
+                        let browseResult = response.results[0];
+                        browseResult.references.forEach(function (reference) {
+                            // console.log(reference.browseName.toString());
+                            let node = new OpcNode(reference.browseName.toString());
+                            if (reference.displayName) {
+                                node.name = reference.displayName.text;
+                            }
+                            node.id = reference.nodeId;
+                            node.class = reference.nodeClass;
+                            opcNodes.push(node);
+                        });
+                        if (browseResult.continuationPoint) {
+                            _browseNext(browseResult.continuationPoint).then(nodes => {
+                                for (let i = 0; i < nodes.length; i++) {
+                                    opcNodes.push(nodes[i]);
+                                }
+                                return resolve(opcNodes);
+                            });
+                        } else {
+                            return resolve(opcNodes);
+                        }
+                    } else {
+                        return resolve(opcNodes);
+                    }
+                }
+            });
         });
     }
 
@@ -277,13 +327,13 @@ function OpcUAclient(_data, _logger, _events) {
                     }
                 }
             ];
-    
+
             the_session.write(nodesToWrite, function (err, statusCodes) {
                 if (err) {
                     logger.error(data.name + ' setValue error: ' + err);
                 }
             });
-    
+
         }
     }
 
@@ -486,7 +536,7 @@ function OpcUAclient(_data, _logger, _events) {
             return opcua.DataType.Guid;
         } else if (type === 'ByteString') {
             return opcua.DataType.ByteString;
-        } 
+        }
     }
 
     var _toValue = function (type, value) {
@@ -508,7 +558,7 @@ function OpcUAclient(_data, _logger, _events) {
             default:
                 return value;
         }
-    }    
+    }
 }
 
 function start() {
