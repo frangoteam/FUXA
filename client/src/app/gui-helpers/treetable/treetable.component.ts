@@ -14,6 +14,7 @@ export class TreetableComponent implements OnInit {
   nodeType = NodeType;
 
   nodes = {};
+  private list: any[] = [];
 
   containerProperty = { width: '100%', height: '100%' };
 
@@ -36,15 +37,14 @@ export class TreetableComponent implements OnInit {
       this.expand.emit(node);
       this.hideNode(node, true);
     } else {
-      node
       this.hideNode(node, false);
     }
   }
 
   hideNode(node: Node, visible: boolean) {
-    Object.values(node.childs).forEach((node) => {
-      node.visible = visible;
-      this.hideNode(node, (visible) ? node.expanded : visible);
+    Object.values(node.childs).forEach((n) => {
+      n.visible = visible;
+      this.hideNode(n, (visible) ? n.expanded : visible);
     });
   }
 
@@ -61,6 +61,7 @@ export class TreetableComponent implements OnInit {
     if (Object.keys(this.nodes).indexOf(node.id) < 0) {
       this.nodes[node.id] = node;
     }
+    this.list = this.nodeToItems();
   }
 
   setNodeProperty(node: Node, pro: string) {

@@ -1,5 +1,5 @@
 <div #treetable class="container" [style.height]="containerProperty.height" [style.width]="containerProperty.width">
-  <div *ngFor="let node of nodeToItems(); index as i" class="item">
+  <div *lazyFor="let node of list; index as i" class="item">
     <div *ngIf="node.visible">
       <div class="item-text" [style.left.px]="node.childPos * 15" [style.width.px]="500 - node.childPos * 15">
         <button mat-icon-button (click)="onExpandToggle(node)" enabled="node.childs" *ngIf="node.class === nodeType.Object">

@@ -125,6 +125,171 @@ var DialogDraggableDirective = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/_directives/lazyFor.directive.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LazyForDirective; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+var LazyForDirective = (function () {
+    function LazyForDirective(vcr, tpl, iterableDiffers) {
+        this.vcr = vcr;
+        this.tpl = tpl;
+        this.iterableDiffers = iterableDiffers;
+        this.list = [];
+        this.initialized = false;
+        this.firstUpdate = true;
+        this.lastChangeTriggeredByScroll = false;
+    }
+    Object.defineProperty(LazyForDirective.prototype, "lazyForOf", {
+        set: function (list) {
+            this.list = list;
+            if (list) {
+                this.differ = this.iterableDiffers.find(list).create();
+                if (this.initialized) {
+                    this.update();
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    LazyForDirective.prototype.ngOnInit = function () {
+        var _this = this;
+        this.templateElem = this.vcr.element.nativeElement;
+        this.lazyForContainer = this.templateElem.parentElement;
+        //Adding an event listener will trigger ngDoCheck whenever the event fires so we don't actually need to call
+        //update here.
+        this.lazyForContainer.addEventListener('scroll', function () {
+            _this.lastChangeTriggeredByScroll = true;
+        });
+        this.initialized = true;
+    };
+    LazyForDirective.prototype.ngDoCheck = function () {
+        if (this.differ && Array.isArray(this.list)) {
+            if (this.lastChangeTriggeredByScroll) {
+                this.update();
+                this.lastChangeTriggeredByScroll = false;
+            }
+            else {
+                var changes = this.differ.diff(this.list);
+                if (changes !== null) {
+                    this.update();
+                }
+            }
+        }
+    };
+    /**
+     * List update
+     *
+     * @returns {void}
+     */
+    LazyForDirective.prototype.update = function () {
+        //Can't run the first update unless there is an element in the list
+        if (this.list.length === 0) {
+            this.vcr.clear();
+            if (!this.firstUpdate) {
+                this.beforeListElem.style.height = '0';
+                this.afterListElem.style.height = '0';
+            }
+            return;
+        }
+        if (this.firstUpdate) {
+            this.onFirstUpdate();
+        }
+        var listHeight = this.lazyForContainer.clientHeight;
+        var scrollTop = this.lazyForContainer.scrollTop;
+        //The height of anything inside the container but above the lazyFor content
+        var fixedHeaderHeight = (this.beforeListElem.getBoundingClientRect().top - this.beforeListElem.scrollTop) -
+            (this.lazyForContainer.getBoundingClientRect().top - this.lazyForContainer.scrollTop);
+        //This needs to run after the scrollTop is retrieved.
+        this.vcr.clear();
+        var listStartI = Math.floor((scrollTop - fixedHeaderHeight) / this.itemHeight);
+        listStartI = this.limitToRange(listStartI, 0, this.list.length);
+        var listEndI = Math.ceil((scrollTop - fixedHeaderHeight + listHeight) / this.itemHeight);
+        listEndI = this.limitToRange(listEndI, -1, this.list.length - 1);
+        for (var i = listStartI; i <= listEndI; i++) {
+            this.vcr.createEmbeddedView(this.tpl, {
+                $implicit: this.list[i],
+                index: i
+            });
+        }
+        this.beforeListElem.style.height = listStartI * this.itemHeight + "px";
+        this.afterListElem.style.height = (this.list.length - listEndI - 1) * this.itemHeight + "px";
+    };
+    /**
+     * First update.
+     *
+     * @returns {void}
+     */
+    LazyForDirective.prototype.onFirstUpdate = function () {
+        var sampleItemElem;
+        if (this.itemHeight === undefined || this.itemTagName === undefined) {
+            this.vcr.createEmbeddedView(this.tpl, {
+                $implicit: this.list[0],
+                index: 0
+            });
+            sampleItemElem = this.templateElem.nextSibling;
+        }
+        if (this.itemHeight === undefined) {
+            this.itemHeight = sampleItemElem.clientHeight;
+        }
+        if (this.itemTagName === undefined) {
+            this.itemTagName = sampleItemElem.tagName;
+        }
+        this.beforeListElem = document.createElement(this.itemTagName);
+        this.templateElem.parentElement.insertBefore(this.beforeListElem, this.templateElem);
+        this.afterListElem = document.createElement(this.itemTagName);
+        this.templateElem.parentElement.insertBefore(this.afterListElem, this.templateElem.nextSibling);
+        // If you want to use <li> elements
+        if (this.itemTagName.toLowerCase() === 'li') {
+            this.beforeListElem.style.listStyleType = 'none';
+            this.afterListElem.style.listStyleType = 'none';
+        }
+        this.firstUpdate = false;
+    };
+    /**
+     * Limit To Range
+     *
+     * @param {number} num - Element number.
+     * @param {number} min - Min element number.
+     * @param {number} max - Max element number.
+     *
+     * @returns {number}
+     */
+    LazyForDirective.prototype.limitToRange = function (num, min, max) {
+        return Math.max(Math.min(num, max), min);
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+        __metadata("design:type", Array),
+        __metadata("design:paramtypes", [Array])
+    ], LazyForDirective.prototype, "lazyForOf", null);
+    LazyForDirective = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["t" /* Directive */])({
+            selector: '[lazyFor]'
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* ViewContainerRef */],
+            __WEBPACK_IMPORTED_MODULE_0__angular_core__["_9" /* TemplateRef */],
+            __WEBPACK_IMPORTED_MODULE_0__angular_core__["G" /* IterableDiffers */]])
+    ], LazyForDirective);
+    return LazyForDirective;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/_directives/modal-position.cache.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -1623,25 +1788,26 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1649,6 +1815,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -1725,32 +1892,33 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_38__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
-                __WEBPACK_IMPORTED_MODULE_40__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_42__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_51__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_39__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__gauges_switch_switch_component__["a" /* SwitchComponent */],
+                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
+                __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
+                __WEBPACK_IMPORTED_MODULE_46__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
+                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
+                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_56__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_21__tester_tester_component__["a" /* TesterComponent */],
                 __WEBPACK_IMPORTED_MODULE_26__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
-                __WEBPACK_IMPORTED_MODULE_39__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_41__gauges_controls_value_value_component__["a" /* ValueComponent */],
+                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_42__gauges_controls_value_value_component__["a" /* ValueComponent */],
                 __WEBPACK_IMPORTED_MODULE_33__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["a" /* EnumToArrayPipe */],
                 __WEBPACK_IMPORTED_MODULE_35__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
                 __WEBPACK_IMPORTED_MODULE_36__directives_number_directive__["a" /* NumberOnlyDirective */],
                 __WEBPACK_IMPORTED_MODULE_30__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
                 __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_32__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */]
+                __WEBPACK_IMPORTED_MODULE_32__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */],
+                __WEBPACK_IMPORTED_MODULE_37__directives_lazyFor_directive__["a" /* LazyForDirective */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__["a" /* BrowserModule */],
@@ -1762,7 +1930,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_50__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_51__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
                     positionClass: 'toast-bottom-right',
@@ -1774,7 +1942,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_24__services_project_service__["a" /* ProjectService */],
                 __WEBPACK_IMPORTED_MODULE_23__tester_tester_service__["a" /* TesterService */],
                 __WEBPACK_IMPORTED_MODULE_22__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_37__gauges_gauges_component__["a" /* GaugesManager */],
+                __WEBPACK_IMPORTED_MODULE_38__gauges_gauges_component__["a" /* GaugesManager */],
                 __WEBPACK_IMPORTED_MODULE_27__helpers_windowref__["a" /* WindowRef */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["b" /* Utils */],
                 __WEBPACK_IMPORTED_MODULE_29__helpers_dictionary__["a" /* Dictionary */],
@@ -1784,8 +1952,8 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_39__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_46__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_16__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_17__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */]
             ],
@@ -2710,7 +2878,7 @@ var TagPropertyComponent = (function () {
                             _this.treetable.setNodeProperty(values.node, _this.attributeToString(values.node.attribute));
                         }
                     }
-                    console.log(values);
+                    // console.log(values);
                 });
             }
             this.queryNext(null);
@@ -7749,7 +7917,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".container {\r\n    overflow: auto;\r\n}\r\n\r\n.item {\r\n    width: 100%\r\n}\r\n.item:hover {\r\n    background-color: rgba(0,0,0,0.1);\r\n}\r\n\r\n.item-text {\r\n    width: 500px;\r\n    position: relative;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-text div {\r\n    display: inline-block;\r\n    overflow-wrap: break-word;\r\n    text-overflow: ellipsis;\r\n    /* word-wrap: break-word; */\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-property {\r\n    position: relative;\r\n    /* left: 400px; */\r\n    width: 400px;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    line-height: 40px;\r\n}\r\n\r\n.item-check {\r\n    float: right;\r\n    margin-right: 20px;\r\n    line-height: 32px;\r\n    /* display: inline-block; */\r\n}\r\n\r\n.item-waiting {\r\n    /* -moz-transition: height .5s;\r\n    -ms-transition: height .5s;\r\n    -o-transition: height .5s;\r\n    -webkit-transition: height .5s;\r\n    transition: height .5s; */\r\n    display: block;\r\n    height: 0;\r\n    width: 80%;\r\n    overflow: hidden;\r\n}\r\n   ", ""]);
+exports.push([module.i, ".container {\r\n    overflow: auto;\r\n}\r\n\r\n.item {\r\n    width: 100%;\r\n    height: 40px;\r\n}\r\n.item:hover {\r\n    background-color: rgba(0,0,0,0.1);\r\n}\r\n\r\n.item-text {\r\n    width: 500px;\r\n    position: relative;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-text div {\r\n    display: inline-block;\r\n    overflow-wrap: break-word;\r\n    text-overflow: ellipsis;\r\n    /* word-wrap: break-word; */\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-property {\r\n    position: relative;\r\n    /* left: 400px; */\r\n    width: 400px;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    line-height: 40px;\r\n}\r\n\r\n.item-check {\r\n    float: right;\r\n    margin-right: 20px;\r\n    line-height: 32px;\r\n    /* display: inline-block; */\r\n}\r\n\r\n.item-waiting {\r\n    /* -moz-transition: height .5s;\r\n    -ms-transition: height .5s;\r\n    -o-transition: height .5s;\r\n    -webkit-transition: height .5s;\r\n    transition: height .5s; */\r\n    display: block;\r\n    height: 0;\r\n    width: 80%;\r\n    overflow: hidden;\r\n}\r\n   ", ""]);
 
 // exports
 
@@ -7762,7 +7930,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/treetable/treetable.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n  <div *ngFor=\"let node of nodeToItems(); index as i\" class=\"item\">\n    <div *ngIf=\"node.visible\">\n      <div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n        <button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\" *ngIf=\"node.class === nodeType.Object\">\n          <mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n          <mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n        </button>\n        <button mat-icon-button enabled=\"false\" *ngIf=\"node.class !== nodeType.Object\">\n          <mat-icon >label</mat-icon>\n        </button>\n          {{node.text}}\n      </div>\n      <div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n        {{node.property}}\n      </div>\n      <div class=\"item-check\">\n        <mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\"  (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n      </div>\n      <div *ngIf=\"!node.childs.length\" class=\"item-waiting\" [ngStyle]=\"{'height': (node.expanded) ? '40px' : '0px'}\" style=\"padding-left: 80px\">\n          <mat-spinner diameter=\"30\"></mat-spinner>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n  <div *lazyFor=\"let node of list; index as i\" class=\"item\">\n    <div *ngIf=\"node.visible\">\n      <div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n        <button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\" *ngIf=\"node.class === nodeType.Object\">\n          <mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n          <mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n        </button>\n        <button mat-icon-button enabled=\"false\" *ngIf=\"node.class !== nodeType.Object\">\n          <mat-icon >label</mat-icon>\n        </button>\n          {{node.text}}\n      </div>\n      <div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n        {{node.property}}\n      </div>\n      <div class=\"item-check\">\n        <mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\"  (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n      </div>\n      <div *ngIf=\"!node.childs.length\" class=\"item-waiting\" [ngStyle]=\"{'height': (node.expanded) ? '40px' : '0px'}\" style=\"padding-left: 80px\">\n          <mat-spinner diameter=\"30\"></mat-spinner>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -7789,6 +7957,7 @@ var TreetableComponent = (function () {
         this.expand = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.nodeType = NodeType;
         this.nodes = {};
+        this.list = [];
         this.containerProperty = { width: '100%', height: '100%' };
     }
     TreetableComponent.prototype.ngOnInit = function () {
@@ -7808,15 +7977,14 @@ var TreetableComponent = (function () {
             this.hideNode(node, true);
         }
         else {
-            node;
             this.hideNode(node, false);
         }
     };
     TreetableComponent.prototype.hideNode = function (node, visible) {
         var _this = this;
-        Object.values(node.childs).forEach(function (node) {
-            node.visible = visible;
-            _this.hideNode(node, (visible) ? node.expanded : visible);
+        Object.values(node.childs).forEach(function (n) {
+            n.visible = visible;
+            _this.hideNode(n, (visible) ? n.expanded : visible);
         });
     };
     TreetableComponent.prototype.addNode = function (node, parent, enabled) {
@@ -7832,6 +8000,7 @@ var TreetableComponent = (function () {
         if (Object.keys(this.nodes).indexOf(node.id) < 0) {
             this.nodes[node.id] = node;
         }
+        this.list = this.nodeToItems();
     };
     TreetableComponent.prototype.setNodeProperty = function (node, pro) {
         if (this.nodes[node.id]) {

@@ -72,7 +72,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
               this.treetable.setNodeProperty(values.node, this.attributeToString(values.node.attribute));
             }
           }
-          console.log(values);
+          // console.log(values);
         });        
       }
       this.queryNext(null);
