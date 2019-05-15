@@ -2004,7 +2004,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".container {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: column;\r\n        flex-direction: column;\r\n    min-width: 300px;\r\n    position: absolute;\r\n    bottom: 0px;\r\n    top: 0px;\r\n    left:0px;\r\n    right:0px;\r\n    background-color: white;\r\n}\r\n\r\n.filter {\r\n    display: inline-block;\r\n    min-height: 64px;\r\n    padding: 8px 24px 0;\r\n}\r\n\r\n.filter .mat-form-field {\r\n    font-size: 14px;\r\n    width: 100%;\r\n}\r\n\r\n.mat-table {\r\n    overflow: auto;\r\n    margin: 5px;\r\n    /* max-height: 500px; */\r\n}\r\n  \r\n.mat-header-cell.mat-sort-header-sorted {\r\n    color: black;\r\n}\r\n\r\n.mat-header-row {\r\n    top: 0;\r\n    position: -webkit-sticky;\r\n    position: sticky;\r\n    z-index: 1;\r\n    background-color: rgba(0,0,0,0.7);\r\n    color: white;\r\n}\r\n.mat-header-cell {\r\n    color: white;\r\n    font-size: 14px;\r\n}\r\n\r\n.mat-column-select {\r\n    overflow: visible;\r\n    -ms-flex: 0 0 100px;\r\n        flex: 0 0 100px;\r\n}\r\n\r\n.mat-column-name {\r\n    -ms-flex: 0 0 400px;\r\n        flex: 0 0 400px;\r\n}\r\n\r\n.mat-column-type {\r\n    -ms-flex: 0 0 180px;\r\n        flex: 0 0 180px;\r\n}\r\n\r\n.mat-column-value {\r\n    -ms-flex: 0 0 180px;\r\n        flex: 0 0 180px;\r\n}\r\n\r\n.mat-column-min {\r\n    -ms-flex: 0 0 120px;\r\n        flex: 0 0 120px;\r\n}\r\n\r\n.mat-column-max {\r\n    -ms-flex: 0 0 120px;\r\n        flex: 0 0 120px;\r\n}\r\n\r\n.selectidthClass{\r\n    -ms-flex: 0 0 50px;\r\n        flex: 0 0 50px;\r\n }", ""]);
+exports.push([module.i, ".container {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: column;\r\n        flex-direction: column;\r\n    min-width: 300px;\r\n    position: absolute;\r\n    bottom: 0px;\r\n    top: 0px;\r\n    left:0px;\r\n    right:0px;\r\n    background-color: white;\r\n}\r\n\r\n.filter {\r\n    display: inline-block;\r\n    min-height: 64px;\r\n    padding: 8px 24px 0;\r\n}\r\n\r\n.filter .mat-form-field {\r\n    font-size: 14px;\r\n    width: 100%;\r\n}\r\n\r\n.mat-table {\r\n    overflow: auto;\r\n    /* margin: 5px; */\r\n    /* max-height: 500px; */\r\n}\r\n  \r\n.mat-header-cell.mat-sort-header-sorted {\r\n    color: black;\r\n}\r\n\r\n.mat-header-row {\r\n    top: 0;\r\n    position: -webkit-sticky;\r\n    position: sticky;\r\n    z-index: 1;\r\n    background-color: rgba(0,0,0,0.7);\r\n    color: white;\r\n}\r\n.mat-header-cell {\r\n    color: white;\r\n    font-size: 14px;\r\n}\r\n\r\n.mat-column-select {\r\n    overflow: visible;\r\n    -ms-flex: 0 0 100px;\r\n        flex: 0 0 100px;\r\n}\r\n\r\n.mat-column-name {\r\n    -ms-flex: 0 0 400px;\r\n        flex: 0 0 400px;\r\n}\r\n\r\n\r\n.mat-column-address {\r\n    -ms-flex: 0 0 260px;\r\n        flex: 0 0 260px;\r\n}\r\n\r\n.mat-column-device {\r\n    -ms-flex: 0 0 200px;\r\n        flex: 0 0 200px;\r\n}\r\n\r\n.mat-column-type {\r\n    -ms-flex: 0 0 160px;\r\n        flex: 0 0 160px;\r\n}\r\n\r\n.mat-column-value {\r\n    -ms-flex: 0 0 180px;\r\n        flex: 0 0 180px;\r\n}\r\n\r\n.mat-column-min {\r\n    -ms-flex: 0 0 100px;\r\n        flex: 0 0 100px;\r\n}\r\n\r\n.mat-column-max {\r\n    -ms-flex: 0 0 100px;\r\n        flex: 0 0 100px;\r\n}\r\n\r\n.mat-column-remove {\r\n    -ms-flex: 0 0 60px;\r\n        flex: 0 0 60px;\r\n}\r\n\r\n.selectidthClass{\r\n    -ms-flex: 0 0 50px;\r\n        flex: 0 0 50px;\r\n }", ""]);
 
 // exports
 
@@ -2934,6 +2934,7 @@ var TagPropertyComponent = (function () {
                 _this.hmiService.askNodeAttributes(_this.data.device.name, n);
             }
         });
+        this.treetable.update();
     };
     TagPropertyComponent.prototype.getProperty = function (n) {
         if (n.class === 'Object') {
@@ -7917,7 +7918,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".container {\r\n    overflow: auto;\r\n}\r\n\r\n.item {\r\n    width: 100%;\r\n    height: 40px;\r\n}\r\n.item:hover {\r\n    background-color: rgba(0,0,0,0.1);\r\n}\r\n\r\n.item-text {\r\n    width: 500px;\r\n    position: relative;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-text div {\r\n    display: inline-block;\r\n    overflow-wrap: break-word;\r\n    text-overflow: ellipsis;\r\n    /* word-wrap: break-word; */\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-property {\r\n    position: relative;\r\n    /* left: 400px; */\r\n    width: 400px;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    line-height: 40px;\r\n}\r\n\r\n.item-check {\r\n    float: right;\r\n    margin-right: 20px;\r\n    line-height: 32px;\r\n    /* display: inline-block; */\r\n}\r\n\r\n.item-waiting {\r\n    /* -moz-transition: height .5s;\r\n    -ms-transition: height .5s;\r\n    -o-transition: height .5s;\r\n    -webkit-transition: height .5s;\r\n    transition: height .5s; */\r\n    display: block;\r\n    height: 0;\r\n    width: 80%;\r\n    overflow: hidden;\r\n}\r\n   ", ""]);
+exports.push([module.i, ".container {\r\n    overflow: auto;\r\n}\r\n\r\n.item {\r\n    width: 100%;\r\n    height: 40px;\r\n}\r\n.item:hover {\r\n    background-color: rgba(0,0,0,0.1);\r\n}\r\n\r\n.item-text {\r\n    width: 500px;\r\n    position: relative;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-text div {\r\n    display: inline-block;\r\n    overflow-wrap: break-word;\r\n    text-overflow: ellipsis;\r\n    /* word-wrap: break-word; */\r\n    white-space: nowrap;\r\n}\r\n\r\n.item-property {\r\n    position: relative;\r\n    /* left: 400px; */\r\n    width: 400px;\r\n    display: inline-block;\r\n    overflow: hidden; \r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\r\n    line-height: 40px;\r\n}\r\n\r\n.item-check {\r\n    float: right;\r\n    margin-right: 20px;\r\n    line-height: 32px;\r\n    /* display: inline-block; */\r\n}\r\n\r\n.item-waiting {\r\n    /* -moz-transition: height .5s;\r\n    -ms-transition: height .5s;\r\n    -o-transition: height .5s;\r\n    -webkit-transition: height .5s;\r\n    transition: height .5s; */\r\n    display:inline-block;\r\n    height: 40;\r\n    vertical-align: middle;\r\n    /* width: 80%; */\r\n    overflow: hidden;\r\n}\r\n   ", ""]);
 
 // exports
 
@@ -7930,7 +7931,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/treetable/treetable.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n  <div *lazyFor=\"let node of list; index as i\" class=\"item\">\n    <div *ngIf=\"node.visible\">\n      <div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n        <button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\" *ngIf=\"node.class === nodeType.Object\">\n          <mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n          <mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n        </button>\n        <button mat-icon-button enabled=\"false\" *ngIf=\"node.class !== nodeType.Object\">\n          <mat-icon >label</mat-icon>\n        </button>\n          {{node.text}}\n      </div>\n      <div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n        {{node.property}}\n      </div>\n      <div class=\"item-check\">\n        <mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\"  (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n      </div>\n      <div *ngIf=\"!node.childs.length\" class=\"item-waiting\" [ngStyle]=\"{'height': (node.expanded) ? '40px' : '0px'}\" style=\"padding-left: 80px\">\n          <mat-spinner diameter=\"30\"></mat-spinner>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n  <div *lazyFor=\"let node of list; index as i\" class=\"item\">\n    <div *ngIf=\"node.visible\">\n      <div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n        <button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\" *ngIf=\"node.class === nodeType.Object\">\n          <mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n          <mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n        </button>\n        <div *ngIf=\"!node.childs.length\" class=\"item-waiting\" [ngStyle]=\"{'width': (node.expanded) ? '40px' : '0px'}\">\n            <mat-spinner diameter=\"20\"></mat-spinner>\n        </div>\n        <button mat-icon-button enabled=\"false\" *ngIf=\"node.class !== nodeType.Object\">\n          <mat-icon >label</mat-icon>\n        </button>\n          {{node.text}}\n      </div>\n      <div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n        {{node.property}}\n      </div>\n      <div class=\"item-check\">\n        <mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\"  (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n      </div>\n    </div>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -7973,12 +7974,15 @@ var TreetableComponent = (function () {
     TreetableComponent.prototype.onExpandToggle = function (node) {
         node.expanded = (node.expanded) ? false : true;
         if (node.expanded) {
-            this.expand.emit(node);
+            if (!node.childs.length) {
+                this.expand.emit(node);
+            }
             this.hideNode(node, true);
         }
         else {
             this.hideNode(node, false);
         }
+        this.list = this.nodeToItems();
     };
     TreetableComponent.prototype.hideNode = function (node, visible) {
         var _this = this;
@@ -8000,6 +8004,8 @@ var TreetableComponent = (function () {
         if (Object.keys(this.nodes).indexOf(node.id) < 0) {
             this.nodes[node.id] = node;
         }
+    };
+    TreetableComponent.prototype.update = function () {
         this.list = this.nodeToItems();
     };
     TreetableComponent.prototype.setNodeProperty = function (node, pro) {
@@ -8012,14 +8018,16 @@ var TreetableComponent = (function () {
         if (this.nodes && Object.values(this.nodes).length) {
             var result_1 = [];
             Object.values(this.nodes).forEach(function (value) {
-                result_1.push(value);
+                if (value.visible) {
+                    result_1.push(value);
+                }
             });
             return result_1.sort(function (a, b) { return (a.path > b.path) ? 1 : -1; });
         }
         return [];
     };
     TreetableComponent.prototype.changeStatus = function (node, $event) {
-        console.log(node);
+        // console.log(node);
     };
     TreetableComponent.prototype.expandable = function (type) {
         if (type === NodeType.Object) {

@@ -34,11 +34,14 @@ export class TreetableComponent implements OnInit {
   onExpandToggle(node: Node) {
     node.expanded = (node.expanded) ? false : true;
     if (node.expanded) {
-      this.expand.emit(node);
+        if (!node.childs.length) {
+            this.expand.emit(node);
+        }
       this.hideNode(node, true);
     } else {
       this.hideNode(node, false);
     }
+    this.list = this.nodeToItems();
   }
 
   hideNode(node: Node, visible: boolean) {
@@ -61,6 +64,9 @@ export class TreetableComponent implements OnInit {
     if (Object.keys(this.nodes).indexOf(node.id) < 0) {
       this.nodes[node.id] = node;
     }
+  }
+
+  update() {
     this.list = this.nodeToItems();
   }
 
@@ -74,8 +80,10 @@ export class TreetableComponent implements OnInit {
   nodeToItems(): Array<Node> {
     if (this.nodes && Object.values(this.nodes).length) {
       let result = [];
-      Object.values(this.nodes).forEach((value) => {
-        result.push(value);
+        Object.values(this.nodes).forEach((value: Node) => {
+          if (value.visible) {
+              result.push(value);
+          }
       });
       return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
     }
@@ -83,7 +91,7 @@ export class TreetableComponent implements OnInit {
   }
 
   changeStatus(node: Node, $event) {
-    console.log(node);
+    // console.log(node);
   }
 
   expandable(type: NodeType) {

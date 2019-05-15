@@ -23,7 +23,7 @@
 
 .mat-table {
     overflow: auto;
-    margin: 5px;
+    /* margin: 5px; */
     /* max-height: 500px; */
 }
   
@@ -52,8 +52,17 @@
     flex: 0 0 400px;
 }
 
+
+.mat-column-address {
+    flex: 0 0 260px;
+}
+
+.mat-column-device {
+    flex: 0 0 200px;
+}
+
 .mat-column-type {
-    flex: 0 0 180px;
+    flex: 0 0 160px;
 }
 
 .mat-column-value {
@@ -61,11 +70,15 @@
 }
 
 .mat-column-min {
-    flex: 0 0 120px;
+    flex: 0 0 100px;
 }
 
 .mat-column-max {
-    flex: 0 0 120px;
+    flex: 0 0 100px;
+}
+
+.mat-column-remove {
+    flex: 0 0 60px;
 }
 
 .selectidthClass{

@@ -51,9 +51,10 @@
     -o-transition: height .5s;
     -webkit-transition: height .5s;
     transition: height .5s; */
-    display: block;
-    height: 0;
-    width: 80%;
+    display:inline-block;
+    height: 40;
+    vertical-align: middle;
+    /* width: 80%; */
     overflow: hidden;
 }
    

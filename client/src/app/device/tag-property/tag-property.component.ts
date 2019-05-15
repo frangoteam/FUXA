@@ -129,6 +129,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         this.hmiService.askNodeAttributes(this.data.device.name, n);
       }
     });
+      this.treetable.update();
   }
 
   getProperty(n: any) {
