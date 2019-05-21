@@ -34,7 +34,7 @@
         </mat-checkbox> -->
       </mat-header-cell>
       <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
-        <button mat-icon-button (click)="onEditRow(element)" class="remove">
+        <button mat-icon-button (click)="onEditRow(element)" class="remove" *ngIf="deviceSelected.type === deviceType.SiemensS7">
           <mat-icon>edit</mat-icon>
         </button>
         <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">

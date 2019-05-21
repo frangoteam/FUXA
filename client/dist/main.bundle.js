@@ -3,7 +3,7 @@ webpackJsonp(["main"],{
 /***/ "../../../../../package.json":
 /***/ (function(module, exports) {
 
-module.exports = {"name":"fuxa-editor","version":"1.0.0","keywords":[],"author":"","description":"","private":true,"scripts":{"ng":"ng","start":"ng serve --dev","start-ele":"ng serve --env=winele","build":"ng build","test":"ng test","lint":"ng lint","e2e":"ng e2e"},"dependencies":{"@angular/animations":"5.2.0","@angular/cdk":"^5.2.5","@angular/common":"5.2.0","@angular/compiler":"5.2.0","@angular/core":"5.2.0","@angular/forms":"5.2.0","@angular/http":"5.2.0","@angular/material":"^5.2.5","@angular/platform-browser":"5.2.0","@angular/platform-browser-dynamic":"5.2.0","@angular/router":"5.2.0","@codebyjordan/scrollbar":"^2.1.6","bcryptjs":"^2.4.3","body-parser":"^1.18.2","core-js":"^2.4.1","express":"^4.16.4","file-saver":"^1.3.8","gulp-autoprefixer":"^5.0.0","gulp-concat":"^2.6.1","gulp-csso":"^3.0.1","gulp-htmlmin":"^4.0.0","gulp-minify":"^3.0.2","gulp-sass":"^4.0.1","gulp-sourcemaps":"^2.6.4","gulp-uglify":"^3.0.0","material-design-icons":"^3.0.1","ng5-slider":"^1.1.7","ngx-color-picker":"^7.4.0","ngx-toastr":"^8.10.2","rxjs":"^5.5.2","socket.io-client":"^2.2.0","zone.js":"^0.8.14"},"devDependencies":{"@angular-devkit/core":"^0.7.3","@angular/cli":"1.6.3","@angular/compiler-cli":"^5.0.0","@angular/language-service":"5.2.0","@types/jasmine":"~2.5.53","@types/jasminewd2":"~2.0.2","@types/node":"~6.0.60","codelyzer":"^4.0.2","gulp":"^4.0.0","jasmine-core":"~2.6.2","jasmine-spec-reporter":"~4.1.0","karma":"^4.0.1","karma-chrome-launcher":"~2.1.1","karma-cli":"~1.0.1","karma-coverage-istanbul-reporter":"^1.2.1","karma-jasmine":"~1.1.0","karma-jasmine-html-reporter":"^0.2.2","protractor":"^5.4.0","ts-node":"~3.2.0","tslint":"~5.7.0","typescript":"~2.4.2"},"repository":{}}
+module.exports = {"name":"fuxa-editor","version":"1.0.1","keywords":[],"author":"","description":"","private":true,"scripts":{"ng":"ng","start":"ng serve --dev","start-ele":"ng serve --env=winele","build":"ng build","test":"ng test","lint":"ng lint","e2e":"ng e2e"},"dependencies":{"@angular/animations":"5.2.0","@angular/cdk":"^5.2.5","@angular/common":"5.2.0","@angular/compiler":"5.2.0","@angular/core":"5.2.0","@angular/forms":"5.2.0","@angular/http":"5.2.0","@angular/material":"^5.2.5","@angular/platform-browser":"5.2.0","@angular/platform-browser-dynamic":"5.2.0","@angular/router":"5.2.0","@codebyjordan/scrollbar":"^2.1.6","bcryptjs":"^2.4.3","body-parser":"^1.18.2","core-js":"^2.4.1","express":"^4.16.4","file-saver":"^1.3.8","gulp-autoprefixer":"^5.0.0","gulp-concat":"^2.6.1","gulp-csso":"^3.0.1","gulp-htmlmin":"^4.0.0","gulp-minify":"^3.0.2","gulp-sass":"^4.0.1","gulp-sourcemaps":"^2.6.4","gulp-uglify":"^3.0.0","material-design-icons":"^3.0.1","ng5-slider":"^1.1.7","ngx-color-picker":"^7.4.0","ngx-toastr":"^8.10.2","rxjs":"^5.5.2","socket.io-client":"^2.2.0","zone.js":"^0.8.14"},"devDependencies":{"@angular-devkit/core":"^0.7.3","@angular/cli":"1.6.3","@angular/compiler-cli":"^5.0.0","@angular/language-service":"5.2.0","@types/jasmine":"~2.5.53","@types/jasminewd2":"~2.0.2","@types/node":"~6.0.60","codelyzer":"^4.0.2","gulp":"^4.0.0","jasmine-core":"~2.6.2","jasmine-spec-reporter":"~4.1.0","karma":"^4.0.1","karma-chrome-launcher":"~2.1.1","karma-cli":"~1.0.1","karma-coverage-istanbul-reporter":"^1.2.1","karma-jasmine":"~1.1.0","karma-jasmine-html-reporter":"^0.2.2","protractor":"^5.4.0","ts-node":"~3.2.0","tslint":"~5.7.0","typescript":"~2.4.2"},"repository":{}}
 
 /***/ }),
 
@@ -1390,6 +1390,7 @@ var ProjectService = (function () {
         this.started = false;
         this.prjresource = 'prj-data';
         this.endPointConfig = __WEBPACK_IMPORTED_MODULE_5__helpers_endpointapi__["a" /* EndPointApi */].getURL(); //"http://localhost:1881";
+        this.projectOld = '';
         if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
             this.checkServer().subscribe(function (result) {
                 _this.serverSettings = result;
@@ -1415,6 +1416,8 @@ var ProjectService = (function () {
         if (this.serverSettings) {
             this.getServerProject().subscribe(function (prj) {
                 _this.projectData = prj;
+                // copy to check before save
+                _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
                 _this.notifyToLoadHmi();
                 console.log(prj);
             }, function (err) {
@@ -1453,7 +1456,13 @@ var ProjectService = (function () {
         this.projectData.version = this.version;
         var prjData = this.convertToSave(this.projectData);
         if (this.serverSettings) {
+            // check project change don't work some svg object change the order and this to check ...boooo
+            // let prjdiff = this._deepEquals(this.projectData, this.projectOld);
+            // if (prjdiff) {
+            //     return true;
+            // }
             this.setServerProject(prjData).subscribe(function (result) {
+                _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
                 console.log(result);
                 // this.toastr.success('Project save successful!');
             }, function (err) {
@@ -1622,6 +1631,89 @@ var ProjectService = (function () {
     ProjectService.prototype.getDemoProject = function () {
         return this.http.get(this.endPointConfig + '/api/projectdemo');
     };
+    ProjectService.prototype._deepEquals = function (x, y) {
+        if (JSON.stringify(x) === JSON.stringify(y)) {
+            return true; // if both x and y are null or undefined and exactly the same
+        }
+        else {
+            try {
+                for (var p in x) {
+                    console.log(p);
+                    if (!x.hasOwnProperty(p)) {
+                        continue; // other properties were tested using x.constructor === y.constructor
+                    }
+                    if (!y.hasOwnProperty(p)) {
+                        return false; // allows to compare x[ p ] and y[ p ] when set to undefined
+                    }
+                    if (p === 'svgcontent') {
+                        // the xml have to be transform in json
+                        var parser = new DOMParser(); // initialize dom parser
+                        var aDOM = parser.parseFromString(x[p], "text/xml");
+                        var bDOM = parser.parseFromString(y[p], "text/xml");
+                        var a = this._xml2json(aDOM);
+                        var b = this._xml2json(bDOM);
+                        return this._deepEquals(a, b);
+                    }
+                    if (x[p] === y[p]) {
+                        continue; // if they have the same strict value or identity then they are equal
+                    }
+                    if (!this._deepEquals(x[p], y[p])) {
+                        return false;
+                    }
+                }
+                for (var p in y) {
+                    if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) {
+                        return false;
+                    }
+                }
+            }
+            catch (ex) {
+                console.log(ex);
+                return false;
+            }
+            return true;
+        }
+    };
+    /**
+     * This function coverts a DOM Tree into JavaScript Object.
+     * @param srcDOM: DOM Tree to be converted.
+     */
+    ProjectService.prototype._xml2json = function (xml) {
+        // Create the return object
+        var obj = {};
+        if (xml.nodeType == 1) {
+            // do attributes
+            if (xml.attributes.length > 0) {
+                obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        }
+        else if (xml.nodeType == 3) {
+            obj = xml.nodeValue;
+        }
+        // do children
+        if (xml.hasChildNodes()) {
+            for (var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if (typeof (obj[nodeName]) == "undefined") {
+                    obj[nodeName] = this._xml2json(item);
+                }
+                else {
+                    if (typeof (obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(this._xml2json(item));
+                }
+            }
+        }
+        return obj;
+    };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
@@ -1784,30 +1876,31 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__gui_helpers_fab_button_ngx_fab_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-button.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-item-button.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1815,6 +1908,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -1891,34 +1985,35 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_20__fuxa_view_fuxa_view_component__["a" /* FuxaViewComponent */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
+                __WEBPACK_IMPORTED_MODULE_33__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_39__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
-                __WEBPACK_IMPORTED_MODULE_41__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_43__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_46__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_55__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_56__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
+                __WEBPACK_IMPORTED_MODULE_42__gauges_switch_switch_component__["a" /* SwitchComponent */],
+                __WEBPACK_IMPORTED_MODULE_44__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
+                __WEBPACK_IMPORTED_MODULE_46__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
+                __WEBPACK_IMPORTED_MODULE_47__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
+                __WEBPACK_IMPORTED_MODULE_45__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
+                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_54__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_56__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_57__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_21__tester_tester_component__["a" /* TesterComponent */],
                 __WEBPACK_IMPORTED_MODULE_26__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
-                __WEBPACK_IMPORTED_MODULE_40__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_42__gauges_controls_value_value_component__["a" /* ValueComponent */],
-                __WEBPACK_IMPORTED_MODULE_33__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_51__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_43__gauges_controls_value_value_component__["a" /* ValueComponent */],
+                __WEBPACK_IMPORTED_MODULE_34__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["a" /* EnumToArrayPipe */],
-                __WEBPACK_IMPORTED_MODULE_35__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
-                __WEBPACK_IMPORTED_MODULE_36__directives_number_directive__["a" /* NumberOnlyDirective */],
+                __WEBPACK_IMPORTED_MODULE_36__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_37__directives_number_directive__["a" /* NumberOnlyDirective */],
                 __WEBPACK_IMPORTED_MODULE_30__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
                 __WEBPACK_IMPORTED_MODULE_31__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
                 __WEBPACK_IMPORTED_MODULE_32__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */],
-                __WEBPACK_IMPORTED_MODULE_37__directives_lazyFor_directive__["a" /* LazyForDirective */]
+                __WEBPACK_IMPORTED_MODULE_38__directives_lazyFor_directive__["a" /* LazyForDirective */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__["a" /* BrowserModule */],
@@ -1930,7 +2025,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_51__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_52__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
                     positionClass: 'toast-bottom-right',
@@ -1942,20 +2037,21 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_24__services_project_service__["a" /* ProjectService */],
                 __WEBPACK_IMPORTED_MODULE_23__tester_tester_service__["a" /* TesterService */],
                 __WEBPACK_IMPORTED_MODULE_22__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_38__gauges_gauges_component__["a" /* GaugesManager */],
+                __WEBPACK_IMPORTED_MODULE_39__gauges_gauges_component__["a" /* GaugesManager */],
                 __WEBPACK_IMPORTED_MODULE_27__helpers_windowref__["a" /* WindowRef */],
                 __WEBPACK_IMPORTED_MODULE_28__helpers_utils__["b" /* Utils */],
                 __WEBPACK_IMPORTED_MODULE_29__helpers_dictionary__["a" /* Dictionary */],
-                __WEBPACK_IMPORTED_MODULE_34__directives_modal_position_cache__["a" /* ModalPositionCache */]
+                __WEBPACK_IMPORTED_MODULE_35__directives_modal_position_cache__["a" /* ModalPositionCache */]
             ],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_13__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_12__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_40__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_47__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_16__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_17__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */]
+                __WEBPACK_IMPORTED_MODULE_17__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_33__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */]
             ],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_9__app_component__["a" /* AppComponent */]]
         })
@@ -2017,7 +2113,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-list/device-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <div class=\"filter\" *ngIf=\"deviceSelected\">\n    <button mat-icon-button title=\"Device Map\" (click)=\"onGoBack()\" style=\"margin-right:10px;margin-left:-10px;\">\n      <mat-icon aria-label=\"Show devices map\">arrow_back</mat-icon>\n    </button>\n    <div class=\"my-form-field\" style=\"\">\n      <span>Device</span>\n      <mat-select [(value)]=\"deviceSelected\" style=\"width: 300px\" (selectionChange)=\"onDeviceChange($event.source)\">\n        <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device\">\n          {{ device.name }}\n        </mat-option>\n      </mat-select>\n    </div>\n    <div class=\"my-form-field\" style=\"\">\n      <span>Filter</span>\n      <input (keyup)=\"applyFilter($event.target.value)\" style=\"width: 450px\" type=\"text\">\n    </div>\n    <!-- <mat-form-field>\n      <input matInput (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\">\n    </mat-form-field> -->\n    <!-- <div class=\"my-form-field\" style=\"padding: 10 20 10 20\">\n      <input (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\" type=\"text\" style=\"width: 100%\">\n    </div> -->\n  </div>\n  <mat-table #table [dataSource]=\"dataSource\" matSort>\n    <!-- Checkbox Column -->\n    <ng-container matColumnDef=\"select\">\n      <mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\n        <button mat-icon-button (click)=\"onAddTag()\" class=\"remove\">\n          <mat-icon>add</mat-icon>\n        </button>\n        <!-- <mat-checkbox (change)=\"$event ? masterToggle() : null\" [checked]=\"selection.hasValue() && isAllSelected()\"\n          [indeterminate]=\"selection.hasValue() && !isAllSelected()\">\n        </mat-checkbox> -->\n      </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\n        <button mat-icon-button (click)=\"onEditRow(element)\" class=\"remove\">\n          <mat-icon>edit</mat-icon>\n        </button>\n        <!-- <mat-checkbox (click)=\"$event.stopPropagation()\" (change)=\"$event ? selection.toggle(row) : null\" [checked]=\"selection.isSelected(row)\">\n        </mat-checkbox> -->\n      </mat-cell>\n    </ng-container>\n\n    <!-- Name Column -->\n    <ng-container matColumnDef=\"name\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.name}} </mat-cell>\n    </ng-container>\n\n    <!-- Address Column -->\n    <ng-container matColumnDef=\"address\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Address </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.address}} </mat-cell>\n    </ng-container>\n\n    <!-- Device Column -->\n    <ng-container matColumnDef=\"device\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Device </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{deviceSelected.name}} </mat-cell>\n    </ng-container>\n\n    <!-- Device Column -->\n    <ng-container matColumnDef=\"type\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.type}} </mat-cell>\n    </ng-container>\n\n    <!-- Min Column -->\n    <ng-container matColumnDef=\"min\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Min </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.min}} </mat-cell>\n    </ng-container>\n\n    <!-- Max Column -->\n    <ng-container matColumnDef=\"max\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Max </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.max}} </mat-cell>\n    </ng-container>\n\n    <!-- Value Column -->\n    <ng-container matColumnDef=\"value\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Value </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.value}} </mat-cell>\n    </ng-container>\n\n    <!-- Button remove Column -->\n    <ng-container matColumnDef=\"remove\">\n      <mat-header-cell *matHeaderCellDef> </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\">\n        <button mat-icon-button (click)=\"$event.stopPropagation();onRemoveRow(element)\" class=\"remove\">\n          <mat-icon>clear</mat-icon>\n        </button>\n      </mat-cell>\n    </ng-container>\n\n    <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n    <mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\n  </mat-table>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"onAddTag()\" style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n  <mat-icon class=\"\">add</mat-icon>\n</button>"
+module.exports = "<div class=\"container\">\n  <div class=\"filter\" *ngIf=\"deviceSelected\">\n    <button mat-icon-button title=\"Device Map\" (click)=\"onGoBack()\" style=\"margin-right:10px;margin-left:-10px;\">\n      <mat-icon aria-label=\"Show devices map\">arrow_back</mat-icon>\n    </button>\n    <div class=\"my-form-field\" style=\"\">\n      <span>Device</span>\n      <mat-select [(value)]=\"deviceSelected\" style=\"width: 300px\" (selectionChange)=\"onDeviceChange($event.source)\">\n        <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device\">\n          {{ device.name }}\n        </mat-option>\n      </mat-select>\n    </div>\n    <div class=\"my-form-field\" style=\"\">\n      <span>Filter</span>\n      <input (keyup)=\"applyFilter($event.target.value)\" style=\"width: 450px\" type=\"text\">\n    </div>\n    <!-- <mat-form-field>\n      <input matInput (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\">\n    </mat-form-field> -->\n    <!-- <div class=\"my-form-field\" style=\"padding: 10 20 10 20\">\n      <input (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\" type=\"text\" style=\"width: 100%\">\n    </div> -->\n  </div>\n  <mat-table #table [dataSource]=\"dataSource\" matSort>\n    <!-- Checkbox Column -->\n    <ng-container matColumnDef=\"select\">\n      <mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\n        <button mat-icon-button (click)=\"onAddTag()\" class=\"remove\">\n          <mat-icon>add</mat-icon>\n        </button>\n        <!-- <mat-checkbox (change)=\"$event ? masterToggle() : null\" [checked]=\"selection.hasValue() && isAllSelected()\"\n          [indeterminate]=\"selection.hasValue() && !isAllSelected()\">\n        </mat-checkbox> -->\n      </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\n        <button mat-icon-button (click)=\"onEditRow(element)\" class=\"remove\" *ngIf=\"deviceSelected.type === deviceType.SiemensS7\">\n          <mat-icon>edit</mat-icon>\n        </button>\n        <!-- <mat-checkbox (click)=\"$event.stopPropagation()\" (change)=\"$event ? selection.toggle(row) : null\" [checked]=\"selection.isSelected(row)\">\n        </mat-checkbox> -->\n      </mat-cell>\n    </ng-container>\n\n    <!-- Name Column -->\n    <ng-container matColumnDef=\"name\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.name}} </mat-cell>\n    </ng-container>\n\n    <!-- Address Column -->\n    <ng-container matColumnDef=\"address\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Address </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.address}} </mat-cell>\n    </ng-container>\n\n    <!-- Device Column -->\n    <ng-container matColumnDef=\"device\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Device </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{deviceSelected.name}} </mat-cell>\n    </ng-container>\n\n    <!-- Device Column -->\n    <ng-container matColumnDef=\"type\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.type}} </mat-cell>\n    </ng-container>\n\n    <!-- Min Column -->\n    <ng-container matColumnDef=\"min\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Min </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.min}} </mat-cell>\n    </ng-container>\n\n    <!-- Max Column -->\n    <ng-container matColumnDef=\"max\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Max </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.max}} </mat-cell>\n    </ng-container>\n\n    <!-- Value Column -->\n    <ng-container matColumnDef=\"value\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> Value </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.value}} </mat-cell>\n    </ng-container>\n\n    <!-- Button remove Column -->\n    <ng-container matColumnDef=\"remove\">\n      <mat-header-cell *matHeaderCellDef> </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\">\n        <button mat-icon-button (click)=\"$event.stopPropagation();onRemoveRow(element)\" class=\"remove\">\n          <mat-icon>clear</mat-icon>\n        </button>\n      </mat-cell>\n    </ng-container>\n\n    <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n    <mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\n  </mat-table>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"onAddTag()\" style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n  <mat-icon class=\"\">add</mat-icon>\n</button>"
 
 /***/ }),
 
@@ -2059,6 +2155,7 @@ var DeviceListComponent = (function () {
         this.dataSource = new __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatTableDataSource */]([]);
         this.selection = new __WEBPACK_IMPORTED_MODULE_2__angular_cdk_collections__["b" /* SelectionModel */](true, []);
         this.dirty = false;
+        this.deviceType = __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */];
         this.save = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.goto = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
     }
@@ -2546,7 +2643,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-property/device-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Device '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      Device Property</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">FUXA\n      Server Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Name</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>Enable</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Port</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Rack</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Slot</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
+module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Device '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      Device Property</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">FUXA\n      Server Property</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Name</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>Enable</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Address (IP or opc.tcp://[server]:[port])</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Port</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Rack</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>Slot</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2792,7 +2889,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/tag-property/tag-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 *ngIf=\"!withtree\" mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Tag Property\n    </h1>\n    <h1 *ngIf=\"withtree\" mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Browse Tags in OPC UA Server\n    </h1>    \n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove && !withtree\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Device</span>\n        <mat-select [(value)]=\"data.device.name\" style=\"width: 300px\" [disabled]=\"true\">\n          <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device.name\">\n            {{ device.name }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Tagname</span>\n        <input [(ngModel)]=\"data.tag.name\" style=\"width: 300px\" type=\"text\" (input)=\"onCheckValue($event)\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.tag.type\" style=\"width: 300px\">\n          <mat-option *ngFor=\"let type of tagType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\"style=\"display: block;margin-bottom: 10px;\">\n        <span>Address</span>\n        <input [(ngModel)]=\"data.tag.address\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Min</span>\n        <input numberOnly [(ngModel)]=\"data.tag.min\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Max</span>\n        <input numberOnly [(ngModel)]=\"data.tag.max\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"error\" *ngIf=\"error\">\n          <span>{{error}}</span>\n      </div>\n    </div>\n  </div>\n\n  <div style=\"overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" [hidden]=\"isToRemove && !withtree\">\n    <ngx-treetable #treetable [config]=\"config\" (expand)=\"queryNext($event)\"></ngx-treetable>\n  </div>\n\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button [disabled]=\"(error) ? 'true' : 'false'\" color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
+module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    Would you like to remove Tag '{{data.tag.name}}' from {{data.device.name}} ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 *ngIf=\"!withtree\" mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Tag Property\n    </h1>\n    <h1 *ngIf=\"withtree\" mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable>\n      Browse Tags in OPC UA Server\n    </h1>    \n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove && !withtree\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Device</span>\n        <mat-select [(value)]=\"data.device.name\" style=\"width: 300px\" [disabled]=\"true\">\n          <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device.name\">\n            {{ device.name }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Tagname</span>\n        <input [(ngModel)]=\"data.tag.name\" style=\"width: 300px\" type=\"text\" (input)=\"onCheckValue($event)\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>Type</span>\n        <mat-select [(value)]=\"data.tag.type\" style=\"width: 300px\">\n          <mat-option *ngFor=\"let type of tagType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\"style=\"display: block;margin-bottom: 10px;\">\n        <span>Address (ex. db5.dbb3   db4.dbx2.0)</span>\n        <input [(ngModel)]=\"data.tag.address\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Min</span>\n        <input numberOnly [(ngModel)]=\"data.tag.min\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n        <span>Max</span>\n        <input numberOnly [(ngModel)]=\"data.tag.max\" style=\"width: 80px\" type=\"text\">\n      </div>\n      <div class=\"error\" *ngIf=\"error\">\n          <span>{{error}}</span>\n      </div>\n    </div>\n  </div>\n\n  <div style=\"overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" [hidden]=\"isToRemove && !withtree\">\n    <ngx-treetable #treetable [config]=\"config\" (expand)=\"queryNext($event)\"></ngx-treetable>\n  </div>\n\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n    <button mat-raised-button [disabled]=\"(error) ? 'true' : 'false'\" color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -3081,14 +3178,14 @@ var DynamicComponent = (function () {
 /***/ "../../../../../src/app/editor/docname.dialog.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>Rename</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div style=\"display: grid; margin-bottom: 20px;\">\r\n      <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n  </div>\r\n</div>"
+module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>Rename</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>Name</span>\r\n        <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div>\r\n    <!-- <div style=\"display: grid; margin-bottom: 20px;\">\r\n      <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div> -->\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
 /***/ "../../../../../src/app/editor/docproperty.dialog.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>Properties</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div style=\"display: inline-block; margin-right: 30px\">\r\n      <mat-form-field style=\"max-width:100px\">\r\n        <input matInput numberOnly [(ngModel)]=\"data.width\" placeholder=\"Width\" type=\"text\">\r\n      </mat-form-field>\r\n    </div>\r\n    <div style=\"display: inline-block\">\r\n      <mat-form-field style=\"max-width:100px\">\r\n        <input matInput numberOnly [(ngModel)]=\"data.height\" placeholder=\"Height\" type=\"text\">\r\n      </mat-form-field>\r\n    </div>\r\n    <div style=\"display: block; margin-top: 10px;margin-bottom:10px\">\r\n      <span style=\"font-size:12px;color:darkgray\">Background</span>\r\n      <input style=\"width:100%;height:24px;border:1px solid rgba(0,0,0,0.2);margin-top: 4px;\" readonly [(colorPicker)]=\"data.bkcolor\" class=\"color-stroke\" title=\"Change stroke color\"\r\n          [style.background]=\"data.bkcolor\"  [cpPresetColors]=\"defaultColor\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" [value]=\"data.bkcolor\"\r\n          [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\"\r\n          [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\"/>\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n  </div>\r\n</div>"
+module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>Properties</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n      <span>Width</span>\r\n      <input numberOnly [(ngModel)]=\"data.width\" style=\"width: 100px\" type=\"text\">\r\n    </div>\r\n    <div class=\"my-form-field\" style=\"margin-bottom: 10px; float:right\">\r\n        <span>Height</span>\r\n        <input numberOnly [(ngModel)]=\"data.height\" style=\"width: 100px\" type=\"text\">\r\n    </div>    \r\n    <div style=\"display: block; margin-top: 10px;margin-bottom:10px\">\r\n      <span style=\"font-size:12px;color:darkgray\">Background</span>\r\n      <input style=\"width:100%;height:24px;border:1px solid rgba(0,0,0,0.2);margin-top: 4px;\" readonly [(colorPicker)]=\"data.bkcolor\"\r\n        class=\"color-stroke\" title=\"Change stroke color\" [style.background]=\"data.bkcolor\" [cpPresetColors]=\"defaultColor\"\r\n        [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" [value]=\"data.bkcolor\" [cpCancelButton]=\"true\"\r\n        [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\"\r\n        [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -3134,6 +3231,7 @@ module.exports = "<div id=\"svg_editor_container\">\r\n  <mat-drawer-container c
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3146,6 +3244,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+
 
 
 
@@ -3697,22 +3796,45 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.onDeleteView = function (view) {
         var _this = this;
-        var dialogRef = this.dialog.open(DialogDocName, {
-            minWidth: '250px',
-            data: { name: view.name, readonly: true }
+        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_10__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */], {
+            minWidth: '350px',
+            data: { msg: "Would you like to remove View '" + view.name + "' ?" },
+            position: { top: '80px' }
         });
         dialogRef.afterClosed().subscribe(function (result) {
-            view.name = result.name;
-            if (_this.hmi.views) {
+            if (result && _this.hmi.views) {
+                var toselect = null;
                 for (var i = 0; i < _this.hmi.views.length; i++) {
                     if (_this.hmi.views[i].name == view.name) {
                         _this.hmi.views.splice(i, 1);
+                        if (i > 0) {
+                            toselect = _this.hmi.views[i - 1];
+                        }
                         break;
                     }
                 }
+                // if (toselect) {
+                //     this.onSelectView(toselect);
+                // }
                 _this.saveHmi();
             }
         });
+        // let dialogRef = this.dialog.open(DialogDocName, {
+        //     minWidth: '250px',
+        //     data: { name: view.name, readonly: true }
+        // });
+        // dialogRef.afterClosed().subscribe(result => {
+        //     view.name = result.name;
+        //     if (this.hmi.views) {
+        //         for (var i = 0; i < this.hmi.views.length; i++) {
+        //             if (this.hmi.views[i].name == view.name) {
+        //                 this.hmi.views.splice(i, 1);
+        //                 break;
+        //             }
+        //         }
+        //         this.saveHmi();
+        //     }
+        // });
     };
     /**
      * Rename the View (only name)
@@ -3846,8 +3968,10 @@ var EditorComponent = (function () {
             minWidth: '700px',
             minHeight: '700px',
             panelClass: 'dialog-property',
-            data: { settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue },
+            data: {
+                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
+            },
             position: { top: '80px' }
             // data: data
         });
@@ -7152,6 +7276,83 @@ var SwitchProperty = (function () {
         this.onmax = 1;
     }
     return SwitchProperty;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\r\n    <div style=\"margin-top: 20px;margin-bottom: 20px;\">\r\n        {{msgtoconfirm}}\r\n    </div>\r\n\r\n    <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\r\n        <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>OK</button>\r\n    </div>\r\n</div>"
+
+/***/ }),
+
+/***/ "../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfirmDialogComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+
+var ConfirmDialogComponent = (function () {
+    function ConfirmDialogComponent(dialogRef, data) {
+        this.dialogRef = dialogRef;
+        this.data = data;
+        this.msgtoconfirm = '';
+        this.msgtoconfirm = this.data.msg;
+    }
+    ConfirmDialogComponent.prototype.ngOnInit = function () {
+    };
+    ConfirmDialogComponent.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    ConfirmDialogComponent.prototype.onOkClick = function () {
+        this.dialogRef.close(true);
+    };
+    ConfirmDialogComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'app-confirm-dialog',
+            template: __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.css")]
+        }),
+        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+    ], ConfirmDialogComponent);
+    return ConfirmDialogComponent;
 }());
 
 

@@ -25,6 +25,7 @@ export class ProjectService {
 
     private prjresource = 'prj-data';
     private endPointConfig: string = EndPointApi.getURL(); //"http://localhost:1881";
+    private projectOld: string = '';
 
     constructor(private http: HttpClient,
         private toastr: ToastrService) {
@@ -54,6 +55,9 @@ export class ProjectService {
         if (this.serverSettings) {
             this.getServerProject().subscribe(prj => {
                 this.projectData = prj;
+                // copy to check before save
+                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+
                 this.notifyToLoadHmi();
                 console.log(prj);
             }, err => {
@@ -89,7 +93,13 @@ export class ProjectService {
         this.projectData.version = this.version;
         let prjData = this.convertToSave(this.projectData);
         if (this.serverSettings) {
+            // check project change don't work some svg object change the order and this to check ...boooo
+            // let prjdiff = this._deepEquals(this.projectData, this.projectOld);
+            // if (prjdiff) {
+            //     return true;
+            // }
             this.setServerProject(prjData).subscribe(result => {
+                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
                 console.log(result);
                 // this.toastr.success('Project save successful!');
             }, err => {
@@ -126,14 +136,14 @@ export class ProjectService {
                 delete result.devices[devid].tags[tagid].value;
             }
             // Object.values(result.devices[devid].tags).forEach(tag => {
-                // delete tag.value;
+            // delete tag.value;
 
-                // if (val[domViewId]) {
-                //   delete val[domViewId];
-                // }
+            // if (val[domViewId]) {
+            //   delete val[domViewId];
+            // }
             // });
             // for (let tag in Object.values(result.devices[devid].tags)) {
-                // delete tag.value;
+            // delete tag.value;
             // };
         }
         return result;
@@ -276,6 +286,90 @@ export class ProjectService {
 
     getDemoProject() {
         return this.http.get<any>(this.endPointConfig + '/api/projectdemo');
+    }
+
+    _deepEquals(x, y) {
+        if (JSON.stringify(x) === JSON.stringify(y)) {
+            return true; // if both x and y are null or undefined and exactly the same
+
+        } else {
+            try {
+                for (const p in x) {
+                    console.log(p);
+                    if (!x.hasOwnProperty(p)) {
+                        continue; // other properties were tested using x.constructor === y.constructor
+                    }
+                    if (!y.hasOwnProperty(p)) {
+                        return false; // allows to compare x[ p ] and y[ p ] when set to undefined
+                    }
+                    if (p === 'svgcontent') {
+                        // the xml have to be transform in json
+                        const parser = new DOMParser();  // initialize dom parser
+                        const aDOM = parser.parseFromString(x[p], "text/xml")
+                        const bDOM = parser.parseFromString(y[p], "text/xml")
+                        let a = this._xml2json(aDOM);
+                        let b = this._xml2json(bDOM);
+                        return this._deepEquals(a, b);
+                    }
+                    if (x[p] === y[p]) {
+                        continue; // if they have the same strict value or identity then they are equal
+                    }
+                    if (!this._deepEquals(x[p], y[p])) {
+                        return false;
+                    }
+                }
+                for (const p in y) {
+                    if (y.hasOwnProperty(p) && !x.hasOwnProperty(p)) {
+                        return false;
+                    }
+                }
+            } catch (ex) {
+                console.log(ex);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /**
+     * This function coverts a DOM Tree into JavaScript Object. 
+     * @param srcDOM: DOM Tree to be converted. 
+     */
+    _xml2json(xml) {
+        // Create the return object
+        var obj = {};
+
+        if (xml.nodeType == 1) { // element
+            // do attributes
+            if (xml.attributes.length > 0) {
+                obj["@attributes"] = {};
+                for (var j = 0; j < xml.attributes.length; j++) {
+                    var attribute = xml.attributes.item(j);
+                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                }
+            }
+        } else if (xml.nodeType == 3) { // text
+            obj = xml.nodeValue;
+        }
+
+        // do children
+        if (xml.hasChildNodes()) {
+            for (var i = 0; i < xml.childNodes.length; i++) {
+                var item = xml.childNodes.item(i);
+                var nodeName = item.nodeName;
+                if (typeof (obj[nodeName]) == "undefined") {
+                    obj[nodeName] = this._xml2json(item);
+                } else {
+                    if (typeof (obj[nodeName].push) == "undefined") {
+                        var old = obj[nodeName];
+                        obj[nodeName] = [];
+                        obj[nodeName].push(old);
+                    }
+                    obj[nodeName].push(this._xml2json(item));
+                }
+            }
+        }
+        return obj;
     }
 }
 

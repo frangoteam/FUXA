@@ -13,6 +13,7 @@ import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-propert
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
 import { Utils } from '../_helpers/utils';
+import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 import * as FileSaver from 'file-saver';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
@@ -132,7 +133,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (this.subscriptionLoad) {
                 this.subscriptionLoad.unsubscribe();
-            }            
+            }
         } catch (e) {
         }
         if (this.currentView) {
@@ -638,23 +639,48 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view View to delete
      */
     onDeleteView(view) {
-        let dialogRef = this.dialog.open(DialogDocName, {
-            minWidth: '250px',
-            data: { name: view.name, readonly: true }
-        });
 
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            minWidth: '350px',
+            data: { msg: "Would you like to remove View '" + view.name + "' ?" },
+            position: { top: '80px' }
+        });
         dialogRef.afterClosed().subscribe(result => {
-            view.name = result.name;
-            if (this.hmi.views) {
+            if (result && this.hmi.views) {
+                let toselect = null;
                 for (var i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name == view.name) {
                         this.hmi.views.splice(i, 1);
+                        if (i > 0) {
+                            toselect = this.hmi.views[i - 1];
+                        }
                         break;
                     }
                 }
+                // if (toselect) {
+                //     this.onSelectView(toselect);
+                // }
                 this.saveHmi();
-            }
+            }            
         });
+
+        // let dialogRef = this.dialog.open(DialogDocName, {
+        //     minWidth: '250px',
+        //     data: { name: view.name, readonly: true }
+        // });
+
+        // dialogRef.afterClosed().subscribe(result => {
+        //     view.name = result.name;
+        //     if (this.hmi.views) {
+        //         for (var i = 0; i < this.hmi.views.length; i++) {
+        //             if (this.hmi.views[i].name == view.name) {
+        //                 this.hmi.views.splice(i, 1);
+        //                 break;
+        //             }
+        //         }
+        //         this.saveHmi();
+        //     }
+        // });
     }
 
     /**
@@ -795,8 +821,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             minWidth: '700px',
             minHeight: '700px',
             panelClass: 'dialog-property',
-            data: { settings: tempsettings, devices: Object.values(this.projectService.getDevices()), 
-                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue },
+            data: {
+                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
+            },
             position: { top: '80px' }
             // data: data
 

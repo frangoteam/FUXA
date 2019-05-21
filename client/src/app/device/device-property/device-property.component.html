@@ -29,7 +29,7 @@
         <mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
       </div>      
       <div class="my-form-field" *ngIf="data.device.property" style="display: block;margin-bottom: 10px;">
-        <span>Address</span>
+        <span>Address (IP or opc.tcp://[server]:[port])</span>
         <input [(ngModel)]="data.device.property.address" style="width: 300px" type="ip">
       </div>
       <div *ngIf="data.device.property && isSiemensS7(data.device.type)">

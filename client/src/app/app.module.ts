@@ -36,6 +36,7 @@ import { Dictionary } from './_helpers/dictionary';
 import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.component';
 import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item-button.component';
 import { TreetableComponent } from './gui-helpers/treetable/treetable.component';
+import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dialog.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -79,6 +80,7 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     FuxaViewComponent,
     DialogDocProperty,
     DialogDocName,
+    ConfirmDialogComponent,
     DialogInfo,
     GaugeBaseComponent,
     SwitchComponent,
@@ -143,7 +145,8 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     DynamicComponent,
     GaugePropertyComponent,
     DevicePropertyComponent,
-    TagPropertyComponent
+    TagPropertyComponent,
+    ConfirmDialogComponent
   ],
   bootstrap: [AppComponent]
 })

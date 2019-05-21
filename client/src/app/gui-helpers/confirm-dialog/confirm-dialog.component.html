@@ -1,0 +1,10 @@
+<div style="width: 100%;position: relative;padding-bottom: 40px">
+    <div style="margin-top: 20px;margin-bottom: 20px;">
+        {{msgtoconfirm}}
+    </div>
+
+    <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
+        <button mat-raised-button (click)="onNoClick()">CANCEL</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>OK</button>
+    </div>
+</div>

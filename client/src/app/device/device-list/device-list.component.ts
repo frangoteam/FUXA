@@ -23,6 +23,7 @@ export class DeviceListComponent implements OnInit {
   selection = new SelectionModel<Element>(true, []);
   devices: Device[];
   dirty: boolean = false;
+  deviceType = DeviceType;
 
   @Input() deviceSelected: Device;
   @Output() save = new EventEmitter();
