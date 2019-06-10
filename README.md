@@ -4,11 +4,17 @@ FUXA is a web-based Process Visualization (SCADA/HMI) software. With FUXA you ca
 
 ![fuxa editor](/screenshot/fuxa-editor.png) 
 
+## Features
+- S7 Protocol to communicate with Siemens CPU
+- A client for OPC UA connectivity
+- SCADA/HMI Web-Editor - Engineering and Design completely web-based
+- Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
+
 ## Live Demo
 Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 
 ## Installing and Running
-FUXA is developed with NodeJS (backend) and Angular (frontend). You can use the [released](/../../releases) Windows desktop version or follow the installation.
+FUXA is developed with NodeJS (backend) and Angular (frontend). You can use the [released](/../../releases) Windows desktop version build with Electron framework or follow the installation.
 
 You need to have installed [Node](https://nodejs.org) and NPM.
 
@@ -32,11 +38,31 @@ Open up a browser (better Chrome) and navigate to http://localhost:1881
 First define your Device and bind the Variable or Signals
 ![fuxa device](/screenshot/fuxa-device.gif)
 
-Than design your HMI pages with the SVG editor
+Then design your HMI pages with the SVG editor
 ![fuxa hmi](/screenshot/fuxa-hmi.gif)
 
-Now you can test by change the values to PLC or manually with the testbench
+Now you can test by changing the values to PLC or manually with the testbench
 ![fuxa test](/screenshot/fuxa-test.gif)
+
+# To Debug (Full Stack)
+Install and start to serve the frontend
+```
+cd ./client
+npm install
+npm start
+```
+
+Start the Server and Client (Browser) in Debug Mode
+```
+In vscode: Debug ‘Server & Client’
+```
+
+# To Build
+Build the frontend for production
+```
+cd ./client
+ng build --env=prod
+```
 
 ## Test
 Tested with:
