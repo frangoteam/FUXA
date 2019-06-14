@@ -10,13 +10,17 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 import { Ng5SliderModule } from 'ng5-slider';
 import { ToastrModule } from 'ngx-toastr';
+import { DndModule } from 'ngx-drag-drop';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
 
 import { HomeComponent } from './home/home.component';
 import { HeaderComponent, DialogInfo } from './header/header.component';
+import { IframeComponent } from './iframe/iframe.component';
+import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName } from './editor/editor.component';
+import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
@@ -32,6 +36,7 @@ import { HmiService } from './_services/hmi.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
 import { WindowRef } from './_helpers/windowref';
 import { Utils, EnumToArrayPipe } from './_helpers/utils';
+import { Define } from './_helpers/define';
 import { Dictionary } from './_helpers/dictionary';
 import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.component';
 import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item-button.component';
@@ -70,11 +75,15 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     HomeComponent,
     EditorComponent,
     HeaderComponent,
+    SidenavComponent,
+    IframeComponent,
     AppComponent,
     LabComponent,
     DeviceComponent,
     TagPropertyComponent,
     DevicePropertyComponent,
+    LayoutPropertyComponent,
+    DialogMenuItem,
     DeviceListComponent,
     DeviceMapComponent,
     FuxaViewComponent,
@@ -126,6 +135,7 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
       positionClass: 'toast-bottom-right',
       preventDuplicates: false,
     }),
+    DndModule
   ],
   providers: [
     HmiService,
@@ -136,7 +146,8 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     WindowRef,
     Utils,
     Dictionary,
-    ModalPositionCache
+    ModalPositionCache,
+    Define
   ],
   entryComponents: [
     DialogDocProperty, 
@@ -146,7 +157,9 @@ import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge
     GaugePropertyComponent,
     DevicePropertyComponent,
     TagPropertyComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    LayoutPropertyComponent,
+    DialogMenuItem
   ],
   bootstrap: [AppComponent]
 })

@@ -25,7 +25,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   isHidden() {
-    let list = ['/lab'],
+    let list = ['/lab', '/home'],
       route = this.location.path();
     return (list.indexOf(route) > -1);
   }

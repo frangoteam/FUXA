@@ -1,0 +1,27 @@
+
+
+.layout-menu-item-icon {
+    /* position: absolute; */
+    font-size: 17px;
+    height: 18px;
+    width: 18px;
+    /* color: rgba(255,255,255,0.8); */
+    cursor:pointer;
+}
+.layout-menu-item-edit {
+    /* bottom: 0px; */
+    /* right: 2px; */
+}
+
+.layout-menu-item-delete {
+    /* top: 2px; */
+    /* right: 2px; */
+    /* font-size: 17px; */
+}
+
+.layout-menu-item-link {
+    /* min-width: 150px; */
+    /* color: rgba(0,0,0,0.3); */
+    font-size: 14px;
+    white-space: nowrap;
+  }

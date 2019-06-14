@@ -69,12 +69,19 @@ export class ProjectService {
                 if (res) {
                     this.projectData = JSON.parse(res);
                 } else if (environment.type === 'demo') {
+                    console.log('load Demo');
+                    // try root path
+                    this.http.get<any>('./assets/project.demo.fuxap').subscribe(
+                        prj => {
+                            this.projectData = prj;
+                        }, err => {
+                    });                      
                     // load demo from server
-                    this.getDemoProject().subscribe(prj => {
-                        this.projectData = prj;
-                    }, err => {
-                        console.log(err);
-                    });
+                    // this.getDemoProject().subscribe(prj => {
+                    //     this.projectData = prj;
+                    // }, err => {
+                    //     console.log(err);                      
+                    // });
                 } else {
                     this.projectData = new ProjectData();
                     let server = new Device();

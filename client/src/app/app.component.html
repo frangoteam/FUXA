@@ -1,6 +1,6 @@
-<mat-sidenav-container class="mysidenav-container">
+<div class="container">
   <app-header class="header" [hidden]="isHidden()"></app-header>
-  <div class="work-container">
+  <div [ngClass]="(isHidden()) ? 'work-home' : 'work-editor'">
     <router-outlet></router-outlet>
     <ngx-fab-button #fabmenu icon="menu" iconOpen="menu" class="fab-button" color="rgba(68,138,255, 1)">
       <ngx-fab-item-button color="rgba(68,138,255, 1)" content="editor" (click)="onGoTo('editor')">editor</ngx-fab-item-button>
@@ -8,4 +8,4 @@
       <ngx-fab-item-button color="rgba(68,138,255, 1)" content="home" (click)="onGoTo('home')">home</ngx-fab-item-button>
     </ngx-fab-button>
   </div>
-</mat-sidenav-container>
+</div>

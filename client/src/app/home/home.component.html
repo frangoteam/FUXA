@@ -1,6 +1,22 @@
-<app-fuxa-view *ngIf="homeView" class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
-<div *ngIf="!homeView" class="home-body home-info">
-  <p>
-    Wait...go to editor, map the devices, design your visualization and bind the devices variables.
-  </p>
-</div>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #matsidenav *ngIf="showSidenav" class="sidenav" [mode]="showSidenav">
+    <app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div class="header">
+      <button mat-icon-button *ngIf="showSidenav && this.showSidenav !== 'side'" (click)="(matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
+        <mat-icon aria-label="Menu">menu</mat-icon>
+      </button>
+    </div>
+    <app-fuxa-view *ngIf="showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+    <!-- <app-fuxa-view [hidden]="!showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view> -->
+    <!-- <app-iframe [hidden]="isLoading && !showHomeLink" #iframeview [link]="homeLink" class="home-body"></app-iframe> -->
+    <div [style.visibility]="(showHomeView) ? 'hidden' : 'visible' " class="home-body home-info">
+      <p>
+        Wait...go to editor, map the devices, design your visualization and bind the devices variables.
+      </p>
+    </div>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

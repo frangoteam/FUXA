@@ -1,0 +1,25 @@
+<div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type">
+    <mat-list >
+        <mat-list-item style="height: 35px; font-weight: bold; padding-left: 10px;padding-bottom: 10px;">
+            FUXA
+        </mat-list-item>
+        <mat-list-item *ngFor="let item of layout.navigation.items; let i = index" [ngClass]="'menu-item-' + layout.navigation.type">
+            <button type="button" mat-button class="sidenav-btn" (click)="onGoTo(item)" [ngSwitch]="layout.navigation.type">
+                <div *ngSwitchCase="'icon'" class="manu-item-content-icon">
+                    <mat-icon>{{item.icon}}</mat-icon>
+                </div>
+                <div *ngSwitchCase="'text'" class="manu-item-content-text">
+                    <span>{{item.text}}</span>
+                </div>
+                <div *ngSwitchCase="'block'" class="manu-item-content-block">
+                    <mat-icon style="display: block;">{{item.icon}}</mat-icon>
+                    <span>{{item.text}}</span>
+                </div>
+                <div *ngSwitchCase="'inline'" class="manu-item-content-inline">
+                    <mat-icon style="display: inline-block">{{item.icon}}</mat-icon>
+                    <span style="display: inline-block">{{item.text}}</span>
+                </div>
+            </button>
+        </mat-list-item>
+    </mat-list>
+</div>

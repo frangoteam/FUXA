@@ -18,7 +18,7 @@ html {
     height: 100%;
     position: relative;
     /*min-height: 100%;*/
-    background-color:#F1F1F1;
+    background-color:#FFFFFF;
     font-family: 'Roboto', "Helvetica Neue", sans-serif;
     /* font-family: 'Open Sans', sans-serif; */
     font-weight: 300;
@@ -183,6 +183,141 @@ app-root {
   background: url(assets/images/logo.svg);
   background-size: 30px 30px;
 }
+
+/* Menu */
+.sidenav-toogle {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+}
+
+.sidenav-menu {
+  padding: 0px 0px 0px 0px;
+  background-color: rgba(244,245,247, 1) !important;
+  color: rgba(0, 0, 0, 1) !important;
+  /* max-width: 100px; */
+  display: inline-block !important;
+}
+
+.sidenav-menu-icon {
+  max-width: 65px;
+  width: 65px;
+}
+
+.sidenav-menu-text {
+  max-width: 160px;
+  width: 160px;
+}
+
+.sidenav-menu-block {
+  max-width: 120px;
+  width: 120px;
+}
+
+.sidenav-menu-inline {
+  max-width: 200px;
+  width: 200px;
+}
+
+.mat-list .mat-list-item .mat-list-item-content {
+  padding: 0px !important;
+}
+
+.menu-item-text {
+  min-height: 50px;
+  margin: 5px;
+}
+.menu-item-icon {
+  min-height: 60px;
+  margin: 5px;
+}
+.menu-item-block {
+  min-height: 80px;
+  margin: 5px;
+}
+
+.menu-item-inline {
+  min-height: 50px;
+  margin: 5px;
+}
+
+.manu-item-content-icon {
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+.manu-item-content-icon .mat-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+}
+
+.manu-item-content-text {
+  padding: 10px 10px 10px 10px;
+}
+.manu-item-content-text span{
+  text-align: left !important;
+}
+
+.manu-item-content-block {
+  display: inline-block;
+  padding: 10px 0px 10px 0px;
+  text-align: -webkit-center;
+}
+.manu-item-content-block .mat-icon {
+  display: block;
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+}
+.manu-item-content-block span {
+  display: block;
+  font-size: 14px;
+}
+
+.manu-item-content-inline {
+  text-align: left;
+  padding: 10px 10px 10px 10px;
+}
+.manu-item-content-inline .mat-icon {
+  display: inline-block;
+  font-size: 22px;
+  height: 22px;
+  width: 22px;
+  vertical-align: text-bottom;
+}
+.manu-item-content-inline span {
+  padding-left: 5px;
+  display: inline-block;
+  font-size: 16px;
+  text-align: left !important;
+}
+
+.sidenav-btn {
+  width: 100%;
+  min-width: 100% !important;
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+  -webkit-align-content: center;
+  align-content: center;
+  /* padding: 14px 2px 14px 2px; */
+  padding: 0px !important;
+  /* min-height: 85px; */
+  /* margin-top: 5px; */
+  /* margin-bottom: 5px; */
+  color: rgba(0, 0, 0, 1) !important;
+}
+
+.sidenav-btn span{
+  display: block;
+  /* width: 100%; */
+  font: inherit;
+  font-weight: normal !important;
+  font-size: 14px;
+  text-align: center;
+  color: rgba(0, 0, 0, 1) !important;
+}
+
 
 /* Layout form */
 .my-form-field {

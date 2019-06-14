@@ -9,6 +9,7 @@ import { Hmi, View, GaugeSettings, SelElement } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
 import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
+import { LayoutPropertyComponent } from './layout-property/layout-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
@@ -746,6 +747,31 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     isViewActive(view) {
         return (this.currentView && this.currentView.name == view.name);
     }
+
+    /**
+     * edit the layout property of project views
+     */
+    onLayoutProperty() {
+        // console.log('The Edit Device open');
+        let templayout = null;
+        if (this.hmi.layout) {
+            templayout = JSON.parse(JSON.stringify(this.hmi.layout));
+        }
+        let dialogRef = this.dialog.open(LayoutPropertyComponent, {
+            // minWidth: '700px',
+            // minHeight: '700px',
+            panelClass: 'dialog-property',
+            data: { layout: templayout, views: this.hmi.views },
+            position: { top: '80px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.hmi.layout = JSON.parse(JSON.stringify(result.layout));
+                this.saveHmi();
+            }
+        });
+    }
+
     //#endregion
 
     //#region Panels State

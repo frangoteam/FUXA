@@ -5,6 +5,7 @@ export class Hmi {
     _id: string;
     _version: string;
     name: string = '';
+    layout: LayoutSettings = new LayoutSettings();
     views: View[] = [];
     // variables: Variable[] = [];
     // alarmes: Alarm[] = [];
@@ -18,6 +19,50 @@ export class View {
     items: DictionaryGaugeSettings = {};
     variables: DictionaryVariables = {};
     svgcontent: string = '';
+}
+
+export class LayoutSettings {
+    start: string = '';
+    navigation: NavigationSettings = new NavigationSettings();
+    header: HeaderSettings = new HeaderSettings();
+}
+
+export class NavigationSettings {
+    mode: NaviModeType;
+    type: NaviItemType;
+    bkcolor: string;
+    fgcolor: string;
+    items: NaviItem[];
+    constructor() {
+        this.mode = Object.keys(NaviModeType).find(key => NaviModeType[key] === NaviModeType.over) as NaviModeType;
+        this.type = Object.keys(NaviItemType).find(key => NaviItemType[key] === NaviItemType.block) as NaviItemType;
+    }
+}
+
+export enum NaviModeType {
+    void = 'None',
+    push = 'Push',
+    over = 'Over',
+    fix = 'Fixed',
+}
+
+export enum NaviItemType {
+    icon = 'Icons',
+    text = 'Text',
+    block = 'Icons & Text (block)',
+    inline = 'Icons & Text (inline)',
+}
+
+export class NaviItem {
+    text: string;
+    link: string;
+    view: string;
+    icon: string;
+    level: number;
+}
+
+export class HeaderSettings {
+
 }
 
 export class DocProfile {

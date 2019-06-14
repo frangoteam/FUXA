@@ -6,3 +6,34 @@
 .home-info {
     
 }
+
+.header {
+    display: block;
+    z-index: 9999 !important;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; 
+    /* min-height: 46px !important; */
+    /* max-height: 46px !important; */
+    height: 46px !important;
+    padding-left: 4px;
+    padding-right: 10px;
+}
+
+
+.sidenav {
+    padding: 0px 0px 0px 0px;
+    background-color: rgba(44, 44, 44, 1) !important;
+    color: rgba(255, 255, 255, 1) !important;
+    /* max-width: 100px; */
+    display: inline-block !important;
+    top:0px;
+}
+
+.sidenav-container {
+    width: 100%;
+    height: 100% !important;
+    background-color:#FFFFFF;
+}
+
+::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
+    background-color: transparent;
+}  

@@ -1,8 +1,19 @@
-.work-container {
-    /* min-height: 450px !important; */
-    /* height: 100% !important; */
-    background-color:#F1F1F1;
+
+.container {
+    width: 100%;
+    height: 100% !important;
+    background-color:#FFFFFF
+}
+
+.work-editor {
+    background-color:#FFFFFF;
     height: calc(100% - (46px));
+    min-width: 800px;
+}
+
+.work-home {
+    background-color:#FFFFFF;
+    height: 100%;
     min-width: 800px;
 }
 
@@ -14,12 +25,6 @@
     height: 20px;
     position:absolute;
     bottom:0px;
-}
-
-.mysidenav-container {
-    width: 100%;
-    height: 100% !important;
-    background-color:#F1F1F1;
 }
 
 .fab-button {

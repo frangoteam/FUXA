@@ -56,7 +56,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private loadHmi(view: View) {
+  public loadHmi(view: View) {
     if (this.id) {
       this.gaugesManager.unbindGauge(this.id);
     }
