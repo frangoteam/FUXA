@@ -5,7 +5,7 @@ module.exports = {
 
     // Used to identify a directory of logger
     // Default: '_logs'
-    //logDir: '_logs',
+    logDir: '_logs',
 
     // By default, server accepts connections on all IPv4 interfaces.
     // To listen on all IPv6 addresses, set uiHost to "::",
