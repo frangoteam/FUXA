@@ -515,23 +515,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private onSetImage(event) {
         if (event.target.files) {
-            // console.log('image ' + event.target.files[0]);
             this.imagefile = 'assets/images/' + event.target.files[0].name;
             let self = this;
             if (this.imagefile.split('.').pop().toLowerCase() === 'svg') {
                 let reader = new FileReader();
                 reader.onloadend = function (e: any) {
-                    // svgCanvas.importSvgString(e.target.result, true);
-                    // self.winRef.nativeWindow.svgEditor.promptImgURLcallback = e.target.result;
                     self.winRef.nativeWindow.svgEditor.setSvgImageToAdd(e.target.result);
                     self.setMode('svg-image');
                 };
                 reader.readAsText(event.target.files[0]);
-                // this.getBase64Image(event.target.files[0], function (imgdata) {
-                //     let data = imgdata;
-                //     self.winRef.nativeWindow.svgEditor.promptImgURLcallback = data;
-                //     self.setMode('svg-image');
-                // });
             } else {
                 this.getBase64Image(event.target.files[0], function (imgdata) {
                     let data = imgdata;
@@ -680,24 +672,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.saveHmi();
             }            
         });
-
-        // let dialogRef = this.dialog.open(DialogDocName, {
-        //     minWidth: '250px',
-        //     data: { name: view.name, readonly: true }
-        // });
-
-        // dialogRef.afterClosed().subscribe(result => {
-        //     view.name = result.name;
-        //     if (this.hmi.views) {
-        //         for (var i = 0; i < this.hmi.views.length; i++) {
-        //             if (this.hmi.views[i].name == view.name) {
-        //                 this.hmi.views.splice(i, 1);
-        //                 break;
-        //             }
-        //         }
-        //         this.saveHmi();
-        //     }
-        // });
     }
 
     /**
