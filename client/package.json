@@ -2,9 +2,12 @@
   "name": "fuxa-editor",
   "version": "1.0.1",
   "keywords": [],
-  "author": "",
-  "description": "",
-  "private": true,
+  "author": "frangoteam <4frango@gmail.com>",
+  "description": "Web-based Process Visualization (SCADA/HMI) software",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frangoteam/FUXA.git"
+  },  
   "scripts": {
     "ng": "ng",
     "start": "ng serve --dev",
@@ -72,6 +75,5 @@
     "ts-node": "~3.2.0",
     "tslint": "~5.7.0",
     "typescript": "~2.4.2"
-  },
-  "repository": {}
+  }
 }

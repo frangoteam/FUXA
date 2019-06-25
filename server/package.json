@@ -1,14 +1,18 @@
 {
   "name": "fuxa-server",
   "version": "1.0.1",
-  "description": "",
+  "description": "Web-based Process Visualization (SCADA/HMI) software",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node main.js"
   },
-  "author": "",
+  "author": "frangoteam <4frango@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frangoteam/FUXA.git"
+  },
   "dependencies": {
     "@types/socket.io": "^2.1.2",
     "app-root-path": "^2.1.0",

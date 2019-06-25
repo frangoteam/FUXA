@@ -11,8 +11,8 @@
               <mat-icon aria-label="Select" *ngIf="!panelsState.panelA">expand_more</mat-icon>
               <span>View</span>  <!-- PROJECT FILES -->
             </mat-panel-title>
-            <mat-icon aria-label="Set" *ngIf="panelsState.panelA" class="leftbar-edit-btn" (click)="onLayoutProperty();$event.stopPropagation()">settings</mat-icon>
-            <mat-icon aria-label="Add" *ngIf="panelsState.panelA" class="leftbar-edit-btn" (click)="onAddView();$event.stopPropagation()">add</mat-icon>
+            <mat-icon aria-label="Set" title="Layout settings" *ngIf="panelsState.panelA" class="leftbar-edit-btn" (click)="onLayoutProperty();$event.stopPropagation()">settings</mat-icon>
+            <mat-icon aria-label="Add" title="Add View" *ngIf="panelsState.panelA" class="leftbar-edit-btn" (click)="onAddView();$event.stopPropagation()">add</mat-icon>
           </mat-expansion-panel-header>
           <div class="leftbar-panel">
             <div *ngIf="hmi.views && hmi.views.length <= 0">
@@ -68,7 +68,7 @@
             <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('text')}" (click)="setMode('text')">
               <span class="icon-text"></span>
             </div>
-            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('image')}" (click)="setMode('image');imagefile.click();">
+            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}" (click)="imagefile.value = '';imagefile.click();">
               <span class="icon-image"></span>
               <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg"/>
             </div>

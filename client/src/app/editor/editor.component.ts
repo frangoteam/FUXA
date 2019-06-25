@@ -345,7 +345,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private getView(name) {
         for (var i = 0; i < this.hmi.views.length; i++) {
-            if (this.hmi.views[i].name == name) {
+            if (this.hmi.views[i].name === name) {
                 return this.hmi.views[i];
             }
         }
@@ -369,7 +369,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param mode mode to check
      */
     private isModeActive(mode) {
-        return (this.currentMode == mode)
+        return (this.currentMode === mode)
     }
 
     /**
@@ -387,7 +387,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedElement = null;
         try {
             // to remove some strange effects
-            if (document.activeElement != document.body) (document.activeElement as HTMLElement).blur();
+            if (document.activeElement !== document.body) (document.activeElement as HTMLElement).blur();
         } catch (e) { }
         // console.log('selected: ' + this.selectedElement);
         if (event) {
@@ -518,11 +518,27 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             // console.log('image ' + event.target.files[0]);
             this.imagefile = 'assets/images/' + event.target.files[0].name;
             let self = this;
-            this.getBase64Image(event.target.files[0], function (imgdata) {
-                let data = imgdata;
-                self.winRef.nativeWindow.svgEditor.promptImgURLcallback = data;//this.imagefile;
-                self.setMode('image');
-            });
+            if (this.imagefile.split('.').pop().toLowerCase() === 'svg') {
+                let reader = new FileReader();
+                reader.onloadend = function (e: any) {
+                    // svgCanvas.importSvgString(e.target.result, true);
+                    // self.winRef.nativeWindow.svgEditor.promptImgURLcallback = e.target.result;
+                    self.winRef.nativeWindow.svgEditor.setSvgImageToAdd(e.target.result);
+                    self.setMode('svg-image');
+                };
+                reader.readAsText(event.target.files[0]);
+                // this.getBase64Image(event.target.files[0], function (imgdata) {
+                //     let data = imgdata;
+                //     self.winRef.nativeWindow.svgEditor.promptImgURLcallback = data;
+                //     self.setMode('svg-image');
+                // });
+            } else {
+                this.getBase64Image(event.target.files[0], function (imgdata) {
+                    let data = imgdata;
+                    self.winRef.nativeWindow.svgEditor.promptImgURLcallback = data;
+                    self.setMode('image');
+                });
+            }
         }
     }
 

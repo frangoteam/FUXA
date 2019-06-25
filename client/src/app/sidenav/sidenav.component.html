@@ -1,6 +1,6 @@
 <div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type">
     <mat-list >
-        <mat-list-item style="height: 35px; font-weight: bold; padding-left: 10px;padding-bottom: 10px;">
+        <mat-list-item style="height: 35px; font-weight: bold; padding-left: 10px;padding-bottom: 10px;margin-bottom: 10px">
             FUXA
         </mat-list-item>
         <mat-list-item *ngFor="let item of layout.navigation.items; let i = index" [ngClass]="'menu-item-' + layout.navigation.type">
