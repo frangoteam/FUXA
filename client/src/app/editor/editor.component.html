@@ -14,7 +14,7 @@
             <mat-icon aria-label="Set" title="Layout settings" *ngIf="panelsState.panelA" class="leftbar-edit-btn" (click)="onLayoutProperty();$event.stopPropagation()">settings</mat-icon>
             <mat-icon aria-label="Add" title="Add View" *ngIf="panelsState.panelA" class="leftbar-edit-btn" (click)="onAddView();$event.stopPropagation()">add</mat-icon>
           </mat-expansion-panel-header>
-          <div class="leftbar-panel">
+          <div class="leftbar-panel view-panel">
             <div *ngIf="hmi.views && hmi.views.length <= 0">
               <br>
             </div>
@@ -179,7 +179,7 @@
             <mat-panel-title>
               <mat-icon aria-label="Select" *ngIf="panelsState.panelD">expand_less</mat-icon>
               <mat-icon aria-label="Select" *ngIf="!panelsState.panelD">expand_more</mat-icon>
-              <span>Controlls</span>  <!-- CONTROLLS  -->
+              <span>Controls</span>  <!-- CONTROLLS  -->
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div id="__tools_left" class="leftbar-panel">

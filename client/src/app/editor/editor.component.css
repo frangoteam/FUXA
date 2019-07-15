@@ -284,6 +284,13 @@ color: rgba(255,255,255,1);
   height: 24px;
 }
 
+/* --------------- */
+/* left panel */
+/* --------------- */
+.view-panel {
+  max-height: 400px;
+  overflow: auto;
+}
 .leftbar-edit-btn {
   margin-top: 2px;
   font-size: 18px;
@@ -291,9 +298,6 @@ color: rgba(255,255,255,1);
   width: 18px;
   padding-right: 15px;
 }
-
-/* .leftbar-edit-btn:hover{
-} */
 
 .leftbar-panel {
   padding: 0px 0px 0px 0px;
