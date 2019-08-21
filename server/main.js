@@ -71,6 +71,14 @@ if (!fs.existsSync(settings.logDir)) {
 logger.init(settings.logDir);
 logger.info("FUXA V." + FUXA.version());
 
+// Check storage Database dir
+if (!settings.dbDir) {
+    settings.dbDir = path.resolve(__dirname, "_db");
+}
+if (!fs.existsSync(settings.dbDir)) {
+    fs.mkdirSync(settings.dbDir);
+}
+
 // Server settings
 if (settings.https) {
     server = https.createServer(settings.https, function (req, res) { app(req, res); });

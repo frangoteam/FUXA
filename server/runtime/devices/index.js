@@ -70,6 +70,7 @@ function update() {
 function load() {
     var devices = runtime.project.getDevices();
     activeDevices = {};
+    runtime.daqStorage.reset();
     // check existing or to add new 
     for (var id in devices) {
         if (devices[id].enabled) {
@@ -81,6 +82,10 @@ function load() {
                 // device create
                 activeDevices[id] = Device.create(devices[id], runtime.logger, runtime.events);
                 runtime.logger.info("device created: " + devices[id].id);
+            }
+            if (runtime.settings.daqEnabled) {
+                var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(id, activeDevices[id].getTagProperty);
+                activeDevices[id].bindSaveDaqValue(fncToSaveDaqValue);
             }
         }
     }

@@ -130,6 +130,14 @@ function Device(data, logger, _events) {
         });
     }
 
+    this.bindSaveDaqValue = function (fnc) {
+        return comm.addDaq = fnc;
+    }
+
+    this.getTagProperty = function (id) {
+        return comm.getTagProperty(id);
+    }
+
     this.load(data);
 }
 

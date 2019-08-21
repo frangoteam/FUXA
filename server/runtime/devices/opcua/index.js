@@ -290,6 +290,12 @@ function OpcUAclient(_data, _logger, _events) {
             if (Object.keys(varsValueChanged).length) {
                 _emitValues(varsValueChanged);
             }
+            // _addToDaq(varsValueChanged);
+            if (this.addDaq) {
+                for (var dbid in varsValueChanged) {
+                    this.addDaq(dbid, varsValueChanged[dbid].value);
+                }
+            }
         }
     }
 
@@ -308,6 +314,15 @@ function OpcUAclient(_data, _logger, _events) {
 
     this.getStatus = function () {
         return lastStatus;
+    }
+
+    this.getTagProperty = function (id) {
+        if (data.tags[id]) {
+            let prop = { id: id, name: id, type: data.tags[id].type };
+            return prop;
+        } else {
+            return null;
+        }
     }
 
     this.setValue = function (sigid, value) {
@@ -340,6 +355,8 @@ function OpcUAclient(_data, _logger, _events) {
     this.isConnected = function () {
         return connected;
     }
+
+    this.addDaq = null;                         // Add the DAQ value to db history
 
     var _disconnect = function (callback) {
         if (!the_session) {
@@ -440,6 +457,14 @@ function OpcUAclient(_data, _logger, _events) {
         }
         working = check;
         return true;
+    }
+
+    var _addToDaq = function (dbvalues) {
+        if (this.addDaq) {
+            for (var dbid in dbvalues) {
+                this.addDaq(dbid, dbvalues[dbid].value);
+            }
+        }
     }
 
     var _emitValues = function (values) {

@@ -25,6 +25,7 @@
     "node-opcua": "^0.7.2",
     "node-snap7": "^1.0.1",
     "socket.io": "^2.2.0",
+    "sqlite3": "^4.0.9",
     "winston": "^3.2.1"
   },
   "devDependencies": {}

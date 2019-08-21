@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 var devices = require("./devices");
 var project = require("./project");
 var events = require("./events");
+const daqstorage = require('./storage/daqstorage');
 
 var apiDevice;
 var settings
@@ -19,6 +20,9 @@ function init(_io, _api, _settings, log) {
     logger = log;
     if (!project.init(settings, logger)) {
         logger.error("runtime.failed-to-init");
+    }
+    if (!daqstorage.init(settings, logger)) {
+        logger.error("daqstorage.failed-to-init");
     }
 
     events.on("project:change", updateProject);
@@ -191,6 +195,7 @@ var runtime = module.exports = {
     get io() { return io },
     get logger() { return logger },
     get settings() { return settings },
+    get daqStorage() { return daqstorage },
     events: events,
     updateProject: updateProject
 

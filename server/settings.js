@@ -7,6 +7,17 @@ module.exports = {
     // Default: '_logs'
     logDir: '_logs',
 
+    // Used to storage Database like DAQ, User
+    // Default: '_db'    
+    dbDir: '_db',
+
+    // DAQ Enabled
+    // Default: true    
+    daqEnabled: true,
+    // DAQ DB to Tokenizer the file and save in archive
+    // Default: 24 Hours (1 Day), 0 is disabled only 1 DB file
+    daqTokenizer: 1,
+
     // By default, server accepts connections on all IPv4 interfaces.
     // To listen on all IPv6 addresses, set uiHost to "::",
     // The following property can be used to listen on a specific interface. For

@@ -88,6 +88,12 @@ function S7client(_data, _logger, _events) {
                     if (varsValueChanged) {
                         _emitValues(varsValueChanged);
                     }
+                    // _addToDaq(varsValueChanged);
+                    if (this.addDaq) {
+                        for (var dbid in varsValueChanged) {
+                            this.addDaq(dbid, varsValueChanged[dbid].value);
+                        }
+                    }
                 }
             }, reason => {
                 if (reason.stack) {
@@ -157,6 +163,15 @@ function S7client(_data, _logger, _events) {
         return lastStatus;
     }
 
+    this.getTagProperty = function (id) {
+        if (varsItemsMap[id]) {
+            let prop = { id: id, name: id, type: varsItemsMap[id].type };
+            return prop;
+        } else {
+            return null;
+        }
+    }
+
     this.setValue = function (sigid, value) {
         var varDb = _getDBValue(data.tags[sigid]);
 
@@ -180,6 +195,8 @@ function S7client(_data, _logger, _events) {
     this.isConnected = function () {
         return s7client.Connected();
     }
+
+    this.addDaq = null;                         // Add the DAQ value to db history
 
     var _clearVarsValue = function () {
         for (let id in varsValue) {
@@ -226,6 +243,14 @@ function S7client(_data, _logger, _events) {
         return null;
     }
 
+    var _addToDaq = function (dbvalues) {
+        if (this.addDaq) {
+            for (var dbid in dbvalues) {
+                this.addDaq(dbid, dbvalues[dbid].value);
+            }
+        }
+    }
+    
     //#region Bit Manipolation
     _getBit = function (number, bitPosition) {
         // return (number & (1 << bitPosition)) === 0 ? 0 : 1;
