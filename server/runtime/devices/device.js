@@ -5,7 +5,8 @@ var OpcUAclient = require('./opcua');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
-var DEVICE_POLLING_INTERVAL = 1000;
+var DEVICE_POLLING_INTERVAL = 4000;             // with DAQ enabled, will be saved only changed values in this interval
+var DEVICE_DAQ_MIN_INTERVAL = 60000;            // with DAQ enabled, interval to save DAQ value anyway !!bigger as DEVICE_POLLING_INTERVAL
 
 function Device(data, logger, _events) {
     var property = { id: data.id, name: data.name };
@@ -131,7 +132,8 @@ function Device(data, logger, _events) {
     }
 
     this.bindSaveDaqValue = function (fnc) {
-        return comm.addDaq = fnc;
+        comm.bindAddDaq(fnc, DEVICE_DAQ_MIN_INTERVAL);
+        //return comm.addDaq = fnc;
     }
 
     this.getTagProperty = function (id) {

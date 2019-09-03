@@ -94,7 +94,7 @@ function DaqNode(_settings, _log, _id) {
 
     this.setCall = function (fncgetprop) {
         fncGetTagProp = fncgetprop;
-        return this.addDaqValue;
+        return this.addDaqValues;
     }
 
     this.addDaqValue = function (tagid, tagvalue) {
@@ -162,6 +162,93 @@ function DaqNode(_settings, _log, _id) {
         }
     }
 
+    this.addDaqValues = function (tags, tagid, tagvalue) {
+        if (initready) {
+            if (db_daqdata) {
+                var addMapfnc = [];
+                var addDaqfnc = [];
+                // prepare functions
+                for (var tagid in tags) {
+                    if (!daqTagsMap[tagid]) {
+                        var prop = fncGetTagProp(tagid);
+                        addMapfnc.push(_insertTagToMap(prop.id, prop.name, prop.type));
+                    } else {
+                        addDaqfnc.push(_insertTagValue(daqTagsMap[tagid].mapid, tags[tagid].value));
+                    }
+                }
+                // check function to insert in map            
+                if (addMapfnc.length > 0) {
+                    Promise.all(addMapfnc).then(result => {
+                        logger.info('addDaqValues _insertTagToMap successfull: ' + result);
+                        for (var idx = 0; idx < result.length; idx++) {
+                            _getTagMap(result[idx]).then(function (result) {
+                                _addTagMap(result.mapid, result.id, result.name);
+                            }).catch(function (err) {
+                                logger.err('addDaqValues _getTagMap error: ' + err);
+                            });
+                        }
+                    }, reason => {
+                        if (reason.stack) {
+                            logger.error(data.name + ' _insertTagToMap error: ' + reason.stack);
+                        } else {
+                            logger.error(data.name + ' _insertTagToMap error: ' + reason);
+                        }
+                        _checkWorking(false);
+                    });
+                } 
+                // check function to add daq data            
+                if (addDaqfnc.length > 0) {
+                    if (_checkDataWorking(true)) {
+                        Promise.all(addDaqfnc).then(result => {
+                            // logger.info('addDaqValues _insertTagValue successfull: ' + result);
+                            // check db tokenizer after inserted
+                            var lastts = 0 || result[0];
+                            if (daqNextToken && daqNextToken < lastts) {
+                                // close data DB, open and bind the new db, rename and move the closed db 
+                                db_daqdata.close(function () {
+                                    var suffix = _getDateTimeSuffix(new Date());
+                                    var oldfile = db_daqdata_file;
+                                    db_daqdata_file = path.join(settings.dbDir, db_daqdata_prefix + id + '_' + suffix + '.db');
+                                    db_daqdata = null;
+                                    _bindDaqData(db_daqdata_file).then(result => {
+                                        logger.info('daqstorage: Connected to data ' + db_daqmap_file + ' database.');
+                                        daqNextToken += (settings.daqTimeToken) ? db_daqtoken * settings.daqTimeToken : db_daqtoken;
+                                        db_daqdata = result;
+                                        _archiveDBfile(oldfile, lastts);
+                                        _checkDataWorking(false);
+                                    }).catch(function (err) {
+                                        _checkDataWorking(false);
+                                        logger.err('addDaqValues _bindDaqData error: ' + err);
+                                    });
+                                });
+                            } else {
+                                _checkDataWorking(false);
+                            }                            
+                        }, reason => {
+                            if (reason.stack) {
+                                logger.error(data.name + ' _insertTagValue error: ' + reason.stack);
+                            } else {
+                                logger.error(data.name + ' _insertTagValue error: ' + reason);
+                            }
+                            _checkWorking(false);
+                        });
+                    }
+                }
+                console.log('add> ' + id);
+            } else {
+                // some things was wrong by tokenize...try to bind the db_daqdata 
+                _bindDaqData(db_daqdata_file).then(result => {
+                    logger.info('daqstorage: Connected to data ' + db_daqmap_file + ' database.');
+                    db_daqdata = result;
+                    _checkDataWorking(false);
+                }).catch(function (err) {
+                    _checkDataWorking(false);
+                    logger.err('addDaqValue _bindDaqData error: ' + err);
+                });
+            }
+        }
+    }
+
     this.getDaqMap = function () {
         return daqTagsMap;
     }
@@ -195,7 +282,7 @@ function DaqNode(_settings, _log, _id) {
                         reject(reason);
                     });
                 }).catch(function (err) {
-                    logger.err('getDaqValue _getTagValues error: ' + err);
+                    logger.error('getDaqValue _getTagValues error: ' + err);
                     reject(err);
                 });
             } else {
@@ -413,7 +500,7 @@ function DaqNode(_settings, _log, _id) {
                 if (err !== null) {
                     reject(err);
                 } else {
-                    resolve();
+                    resolve(tagid);
                 }
             });
         });

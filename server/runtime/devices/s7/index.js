@@ -17,6 +17,8 @@ function S7client(_data, _logger, _events) {
     var lastStatus = '';                // Last Device status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var varsItemsMap = {};              // Mapped Signale name with DbItem to find for set value
+    var daqInterval = 0;
+    var lastDaqInterval = 0;
 
     this.connect = function () {
         return new Promise(function (resolve, reject) {
@@ -85,15 +87,24 @@ function S7client(_data, _logger, _events) {
                 _checkWorking(false);
                 if (result.length) {
                     let varsValueChanged = _updateVarsValue(result);
-                    if (varsValueChanged) {
-                        _emitValues(varsValueChanged);
-                    }
-                    // _addToDaq(varsValueChanged);
+                    _emitValues(varsValue);
                     if (this.addDaq) {
-                        for (var dbid in varsValueChanged) {
-                            this.addDaq(dbid, varsValueChanged[dbid].value);
+                        var current = new Date().getTime();
+                        if (current - daqInterval > lastDaqInterval) {
+                            this.addDaq(varsValue);
+                            lastDaqInterval = current;
+                        } else if (varsValueChanged) {
+                            this.addDaq(varsValueChanged);
                         }
+                        // for (var dbid in varsValue) {
+                        //     this.addDaq(dbid, varsValue[dbid].value);
+                        // }
+                        // for (var dbid in varsValueChanged) {
+                        //     this.addDaq(dbid, varsValueChanged[dbid].value);
+                        // }
                     }
+                } else {
+                    console.log('not');
                 }
             }, reason => {
                 if (reason.stack) {
@@ -196,6 +207,11 @@ function S7client(_data, _logger, _events) {
         return s7client.Connected();
     }
 
+    this.bindAddDaq = function (fnc, intervalToSave) {
+        this.addDaq = fnc;                         // Add the DAQ value to db history
+        daqInterval = intervalToSave;
+    }
+
     this.addDaq = null;                         // Add the DAQ value to db history
 
     var _clearVarsValue = function () {
@@ -212,6 +228,7 @@ function S7client(_data, _logger, _events) {
 
     var _updateVarsValue = function (dbvalues) {
         var someval = false;
+        var changed = [];
         var result = [];
         for (var dbid in dbvalues) {
             let dbitems = dbvalues[dbid];
@@ -236,19 +253,14 @@ function S7client(_data, _logger, _events) {
         }
         if (someval) {
             for (var id in result) {
+                if (varsValue[id] !== result[id]) {
+                    changed[id] = result[id];
+                }
                 varsValue[id] = result[id];
             }
-            return result;
+            return changed;
         }
         return null;
-    }
-
-    var _addToDaq = function (dbvalues) {
-        if (this.addDaq) {
-            for (var dbid in dbvalues) {
-                this.addDaq(dbid, dbvalues[dbid].value);
-            }
-        }
     }
     
     //#region Bit Manipolation
