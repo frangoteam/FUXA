@@ -61,6 +61,9 @@ function OpcUAclient(_data, _logger, _events) {
     var client = new opcua.OPCUAClient(options);
     const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === "DataType" || x === "AccessLevel" || x === "UserAccessLevel");//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
+    var daqInterval = 0;
+    var lastDaqInterval = 0;
+
     this.connect = function () {
         return new Promise(function (resolve, reject) {
             if (!_checkWorking(true)) {
@@ -285,17 +288,25 @@ function OpcUAclient(_data, _logger, _events) {
                     monitored = true;
                 }
             });
-        } else {
+        } else if (the_session && client) {
             var varsValueChanged = _clearVarsChanged();
             if (Object.keys(varsValueChanged).length) {
                 _emitValues(varsValueChanged);
             }
-            // _addToDaq(varsValueChanged);
+
             if (this.addDaq) {
-                for (var dbid in varsValueChanged) {
-                    this.addDaq(dbid, varsValueChanged[dbid].value);
+                var current = new Date().getTime();
+                if (current - daqInterval > lastDaqInterval) {
+                    this.addDaq(data.tags);
+                    lastDaqInterval = current;
+                } else if (Object.keys(varsValueChanged).length) {
+                    this.addDaq(varsValueChanged);
                 }
+                // for (var dbid in dbvalues) {
+                //     addDaq(dbid, dbvalues[dbid].value);
+                // }
             }
+
         }
     }
 
@@ -354,6 +365,11 @@ function OpcUAclient(_data, _logger, _events) {
 
     this.isConnected = function () {
         return connected;
+    }
+
+    this.bindAddDaq = function (fnc, intervalToSave) {
+        this.addDaq = fnc;                         // Add the DAQ value to db history
+        daqInterval = intervalToSave;
     }
 
     this.addDaq = null;                         // Add the DAQ value to db history
@@ -457,14 +473,6 @@ function OpcUAclient(_data, _logger, _events) {
         }
         working = check;
         return true;
-    }
-
-    var _addToDaq = function (dbvalues) {
-        if (this.addDaq) {
-            for (var dbid in dbvalues) {
-                this.addDaq(dbid, dbvalues[dbid].value);
-            }
-        }
     }
 
     var _emitValues = function (values) {
