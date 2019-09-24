@@ -1,6 +1,6 @@
 <div *ngFor="let item of events; index as i" class="item">
   <div class="my-form-field" style="width: 140px;">
-    <span>Type</span>
+    <span>{{'gauges.property-event-type' | translate}}</span>
     <mat-select [(value)]="item.type" >
       <mat-option *ngFor="let ev of eventType | enumToArray" [value]="ev.key">
         {{ ev.value }}
@@ -8,7 +8,7 @@
     </mat-select>
   </div>
   <div class="my-form-field" style="width: 140px;padding-left: 20px">
-    <span>Action</span>
+    <span>{{'gauges.property-event-action' | translate}}</span>
     <mat-select [(value)]="item.action" (change)="item.actparam = '';">
       <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
         {{ type.value }}
@@ -16,13 +16,13 @@
     </mat-select>
   </div>
   <div class="my-form-field" style="width: 200px;padding-left: 20px" *ngIf="withDestination(item.action)">
-    <span>Destination</span>
+    <span>{{'gauges.property-event-destination' | translate}}</span>
     <mat-select [(value)]="item.actparam">
       <mat-option *ngFor="let v of views; index as i" [(value)]="v.id">{{v.name}}</mat-option>
     </mat-select>
   </div>
   <div class="my-form-field" style="padding-left: 20px;" *ngIf="withSetValue(item.action)">
-    <span>Value</span>
+    <span>{{'gauges.property-event-value' | translate}}</span>
     <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 100px">
   </div>
   <div class="item-remove">

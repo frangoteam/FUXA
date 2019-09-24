@@ -8,6 +8,7 @@ import {
   import { MatOption, MatSelect } from '@angular/material';
   import { Subject } from 'rxjs/Subject';
   import { take, takeUntil } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
   
   /* tslint:disable:member-ordering */
   /**
@@ -102,10 +103,10 @@ import {
   export class MatSelectSearchComponent implements OnInit, OnDestroy, AfterViewInit, ControlValueAccessor {
   
     /** Label of the search placeholder */
-    @Input() placeholderLabel = 'Suche';
+    @Input() placeholderLabel = '';
   
     /** Label to be shown when no entries are found. Set to null if no message should be shown. */
-    @Input() noEntriesFoundLabel = 'Keine Optionen gefunden';
+    @Input() noEntriesFoundLabel = '';
   
     /** Reference to the search input field */
     @ViewChild('searchSelectInput', {read: ElementRef}) searchSelectInput: ElementRef;
@@ -136,9 +137,8 @@ import {
   
   
     constructor(@Inject(MatSelect) public matSelect: MatSelect,
+                private translateService: TranslateService,
                 private changeDetectorRef: ChangeDetectorRef) {
-      
-  
     }
   
     ngOnInit() {
@@ -195,7 +195,7 @@ import {
           this.changeDetectorRef.detectChanges();
         });
   
-      this.initMultipleHandling();
+      this.initMultipleHandling();      
     }
   
     ngOnDestroy() {
@@ -205,6 +205,8 @@ import {
   
     ngAfterViewInit() {
       this.setOverlayClass();
+      this.translateService.get('general.search').subscribe((txt: string) => { this.placeholderLabel = txt });
+      this.translateService.get('general.search-notfound').subscribe((txt: string) => { this.noEntriesFoundLabel = txt });
     }
   
     /**

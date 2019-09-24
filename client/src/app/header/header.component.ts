@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 import { ProjectService } from '../_services/project.service';
 import { HelpData } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     moduleId: module.id,
@@ -26,6 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     
     constructor(private router: Router,
                 public dialog: MatDialog,
+                private translateService: TranslateService,
                 private projectService: ProjectService){
 
         this.router.events.subscribe(()=> {
@@ -87,7 +89,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     //#region Project Events
     onNewProject() {
         try {
-            if (window.confirm('You want to save the Project change?')) {
+            let msg = '';
+            this.translateService.get('msg.project-save-ask').subscribe((txt: string) => { msg = txt });
+            if (window.confirm(msg)) {
                 this.onSaveProject();
                 this.projectService.setNewProject();
             }
@@ -128,7 +132,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         }
 
         reader.onerror = function () {
-            alert('Unable to read ' + input.files[0]);
+            let msg = 'Unable to read ' + input.files[0];
+            // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
+            alert(msg);
         };
         reader.readAsText(input.files[0]);
     }

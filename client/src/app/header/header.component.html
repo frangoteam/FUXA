@@ -1,33 +1,37 @@
 <div class="header-panel" *ngIf="ineditor">
-  <button mat-button title="Save Project" [matMenuTriggerFor]="prjview" class="main-btn">
+  <button mat-button title="{{'header.save-project' | translate}}" [matMenuTriggerFor]="prjview" #prjviewtrigger="matMenuTrigger" class="main-btn"
+   (click)="prjedittrigger.closeMenu()">
     <mat-icon aria-label="Save Project">save</mat-icon>
   </button>
   <mat-menu #prjview="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
-    <button mat-menu-item (click)="onNewProject()">New Project</button>
+    <button mat-menu-item (click)="onNewProject()">{{'header.new-project' | translate}}</button>
     <mat-divider class="menu-separator"></mat-divider>
-    <button mat-menu-item (click)="onSaveProject()">Save Project</button>
-    <button mat-menu-item (click)="onSaveProjectAs()">Save Project As...</button>
+    <button mat-menu-item (click)="onSaveProject()">{{'header.save-project' | translate}}</button>
+    <button mat-menu-item (click)="onSaveProjectAs()">{{'header.saveas-project' | translate}}</button>
     <mat-divider class="menu-separator"></mat-divider>
-    <button mat-menu-item (click)="onOpenProject();$event.stopPropagation()">Open Project</button>
+    <button mat-menu-item (click)="onOpenProject();$event.stopPropagation()">{{'header.open-project' | translate}}</button>
     <!-- <button mat-menu-item (click)="onImportVariable();$event.stopPropagation()">Import Variable</button> -->
     <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)"
       accept=".fuxap" />
   </mat-menu>
-  <button mat-button title="View pages editor" class="main-btn" (click)="goTo('/editor')">
-      <mat-icon aria-label="View pages editor">widgets</mat-icon>
+  <button mat-button title="{{'header.edit-project' | translate}}" [matMenuTriggerFor]="prjedit" #prjedittrigger="matMenuTrigger" class="main-btn"
+   (click)="prjviewtrigger.closeMenu()">
+      <mat-icon aria-label="Edit Views">widgets</mat-icon>
   </button>
-  <button mat-button title="View Devices settings" class="main-btn" (click)="goTo('/device')">
-      <mat-icon aria-label="View Devices settings">device_hub</mat-icon>
-  </button>  
+  <mat-menu #prjedit="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
+    <button mat-menu-item (click)="goTo('/editor')">{{'header.edit-views' | translate}}</button>
+    <button mat-menu-item (click)="goTo('/device')">{{'header.edit-devices' | translate}}</button>
+  </mat-menu>
+
 </div>
 <div class="header-help" *ngIf="ineditor && !winele">
-    <button mat-button title="Help" [matMenuTriggerFor]="helpmenu" class="device-btn" style="padding-top: 3px !important;">
-        <mat-icon aria-label="Show FUXA Help">help_outline</mat-icon>
+    <button mat-button title="{{'header.help' | translate}}" [matMenuTriggerFor]="helpmenu" class="main-btn" style="padding-top: 3px !important;">
+        <mat-icon aria-label="HELP">help_outline</mat-icon>
     </button>
     <mat-menu #helpmenu="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
-        <button mat-menu-item (click)="onShowHelp('help')">Tutorial</button>
+        <button mat-menu-item (click)="onShowHelp('help')">{{'header.help-tutorial' | translate}}</button>
         <mat-divider class="menu-separator"></mat-divider>
-        <button mat-menu-item (click)="onShowHelp('info')">Info</button>
+        <button mat-menu-item (click)="onShowHelp('info')">{{'header.help-info' | translate}}</button>
     </mat-menu>
 </div>
 <app-tutorial #tutorial></app-tutorial>

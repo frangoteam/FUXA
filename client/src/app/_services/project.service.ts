@@ -8,6 +8,7 @@ import { Hmi } from '../_models/hmi';
 import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 import * as FileSaver from 'file-saver';
 
@@ -28,6 +29,7 @@ export class ProjectService {
     private projectOld: string = '';
 
     constructor(private http: HttpClient,
+        private translateService: TranslateService,
         private toastr: ToastrService) {
 
         if (environment.serverEnabled) {
@@ -38,7 +40,9 @@ export class ProjectService {
             }, error => {
                 this.load();
                 console.error(error);
-                this.toastr.error('Server connection failed!', '', {
+                var msg = '';
+                this.translateService.get('msg.server-connection-error').subscribe((txt: string) => {msg = txt});                      
+                this.toastr.error(msg, '', {
                     timeOut: 3000,
                     closeButton: true,
                     disableTimeOut: true
@@ -111,7 +115,9 @@ export class ProjectService {
                 // this.toastr.success('Project save successful!');
             }, err => {
                 console.log(err);
-                this.toastr.error('Project save failed', '', {
+                var msg = '';
+                this.translateService.get('msg.project-save-error').subscribe((txt: string) => {msg = txt});                  
+                this.toastr.error(msg, '', {
                     timeOut: 3000,
                     closeButton: true,
                     disableTimeOut: true

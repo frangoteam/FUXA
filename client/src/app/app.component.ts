@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -12,10 +13,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   title = 'app';
   location: Location;
 
-  @ViewChild('fabmenu')fabmenu: any; 
+  @ViewChild('fabmenu') fabmenu: any;
 
-  constructor(private router: Router, location: Location) {
+  constructor(private router: Router,
+    private fuxaLanguage: TranslateService,
+    location: Location) {
     this.location = location;
+
+    // this language will be used as a fallback when a translation isn't found in the current language
+    fuxaLanguage.setDefaultLang('en');
+    // the lang to use, if the lang isn't available, it will use the current loader to get them
+    fuxaLanguage.use('en');
   }
 
   ngOnInit() {
@@ -31,7 +39,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onGoTo(goto) {
-    this.router.navigate([ goto ]);
+    this.router.navigate([goto]);
     this.fabmenu.toggle();
   }
 }

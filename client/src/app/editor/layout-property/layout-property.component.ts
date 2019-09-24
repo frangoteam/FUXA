@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 import { LayoutSettings, NaviModeType, NaviItem, NaviItemType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
@@ -34,7 +35,8 @@ export class LayoutPropertyComponent implements OnInit {
     navType: any;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any,
-        public dialog: MatDialog) {
+        public dialog: MatDialog,
+        private translateService: TranslateService) {
         if (!data.layout) {
             data.layout = new LayoutSettings();
         }
@@ -51,6 +53,12 @@ export class LayoutPropertyComponent implements OnInit {
         this.navMode = NaviModeType;
         this.navType = NaviItemType;
 
+        Object.keys(this.navMode).forEach(key => {
+            this.translateService.get(this.navMode[key]).subscribe((txt: string) => {this.navMode[key] = txt});
+        });
+        Object.keys(this.navType).forEach(key => {
+            this.translateService.get(this.navType[key]).subscribe((txt: string) => {this.navType[key] = txt});
+        });
     }
 
     onAddMenuItem(item) {

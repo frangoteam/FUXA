@@ -3,11 +3,11 @@
     <div *ngIf="isWithRange()">
       <div *ngIf="slideView" class="item-range">
         <div class="my-form-field">
-          <span>Min</span>
+          <span>{{'gauges.property-input-min' | translate}}</span>
           <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
         </div>
         <div class="my-form-field" style="padding-left: 20px;">
-          <span>Max</span>
+          <span>{{'gauges.property-input-max' | translate}}</span>
           <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
         </div>
       </div>
@@ -15,7 +15,7 @@
         <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
       </div>
       <div class="my-form-field" style="width: 60px; top: 6px;" *ngIf="isWithRangeColor()">
-        <span>Color</span>
+        <span>{{'gauges.property-input-color' | translate}}</span>
         <input [(colorPicker)]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
             [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
             [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 8px 0 0 0;"
@@ -38,11 +38,11 @@
     <div *ngIf="isMinMax()">
       <div class="item-minmax">
         <div class="my-form-field">
-          <span>Min</span>
+          <span>{{'gauges.property-input-min' | translate}}</span>
           <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
         </div>
         <div class="my-form-field" style="padding-left: 20px;">
-          <span>Max</span>
+          <span>{{'gauges.property-input-max' | translate}}</span>
           <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
         </div>
         <div class="my-form-field" style="padding-left: 30px">
@@ -50,7 +50,7 @@
           <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important"> -->
         </div>
         <div class="my-form-field" style="width: 60px;padding-left: 20px; top: 4px;">
-          <span>Color</span>
+          <span>{{'gauges.property-input-color' | translate}}</span>
           <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
           [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
           [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 8px 0 0 0;"
@@ -62,17 +62,17 @@
     </div>
     <div *ngIf="isWithStep()" class="item-step">
       <div class="my-form-field">
-        <span>Value</span>
+        <span>{{'gauges.property-input-value' | translate}}</span>
         <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
       </div>
       <div class="my-form-field" style="padding-left: 20px;">
-        <span>Label</span>
+        <span>{{'gauges.property-input-label' | translate}}</span>
         <input [(ngModel)]="item.text" type="text" style="width: 160px;text-align: left !important">
       </div>
     </div>
     <div *ngIf="isWithUnit()" class="item-step">
       <div class="my-form-field">
-          <span>Unit</span>
+          <span>{{'gauges.property-input-unit' | translate}}</span>
           <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important">
       </div>
     </div>    

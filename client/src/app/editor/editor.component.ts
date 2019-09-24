@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 import { Subscription } from 'rxjs/Subscription';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService } from '../_services/project.service';
 import { Hmi, View, GaugeSettings, SelElement } from '../_models/hmi';
@@ -85,6 +86,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(private projectService: ProjectService,
         private winRef: WindowRef,
         public dialog: MatDialog,
+        private translateService: TranslateService,
         private gaugesManager: GaugesManager,
         private mdIconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
         mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
@@ -649,11 +651,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onDeleteView(view) {
 
+        var msg = '';
+        this.translateService.get('msg.view-remove', { value: view.name }).subscribe((txt: string) => {msg = txt});
         let dialogRef = this.dialog.open(ConfirmDialogComponent, {
             minWidth: '350px',
-            data: { msg: "Would you like to remove View '" + view.name + "' ?" },
+            data: { msg: msg },
             position: { top: '80px' }
         });
+
         dialogRef.afterClosed().subscribe(result => {
             if (result && this.hmi.views) {
                 let toselect = null;

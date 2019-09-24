@@ -7,7 +7,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/frangoteam/FUXA.git"
-  },  
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve --dev",
@@ -31,6 +31,8 @@
     "@angular/platform-browser-dynamic": "5.2.0",
     "@angular/router": "5.2.0",
     "@codebyjordan/scrollbar": "^2.1.6",
+    "@ngx-translate/core": "^9.1.1",
+    "@ngx-translate/http-loader": "^2.0.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "core-js": "^2.4.1",

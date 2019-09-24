@@ -40,17 +40,17 @@ export class NavigationSettings {
 }
 
 export enum NaviModeType {
-    void = 'None',
-    push = 'Push',
-    over = 'Over',
-    fix = 'Fixed',
+    void = 'item.navsmode-none',
+    push = 'item.navsmode-push',
+    over = 'item.navsmode-over',
+    fix = 'item.navsmode-fixed',
 }
 
 export enum NaviItemType {
-    icon = 'Icons',
-    text = 'Text',
-    block = 'Icons & Text (block)',
-    inline = 'Icons & Text (inline)',
+    icon = 'item.navtype-icons',
+    text = 'item.navtype-text',
+    block = 'item.navtype-icons-text-block',
+    inline = 'item.navtype-icons-text-inline',
 }
 
 export class NaviItem {

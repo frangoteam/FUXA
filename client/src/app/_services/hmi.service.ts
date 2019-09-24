@@ -9,6 +9,7 @@ import { Hmi, Variable, GaugeSettings } from '../_models/hmi';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class HmiService {
@@ -30,6 +31,7 @@ export class HmiService {
     private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
 
     constructor(private projectService: ProjectService,
+        private translateService: TranslateService,
         private toastr: ToastrService) {
         if (environment.serverEnabled) {
             this.initSocket();
@@ -78,7 +80,9 @@ export class HmiService {
             this.socket.on('device-status', (message) => {
                 this.onDeviceChanged.emit(message);
                 if (message.status === 'connect-error') {
-                    this.toastr.error('Device "' + message.id + '" connection error!', '', {
+                    var msg = '';
+                    this.translateService.get('msg.device-connection-error', { value: message.id }).subscribe((txt: string) => {msg = txt});                    
+                    this.toastr.error(msg, '', {
                         timeOut: 3000,
                         closeButton: true,
                         // disableTimeOut: true

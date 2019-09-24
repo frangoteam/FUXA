@@ -4,7 +4,7 @@
       <mat-icon aria-label="Show devices map">arrow_back</mat-icon>
     </button>
     <div class="my-form-field" style="">
-      <span>Device</span>
+      <span>{{'device.list-device' | translate}}</span>
       <mat-select [(value)]="deviceSelected" style="width: 300px" (selectionChange)="onDeviceChange($event.source)">
         <mat-option *ngFor="let device of devicesValue()" [value]="device">
           {{ device.name }}
@@ -12,7 +12,7 @@
       </mat-select>
     </div>
     <div class="my-form-field" style="">
-      <span>Filter</span>
+      <span>{{'device.list-filter' | translate}}</span>
       <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
     </div>
     <!-- <mat-form-field>
@@ -44,43 +44,43 @@
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
 
     <!-- Address Column -->
     <ng-container matColumnDef="address">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Address </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
     </ng-container>
 
     <!-- Device Column -->
     <ng-container matColumnDef="device">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Device </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{deviceSelected.name}} </mat-cell>
     </ng-container>
 
     <!-- Device Column -->
     <ng-container matColumnDef="type">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
     </ng-container>
 
     <!-- Min Column -->
     <ng-container matColumnDef="min">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Min </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.min}} </mat-cell>
     </ng-container>
 
     <!-- Max Column -->
     <ng-container matColumnDef="max">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Max </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.max}} </mat-cell>
     </ng-container>
 
     <!-- Value Column -->
     <ng-container matColumnDef="value">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> Value </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
     </ng-container>
 

@@ -5,6 +5,7 @@ import { Subscription } from "rxjs/Subscription";
 import { Device, TagType, Tag, DeviceType } from './../../_models/device';
 import { TreetableComponent, Node } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
+import { TranslateService } from '@ngx-translate/core';
 import { t } from '@angular/core/src/render3';
 
 @Component({
@@ -27,6 +28,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
   constructor(
     private hmiService: HmiService,
+    private translateService: TranslateService,
     public dialogRef: MatDialogRef<TagPropertyComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     if (this.data.device.type === DeviceType.OPCUA) {
@@ -73,7 +75,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             }
           }
           // console.log(values);
-        });        
+        });
       }
       this.queryNext(null);
     }
@@ -108,9 +110,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
   onCheckValue(tag) {
     if (this.existing.indexOf(tag.target.value) !== -1) {
-      this.error = "Tagname exist!"
+        this.error = '';
+        this.translateService.get('msg.device-tag-exist').subscribe((txt: string) => { this.error = txt });
     } else {
-      this.error = "";
+      this.error = '';
     }
   }
 
@@ -136,9 +139,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     if (n.class === 'Object') { // Object
       return '';
     } else if (n.class === 'Variable') {
-      return "Variable";
+      return 'Variable';
     } else if (n.class === 'Method') {
-      return "Method";
+      return 'Method';
     }
     return '';
   }
@@ -152,7 +155,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
   }
 
   queryNext(node: Node) {
-    let n = (node) ? { id: node.id } : null; 
+    let n = (node) ? { id: node.id } : null;
     this.hmiService.askDeviceBrowse(this.data.device.name, n);
   }
 

@@ -1,7 +1,7 @@
 <div class="container">
   <div class="head" style="padding-top: 10px;">
     <div class="my-form-field" style="width: 220px;">
-      <span>Device</span>
+      <span>{{'gauges.property-head-device' | translate}}</span>
       <mat-select [formControl]="deviceCtrl" (selectionChange)="onDeviceChange($event.source)">
         <mat-select-search [formControl]="deviceFilterCtrl"></mat-select-search>
         <mat-option *ngFor="let device of filteredDevice | async" [value]="device">
@@ -10,7 +10,7 @@
       </mat-select>
     </div>
     <div class="my-form-field" style="width: 400px;float: right;margin-right: 10px;">
-      <span>Variable</span>
+      <span>{{'gauges.property-head-variable' | translate}}</span>
       <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
         <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
         <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
@@ -22,7 +22,7 @@
   <flex-input [ranges]="property.ranges" [default]="defaultValue" #flexinput *ngIf="withInput" [inputType]="withInput" style="padding-bottom: 5px"></flex-input>
   <div *ngIf="withAlarm" class="head" style="padding-top: 15px;">
     <div class="my-form-field" style="width: 220px;">
-      <span>Device</span>
+      <span>{{'gauges.property-head-device' | translate}}</span>
       <mat-select [formControl]="alarmDeviceCtrl" (selectionChange)="onAlarmDeviceChange($event.source)" class="select-item">
         <mat-select-search [formControl]="alarmDeviceFilterCtrl"></mat-select-search>
         <mat-option *ngFor="let device of filteredAlarmDevice | async" [value]="device">
@@ -31,7 +31,7 @@
       </mat-select>
     </div>
     <div class="my-form-field" style="width: 400px;float: right;margin-right: 10px;">
-      <span>Alarm</span>
+      <span>{{'gauges.property-head-alarm' | translate}}</span>
       <mat-select [formControl]="alarmCtrl" (selectionChange)="onAlarmChange($event.source)">
         <mat-select-search [formControl]="alarmFilterCtrl"></mat-select-search>
         <mat-option *ngFor="let vari of filteredAlarm | async" [value]="vari">
@@ -41,7 +41,7 @@
     </div>
     <div style="display: block; width:100%">
       <div class="my-form-field" style="width: 60px;float: right;margin-right: 10px; top: 5px;">
-        <span>Color</span>
+        <span>{{'gauges.property-head-color' | translate}}</span>
         <input [(colorPicker)]="property.alarmColor" [style.background]="property.alarmColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
             [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
             [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 10px 0 0 0;"
