@@ -203,7 +203,7 @@
             <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('gauge_semaphore')}" (click)="setMode('gauge_semaphore')">
               <span class="icon-tool icon-semaphore"></span>
             </div>
-            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('chart')}" (click)="setMode('chart')">
+            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('html_chart')}" (click)="setMode('html_chart')">
               <span class="icon-tool icon-chart"></span>
             </div>
           </div>
@@ -1000,9 +1000,9 @@
     <!-- work area END -->
   </mat-drawer-container>
 
-
   <!-- svg_editor -->
 
+  <!-- NOT USED -->
   <div id="svg_source_editor">
     <div class="overlay"></div>
     <div id="svg_source_container">
@@ -1020,7 +1020,6 @@
       </form>
     </div>
   </div>
-
 
   <div id="svg_docprops">
     <div class="overlay"></div>
@@ -1193,6 +1192,7 @@
 
     </div>
   </div>
+  <!-- NOT USED END -->
 
   <div id="dialog_box">
     <div class="overlay"></div>
@@ -1202,72 +1202,76 @@
     </div>
   </div>
 
+  <!-- canvas context menu -->
   <ul id="cmenu_canvas" class="contextMenu svg-workarea-contextmenu">
     <!-- <li>
       <a href="#deselect">Clear selection</a>
     </li> -->
     <li>
-      <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">Interactivity</a>
+      <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">{{'editor.interactivity' | translate}}</a>
     </li>
     <li class="separator">
-      <a id="#cut">Cut</a>
+      <a id="#cut">{{'editor.cmenu-cut' | translate}}</a>
     </li>
     <li>
-      <a id="#copy">Copy</a>
+      <a id="#copy">{{'editor.cmenu-copy' | translate}}</a>
     </li>
     <li>
-      <a id="#paste">Paste</a>
+      <a id="#paste">{{'editor.cmenu-paste' | translate}}</a>
     </li>
     <li>
-      <a id="#paste_in_place">Paste in Place</a>
+      <a id="#paste_in_place">{{'editor.cmenu-paste-place' | translate}}</a>
     </li>
     <li class="separator">
-      <a id="#delete">Delete</a>
+      <a id="#delete">{{'editor.cmenu-delete' | translate}}</a>
     </li>
     <li class="separator">
-      <a id="#group">Group
+      <a id="#group">{{'editor.cmenu-group' | translate}}
         <span class="shortcut">G</span>
       </a>
     </li>
     <li>
-      <a id="#ungroup">Ungroup
+      <a id="#ungroup">{{'editor.cmenu-ungroup' | translate}}
         <span class="shortcut">G</span>
       </a>
     </li>
     <li class="separator">
-      <a id="#move_front">Bring to Front
+      <a id="#move_front">{{'editor.cmenu-bring-front' | translate}}
         <span class="shortcut">SHFT+CTRL+]</span>
       </a>
     </li>
     <li>
-      <a id="#move_up">Bring Forward
+      <a id="#move_up">{{'editor.cmenu-bring-forward' | translate}}
         <span class="shortcut">CTRL+]</span>
       </a>
     </li>
     <li>
-      <a id="#move_down">Send Backward
+      <a id="#move_down">{{'editor.cmenu-send-backward' | translate}}
         <span class="shortcut">CTRL+[</span>
       </a>
     </li>
     <li>
-      <a id="#move_back">Send to Back
+      <a id="#move_back">{{'editor.cmenu-send-back' | translate}}
         <span class="shortcut">SHFT+CTRL+[</span>
       </a>
     </li>
   </ul>
+  <!-- canvas context menu END -->
 
+  <!-- layers context menu -->
   <ul id="cmenu_layers" class="contextMenu" style="display: none">
     <li>
-      <a href="#dupe">Duplicate Layer...</a>
+      <a href="#dupe">{{'editor.cmenu-layer-duplicate' | translate}}</a>
     </li>
     <li>
-      <a href="#delete">Delete Layer</a>
+      <a href="#delete">{{'editor.cmenu-layer-delete' | translate}}</a>
     </li>
     <li>
-      <a href="#merge_down">Merge Down</a>
+      <a href="#merge_down">{{'editor.cmenu-layer-marge-down' | translate}}</a>
     </li>
     <li>
-      <a href="#merge_all">Merge All</a>
+      <a href="#merge_all">{{'editor.cmenu-layer-marge-all' | translate}}</a>
     </li>
   </ul>
+  <!-- layers context menu END -->
 </div>
