@@ -1,0 +1,22 @@
+<!-- <div class="ng-dygraphs">
+    <div *ngIf="loadingInProgress" class="loader-holder">
+        <div class="loader"></div>
+    </div>
+    <div class="ng-dygraphs-chart-container">
+        <div [ngClass]="{'hide': !data?.length}" #chart [style.width.px]="chartWidth" [style.height.px]="chartHeight">
+        </div>
+        <div *ngIf="!data?.length" class="nodata" [style.width.px]="chartWidth" [style.height.px]="chartHeight">
+            {{noDataLabel}}
+        </div>
+    </div>
+</div> -->
+<div class="mychart-panel">
+    <div class="mychart-graph" #chart>
+    </div>
+    <div *ngIf="!data?.length" class="nodata">
+        {{noDataLabel}}
+    </div>
+    <div *ngIf="loadingInProgress" class="loader-holder">
+        <div class="loader"></div>
+    </div>
+</div>

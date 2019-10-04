@@ -16,10 +16,12 @@ import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
 import { HtmlButtonComponent } from './controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './controls/html-select/html-select.component';
+import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
 import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaphore.component';
 
 import { Dictionary } from '../_helpers/dictionary';
+import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 
 
 @Injectable()
@@ -95,6 +97,10 @@ export class GaugesManager {
       case HtmlSelectComponent.TypeTag:
         gs = new GaugeSettings(id, type);
         gs.label = HtmlSelectComponent.LabelTag;
+        break;
+      case HtmlChartComponent.TypeTag:
+        gs = new GaugeSettings(id, type);
+        gs.label = HtmlChartComponent.LabelTag;
         break;
       case GaugeProgressComponent.TypeTag:
         gs = new GaugeSettings(id, type);
@@ -383,6 +389,19 @@ export class GaugesManager {
       } else if (type === HtmlSelectComponent.TypeTag) {
         HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
       }
+    }
+  }
+
+  public static initElementAdded(ga: GaugeSettings, res: any, ref: any, view: any) {
+    if (ga.type === HtmlChartComponent.TypeTag) {
+      let optionsToRemoveInteraction = { interactionModel: {} };
+      if (view) {
+        optionsToRemoveInteraction = null;
+      }
+      let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, optionsToRemoveInteraction);
+
+      gauge.resize();
+      return gauge;
     }
   }
 }

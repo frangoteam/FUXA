@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFactoryResolver, Output, EventEmitter } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
 
@@ -27,7 +27,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
   private subscriptionOnChange: Subscription;
 
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef,
+              private viewContainerRef: ViewContainerRef,
+              private resolver: ComponentFactoryResolver) {
+
+  }
 
   ngOnInit() {
     try {
@@ -76,6 +80,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
       // this.gaugesManager.initGaugesMap();
       for (let key in view.items) {
         console.log(key);
+        let gauge = GaugesManager.initElementAdded(view.items[key], this.resolver, this.viewContainerRef, this);
         this.gaugesManager.bindGauge(this.id, view.items[key],
           (gatobindclick) => {
             this.onBindClick(gatobindclick);

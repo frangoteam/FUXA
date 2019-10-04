@@ -1,4 +1,4 @@
-﻿import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+﻿import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
@@ -20,6 +20,7 @@ import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-di
 import * as FileSaver from 'file-saver';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
+import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 
 declare var Gauge: any;
 
@@ -80,6 +81,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelEventOpenState: boolean;
     panelMarkerOpenState: boolean;
 
+    private gaugesRef = [];
+
     private subscriptionSave: Subscription;
     private subscriptionLoad: Subscription;
 
@@ -88,6 +91,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         public dialog: MatDialog,
         private translateService: TranslateService,
         private gaugesManager: GaugesManager,
+        private viewContainerRef: ViewContainerRef,
+        private resolver: ComponentFactoryResolver,
         private mdIconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
         mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
         mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
@@ -165,25 +170,28 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             let toinit = mysvgeditor.initSvgEditor($,
                 (selected) => {
                     this.onSelectedElement(selected);
+                    let ga: GaugeSettings = this.getGaugeSettings(selected);
                 },
                 (args) => {
                     this.onExtensionLoaded(args);
                     this.clearSelection();
                 },
                 (type, color) => {
-                    if (type == 'fill') {
+                    if (type === 'fill') {
                         this.colorFill = color;
                         this.setFillColor(this.colorFill);
                         this.checkMySelectedToSetColor(this.colorFill, null, this.winRef.nativeWindow.svgEditor.getSelectedElements());
                         // console.log('fill ' + color);
-                    } else if (type == 'stroke') {
+                    } else if (type === 'stroke') {
                         this.colorStroke = color;
                         this.checkMySelectedToSetColor(null, this.colorStroke, this.winRef.nativeWindow.svgEditor.getSelectedElements());
                         // console.log('stroke ' + color);
                     }
                 },
                 (eleadded) => {
-                    // console.log('added: ' + eleadded.id + ' ' + eleadded.type);
+                    console.log('added: ' + eleadded.id + ' ' + eleadded.type);
+                    let ga: GaugeSettings = this.getGaugeSettings(eleadded);
+                    this.checkGaugeAdded(ga);
                     // this.hmiService.addGauge(this.hmi, eleadded);
                 },
                 (eleremoved) => {
@@ -338,6 +346,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
             this.winRef.nativeWindow.svgEditor.setSvgString(svgcontent);
+
+            // check gauge to init
+            this.gaugesRef = [];
+            setTimeout(() => {            
+                for (let key in v.items) {
+                    let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
+                    this.checkGaugeAdded(ga);
+                    // GaugesManager.initElementAdded(v.items[key], this.resolver, this.viewContainerRef);                
+                }
+            }, 500);
+
         }
     }
 
@@ -589,6 +608,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         // }
     }
 
+    /**
+     * check and set the special gauge like ngx-dygraphs if added
+     * @param ga 
+     */
+    checkGaugeAdded(ga: GaugeSettings) {
+        let gauge = GaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, null);
+        if (gauge) {
+            if (this.gaugesRef.indexOf(ga.id) === -1) {
+                this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
+            }
+            this.setGaugeSettings(ga);
+        }
+    }
     //#endregion
 
     //#region Toolbar Top Events

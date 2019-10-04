@@ -44,6 +44,7 @@ import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.c
 import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item-button.component';
 import { TreetableComponent } from './gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dialog.component';
+import { NgxDygraphsComponent } from './gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -69,6 +70,7 @@ import { MatSelectSearchModule } from './gui-helpers/mat-select-search/mat-selec
 import { HtmlInputComponent } from './gauges/controls/html-input/html-input.component';
 import { HtmlButtonComponent } from './gauges/controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.component';
+import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
 
@@ -106,6 +108,7 @@ export function createTranslateLoader(http: HttpClient) {
     HtmlInputComponent,
     HtmlButtonComponent,
     HtmlSelectComponent,
+    HtmlChartComponent,
     GaugeProgressComponent,
     GaugeSemaphoreComponent,
     GaugePropertyComponent,
@@ -123,14 +126,15 @@ export function createTranslateLoader(http: HttpClient) {
     NgxFabButtonComponent,
     NgxFabItemButtonComponent,
     TreetableComponent,
-    LazyForDirective
+    LazyForDirective,
+    NgxDygraphsComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    routing,    
+    routing,
     MaterialModule,
     BrowserAnimationsModule,
     ColorPickerModule,
@@ -139,23 +143,23 @@ export function createTranslateLoader(http: HttpClient) {
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-bottom-right',
-      preventDuplicates: false,
+      preventDuplicates: false
     }),
     DndModule,
     TranslateModule.forRoot({
-        loader: {
-            provide: TranslateLoader,
-            useFactory: (createTranslateLoader),
-            deps: [HttpClient]
-        }
-    }),
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     HmiService,
     ProjectService,
     TesterService,
     customHttpProvider,
-    GaugesManager,    
+    GaugesManager,
     WindowRef,
     Utils,
     Dictionary,
@@ -163,7 +167,7 @@ export function createTranslateLoader(http: HttpClient) {
     Define
   ],
   entryComponents: [
-    DialogDocProperty, 
+    DialogDocProperty,
     DialogDocName,
     DialogInfo,
     DynamicComponent,
@@ -172,8 +176,9 @@ export function createTranslateLoader(http: HttpClient) {
     TagPropertyComponent,
     ConfirmDialogComponent,
     LayoutPropertyComponent,
-    DialogMenuItem
+    DialogMenuItem,
+    NgxDygraphsComponent
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
