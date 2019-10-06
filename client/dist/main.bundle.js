@@ -4078,6 +4078,7 @@ var EditorComponent = (function () {
             }
             else {
                 v.name = nn + idx;
+                v.profile.bkcolor = '#ffffffff';
             }
             v.id = 'v_' + Date.now();
             this.hmi.views.push(v);
@@ -4142,8 +4143,8 @@ var EditorComponent = (function () {
             data: { name: view.name, width: view.profile.width, height: view.profile.height, bkcolor: view.profile.bkcolor }
         });
         dialogRef.afterClosed().subscribe(function (result) {
-            view.profile.width = result.width;
-            view.profile.height = result.height;
+            view.profile.width = parseInt(result.width);
+            view.profile.height = parseInt(result.height);
             view.profile.bkcolor = result.bkcolor;
             _this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
             _this.saveHmi();

@@ -670,6 +670,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 v.name = 'MainView';
             } else {
                 v.name = nn + idx;
+                v.profile.bkcolor = '#ffffffff';
             }
             v.id = 'v_' + Date.now();
             this.hmi.views.push(v);
@@ -738,8 +739,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            view.profile.width = result.width;
-            view.profile.height = result.height;
+            view.profile.width = parseInt(result.width);
+            view.profile.height = parseInt(result.height);
             view.profile.bkcolor = result.bkcolor;
             this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
             this.saveHmi();
