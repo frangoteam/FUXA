@@ -1,0 +1,48 @@
+<div style="width: 100%;min-height: 400px;position: relative;padding-bottom: 40px">
+  <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+  <mat-tab-group style="width: 100%;">
+    <mat-tab label="{{'gauges.property-props' | translate}}">
+      <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+        <div style="display: block;">
+          <div class="my-form-field" style="width: 400px;">
+            <span>{{'chart.property-chart' | translate}}</span>
+            <mat-select [formControl]="chartCtrl">
+              <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
+              <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
+                {{ chart.name }}
+              </mat-option>
+            </mat-select>
+          </div>
+          <div class="my-form-field" style="width: 200px;float: right;margin-right: 10px;">
+            <span>{{'chart.property-chart-type' | translate}}</span>
+            <mat-select [(value)]="chartViewValue" >
+              <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
+                {{ ev.value }}
+              </mat-option>
+            </mat-select>
+          </div>          
+        </div>
+        <div style="display: block; width:100%">
+          <mat-list class="list" style="padding-left: 8px;padding-right: 8px;">
+            <div style="height: calc(100% - 36px); overflow-y: auto" *ngIf="chartCtrl.value">
+                <mat-list-item *ngFor="let tag of chartCtrl.value.lines" style="font-size:14px">
+                    <div style="width: 50%;">
+                        <span>{{tag.name}}</span>
+                    </div>
+                    <div style="width: 40%;">
+                        <span>{{getDeviceName(tag.device)}}</span>
+                    </div>
+                    <div [style.background-color]="tag.color" style="height:20px; width:30px">
+                    </div>
+                </mat-list-item>
+            </div>
+        </mat-list>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
+    <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+    <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+  </div>
+</div>

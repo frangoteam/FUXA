@@ -21,6 +21,7 @@
   <mat-menu #prjedit="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
     <button mat-menu-item (click)="goTo('/editor')">{{'header.edit-views' | translate}}</button>
     <button mat-menu-item (click)="goTo('/device')">{{'header.edit-devices' | translate}}</button>
+    <button mat-menu-item (click)="onChartConfig()">{{'header.edit-charts' | translate}}</button>
   </mat-menu>
 
 </div>

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Hmi } from '../_models/hmi';
+import { Chart } from '../_models/chart';
 import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
@@ -178,14 +179,14 @@ export class ProjectService {
 
     //#region hmi resource json struct
     /**
-     * get hmiresource
+     * get hmi resource
      */
     getHmi() {
         return (this.projectData) ? this.projectData.hmi : null;
     }
 
     /**
-     * save hmi resource to backend
+     * save hmi resource to project
      * @param hmi hmiresource to save
      */
     setHmi(hmi: Hmi, notify?: boolean) {
@@ -193,6 +194,23 @@ export class ProjectService {
         if (notify) {
             this.notifyToLoadHmi();
         }
+    }
+    //#endregion
+
+    //#region charts resource
+    /**
+     * get charts resource
+     */
+    getCharts() {
+        return (this.projectData) ? (this.projectData.charts) ? this.projectData.charts : [] : null;
+    }
+
+    /**
+     * save the charts to project
+     * @param charts
+     */
+    setCharts(charts: Chart[]) {
+        this.projectData.charts = charts;
     }
     //#endregion
 
@@ -392,4 +410,5 @@ export class ProjectData {
     server: Device = new Device();
     hmi: Hmi = new Hmi();
     devices = {};
+    charts: Chart[] = [];
 }

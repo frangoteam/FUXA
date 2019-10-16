@@ -10,6 +10,7 @@ import { Hmi, View, GaugeSettings, SelElement } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
 import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
+import { ChartPropertyComponent } from '../gauges/chart-property/chart-property.component';
 import { LayoutPropertyComponent } from './layout-property/layout-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
@@ -862,6 +863,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.gaugesManager.isWithEvents(type);
     }
 
+    /**
+     * edit the gauge/chart settings property, the settings are composed from gauge id... and property
+     * in property will be the result values saved
+     * @param settings 
+     * @param callback 
+     */
     openEditGauge(settings, callback) {
         // console.log('The Edit Gauge open');
         let tempsettings = JSON.parse(JSON.stringify(settings));
@@ -870,20 +877,30 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let eventsSupported = this.isWithEvents(settings.type);
         let defaultValue = GaugesManager.getDefaultValue(settings.type);
         // settings.property = JSON.parse(settings.property);
-        let dialogRef = this.dialog.open(GaugePropertyComponent, {
-            // data: { settings: tempsettings, signals: this.signals, views: hmi.views }
-            minWidth: '700px',
-            minHeight: '700px',
-            panelClass: 'dialog-property',
-            data: {
-                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
-            },
-            position: { top: '80px' }
-            // data: data
-
-        });
-
+        let dialogRef: any;
+        if (dlgType === GaugeDialogType.Chart) {
+            dialogRef = this.dialog.open(ChartPropertyComponent, {
+                minWidth: '700px',
+                minHeight: '700px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts()
+                },
+                position: { top: '80px' }
+            });
+        } else {
+            dialogRef = this.dialog.open(GaugePropertyComponent, {
+                minWidth: '700px',
+                minHeight: '700px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
+                },
+                position: { top: '80px' }
+            });
+        }
         dialogRef.afterClosed().subscribe(result => {
             // console.log('The Edit Gauge was closed');
             if (result) {

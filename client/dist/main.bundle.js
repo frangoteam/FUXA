@@ -887,6 +887,7 @@ var Utils = (function () {
     Utils.defaultColor = ['#FFFFFF', '#000000', '#EEECE1', '#1F497D', '#4F81BD', '#C0504D', '#9BBB59', '#8064A2', '#4BACC6',
         '#F79646', '#C00000', '#FF0000', '#FFC000', '#FFD04A', '#FFFF00', '#92D050', '#0AC97D', '#00B050', '#00B0F0', '#4484EF', '#3358C0',
         '#002060', '#7030A0', '#D8D8D8', '#BFBFBF', '#A5A5A5', '#7F7F7F', '#595959', '#3F3F3F', '#262626'];
+    Utils.lineColor = ['#4484ef', '#ef0909', '#00b050', '#ffd04a', '#7030a0', '#a5a5a5', '#c0504d', '#000000'];
     Utils = Utils_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])()
     ], Utils);
@@ -953,6 +954,34 @@ var WindowRef = (function () {
     return WindowRef;
 }());
 
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/_models/chart.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export Chart */
+/* unused harmony export ChartLine */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartViewType; });
+var Chart = (function () {
+    function Chart() {
+    }
+    return Chart;
+}());
+
+var ChartLine = (function () {
+    function ChartLine() {
+    }
+    return ChartLine;
+}());
+
+var ChartViewType;
+(function (ChartViewType) {
+    ChartViewType["realtime1"] = "chart.viewtype-realtime1";
+    ChartViewType["history"] = "chart.viewtype-history";
+})(ChartViewType || (ChartViewType = {}));
 
 
 /***/ }),
@@ -1718,13 +1747,13 @@ var ProjectService = (function () {
     //#endregion
     //#region hmi resource json struct
     /**
-     * get hmiresource
+     * get hmi resource
      */
     ProjectService.prototype.getHmi = function () {
         return (this.projectData) ? this.projectData.hmi : null;
     };
     /**
-     * save hmi resource to backend
+     * save hmi resource to project
      * @param hmi hmiresource to save
      */
     ProjectService.prototype.setHmi = function (hmi, notify) {
@@ -1732,6 +1761,21 @@ var ProjectService = (function () {
         if (notify) {
             this.notifyToLoadHmi();
         }
+    };
+    //#endregion
+    //#region charts resource
+    /**
+     * get charts resource
+     */
+    ProjectService.prototype.getCharts = function () {
+        return (this.projectData) ? (this.projectData.charts) ? this.projectData.charts : [] : null;
+    };
+    /**
+     * save the charts to project
+     * @param charts
+     */
+    ProjectService.prototype.setCharts = function (charts) {
+        this.projectData.charts = charts;
     };
     //#endregion
     //#region Notify
@@ -1932,6 +1976,7 @@ var ProjectData = (function () {
         this.server = new __WEBPACK_IMPORTED_MODULE_4__models_device__["a" /* Device */]();
         this.hmi = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["i" /* Hmi */]();
         this.devices = {};
+        this.charts = [];
     }
     return ProjectData;
 }());
@@ -2069,53 +2114,55 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__sidenav_sidenav_component__ = __webpack_require__("../../../../../src/app/sidenav/sidenav.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__ = __webpack_require__("../../../../../src/app/editor/editor.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__ = __webpack_require__("../../../../../src/app/editor/layout-property/layout-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__lab_lab_component__ = __webpack_require__("../../../../../src/app/lab/lab.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__device_device_component__ = __webpack_require__("../../../../../src/app/device/device.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__device_device_property_device_property_component__ = __webpack_require__("../../../../../src/app/device/device-property/device-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__device_tag_property_tag_property_component__ = __webpack_require__("../../../../../src/app/device/tag-property/tag-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__device_device_list_device_list_component__ = __webpack_require__("../../../../../src/app/device/device-list/device-list.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__device_device_map_device_map_component__ = __webpack_require__("../../../../../src/app/device/device-map/device-map.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__fuxa_view_fuxa_view_component__ = __webpack_require__("../../../../../src/app/fuxa-view/fuxa-view.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__tester_tester_component__ = __webpack_require__("../../../../../src/app/tester/tester.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__helpers_custom_http__ = __webpack_require__("../../../../../src/app/_helpers/custom-http.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__tester_tester_service__ = __webpack_require__("../../../../../src/app/tester/tester.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__help_tutorial_tutorial_component__ = __webpack_require__("../../../../../src/app/help/tutorial/tutorial.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__helpers_windowref__ = __webpack_require__("../../../../../src/app/_helpers/windowref.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__helpers_define__ = __webpack_require__("../../../../../src/app/_helpers/define.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__helpers_dictionary__ = __webpack_require__("../../../../../src/app/_helpers/dictionary.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__gui_helpers_fab_button_ngx_fab_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gui_helpers_fab_button_ngx_fab_item_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-item-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_60__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_61__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_62__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_65__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_66__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__ = __webpack_require__("../../../../../src/app/editor/chart-config/chart-config.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__lab_lab_component__ = __webpack_require__("../../../../../src/app/lab/lab.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__device_device_component__ = __webpack_require__("../../../../../src/app/device/device.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__device_device_property_device_property_component__ = __webpack_require__("../../../../../src/app/device/device-property/device-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__device_tag_property_tag_property_component__ = __webpack_require__("../../../../../src/app/device/tag-property/tag-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__device_device_list_device_list_component__ = __webpack_require__("../../../../../src/app/device/device-list/device-list.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__device_device_map_device_map_component__ = __webpack_require__("../../../../../src/app/device/device-map/device-map.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__fuxa_view_fuxa_view_component__ = __webpack_require__("../../../../../src/app/fuxa-view/fuxa-view.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__tester_tester_component__ = __webpack_require__("../../../../../src/app/tester/tester.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__helpers_custom_http__ = __webpack_require__("../../../../../src/app/_helpers/custom-http.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__tester_tester_service__ = __webpack_require__("../../../../../src/app/tester/tester.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__help_tutorial_tutorial_component__ = __webpack_require__("../../../../../src/app/help/tutorial/tutorial.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__helpers_windowref__ = __webpack_require__("../../../../../src/app/_helpers/windowref.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__helpers_define__ = __webpack_require__("../../../../../src/app/_helpers/define.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__helpers_dictionary__ = __webpack_require__("../../../../../src/app/_helpers/dictionary.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gui_helpers_fab_button_ngx_fab_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gui_helpers_fab_button_ngx_fab_item_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-item-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_58__gauges_chart_property_chart_property_component__ = __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_60__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_62__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_67__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_68__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2123,6 +2170,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -2205,48 +2254,51 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_17__sidenav_sidenav_component__["a" /* SidenavComponent */],
                 __WEBPACK_IMPORTED_MODULE_16__iframe_iframe_component__["a" /* IframeComponent */],
                 __WEBPACK_IMPORTED_MODULE_12__app_component__["a" /* AppComponent */],
-                __WEBPACK_IMPORTED_MODULE_20__lab_lab_component__["a" /* LabComponent */],
-                __WEBPACK_IMPORTED_MODULE_21__device_device_component__["a" /* DeviceComponent */],
-                __WEBPACK_IMPORTED_MODULE_23__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_22__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_21__lab_lab_component__["a" /* LabComponent */],
+                __WEBPACK_IMPORTED_MODULE_22__device_device_component__["a" /* DeviceComponent */],
+                __WEBPACK_IMPORTED_MODULE_24__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_23__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__["b" /* LayoutPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__["a" /* DialogMenuItem */],
-                __WEBPACK_IMPORTED_MODULE_24__device_device_list_device_list_component__["a" /* DeviceListComponent */],
-                __WEBPACK_IMPORTED_MODULE_25__device_device_map_device_map_component__["a" /* DeviceMapComponent */],
-                __WEBPACK_IMPORTED_MODULE_26__fuxa_view_fuxa_view_component__["a" /* FuxaViewComponent */],
+                __WEBPACK_IMPORTED_MODULE_25__device_device_list_device_list_component__["a" /* DeviceListComponent */],
+                __WEBPACK_IMPORTED_MODULE_26__device_device_map_device_map_component__["a" /* DeviceMapComponent */],
+                __WEBPACK_IMPORTED_MODULE_27__fuxa_view_fuxa_view_component__["a" /* FuxaViewComponent */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["a" /* DialogDocName */],
-                __WEBPACK_IMPORTED_MODULE_40__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_48__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
-                __WEBPACK_IMPORTED_MODULE_50__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_52__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_53__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_61__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_62__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
-                __WEBPACK_IMPORTED_MODULE_65__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_66__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_56__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_27__tester_tester_component__["a" /* TesterComponent */],
-                __WEBPACK_IMPORTED_MODULE_32__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
-                __WEBPACK_IMPORTED_MODULE_49__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_51__gauges_controls_value_value_component__["a" /* ValueComponent */],
-                __WEBPACK_IMPORTED_MODULE_42__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
-                __WEBPACK_IMPORTED_MODULE_34__helpers_utils__["a" /* EnumToArrayPipe */],
-                __WEBPACK_IMPORTED_MODULE_44__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
-                __WEBPACK_IMPORTED_MODULE_45__directives_number_directive__["a" /* NumberOnlyDirective */],
-                __WEBPACK_IMPORTED_MODULE_37__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_38__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_39__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */],
-                __WEBPACK_IMPORTED_MODULE_46__directives_lazyFor_directive__["a" /* LazyForDirective */],
-                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]
+                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
+                __WEBPACK_IMPORTED_MODULE_51__gauges_switch_switch_component__["a" /* SwitchComponent */],
+                __WEBPACK_IMPORTED_MODULE_53__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
+                __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
+                __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
+                __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
+                __WEBPACK_IMPORTED_MODULE_67__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_68__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_58__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_28__tester_tester_component__["a" /* TesterComponent */],
+                __WEBPACK_IMPORTED_MODULE_33__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_60__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_50__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_value_value_component__["a" /* ValueComponent */],
+                __WEBPACK_IMPORTED_MODULE_43__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_35__helpers_utils__["a" /* EnumToArrayPipe */],
+                __WEBPACK_IMPORTED_MODULE_45__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_46__directives_number_directive__["a" /* NumberOnlyDirective */],
+                __WEBPACK_IMPORTED_MODULE_38__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_39__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */],
+                __WEBPACK_IMPORTED_MODULE_47__directives_lazyFor_directive__["a" /* LazyForDirective */],
+                __WEBPACK_IMPORTED_MODULE_42__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
+                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */],
+                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__["a" /* BrowserModule */],
@@ -2258,10 +2310,10 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_60__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_62__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
-                    positionClass: 'toast-bottom-right',
+                    positionClass: "toast-bottom-right",
                     preventDuplicates: false
                 }),
                 __WEBPACK_IMPORTED_MODULE_9_ngx_drag_drop__["a" /* DndModule */],
@@ -2274,29 +2326,32 @@ var AppModule = (function () {
                 })
             ],
             providers: [
-                __WEBPACK_IMPORTED_MODULE_31__services_hmi_service__["a" /* HmiService */],
-                __WEBPACK_IMPORTED_MODULE_30__services_project_service__["a" /* ProjectService */],
-                __WEBPACK_IMPORTED_MODULE_29__tester_tester_service__["a" /* TesterService */],
-                __WEBPACK_IMPORTED_MODULE_28__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_47__gauges_gauges_component__["a" /* GaugesManager */],
-                __WEBPACK_IMPORTED_MODULE_33__helpers_windowref__["a" /* WindowRef */],
-                __WEBPACK_IMPORTED_MODULE_34__helpers_utils__["b" /* Utils */],
-                __WEBPACK_IMPORTED_MODULE_36__helpers_dictionary__["a" /* Dictionary */],
-                __WEBPACK_IMPORTED_MODULE_43__directives_modal_position_cache__["a" /* ModalPositionCache */],
-                __WEBPACK_IMPORTED_MODULE_35__helpers_define__["a" /* Define */]
+                __WEBPACK_IMPORTED_MODULE_32__services_hmi_service__["a" /* HmiService */],
+                __WEBPACK_IMPORTED_MODULE_31__services_project_service__["a" /* ProjectService */],
+                __WEBPACK_IMPORTED_MODULE_30__tester_tester_service__["a" /* TesterService */],
+                __WEBPACK_IMPORTED_MODULE_29__helpers_custom_http__["a" /* customHttpProvider */],
+                __WEBPACK_IMPORTED_MODULE_48__gauges_gauges_component__["a" /* GaugesManager */],
+                __WEBPACK_IMPORTED_MODULE_34__helpers_windowref__["a" /* WindowRef */],
+                __WEBPACK_IMPORTED_MODULE_35__helpers_utils__["b" /* Utils */],
+                __WEBPACK_IMPORTED_MODULE_37__helpers_dictionary__["a" /* Dictionary */],
+                __WEBPACK_IMPORTED_MODULE_44__directives_modal_position_cache__["a" /* ModalPositionCache */],
+                __WEBPACK_IMPORTED_MODULE_36__helpers_define__["a" /* Define */]
             ],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_49__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_56__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_22__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_23__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_40__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
+                __WEBPACK_IMPORTED_MODULE_50__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_58__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_23__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_24__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__["b" /* LayoutPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__["a" /* DialogMenuItem */],
-                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]
+                __WEBPACK_IMPORTED_MODULE_42__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
+                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */],
+                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */]
             ],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_12__app_component__["a" /* AppComponent */]]
         })
@@ -2397,7 +2452,7 @@ var DeviceListComponent = (function () {
         this.hmiService = hmiService;
         this.projectService = projectService;
         this.displayedColumns = ['select', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
-        this.dataSource = new __WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatTableDataSource */]([]);
+        this.dataSource = new __WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTableDataSource */]([]);
         this.selection = new __WEBPACK_IMPORTED_MODULE_2__angular_cdk_collections__["b" /* SelectionModel */](true, []);
         this.dirty = false;
         this.deviceType = __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */];
@@ -2585,12 +2640,12 @@ var DeviceListComponent = (function () {
         __metadata("design:type", Object)
     ], DeviceListComponent.prototype, "goto", void 0);
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatTable */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatTable */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatTable */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatTable */])
     ], DeviceListComponent.prototype, "table", void 0);
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSort */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSort */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSort */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSort */])
     ], DeviceListComponent.prototype, "sort", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["t" /* MatMenuTrigger */]),
@@ -3426,6 +3481,268 @@ var DynamicComponent = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/editor/chart-config/chart-config.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\r\n.panelTop {\r\n    display: block;\r\n    /* position: relative;\r\n    top: 20px; */\r\n    /* margin-top: 10px; */\r\n    width: 100%;\r\n    height: 580px;\r\n    /* border: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.panelBottom {\r\n    /* position: relative; */\r\n    /* bottom: 10px; */\r\n    display: block;\r\n    width: 100%;\r\n    height: 160px;\r\n    /* margin-top: 2px; */\r\n    /* border: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.list {\r\n    width: 100% !important; \r\n    height: 100% !important; \r\n    font-size: 16px !important; \r\n    padding-top: 0px !important;\r\n}\r\n\r\n.list span  {\r\n    padding-left: 10px;\r\n    /* padding-right: 10px; */\r\n}\r\n\r\n.list mat-list-option  {\r\n    padding-left: 10px;\r\n    /* padding-right: 10px; */\r\n}\r\n\r\n.chart-list {\r\n    /* margin-right: 2px; */\r\n    overflow-y: auto;\r\n}\r\n\r\n.list-item {\r\n    width: 100%;\r\n    display: block;\r\n    font-size: 14px;\r\n    height: 26px !important;\r\n\r\n    cursor: pointer;\r\n}\r\n\r\n.list-item mat-icon {\r\n    font-size: 20px;\r\n}\r\n\r\n.list-item-selected {\r\n  background-color: rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.list-header {\r\n    background-color: rgba(0, 0, 0, 0.8);\r\n    color: #ffffff;\r\n}\r\n\r\n.device-list {\r\n    margin-right: 2px;\r\n    overflow-y: auto;\r\n    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.tag-list {\r\n    margin-right: 2px;\r\n    overflow-y: auto;\r\n    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.color-line {\r\n    width: 30px;\r\n    border: unset;\r\n    border: 1px solid rgba(0,0,0,0.1);\r\n    border-radius: 2px;\r\n    opacity: 1;\r\n    background-color: #f1f3f4;\r\n  }\r\n\r\n/* ::ng-deep .mat-dialog-container {\r\n    display: inline-table !important;\r\n    padding: 0px 10px 10px 10px;\r\n} */\r\n\r\n/* ::ng-deep .mat-list-item-content {\r\n    padding-left: 8px !important;\r\n    padding-right: 8px !important;\r\n} */", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/editor/chart-config/chart-config.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div>\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\n    <div style=\"display: inline-block; width: 100%\">\n        <div class=\"panelTop\">\n            <mat-grid-list cols=\"3\" rowHeight=\"100%\">\n                <mat-grid-tile class=\"chart-list\">\n                    <mat-list class=\"list\" >\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-charts' | translate}}</span>\n                            <mat-icon style=\"position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);\" (click)=\"editChart()\">add</mat-icon>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let chart of data.charts\" class=\"list-item\" [ngClass]=\"isChartSelected(chart)\" (click)=\"selectedChart = chart;loadChartConfig();\">\n                            <span>{{chart.name}}</span>\n                            <mat-icon [matMenuTriggerFor]=\"configMenu\" style=\"position: absolute; right: 10px;cursor:pointer;color:gray;\">more_vert</mat-icon>\n                            <mat-menu #configMenu [overlapTrigger]=\"false\">\n                                <button mat-menu-item (click)=\"editChart(chart)\">edit chart</button>\n                                <button mat-menu-item (click)=\"deleteChart(chart)\">delete chart</button>\n                            </mat-menu>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"device-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-devices' | translate}}</span>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let device of data.devices;\" class=\"list-item\" [ngClass]=\"isDeviceSelected(device)\" (click)=\"selectDevice(device);\">\n                            <span>{{device.name}}</span>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"tag-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-tags' | translate}}</span>\n                        </mat-list-item>\n                        <mat-selection-list #selTags [(ngModel)]=\"selectedTags\" (selectionChange)=\"tagSelectionChanged($event)\" style=\"padding-top: 0px;\">\n                            <mat-list-option *ngFor=\"let tag of selectedDevice.tags\" [selected]=\"tag.selected\" [value]=\"tag\" class=\"list-item\" checkboxPosition=\"before\">\n                                {{tag.name}}\n                            </mat-list-option>\n                        </mat-selection-list>\n                    </mat-list>\n                </mat-grid-tile>\n            </mat-grid-list>\n        </div>\n        <div class=\"panelBottom\">\n            <mat-list class=\"list\">\n                <mat-list-item class=\"list-item list-header\">\n                    <span>{{'chart.config-lines' | translate}}</span>\n                </mat-list-item>\n                <div style=\"height: calc(100% - 36px); overflow-y: auto\">\n                    <mat-list-item *ngFor=\"let tag of selectedChart.lines\" class=\"list-item\" (click)=\"editChartLine(tag)\">\n                        <mat-icon (click)=\"$event.stopPropagation();removeChartLine(tag)\" style=\"color:gray;font-size: 20px\">delete</mat-icon>\n                        <div style=\"width: 50%;max-width: 50%\">\n                            <span>{{tag.name}}</span>\n                        </div>\n                        <div style=\"width: 30%;max-width: 30%\">\n                            <span>{{getDeviceName(tag.device)}}</span>\n                        </div>\n                        <div>\n                            <input [(colorPicker)]=\"tag.color\" class=\"color-line\" title=\"{{'chart.config-line-color' | translate}}\" \n                            [style.background]=\"tag.color\" [cpAlphaChannel]=\"'disabled'\" [cpPosition]=\"'top'\"\n                            [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\n                            [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\n                        </div>\n                    </mat-list-item>\n                </div>\n            </mat-list>\n        </div>\n    </div>\n\n    <!-- <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\"> -->\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\"\n            cdkFocusInitial>OK</button>\n    </div>\n</div>\n"
+
+/***/ }),
+
+/***/ "../../../../../src/app/editor/chart-config/chart-config.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartConfigComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DialogListItem; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+
+
+var ChartConfigComponent = (function () {
+    function ChartConfigComponent(dialog, dialogRef, param) {
+        var _this = this;
+        this.dialog = dialog;
+        this.dialogRef = dialogRef;
+        this.param = param;
+        this.selectedChart = { id: null, name: null, lines: [] };
+        this.selectedDevice = { id: null, name: null, tags: [] };
+        this.selectedTags = [];
+        this.data = { charts: [], devices: [] };
+        this.defaultColor = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].defaultColor;
+        this.lineColor = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].lineColor;
+        this.data.charts = param.charts;
+        Object.values(param.devices).forEach(function (device) {
+            var devicobj = Object.assign({}, device);
+            devicobj.tags = Object.values(device.tags);
+            _this.data.devices.push(devicobj);
+        });
+    }
+    ChartConfigComponent.prototype.ngOnInit = function () {
+        // this.data = {
+        //     charts: [{ id: 'My chart A', name: 'My chart A', lines: [{ device: 'a', id: 'ab', name: 'aB' }] },
+        //              { id: 'My chart B', name: 'My chart B', lines: []}],
+        //     devices: [{ id: 'a', name: 'Device A', tags: [{ id: 'aa', name: 'aA' }, { id: 'ab', name: 'aB' }, { id: 'ac', name: 'aC' }]},
+        //         { id: 'b', name: 'Device B', tags: [{ id: 'ba', name: 'bA' }, { id: 'bb', name: 'bB' }, { id: 'bc', name: 'bC' }, { id: 'bd', name: 'bD' }]}] };
+    };
+    ChartConfigComponent.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    ChartConfigComponent.prototype.onOkClick = function () {
+        this.dialogRef.close({ charts: this.data.charts });
+    };
+    ChartConfigComponent.prototype.editChart = function (chart) {
+        var _this = this;
+        var dialogRef = this.dialog.open(DialogListItem, {
+            // minWidth: '700px',
+            // minHeight: '700px',
+            panelClass: 'dialog-property',
+            data: { name: (chart) ? chart.name : '' },
+            position: { top: '80px' }
+        });
+        dialogRef.afterClosed().subscribe(function (result) {
+            if (result && result.name && result.name.length > 0) {
+                // this.dirty = true;
+                if (chart) {
+                    chart.name = result.name;
+                }
+                else {
+                    _this.data.charts.push({ id: result.name, name: result.name, lines: [] });
+                }
+            }
+        });
+    };
+    ChartConfigComponent.prototype.deleteChart = function (chart) {
+        console.log(chart);
+    };
+    ChartConfigComponent.prototype.selectDevice = function (device) {
+        this.selectedDevice = JSON.parse(JSON.stringify(device));
+        this.loadDeviceConfig();
+    };
+    ChartConfigComponent.prototype.loadChartConfig = function () {
+        this.selectedDevice = { id: null, name: null, tags: [] };
+        this.loadDeviceConfig();
+    };
+    ChartConfigComponent.prototype.loadDeviceConfig = function () {
+        var _this = this;
+        if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
+            this.selectedChart.lines.forEach(function (line) {
+                _this.selectedDevice.tags.forEach(function (tag) {
+                    if (line.device === _this.selectedDevice.id && line.id === ((tag.address) ? tag.address : tag.id)) {
+                        tag.selected = true;
+                    }
+                });
+            });
+        }
+    };
+    /**
+     * add or remove the selected device tags to the selected chart in char-line list
+     * @param chart
+     * @param device
+     * @param tags
+     */
+    ChartConfigComponent.prototype.checkChartTags = function (chart, device, tags) {
+        if (chart && chart.id) {
+            var toremove = [];
+            // check to remove
+            if (chart.lines) {
+                for (var i = 0; i < chart.lines.length; i++) {
+                    if (chart.lines[i].device === device.id) {
+                        if (tags.map(function (x) { return x.id; }).indexOf(chart.lines[i].id) === -1) {
+                            toremove.push(i);
+                        }
+                    }
+                }
+            }
+            // remove
+            for (var i = 0; i < toremove.length; i++) {
+                chart.lines.splice(toremove[i], 1);
+            }
+            // add if not exist
+            for (var x = 0; x < tags.length; x++) {
+                var found = false;
+                if (chart.line) {
+                    for (var i = 0; i < chart.lines.length; i++) {
+                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
+                            found = true;
+                        }
+                    }
+                }
+                if (!found) {
+                    var myCopiedObject = {}; //Object.assign({}, tags[x]);
+                    myCopiedObject['id'] = (tags[x].address) ? tags[x].address : tags[x].id;
+                    myCopiedObject['name'] = tags[x].name;
+                    myCopiedObject['device'] = device.id;
+                    myCopiedObject['color'] = this.getNextColor();
+                    chart.lines.push(myCopiedObject);
+                }
+            }
+        }
+    };
+    ChartConfigComponent.prototype.tagSelectionChanged = function (event) {
+        this.checkChartTags(this.selectedChart, this.selectedDevice, this.selectedTags);
+    };
+    ChartConfigComponent.prototype.editChartLine = function (tag) {
+        console.log('ed ' + tag);
+    };
+    ChartConfigComponent.prototype.removeChartLine = function (tag) {
+        console.log('rm ' + tag);
+    };
+    ChartConfigComponent.prototype.isChartSelected = function (chart) {
+        if (chart === this.selectedChart) {
+            return 'list-item-selected';
+        }
+    };
+    ChartConfigComponent.prototype.isDeviceSelected = function (device) {
+        if (device && device.id === this.selectedDevice.id) {
+            return 'list-item-selected';
+        }
+    };
+    ChartConfigComponent.prototype.getDeviceName = function (deviceid) {
+        var obj = this.data.devices.filter(function (x) { return x.id === deviceid; });
+        if (obj && obj.length > 0) {
+            return obj[0].name;
+        }
+        return '';
+    };
+    ChartConfigComponent.prototype.getNextColor = function () {
+        for (var x = 0; x < this.lineColor.length; x++) {
+            var found = false;
+            if (this.selectedChart.lines) {
+                for (var i = 0; i < this.selectedChart.lines.length; i++) {
+                    if (this.selectedChart.lines[i].color === this.lineColor[x]) {
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                return this.lineColor[x];
+            }
+        }
+        return __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].lineColor[0];
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSelectionList */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSelectionList */])
+    ], ChartConfigComponent.prototype, "selTags", void 0);
+    ChartConfigComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'app-chart-config',
+            template: __webpack_require__("../../../../../src/app/editor/chart-config/chart-config.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/editor/chart-config/chart-config.component.css")]
+        }),
+        __param(2, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */],
+            __WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+    ], ChartConfigComponent);
+    return ChartConfigComponent;
+}());
+
+var DialogListItem = (function () {
+    // defaultColor = Utils.defaultColor;
+    function DialogListItem(dialogRef, data) {
+        this.dialogRef = dialogRef;
+        this.data = data;
+    }
+    DialogListItem.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    DialogListItem.prototype.onOkClick = function () {
+        this.dialogRef.close(true);
+    };
+    DialogListItem = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'dialog-list-item',
+            template: __webpack_require__("../../../../../src/app/editor/chart-config/list-item.dialog.html"),
+        }),
+        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+    ], DialogListItem);
+    return DialogListItem;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/editor/chart-config/list-item.dialog.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div>\r\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>menu</h1>\r\n    <div mat-dialog-content>\r\n        <!-- <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>Icon</span>\r\n            <mat-select [(value)]=\"data.item.icon\" style=\"width: 60px; height: 30px\" #iconsel>\r\n                <mat-select-trigger>\r\n                    <mat-icon>{{iconsel.value}}</mat-icon>\r\n                </mat-select-trigger>\r\n                <mat-option *ngFor=\"let icon of icons\" [value]=\"icon\">\r\n                    <mat-icon class=\"\">{{ icon }}</mat-icon>\r\n                </mat-option>\r\n            </mat-select>\r\n        </div> -->\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>name</span>\r\n            <input [(ngModel)]=\"data.name\" type=\"text\" style=\"width:100%\">\r\n        </div>\r\n        <!-- <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'dlg.menuitem-view' | translate}}</span>\r\n            <mat-select [(value)]=\"data.item.view\" style=\"width: 300px\">\r\n                <mat-option *ngFor=\"let view of data.views\" [value]=\"view.id\">\r\n                    {{ view.name }}\r\n                </mat-option>\r\n            </mat-select>\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'dlg.menuitem-link' | translate}}</span>\r\n            <input [(ngModel)]=\"data.item.link\" type=\"text\" style=\"width:100%\" [readonly]=\"data.item.view\">\r\n        </div> -->\r\n    </div>\r\n    <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n        <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\r\n        <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\"\r\n            cdkFocusInitial>OK</button>\r\n    </div>\r\n</div>"
+
+/***/ }),
+
 /***/ "../../../../../src/app/editor/docname.dialog.html":
 /***/ (function(module, exports) {
 
@@ -3480,11 +3797,12 @@ module.exports = "<div id=\"svg_editor_container\">\r\n  <mat-drawer-container c
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__helpers_windowref__ = __webpack_require__("../../../../../src/app/_helpers/windowref.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__layout_property_layout_property_component__ = __webpack_require__("../../../../../src/app/editor/layout-property/layout-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__gauges_chart_property_chart_property_component__ = __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__layout_property_layout_property_component__ = __webpack_require__("../../../../../src/app/editor/layout-property/layout-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3511,6 +3829,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
+
 var EditorComponent = (function () {
     function EditorComponent(projectService, winRef, dialog, translateService, gaugesManager, viewContainerRef, resolver, mdIconRegistry, sanitizer) {
         this.projectService = projectService;
@@ -3522,7 +3841,7 @@ var EditorComponent = (function () {
         this.resolver = resolver;
         this.mdIconRegistry = mdIconRegistry;
         this.sanitizer = sanitizer;
-        this.defaultColor = __WEBPACK_IMPORTED_MODULE_11__helpers_utils__["b" /* Utils */].defaultColor;
+        this.defaultColor = __WEBPACK_IMPORTED_MODULE_12__helpers_utils__["b" /* Utils */].defaultColor;
         this.colorFill = '#FFFFFF';
         this.colorStroke = '#000000';
         this.currentView = null;
@@ -3728,7 +4047,7 @@ var EditorComponent = (function () {
         if (eles && (eles.length <= 1 || !eles[1]) && eles[0]) {
             // check for gauge fill and stroke color
             var colors = { fill: clrfill, stroke: clrstroke };
-            if (__WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__["a" /* GaugesManager */].checkGaugeColor(ele, eles, colors)) {
+            if (__WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].checkGaugeColor(ele, eles, colors)) {
                 if (colors.fill) {
                     this.colorFill = colors.fill;
                 }
@@ -4013,7 +4332,7 @@ var EditorComponent = (function () {
         this.winRef.nativeWindow.svgEditor.setTextAlign(align);
     };
     EditorComponent.prototype.checkMySelectedToSetColor = function (bkcolor, color, elems) {
-        __WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__["a" /* GaugesManager */].initElementColor(bkcolor, color, elems);
+        __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].initElementColor(bkcolor, color, elems);
         // for (let i = 0; i < elems.length; i++) {
         //     HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
         //     GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
@@ -4024,7 +4343,7 @@ var EditorComponent = (function () {
      * @param ga
      */
     EditorComponent.prototype.checkGaugeAdded = function (ga) {
-        var gauge = __WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__["a" /* GaugesManager */].initElementAdded(ga, this.resolver, this.viewContainerRef, null);
+        var gauge = __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].initElementAdded(ga, this.resolver, this.viewContainerRef, null);
         if (gauge) {
             if (this.gaugesRef.indexOf(ga.id) === -1) {
                 this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
@@ -4093,7 +4412,7 @@ var EditorComponent = (function () {
         var _this = this;
         var msg = '';
         this.translateService.get('msg.view-remove', { value: view.name }).subscribe(function (txt) { msg = txt; });
-        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_12__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */], {
+        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_13__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */], {
             minWidth: '350px',
             data: { msg: msg },
             position: { top: '80px' }
@@ -4188,7 +4507,7 @@ var EditorComponent = (function () {
         if (this.hmi.layout) {
             templayout = JSON.parse(JSON.stringify(this.hmi.layout));
         }
-        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_8__layout_property_layout_property_component__["b" /* LayoutPropertyComponent */], {
+        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_9__layout_property_layout_property_component__["b" /* LayoutPropertyComponent */], {
             // minWidth: '700px',
             // minHeight: '700px',
             panelClass: 'dialog-property',
@@ -4259,27 +4578,46 @@ var EditorComponent = (function () {
     EditorComponent.prototype.isWithEvents = function (type) {
         return this.gaugesManager.isWithEvents(type);
     };
+    /**
+     * edit the gauge/chart settings property, the settings are composed from gauge id... and property
+     * in property will be the result values saved
+     * @param settings
+     * @param callback
+     */
     EditorComponent.prototype.openEditGauge = function (settings, callback) {
         var _this = this;
         // console.log('The Edit Gauge open');
         var tempsettings = JSON.parse(JSON.stringify(settings));
         var hmi = this.projectService.getHmi();
-        var dlgType = __WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__["a" /* GaugesManager */].getEditDialogTypeToUse(settings.type);
+        var dlgType = __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].getEditDialogTypeToUse(settings.type);
         var eventsSupported = this.isWithEvents(settings.type);
-        var defaultValue = __WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__["a" /* GaugesManager */].getDefaultValue(settings.type);
+        var defaultValue = __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].getDefaultValue(settings.type);
         // settings.property = JSON.parse(settings.property);
-        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */], {
-            // data: { settings: tempsettings, signals: this.signals, views: hmi.views }
-            minWidth: '700px',
-            minHeight: '700px',
-            panelClass: 'dialog-property',
-            data: {
-                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
-            },
-            position: { top: '80px' }
-            // data: data
-        });
+        var dialogRef;
+        if (dlgType === __WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Chart) {
+            dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_8__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */], {
+                minWidth: '700px',
+                minHeight: '700px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts()
+                },
+                position: { top: '80px' }
+            });
+        }
+        else {
+            dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */], {
+                minWidth: '700px',
+                minHeight: '700px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
+                },
+                position: { top: '80px' }
+            });
+        }
         dialogRef.afterClosed().subscribe(function (result) {
             // console.log('The Edit Gauge was closed');
             if (result) {
@@ -4318,7 +4656,7 @@ var EditorComponent = (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('gaugepanel'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_10__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_11__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */])
     ], EditorComponent.prototype, "gaugePanelComponent", void 0);
     EditorComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -4330,7 +4668,7 @@ var EditorComponent = (function () {
             __WEBPACK_IMPORTED_MODULE_6__helpers_windowref__["a" /* WindowRef */],
             __WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */],
             __WEBPACK_IMPORTED_MODULE_3__ngx_translate_core__["c" /* TranslateService */],
-            __WEBPACK_IMPORTED_MODULE_9__gauges_gauges_component__["a" /* GaugesManager */],
+            __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* ViewContainerRef */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["p" /* ComponentFactoryResolver */],
             __WEBPACK_IMPORTED_MODULE_1__angular_material__["p" /* MatIconRegistry */], __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */]])
@@ -4342,7 +4680,7 @@ var DialogDocProperty = (function () {
     function DialogDocProperty(dialogRef, data) {
         this.dialogRef = dialogRef;
         this.data = data;
-        this.defaultColor = __WEBPACK_IMPORTED_MODULE_11__helpers_utils__["b" /* Utils */].defaultColor;
+        this.defaultColor = __WEBPACK_IMPORTED_MODULE_12__helpers_utils__["b" /* Utils */].defaultColor;
     }
     DialogDocProperty.prototype.onNoClick = function () {
         this.dialogRef.close();
@@ -4945,6 +5283,175 @@ var DialogModalModel = (function () {
         this.id = id;
     }
     return DialogModalModel;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/gauges/chart-property/chart-property.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/gauges/chart-property/chart-property.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\" style=\"width: 400px;\">\n            <span>{{'chart.property-chart' | translate}}</span>\n            <mat-select [formControl]=\"chartCtrl\">\n              <mat-select-search [formControl]=\"chartFilterCtrl\"></mat-select-search>\n              <mat-option *ngFor=\"let chart of filteredChart | async\" [value]=\"chart\">\n                {{ chart.name }}\n              </mat-option>\n            </mat-select>\n          </div>\n          <div class=\"my-form-field\" style=\"width: 200px;float: right;margin-right: 10px;\">\n            <span>{{'chart.property-chart-type' | translate}}</span>\n            <mat-select [(value)]=\"chartViewValue\" >\n              <mat-option *ngFor=\"let ev of chartViewType | enumToArray\" [value]=\"ev.key\">\n                {{ ev.value }}\n              </mat-option>\n            </mat-select>\n          </div>          \n        </div>\n        <div style=\"display: block; width:100%\">\n          <mat-list class=\"list\" style=\"padding-left: 8px;padding-right: 8px;\">\n            <div style=\"height: calc(100% - 36px); overflow-y: auto\" *ngIf=\"chartCtrl.value\">\n                <mat-list-item *ngFor=\"let tag of chartCtrl.value.lines\" style=\"font-size:14px\">\n                    <div style=\"width: 50%;\">\n                        <span>{{tag.name}}</span>\n                    </div>\n                    <div style=\"width: 40%;\">\n                        <span>{{getDeviceName(tag.device)}}</span>\n                    </div>\n                    <div [style.background-color]=\"tag.color\" style=\"height:20px; width:30px\">\n                    </div>\n                </mat-list-item>\n            </div>\n        </mat-list>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+
+/***/ }),
+
+/***/ "../../../../../src/app/gauges/chart-property/chart-property.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartPropertyComponent; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_ReplaySubject__ = __webpack_require__("../../../../rxjs/_esm5/ReplaySubject.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_forms__ = __webpack_require__("../../../forms/esm5/forms.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_operators__ = __webpack_require__("../../../../rxjs/_esm5/operators/index.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Subject__ = __webpack_require__("../../../../rxjs/_esm5/Subject.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__models_chart__ = __webpack_require__("../../../../../src/app/_models/chart.ts");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+
+
+
+
+
+
+
+var ChartPropertyComponent = (function () {
+    function ChartPropertyComponent(dialogRef, translateService, data) {
+        this.dialogRef = dialogRef;
+        this.translateService = translateService;
+        this.data = data;
+        this.chartViewType = __WEBPACK_IMPORTED_MODULE_7__models_chart__["a" /* ChartViewType */];
+        this.chartCtrl = new __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormControl */]();
+        this.chartFilterCtrl = new __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormControl */]();
+        this.filteredChart = new __WEBPACK_IMPORTED_MODULE_2_rxjs_ReplaySubject__["a" /* ReplaySubject */](1);
+        this._onDestroy = new __WEBPACK_IMPORTED_MODULE_5_rxjs_Subject__["b" /* Subject */]();
+    }
+    ChartPropertyComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        Object.keys(this.chartViewType).forEach(function (key) {
+            _this.translateService.get(_this.chartViewType[key]).subscribe(function (txt) { _this.chartViewType[key] = txt; });
+        });
+        this.loadChart();
+        var selected = null;
+        if (this.data.settings.property) {
+            this.chartViewValue = this.data.settings.property.type;
+            this.data.charts.forEach(function (chart) {
+                if (chart.id === _this.data.settings.property.id) {
+                    selected = chart;
+                }
+            });
+        }
+        if (selected) {
+            this.chartCtrl.setValue(selected);
+        }
+    };
+    ChartPropertyComponent.prototype.ngOnDestroy = function () {
+        this._onDestroy.next();
+        this._onDestroy.complete();
+    };
+    ChartPropertyComponent.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    ChartPropertyComponent.prototype.onOkClick = function () {
+        if (this.chartCtrl.value) {
+            this.data.settings.property = { id: this.chartCtrl.value.id, type: this.chartViewValue };
+            this.data.settings.name = this.chartCtrl.value.name;
+        }
+        else {
+            this.data.settings.name = '';
+            this.data.settings.property = null;
+        }
+    };
+    ChartPropertyComponent.prototype.getDeviceName = function (deviceid) {
+        var obj = this.data.devices.filter(function (x) { return x.id === deviceid; });
+        if (obj && obj.length > 0) {
+            return obj[0].name;
+        }
+        return '';
+    };
+    ChartPropertyComponent.prototype.loadChart = function (toset) {
+        var _this = this;
+        // load the initial chart list
+        this.filteredChart.next(this.data.charts.slice());
+        // listen for search field value changes
+        this.chartFilterCtrl.valueChanges
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_4_rxjs_operators__["takeUntil"])(this._onDestroy))
+            .subscribe(function () {
+            _this.filterChart();
+        });
+        if (toset) {
+            var idx_1 = -1;
+            this.data.charts.every(function (value, index, _arr) {
+                if (value.id === toset) {
+                    idx_1 = index;
+                    return false;
+                }
+                return true;
+            });
+            if (idx_1 >= 0) {
+                this.chartCtrl.setValue(this.data.charts[idx_1]);
+            }
+        }
+    };
+    ChartPropertyComponent.prototype.filterChart = function () {
+        if (!this.data.charts) {
+            return;
+        }
+        // get the search keyword
+        var search = this.chartFilterCtrl.value;
+        if (!search) {
+            this.filteredChart.next(this.data.charts.slice());
+            return;
+        }
+        else {
+            search = search.toLowerCase();
+        }
+        // filter the variable
+        this.filteredChart.next(this.data.charts.filter(function (chart) { return chart.name.toLowerCase().indexOf(search) > -1; }));
+    };
+    ChartPropertyComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'app-chart-property',
+            template: __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.css")]
+        }),
+        __param(2, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */],
+            __WEBPACK_IMPORTED_MODULE_6__ngx_translate_core__["c" /* TranslateService */], Object])
+    ], ChartPropertyComponent);
+    return ChartPropertyComponent;
 }());
 
 
@@ -6751,7 +7258,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gauges/gauge-property/gauge-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1 mat-dialog-title style=\"display:inline-block; cursor:move\" mat-dialog-draggable>Property</h1> -->\n<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"Property\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\">\n            <span>{{'gauges.property-name' | translate}}</span>\n            <input [(ngModel)]=\"data.settings.name\" style=\"width: 220px\" type=\"text\">\n          </div>\n          <div class=\"toolbox\" *ngIf=\"isToolboxToShow()\">\n            <button mat-icon-button (click)=\"onAddInput()\">\n              <mat-icon>add_circle_outline</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button>\n          </div>\n        </div>\n        <div mat-dialog-content style=\"overflow: hidden; width:100%\">\n          <flex-head [data]=\"data\" [property]=\"property\" #flexhead></flex-head>\n        </div>\n      </div>\n    </mat-tab>\n    <mat-tab label=\"Events\" *ngIf=\"eventsSupported\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"toolbox\">\n            <button mat-icon-button (click)=\"onAddEvent()\">\n              <mat-icon>add_circle_outline</mat-icon>\n            </button>\n            <!-- <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button> -->\n          </div>\n        </div>\n        <div mat-dialog-content style=\"overflow: hidden; width:100%\">\n          <flex-event [property]=\"property\" [views]=\"views\" #flexevent *ngIf=\"eventsSupported\" style=\"padding-bottom: 5px\"></flex-event>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <!-- <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px; margin-top: 5px\"> -->\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+module.exports = "<!-- <h1 mat-dialog-title style=\"display:inline-block; cursor:move\" mat-dialog-draggable>Property</h1> -->\n<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\">\n            <span>{{'gauges.property-name' | translate}}</span>\n            <input [(ngModel)]=\"data.settings.name\" style=\"width: 220px\" type=\"text\">\n          </div>\n          <div class=\"toolbox\" *ngIf=\"isToolboxToShow()\">\n            <button mat-icon-button (click)=\"onAddInput()\">\n              <mat-icon>add_circle_outline</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button>\n          </div>\n        </div>\n        <div mat-dialog-content style=\"overflow: hidden; width:100%\">\n          <flex-head [data]=\"data\" [property]=\"property\" #flexhead></flex-head>\n        </div>\n      </div>\n    </mat-tab>\n    <mat-tab label=\"{{'gauges.property-events' | translate}}\" *ngIf=\"eventsSupported\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"toolbox\">\n            <button mat-icon-button (click)=\"onAddEvent()\">\n              <mat-icon>add_circle_outline</mat-icon>\n            </button>\n            <!-- <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button> -->\n          </div>\n        </div>\n        <div mat-dialog-content style=\"overflow: hidden; width:100%\">\n          <flex-event [property]=\"property\" [views]=\"views\" #flexevent *ngIf=\"eventsSupported\" style=\"padding-bottom: 5px\"></flex-event>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <!-- <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px; margin-top: 5px\"> -->\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -6894,6 +7401,7 @@ var GaugeDialogType;
     GaugeDialogType[GaugeDialogType["ValueWithRef"] = 4] = "ValueWithRef";
     GaugeDialogType[GaugeDialogType["Step"] = 5] = "Step";
     GaugeDialogType[GaugeDialogType["MinMax"] = 6] = "MinMax";
+    GaugeDialogType[GaugeDialogType["Chart"] = 7] = "Chart";
 })(GaugeDialogType || (GaugeDialogType = {}));
 
 
@@ -7273,6 +7781,9 @@ var GaugesManager = (function () {
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
             return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Range;
+        }
+        else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Chart;
         }
     };
     GaugesManager.getDefaultValue = function (type) {
@@ -9182,7 +9693,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/header/header.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button mat-button title=\"{{'header.save-project' | translate}}\" [matMenuTriggerFor]=\"prjview\" #prjviewtrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjedittrigger.closeMenu()\">\r\n    <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n  </button>\r\n  <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"onNewProject()\">{{'header.new-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onSaveProject()\">{{'header.save-project' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onSaveProjectAs()\">{{'header.saveas-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">{{'header.open-project' | translate}}</button>\r\n    <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n    <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\"\r\n      accept=\".fuxap\" />\r\n  </mat-menu>\r\n  <button mat-button title=\"{{'header.edit-project' | translate}}\" [matMenuTriggerFor]=\"prjedit\" #prjedittrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjviewtrigger.closeMenu()\">\r\n      <mat-icon aria-label=\"Edit Views\">widgets</mat-icon>\r\n  </button>\r\n  <mat-menu #prjedit=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"goTo('/editor')\">{{'header.edit-views' | translate}}</button>\r\n    <button mat-menu-item (click)=\"goTo('/device')\">{{'header.edit-devices' | translate}}</button>\r\n  </mat-menu>\r\n\r\n</div>\r\n<div class=\"header-help\" *ngIf=\"ineditor && !winele\">\r\n    <button mat-button title=\"{{'header.help' | translate}}\" [matMenuTriggerFor]=\"helpmenu\" class=\"main-btn\" style=\"padding-top: 3px !important;\">\r\n        <mat-icon aria-label=\"HELP\">help_outline</mat-icon>\r\n    </button>\r\n    <mat-menu #helpmenu=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n        <button mat-menu-item (click)=\"onShowHelp('help')\">{{'header.help-tutorial' | translate}}</button>\r\n        <mat-divider class=\"menu-separator\"></mat-divider>\r\n        <button mat-menu-item (click)=\"onShowHelp('info')\">{{'header.help-info' | translate}}</button>\r\n    </mat-menu>\r\n</div>\r\n<app-tutorial #tutorial></app-tutorial>\r\n"
+module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button mat-button title=\"{{'header.save-project' | translate}}\" [matMenuTriggerFor]=\"prjview\" #prjviewtrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjedittrigger.closeMenu()\">\r\n    <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n  </button>\r\n  <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"onNewProject()\">{{'header.new-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onSaveProject()\">{{'header.save-project' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onSaveProjectAs()\">{{'header.saveas-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">{{'header.open-project' | translate}}</button>\r\n    <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n    <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\"\r\n      accept=\".fuxap\" />\r\n  </mat-menu>\r\n  <button mat-button title=\"{{'header.edit-project' | translate}}\" [matMenuTriggerFor]=\"prjedit\" #prjedittrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjviewtrigger.closeMenu()\">\r\n      <mat-icon aria-label=\"Edit Views\">widgets</mat-icon>\r\n  </button>\r\n  <mat-menu #prjedit=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"goTo('/editor')\">{{'header.edit-views' | translate}}</button>\r\n    <button mat-menu-item (click)=\"goTo('/device')\">{{'header.edit-devices' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onChartConfig()\">{{'header.edit-charts' | translate}}</button>\r\n  </mat-menu>\r\n\r\n</div>\r\n<div class=\"header-help\" *ngIf=\"ineditor && !winele\">\r\n    <button mat-button title=\"{{'header.help' | translate}}\" [matMenuTriggerFor]=\"helpmenu\" class=\"main-btn\" style=\"padding-top: 3px !important;\">\r\n        <mat-icon aria-label=\"HELP\">help_outline</mat-icon>\r\n    </button>\r\n    <mat-menu #helpmenu=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n        <button mat-menu-item (click)=\"onShowHelp('help')\">{{'header.help-tutorial' | translate}}</button>\r\n        <mat-divider class=\"menu-separator\"></mat-divider>\r\n        <button mat-menu-item (click)=\"onShowHelp('info')\">{{'header.help-info' | translate}}</button>\r\n    </mat-menu>\r\n</div>\r\n<app-tutorial #tutorial></app-tutorial>\r\n"
 
 /***/ }),
 
@@ -9196,10 +9707,11 @@ module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button m
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__environments_environment__ = __webpack_require__("../../../../../src/environments/environment.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__help_tutorial_tutorial_component__ = __webpack_require__("../../../../../src/app/help/tutorial/tutorial.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__editor_chart_config_chart_config_component__ = __webpack_require__("../../../../../src/app/editor/chart-config/chart-config.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__help_tutorial_tutorial_component__ = __webpack_require__("../../../../../src/app/help/tutorial/tutorial.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9212,6 +9724,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+
 
 
 
@@ -9251,11 +9764,29 @@ var HeaderComponent = (function () {
     HeaderComponent.prototype.onClick = function (targetElement) {
         this.sidenav.close();
     };
+    HeaderComponent.prototype.onChartConfig = function () {
+        this.chartConfig();
+    };
     HeaderComponent.prototype.onShowHelp = function (page) {
-        var data = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["h" /* HelpData */]();
+        var data = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* HelpData */]();
         data.page = page;
         data.tag = 'device';
         this.showHelp(data);
+    };
+    HeaderComponent.prototype.chartConfig = function () {
+        var _this = this;
+        var chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
+        var devices = this.projectService.getDevices();
+        var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_4__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */], {
+            minWidth: '900px',
+            data: { charts: chartscopy, devices: devices }
+        });
+        dialogRef.afterClosed().subscribe(function (result) {
+            if (result) {
+                _this.projectService.setCharts(result.charts);
+                _this.projectService.saveProject();
+            }
+        });
     };
     HeaderComponent.prototype.showHelp = function (data) {
         console.log('show help: ' + data.page);
@@ -9342,7 +9873,7 @@ var HeaderComponent = (function () {
     ], HeaderComponent.prototype, "sidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('tutorial'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_6__help_tutorial_tutorial_component__["a" /* TutorialComponent */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_7__help_tutorial_tutorial_component__["a" /* TutorialComponent */])
     ], HeaderComponent.prototype, "tutorial", void 0);
     HeaderComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -9353,8 +9884,8 @@ var HeaderComponent = (function () {
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_router__["b" /* Router */],
             __WEBPACK_IMPORTED_MODULE_2__angular_material__["i" /* MatDialog */],
-            __WEBPACK_IMPORTED_MODULE_7__ngx_translate_core__["c" /* TranslateService */],
-            __WEBPACK_IMPORTED_MODULE_4__services_project_service__["a" /* ProjectService */]])
+            __WEBPACK_IMPORTED_MODULE_8__ngx_translate_core__["c" /* TranslateService */],
+            __WEBPACK_IMPORTED_MODULE_5__services_project_service__["a" /* ProjectService */]])
     ], HeaderComponent);
     return HeaderComponent;
 }());
@@ -9649,7 +10180,7 @@ var HomeComponent = (function () {
     ], HomeComponent.prototype, "sidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('matsidenav'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSidenav */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["D" /* MatSidenav */])
     ], HomeComponent.prototype, "matsidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('fuxaview'),
@@ -9932,7 +10463,7 @@ var MaterialModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["e" /* MatCardModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["f" /* MatCheckboxModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["g" /* MatChipsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatStepperModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatStepperModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["h" /* MatDatepickerModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["k" /* MatDialogModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["m" /* MatExpansionModule */],
@@ -9948,15 +10479,15 @@ var MaterialModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["y" /* MatRadioModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["z" /* MatRippleModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["B" /* MatSelectModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["D" /* MatSidenavModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSliderModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSlideToggleModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSnackBarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSortModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTableModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTabsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatToolbarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatTooltipModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSidenavModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSliderModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSlideToggleModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSnackBarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSortModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTableModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatTabsModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatToolbarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["Q" /* MatTooltipModule */],
             ],
             exports: [
                 __WEBPACK_IMPORTED_MODULE_2__angular_cdk_table__["m" /* CdkTableModule */],
@@ -9966,7 +10497,7 @@ var MaterialModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["e" /* MatCardModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["f" /* MatCheckboxModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["g" /* MatChipsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatStepperModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatStepperModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["h" /* MatDatepickerModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["k" /* MatDialogModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["m" /* MatExpansionModule */],
@@ -9982,15 +10513,15 @@ var MaterialModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["y" /* MatRadioModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["z" /* MatRippleModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["B" /* MatSelectModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["D" /* MatSidenavModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSliderModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSlideToggleModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSnackBarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSortModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTableModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTabsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatToolbarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatTooltipModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSidenavModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSliderModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSlideToggleModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSnackBarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSortModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTableModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatTabsModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatToolbarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["Q" /* MatTooltipModule */],
             ]
         })
     ], MaterialModule);
@@ -10074,7 +10605,7 @@ var SidenavComponent = (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__angular_material__["C" /* MatSidenav */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__angular_material__["D" /* MatSidenav */])
     ], SidenavComponent.prototype, "sidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),

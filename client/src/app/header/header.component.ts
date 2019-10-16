@@ -5,6 +5,8 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { environment } from '../../environments/environment';
 
+import { ChartConfigComponent } from '../editor/chart-config/chart-config.component';
+
 import { ProjectService } from '../_services/project.service';
 import { HelpData } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
@@ -55,12 +57,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.sidenav.close();
     }
 
-    
+    onChartConfig() {
+        this.chartConfig();
+    }
+
     onShowHelp(page) {
         let data = new HelpData();
         data.page = page;
         data.tag = 'device';
         this.showHelp(data);
+    }
+
+    chartConfig() {
+        let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
+        let devices = this.projectService.getDevices();
+        let dialogRef = this.dialog.open(ChartConfigComponent, {
+            minWidth: '900px',
+            data: { charts: chartscopy, devices: devices }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.projectService.setCharts(result.charts);
+                this.projectService.saveProject();
+            }
+        });
     }
 
     showHelp(data: HelpData) {

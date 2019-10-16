@@ -1,0 +1,79 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <div style="display: inline-block; width: 100%">
+        <div class="panelTop">
+            <mat-grid-list cols="3" rowHeight="100%">
+                <mat-grid-tile class="chart-list">
+                    <mat-list class="list" >
+                        <mat-list-item class="list-item list-header">
+                            <span>{{'chart.config-charts' | translate}}</span>
+                            <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart()">add</mat-icon>
+                        </mat-list-item>
+                        <mat-list-item *ngFor="let chart of data.charts" class="list-item" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
+                            <span>{{chart.name}}</span>
+                            <mat-icon [matMenuTriggerFor]="configMenu" style="position: absolute; right: 10px;cursor:pointer;color:gray;">more_vert</mat-icon>
+                            <mat-menu #configMenu [overlapTrigger]="false">
+                                <button mat-menu-item (click)="editChart(chart)">edit chart</button>
+                                <button mat-menu-item (click)="deleteChart(chart)">delete chart</button>
+                            </mat-menu>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-grid-tile>
+                <mat-grid-tile class="device-list">
+                    <mat-list class="list">
+                        <mat-list-item class="list-item list-header">
+                            <span>{{'chart.config-devices' | translate}}</span>
+                        </mat-list-item>
+                        <mat-list-item *ngFor="let device of data.devices;" class="list-item" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
+                            <span>{{device.name}}</span>
+                        </mat-list-item>
+                    </mat-list>
+                </mat-grid-tile>
+                <mat-grid-tile class="tag-list">
+                    <mat-list class="list">
+                        <mat-list-item class="list-item list-header">
+                            <span>{{'chart.config-tags' | translate}}</span>
+                        </mat-list-item>
+                        <mat-selection-list #selTags [(ngModel)]="selectedTags" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
+                            <mat-list-option *ngFor="let tag of selectedDevice.tags" [selected]="tag.selected" [value]="tag" class="list-item" checkboxPosition="before">
+                                {{tag.name}}
+                            </mat-list-option>
+                        </mat-selection-list>
+                    </mat-list>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+        <div class="panelBottom">
+            <mat-list class="list">
+                <mat-list-item class="list-item list-header">
+                    <span>{{'chart.config-lines' | translate}}</span>
+                </mat-list-item>
+                <div style="height: calc(100% - 36px); overflow-y: auto">
+                    <mat-list-item *ngFor="let tag of selectedChart.lines" class="list-item" (click)="editChartLine(tag)">
+                        <mat-icon (click)="$event.stopPropagation();removeChartLine(tag)" style="color:gray;font-size: 20px">delete</mat-icon>
+                        <div style="width: 50%;max-width: 50%">
+                            <span>{{tag.name}}</span>
+                        </div>
+                        <div style="width: 30%;max-width: 30%">
+                            <span>{{getDeviceName(tag.device)}}</span>
+                        </div>
+                        <div>
+                            <input [(colorPicker)]="tag.color" class="color-line" title="{{'chart.config-line-color' | translate}}" 
+                            [style.background]="tag.color" [cpAlphaChannel]="'disabled'" [cpPosition]="'top'"
+                            [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
+                        </div>
+                    </mat-list-item>
+                </div>
+            </mat-list>
+        </div>
+    </div>
+
+    <!-- <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px"> -->
+  <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+    <button mat-raised-button (click)="onNoClick()">CANCEL</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data"
+            cdkFocusInitial>OK</button>
+    </div>
+</div>

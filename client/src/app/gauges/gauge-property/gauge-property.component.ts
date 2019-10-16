@@ -112,5 +112,6 @@ export enum GaugeDialogType {
   ValueAndUnit,
   ValueWithRef,
   Step,
-  MinMax
+  MinMax,
+  Chart
 }

@@ -340,6 +340,8 @@ export class GaugesManager {
       return GaugeDialogType.MinMax;
     } else if (type === GaugeSemaphoreComponent.TypeTag) {
       return GaugeDialogType.Range;
+    } else if (type === HtmlChartComponent.TypeTag) {
+      return GaugeDialogType.Chart;
     }
   }
 

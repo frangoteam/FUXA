@@ -3,7 +3,7 @@
 <div style="width: 100%;min-height: 400px;position: relative;padding-bottom: 40px">
   <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
   <mat-tab-group style="width: 100%;">
-    <mat-tab label="Property">
+    <mat-tab label="{{'gauges.property-props' | translate}}">
       <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
         <div style="display: block;">
           <div class="my-form-field">
@@ -29,7 +29,7 @@
         </div>
       </div>
     </mat-tab>
-    <mat-tab label="Events" *ngIf="eventsSupported">
+    <mat-tab label="{{'gauges.property-events' | translate}}" *ngIf="eventsSupported">
       <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
         <div style="display: block;">
           <div class="toolbox">

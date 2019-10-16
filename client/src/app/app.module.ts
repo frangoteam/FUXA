@@ -23,6 +23,7 @@ import { IframeComponent } from './iframe/iframe.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
+import { ChartConfigComponent, DialogListItem } from './editor/chart-config/chart-config.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
@@ -63,6 +64,7 @@ import { ExchangerComponent } from './gauges/proc-eng/exchanger/exchanger.compon
 import { ValveComponent } from './gauges/proc-eng/valve/valve.component';
 import { MotorComponent } from './gauges/proc-eng/motor/motor.component';
 import { GaugePropertyComponent } from './gauges/gauge-property/gauge-property.component';
+import { ChartPropertyComponent } from './gauges/chart-property/chart-property.component';
 import { FlexInputComponent } from './gauges/gauge-property/flex-input/flex-input.component';
 import { FlexHeadComponent } from './gauges/gauge-property/flex-head/flex-head.component';
 import { FlexEventComponent } from './gauges/gauge-property/flex-event/flex-event.component';
@@ -112,6 +114,7 @@ export function createTranslateLoader(http: HttpClient) {
     GaugeProgressComponent,
     GaugeSemaphoreComponent,
     GaugePropertyComponent,
+    ChartPropertyComponent,
     TesterComponent,
     TutorialComponent,
     FlexInputComponent,
@@ -127,7 +130,9 @@ export function createTranslateLoader(http: HttpClient) {
     NgxFabItemButtonComponent,
     TreetableComponent,
     LazyForDirective,
-    NgxDygraphsComponent
+    NgxDygraphsComponent,
+    ChartConfigComponent,
+    DialogListItem
   ],
   imports: [
     BrowserModule,
@@ -142,7 +147,7 @@ export function createTranslateLoader(http: HttpClient) {
     MatSelectSearchModule,
     ToastrModule.forRoot({
       timeOut: 3000,
-      positionClass: 'toast-bottom-right',
+      positionClass: "toast-bottom-right",
       preventDuplicates: false
     }),
     DndModule,
@@ -172,12 +177,15 @@ export function createTranslateLoader(http: HttpClient) {
     DialogInfo,
     DynamicComponent,
     GaugePropertyComponent,
+    ChartPropertyComponent,
     DevicePropertyComponent,
     TagPropertyComponent,
     ConfirmDialogComponent,
     LayoutPropertyComponent,
     DialogMenuItem,
-    NgxDygraphsComponent
+    NgxDygraphsComponent,
+    ChartConfigComponent,
+    DialogListItem
   ],
   bootstrap: [AppComponent]
 })

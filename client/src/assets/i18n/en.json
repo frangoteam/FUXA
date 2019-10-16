@@ -8,6 +8,7 @@
     "header.edit-project": "Edit Project",
     "header.edit-views": "Edit Views",
     "header.edit-devices": "Edit Devices",
+    "header.edit-charts": "Charts settings",
     "header.help": "FUXA Help",
     "header.help-tutorial": "Tutorial",
     "header.help-info": "About",
@@ -59,6 +60,18 @@
     "item.navtype-text": "Text",
     "item.navtype-icons-text-block": "Icons & Text (block)",
     "item.navtype-icons-text-inline": "Icons & Text (inline)",
+
+    "chart.config-title": "Charts settings",
+    "chart.config-charts": "Charts",
+    "chart.config-devices": "Devices",
+    "chart.config-tags": "Tags",
+    "chart.config-lines": "Chart-Line",
+    "chart.config-line-color": "Change line color",
+    
+    "chart.property-chart": "Chart to show",
+    "chart.property-chart-type": "Show mode",
+    "chart.viewtype-realtime1": "Realtime",
+    "chart.viewtype-history": "History",
 
     "editor.views": "Views",
     "editor.view-delete": "Delete",
@@ -233,6 +246,8 @@
     "device.tag-property-min": "Min",
     "device.tag-property-max": "Max",
     
+    "gauges.property-props": "Property",
+    "gauges.property-events": "Events",
     "gauges.property-title": "Property",
     "gauges.property-name": "Name",
     "gauges.property-event-type": "Type",
