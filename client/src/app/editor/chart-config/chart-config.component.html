@@ -35,7 +35,7 @@
                         <mat-list-item class="list-item list-header">
                             <span>{{'chart.config-tags' | translate}}</span>
                         </mat-list-item>
-                        <mat-selection-list #selTags [(ngModel)]="selectedTags" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
+                        <mat-selection-list #selTags [(ngModel)]="selectedTags" [disabled]="(selectedChart.id)?false:true" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
                             <mat-list-option *ngFor="let tag of selectedDevice.tags" [selected]="tag.selected" [value]="tag" class="list-item" checkboxPosition="before">
                                 {{tag.name}}
                             </mat-list-option>

@@ -107,9 +107,19 @@ export class ChartConfigComponent implements OnInit {
             if (chart.lines) {
                 for (let i = 0; i < chart.lines.length; i++) {
                     if (chart.lines[i].device === device.id) {
-                        if (tags.map(x => x.id).indexOf(chart.lines[i].id) === -1) {
+                        let found = -1;
+                        for (let x = 0; x < tags.length; x++) {
+                            if (chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
+                                found = i;
+                                break;
+                            }
+                        }
+                        if (found < 0) {
                             toremove.push(i);
                         }
+                        // if (tags.map(x => x.id).indexOf(chart.lines[i].id) === -1) {
+                        //     toremove.push(i);
+                        // }
                     }
                 }
             }
@@ -120,7 +130,7 @@ export class ChartConfigComponent implements OnInit {
             // add if not exist
             for (let x = 0; x < tags.length; x++) {
                 let found = false;
-                if (chart.line) {
+                if (chart.lines) {
                     for (let i = 0; i < chart.lines.length; i++) {
                         if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
                             found = true;
