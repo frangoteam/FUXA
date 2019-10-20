@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, ElementRef, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
 import { DygraphOptions } from './dygraphOptions';
 
 declare const Dygraph: any;
@@ -16,23 +16,33 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() public options: DygraphOptions;
     @Input() public data: any;
     @Input() public noDataLabel: string;
+    @Output() onTimeRange: EventEmitter<string> = new EventEmitter();
     @ViewChild('chart') public chart: ElementRef;
 
     public loadingInProgress: boolean;
+    public withToolbar = false;
+    public isEditor = false;
+    public rangeType: any;
+    public rangeTypeValue: any;
+
     //   public chartWidth: number;
     //   public chartHeight: number;
-    public labels: string[];
+    mapData = {};
 
     public dygraph: any;
     public defOptions = {
         // width: "auto",
         // height: "auto",
         labels: ['Date', 'Temperature'],
+        colors: [],
         // xlabel: "X label text",
         // ylabel: "Y label text",
         title: 'My Title',
         animatedZooms: true,
-        pointSize: 4,
+        connectSeparatedPoints: true,
+        legend: 'always',
+        labelsSeparateLines: true,
+        // pointSize: 2,
         titleHeight: 20,
         axisLabelFontSize: 12
     };
@@ -51,6 +61,11 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         this.dygraph.ready(graph => {
             let sc: SimpleChanges = {};
             this.ngOnChanges(sc);
+            // test to change css legend
+            var cols: any = document.getElementsByClassName('dygraph-legend');
+            for(let i = 0; i < cols.length; i++) {
+              cols[i].style.fontSize = '12px';
+            }
         });
     }
 
@@ -92,11 +107,19 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         // }, 500);
     }
 
-    public setData(data) {
-        let sc: SimpleChanges = {};
-        let rdata = [[new Date("1967/09/14"), 4], [new Date("1968/09/14"), 0]];
-        this.dygraph.updateOptions({ file: rdata });
+    onClick(ev) {
+        this.onTimeRange.emit(ev);
     }
+
+    onRangeChange(ev) {
+        this.onTimeRange.emit(ev);
+    }
+
+    // public setData(data) {
+    //     let sc: SimpleChanges = {};
+    //     let rdata = [[new Date("1967/09/14"), 4], [new Date("1968/09/14"), 0]];
+    //     this.dygraph.updateOptions({ file: rdata });
+    // }
 
     public resize(height?, width?) {
         let chart = this.chart.nativeElement;
@@ -116,6 +139,46 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
 
     public changeVisibility(index, value) {
         this.dygraph.setVisibility(index, value);
+    }
+
+    public init() {
+        this.options.labels = ['DateTime'];
+        this.mapData = {};
+        this.data = [];
+    }
+
+    public setOptions(options) {
+        this.options = Object.assign(this.options, options);
+        this.dygraph.updateOptions(this.options);
+    }
+
+    public addLine(id: string, name:string, color: string) {
+        if (!this.mapData[id]) {
+            this.mapData[id] = this.options.labels.length;
+            this.options.labels.push(name);
+            this.options.colors.push(color);
+            this.dygraph.updateOptions({ labels: this.options.labels, colors: this.options.colors });
+        }
+    }
+
+    public addValue(id: string, value) {
+        console.log(value);
+        if (this.mapData[id] && value) {
+            let row = Array(this.options.labels.length).fill(null);
+            row[0] = new Date();
+            row[this.mapData[id]] = parseInt(value);
+            this.data.push(row);
+            // check to remove old value
+            if (this.data.length > 5000) {
+                this.data.shift();
+            }
+            this.dygraph.updateOptions({ file: this.data });
+        }
+    }
+
+    public clear() {
+        this.data = [];
+        this.dygraph.updateOptions({ file: this.data });
     }
 
     //   private watchRangeSelector(graph) {

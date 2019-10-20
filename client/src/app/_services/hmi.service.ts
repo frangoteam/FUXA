@@ -68,6 +68,11 @@ export class HmiService {
         }
     }
 
+    
+    public getAllSignals() {
+        return this.variables;
+    }
+
     //#region Scket.io
     /**
      * Init the socket and subsribe to device status and signal value change
@@ -130,17 +135,6 @@ export class HmiService {
             this.socket.emit('device-values', 'get');
         }
     }
-
-    public getAllSignals() {
-        return this.variables;
-    }
-    // public getMessages = () => {
-    //     return Observable.create((observer) => {
-    //         this.socket.on('device-status', (message) => {
-    //             observer.next(message);
-    //         });
-    //     });
-    // }
 
     public emitMappedSignalsGauge(domViewId: string) {
         let sigsToEmit = this.viewSignalGaugeMap.getSignalIds(domViewId);
@@ -214,19 +208,71 @@ export class HmiService {
     }
 
     /**
-     * get all signals mapped in all dom views
+     * get all signals property mapped in all dom views
+     * @param fulltext a copy with item name and source 
      */
-    getMappedVariables(): Variable[] {
+    getMappedVariables(fulltext: boolean): Variable[] {
         let result: Variable[] = [];
         this.viewSignalGaugeMap.getAllSignalIds().forEach(sigid => {
             if (this.variables[sigid]) {
-                result.push(this.variables[sigid]);
+                let toadd = this.variables[sigid];
+                if (fulltext) {
+                    toadd = Object.assign({}, this.variables[sigid]);
+                    let device = this.projectService.getDeviceFromId(toadd.source);
+                    if (device) {
+                        toadd['source'] = device.name;
+                        if (device.tags[toadd.name]) {
+                            toadd['name'] = device.tags[toadd.name].name;
+                        }                    
+                    }
+                }
+                result.push(toadd);
             }
         });
         return result;
     }
+
+    /**
+     * get singal property, complate the signal property with device tag property 
+     * @param sigid 
+     * @param fulltext 
+     */
+    getMappedVariable(sigid: string, fulltext: boolean): Variable {
+        if (this.variables[sigid]) {
+            let result = this.variables[sigid];
+            if (fulltext) {
+                result = Object.assign({}, this.variables[sigid]);
+                let device = this.projectService.getDeviceFromId(result.source);
+                if (device) {
+                    result['source'] = device.name;
+                    if (device.tags[result.name]) {
+                        result['name'] = device.tags[result.name].name;
+                    }                    
+                }
+            }
+            return result;
+        }
+    }    
     //#endregion
 
+    //#region Chart Function
+    getChart(id: string) {
+        return this.projectService.getChart(id);
+    }
+
+    getChartSignal(id: string) {
+        let chart = this.projectService.getChart(id);
+        if (chart) {
+            let varsId = [];
+            chart.lines.forEach(line => {
+                varsId.push(HmiService.toVariableId(line.device, line.id));
+            });
+            return varsId;
+        }
+    }
+
+    //#endregion
+    
     //#region My Static functions
     public static toVariableId(src: string, name: string) {
         return src + HmiService.separator + name;

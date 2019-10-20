@@ -8,6 +8,7 @@ import { Tag, Device, DeviceType } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
 import { Node } from '../../gui-helpers/treetable/treetable.component';
+import { Utils } from '../../_helpers/utils';
 
 @Component({
   selector: 'app-device-list',
@@ -154,7 +155,7 @@ export class DeviceListComponent implements OnInit {
 
   editTag(tag: Tag, checkToAdd: boolean) {
     // console.log('The Edit Tag open');
-    let oldtag = tag.name;
+    let oldtag = tag.id;
     let temptag = JSON.parse(JSON.stringify(tag));
     let dialogRef = this.dialog.open(TagPropertyComponent, {
       // minWidth: '700px',
@@ -167,7 +168,7 @@ export class DeviceListComponent implements OnInit {
       if (result) {
         this.dirty = true;
         // console.log('The Edit Tag was closed');
-        tag.id = temptag.name;
+        tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
         tag.name = temptag.name;
         tag.type = temptag.type;
         tag.address = temptag.address;

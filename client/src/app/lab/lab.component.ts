@@ -59,7 +59,7 @@ export class LabComponent implements OnInit, AfterViewInit {
     }
 
     onTest() {
-        this.tester.setSignals(this.gaugesManager.getMappedGaugesSignals());
+        this.tester.setSignals(this.gaugesManager.getMappedGaugesSignals(true));
         this.testerService.toggle(true);
     }
 

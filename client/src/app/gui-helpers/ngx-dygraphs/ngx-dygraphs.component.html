@@ -11,6 +11,19 @@
     </div>
 </div> -->
 <div class="mychart-panel">
+    <div class="mychar-toolbar" *ngIf="withToolbar">
+        <div class="mychar-toolbar-space" *ngIf="isEditor">Toolbar</div>
+        <div style="display: block; float:right; padding-right: 5px;" class="my-form-field" *ngIf="!isEditor">
+            <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-select toolbar-cmp" (selectionChange)="onRangeChange($event.source)">
+                <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key">
+                  {{ ev.value }}
+                </mat-option>
+            </mat-select>            
+            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('T')">T</button>
+            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('B')">B</button>
+            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('F')">F</button>
+          </div>
+    </div>
     <div class="mychart-graph" #chart>
     </div>
     <div *ngIf="!data?.length" class="nodata">

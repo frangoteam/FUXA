@@ -34,6 +34,11 @@ export interface DygraphOptions {
     labels?: string[];
 
     /**
+     * Define Line Colors
+     */
+    colors?: string[];
+
+    /**
      * When to display the legend. By default ("onmouseover"), it only appears when a user mouses over the chart.
      * Set it to "always" to always display a legend of some sort.
      * When set to "follow", legend follows highlighted points.

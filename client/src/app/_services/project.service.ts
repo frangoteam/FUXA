@@ -205,6 +205,14 @@ export class ProjectService {
         return (this.projectData) ? (this.projectData.charts) ? this.projectData.charts : [] : null;
     }
 
+    getChart(id: string) {
+        for (let i = 0; i < this.projectData.charts.length; i++) {
+            if (this.projectData.charts[i].id === id) {
+                return this.projectData.charts[i];
+            }
+        }
+    }
+
     /**
      * save the charts to project
      * @param charts
@@ -288,6 +296,16 @@ export class ProjectService {
 
     getDevices(): any {
         return (this.projectData) ? this.projectData.devices : {};
+    }
+
+    getDeviceFromId(id: string): any {
+        let result;
+        Object.keys(this.projectData.devices).forEach(k => {
+            if (this.projectData.devices[k].id === id) {
+                result = this.projectData.devices[k];
+            }
+        });
+        return result;
     }
 
     setDevices(devices: any, nosave?: boolean): boolean {

@@ -117,6 +117,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
                 this.loadHmi();
             });
+            this.gaugesManager.clearMemory();
         }
         catch (e) {
             console.log(e);
@@ -614,7 +615,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ga 
      */
     checkGaugeAdded(ga: GaugeSettings) {
-        let gauge = GaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, null);
+        let gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
         if (gauge) {
             if (this.gaugesRef.indexOf(ga.id) === -1) {
                 this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };

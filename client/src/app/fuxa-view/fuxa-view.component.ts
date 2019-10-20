@@ -17,7 +17,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
   @Input() id: string;
   @Input() view: View;
   @Input() hmi: Hmi;
-  @Input() gaugesManager: GaugesManager;
+  @Input() gaugesManager: GaugesManager;        // gauges.component
   @Input() parentcards: CardModel[];
 
   @ViewChild('dataContainer') dataContainer: ElementRef;
@@ -80,8 +80,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
       // this.gaugesManager.initGaugesMap();
       for (let key in view.items) {
         console.log(key);
-        let gauge = GaugesManager.initElementAdded(view.items[key], this.resolver, this.viewContainerRef, this);
-        this.gaugesManager.bindGauge(this.id, view.items[key],
+        let gauge = this.gaugesManager.initElementAdded(view.items[key], this.resolver, this.viewContainerRef, true);
+        this.gaugesManager.bindGauge(gauge, this.id, view.items[key],
           (gatobindclick) => {
             this.onBindClick(gatobindclick);
           },

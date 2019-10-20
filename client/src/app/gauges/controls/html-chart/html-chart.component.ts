@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings } from '../../../_models/hmi';
+import { GaugeSettings, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
+
+import { ChartRangeType } from '../../../_models/chart';
 
 import { NgxDygraphsComponent } from '../../../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 
@@ -21,23 +23,56 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
 
   ngOnInit() {}
 
-  static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options: any) {
+  static getSignal(pro: any) {
+    return pro.variableIds;
+  }
+
+  static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gauge: NgxDygraphsComponent) {
+    console.log(sig);
+    gauge.addValue(sig.id, sig.value);
+  }
+  
+  static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean) {
     let ele = document.getElementById(gab.id);
     if (ele) {
       let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD);
       if (htmlChart) {
         const factory = resolver.resolveComponentFactory(NgxDygraphsComponent);
         const componentRef = viewContainerRef.createComponent(factory);
-        if (options) {
-          componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
+        if (gab.property) {
+          componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
         }
+        let options = { interactionModel: {} };    // option to remove interaction in editor modus
+        if (isview) {
+          options = null;        
+        }
+        componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
+        componentRef.instance.isEditor = !isview;
+        // range select
+        let chartRange = ChartRangeType;
+        // Object.keys(this.chartViewType).forEach(key => {
+        //   this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => {this.chartViewType[key] = txt});
+        // });
+        componentRef.instance.rangeType = chartRange;
+
+        componentRef.instance.onTimeRange.subscribe(data => {
+          console.log(gab.id + ' ' + data);
+          componentRef.instance.clear();
+        });
         componentRef.changeDetectorRef.detectChanges();
         const loaderComponentElement = componentRef.location.nativeElement;
-        const sibling: HTMLElement = loaderComponentElement.previousSibling;
         htmlChart.appendChild(loaderComponentElement);
-          componentRef.instance.resize(htmlChart.clientHeight, htmlChart.clientWidth);
+          componentRef.instance.resize(htmlChart.clientHeight - ((componentRef.instance.withToolbar) ? 34 : 0), htmlChart.clientWidth);
           return componentRef.instance;
       }
+    }
+  }
+
+  static detectChange(gab: GaugeSettings) {
+    let ele = document.getElementById(gab.id);
+    if (ele) {
+      let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD) as HTMLElement;
+      let txt = htmlChart.namespaceURI;
     }
   }
 }

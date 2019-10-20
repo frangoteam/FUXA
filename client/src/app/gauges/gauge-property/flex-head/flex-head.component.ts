@@ -69,10 +69,10 @@ export class FlexHeadComponent implements OnInit {
     if (this.data.devices) {
       if (this.property.variableSrc || this.property.alarmSrc) {
         this.data.devices.forEach(dev => {
-          if (this.property.variableSrc && dev.name === this.property.variableSrc) {
+          if (this.property.variableSrc && dev.id === this.property.variableSrc) {
             seldevice = dev;
           }
-          if (this.property.alarmSrc && dev.name === this.property.alarmSrc) {
+          if (this.property.alarmSrc && dev.id === this.property.alarmSrc) {
             selalarmdevice = dev;
           }
         });
@@ -90,7 +90,7 @@ export class FlexHeadComponent implements OnInit {
       this.onDeviceChange(this.deviceCtrl);
       if (this.property.variable) {
         for (let i = 0; i < this.variable.length; i++) {
-          if (this.variable[i].name === this.property.variable) {
+          if (this.variable[i].id === this.property.variable) {
             this.currentTag = this.variable[i];
           }
         }
@@ -127,11 +127,11 @@ export class FlexHeadComponent implements OnInit {
 
   onDeviceChange(event) {
     if (event.value) {
-      if (this.property.variableSrc !== event.value.name) {
+      if (this.property.variableSrc !== event.value.id) {
         this.property.variable = '';
         this.property.variableId = '';
       }
-      this.property.variableSrc = event.value.name;
+      this.property.variableSrc = event.value.id;
       this.variable = [];
       this.currentTag = null;
       if (event.value.tags) {
@@ -154,11 +154,11 @@ export class FlexHeadComponent implements OnInit {
 
   onAlarmDeviceChange(event) {
     if (event.value) {
-      if (this.property.alarmSrc !== event.value.name) {
+      if (this.property.alarmSrc !== event.value.id) {
         this.property.alarm = '';
         this.property.alarmId = '';
       }
-      this.property.alarmSrc = event.value.name;
+      this.property.alarmSrc = event.value.id;
       this.alarme = [];
       if (event.value.tags) {
         this.alarme = Object.values(event.value.tags);

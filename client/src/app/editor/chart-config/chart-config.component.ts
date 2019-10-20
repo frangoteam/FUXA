@@ -62,14 +62,23 @@ export class ChartConfigComponent implements OnInit {
                 if (chart) {
                     chart.name = result.name;
                 } else {
-                    this.data.charts.push({ id: result.name, name: result.name, lines: [] });
+                    this.data.charts.push({ id: Utils.getShortGUID(), name: result.name, lines: [] });
                 }
             }
         });
     }
 
     deleteChart(chart) {
-        console.log(chart);
+        let found = -1;
+        for (let i = 0; i < this.data.charts.length; i++) {
+            if (chart.id === this.data.charts[i].id) {
+                found = i;
+            }
+        }
+        if (found >= 0) {
+            this.data.charts.splice(found, 1);
+            this.selectedChart = { id: null, name: null, lines: [] };
+        }
     }
 
     selectDevice(device) {
@@ -86,7 +95,7 @@ export class ChartConfigComponent implements OnInit {
         if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
             this.selectedChart.lines.forEach(line => {
                 this.selectedDevice.tags.forEach(tag => {
-                    if (line.device === this.selectedDevice.id && line.id === ((tag.address) ? tag.address : tag.id)) {
+                    if (line.device === this.selectedDevice.id && line.id === ((tag.id) ? tag.id : tag.address)) {
                         tag.selected = true;
                     }
                 });
@@ -109,7 +118,7 @@ export class ChartConfigComponent implements OnInit {
                     if (chart.lines[i].device === device.id) {
                         let found = -1;
                         for (let x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
+                            if (chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
                                 found = i;
                                 break;
                             }
@@ -132,14 +141,14 @@ export class ChartConfigComponent implements OnInit {
                 let found = false;
                 if (chart.lines) {
                     for (let i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
+                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
                             found = true;
                         }
                     }
                 }
                 if (!found) {
                     const myCopiedObject = {};//Object.assign({}, tags[x]);
-                    myCopiedObject['id'] = (tags[x].address) ? tags[x].address : tags[x].id;
+                    myCopiedObject['id'] = (tags[x].id) ? tags[x].id : tags[x].address;
                     myCopiedObject['name'] = tags[x].name;
                     myCopiedObject['device'] = device.id;
                     myCopiedObject['color'] = this.getNextColor();
@@ -159,6 +168,17 @@ export class ChartConfigComponent implements OnInit {
 
     removeChartLine(tag) {
         console.log('rm ' + tag);
+        let found = -1;
+        for (let i = 0; i < this.selectedTags.length; i++) {
+            if (tag.id === this.selectedTags[i].id) {
+                found = i;
+                break;
+            }
+        }
+        if (found >= 0) {
+            this.selectedTags.splice(found, 1)
+        }
+        this.checkChartTags(this.selectedChart, this.selectedDevice, this.selectedTags);
     }
 
     isChartSelected(chart) {
@@ -171,6 +191,19 @@ export class ChartConfigComponent implements OnInit {
         if (device && device.id === this.selectedDevice.id) {
             return 'list-item-selected';
         }
+    }
+
+    getDeviceTagName(tag) {
+        let devices = this.data.devices.filter(x => x.id === tag.device);
+        if (devices && devices.length > 0) {
+            let tags = devices[0].tags;
+            for (let i = 0; i < tags.length; i++) {
+                if (tag.id === tags[i].id) {
+                    return tags[i].name;
+                }
+            }
+        }
+        return '';
     }
 
     getDeviceName(deviceid) {

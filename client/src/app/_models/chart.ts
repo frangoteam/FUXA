@@ -16,3 +16,10 @@ export enum ChartViewType {
     realtime1 = 'chart.viewtype-realtime1',
     history = 'chart.viewtype-history'
 }
+
+export enum ChartRangeType {
+    last8h = 'chart.rangetype-last8h',
+    last1d = 'chart.rangetype-last1d',
+    last3d = 'chart.rangetype-last2d',
+    last1w = 'chart.rangetype-last1w'
+}

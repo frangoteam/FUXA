@@ -46,7 +46,7 @@ export class TesterComponent implements OnInit {
 
   setSignal(sig:any) {
     this.hmiService.setSignalValue(sig);
-    this.addOutput('set ' + sig.id + ' ' + sig.value);
+    this.addOutput('set ' + sig.source + ' - ' + sig.name + ' = ' + sig.value);
   }
 
   setSignals(items: any) {

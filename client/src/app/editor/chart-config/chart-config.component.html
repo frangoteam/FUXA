@@ -13,9 +13,9 @@
                         <mat-list-item *ngFor="let chart of data.charts" class="list-item" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
                             <span>{{chart.name}}</span>
                             <mat-icon [matMenuTriggerFor]="configMenu" style="position: absolute; right: 10px;cursor:pointer;color:gray;">more_vert</mat-icon>
-                            <mat-menu #configMenu [overlapTrigger]="false">
-                                <button mat-menu-item (click)="editChart(chart)">edit chart</button>
-                                <button mat-menu-item (click)="deleteChart(chart)">delete chart</button>
+                            <mat-menu #configMenu [overlapTrigger]="false" style="color:#000000">
+                                <button mat-menu-item (click)="editChart(chart)" style="color:#000000;font-size: 14px;">edit chart</button>
+                                <button mat-menu-item (click)="deleteChart(chart)" style="color:#000000;font-size: 14px;">delete chart</button>
                             </mat-menu>
                         </mat-list-item>
                     </mat-list>
@@ -53,7 +53,7 @@
                     <mat-list-item *ngFor="let tag of selectedChart.lines" class="list-item" (click)="editChartLine(tag)">
                         <mat-icon (click)="$event.stopPropagation();removeChartLine(tag)" style="color:gray;font-size: 20px">delete</mat-icon>
                         <div style="width: 50%;max-width: 50%">
-                            <span>{{tag.name}}</span>
+                            <span>{{getDeviceTagName(tag)}}</span>
                         </div>
                         <div style="width: 30%;max-width: 30%">
                             <span>{{getDeviceName(tag.device)}}</span>

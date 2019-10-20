@@ -51,6 +51,18 @@ export class Utils {
         }
         return uuid;
     };
+
+    static getShortGUID(): string {
+      var uuid = "", i, random;
+      for (i = 0; i < 16; i++) {
+        random = Math.random() * 16 | 0;
+        if (i == 8) {
+          uuid += "-"
+        }
+        uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+      }
+      return uuid;
+  };
 }
 
 @Pipe({

@@ -884,6 +884,18 @@ var Utils = (function () {
         return uuid;
     };
     ;
+    Utils.getShortGUID = function () {
+        var uuid = "", i, random;
+        for (i = 0; i < 16; i++) {
+            random = Math.random() * 16 | 0;
+            if (i == 8) {
+                uuid += "-";
+            }
+            uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+        }
+        return uuid;
+    };
+    ;
     Utils.defaultColor = ['#FFFFFF', '#000000', '#EEECE1', '#1F497D', '#4F81BD', '#C0504D', '#9BBB59', '#8064A2', '#4BACC6',
         '#F79646', '#C00000', '#FF0000', '#FFC000', '#FFD04A', '#FFFF00', '#92D050', '#0AC97D', '#00B050', '#00B0F0', '#4484EF', '#3358C0',
         '#002060', '#7030A0', '#D8D8D8', '#BFBFBF', '#A5A5A5', '#7F7F7F', '#595959', '#3F3F3F', '#262626'];
@@ -964,7 +976,8 @@ var WindowRef = (function () {
 "use strict";
 /* unused harmony export Chart */
 /* unused harmony export ChartLine */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartViewType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ChartViewType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartRangeType; });
 var Chart = (function () {
     function Chart() {
     }
@@ -982,6 +995,13 @@ var ChartViewType;
     ChartViewType["realtime1"] = "chart.viewtype-realtime1";
     ChartViewType["history"] = "chart.viewtype-history";
 })(ChartViewType || (ChartViewType = {}));
+var ChartRangeType;
+(function (ChartRangeType) {
+    ChartRangeType["last8h"] = "chart.rangetype-last8h";
+    ChartRangeType["last1d"] = "chart.rangetype-last1d";
+    ChartRangeType["last3d"] = "chart.rangetype-last2d";
+    ChartRangeType["last1w"] = "chart.rangetype-last1w";
+})(ChartRangeType || (ChartRangeType = {}));
 
 
 /***/ }),
@@ -1332,6 +1352,9 @@ var HmiService = (function () {
             // this.onVariableChanged.emit(this.variables[sigId]);
         }
     };
+    HmiService.prototype.getAllSignals = function () {
+        return this.variables;
+    };
     //#region Scket.io
     /**
      * Init the socket and subsribe to device status and signal value change
@@ -1392,16 +1415,6 @@ var HmiService = (function () {
             this.socket.emit('device-values', 'get');
         }
     };
-    HmiService.prototype.getAllSignals = function () {
-        return this.variables;
-    };
-    // public getMessages = () => {
-    //     return Observable.create((observer) => {
-    //         this.socket.on('device-status', (message) => {
-    //             observer.next(message);
-    //         });
-    //     });
-    // }
     HmiService.prototype.emitMappedSignalsGauge = function (domViewId) {
         var sigsToEmit = this.viewSignalGaugeMap.getSignalIds(domViewId);
         for (var idx = 0; idx < sigsToEmit.length; idx++) {
@@ -1469,17 +1482,65 @@ var HmiService = (function () {
         return Object.values(this.viewSignalGaugeMap.signalsGauges(domViewId, sigid));
     };
     /**
-     * get all signals mapped in all dom views
+     * get all signals property mapped in all dom views
+     * @param fulltext a copy with item name and source
      */
-    HmiService.prototype.getMappedVariables = function () {
+    HmiService.prototype.getMappedVariables = function (fulltext) {
         var _this = this;
         var result = [];
         this.viewSignalGaugeMap.getAllSignalIds().forEach(function (sigid) {
             if (_this.variables[sigid]) {
-                result.push(_this.variables[sigid]);
+                var toadd = _this.variables[sigid];
+                if (fulltext) {
+                    toadd = Object.assign({}, _this.variables[sigid]);
+                    var device = _this.projectService.getDeviceFromId(toadd.source);
+                    if (device) {
+                        toadd['source'] = device.name;
+                        if (device.tags[toadd.name]) {
+                            toadd['name'] = device.tags[toadd.name].name;
+                        }
+                    }
+                }
+                result.push(toadd);
             }
         });
         return result;
+    };
+    /**
+     * get singal property, complate the signal property with device tag property
+     * @param sigid
+     * @param fulltext
+     */
+    HmiService.prototype.getMappedVariable = function (sigid, fulltext) {
+        if (this.variables[sigid]) {
+            var result = this.variables[sigid];
+            if (fulltext) {
+                result = Object.assign({}, this.variables[sigid]);
+                var device = this.projectService.getDeviceFromId(result.source);
+                if (device) {
+                    result['source'] = device.name;
+                    if (device.tags[result.name]) {
+                        result['name'] = device.tags[result.name].name;
+                    }
+                }
+            }
+            return result;
+        }
+    };
+    //#endregion
+    //#region Chart Function
+    HmiService.prototype.getChart = function (id) {
+        return this.projectService.getChart(id);
+    };
+    HmiService.prototype.getChartSignal = function (id) {
+        var chart = this.projectService.getChart(id);
+        if (chart) {
+            var varsId_1 = [];
+            chart.lines.forEach(function (line) {
+                varsId_1.push(HmiService_1.toVariableId(line.device, line.id));
+            });
+            return varsId_1;
+        }
     };
     //#endregion
     //#region My Static functions
@@ -1770,6 +1831,13 @@ var ProjectService = (function () {
     ProjectService.prototype.getCharts = function () {
         return (this.projectData) ? (this.projectData.charts) ? this.projectData.charts : [] : null;
     };
+    ProjectService.prototype.getChart = function (id) {
+        for (var i = 0; i < this.projectData.charts.length; i++) {
+            if (this.projectData.charts[i].id === id) {
+                return this.projectData.charts[i];
+            }
+        }
+    };
     /**
      * save the charts to project
      * @param charts
@@ -1845,6 +1913,16 @@ var ProjectService = (function () {
     };
     ProjectService.prototype.getDevices = function () {
         return (this.projectData) ? this.projectData.devices : {};
+    };
+    ProjectService.prototype.getDeviceFromId = function (id) {
+        var _this = this;
+        var result;
+        Object.keys(this.projectData.devices).forEach(function (k) {
+            if (_this.projectData.devices[k].id === id) {
+                result = _this.projectData.devices[k];
+            }
+        });
+        return result;
     };
     ProjectService.prototype.setDevices = function (devices, nosave) {
         this.projectData.devices = devices;
@@ -2429,6 +2507,7 @@ module.exports = "<div class=\"container\">\n  <div class=\"filter\" *ngIf=\"dev
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_device__ = __webpack_require__("../../../../../src/app/_models/device.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2438,6 +2517,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -2567,7 +2647,7 @@ var DeviceListComponent = (function () {
     DeviceListComponent.prototype.editTag = function (tag, checkToAdd) {
         var _this = this;
         // console.log('The Edit Tag open');
-        var oldtag = tag.name;
+        var oldtag = tag.id;
         var temptag = JSON.parse(JSON.stringify(tag));
         var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_3__tag_property_tag_property_component__["a" /* TagPropertyComponent */], {
             // minWidth: '700px',
@@ -2580,7 +2660,7 @@ var DeviceListComponent = (function () {
             if (result) {
                 _this.dirty = true;
                 // console.log('The Edit Tag was closed');
-                tag.id = temptag.name;
+                tag.id = (tag.id) ? tag.id : __WEBPACK_IMPORTED_MODULE_7__helpers_utils__["b" /* Utils */].getShortGUID();
                 tag.name = temptag.name;
                 tag.type = temptag.type;
                 tag.address = temptag.address;
@@ -3502,7 +3582,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/editor/chart-config/chart-config.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\n    <div style=\"display: inline-block; width: 100%\">\n        <div class=\"panelTop\">\n            <mat-grid-list cols=\"3\" rowHeight=\"100%\">\n                <mat-grid-tile class=\"chart-list\">\n                    <mat-list class=\"list\" >\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-charts' | translate}}</span>\n                            <mat-icon style=\"position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);\" (click)=\"editChart()\">add</mat-icon>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let chart of data.charts\" class=\"list-item\" [ngClass]=\"isChartSelected(chart)\" (click)=\"selectedChart = chart;loadChartConfig();\">\n                            <span>{{chart.name}}</span>\n                            <mat-icon [matMenuTriggerFor]=\"configMenu\" style=\"position: absolute; right: 10px;cursor:pointer;color:gray;\">more_vert</mat-icon>\n                            <mat-menu #configMenu [overlapTrigger]=\"false\">\n                                <button mat-menu-item (click)=\"editChart(chart)\">edit chart</button>\n                                <button mat-menu-item (click)=\"deleteChart(chart)\">delete chart</button>\n                            </mat-menu>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"device-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-devices' | translate}}</span>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let device of data.devices;\" class=\"list-item\" [ngClass]=\"isDeviceSelected(device)\" (click)=\"selectDevice(device);\">\n                            <span>{{device.name}}</span>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"tag-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-tags' | translate}}</span>\n                        </mat-list-item>\n                        <mat-selection-list #selTags [(ngModel)]=\"selectedTags\" [disabled]=\"(selectedChart.id)?false:true\" (selectionChange)=\"tagSelectionChanged($event)\" style=\"padding-top: 0px;\">\n                            <mat-list-option *ngFor=\"let tag of selectedDevice.tags\" [selected]=\"tag.selected\" [value]=\"tag\" class=\"list-item\" checkboxPosition=\"before\">\n                                {{tag.name}}\n                            </mat-list-option>\n                        </mat-selection-list>\n                    </mat-list>\n                </mat-grid-tile>\n            </mat-grid-list>\n        </div>\n        <div class=\"panelBottom\">\n            <mat-list class=\"list\">\n                <mat-list-item class=\"list-item list-header\">\n                    <span>{{'chart.config-lines' | translate}}</span>\n                </mat-list-item>\n                <div style=\"height: calc(100% - 36px); overflow-y: auto\">\n                    <mat-list-item *ngFor=\"let tag of selectedChart.lines\" class=\"list-item\" (click)=\"editChartLine(tag)\">\n                        <mat-icon (click)=\"$event.stopPropagation();removeChartLine(tag)\" style=\"color:gray;font-size: 20px\">delete</mat-icon>\n                        <div style=\"width: 50%;max-width: 50%\">\n                            <span>{{tag.name}}</span>\n                        </div>\n                        <div style=\"width: 30%;max-width: 30%\">\n                            <span>{{getDeviceName(tag.device)}}</span>\n                        </div>\n                        <div>\n                            <input [(colorPicker)]=\"tag.color\" class=\"color-line\" title=\"{{'chart.config-line-color' | translate}}\" \n                            [style.background]=\"tag.color\" [cpAlphaChannel]=\"'disabled'\" [cpPosition]=\"'top'\"\n                            [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\n                            [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\n                        </div>\n                    </mat-list-item>\n                </div>\n            </mat-list>\n        </div>\n    </div>\n\n    <!-- <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\"> -->\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\"\n            cdkFocusInitial>OK</button>\n    </div>\n</div>\n"
+module.exports = "<div>\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\n    <div style=\"display: inline-block; width: 100%\">\n        <div class=\"panelTop\">\n            <mat-grid-list cols=\"3\" rowHeight=\"100%\">\n                <mat-grid-tile class=\"chart-list\">\n                    <mat-list class=\"list\" >\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-charts' | translate}}</span>\n                            <mat-icon style=\"position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);\" (click)=\"editChart()\">add</mat-icon>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let chart of data.charts\" class=\"list-item\" [ngClass]=\"isChartSelected(chart)\" (click)=\"selectedChart = chart;loadChartConfig();\">\n                            <span>{{chart.name}}</span>\n                            <mat-icon [matMenuTriggerFor]=\"configMenu\" style=\"position: absolute; right: 10px;cursor:pointer;color:gray;\">more_vert</mat-icon>\n                            <mat-menu #configMenu [overlapTrigger]=\"false\" style=\"color:#000000\">\n                                <button mat-menu-item (click)=\"editChart(chart)\" style=\"color:#000000;font-size: 14px;\">edit chart</button>\n                                <button mat-menu-item (click)=\"deleteChart(chart)\" style=\"color:#000000;font-size: 14px;\">delete chart</button>\n                            </mat-menu>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"device-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-devices' | translate}}</span>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let device of data.devices;\" class=\"list-item\" [ngClass]=\"isDeviceSelected(device)\" (click)=\"selectDevice(device);\">\n                            <span>{{device.name}}</span>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"tag-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-tags' | translate}}</span>\n                        </mat-list-item>\n                        <mat-selection-list #selTags [(ngModel)]=\"selectedTags\" [disabled]=\"(selectedChart.id)?false:true\" (selectionChange)=\"tagSelectionChanged($event)\" style=\"padding-top: 0px;\">\n                            <mat-list-option *ngFor=\"let tag of selectedDevice.tags\" [selected]=\"tag.selected\" [value]=\"tag\" class=\"list-item\" checkboxPosition=\"before\">\n                                {{tag.name}}\n                            </mat-list-option>\n                        </mat-selection-list>\n                    </mat-list>\n                </mat-grid-tile>\n            </mat-grid-list>\n        </div>\n        <div class=\"panelBottom\">\n            <mat-list class=\"list\">\n                <mat-list-item class=\"list-item list-header\">\n                    <span>{{'chart.config-lines' | translate}}</span>\n                </mat-list-item>\n                <div style=\"height: calc(100% - 36px); overflow-y: auto\">\n                    <mat-list-item *ngFor=\"let tag of selectedChart.lines\" class=\"list-item\" (click)=\"editChartLine(tag)\">\n                        <mat-icon (click)=\"$event.stopPropagation();removeChartLine(tag)\" style=\"color:gray;font-size: 20px\">delete</mat-icon>\n                        <div style=\"width: 50%;max-width: 50%\">\n                            <span>{{getDeviceTagName(tag)}}</span>\n                        </div>\n                        <div style=\"width: 30%;max-width: 30%\">\n                            <span>{{getDeviceName(tag.device)}}</span>\n                        </div>\n                        <div>\n                            <input [(colorPicker)]=\"tag.color\" class=\"color-line\" title=\"{{'chart.config-line-color' | translate}}\" \n                            [style.background]=\"tag.color\" [cpAlphaChannel]=\"'disabled'\" [cpPosition]=\"'top'\"\n                            [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\n                            [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\n                        </div>\n                    </mat-list-item>\n                </div>\n            </mat-list>\n        </div>\n    </div>\n\n    <!-- <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\"> -->\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\"\n            cdkFocusInitial>OK</button>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -3578,13 +3658,22 @@ var ChartConfigComponent = (function () {
                     chart.name = result.name;
                 }
                 else {
-                    _this.data.charts.push({ id: result.name, name: result.name, lines: [] });
+                    _this.data.charts.push({ id: __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].getShortGUID(), name: result.name, lines: [] });
                 }
             }
         });
     };
     ChartConfigComponent.prototype.deleteChart = function (chart) {
-        console.log(chart);
+        var found = -1;
+        for (var i = 0; i < this.data.charts.length; i++) {
+            if (chart.id === this.data.charts[i].id) {
+                found = i;
+            }
+        }
+        if (found >= 0) {
+            this.data.charts.splice(found, 1);
+            this.selectedChart = { id: null, name: null, lines: [] };
+        }
     };
     ChartConfigComponent.prototype.selectDevice = function (device) {
         this.selectedDevice = JSON.parse(JSON.stringify(device));
@@ -3599,7 +3688,7 @@ var ChartConfigComponent = (function () {
         if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
             this.selectedChart.lines.forEach(function (line) {
                 _this.selectedDevice.tags.forEach(function (tag) {
-                    if (line.device === _this.selectedDevice.id && line.id === ((tag.address) ? tag.address : tag.id)) {
+                    if (line.device === _this.selectedDevice.id && line.id === ((tag.id) ? tag.id : tag.address)) {
                         tag.selected = true;
                     }
                 });
@@ -3621,7 +3710,7 @@ var ChartConfigComponent = (function () {
                     if (chart.lines[i].device === device.id) {
                         var found = -1;
                         for (var x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
+                            if (chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
                                 found = i;
                                 break;
                             }
@@ -3644,14 +3733,14 @@ var ChartConfigComponent = (function () {
                 var found = false;
                 if (chart.lines) {
                     for (var i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].address) ? tags[x].address : tags[x].id)) {
+                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
                             found = true;
                         }
                     }
                 }
                 if (!found) {
                     var myCopiedObject = {}; //Object.assign({}, tags[x]);
-                    myCopiedObject['id'] = (tags[x].address) ? tags[x].address : tags[x].id;
+                    myCopiedObject['id'] = (tags[x].id) ? tags[x].id : tags[x].address;
                     myCopiedObject['name'] = tags[x].name;
                     myCopiedObject['device'] = device.id;
                     myCopiedObject['color'] = this.getNextColor();
@@ -3668,6 +3757,17 @@ var ChartConfigComponent = (function () {
     };
     ChartConfigComponent.prototype.removeChartLine = function (tag) {
         console.log('rm ' + tag);
+        var found = -1;
+        for (var i = 0; i < this.selectedTags.length; i++) {
+            if (tag.id === this.selectedTags[i].id) {
+                found = i;
+                break;
+            }
+        }
+        if (found >= 0) {
+            this.selectedTags.splice(found, 1);
+        }
+        this.checkChartTags(this.selectedChart, this.selectedDevice, this.selectedTags);
     };
     ChartConfigComponent.prototype.isChartSelected = function (chart) {
         if (chart === this.selectedChart) {
@@ -3678,6 +3778,18 @@ var ChartConfigComponent = (function () {
         if (device && device.id === this.selectedDevice.id) {
             return 'list-item-selected';
         }
+    };
+    ChartConfigComponent.prototype.getDeviceTagName = function (tag) {
+        var devices = this.data.devices.filter(function (x) { return x.id === tag.device; });
+        if (devices && devices.length > 0) {
+            var tags = devices[0].tags;
+            for (var i = 0; i < tags.length; i++) {
+                if (tag.id === tags[i].id) {
+                    return tags[i].name;
+                }
+            }
+        }
+        return '';
     };
     ChartConfigComponent.prototype.getDeviceName = function (deviceid) {
         var obj = this.data.devices.filter(function (x) { return x.id === deviceid; });
@@ -3889,6 +4001,7 @@ var EditorComponent = (function () {
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (load) {
                 _this.loadHmi();
             });
+            this.gaugesManager.clearMemory();
         }
         catch (e) {
             console.log(e);
@@ -4353,7 +4466,7 @@ var EditorComponent = (function () {
      * @param ga
      */
     EditorComponent.prototype.checkGaugeAdded = function (ga) {
-        var gauge = __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].initElementAdded(ga, this.resolver, this.viewContainerRef, null);
+        var gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
         if (gauge) {
             if (this.gaugesRef.indexOf(ga.id) === -1) {
                 this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
@@ -5068,8 +5181,8 @@ var FuxaViewComponent = (function () {
             // this.gaugesManager.initGaugesMap();
             for (var key in view.items) {
                 console.log(key);
-                var gauge = __WEBPACK_IMPORTED_MODULE_2__gauges_gauges_component__["a" /* GaugesManager */].initElementAdded(view.items[key], this.resolver, this.viewContainerRef, this);
-                this.gaugesManager.bindGauge(this.id, view.items[key], function (gatobindclick) {
+                var gauge = this.gaugesManager.initElementAdded(view.items[key], this.resolver, this.viewContainerRef, true);
+                this.gaugesManager.bindGauge(gauge, this.id, view.items[key], function (gatobindclick) {
                     _this.onBindClick(gatobindclick);
                 }, function (gatobindhtmlevent) {
                     _this.onBindHtmlEvent(gatobindhtmlevent);
@@ -5320,7 +5433,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gauges/chart-property/chart-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\" style=\"width: 400px;\">\n            <span>{{'chart.property-chart' | translate}}</span>\n            <mat-select [formControl]=\"chartCtrl\">\n              <mat-select-search [formControl]=\"chartFilterCtrl\"></mat-select-search>\n              <mat-option *ngFor=\"let chart of filteredChart | async\" [value]=\"chart\">\n                {{ chart.name }}\n              </mat-option>\n            </mat-select>\n          </div>\n          <div class=\"my-form-field\" style=\"width: 200px;float: right;margin-right: 10px;\">\n            <span>{{'chart.property-chart-type' | translate}}</span>\n            <mat-select [(value)]=\"chartViewValue\" >\n              <mat-option *ngFor=\"let ev of chartViewType | enumToArray\" [value]=\"ev.key\">\n                {{ ev.value }}\n              </mat-option>\n            </mat-select>\n          </div>          \n        </div>\n        <div style=\"display: block; width:100%\">\n          <mat-list class=\"list\" style=\"padding-left: 8px;padding-right: 8px;\">\n            <div style=\"height: calc(100% - 36px); overflow-y: auto\" *ngIf=\"chartCtrl.value\">\n                <mat-list-item *ngFor=\"let tag of chartCtrl.value.lines\" style=\"font-size:14px\">\n                    <div style=\"width: 50%;\">\n                        <span>{{tag.name}}</span>\n                    </div>\n                    <div style=\"width: 40%;\">\n                        <span>{{getDeviceName(tag.device)}}</span>\n                    </div>\n                    <div [style.background-color]=\"tag.color\" style=\"height:20px; width:30px\">\n                    </div>\n                </mat-list-item>\n            </div>\n        </mat-list>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+module.exports = "<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\" style=\"width: 400px;\">\n            <span>{{'chart.property-chart' | translate}}</span>\n            <mat-select [formControl]=\"chartCtrl\">\n              <mat-select-search [formControl]=\"chartFilterCtrl\"></mat-select-search>\n              <mat-option *ngFor=\"let chart of filteredChart | async\" [value]=\"chart\">\n                {{ chart.name }}\n              </mat-option>\n            </mat-select>\n          </div>\n          <div class=\"my-form-field\" style=\"width: 200px;float: right;margin-right: 10px;\">\n            <span>{{'chart.property-chart-type' | translate}}</span>\n            <mat-select [(value)]=\"chartViewValue\" >\n              <mat-option *ngFor=\"let ev of chartViewType | enumToArray\" [value]=\"ev.key\">\n                {{ ev.value }}\n              </mat-option>\n            </mat-select>\n          </div>          \n        </div>\n        <div style=\"display: block; width:100%\">\n          <mat-list class=\"list\" style=\"padding-left: 8px;padding-right: 8px;\">\n            <div style=\"height: calc(100% - 36px); overflow-y: auto\" *ngIf=\"chartCtrl.value\">\n                <mat-list-item *ngFor=\"let tag of chartCtrl.value.lines\" style=\"font-size:14px;height: 27px;\">\n                    <div style=\"width: 50%;\">\n                        <span>{{tag.name}}</span>\n                    </div>\n                    <div style=\"width: 40%;\">\n                        <span>{{getDeviceName(tag.device)}}</span>\n                    </div>\n                    <div [style.background-color]=\"tag.color\" style=\"height:20px; width:30px\">\n                    </div>\n                </mat-list-item>\n            </div>\n        </mat-list>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -5362,7 +5475,7 @@ var ChartPropertyComponent = (function () {
         this.dialogRef = dialogRef;
         this.translateService = translateService;
         this.data = data;
-        this.chartViewType = __WEBPACK_IMPORTED_MODULE_7__models_chart__["a" /* ChartViewType */];
+        this.chartViewType = __WEBPACK_IMPORTED_MODULE_7__models_chart__["b" /* ChartViewType */];
         this.chartCtrl = new __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormControl */]();
         this.chartFilterCtrl = new __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormControl */]();
         this.filteredChart = new __WEBPACK_IMPORTED_MODULE_2_rxjs_ReplaySubject__["a" /* ReplaySubject */](1);
@@ -5943,7 +6056,8 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_chart__ = __webpack_require__("../../../../../src/app/_models/chart.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -5967,6 +6081,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HtmlChartComponent = (function (_super) {
     __extends(HtmlChartComponent, _super);
     function HtmlChartComponent(resolver) {
@@ -5975,23 +6090,52 @@ var HtmlChartComponent = (function (_super) {
         return _this;
     }
     HtmlChartComponent.prototype.ngOnInit = function () { };
-    HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, options) {
+    HtmlChartComponent.getSignal = function (pro) {
+        return pro.variableIds;
+    };
+    HtmlChartComponent.processValue = function (ga, svgele, sig, gauge) {
+        console.log(sig);
+        gauge.addValue(sig.id, sig.value);
+    };
+    HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, isview) {
         var ele = document.getElementById(gab.id);
         if (ele) {
             var htmlChart = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixD);
             if (htmlChart) {
-                var factory = resolver.resolveComponentFactory(__WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]);
-                var componentRef = viewContainerRef.createComponent(factory);
-                if (options) {
-                    componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
+                var factory = resolver.resolveComponentFactory(__WEBPACK_IMPORTED_MODULE_4__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]);
+                var componentRef_1 = viewContainerRef.createComponent(factory);
+                if (gab.property) {
+                    componentRef_1.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 }
-                componentRef.changeDetectorRef.detectChanges();
-                var loaderComponentElement = componentRef.location.nativeElement;
-                var sibling = loaderComponentElement.previousSibling;
+                var options = { interactionModel: {} }; // option to remove interaction in editor modus
+                if (isview) {
+                    options = null;
+                }
+                componentRef_1.instance.defOptions = Object.assign(componentRef_1.instance.defOptions, options);
+                componentRef_1.instance.isEditor = !isview;
+                // range select
+                var chartRange = __WEBPACK_IMPORTED_MODULE_3__models_chart__["a" /* ChartRangeType */];
+                // Object.keys(this.chartViewType).forEach(key => {
+                //   this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => {this.chartViewType[key] = txt});
+                // });
+                componentRef_1.instance.rangeType = chartRange;
+                componentRef_1.instance.onTimeRange.subscribe(function (data) {
+                    console.log(gab.id + ' ' + data);
+                    componentRef_1.instance.clear();
+                });
+                componentRef_1.changeDetectorRef.detectChanges();
+                var loaderComponentElement = componentRef_1.location.nativeElement;
                 htmlChart.appendChild(loaderComponentElement);
-                componentRef.instance.resize(htmlChart.clientHeight, htmlChart.clientWidth);
-                return componentRef.instance;
+                componentRef_1.instance.resize(htmlChart.clientHeight - ((componentRef_1.instance.withToolbar) ? 34 : 0), htmlChart.clientWidth);
+                return componentRef_1.instance;
             }
+        }
+    };
+    HtmlChartComponent.detectChange = function (gab) {
+        var ele = document.getElementById(gab.id);
+        if (ele) {
+            var htmlChart = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixD);
+            var txt = htmlChart.namespaceURI;
         }
     };
     HtmlChartComponent.TypeTag = "svg-ext-html_chart";
@@ -6749,10 +6893,10 @@ var FlexHeadComponent = (function () {
         if (this.data.devices) {
             if (this.property.variableSrc || this.property.alarmSrc) {
                 this.data.devices.forEach(function (dev) {
-                    if (_this.property.variableSrc && dev.name === _this.property.variableSrc) {
+                    if (_this.property.variableSrc && dev.id === _this.property.variableSrc) {
                         seldevice = dev;
                     }
-                    if (_this.property.alarmSrc && dev.name === _this.property.alarmSrc) {
+                    if (_this.property.alarmSrc && dev.id === _this.property.alarmSrc) {
                         selalarmdevice = dev;
                     }
                 });
@@ -6770,7 +6914,7 @@ var FlexHeadComponent = (function () {
             this.onDeviceChange(this.deviceCtrl);
             if (this.property.variable) {
                 for (var i = 0; i < this.variable.length; i++) {
-                    if (this.variable[i].name === this.property.variable) {
+                    if (this.variable[i].id === this.property.variable) {
                         this.currentTag = this.variable[i];
                     }
                 }
@@ -6802,11 +6946,11 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onDeviceChange = function (event) {
         if (event.value) {
-            if (this.property.variableSrc !== event.value.name) {
+            if (this.property.variableSrc !== event.value.id) {
                 this.property.variable = '';
                 this.property.variableId = '';
             }
-            this.property.variableSrc = event.value.name;
+            this.property.variableSrc = event.value.id;
             this.variable = [];
             this.currentTag = null;
             if (event.value.tags) {
@@ -6827,11 +6971,11 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onAlarmDeviceChange = function (event) {
         if (event.value) {
-            if (this.property.alarmSrc !== event.value.name) {
+            if (this.property.alarmSrc !== event.value.id) {
                 this.property.alarm = '';
                 this.property.alarmId = '';
             }
-            this.property.alarmSrc = event.value.name;
+            this.property.alarmSrc = event.value.id;
             this.alarme = [];
             if (event.value.tags) {
                 this.alarme = Object.values(event.value.tags);
@@ -7475,6 +7619,7 @@ var GaugesManager = (function () {
         // signalGaugeMap = new ViewSignalGaugeMap();      // map of all gauges (GaugeSettings) pro signals
         this.eventGauge = {};
         this.mapGaugeView = {};
+        this.memorySigGauges = {};
         this.gaugeWithProperty = [__WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag,
             __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag,
             __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag];
@@ -7563,6 +7708,9 @@ var GaugesManager = (function () {
         else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
             __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElement(ga);
         }
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].detectChange(ga);
+        }
         return false;
     };
     GaugesManager.prototype.setSignalValue = function (sig) {
@@ -7578,16 +7726,28 @@ var GaugesManager = (function () {
     };
     /**
      * bind dom view, gauge with signal (for animation) and event
+     * @param gaugekey
+     * @param gauge
      * @param domViewId
      * @param ga
      * @param bindclick
      * @param bindhtmlevent
      */
-    GaugesManager.prototype.bindGauge = function (domViewId, ga, bindclick, bindhtmlevent) {
-        var sigs = this.getBindSignals(ga);
-        if (sigs) {
-            for (var i = 0; i < sigs.length; i++) {
-                this.hmiService.addSignalGaugeToMap(domViewId, sigs[i], ga);
+    GaugesManager.prototype.bindGauge = function (gauge, domViewId, ga, bindclick, bindhtmlevent) {
+        var sigsid = this.getBindSignals(ga);
+        if (sigsid) {
+            for (var i = 0; i < sigsid.length; i++) {
+                this.hmiService.addSignalGaugeToMap(domViewId, sigsid[i], ga);
+                // check for special gauge to save in memory binded to sigid (chart-html)
+                if (gauge) {
+                    if (!this.memorySigGauges[sigsid[i]]) {
+                        this.memorySigGauges[sigsid[i]] = {};
+                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
+                    }
+                    else if (!this.memorySigGauges[sigsid[i]][ga.id]) {
+                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
+                    }
+                }
             }
         }
         var clicks = this.getBindClick(ga);
@@ -7645,9 +7805,10 @@ var GaugesManager = (function () {
     };
     /**
      * get all signals mapped in all dom views
+     * @param fulltext a copy with item name and source
      */
-    GaugesManager.prototype.getMappedGaugesSignals = function () {
-        return this.hmiService.getMappedVariables();
+    GaugesManager.prototype.getMappedGaugesSignals = function (fulltext) {
+        return this.hmiService.getMappedVariables(fulltext);
     };
     GaugesManager.prototype.getBindSignals = function (ga) {
         if (ga.type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
@@ -7683,6 +7844,10 @@ var GaugesManager = (function () {
         else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
             return __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getSignal(ga.property);
         }
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            var sigs = this.hmiService.getChartSignal(ga.property.id);
+            return sigs;
+        }
         return null;
     };
     GaugesManager.prototype.getBindClick = function (ga) {
@@ -7712,7 +7877,14 @@ var GaugesManager = (function () {
         }
         return null;
     };
+    /**
+     * manage to which gauge to forward the process function
+     * @param ga
+     * @param svgele
+     * @param sig
+     */
     GaugesManager.prototype.processValue = function (ga, svgele, sig) {
+        var _this = this;
         // console.log('gaid: ' + ga.id);
         if (ga.type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
             return __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].processValue(ga, svgele, sig);
@@ -7746,6 +7918,13 @@ var GaugesManager = (function () {
         }
         else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
             return __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].processValue(ga, svgele, sig);
+        }
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            if (ga.property.type !== '_history' && this.memorySigGauges[sig.id]) {
+                Object.keys(this.memorySigGauges[sig.id]).forEach(function (k) {
+                    __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, _this.memorySigGauges[sig.id][k]);
+                });
+            }
         }
     };
     GaugesManager.prototype.putEvent = function (event) {
@@ -7849,16 +8028,30 @@ var GaugesManager = (function () {
             }
         }
     };
-    GaugesManager.initElementAdded = function (ga, res, ref, view) {
+    GaugesManager.prototype.initElementAdded = function (ga, res, ref, isview) {
+        var _this = this;
         if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            var optionsToRemoveInteraction = { interactionModel: {} };
-            if (view) {
-                optionsToRemoveInteraction = null;
-            }
-            var gauge = __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, optionsToRemoveInteraction);
-            gauge.resize();
-            return gauge;
+            var gauge_1 = __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview);
+            gauge_1.init();
+            var chart = this.hmiService.getChart(ga.property.id);
+            chart.lines.forEach(function (line) {
+                var sigid = __WEBPACK_IMPORTED_MODULE_2__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
+                var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
+                if (sigProperty) {
+                    gauge_1.addLine(sigid, sigProperty.name, line.color);
+                }
+            });
+            gauge_1.setOptions({ title: chart.name });
+            gauge_1.resize();
+            // gauge.onTimeRange = this.onTimeRange;
+            return gauge_1;
         }
+    };
+    /**
+     * clear memory object used from view, some reset
+     */
+    GaugesManager.prototype.clearMemory = function () {
+        this.memorySigGauges = {};
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
@@ -9311,7 +9504,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".mychart-panel {\r\n    display: block;\r\n    margin: 0 auto;\r\n    /*height: 600px;\r\n    width: 1000px;*/\r\n}\r\n.mychart-graph {\r\n    display: block;\r\n    margin: 0 auto;\r\n    /*height: 600px;*/\r\n    height: 100% !important;\r\n    width: 100% !important;\r\n}\r\n\r\n\r\n.ng-dygraphs {\r\n  position: relative; }\r\n  .ng-dygraphs .name-nodes-holder {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n    padding-right: 30px;\r\n    padding-left: 30px; }\r\n  .ng-dygraphs .ng-dygraphs-chart-container {\r\n    background-color: #fff;\r\n    padding: 0;\r\n    margin: 0px;}\r\n    .ng-dygraphs .ng-dygraphs-chart-container .nodata {\r\n      display: -ms-flexbox;\r\n      display: flex;\r\n      -ms-flex-pack: center;\r\n    justify-content: center;\r\n     -ms-flex-align: center;\r\n        align-items: center;\r\n      color: #5c5c5c;\r\n      font-weight: bold;\r\n      font-size: 24px; \r\n      display: flex;\r\n      -ms-flex-line-pack: center;\r\n          align-content: center; }\r\n    .ng-dygraphs .ng-dygraphs-chart-container .hide {\r\n       display: none; }\r\n  .ng-dygraphs .loader-holder {\r\n    position: absolute;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-align: center;\r\n        align-items: center;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: #fff;\r\n    z-index: 55;\r\n    opacity: 0.9; }\r\n  .ng-dygraphs .loader {\r\n    color: #0dc5c1;\r\n    font-size: 20px;\r\n    margin: 100px auto;\r\n    width: 1em;\r\n    height: 1em;\r\n    border-radius: 50%;\r\n    position: relative;\r\n    text-indent: -9999em;\r\n    animation: load4 1.3s infinite linear;\r\n    transform: translateZ(0); }\r\n\r\n@keyframes load4 {\r\n  0%,\r\n  100% {\r\n    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0; }\r\n  12.5% {\r\n    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\r\n  25% {\r\n    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\r\n  37.5% {\r\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em; }\r\n  50% {\r\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em; }\r\n  62.5% {\r\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em; }\r\n  75% {\r\n    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0; }\r\n  87.5% {\r\n    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em; } }", ""]);
+exports.push([module.i, ".mychart-panel {\r\n    display: block;\r\n    margin: 0 auto;\r\n    /*height: 600px;\r\n    width: 1000px;*/\r\n}\r\n.mychart-graph {\r\n    display: block;\r\n    margin: 0 auto;\r\n    /*height: 600px;*/\r\n    height: 100% !important;\r\n    width: 100% !important;\r\n}\r\n\r\n.mychar-toolbar {\r\n  display: block;\r\n  height: 34px !important;\r\n  width: 100% !important;\r\n  background-color:transparent;\r\n}\r\n\r\n.mychar-toolbar-button {\r\n  width: 30px;\r\n  height: 26px;\r\n  cursor: pointer;\r\n  -webkit-user-select: none;\r\n  -moz-user-select: none;\r\n  -ms-user-select: none;\r\n  user-select: none;\r\n  border: 0;\r\n  background-color: #fff;\r\n  border-radius: 2px;\r\n\r\n}\r\n.mychar-toolbar-space {\r\n  /* min-width: calc(100% - 250px); */\r\n  /* width: calc(100% - 250px); */\r\n  width:100%;\r\n  height: 26px;\r\n  background-color: rgba(0, 0, 0, 0.1);\r\n  line-height: 26px;\r\n}\r\n\r\n.mychart-toolbar-select {\r\n  width:160px;\r\n  padding: 4px 3px 5px 4px;\r\n  background-color: #fff;\r\n}\r\n\r\n.toolbar-cmp {\r\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 1px -2px rgba(0, 0, 0, 0.2);\r\n  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);\r\n}\r\n.toolbar-cmp:active {\r\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.01), 0 1px 3px 0 rgba(0, 0, 0, 0.01), 0 1px 1px -2px rgba(0, 0, 0, 0.02);\r\n  /* background-color: rgba(0, 0, 0, 0.01); */\r\n}\r\n\r\n.ng-dygraphs {\r\n  position: relative; }\r\n  .ng-dygraphs .name-nodes-holder {\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n    padding-right: 30px;\r\n    padding-left: 30px; }\r\n  .ng-dygraphs .ng-dygraphs-chart-container {\r\n    background-color: #fff;\r\n    padding: 0;\r\n    margin: 0px;}\r\n    .ng-dygraphs .ng-dygraphs-chart-container .nodata {\r\n      display: -ms-flexbox;\r\n      display: flex;\r\n      -ms-flex-pack: center;\r\n    justify-content: center;\r\n     -ms-flex-align: center;\r\n        align-items: center;\r\n      color: #5c5c5c;\r\n      font-weight: bold;\r\n      font-size: 24px; \r\n      display: flex;\r\n      -ms-flex-line-pack: center;\r\n          align-content: center; }\r\n    .ng-dygraphs .ng-dygraphs-chart-container .hide {\r\n       display: none; }\r\n  .ng-dygraphs .loader-holder {\r\n    position: absolute;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-align: center;\r\n        align-items: center;\r\n    width: 100%;\r\n    height: 100%;\r\n    background-color: #fff;\r\n    z-index: 55;\r\n    opacity: 0.9; }\r\n  .ng-dygraphs .loader {\r\n    color: #0dc5c1;\r\n    font-size: 20px;\r\n    margin: 100px auto;\r\n    width: 1em;\r\n    height: 1em;\r\n    border-radius: 50%;\r\n    position: relative;\r\n    text-indent: -9999em;\r\n    animation: load4 1.3s infinite linear;\r\n    transform: translateZ(0); }\r\n\r\n@keyframes load4 {\r\n  0%,\r\n  100% {\r\n    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0; }\r\n  12.5% {\r\n    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\r\n  25% {\r\n    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\r\n  37.5% {\r\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em; }\r\n  50% {\r\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em; }\r\n  62.5% {\r\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em; }\r\n  75% {\r\n    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0; }\r\n  87.5% {\r\n    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em; } }", ""]);
 
 // exports
 
@@ -9324,7 +9517,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n    <div class=\"ng-dygraphs-chart-container\">\n        <div [ngClass]=\"{'hide': !data?.length}\" #chart [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n        </div>\n        <div *ngIf=\"!data?.length\" class=\"nodata\" [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n            {{noDataLabel}}\n        </div>\n    </div>\n</div> -->\n<div class=\"mychart-panel\">\n    <div class=\"mychart-graph\" #chart>\n    </div>\n    <div *ngIf=\"!data?.length\" class=\"nodata\">\n        {{noDataLabel}}\n    </div>\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n</div>"
+module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n    <div class=\"ng-dygraphs-chart-container\">\n        <div [ngClass]=\"{'hide': !data?.length}\" #chart [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n        </div>\n        <div *ngIf=\"!data?.length\" class=\"nodata\" [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n            {{noDataLabel}}\n        </div>\n    </div>\n</div> -->\n<div class=\"mychart-panel\">\n    <div class=\"mychar-toolbar\" *ngIf=\"withToolbar\">\n        <div class=\"mychar-toolbar-space\" *ngIf=\"isEditor\">Toolbar</div>\n        <div style=\"display: block; float:right; padding-right: 5px;\" class=\"my-form-field\" *ngIf=\"!isEditor\">\n            <mat-select [(value)]=\"rangeTypeValue\" class=\"mychart-toolbar-select toolbar-cmp\" (selectionChange)=\"onRangeChange($event.source)\">\n                <mat-option *ngFor=\"let ev of rangeType | enumToArray\" [value]=\"ev.key\">\n                  {{ ev.value }}\n                </mat-option>\n            </mat-select>            \n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('T')\">T</button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('B')\">B</button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('F')\">F</button>\n          </div>\n    </div>\n    <div class=\"mychart-graph\" #chart>\n    </div>\n    <div *ngIf=\"!data?.length\" class=\"nodata\">\n        {{noDataLabel}}\n    </div>\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -9346,15 +9539,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 var NgxDygraphsComponent = (function () {
     function NgxDygraphsComponent() {
+        this.onTimeRange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.withToolbar = false;
+        this.isEditor = false;
+        //   public chartWidth: number;
+        //   public chartHeight: number;
+        this.mapData = {};
         this.defOptions = {
             // width: "auto",
             // height: "auto",
             labels: ['Date', 'Temperature'],
+            colors: [],
             // xlabel: "X label text",
             // ylabel: "Y label text",
             title: 'My Title',
             animatedZooms: true,
-            pointSize: 4,
+            connectSeparatedPoints: true,
+            legend: 'always',
+            labelsSeparateLines: true,
+            // pointSize: 2,
             titleHeight: 20,
             axisLabelFontSize: 12
         };
@@ -9398,6 +9601,11 @@ var NgxDygraphsComponent = (function () {
         this.dygraph.ready(function (graph) {
             var sc = {};
             _this.ngOnChanges(sc);
+            // test to change css legend
+            var cols = document.getElementsByClassName('dygraph-legend');
+            for (var i = 0; i < cols.length; i++) {
+                cols[i].style.fontSize = '12px';
+            }
         });
     };
     /**
@@ -9433,11 +9641,17 @@ var NgxDygraphsComponent = (function () {
         //   });
         // }, 500);
     };
-    NgxDygraphsComponent.prototype.setData = function (data) {
-        var sc = {};
-        var rdata = [[new Date("1967/09/14"), 4], [new Date("1968/09/14"), 0]];
-        this.dygraph.updateOptions({ file: rdata });
+    NgxDygraphsComponent.prototype.onClick = function (ev) {
+        this.onTimeRange.emit(ev);
     };
+    NgxDygraphsComponent.prototype.onRangeChange = function (ev) {
+        this.onTimeRange.emit(ev);
+    };
+    // public setData(data) {
+    //     let sc: SimpleChanges = {};
+    //     let rdata = [[new Date("1967/09/14"), 4], [new Date("1968/09/14"), 0]];
+    //     this.dygraph.updateOptions({ file: rdata });
+    // }
     NgxDygraphsComponent.prototype.resize = function (height, width) {
         var chart = this.chart.nativeElement;
         var w = chart.parentNode.clientWidth;
@@ -9456,6 +9670,41 @@ var NgxDygraphsComponent = (function () {
     NgxDygraphsComponent.prototype.changeVisibility = function (index, value) {
         this.dygraph.setVisibility(index, value);
     };
+    NgxDygraphsComponent.prototype.init = function () {
+        this.options.labels = ['DateTime'];
+        this.mapData = {};
+        this.data = [];
+    };
+    NgxDygraphsComponent.prototype.setOptions = function (options) {
+        this.options = Object.assign(this.options, options);
+        this.dygraph.updateOptions(this.options);
+    };
+    NgxDygraphsComponent.prototype.addLine = function (id, name, color) {
+        if (!this.mapData[id]) {
+            this.mapData[id] = this.options.labels.length;
+            this.options.labels.push(name);
+            this.options.colors.push(color);
+            this.dygraph.updateOptions({ labels: this.options.labels, colors: this.options.colors });
+        }
+    };
+    NgxDygraphsComponent.prototype.addValue = function (id, value) {
+        console.log(value);
+        if (this.mapData[id] && value) {
+            var row = Array(this.options.labels.length).fill(null);
+            row[0] = new Date();
+            row[this.mapData[id]] = parseInt(value);
+            this.data.push(row);
+            // check to remove old value
+            if (this.data.length > 5000) {
+                this.data.shift();
+            }
+            this.dygraph.updateOptions({ file: this.data });
+        }
+    };
+    NgxDygraphsComponent.prototype.clear = function () {
+        this.data = [];
+        this.dygraph.updateOptions({ file: this.data });
+    };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
         __metadata("design:type", Object)
@@ -9468,6 +9717,10 @@ var NgxDygraphsComponent = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
         __metadata("design:type", String)
     ], NgxDygraphsComponent.prototype, "noDataLabel", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
+    ], NgxDygraphsComponent.prototype, "onTimeRange", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('chart'),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["u" /* ElementRef */])
@@ -10396,7 +10649,7 @@ var LabComponent = (function () {
         }
     };
     LabComponent.prototype.onTest = function () {
-        this.tester.setSignals(this.gaugesManager.getMappedGaugesSignals());
+        this.tester.setSignals(this.gaugesManager.getMappedGaugesSignals(true));
         this.testerService.toggle(true);
     };
     LabComponent.prototype.loadHmi = function () {
@@ -10662,7 +10915,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/tester/tester.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div draggable  [draggableHeight]=\"30\" class=\"tester-panel\" *ngIf=\"show\">\r\n  <style>\r\n    pre {\r\n      white-space: pre-line;\r\n    }\r\n  </style>\r\n  <div name=\"dlgTesterForm\">\r\n    <div class=\"tester-header\">\r\n      <div class=\"tester-title\">\r\n        {{'tester.title' | translate}}\r\n      </div>\r\n      <div class=\"tester-close\" (click)=\"close()\">\r\n        &times;\r\n      </div>\r\n    </div>\r\n    <div class=\"tester-body\">\r\n      <div class=\"_svg-property\" mat-dialog-actions>\r\n        <!-- <button mat-button color=\"warn\" type=\"button\" class=\"\" (click)=\"setDemo(true)\">\r\n          Start\r\n        </button>\r\n        <button mat-button color=\"warn\" type=\"button\" class=\"\" (click)=\"setDemo(false)\">\r\n          End\r\n        </button> -->\r\n      </div>\r\n      <br>\r\n      <div *ngFor=\"let item of items\">\r\n        <div class=\"svg-property\">\r\n          <span>{{item.source}} {{item.name}} :</span>\r\n          <input id=\"item.name\" [(ngModel)]=\"item.value\" type=\"text\" class=\"no-spinners\" />\r\n          <button type=\"button\" class=\"\" (click)=\"setSignal(item)\">\r\n            >>\r\n          </button>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"tester-output\">\r\n      <span *ngFor=\"let item of output; index as i\" class=\"output-item\">\r\n        {{item}}\r\n      </span>\r\n    </div>\r\n  </div>\r\n</div>"
+module.exports = "<div draggable  [draggableHeight]=\"30\" class=\"tester-panel\" *ngIf=\"show\">\r\n  <style>\r\n    pre {\r\n      white-space: pre-line;\r\n    }\r\n  </style>\r\n  <div name=\"dlgTesterForm\">\r\n    <div class=\"tester-header\">\r\n      <div class=\"tester-title\">\r\n        {{'tester.title' | translate}}\r\n      </div>\r\n      <div class=\"tester-close\" (click)=\"close()\">\r\n        &times;\r\n      </div>\r\n    </div>\r\n    <div class=\"tester-body\">\r\n      <div class=\"_svg-property\" mat-dialog-actions>\r\n        <!-- <button mat-button color=\"warn\" type=\"button\" class=\"\" (click)=\"setDemo(true)\">\r\n          Start\r\n        </button>\r\n        <button mat-button color=\"warn\" type=\"button\" class=\"\" (click)=\"setDemo(false)\">\r\n          End\r\n        </button> -->\r\n      </div>\r\n      <br>\r\n      <div *ngFor=\"let item of items\">\r\n        <div class=\"svg-property\">\r\n          <span>{{item.source}} - {{item.name}} :</span>\r\n          <input id=\"item.name\" [(ngModel)]=\"item.value\" type=\"text\" class=\"no-spinners\" />\r\n          <button type=\"button\" class=\"\" (click)=\"setSignal(item)\">\r\n            >>\r\n          </button>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"tester-output\">\r\n      <span *ngFor=\"let item of output; index as i\" class=\"output-item\">\r\n        {{item}}\r\n      </span>\r\n    </div>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -10718,7 +10971,7 @@ var TesterComponent = (function () {
     };
     TesterComponent.prototype.setSignal = function (sig) {
         this.hmiService.setSignalValue(sig);
-        this.addOutput('set ' + sig.id + ' ' + sig.value);
+        this.addOutput('set ' + sig.source + ' - ' + sig.name + ' = ' + sig.value);
     };
     TesterComponent.prototype.setSignals = function (items) {
         this.items = items;

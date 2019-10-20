@@ -25,7 +25,7 @@
         <div style="display: block; width:100%">
           <mat-list class="list" style="padding-left: 8px;padding-right: 8px;">
             <div style="height: calc(100% - 36px); overflow-y: auto" *ngIf="chartCtrl.value">
-                <mat-list-item *ngFor="let tag of chartCtrl.value.lines" style="font-size:14px">
+                <mat-list-item *ngFor="let tag of chartCtrl.value.lines" style="font-size:14px;height: 27px;">
                     <div style="width: 50%;">
                         <span>{{tag.name}}</span>
                     </div>
