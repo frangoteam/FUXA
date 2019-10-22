@@ -155,7 +155,7 @@ export class DeviceListComponent implements OnInit {
 
   editTag(tag: Tag, checkToAdd: boolean) {
     // console.log('The Edit Tag open');
-    let oldtag = tag.id;
+    let oldtag = tag.name;
     let temptag = JSON.parse(JSON.stringify(tag));
     let dialogRef = this.dialog.open(TagPropertyComponent, {
       // minWidth: '700px',
@@ -168,7 +168,8 @@ export class DeviceListComponent implements OnInit {
       if (result) {
         this.dirty = true;
         // console.log('The Edit Tag was closed');
-        tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
+        // tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
+        tag.id = temptag.name;
         tag.name = temptag.name;
         tag.type = temptag.type;
         tag.address = temptag.address;

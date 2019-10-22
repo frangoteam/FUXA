@@ -95,7 +95,7 @@ export class ChartConfigComponent implements OnInit {
         if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
             this.selectedChart.lines.forEach(line => {
                 this.selectedDevice.tags.forEach(tag => {
-                    if (line.device === this.selectedDevice.id && line.id === ((tag.id) ? tag.id : tag.address)) {
+                    if (line.device === this.selectedDevice.name && line.id === ((tag.name) ? tag.name : tag.address)) {
                         tag.selected = true;
                     }
                 });
@@ -115,10 +115,10 @@ export class ChartConfigComponent implements OnInit {
             // check to remove
             if (chart.lines) {
                 for (let i = 0; i < chart.lines.length; i++) {
-                    if (chart.lines[i].device === device.id) {
+                    if (chart.lines[i].device === device.name) {
                         let found = -1;
                         for (let x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
+                            if (chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
                                 found = i;
                                 break;
                             }
@@ -141,16 +141,16 @@ export class ChartConfigComponent implements OnInit {
                 let found = false;
                 if (chart.lines) {
                     for (let i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
+                        if (chart.lines[i].device === device.name && chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
                             found = true;
                         }
                     }
                 }
                 if (!found) {
-                    const myCopiedObject = {};//Object.assign({}, tags[x]);
-                    myCopiedObject['id'] = (tags[x].id) ? tags[x].id : tags[x].address;
+                    const myCopiedObject = {}; //Object.assign({}, tags[x]);
+                    myCopiedObject['id'] = tags[x].name; // (tags[x].id) ? tags[x].id : tags[x].address;
                     myCopiedObject['name'] = tags[x].name;
-                    myCopiedObject['device'] = device.id;
+                    myCopiedObject['device'] = device.name;
                     myCopiedObject['color'] = this.getNextColor();
                     chart.lines.push(myCopiedObject);
                 }
@@ -188,13 +188,13 @@ export class ChartConfigComponent implements OnInit {
     }
 
     isDeviceSelected(device) {
-        if (device && device.id === this.selectedDevice.id) {
+        if (device && device.name === this.selectedDevice.name) {
             return 'list-item-selected';
         }
     }
 
     getDeviceTagName(tag) {
-        let devices = this.data.devices.filter(x => x.id === tag.device);
+        let devices = this.data.devices.filter(x => x.name === tag.device);
         if (devices && devices.length > 0) {
             let tags = devices[0].tags;
             for (let i = 0; i < tags.length; i++) {
@@ -202,14 +202,6 @@ export class ChartConfigComponent implements OnInit {
                     return tags[i].name;
                 }
             }
-        }
-        return '';
-    }
-
-    getDeviceName(deviceid) {
-        let obj = this.data.devices.filter(x => x.id === deviceid);
-        if (obj && obj.length > 0) {
-            return obj[0].name;
         }
         return '';
     }

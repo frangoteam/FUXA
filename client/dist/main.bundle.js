@@ -1443,6 +1443,14 @@ var HmiService = (function () {
     };
     //#endregion
     //#region Signals Gauges Mapping
+    HmiService.prototype.addSignal = function (signalId, ga) {
+        var sigsplit = signalId.split(HmiService_1.separator);
+        // add to variable list
+        if (!this.variables[signalId]) {
+            var v = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["o" /* Variable */](signalId, sigsplit[0], sigsplit[1]);
+            this.variables[signalId] = v;
+        }
+    };
     /**
      * map the dom view with signal and gauge settings
      * @param domViewId
@@ -1469,9 +1477,20 @@ var HmiService = (function () {
     /**
      * remove mapped dom view Gauges
      * @param domViewId
+     * return the removed gauge settings id list with signal id binded
      */
     HmiService.prototype.removeSignalGaugeFromMap = function (domViewId) {
+        var _this = this;
+        var sigsIdremoved = this.viewSignalGaugeMap.getSignalIds(domViewId);
+        var result = {};
+        sigsIdremoved.forEach(function (sigid) {
+            var gs = _this.viewSignalGaugeMap.signalsGauges(domViewId, sigid);
+            if (gs) {
+                result[sigid] = gs[0].id;
+            }
+        });
         this.viewSignalGaugeMap.remove(domViewId);
+        return result;
     };
     /**
      * get the gauges settings list of mapped dom view with the signal
@@ -1590,6 +1609,7 @@ var ViewSignalGaugeMap = (function () {
     };
     ViewSignalGaugeMap.prototype.remove = function (domViewId) {
         delete this.views[domViewId];
+        return;
     };
     ViewSignalGaugeMap.prototype.signalsGauges = function (domViewId, sigid) {
         return this.views[domViewId][sigid];
@@ -2507,7 +2527,6 @@ module.exports = "<div class=\"container\">\n  <div class=\"filter\" *ngIf=\"dev
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_device__ = __webpack_require__("../../../../../src/app/_models/device.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2517,7 +2536,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-
 
 
 
@@ -2647,7 +2665,7 @@ var DeviceListComponent = (function () {
     DeviceListComponent.prototype.editTag = function (tag, checkToAdd) {
         var _this = this;
         // console.log('The Edit Tag open');
-        var oldtag = tag.id;
+        var oldtag = tag.name;
         var temptag = JSON.parse(JSON.stringify(tag));
         var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_3__tag_property_tag_property_component__["a" /* TagPropertyComponent */], {
             // minWidth: '700px',
@@ -2660,7 +2678,8 @@ var DeviceListComponent = (function () {
             if (result) {
                 _this.dirty = true;
                 // console.log('The Edit Tag was closed');
-                tag.id = (tag.id) ? tag.id : __WEBPACK_IMPORTED_MODULE_7__helpers_utils__["b" /* Utils */].getShortGUID();
+                // tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
+                tag.id = temptag.name;
                 tag.name = temptag.name;
                 tag.type = temptag.type;
                 tag.address = temptag.address;
@@ -3582,7 +3601,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/editor/chart-config/chart-config.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\n    <div style=\"display: inline-block; width: 100%\">\n        <div class=\"panelTop\">\n            <mat-grid-list cols=\"3\" rowHeight=\"100%\">\n                <mat-grid-tile class=\"chart-list\">\n                    <mat-list class=\"list\" >\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-charts' | translate}}</span>\n                            <mat-icon style=\"position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);\" (click)=\"editChart()\">add</mat-icon>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let chart of data.charts\" class=\"list-item\" [ngClass]=\"isChartSelected(chart)\" (click)=\"selectedChart = chart;loadChartConfig();\">\n                            <span>{{chart.name}}</span>\n                            <mat-icon [matMenuTriggerFor]=\"configMenu\" style=\"position: absolute; right: 10px;cursor:pointer;color:gray;\">more_vert</mat-icon>\n                            <mat-menu #configMenu [overlapTrigger]=\"false\" style=\"color:#000000\">\n                                <button mat-menu-item (click)=\"editChart(chart)\" style=\"color:#000000;font-size: 14px;\">edit chart</button>\n                                <button mat-menu-item (click)=\"deleteChart(chart)\" style=\"color:#000000;font-size: 14px;\">delete chart</button>\n                            </mat-menu>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"device-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-devices' | translate}}</span>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let device of data.devices;\" class=\"list-item\" [ngClass]=\"isDeviceSelected(device)\" (click)=\"selectDevice(device);\">\n                            <span>{{device.name}}</span>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"tag-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-tags' | translate}}</span>\n                        </mat-list-item>\n                        <mat-selection-list #selTags [(ngModel)]=\"selectedTags\" [disabled]=\"(selectedChart.id)?false:true\" (selectionChange)=\"tagSelectionChanged($event)\" style=\"padding-top: 0px;\">\n                            <mat-list-option *ngFor=\"let tag of selectedDevice.tags\" [selected]=\"tag.selected\" [value]=\"tag\" class=\"list-item\" checkboxPosition=\"before\">\n                                {{tag.name}}\n                            </mat-list-option>\n                        </mat-selection-list>\n                    </mat-list>\n                </mat-grid-tile>\n            </mat-grid-list>\n        </div>\n        <div class=\"panelBottom\">\n            <mat-list class=\"list\">\n                <mat-list-item class=\"list-item list-header\">\n                    <span>{{'chart.config-lines' | translate}}</span>\n                </mat-list-item>\n                <div style=\"height: calc(100% - 36px); overflow-y: auto\">\n                    <mat-list-item *ngFor=\"let tag of selectedChart.lines\" class=\"list-item\" (click)=\"editChartLine(tag)\">\n                        <mat-icon (click)=\"$event.stopPropagation();removeChartLine(tag)\" style=\"color:gray;font-size: 20px\">delete</mat-icon>\n                        <div style=\"width: 50%;max-width: 50%\">\n                            <span>{{getDeviceTagName(tag)}}</span>\n                        </div>\n                        <div style=\"width: 30%;max-width: 30%\">\n                            <span>{{getDeviceName(tag.device)}}</span>\n                        </div>\n                        <div>\n                            <input [(colorPicker)]=\"tag.color\" class=\"color-line\" title=\"{{'chart.config-line-color' | translate}}\" \n                            [style.background]=\"tag.color\" [cpAlphaChannel]=\"'disabled'\" [cpPosition]=\"'top'\"\n                            [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\n                            [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\n                        </div>\n                    </mat-list-item>\n                </div>\n            </mat-list>\n        </div>\n    </div>\n\n    <!-- <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\"> -->\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\"\n            cdkFocusInitial>OK</button>\n    </div>\n</div>\n"
+module.exports = "<div>\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\n    <div style=\"display: inline-block; width: 100%\">\n        <div class=\"panelTop\">\n            <mat-grid-list cols=\"3\" rowHeight=\"100%\">\n                <mat-grid-tile class=\"chart-list\">\n                    <mat-list class=\"list\" >\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-charts' | translate}}</span>\n                            <mat-icon style=\"position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);\" (click)=\"editChart()\">add</mat-icon>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let chart of data.charts\" class=\"list-item\" [ngClass]=\"isChartSelected(chart)\" (click)=\"selectedChart = chart;loadChartConfig();\">\n                            <span>{{chart.name}}</span>\n                            <mat-icon [matMenuTriggerFor]=\"configMenu\" style=\"position: absolute; right: 10px;cursor:pointer;color:gray;\">more_vert</mat-icon>\n                            <mat-menu #configMenu [overlapTrigger]=\"false\" style=\"color:#000000\">\n                                <button mat-menu-item (click)=\"editChart(chart)\" style=\"color:#000000;font-size: 14px;\">edit chart</button>\n                                <button mat-menu-item (click)=\"deleteChart(chart)\" style=\"color:#000000;font-size: 14px;\">delete chart</button>\n                            </mat-menu>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"device-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-devices' | translate}}</span>\n                        </mat-list-item>\n                        <mat-list-item *ngFor=\"let device of data.devices;\" class=\"list-item\" [ngClass]=\"isDeviceSelected(device)\" (click)=\"selectDevice(device);\">\n                            <span>{{device.name}}</span>\n                        </mat-list-item>\n                    </mat-list>\n                </mat-grid-tile>\n                <mat-grid-tile class=\"tag-list\">\n                    <mat-list class=\"list\">\n                        <mat-list-item class=\"list-item list-header\">\n                            <span>{{'chart.config-tags' | translate}}</span>\n                        </mat-list-item>\n                        <mat-selection-list #selTags [(ngModel)]=\"selectedTags\" [disabled]=\"(selectedChart.id)?false:true\" (selectionChange)=\"tagSelectionChanged($event)\" style=\"padding-top: 0px;\">\n                            <mat-list-option *ngFor=\"let tag of selectedDevice.tags\" [selected]=\"tag.selected\" [value]=\"tag\" class=\"list-item\" checkboxPosition=\"before\">\n                                {{tag.name}}\n                            </mat-list-option>\n                        </mat-selection-list>\n                    </mat-list>\n                </mat-grid-tile>\n            </mat-grid-list>\n        </div>\n        <div class=\"panelBottom\">\n            <mat-list class=\"list\">\n                <mat-list-item class=\"list-item list-header\">\n                    <span>{{'chart.config-lines' | translate}}</span>\n                </mat-list-item>\n                <div style=\"height: calc(100% - 36px); overflow-y: auto\">\n                    <mat-list-item *ngFor=\"let tag of selectedChart.lines\" class=\"list-item\" (click)=\"editChartLine(tag)\">\n                        <mat-icon (click)=\"$event.stopPropagation();removeChartLine(tag)\" style=\"color:gray;font-size: 20px\">delete</mat-icon>\n                        <div style=\"width: 50%;max-width: 50%\">\n                            <span>{{getDeviceTagName(tag)}}</span>\n                        </div>\n                        <div style=\"width: 30%;max-width: 30%\">\n                            <span>{{tag.device}}</span>\n                        </div>\n                        <div>\n                            <input [(colorPicker)]=\"tag.color\" class=\"color-line\" title=\"{{'chart.config-line-color' | translate}}\" \n                            [style.background]=\"tag.color\" [cpAlphaChannel]=\"'disabled'\" [cpPosition]=\"'top'\"\n                            [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\n                            [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\n                        </div>\n                    </mat-list-item>\n                </div>\n            </mat-list>\n        </div>\n    </div>\n\n    <!-- <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\"> -->\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\n    <button mat-raised-button (click)=\"onNoClick()\">CANCEL</button>\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\"\n            cdkFocusInitial>OK</button>\n    </div>\n</div>\n"
 
 /***/ }),
 
@@ -3688,7 +3707,7 @@ var ChartConfigComponent = (function () {
         if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
             this.selectedChart.lines.forEach(function (line) {
                 _this.selectedDevice.tags.forEach(function (tag) {
-                    if (line.device === _this.selectedDevice.id && line.id === ((tag.id) ? tag.id : tag.address)) {
+                    if (line.device === _this.selectedDevice.name && line.id === ((tag.name) ? tag.name : tag.address)) {
                         tag.selected = true;
                     }
                 });
@@ -3707,10 +3726,10 @@ var ChartConfigComponent = (function () {
             // check to remove
             if (chart.lines) {
                 for (var i = 0; i < chart.lines.length; i++) {
-                    if (chart.lines[i].device === device.id) {
+                    if (chart.lines[i].device === device.name) {
                         var found = -1;
                         for (var x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
+                            if (chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
                                 found = i;
                                 break;
                             }
@@ -3733,16 +3752,16 @@ var ChartConfigComponent = (function () {
                 var found = false;
                 if (chart.lines) {
                     for (var i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.id && chart.lines[i].id === ((tags[x].id) ? tags[x].id : tags[x].address)) {
+                        if (chart.lines[i].device === device.name && chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
                             found = true;
                         }
                     }
                 }
                 if (!found) {
                     var myCopiedObject = {}; //Object.assign({}, tags[x]);
-                    myCopiedObject['id'] = (tags[x].id) ? tags[x].id : tags[x].address;
+                    myCopiedObject['id'] = tags[x].name; // (tags[x].id) ? tags[x].id : tags[x].address;
                     myCopiedObject['name'] = tags[x].name;
-                    myCopiedObject['device'] = device.id;
+                    myCopiedObject['device'] = device.name;
                     myCopiedObject['color'] = this.getNextColor();
                     chart.lines.push(myCopiedObject);
                 }
@@ -3775,12 +3794,12 @@ var ChartConfigComponent = (function () {
         }
     };
     ChartConfigComponent.prototype.isDeviceSelected = function (device) {
-        if (device && device.id === this.selectedDevice.id) {
+        if (device && device.name === this.selectedDevice.name) {
             return 'list-item-selected';
         }
     };
     ChartConfigComponent.prototype.getDeviceTagName = function (tag) {
-        var devices = this.data.devices.filter(function (x) { return x.id === tag.device; });
+        var devices = this.data.devices.filter(function (x) { return x.name === tag.device; });
         if (devices && devices.length > 0) {
             var tags = devices[0].tags;
             for (var i = 0; i < tags.length; i++) {
@@ -3788,13 +3807,6 @@ var ChartConfigComponent = (function () {
                     return tags[i].name;
                 }
             }
-        }
-        return '';
-    };
-    ChartConfigComponent.prototype.getDeviceName = function (deviceid) {
-        var obj = this.data.devices.filter(function (x) { return x.id === deviceid; });
-        if (obj && obj.length > 0) {
-            return obj[0].name;
         }
         return '';
     };
@@ -5433,7 +5445,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gauges/chart-property/chart-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\" style=\"width: 400px;\">\n            <span>{{'chart.property-chart' | translate}}</span>\n            <mat-select [formControl]=\"chartCtrl\">\n              <mat-select-search [formControl]=\"chartFilterCtrl\"></mat-select-search>\n              <mat-option *ngFor=\"let chart of filteredChart | async\" [value]=\"chart\">\n                {{ chart.name }}\n              </mat-option>\n            </mat-select>\n          </div>\n          <div class=\"my-form-field\" style=\"width: 200px;float: right;margin-right: 10px;\">\n            <span>{{'chart.property-chart-type' | translate}}</span>\n            <mat-select [(value)]=\"chartViewValue\" >\n              <mat-option *ngFor=\"let ev of chartViewType | enumToArray\" [value]=\"ev.key\">\n                {{ ev.value }}\n              </mat-option>\n            </mat-select>\n          </div>          \n        </div>\n        <div style=\"display: block; width:100%\">\n          <mat-list class=\"list\" style=\"padding-left: 8px;padding-right: 8px;\">\n            <div style=\"height: calc(100% - 36px); overflow-y: auto\" *ngIf=\"chartCtrl.value\">\n                <mat-list-item *ngFor=\"let tag of chartCtrl.value.lines\" style=\"font-size:14px;height: 27px;\">\n                    <div style=\"width: 50%;\">\n                        <span>{{tag.name}}</span>\n                    </div>\n                    <div style=\"width: 40%;\">\n                        <span>{{getDeviceName(tag.device)}}</span>\n                    </div>\n                    <div [style.background-color]=\"tag.color\" style=\"height:20px; width:30px\">\n                    </div>\n                </mat-list-item>\n            </div>\n        </mat-list>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+module.exports = "<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\" style=\"width: 400px;\">\n            <span>{{'chart.property-chart' | translate}}</span>\n            <mat-select [formControl]=\"chartCtrl\">\n              <mat-select-search [formControl]=\"chartFilterCtrl\"></mat-select-search>\n              <mat-option *ngFor=\"let chart of filteredChart | async\" [value]=\"chart\">\n                {{ chart.name }}\n              </mat-option>\n            </mat-select>\n          </div>\n          <div class=\"my-form-field\" style=\"width: 200px;float: right;margin-right: 10px;\">\n            <span>{{'chart.property-chart-type' | translate}}</span>\n            <mat-select [(value)]=\"chartViewValue\" >\n              <mat-option *ngFor=\"let ev of chartViewType | enumToArray\" [value]=\"ev.key\">\n                {{ ev.value }}\n              </mat-option>\n            </mat-select>\n          </div>          \n        </div>\n        <div style=\"display: block; width:100%\">\n          <mat-list class=\"list\" style=\"padding-left: 8px;padding-right: 8px;\">\n            <div style=\"height: calc(100% - 36px); overflow-y: auto\" *ngIf=\"chartCtrl.value\">\n                <mat-list-item *ngFor=\"let tag of chartCtrl.value.lines\" style=\"font-size:14px;height: 27px;\">\n                    <div style=\"width: 50%;\">\n                        <span>{{tag.name}}</span>\n                    </div>\n                    <div style=\"width: 40%;\">\n                        <span>{{tag.device}}</span>\n                    </div>\n                    <div [style.background-color]=\"tag.color\" style=\"height:20px; width:30px\">\n                    </div>\n                </mat-list-item>\n            </div>\n        </mat-list>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -5516,13 +5528,6 @@ var ChartPropertyComponent = (function () {
             this.data.settings.name = '';
             this.data.settings.property = null;
         }
-    };
-    ChartPropertyComponent.prototype.getDeviceName = function (deviceid) {
-        var obj = this.data.devices.filter(function (x) { return x.id === deviceid; });
-        if (obj && obj.length > 0) {
-            return obj[0].name;
-        }
-        return '';
     };
     ChartPropertyComponent.prototype.loadChart = function (toset) {
         var _this = this;
@@ -7776,7 +7781,13 @@ var GaugesManager = (function () {
      * @param domViewId
      */
     GaugesManager.prototype.unbindGauge = function (domViewId) {
-        this.hmiService.removeSignalGaugeFromMap(domViewId);
+        var _this = this;
+        // first remove special gauge like chart from memorySigGauges
+        var sigGaugeSettingsIdremoved = this.hmiService.removeSignalGaugeFromMap(domViewId);
+        Object.keys(sigGaugeSettingsIdremoved).forEach(function (sid) {
+            delete _this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+        });
+        // remove mapped gauge for events of this view
         Object.values(this.mapGaugeView).forEach(function (val) {
             if (val[domViewId]) {
                 delete val[domViewId];
@@ -7811,42 +7822,44 @@ var GaugesManager = (function () {
         return this.hmiService.getMappedVariables(fulltext);
     };
     GaugesManager.prototype.getBindSignals = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].getSignals(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].getSignals(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].getSignals(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getSignals(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].getSignals(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getSignals(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getSignal(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getSignal(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getSignal(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getSignal(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getSignal(ga.property);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            var sigs = this.hmiService.getChartSignal(ga.property.id);
-            return sigs;
+        if (ga.property) {
+            if (ga.type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].getSignals(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].getSignals(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].getSignals(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getSignals(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].getSignals(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getSignals(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getSignal(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getSignal(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getSignal(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getSignal(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getSignal(ga.property);
+            }
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+                var sigs = this.hmiService.getChartSignal(ga.property.id);
+                return sigs;
+            }
         }
         return null;
     };
@@ -8030,18 +8043,27 @@ var GaugesManager = (function () {
     };
     GaugesManager.prototype.initElementAdded = function (ga, res, ref, isview) {
         var _this = this;
+        // add variable
+        var sigsid = this.getBindSignals(ga);
+        if (sigsid) {
+            for (var i = 0; i < sigsid.length; i++) {
+                this.hmiService.addSignal(sigsid[i], ga);
+            }
+        }
         if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
             var gauge_1 = __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview);
             gauge_1.init();
-            var chart = this.hmiService.getChart(ga.property.id);
-            chart.lines.forEach(function (line) {
-                var sigid = __WEBPACK_IMPORTED_MODULE_2__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
-                var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
-                if (sigProperty) {
-                    gauge_1.addLine(sigid, sigProperty.name, line.color);
-                }
-            });
-            gauge_1.setOptions({ title: chart.name });
+            if (ga.property) {
+                var chart = this.hmiService.getChart(ga.property.id);
+                chart.lines.forEach(function (line) {
+                    var sigid = __WEBPACK_IMPORTED_MODULE_2__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
+                    var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
+                    if (sigProperty) {
+                        gauge_1.addLine(sigid, sigProperty.name, line.color);
+                    }
+                });
+                // gauge.setOptions({title: chart.name});
+            }
             gauge_1.resize();
             // gauge.onTimeRange = this.onTimeRange;
             return gauge_1;

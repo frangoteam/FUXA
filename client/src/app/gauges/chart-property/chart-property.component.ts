@@ -70,14 +70,6 @@ export class ChartPropertyComponent implements OnInit {
     }
   }
 
-  getDeviceName(deviceid) {
-    let obj = this.data.devices.filter(x => x.id === deviceid);
-    if (obj && obj.length > 0) {
-        return obj[0].name;
-    }
-    return '';
-  }
-
   private loadChart(toset?: string) {
     // load the initial chart list
     this.filteredChart.next(this.data.charts.slice());

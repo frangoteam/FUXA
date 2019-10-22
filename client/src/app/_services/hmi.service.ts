@@ -167,6 +167,15 @@ export class HmiService {
     //#endregion
 
     //#region Signals Gauges Mapping
+    addSignal(signalId: string, ga: GaugeSettings) {
+        let sigsplit = signalId.split(HmiService.separator);
+        // add to variable list
+        if (!this.variables[signalId]) {
+            let v = new Variable(signalId, sigsplit[0], sigsplit[1]);
+            this.variables[signalId] = v;
+        }
+    }
+
     /**
      * map the dom view with signal and gauge settings
      * @param domViewId 
@@ -192,10 +201,20 @@ export class HmiService {
 
     /**
      * remove mapped dom view Gauges
-     * @param domViewId 
+     * @param domViewId
+     * return the removed gauge settings id list with signal id binded
      */
     removeSignalGaugeFromMap(domViewId: string) {
+        let sigsIdremoved = this.viewSignalGaugeMap.getSignalIds(domViewId);
+        let result = {};
+        sigsIdremoved.forEach(sigid => {
+            let gs: GaugeSettings = this.viewSignalGaugeMap.signalsGauges(domViewId, sigid);
+            if (gs) {
+                result[sigid] = gs[0].id;
+            }
+        }) 
         this.viewSignalGaugeMap.remove(domViewId);
+        return result;
     }
 
     /**
@@ -296,6 +315,7 @@ class ViewSignalGaugeMap {
 
     public remove(domViewId: string) {
         delete this.views[domViewId];
+        return;
     }
 
     public signalsGauges(domViewId: string, sigid: string) {
