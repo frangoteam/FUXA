@@ -374,8 +374,10 @@ function DaqNode(_settings, _log, _id) {
                         logger.info('_checkToArchiveDBfile: move to ' + filearchived);
                     } else {
                         // delete void db
-                        fs.unlinkSync(dbfile);
-                        logger.info('_checkToArchiveDBfile :' + dbfile + ' database deleted!.');
+                        try {
+                            fs.unlinkSync(dbfile);
+                            logger.info('_checkToArchiveDBfile :' + dbfile + ' database deleted!.');
+                        } catch (e) { }
                     }
                 });
             }).catch(function (err) {
@@ -440,7 +442,7 @@ function DaqNode(_settings, _log, _id) {
         if (SS < 10) {
             SS = '0' + SS;
         }
-        return yyyy + mm + dd + HH + MM + SS;
+        return '' + yyyy + mm + dd + HH + MM + SS;
     }
 
     function _suffixToTimestamp(dt) {

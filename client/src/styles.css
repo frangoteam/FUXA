@@ -292,6 +292,10 @@ app-root {
   text-align: left !important;
 }
 
+.dygraph-legend {
+  background: transparent !important;
+}
+
 .sidenav-btn {
   width: 100%;
   min-width: 100% !important;

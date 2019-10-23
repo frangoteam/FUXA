@@ -148,8 +148,11 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public setOptions(options) {
-        this.options = Object.assign(this.options, options);
-        this.dygraph.updateOptions(this.options);
+        try {
+            this.options = Object.assign(this.options, options);
+            this.dygraph.updateOptions(this.options);
+        } catch (e) {
+        }
     }
 
     public addLine(id: string, name:string, color: string) {
@@ -162,7 +165,7 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public addValue(id: string, value) {
-        console.log(value);
+        // console.log(value);
         if (this.mapData[id] && value) {
             let row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();

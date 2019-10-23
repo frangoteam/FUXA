@@ -205,7 +205,9 @@ export class GaugesManager {
     // first remove special gauge like chart from memorySigGauges
     let sigGaugeSettingsIdremoved = this.hmiService.removeSignalGaugeFromMap(domViewId);
     Object.keys(sigGaugeSettingsIdremoved).forEach(sid => {
-      delete this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+        if (this.memorySigGauges[sid] && this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]]) {
+            delete this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+        }
     });
     // remove mapped gauge for events of this view
     Object.values(this.mapGaugeView).forEach(val => {
@@ -451,7 +453,7 @@ export class GaugesManager {
             gauge.addLine(sigid, sigProperty.name, line.color);
             }
         });
-        // gauge.setOptions({title: chart.name});
+        gauge.setOptions({title: chart.name});
       }
       gauge.resize();
       // gauge.onTimeRange = this.onTimeRange;

@@ -69,10 +69,10 @@ export class FlexHeadComponent implements OnInit {
     if (this.data.devices) {
       if (this.property.variableSrc || this.property.alarmSrc) {
         this.data.devices.forEach(dev => {
-          if (this.property.variableSrc && dev.id === this.property.variableSrc) {
+          if (this.property.variableSrc && dev.name === this.property.variableSrc) {
             seldevice = dev;
           }
-          if (this.property.alarmSrc && dev.id === this.property.alarmSrc) {
+          if (this.property.alarmSrc && dev.name === this.property.alarmSrc) {
             selalarmdevice = dev;
           }
         });
@@ -127,11 +127,11 @@ export class FlexHeadComponent implements OnInit {
 
   onDeviceChange(event) {
     if (event.value) {
-      if (this.property.variableSrc !== event.value.id) {
+      if (this.property.variableSrc !== event.value.name) {
         this.property.variable = '';
         this.property.variableId = '';
       }
-      this.property.variableSrc = event.value.id;
+      this.property.variableSrc = event.value.name;
       this.variable = [];
       this.currentTag = null;
       if (event.value.tags) {
@@ -143,7 +143,7 @@ export class FlexHeadComponent implements OnInit {
 
   onVariableChange(event) {
     if (event.value) {
-      this.property.variable = (event.value.id) ? event.value.id : event.value.name;
+      this.property.variable = event.value.name;
       this.property.variableId = HmiService.toVariableId(this.property.variableSrc, this.property.variable);
     }
     this.currentTag = event.value;
@@ -154,11 +154,11 @@ export class FlexHeadComponent implements OnInit {
 
   onAlarmDeviceChange(event) {
     if (event.value) {
-      if (this.property.alarmSrc !== event.value.id) {
+      if (this.property.alarmSrc !== event.value.name) {
         this.property.alarm = '';
         this.property.alarmId = '';
       }
-      this.property.alarmSrc = event.value.id;
+      this.property.alarmSrc = event.value.name;
       this.alarme = [];
       if (event.value.tags) {
         this.alarme = Object.values(event.value.tags);
@@ -173,7 +173,7 @@ export class FlexHeadComponent implements OnInit {
   onAlarmChange(event) {
     if (event.value) {
       this.property.alarm =  (event.value.id) ? event.value.id : event.value.name;
-      this.property.alarmId = HmiService.toVariableId(this.property.alarmSrc, this.property.alarm);;
+      this.property.alarmId = HmiService.toVariableId(this.property.alarmSrc, this.property.alarm);
     }
   }
 

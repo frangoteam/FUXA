@@ -28,6 +28,7 @@ export class ProjectService {
     private prjresource = 'prj-data';
     private endPointConfig: string = EndPointApi.getURL(); //"http://localhost:1881";
     private projectOld: string = '';
+    private saveworking = false;
 
     constructor(private http: HttpClient,
         private translateService: TranslateService,
@@ -110,20 +111,25 @@ export class ProjectService {
             // if (prjdiff) {
             //     return true;
             // }
-            this.setServerProject(prjData).subscribe(result => {
-                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-                console.log(result);
-                // this.toastr.success('Project save successful!');
-            }, err => {
-                console.log(err);
-                var msg = '';
-                this.translateService.get('msg.project-save-error').subscribe((txt: string) => {msg = txt});                  
-                this.toastr.error(msg, '', {
-                    timeOut: 3000,
-                    closeButton: true,
-                    disableTimeOut: true
+            if (this.checSaveWorking(true)) {
+                console.log('my save');
+                this.setServerProject(prjData).subscribe(result => {
+                    this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+                    console.log(result);
+                    this.checSaveWorking(false);
+                    // this.toastr.success('Project save successful!');
+                }, err => {
+                    console.log(err);
+                    this.checSaveWorking(false);
+                    var msg = '';
+                    this.translateService.get('msg.project-save-error').subscribe((txt: string) => {msg = txt});                  
+                    this.toastr.error(msg, '', {
+                        timeOut: 3000,
+                        closeButton: true,
+                        disableTimeOut: true
+                    });
                 });
-            });
+            }
         } else {
             localStorage.setItem(this.prjresource, JSON.stringify(prjData));
         }
@@ -161,6 +167,14 @@ export class ProjectService {
             // };
         }
         return result;
+    }
+
+    private checSaveWorking (check: boolean) {
+        if (check && this.saveworking) {
+            return false;
+        }
+        this.saveworking = check;
+        return true;
     }
 
     //#region to server api

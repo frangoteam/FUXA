@@ -1686,6 +1686,7 @@ var ProjectService = (function () {
         this.prjresource = 'prj-data';
         this.endPointConfig = __WEBPACK_IMPORTED_MODULE_5__helpers_endpointapi__["a" /* EndPointApi */].getURL(); //"http://localhost:1881";
         this.projectOld = '';
+        this.saveworking = false;
         if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
             this.checkServer().subscribe(function (result) {
                 _this.serverSettings = result;
@@ -1764,20 +1765,25 @@ var ProjectService = (function () {
             // if (prjdiff) {
             //     return true;
             // }
-            this.setServerProject(prjData).subscribe(function (result) {
-                _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
-                console.log(result);
-                // this.toastr.success('Project save successful!');
-            }, function (err) {
-                console.log(err);
-                var msg = '';
-                _this.translateService.get('msg.project-save-error').subscribe(function (txt) { msg = txt; });
-                _this.toastr.error(msg, '', {
-                    timeOut: 3000,
-                    closeButton: true,
-                    disableTimeOut: true
+            if (this.checSaveWorking(true)) {
+                console.log('my save');
+                this.setServerProject(prjData).subscribe(function (result) {
+                    _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
+                    console.log(result);
+                    _this.checSaveWorking(false);
+                    // this.toastr.success('Project save successful!');
+                }, function (err) {
+                    console.log(err);
+                    _this.checSaveWorking(false);
+                    var msg = '';
+                    _this.translateService.get('msg.project-save-error').subscribe(function (txt) { msg = txt; });
+                    _this.toastr.error(msg, '', {
+                        timeOut: 3000,
+                        closeButton: true,
+                        disableTimeOut: true
+                    });
                 });
-            });
+            }
         }
         else {
             localStorage.setItem(this.prjresource, JSON.stringify(prjData));
@@ -1813,6 +1819,13 @@ var ProjectService = (function () {
             // };
         }
         return result;
+    };
+    ProjectService.prototype.checSaveWorking = function (check) {
+        if (check && this.saveworking) {
+            return false;
+        }
+        this.saveworking = check;
+        return true;
     };
     //#region to server api
     ProjectService.prototype.getServerProject = function () {
@@ -5101,7 +5114,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".view-container {\r\n    display: table;\r\n    margin: 0 auto;\r\n}\r\n\r\n.fab-card {\r\n    position: absolute;\r\n    width: 1300px;\r\n    height: 800px;\r\n    /* background-color:black; */\r\n    /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.26); */\r\n    box-shadow: 0px 1px 4px 1px #888888;\r\n}\r\n\r\n.card-close {\r\n    position: absolute;\r\n    top: 0px;\r\n    right: 0px;\r\n    height: 22px;\r\n    width: 100%;\r\n    color: rgba(0,0,0,0.7);\r\n    background-color: transparent;\r\n    font-size: 12px;\r\n    cursor: move !important;\r\n}\r\n\r\n.card-close i {\r\n    float: right;\r\n}\r\n\r\n.dialog-modal {\r\n    /* display: none; */\r\n    position: fixed; /* Stay in place */\r\n    z-index: 1; /* Sit on top */\r\n    left: 0;\r\n    top: 0;\r\n    width: 100%; /* Full width */\r\n    height: 100%; /* Full height */\r\n    overflow: auto; /* Enable scroll if needed */\r\n    background-color: rgb(0,0,0); /* Fallback color */\r\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\r\n}\r\n  \r\n  /* Modal Content/Box */\r\n.dialog-modal-content {\r\n    /* background-color: #fefefe; */\r\n    margin: 15% auto; /*15% from the top and centered */\r\n    /* padding: 20px; */\r\n    border: 1px solid #888;\r\n    width: 80%; /* Could be more or less, depending on screen size */\r\n}\r\n\r\n.dialog-modal-close {\r\n    position: relative;\r\n    top: 0px;\r\n    right: 0px;\r\n    height: 22px;\r\n    width: 100%;\r\n    color: rgba(0,0,0,0.7);\r\n    background-color: transparent;\r\n    font-size: 12px;\r\n    cursor: move !important;\r\n}\r\n\r\n.dialog-modal-close i {\r\n    float: right;\r\n}", ""]);
+exports.push([module.i, ".view-container {\n    display: table;\n    margin: 5px auto;\n}\n\n.fab-card {\n    position: absolute;\n    width: 1300px;\n    height: 800px;\n    /* background-color:black; */\n    /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.26); */\n    box-shadow: 0px 1px 4px 1px #888888;\n}\n\n.card-close {\n    position: absolute;\n    top: 0px;\n    right: 0px;\n    height: 22px;\n    width: 100%;\n    color: rgba(0,0,0,0.7);\n    background-color: transparent;\n    font-size: 12px;\n    cursor: move !important;\n}\n\n.card-close i {\n    float: right;\n}\n\n.dialog-modal {\n    /* display: none; */\n    position: fixed; /* Stay in place */\n    z-index: 1; /* Sit on top */\n    left: 0;\n    top: 0;\n    width: 100%; /* Full width */\n    height: 100%; /* Full height */\n    overflow: auto; /* Enable scroll if needed */\n    background-color: rgb(0,0,0); /* Fallback color */\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\n}\n  \n  /* Modal Content/Box */\n.dialog-modal-content {\n    /* background-color: #fefefe; */\n    margin: 15% auto; /*15% from the top and centered */\n    /* padding: 20px; */\n    border: 1px solid #888;\n    width: 80%; /* Could be more or less, depending on screen size */\n}\n\n.dialog-modal-close {\n    position: relative;\n    top: 0px;\n    right: 0px;\n    height: 22px;\n    width: 100%;\n    color: rgba(0,0,0,0.7);\n    background-color: transparent;\n    font-size: 12px;\n    cursor: move !important;\n}\n\n.dialog-modal-close i {\n    float: right;\n}", ""]);
 
 // exports
 
@@ -5128,6 +5141,8 @@ module.exports = "<div #dataContainer class=\"view-container\">\n</div>\n<div cl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util__ = __webpack_require__("../../../../util/util.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_util__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -5137,6 +5152,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -5202,21 +5218,23 @@ var FuxaViewComponent = (function () {
             }
             var self_1 = this;
             this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(function (sig) {
-                console.log('lab sig ' + sig.id + ' ' + sig.value);
-                try {
-                    var gas = self_1.gaugesManager.getGaugeSettings(self_1.id, sig.id);
-                    if (gas) {
-                        for (var i = 0; i < gas.length; i++) {
-                            var ga = gas[i];
-                            // console.log('gaid: ' + ga.id);
-                            var svgeles = _this.getSvgElements(ga.id);
-                            for (var y = 0; y < svgeles.length; y++) {
-                                _this.gaugesManager.processValue(ga, svgeles[y], sig);
+                // console.log('lab sig ' + sig.id + ' ' + sig.value);
+                if (!Object(__WEBPACK_IMPORTED_MODULE_3_util__["isUndefined"])(sig.value)) {
+                    try {
+                        var gas = _this.gaugesManager.getGaugeSettings(_this.id, sig.id);
+                        if (gas) {
+                            for (var i = 0; i < gas.length; i++) {
+                                var ga = gas[i];
+                                // console.log('gaid: ' + ga.id);
+                                var svgeles = _this.getSvgElements(ga.id);
+                                for (var y = 0; y < svgeles.length; y++) {
+                                    _this.gaugesManager.processValue(ga, svgeles[y], sig);
+                                }
                             }
                         }
                     }
-                }
-                catch (err) {
+                    catch (err) {
+                    }
                 }
             });
         }
@@ -6099,7 +6117,7 @@ var HtmlChartComponent = (function (_super) {
         return pro.variableIds;
     };
     HtmlChartComponent.processValue = function (ga, svgele, sig, gauge) {
-        console.log(sig);
+        // console.log(sig);
         gauge.addValue(sig.id, sig.value);
     };
     HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, isview) {
@@ -6898,10 +6916,10 @@ var FlexHeadComponent = (function () {
         if (this.data.devices) {
             if (this.property.variableSrc || this.property.alarmSrc) {
                 this.data.devices.forEach(function (dev) {
-                    if (_this.property.variableSrc && dev.id === _this.property.variableSrc) {
+                    if (_this.property.variableSrc && dev.name === _this.property.variableSrc) {
                         seldevice = dev;
                     }
-                    if (_this.property.alarmSrc && dev.id === _this.property.alarmSrc) {
+                    if (_this.property.alarmSrc && dev.name === _this.property.alarmSrc) {
                         selalarmdevice = dev;
                     }
                 });
@@ -6951,11 +6969,11 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onDeviceChange = function (event) {
         if (event.value) {
-            if (this.property.variableSrc !== event.value.id) {
+            if (this.property.variableSrc !== event.value.name) {
                 this.property.variable = '';
                 this.property.variableId = '';
             }
-            this.property.variableSrc = event.value.id;
+            this.property.variableSrc = event.value.name;
             this.variable = [];
             this.currentTag = null;
             if (event.value.tags) {
@@ -6966,7 +6984,7 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onVariableChange = function (event) {
         if (event.value) {
-            this.property.variable = (event.value.id) ? event.value.id : event.value.name;
+            this.property.variable = event.value.name;
             this.property.variableId = __WEBPACK_IMPORTED_MODULE_7__services_hmi_service__["a" /* HmiService */].toVariableId(this.property.variableSrc, this.property.variable);
         }
         this.currentTag = event.value;
@@ -6976,11 +6994,11 @@ var FlexHeadComponent = (function () {
     };
     FlexHeadComponent.prototype.onAlarmDeviceChange = function (event) {
         if (event.value) {
-            if (this.property.alarmSrc !== event.value.id) {
+            if (this.property.alarmSrc !== event.value.name) {
                 this.property.alarm = '';
                 this.property.alarmId = '';
             }
-            this.property.alarmSrc = event.value.id;
+            this.property.alarmSrc = event.value.name;
             this.alarme = [];
             if (event.value.tags) {
                 this.alarme = Object.values(event.value.tags);
@@ -6994,7 +7012,6 @@ var FlexHeadComponent = (function () {
         if (event.value) {
             this.property.alarm = (event.value.id) ? event.value.id : event.value.name;
             this.property.alarmId = __WEBPACK_IMPORTED_MODULE_7__services_hmi_service__["a" /* HmiService */].toVariableId(this.property.alarmSrc, this.property.alarm);
-            ;
         }
     };
     FlexHeadComponent.prototype.onAlarmColorChange = function (event) {
@@ -7785,7 +7802,9 @@ var GaugesManager = (function () {
         // first remove special gauge like chart from memorySigGauges
         var sigGaugeSettingsIdremoved = this.hmiService.removeSignalGaugeFromMap(domViewId);
         Object.keys(sigGaugeSettingsIdremoved).forEach(function (sid) {
-            delete _this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+            if (_this.memorySigGauges[sid] && _this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]]) {
+                delete _this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+            }
         });
         // remove mapped gauge for events of this view
         Object.values(this.mapGaugeView).forEach(function (val) {
@@ -8062,7 +8081,7 @@ var GaugesManager = (function () {
                         gauge_1.addLine(sigid, sigProperty.name, line.color);
                     }
                 });
-                // gauge.setOptions({title: chart.name});
+                gauge_1.setOptions({ title: chart.name });
             }
             gauge_1.resize();
             // gauge.onTimeRange = this.onTimeRange;
@@ -9698,8 +9717,12 @@ var NgxDygraphsComponent = (function () {
         this.data = [];
     };
     NgxDygraphsComponent.prototype.setOptions = function (options) {
-        this.options = Object.assign(this.options, options);
-        this.dygraph.updateOptions(this.options);
+        try {
+            this.options = Object.assign(this.options, options);
+            this.dygraph.updateOptions(this.options);
+        }
+        catch (e) {
+        }
     };
     NgxDygraphsComponent.prototype.addLine = function (id, name, color) {
         if (!this.mapData[id]) {
@@ -9710,7 +9733,7 @@ var NgxDygraphsComponent = (function () {
         }
     };
     NgxDygraphsComponent.prototype.addValue = function (id, value) {
-        console.log(value);
+        // console.log(value);
         if (this.mapData[id] && value) {
             var row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();

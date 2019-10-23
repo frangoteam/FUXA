@@ -104,7 +104,7 @@ function S7client(_data, _logger, _events) {
                         // }
                     }
                 } else {
-                    console.log('not');
+                    // console.log('not');
                 }
             }, reason => {
                 if (reason.stack) {

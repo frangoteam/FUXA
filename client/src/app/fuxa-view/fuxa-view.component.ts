@@ -4,6 +4,7 @@ import { Subscription } from "rxjs/Subscription";
 
 import { Hmi, View, GaugeSettings, Event, GaugeEventActionType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
+import { isUndefined } from 'util';
 
 declare var SVG: any;
 
@@ -91,21 +92,23 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
       }
       let self = this;
       this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(sig => {
-        console.log('lab sig ' + sig.id + ' ' + sig.value);
-        try {
-          let gas = self.gaugesManager.getGaugeSettings(self.id, sig.id);
-          if (gas) {
-            for (let i = 0; i < gas.length; i++) {
-              let ga = gas[i];
-              // console.log('gaid: ' + ga.id);
-              let svgeles = this.getSvgElements(ga.id);
-              for (let y = 0; y < svgeles.length; y++) {
-                this.gaugesManager.processValue(ga, svgeles[y], sig);
-              }
+        // console.log('lab sig ' + sig.id + ' ' + sig.value);
+          if (!isUndefined(sig.value)) {
+            try {
+            let gas = this.gaugesManager.getGaugeSettings(this.id, sig.id);
+            if (gas) {
+                for (let i = 0; i < gas.length; i++) {
+                let ga = gas[i];
+                // console.log('gaid: ' + ga.id);
+                let svgeles = this.getSvgElements(ga.id);
+                for (let y = 0; y < svgeles.length; y++) {
+                    this.gaugesManager.processValue(ga, svgeles[y], sig);
+                }
+                }
             }
-          }
-        } catch (err) {
+            } catch (err) {
 
+            }
         }
       });
     }
