@@ -1,6 +1,8 @@
 import { Component, Input, Output, ElementRef, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
 import { DygraphOptions } from './dygraphOptions';
 
+import { isUndefined } from 'util';
+
 declare const Dygraph: any;
 @Component({
     selector: 'ngx-dygraphs',
@@ -108,11 +110,13 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     onClick(ev) {
-        this.onTimeRange.emit(ev);
+        let keys = Object.keys(this.mapData);
+        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys}));
     }
 
     onRangeChange(ev) {
-        this.onTimeRange.emit(ev);
+        let keys = Object.keys(this.mapData);
+        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys}));
     }
 
     // public setData(data) {
@@ -166,7 +170,7 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
 
     public addValue(id: string, value) {
         // console.log(value);
-        if (this.mapData[id] && value) {
+        if (this.mapData[id] && !isUndefined(value)) {
             let row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();
             row[this.mapData[id]] = parseInt(value);

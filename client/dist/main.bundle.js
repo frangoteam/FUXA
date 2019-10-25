@@ -9568,6 +9568,8 @@ module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInPr
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NgxDygraphsComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util__ = __webpack_require__("../../../../util/util.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_util__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9577,6 +9579,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 var NgxDygraphsComponent = (function () {
     function NgxDygraphsComponent() {
@@ -9683,10 +9686,12 @@ var NgxDygraphsComponent = (function () {
         // }, 500);
     };
     NgxDygraphsComponent.prototype.onClick = function (ev) {
-        this.onTimeRange.emit(ev);
+        var keys = Object.keys(this.mapData);
+        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys }));
     };
     NgxDygraphsComponent.prototype.onRangeChange = function (ev) {
-        this.onTimeRange.emit(ev);
+        var keys = Object.keys(this.mapData);
+        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys }));
     };
     // public setData(data) {
     //     let sc: SimpleChanges = {};
@@ -9734,7 +9739,7 @@ var NgxDygraphsComponent = (function () {
     };
     NgxDygraphsComponent.prototype.addValue = function (id, value) {
         // console.log(value);
-        if (this.mapData[id] && value) {
+        if (this.mapData[id] && !Object(__WEBPACK_IMPORTED_MODULE_1_util__["isUndefined"])(value)) {
             var row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();
             row[this.mapData[id]] = parseInt(value);
