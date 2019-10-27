@@ -43,7 +43,7 @@ export enum NaviModeType {
     void = 'item.navsmode-none',
     push = 'item.navsmode-push',
     over = 'item.navsmode-over',
-    fix = 'item.navsmode-fixed',
+    fix = 'item.navsmode-fix',
 }
 
 export enum NaviItemType {
@@ -160,6 +160,19 @@ export class Event {
     dbg: string = '';
     type: string;
     ga: GaugeSettings;
+}
+
+export class DaqQuery {
+    gid: string;
+    from: any;
+    to: any;
+    event: string;
+    sids: string[];
+}
+
+export class DaqResult {
+    gid: string;
+    result: any;
 }
 
 export class HelpData {

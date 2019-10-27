@@ -20,6 +20,22 @@ export enum ChartViewType {
 export enum ChartRangeType {
     last8h = 'chart.rangetype-last8h',
     last1d = 'chart.rangetype-last1d',
-    last3d = 'chart.rangetype-last2d',
+    last3d = 'chart.rangetype-last3d',
     last1w = 'chart.rangetype-last1w'
+}
+
+export class ChartRangeConverter {
+    static ChartRangeToHours (crt: ChartRangeType) {
+        let types = Object.keys(ChartRangeType);
+        if (crt === types[0]) {         // ChartRangeType.last8h) {
+            return 8;
+        } else if (crt === types[1]) {  // ChartRangeType.last1d) {
+            return 24;
+        } else if (crt === types[2]) {  // ChartRangeType.last3d) {
+            return 24 * 3; 
+        } else if (crt === types[3]) {  // ChartRangeType.last1w) {
+            return 24 * 7;
+        }
+        return 0;
+    }
 }

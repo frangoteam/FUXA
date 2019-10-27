@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy, Injectable, Inject, Output, EventEmitter 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Observable } from 'rxjs/Rx';
 
+import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
+import { ChartRangeType } from '../_models/chart';
 
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { SwitchComponent } from './switch/switch.component';
@@ -35,6 +37,7 @@ export class GaugesManager {
   eventGauge: MapGaugesSetting = {};
   mapGaugeView = {};
   memorySigGauges = {};
+  mapChart = {};
 
   gaugeWithProperty = [CompressorComponent.TypeTag, ValveComponent.TypeTag, MotorComponent.TypeTag, ExchangerComponent.TypeTag, ValueComponent.TypeTag,
                       HtmlInputComponent.TypeTag, HtmlButtonComponent.TypeTag, HtmlSelectComponent.TypeTag, GaugeProgressComponent.TypeTag, 
@@ -42,10 +45,24 @@ export class GaugesManager {
   gaugeWithEvents = [CompressorComponent.TypeTag, ValveComponent.TypeTag, MotorComponent.TypeTag, ExchangerComponent.TypeTag, HtmlButtonComponent.TypeTag];
 
   constructor(private hmiService: HmiService,
-    private dialog: MatDialog) {
+              private translateService: TranslateService,
+              private dialog: MatDialog) {
     this.hmiService.onVariableChanged.subscribe(sig => {
       try {
         this.onchange.emit(sig);
+      } catch (err) {
+        
+      }
+    });
+    this.hmiService.onDaqResult.subscribe(message => {
+      try {
+        if (this.mapChart[message.gid]) {
+          let gauge: NgxDygraphsComponent = this.mapChart[message.gid];
+          for(let i = 0; i < message.values.length; i++) {
+            message.values[i][0] = new Date(message.values[i][0]);
+          }
+          gauge.setValues(message.values);
+        }
       } catch (err) {
         
       }
@@ -336,9 +353,11 @@ export class GaugesManager {
     } else if (ga.type === GaugeSemaphoreComponent.TypeTag) {
       return GaugeSemaphoreComponent.processValue(ga, svgele, sig);
     } else if (ga.type === HtmlChartComponent.TypeTag) {
-      if (ga.property.type !== '_history' && this.memorySigGauges[sig.id]) {
+      if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
-          HtmlChartComponent.processValue(ga, svgele, sig, this.memorySigGauges[sig.id][k]);
+          if (k === ga.id) {
+            HtmlChartComponent.processValue(ga, svgele, sig, this.memorySigGauges[sig.id][k]);
+          }
         });
       }
     }
@@ -433,6 +452,14 @@ export class GaugesManager {
     }
   }
 
+  /**
+   * initialize the gauge element found in svg, 
+   * in svg is only a 'div' that have to be dynamic build and render from angular
+   * @param ga gauge settings
+   * @param res reference to factory
+   * @param ref reference to factory
+   * @param isview in view or editor, in editor have to disable mouse activity
+   */
   public initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
     // add variable
     let sigsid: string[] = this.getBindSignals(ga);
@@ -442,7 +469,12 @@ export class GaugesManager {
       }
     }
     if (ga.type === HtmlChartComponent.TypeTag) {
-      let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview);
+      // prepare attribute
+      let chartRange = ChartRangeType;
+      Object.keys(chartRange).forEach(key => {
+        this.translateService.get(chartRange[key]).subscribe((txt: string) => {chartRange[key] = txt});
+      });
+      let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
       gauge.init();
       if (ga.property) {
         let chart = this.hmiService.getChart(ga.property.id)
@@ -450,12 +482,18 @@ export class GaugesManager {
             let sigid = HmiService.toVariableId(line.device, line.id);
             let sigProperty = this.hmiService.getMappedVariable(sigid, true);
             if (sigProperty) {
-            gauge.addLine(sigid, sigProperty.name, line.color);
+              gauge.addLine(sigid, sigProperty.name, line.color);
             }
         });
         gauge.setOptions({title: chart.name});
       }
+      this.mapChart[ga.id] = gauge;
       gauge.resize();
+      gauge.onTimeRange.subscribe(data => {
+        console.log(ga.id + ' ' + data);
+        this.hmiService.queryDaqValues(data);
+      });
+      gauge.setRange(Object.keys(chartRange)[0]);
       // gauge.onTimeRange = this.onTimeRange;
       return gauge;
     }

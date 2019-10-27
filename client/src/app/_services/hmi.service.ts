@@ -5,7 +5,7 @@ import * as io from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
 import { Device } from '../_models/device';
-import { Hmi, Variable, GaugeSettings } from '../_models/hmi';
+import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
@@ -19,6 +19,7 @@ export class HmiService {
     @Output() onDeviceChanged: EventEmitter<boolean> = new EventEmitter();
     @Output() onDeviceBrowse: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceNodeAttribute: EventEmitter<any> = new EventEmitter();
+    @Output() onDaqResult: EventEmitter<DaqResult> = new EventEmitter();
 
     public version = "1.00";
     public static separator = '^~^';
@@ -114,6 +115,11 @@ export class HmiService {
             this.socket.on('device-node-attribute', (message) => {
                 this.onDeviceNodeAttribute.emit(message);
             });
+            // daq values
+            this.socket.on('daq-result', (message) => {
+                this.onDaqResult.emit(message);
+            });
+
             this.askDeviceValues();
         }
     }
@@ -163,7 +169,14 @@ export class HmiService {
             let msg = { device: deviceId, node: node };
             this.socket.emit('device-node-attribute', msg);
         }
-    }    
+    }
+    
+    public queryDaqValues(msg: DaqQuery) {
+        if (this.socket) {
+            this.socket.emit('daq-query', msg);
+        }
+    }
+
     //#endregion
 
     //#region Signals Gauges Mapping

@@ -1,6 +1,8 @@
 import { Component, Input, Output, ElementRef, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
 import { DygraphOptions } from './dygraphOptions';
 
+import { ChartRangeType, ChartRangeConverter } from '../../_models/chart';
+import { DaqQuery } from '../../_models/hmi';
 import { isUndefined } from 'util';
 
 declare const Dygraph: any;
@@ -15,17 +17,19 @@ declare const Dygraph: any;
  * @class NgDygraphsComponent
  */
 export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
+    @Input() public id: string;
     @Input() public options: DygraphOptions;
     @Input() public data: any;
     @Input() public noDataLabel: string;
-    @Output() onTimeRange: EventEmitter<string> = new EventEmitter();
+    @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
     @ViewChild('chart') public chart: ElementRef;
 
     public loadingInProgress: boolean;
     public withToolbar = false;
     public isEditor = false;
-    public rangeType: any;
     public rangeTypeValue: any;
+    public rangeType: ChartRangeType;
+    public range = { from: Date.now(), to: Date.now() };
 
     //   public chartWidth: number;
     //   public chartHeight: number;
@@ -69,6 +73,9 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
               cols[i].style.fontSize = '12px';
             }
         });
+        if (this.withToolbar && !this.isEditor) {
+            this.onRangeChanged(this.rangeTypeValue);
+        }
     }
 
     /**
@@ -110,20 +117,38 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     onClick(ev) {
-        let keys = Object.keys(this.mapData);
-        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys}));
+        let msg = new DaqQuery();
+        msg.gid = this.id;
+        msg.event = ev;
+        if (ev === 'B') {           // back
+            this.range.to = new Date(this.range.from).getTime();
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(this.rangeTypeValue) * 60 * 60 * 1000));    
+        } else if (ev === 'F') {    // forward
+            this.range.from = new Date(this.range.to).getTime();
+            this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (ChartRangeConverter.ChartRangeToHours(this.rangeTypeValue) * 60 * 60 * 1000));    
+        }
+        msg.sids = Object.keys(this.mapData);
+        msg.from = this.range.from;
+        msg.to = this.range.to;        
+        this.onTimeRange.emit(msg);
     }
 
-    onRangeChange(ev) {
-        let keys = Object.keys(this.mapData);
-        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys}));
+    onRangeChanged(ev) {
+        if (ev) {
+            this.range.from = Date.now();
+            this.range.to = Date.now();
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(ev) * 60 * 60 * 1000));
+
+            let msg = new DaqQuery();
+            msg.event = ev;
+            msg.gid = this.id;
+            msg.sids = Object.keys(this.mapData);
+            msg.from = this.range.from;
+            msg.to = this.range.to;
+            this.onTimeRange.emit(msg);
+        }
     }
 
-    // public setData(data) {
-    //     let sc: SimpleChanges = {};
-    //     let rdata = [[new Date("1967/09/14"), 4], [new Date("1968/09/14"), 0]];
-    //     this.dygraph.updateOptions({ file: rdata });
-    // }
 
     public resize(height?, width?) {
         let chart = this.chart.nativeElement;
@@ -149,6 +174,13 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         this.options.labels = ['DateTime'];
         this.mapData = {};
         this.data = [];
+    }
+
+    public setRange(startRange) {
+        if (this.withToolbar && !this.isEditor) {
+            this.rangeTypeValue = startRange;
+            this.onRangeChanged(this.rangeTypeValue);
+        }
     }
 
     public setOptions(options) {
@@ -181,6 +213,11 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
             }
             this.dygraph.updateOptions({ file: this.data });
         }
+    }
+
+    public setValues(values) {
+        this.data = values;
+        this.dygraph.updateOptions({ file: this.data });
     }
 
     public clear() {

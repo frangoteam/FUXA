@@ -102,7 +102,46 @@ function init(_io, _api, _settings, log) {
             } catch (err) {
                 logger.error('socket.on:device-values error: ' + err);
             }
-        });        
+        });
+        // client query DAQ values
+        socket.on('daq-query', (msg) => {
+            try {
+                if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
+                    console.log('>' + new Date(msg.from).toString() + ' ' + new Date(msg.to).toString());
+                    var dbfncs = [];
+                    for (let i = 0; i < msg.sids.length; i++) {
+                        let tks = msg.sids[i].split('^~^');
+                        dbfncs.push(daqstorage.getNodeValues(tks[0], tks[1], msg.from, msg.to));
+                    }
+                    var result = {};
+                    Promise.all(dbfncs).then(values => {
+                        for (var x = 0; x < values.length; x++) {
+                            for (var y = 0; y < values[x].length; y++) {
+                                if (!result[values[x][y].dt]) {
+                                    result[values[x][y].dt] = Array(msg.sids.length + 1).fill(null);
+                                    result[values[x][y].dt][0] = values[x][y].dt;
+                                } 
+                                result[values[x][y].dt][x + 1] = values[x][y].value;
+                            }
+                        }
+                        let res = []
+                        Object.keys(result).sort().forEach(k => {
+                            res.push(result[k]);
+                        });
+                        io.emit('daq-result', {gid: msg.gid, values: res });
+                    }, reason => {
+                        if (reason.stack) {
+                            logger.error('getDaqValue error: ' + reason.stack);
+                        } else {
+                            logger.error('getDaqValue error: ' + reason);
+                        }
+                        reject(reason);
+                    });
+                }
+            } catch (err) {
+                logger.error('socket.on:daq-query error: ' + err);
+            }
+        });
     });
 }
 

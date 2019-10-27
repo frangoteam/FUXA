@@ -3,8 +3,6 @@ import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 
-import { ChartRangeType } from '../../../_models/chart';
-
 import { NgxDygraphsComponent } from '../../../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 
 @Component({
@@ -32,7 +30,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
     gauge.addValue(sig.id, sig.value);
   }
   
-  static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean) {
+  static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean, chartRange: any) {
     let ele = document.getElementById(gab.id);
     if (ele) {
       let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD);
@@ -48,17 +46,10 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
         }
         componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
         componentRef.instance.isEditor = !isview;
-        // range select
-        let chartRange = ChartRangeType;
-        // Object.keys(this.chartViewType).forEach(key => {
-        //   this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => {this.chartViewType[key] = txt});
-        // });
-        componentRef.instance.rangeType = chartRange;
 
-        componentRef.instance.onTimeRange.subscribe(data => {
-          console.log(gab.id + ' ' + data);
-          componentRef.instance.clear();
-        });
+        componentRef.instance.rangeType = chartRange;
+        componentRef.instance.id = gab.id;
+
         componentRef.changeDetectorRef.detectChanges();
         const loaderComponentElement = componentRef.location.nativeElement;
         htmlChart.appendChild(loaderComponentElement);

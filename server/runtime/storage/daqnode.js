@@ -234,7 +234,7 @@ function DaqNode(_settings, _log, _id) {
                         });
                     }
                 }
-                console.log('add> ' + id);
+                // console.log('add> ' + id);
             } else {
                 // some things was wrong by tokenize...try to bind the db_daqdata 
                 _bindDaqData(db_daqdata_file).then(result => {

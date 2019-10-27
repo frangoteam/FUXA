@@ -73,6 +73,11 @@
     "chart.viewtype-realtime1": "Realtime",
     "chart.viewtype-history": "History",
 
+    "chart.rangetype-last8h": "Last 8 hours",
+    "chart.rangetype-last1d": "Last day",
+    "chart.rangetype-last3d": "Last 3 days",
+    "chart.rangetype-last1w": "Last week",
+
     "editor.views": "Views",
     "editor.view-delete": "Delete",
     "editor.view-rename": "Rename",

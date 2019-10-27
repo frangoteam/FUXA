@@ -976,8 +976,9 @@ var WindowRef = (function () {
 "use strict";
 /* unused harmony export Chart */
 /* unused harmony export ChartLine */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ChartViewType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartRangeType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return ChartViewType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ChartRangeType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChartRangeConverter; });
 var Chart = (function () {
     function Chart() {
     }
@@ -999,9 +1000,31 @@ var ChartRangeType;
 (function (ChartRangeType) {
     ChartRangeType["last8h"] = "chart.rangetype-last8h";
     ChartRangeType["last1d"] = "chart.rangetype-last1d";
-    ChartRangeType["last3d"] = "chart.rangetype-last2d";
+    ChartRangeType["last3d"] = "chart.rangetype-last3d";
     ChartRangeType["last1w"] = "chart.rangetype-last1w";
 })(ChartRangeType || (ChartRangeType = {}));
+var ChartRangeConverter = (function () {
+    function ChartRangeConverter() {
+    }
+    ChartRangeConverter.ChartRangeToHours = function (crt) {
+        var types = Object.keys(ChartRangeType);
+        if (crt === types[0]) {
+            return 8;
+        }
+        else if (crt === types[1]) {
+            return 24;
+        }
+        else if (crt === types[2]) {
+            return 24 * 3;
+        }
+        else if (crt === types[3]) {
+            return 24 * 7;
+        }
+        return 0;
+    };
+    return ChartRangeConverter;
+}());
+
 
 
 /***/ }),
@@ -1057,29 +1080,31 @@ var TagType;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return Hmi; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return View; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return LayoutSettings; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return Hmi; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return View; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return LayoutSettings; });
 /* unused harmony export NavigationSettings */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return NaviModeType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return NaviItemType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return NaviItem; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return NaviModeType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return NaviItemType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return NaviItem; });
 /* unused harmony export HeaderSettings */
 /* unused harmony export DocProfile */
 /* unused harmony export MyItem */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return GaugeSettings; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return GaugeProperty; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return GaugeEvent; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return GaugeEventType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return GaugeEventActionType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return GaugeRangeProperty; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return Variable; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return GaugeSettings; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return GaugeProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return GaugeEvent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return GaugeEventType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return GaugeEventActionType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return GaugeRangeProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return Variable; });
 /* unused harmony export VariableRange */
 /* unused harmony export Alarm */
 /* unused harmony export WindowLink */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return SelElement; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Event; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return HelpData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return SelElement; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Event; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DaqQuery; });
+/* unused harmony export DaqResult */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return HelpData; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__device__ = __webpack_require__("../../../../../src/app/_models/device.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -1138,7 +1163,7 @@ var NaviModeType;
     NaviModeType["void"] = "item.navsmode-none";
     NaviModeType["push"] = "item.navsmode-push";
     NaviModeType["over"] = "item.navsmode-over";
-    NaviModeType["fix"] = "item.navsmode-fixed";
+    NaviModeType["fix"] = "item.navsmode-fix";
 })(NaviModeType || (NaviModeType = {}));
 var NaviItemType;
 (function (NaviItemType) {
@@ -1263,6 +1288,18 @@ var Event = (function () {
     return Event;
 }());
 
+var DaqQuery = (function () {
+    function DaqQuery() {
+    }
+    return DaqQuery;
+}());
+
+var DaqResult = (function () {
+    function DaqResult() {
+    }
+    return DaqResult;
+}());
+
 var HelpData = (function () {
     function HelpData() {
     }
@@ -1314,6 +1351,7 @@ var HmiService = (function () {
         this.onDeviceChanged = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onDeviceBrowse = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onDeviceNodeAttribute = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.onDaqResult = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.version = "1.00";
         this.hmiresource = "hmi-config";
         this.viewSignalGaugeMap = new ViewSignalGaugeMap();
@@ -1382,7 +1420,7 @@ var HmiService = (function () {
                 for (var idx = 0; idx < message.values.length; idx++) {
                     var varid = message.id + HmiService_1.separator + message.values[idx].id;
                     if (!_this.variables[varid]) {
-                        _this.variables[varid] = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["o" /* Variable */](varid, message.id, message.values[idx].id);
+                        _this.variables[varid] = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["p" /* Variable */](varid, message.id, message.values[idx].id);
                     }
                     _this.variables[varid].value = message.values[idx].value;
                     _this.setSignalValue(_this.variables[varid]);
@@ -1395,6 +1433,10 @@ var HmiService = (function () {
             // device node attribute
             this.socket.on('device-node-attribute', function (message) {
                 _this.onDeviceNodeAttribute.emit(message);
+            });
+            // daq values
+            this.socket.on('daq-result', function (message) {
+                _this.onDaqResult.emit(message);
             });
             this.askDeviceValues();
         }
@@ -1441,13 +1483,18 @@ var HmiService = (function () {
             this.socket.emit('device-node-attribute', msg);
         }
     };
+    HmiService.prototype.queryDaqValues = function (msg) {
+        if (this.socket) {
+            this.socket.emit('daq-query', msg);
+        }
+    };
     //#endregion
     //#region Signals Gauges Mapping
     HmiService.prototype.addSignal = function (signalId, ga) {
         var sigsplit = signalId.split(HmiService_1.separator);
         // add to variable list
         if (!this.variables[signalId]) {
-            var v = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["o" /* Variable */](signalId, sigsplit[0], sigsplit[1]);
+            var v = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["p" /* Variable */](signalId, sigsplit[0], sigsplit[1]);
             this.variables[signalId] = v;
         }
     };
@@ -1462,7 +1509,7 @@ var HmiService = (function () {
         var sigsplit = signalId.split(HmiService_1.separator);
         // add to variable list
         if (!this.variables[signalId]) {
-            var v = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["o" /* Variable */](signalId, sigsplit[0], sigsplit[1]);
+            var v = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["p" /* Variable */](signalId, sigsplit[0], sigsplit[1]);
             this.variables[signalId] = v;
         }
         // add to device list
@@ -1583,6 +1630,10 @@ var HmiService = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
     ], HmiService.prototype, "onDeviceNodeAttribute", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
+    ], HmiService.prototype, "onDaqResult", void 0);
     HmiService = HmiService_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__services_project_service__["a" /* ProjectService */],
@@ -2085,7 +2136,7 @@ var ProjectData = (function () {
     function ProjectData() {
         this.version = "1.00";
         this.server = new __WEBPACK_IMPORTED_MODULE_4__models_device__["a" /* Device */]();
-        this.hmi = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["i" /* Hmi */]();
+        this.hmi = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["j" /* Hmi */]();
         this.devices = {};
         this.charts = [];
     }
@@ -3992,10 +4043,10 @@ var EditorComponent = (function () {
         this.colorFill = '#FFFFFF';
         this.colorStroke = '#000000';
         this.currentView = null;
-        this.hmi = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["i" /* Hmi */](); // = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
+        this.hmi = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["j" /* Hmi */](); // = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
         this.currentMode = '';
         this.gridOn = false;
-        this.selectedElement = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["n" /* SelElement */]();
+        this.selectedElement = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["o" /* SelElement */]();
         this.panelsState = {
             enabled: false,
             panelA: true,
@@ -4539,7 +4590,7 @@ var EditorComponent = (function () {
                 if (!found)
                     break;
             }
-            var v = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["p" /* View */]();
+            var v = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["q" /* View */]();
             if (this.hmi.views.length <= 0) {
                 v.name = 'MainView';
             }
@@ -4945,7 +4996,7 @@ var LayoutPropertyComponent = (function () {
             dndHorizontal: true
         };
         if (!data.layout) {
-            data.layout = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["j" /* LayoutSettings */]();
+            data.layout = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["k" /* LayoutSettings */]();
         }
         this.startView = data.layout.start;
         this.sideMode = data.layout.navigation.mode;
@@ -4957,8 +5008,8 @@ var LayoutPropertyComponent = (function () {
     }
     LayoutPropertyComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.navMode = __WEBPACK_IMPORTED_MODULE_3__models_hmi__["m" /* NaviModeType */];
-        this.navType = __WEBPACK_IMPORTED_MODULE_3__models_hmi__["l" /* NaviItemType */];
+        this.navMode = __WEBPACK_IMPORTED_MODULE_3__models_hmi__["n" /* NaviModeType */];
+        this.navType = __WEBPACK_IMPORTED_MODULE_3__models_hmi__["m" /* NaviItemType */];
         Object.keys(this.navMode).forEach(function (key) {
             _this.translateService.get(_this.navMode[key]).subscribe(function (txt) { _this.navMode[key] = txt; });
         });
@@ -4968,7 +5019,7 @@ var LayoutPropertyComponent = (function () {
     };
     LayoutPropertyComponent.prototype.onAddMenuItem = function (item) {
         var _this = this;
-        var eitem = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["k" /* NaviItem */]();
+        var eitem = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["l" /* NaviItem */]();
         if (item) {
             eitem = JSON.parse(JSON.stringify(item));
         }
@@ -4991,7 +5042,7 @@ var LayoutPropertyComponent = (function () {
                     }
                 }
                 else {
-                    var nitem = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["k" /* NaviItem */]();
+                    var nitem = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["l" /* NaviItem */]();
                     nitem.icon = result.item.icon;
                     nitem.text = result.item.text;
                     nitem.view = result.item.view;
@@ -5036,7 +5087,7 @@ var LayoutPropertyComponent = (function () {
         var _this = this;
         this.data.layout.navigation.items = [];
         this.draggableListLeft.forEach(function (item) {
-            var nitem = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["k" /* NaviItem */]();
+            var nitem = new __WEBPACK_IMPORTED_MODULE_3__models_hmi__["l" /* NaviItem */]();
             nitem.icon = item.icon;
             nitem.text = item.text;
             nitem.view = item.view;
@@ -5247,17 +5298,17 @@ var FuxaViewComponent = (function () {
                 console.log('click -');
                 var event = self.gaugesManager.getBindClick(ga);
                 if (event && event.length > 0 && event[0].action && event[0].actparam) {
-                    var actindex = Object.keys(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */]).indexOf(event[0].action);
-                    if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */].onpage) === actindex) {
+                    var actindex = Object.keys(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */]).indexOf(event[0].action);
+                    if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */].onpage) === actindex) {
                         self.loadPage(ev, event[0].actparam);
                     }
-                    else if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */].onwindow) === actindex) {
+                    else if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */].onwindow) === actindex) {
                         self.onOpenCard(ga.id, ev, event[0].actparam);
                     }
-                    else if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */].ondialog) === actindex) {
+                    else if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */].ondialog) === actindex) {
                         self.openDialog(ev, event[0].actparam);
                     }
-                    else if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */].onSetValue) === actindex) {
+                    else if (Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */]).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */].onSetValue) === actindex) {
                         self.onSetValue(ga, event[0].actparam);
                     }
                     // self.createComponent(event[0].name, ev.x, ev.y);
@@ -5393,11 +5444,11 @@ var FuxaViewComponent = (function () {
     ], FuxaViewComponent.prototype, "id", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["p" /* View */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["q" /* View */])
     ], FuxaViewComponent.prototype, "view", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["i" /* Hmi */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["j" /* Hmi */])
     ], FuxaViewComponent.prototype, "hmi", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
@@ -5505,7 +5556,7 @@ var ChartPropertyComponent = (function () {
         this.dialogRef = dialogRef;
         this.translateService = translateService;
         this.data = data;
-        this.chartViewType = __WEBPACK_IMPORTED_MODULE_7__models_chart__["b" /* ChartViewType */];
+        this.chartViewType = __WEBPACK_IMPORTED_MODULE_7__models_chart__["c" /* ChartViewType */];
         this.chartCtrl = new __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormControl */]();
         this.chartFilterCtrl = new __WEBPACK_IMPORTED_MODULE_3__angular_forms__["b" /* FormControl */]();
         this.filteredChart = new __WEBPACK_IMPORTED_MODULE_2_rxjs_ReplaySubject__["a" /* ReplaySubject */](1);
@@ -6079,8 +6130,7 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_chart__ = __webpack_require__("../../../../../src/app/_models/chart.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6104,7 +6154,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 var HtmlChartComponent = (function (_super) {
     __extends(HtmlChartComponent, _super);
     function HtmlChartComponent(resolver) {
@@ -6120,37 +6169,29 @@ var HtmlChartComponent = (function (_super) {
         // console.log(sig);
         gauge.addValue(sig.id, sig.value);
     };
-    HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, isview) {
+    HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, isview, chartRange) {
         var ele = document.getElementById(gab.id);
         if (ele) {
             var htmlChart = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixD);
             if (htmlChart) {
-                var factory = resolver.resolveComponentFactory(__WEBPACK_IMPORTED_MODULE_4__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]);
-                var componentRef_1 = viewContainerRef.createComponent(factory);
+                var factory = resolver.resolveComponentFactory(__WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]);
+                var componentRef = viewContainerRef.createComponent(factory);
                 if (gab.property) {
-                    componentRef_1.instance.withToolbar = (gab.property.type === 'history') ? true : false;
+                    componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 }
                 var options = { interactionModel: {} }; // option to remove interaction in editor modus
                 if (isview) {
                     options = null;
                 }
-                componentRef_1.instance.defOptions = Object.assign(componentRef_1.instance.defOptions, options);
-                componentRef_1.instance.isEditor = !isview;
-                // range select
-                var chartRange = __WEBPACK_IMPORTED_MODULE_3__models_chart__["a" /* ChartRangeType */];
-                // Object.keys(this.chartViewType).forEach(key => {
-                //   this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => {this.chartViewType[key] = txt});
-                // });
-                componentRef_1.instance.rangeType = chartRange;
-                componentRef_1.instance.onTimeRange.subscribe(function (data) {
-                    console.log(gab.id + ' ' + data);
-                    componentRef_1.instance.clear();
-                });
-                componentRef_1.changeDetectorRef.detectChanges();
-                var loaderComponentElement = componentRef_1.location.nativeElement;
+                componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
+                componentRef.instance.isEditor = !isview;
+                componentRef.instance.rangeType = chartRange;
+                componentRef.instance.id = gab.id;
+                componentRef.changeDetectorRef.detectChanges();
+                var loaderComponentElement = componentRef.location.nativeElement;
                 htmlChart.appendChild(loaderComponentElement);
-                componentRef_1.instance.resize(htmlChart.clientHeight - ((componentRef_1.instance.withToolbar) ? 34 : 0), htmlChart.clientWidth);
-                return componentRef_1.instance;
+                componentRef.instance.resize(htmlChart.clientHeight - ((componentRef.instance.withToolbar) ? 34 : 0), htmlChart.clientWidth);
+                return componentRef.instance;
             }
         }
     };
@@ -6255,7 +6296,7 @@ var HtmlInputComponent = (function (_super) {
         if (ele) {
             var input = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefix);
             if (input) {
-                var event_1 = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["a" /* Event */]();
+                var event_1 = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["b" /* Event */]();
                 event_1.dom = input;
                 event_1.type = 'key-enter';
                 event_1.ga = ga;
@@ -6400,7 +6441,7 @@ var HtmlSelectComponent = (function (_super) {
         if (ele) {
             var select = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefix);
             if (select) {
-                var event_1 = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["a" /* Event */]();
+                var event_1 = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["b" /* Event */]();
                 event_1.dom = select;
                 event_1.type = 'change';
                 event_1.ga = ga;
@@ -6670,9 +6711,9 @@ var GaugeBaseComponent = (function () {
         if (!pro.events) {
             return null;
         }
-        var idxtype = Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventType */]).indexOf(type);
+        var idxtype = Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["e" /* GaugeEventType */]).indexOf(type);
         pro.events.forEach(function (ev) {
-            if (Object.keys(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventType */]).indexOf(ev.type) === idxtype) {
+            if (Object.keys(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["e" /* GaugeEventType */]).indexOf(ev.type) === idxtype) {
                 res.push(ev);
             }
         });
@@ -6692,7 +6733,7 @@ var GaugeBaseComponent = (function () {
     ], GaugeBaseComponent.prototype, "data", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["g" /* GaugeSettings */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["h" /* GaugeSettings */])
     ], GaugeBaseComponent.prototype, "settings", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
@@ -6764,8 +6805,8 @@ var FlexEventComponent = (function () {
     function FlexEventComponent() {
     }
     FlexEventComponent.prototype.ngOnInit = function () {
-        this.eventType = __WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventType */];
-        this.actionType = __WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */];
+        this.eventType = __WEBPACK_IMPORTED_MODULE_1__models_hmi__["e" /* GaugeEventType */];
+        this.actionType = __WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */];
         if (this.property) {
             this.events = this.property.events;
         }
@@ -6780,7 +6821,7 @@ var FlexEventComponent = (function () {
         return result;
     };
     FlexEventComponent.prototype.onAddEvent = function () {
-        var ga = new __WEBPACK_IMPORTED_MODULE_1__models_hmi__["b" /* GaugeEvent */]();
+        var ga = new __WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEvent */]();
         this.addEvent(ga);
     };
     FlexEventComponent.prototype.onRemoveEvent = function (index) {
@@ -6788,12 +6829,12 @@ var FlexEventComponent = (function () {
     };
     FlexEventComponent.prototype.withDestination = function (action) {
         var a = Object.keys(this.actionType).indexOf(action);
-        var b = Object.values(this.actionType).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */].onSetValue);
+        var b = Object.values(this.actionType).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */].onSetValue);
         return (a >= 0 && a != b) ? true : false;
     };
     FlexEventComponent.prototype.withSetValue = function (action) {
         var a = Object.keys(this.actionType).indexOf(action);
-        var b = Object.values(this.actionType).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["c" /* GaugeEventActionType */].onSetValue);
+        var b = Object.values(this.actionType).indexOf(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */].onSetValue);
         return (a === b) ? true : false;
     };
     FlexEventComponent.prototype.addEvent = function (ge) {
@@ -6804,7 +6845,7 @@ var FlexEventComponent = (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["e" /* GaugeProperty */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__models_hmi__["f" /* GaugeProperty */])
     ], FlexEventComponent.prototype, "property", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
@@ -6909,7 +6950,7 @@ var FlexHeadComponent = (function () {
     FlexHeadComponent.prototype.ngOnInit = function () {
         var _this = this;
         if (!this.property) {
-            this.property = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeProperty */]();
+            this.property = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["f" /* GaugeProperty */]();
         }
         var seldevice = null;
         var selalarmdevice = null;
@@ -7167,7 +7208,7 @@ var FlexHeadComponent = (function () {
     ], FlexHeadComponent.prototype, "data", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeProperty */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_6__models_hmi__["f" /* GaugeProperty */])
     ], FlexHeadComponent.prototype, "property", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('flexinput'),
@@ -7250,7 +7291,7 @@ var FlexInputComponent = (function () {
     FlexInputComponent.prototype.ngOnInit = function () {
         if (!this.ranges) {
             this.ranges = [];
-            var ip = new __WEBPACK_IMPORTED_MODULE_1__models_hmi__["f" /* GaugeRangeProperty */]();
+            var ip = new __WEBPACK_IMPORTED_MODULE_1__models_hmi__["g" /* GaugeRangeProperty */]();
             if (this.isWithStep()) {
                 ip.type = this.type;
                 ip.min = 1;
@@ -7280,7 +7321,7 @@ var FlexInputComponent = (function () {
         // });
     };
     FlexInputComponent.prototype.onAddInput = function () {
-        var ip = new __WEBPACK_IMPORTED_MODULE_1__models_hmi__["f" /* GaugeRangeProperty */]();
+        var ip = new __WEBPACK_IMPORTED_MODULE_1__models_hmi__["g" /* GaugeRangeProperty */]();
         ip.type = this.type;
         this.addInput(ip);
     };
@@ -7590,21 +7631,23 @@ var GaugeDialogType;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GaugesManager; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_chart__ = __webpack_require__("../../../../../src/app/_models/chart.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7631,10 +7674,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
+
 var GaugesManager = (function () {
-    function GaugesManager(hmiService, dialog) {
+    function GaugesManager(hmiService, translateService, dialog) {
         var _this = this;
         this.hmiService = hmiService;
+        this.translateService = translateService;
         this.dialog = dialog;
         this.onchange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onevent = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
@@ -7642,13 +7688,27 @@ var GaugesManager = (function () {
         this.eventGauge = {};
         this.mapGaugeView = {};
         this.memorySigGauges = {};
-        this.gaugeWithProperty = [__WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag,
-            __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag,
-            __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag];
-        this.gaugeWithEvents = [__WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag];
+        this.mapChart = {};
+        this.gaugeWithProperty = [__WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag,
+            __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag,
+            __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag];
+        this.gaugeWithEvents = [__WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag];
         this.hmiService.onVariableChanged.subscribe(function (sig) {
             try {
                 _this.onchange.emit(sig);
+            }
+            catch (err) {
+            }
+        });
+        this.hmiService.onDaqResult.subscribe(function (message) {
+            try {
+                if (_this.mapChart[message.gid]) {
+                    var gauge = _this.mapChart[message.gid];
+                    for (var i = 0; i < message.values.length; i++) {
+                        message.values[i][0] = new Date(message.values[i][0]);
+                    }
+                    gauge.setValues(message.values);
+                }
             }
             catch (err) {
             }
@@ -7663,53 +7723,53 @@ var GaugesManager = (function () {
     GaugesManager.prototype.createSettings = function (id, type) {
         var gs = null;
         switch (type) {
-            case __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].LabelTag;
                 break;
-            case __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_4__models_hmi__["g" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].LabelTag;
+            case __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag:
+                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].LabelTag;
                 break;
         }
         return gs;
@@ -7724,14 +7784,14 @@ var GaugesManager = (function () {
         return this.gaugeWithProperty.indexOf(type) > -1;
     };
     GaugesManager.prototype.isToInitInEditor = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElement(ga);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElement(ga);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElement(ga);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElement(ga);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].detectChange(ga);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].detectChange(ga);
         }
         return false;
     };
@@ -7814,8 +7874,8 @@ var GaugesManager = (function () {
         });
     };
     GaugesManager.prototype.checkElementToInit = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElement(ga);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElement(ga);
         }
         // } else if (ga.type === GaugeProgressComponent.TypeTag) {
         //   return GaugeProgressComponent.initElement(ga);
@@ -7842,40 +7902,40 @@ var GaugesManager = (function () {
     };
     GaugesManager.prototype.getBindSignals = function (ga) {
         if (ga.property) {
-            if (ga.type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].getSignals(ga.property);
+            if (ga.type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].getSignals(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].getSignals(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].getSignals(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].getSignals(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].getSignals(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getSignals(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getSignals(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].getSignals(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].getSignals(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getSignals(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getSignals(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getSignal(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getSignal(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getSignal(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getSignal(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getSignal(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getSignal(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getSignal(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getSignal(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getSignal(ga.property);
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
+                return __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getSignal(ga.property);
             }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
                 var sigs = this.hmiService.getChartSignal(ga.property.id);
                 return sigs;
             }
@@ -7883,29 +7943,29 @@ var GaugesManager = (function () {
         return null;
     };
     GaugesManager.prototype.getBindClick = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_4__models_hmi__["d" /* GaugeEventType */].click);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_4__models_hmi__["d" /* GaugeEventType */].click);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_4__models_hmi__["d" /* GaugeEventType */].click);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_4__models_hmi__["d" /* GaugeEventType */].click);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_4__models_hmi__["d" /* GaugeEventType */].click);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
         }
         return null;
     };
     GaugesManager.prototype.getHtmlEvents = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getHtmlEvents(ga);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getHtmlEvents(ga);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getHtmlEvents(ga);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getHtmlEvents(ga);
         }
         return null;
     };
@@ -7918,43 +7978,45 @@ var GaugesManager = (function () {
     GaugesManager.prototype.processValue = function (ga, svgele, sig) {
         var _this = this;
         // console.log('gaid: ' + ga.id);
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].processValue(ga, svgele, sig);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].processValue(ga, svgele, sig);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].processValue(ga, svgele, sig);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            if (ga.property.type !== '_history' && this.memorySigGauges[sig.id]) {
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
                 Object.keys(this.memorySigGauges[sig.id]).forEach(function (k) {
-                    __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, _this.memorySigGauges[sig.id][k]);
+                    if (k === ga.id) {
+                        __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, _this.memorySigGauges[sig.id][k]);
+                    }
                 });
             }
         }
@@ -7970,74 +8032,74 @@ var GaugesManager = (function () {
         this.hmiService.putSignalValue(sigid, val);
     };
     GaugesManager.getEditDialogTypeToUse = function (type) {
-        if (type === __WEBPACK_IMPORTED_MODULE_3__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
+        if (type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_7__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+        else if (type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+        else if (type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_5__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].ValueAndUnit;
+        else if (type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].ValueAndUnit;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_6__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+        else if (type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+        else if (type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
+        else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
+        else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Step;
+        else if (type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Step;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].MinMax;
+        else if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].MinMax;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Range;
+        else if (type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Range;
         }
-        else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Chart;
+        else if (type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Chart;
         }
     };
     GaugesManager.getDefaultValue = function (type) {
-        if (type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getDefaultValue();
+        if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getDefaultValue();
         }
         return null;
     };
     GaugesManager.checkGaugeColor = function (ele, eles, colors) {
         if (ele && eles && (eles.length <= 1 || !eles[1])) {
-            if (ele.type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getStrokeColor(eles[0]);
+            if (ele.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_16__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getStrokeColor(eles[0]);
                 return true;
             }
         }
@@ -8046,20 +8108,28 @@ var GaugesManager = (function () {
     GaugesManager.initElementColor = function (bkcolor, color, elems) {
         for (var i = 0; i < elems.length; i++) {
             var type = elems[i].getAttribute('type');
-            if (type === __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_15__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElementColor(bkcolor, color, elems[i]);
+            if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElementColor(bkcolor, color, elems[i]);
             }
-            else if (type === __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_12__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElementColor(bkcolor, color, elems[i]);
+            else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElementColor(bkcolor, color, elems[i]);
             }
-            else if (type === __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_11__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].initElementColor(bkcolor, color, elems[i]);
+            else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].initElementColor(bkcolor, color, elems[i]);
             }
-            else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_13__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElementColor(bkcolor, color, elems[i]);
+            else if (type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElementColor(bkcolor, color, elems[i]);
             }
         }
     };
+    /**
+     * initialize the gauge element found in svg,
+     * in svg is only a 'div' that have to be dynamic build and render from angular
+     * @param ga gauge settings
+     * @param res reference to factory
+     * @param ref reference to factory
+     * @param isview in view or editor, in editor have to disable mouse activity
+     */
     GaugesManager.prototype.initElementAdded = function (ga, res, ref, isview) {
         var _this = this;
         // add variable
@@ -8069,13 +8139,18 @@ var GaugesManager = (function () {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
         }
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            var gauge_1 = __WEBPACK_IMPORTED_MODULE_14__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            // prepare attribute
+            var chartRange_1 = __WEBPACK_IMPORTED_MODULE_4__models_chart__["b" /* ChartRangeType */];
+            Object.keys(chartRange_1).forEach(function (key) {
+                _this.translateService.get(chartRange_1[key]).subscribe(function (txt) { chartRange_1[key] = txt; });
+            });
+            var gauge_1 = __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
             gauge_1.init();
             if (ga.property) {
                 var chart = this.hmiService.getChart(ga.property.id);
                 chart.lines.forEach(function (line) {
-                    var sigid = __WEBPACK_IMPORTED_MODULE_2__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
+                    var sigid = __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
                     var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
                     if (sigProperty) {
                         gauge_1.addLine(sigid, sigProperty.name, line.color);
@@ -8083,7 +8158,13 @@ var GaugesManager = (function () {
                 });
                 gauge_1.setOptions({ title: chart.name });
             }
+            this.mapChart[ga.id] = gauge_1;
             gauge_1.resize();
+            gauge_1.onTimeRange.subscribe(function (data) {
+                console.log(ga.id + ' ' + data);
+                _this.hmiService.queryDaqValues(data);
+            });
+            gauge_1.setRange(Object.keys(chartRange_1)[0]);
             // gauge.onTimeRange = this.onTimeRange;
             return gauge_1;
         }
@@ -8104,7 +8185,8 @@ var GaugesManager = (function () {
     ], GaugesManager.prototype, "onevent", void 0);
     GaugesManager = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__services_hmi_service__["a" /* HmiService */],
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */],
+            __WEBPACK_IMPORTED_MODULE_2__ngx_translate_core__["c" /* TranslateService */],
             __WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */]])
     ], GaugesManager);
     return GaugesManager;
@@ -8671,7 +8753,7 @@ var SwitchComponent = (function (_super) {
     SwitchComponent.LabelTag = 'Switch';
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__models_hmi__["g" /* GaugeSettings */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__models_hmi__["h" /* GaugeSettings */])
     ], SwitchComponent.prototype, "settings", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
@@ -9558,7 +9640,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n    <div class=\"ng-dygraphs-chart-container\">\n        <div [ngClass]=\"{'hide': !data?.length}\" #chart [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n        </div>\n        <div *ngIf=\"!data?.length\" class=\"nodata\" [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n            {{noDataLabel}}\n        </div>\n    </div>\n</div> -->\n<div class=\"mychart-panel\">\n    <div class=\"mychar-toolbar\" *ngIf=\"withToolbar\">\n        <div class=\"mychar-toolbar-space\" *ngIf=\"isEditor\">Toolbar</div>\n        <div style=\"display: block; float:right; padding-right: 5px;\" class=\"my-form-field\" *ngIf=\"!isEditor\">\n            <mat-select [(value)]=\"rangeTypeValue\" class=\"mychart-toolbar-select toolbar-cmp\" (selectionChange)=\"onRangeChange($event.source)\">\n                <mat-option *ngFor=\"let ev of rangeType | enumToArray\" [value]=\"ev.key\">\n                  {{ ev.value }}\n                </mat-option>\n            </mat-select>            \n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('T')\">T</button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('B')\">B</button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('F')\">F</button>\n          </div>\n    </div>\n    <div class=\"mychart-graph\" #chart>\n    </div>\n    <div *ngIf=\"!data?.length\" class=\"nodata\">\n        {{noDataLabel}}\n    </div>\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n</div>"
+module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n    <div class=\"ng-dygraphs-chart-container\">\n        <div [ngClass]=\"{'hide': !data?.length}\" #chart [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n        </div>\n        <div *ngIf=\"!data?.length\" class=\"nodata\" [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n            {{noDataLabel}}\n        </div>\n    </div>\n</div> -->\n<div class=\"mychart-panel\">\n    <div class=\"mychar-toolbar\" *ngIf=\"withToolbar\">\n        <div class=\"mychar-toolbar-space\" *ngIf=\"isEditor\">Toolbar</div>\n        <div style=\"display: block; float:right; padding-right: 5px;\" class=\"my-form-field\" *ngIf=\"!isEditor\">\n            <mat-select [(value)]=\"rangeTypeValue\" class=\"mychart-toolbar-select toolbar-cmp\" (selectionChange)=\"onRangeChanged($event.source.value)\">\n                <mat-option *ngFor=\"let ev of rangeType | enumToArray\" [value]=\"ev.key\">\n                  {{ ev.value }}\n                </mat-option>\n            </mat-select>            \n            <!-- <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('T')\">T</button> -->\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('B')\">\n                <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">chevron_left</i>\n            </button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('F')\">\n                <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">chevron_right</i>\n            </button>\n          </div>\n    </div>\n    <div class=\"mychart-graph\" #chart>\n    </div>\n    <div *ngIf=\"!data?.length\" class=\"nodata\">\n        {{noDataLabel}}\n    </div>\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -9568,8 +9650,10 @@ module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInPr
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return NgxDygraphsComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util__ = __webpack_require__("../../../../util/util.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_util__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_chart__ = __webpack_require__("../../../../../src/app/_models/chart.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util__ = __webpack_require__("../../../../util/util.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_util__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9581,11 +9665,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
+
 var NgxDygraphsComponent = (function () {
     function NgxDygraphsComponent() {
         this.onTimeRange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.withToolbar = false;
         this.isEditor = false;
+        this.range = { from: Date.now(), to: Date.now() };
         //   public chartWidth: number;
         //   public chartHeight: number;
         this.mapData = {};
@@ -9651,6 +9738,9 @@ var NgxDygraphsComponent = (function () {
                 cols[i].style.fontSize = '12px';
             }
         });
+        if (this.withToolbar && !this.isEditor) {
+            this.onRangeChanged(this.rangeTypeValue);
+        }
     };
     /**
      * ngOnChanges
@@ -9686,18 +9776,36 @@ var NgxDygraphsComponent = (function () {
         // }, 500);
     };
     NgxDygraphsComponent.prototype.onClick = function (ev) {
-        var keys = Object.keys(this.mapData);
-        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys }));
+        var msg = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["a" /* DaqQuery */]();
+        msg.gid = this.id;
+        msg.event = ev;
+        if (ev === 'B') {
+            this.range.to = new Date(this.range.from).getTime();
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (__WEBPACK_IMPORTED_MODULE_1__models_chart__["a" /* ChartRangeConverter */].ChartRangeToHours(this.rangeTypeValue) * 60 * 60 * 1000));
+        }
+        else if (ev === 'F') {
+            this.range.from = new Date(this.range.to).getTime();
+            this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (__WEBPACK_IMPORTED_MODULE_1__models_chart__["a" /* ChartRangeConverter */].ChartRangeToHours(this.rangeTypeValue) * 60 * 60 * 1000));
+        }
+        msg.sids = Object.keys(this.mapData);
+        msg.from = this.range.from;
+        msg.to = this.range.to;
+        this.onTimeRange.emit(msg);
     };
-    NgxDygraphsComponent.prototype.onRangeChange = function (ev) {
-        var keys = Object.keys(this.mapData);
-        this.onTimeRange.emit(JSON.stringify({ range: this.rangeTypeValue, event: ev, ids: keys }));
+    NgxDygraphsComponent.prototype.onRangeChanged = function (ev) {
+        if (ev) {
+            this.range.from = Date.now();
+            this.range.to = Date.now();
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (__WEBPACK_IMPORTED_MODULE_1__models_chart__["a" /* ChartRangeConverter */].ChartRangeToHours(ev) * 60 * 60 * 1000));
+            var msg = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["a" /* DaqQuery */]();
+            msg.event = ev;
+            msg.gid = this.id;
+            msg.sids = Object.keys(this.mapData);
+            msg.from = this.range.from;
+            msg.to = this.range.to;
+            this.onTimeRange.emit(msg);
+        }
     };
-    // public setData(data) {
-    //     let sc: SimpleChanges = {};
-    //     let rdata = [[new Date("1967/09/14"), 4], [new Date("1968/09/14"), 0]];
-    //     this.dygraph.updateOptions({ file: rdata });
-    // }
     NgxDygraphsComponent.prototype.resize = function (height, width) {
         var chart = this.chart.nativeElement;
         var w = chart.parentNode.clientWidth;
@@ -9721,6 +9829,12 @@ var NgxDygraphsComponent = (function () {
         this.mapData = {};
         this.data = [];
     };
+    NgxDygraphsComponent.prototype.setRange = function (startRange) {
+        if (this.withToolbar && !this.isEditor) {
+            this.rangeTypeValue = startRange;
+            this.onRangeChanged(this.rangeTypeValue);
+        }
+    };
     NgxDygraphsComponent.prototype.setOptions = function (options) {
         try {
             this.options = Object.assign(this.options, options);
@@ -9739,7 +9853,7 @@ var NgxDygraphsComponent = (function () {
     };
     NgxDygraphsComponent.prototype.addValue = function (id, value) {
         // console.log(value);
-        if (this.mapData[id] && !Object(__WEBPACK_IMPORTED_MODULE_1_util__["isUndefined"])(value)) {
+        if (this.mapData[id] && !Object(__WEBPACK_IMPORTED_MODULE_3_util__["isUndefined"])(value)) {
             var row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();
             row[this.mapData[id]] = parseInt(value);
@@ -9751,10 +9865,18 @@ var NgxDygraphsComponent = (function () {
             this.dygraph.updateOptions({ file: this.data });
         }
     };
+    NgxDygraphsComponent.prototype.setValues = function (values) {
+        this.data = values;
+        this.dygraph.updateOptions({ file: this.data });
+    };
     NgxDygraphsComponent.prototype.clear = function () {
         this.data = [];
         this.dygraph.updateOptions({ file: this.data });
     };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+        __metadata("design:type", String)
+    ], NgxDygraphsComponent.prototype, "id", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
         __metadata("design:type", Object)
@@ -10081,7 +10203,7 @@ var HeaderComponent = (function () {
         this.chartConfig();
     };
     HeaderComponent.prototype.onShowHelp = function (page) {
-        var data = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* HelpData */]();
+        var data = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["i" /* HelpData */]();
         data.page = page;
         data.tag = 'device';
         this.showHelp(data);
@@ -10362,8 +10484,8 @@ var HomeComponent = (function () {
         this.hmiService = hmiService;
         this.gaugesManager = gaugesManager;
         // @ViewChild('iframeview') iframeview: IframeComponent;
-        this.homeView = new __WEBPACK_IMPORTED_MODULE_8__models_hmi__["p" /* View */]();
-        this.hmi = new __WEBPACK_IMPORTED_MODULE_8__models_hmi__["i" /* Hmi */]();
+        this.homeView = new __WEBPACK_IMPORTED_MODULE_8__models_hmi__["q" /* View */]();
+        this.hmi = new __WEBPACK_IMPORTED_MODULE_8__models_hmi__["j" /* Hmi */]();
         this.showSidenav = 'over';
         this.showHomeView = false;
         this.homeLink = '';
@@ -10464,16 +10586,16 @@ var HomeComponent = (function () {
                 this.homeView = this.hmi.views[0];
             }
             // check sidenav
-            var nvoid = __WEBPACK_IMPORTED_MODULE_8__models_hmi__["m" /* NaviModeType */][this.hmi.layout.navigation.mode];
-            if (this.hmi.layout && nvoid !== __WEBPACK_IMPORTED_MODULE_8__models_hmi__["m" /* NaviModeType */].void) {
-                if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["m" /* NaviModeType */].over) {
+            var nvoid = __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */][this.hmi.layout.navigation.mode];
+            if (this.hmi.layout && nvoid !== __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].void) {
+                if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].over) {
                     this.showSidenav = 'over';
                 }
-                else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["m" /* NaviModeType */].fix) {
+                else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].fix) {
                     this.showSidenav = 'side';
                     this.matsidenav.open();
                 }
-                else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["m" /* NaviModeType */].push) {
+                else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].push) {
                     this.showSidenav = 'push';
                 }
                 this.sidenav.setLayout(this.hmi.layout);
@@ -10671,7 +10793,7 @@ var LabComponent = (function () {
         this.gaugesManager = gaugesManager;
         this.testerService = testerService;
         this.currentView = null;
-        this.hmi = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["i" /* Hmi */]();
+        this.hmi = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["j" /* Hmi */]();
         this.labView = null;
     }
     LabComponent.prototype.ngOnInit = function () {

@@ -56,10 +56,13 @@ function addDaqNode(id, fncgetprop) {
 }
 
 function getNodeValues(nodeid, tagid, fromts, tots) {
-    if (daqnodes[nodeid]) {
-        daqnodes[nodeid].getDaqValue(tagid, fromts, tots);
-    }
-    return null;
+    return new Promise(function (resolve, reject) {
+        if (daqnodes[nodeid]) {
+            resolve(daqnodes[nodeid].getDaqValue(tagid, fromts, tots));
+        } else {
+            reject(reason);
+        }
+    });
 }
 
 module.exports = {
