@@ -121,7 +121,7 @@ function init(_io, _api, _settings, log) {
                                     result[values[x][y].dt] = Array(msg.sids.length + 1).fill(null);
                                     result[values[x][y].dt][0] = values[x][y].dt;
                                 } 
-                                result[values[x][y].dt][x + 1] = values[x][y].value;
+                                result[values[x][y].dt][x + 1] = (values[x][y].value) ? parseFloat(values[x][y].value) : null;
                             }
                         }
                         let res = []
@@ -130,12 +130,12 @@ function init(_io, _api, _settings, log) {
                         });
                         io.emit('daq-result', {gid: msg.gid, values: res });
                     }, reason => {
-                        if (reason.stack) {
+                        if (reason && reason.stack) {
                             logger.error('getDaqValue error: ' + reason.stack);
                         } else {
                             logger.error('getDaqValue error: ' + reason);
                         }
-                        reject(reason);
+                        io.emit('daq-error', { gid: msg.gid, error: reason });
                     });
                 }
             } catch (err) {

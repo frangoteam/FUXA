@@ -20,7 +20,7 @@
 }
 
 .mychar-toolbar-button {
-  width: 30px;
+  /* width: 30px; */
   height: 26px;
   cursor: pointer;
   -webkit-user-select: none;
@@ -45,6 +45,8 @@
   width:160px;
   padding: 4px 3px 5px 4px;
   background-color: #fff;
+  position: relative;
+  top: -5px;
 }
 
 .toolbar-cmp {

@@ -391,20 +391,22 @@ function DaqNode(_settings, _log, _id) {
     function _getArchiveFiles(fromts, tots) {
         var archive = path.resolve(settings.dbDir, 'archive');
         var result = [];
-        fs.readdirSync(archive).forEach(file => {
-            var ranges = file.split('_');
-            if (ranges.length >= 3) {
-                var fr = ranges[ranges.length - 2];
-                var to = ranges[ranges.length - 1];
-                var f = _suffixToTimestamp(fr);
-                var t = _suffixToTimestamp(to);
-                if (f >= fromts && t <= tots) {
-                    result.push(path.join(archive, file));
+        if (fs.existsSync(archive)) {
+            fs.readdirSync(archive).forEach(file => {
+                var ranges = file.split('_');
+                if (ranges.length >= 3) {
+                    var fr = ranges[ranges.length - 2];
+                    var to = ranges[ranges.length - 1];
+                    var f = _suffixToTimestamp(fr);
+                    var t = _suffixToTimestamp(to);
+                    if (f >= fromts && t <= tots) {
+                        result.push(path.join(archive, file));
+                    }
                 }
-            }
-            console.log(file);
-        });
-        result.sort();
+                console.log(file);
+            });
+            result.sort();
+        }
         // result.reverse();
         return result;
     }

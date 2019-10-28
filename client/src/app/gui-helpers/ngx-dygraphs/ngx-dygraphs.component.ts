@@ -68,8 +68,8 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
             let sc: SimpleChanges = {};
             this.ngOnChanges(sc);
             // test to change css legend
-            var cols: any = document.getElementsByClassName('dygraph-legend');
-            for(let i = 0; i < cols.length; i++) {
+            let cols: any = document.getElementsByClassName('dygraph-legend');
+            for (let i = 0; i < cols.length; i++) {
               cols[i].style.fontSize = '12px';
             }
         });
