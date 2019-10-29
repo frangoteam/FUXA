@@ -399,7 +399,7 @@ function DaqNode(_settings, _log, _id) {
                     var to = ranges[ranges.length - 1];
                     var f = _suffixToTimestamp(fr);
                     var t = _suffixToTimestamp(to);
-                    if (f >= fromts && t <= tots) {
+                    if (f <= tots && t >= fromts) {
                         result.push(path.join(archive, file));
                     }
                 }

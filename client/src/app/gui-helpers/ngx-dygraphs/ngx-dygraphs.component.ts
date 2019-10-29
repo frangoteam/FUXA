@@ -205,10 +205,10 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         if (this.mapData[id] && !isUndefined(value)) {
             let row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();
-            row[this.mapData[id]] = parseInt(value);
+            row[this.mapData[id]] = parseFloat(value);
             this.data.push(row);
             // check to remove old value
-            if (this.data.length > 5000) {
+            if (this.data.length > 1000) {
                 this.data.shift();
             }
             this.dygraph.updateOptions({ file: this.data });
@@ -217,7 +217,7 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
 
     public setValues(values) {
         this.data = values;
-        this.dygraph.updateOptions({ file: this.data });
+        this.dygraph.updateOptions({ file: this.data, dateWindow: [this.range.from, this.range.to] });
     }
 
     public clear() {
