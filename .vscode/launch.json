@@ -17,6 +17,8 @@
       "type": "node",
       "request": "launch",
       "name": "Server Process",
+      "localRoot": "${workspaceFolder}/server",
+      "remoteRoot": "${workspaceFolder}/server",
       "program": "${workspaceRoot}/server/main.js",
       "args": [
         "."

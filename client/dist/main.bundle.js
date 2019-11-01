@@ -11273,7 +11273,7 @@ var environment = {
     apiEndpoint: null,
     apiPort: null,
     serverEnabled: true,
-    type: null
+    type: 'winele'
 };
 
 
