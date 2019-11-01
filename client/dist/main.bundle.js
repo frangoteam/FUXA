@@ -2717,7 +2717,7 @@ var DeviceListComponent = (function () {
                 result.nodes.forEach(function (n) {
                     var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* Tag */]();
                     tag.id = n.id;
-                    tag.name = n.text;
+                    tag.name = n.id;
                     tag.type = n.type;
                     tag.address = n.id;
                     _this.checkToAdd(tag, result.device);
@@ -3771,7 +3771,7 @@ var ChartConfigComponent = (function () {
         if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
             this.selectedChart.lines.forEach(function (line) {
                 _this.selectedDevice.tags.forEach(function (tag) {
-                    if (line.device === _this.selectedDevice.name && line.id === ((tag.name) ? tag.name : tag.address)) {
+                    if (line.device === _this.selectedDevice.name && line.id === tag.id) {
                         tag.selected = true;
                     }
                 });
@@ -3793,7 +3793,7 @@ var ChartConfigComponent = (function () {
                     if (chart.lines[i].device === device.name) {
                         var found = -1;
                         for (var x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
+                            if (chart.lines[i].id === tags[x].id) {
                                 found = i;
                                 break;
                             }
@@ -3816,14 +3816,14 @@ var ChartConfigComponent = (function () {
                 var found = false;
                 if (chart.lines) {
                     for (var i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.name && chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
+                        if (chart.lines[i].device === device.name && chart.lines[i].id === tags[x].id) {
                             found = true;
                         }
                     }
                 }
                 if (!found) {
-                    var myCopiedObject = {}; //Object.assign({}, tags[x]);
-                    myCopiedObject['id'] = tags[x].name; // (tags[x].id) ? tags[x].id : tags[x].address;
+                    var myCopiedObject = {};
+                    myCopiedObject['id'] = tags[x].id;
                     myCopiedObject['name'] = tags[x].name;
                     myCopiedObject['device'] = device.name;
                     myCopiedObject['color'] = this.getNextColor();
@@ -5165,7 +5165,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".view-container {\n    display: table;\n    margin: 5px auto;\n}\n\n.fab-card {\n    position: absolute;\n    width: 1300px;\n    height: 800px;\n    /* background-color:black; */\n    /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.26); */\n    box-shadow: 0px 1px 4px 1px #888888;\n}\n\n.card-close {\n    position: absolute;\n    top: 0px;\n    right: 0px;\n    height: 22px;\n    width: 100%;\n    color: rgba(0,0,0,0.7);\n    background-color: transparent;\n    font-size: 12px;\n    cursor: move !important;\n}\n\n.card-close i {\n    float: right;\n}\n\n.dialog-modal {\n    /* display: none; */\n    position: fixed; /* Stay in place */\n    z-index: 1; /* Sit on top */\n    left: 0;\n    top: 0;\n    width: 100%; /* Full width */\n    height: 100%; /* Full height */\n    overflow: auto; /* Enable scroll if needed */\n    background-color: rgb(0,0,0); /* Fallback color */\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\n}\n  \n  /* Modal Content/Box */\n.dialog-modal-content {\n    /* background-color: #fefefe; */\n    margin: 15% auto; /*15% from the top and centered */\n    /* padding: 20px; */\n    border: 1px solid #888;\n    width: 80%; /* Could be more or less, depending on screen size */\n}\n\n.dialog-modal-close {\n    position: relative;\n    top: 0px;\n    right: 0px;\n    height: 22px;\n    width: 100%;\n    color: rgba(0,0,0,0.7);\n    background-color: transparent;\n    font-size: 12px;\n    cursor: move !important;\n}\n\n.dialog-modal-close i {\n    float: right;\n}", ""]);
+exports.push([module.i, ".view-container {\n    display: table;\n}\n\n.fab-card {\n    position: absolute;\n    width: 1300px;\n    height: 800px;\n    /* background-color:black; */\n    /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.26); */\n    box-shadow: 0px 1px 4px 1px #888888;\n}\n\n.card-close {\n    position: absolute;\n    top: 0px;\n    right: 0px;\n    height: 22px;\n    width: 100%;\n    color: rgba(0,0,0,0.7);\n    background-color: transparent;\n    font-size: 12px;\n    cursor: move !important;\n}\n\n.card-close i {\n    float: right;\n}\n\n.dialog-modal {\n    /* display: none; */\n    position: fixed; /* Stay in place */\n    z-index: 1; /* Sit on top */\n    left: 0;\n    top: 0;\n    width: 100%; /* Full width */\n    height: 100%; /* Full height */\n    overflow: auto; /* Enable scroll if needed */\n    background-color: rgb(0,0,0); /* Fallback color */\n    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */\n}\n  \n  /* Modal Content/Box */\n.dialog-modal-content {\n    /* background-color: #fefefe; */\n    margin: 15% auto; /*15% from the top and centered */\n    /* padding: 20px; */\n    border: 1px solid #888;\n    width: 80%; /* Could be more or less, depending on screen size */\n}\n\n.dialog-modal-close {\n    position: relative;\n    top: 0px;\n    right: 0px;\n    height: 22px;\n    width: 100%;\n    color: rgba(0,0,0,0.7);\n    background-color: transparent;\n    font-size: 12px;\n    cursor: move !important;\n}\n\n.dialog-modal-close i {\n    float: right;\n}", ""]);
 
 // exports
 
@@ -6310,7 +6310,9 @@ var HtmlInputComponent = (function (_super) {
             var input = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(svgele.node, this.prefix);
             if (input) {
                 var val = parseInt(sig.value, 10);
-                input.value = val;
+                if (!input.value || input.value.length <= 0) {
+                    input.value = val;
+                }
             }
         }
     };
@@ -10428,7 +10430,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".home-body {\r\n    display: table;\r\n    margin: 0 auto;\r\n}\r\n\r\n.home-info {\r\n    \r\n}\r\n\r\n.header {\r\n    display: block;\r\n    z-index: 9999 !important;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n    /* min-height: 46px !important; */\r\n    /* max-height: 46px !important; */\r\n    height: 46px !important;\r\n    padding-left: 4px;\r\n    padding-right: 10px;\r\n}\r\n\r\n\r\n.sidenav {\r\n    padding: 0px 0px 0px 0px;\r\n    background-color: rgba(44, 44, 44, 1) !important;\r\n    color: rgba(255, 255, 255, 1) !important;\r\n    /* max-width: 100px; */\r\n    display: inline-block !important;\r\n    top:0px;\r\n}\r\n\r\n.sidenav-container {\r\n    width: 100%;\r\n    height: 100% !important;\r\n    background-color:#FFFFFF;\r\n}\r\n\r\n::ng-deep .mat-drawer-backdrop.mat-drawer-shown {\r\n    background-color: transparent;\r\n}  ", ""]);
+exports.push([module.i, ".home-body {\r\n    display: table;\r\n    margin: 0 auto;\r\n}\r\n\r\n.home-info {\r\n    \r\n}\r\n\r\n.header {\r\n    display: block;\r\n    z-index: 9999 !important;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n    /* min-height: 46px !important; */\r\n    /* max-height: 46px !important; */\r\n    height: 46px !important;\r\n    padding-left: 4px;\r\n    padding-right: 10px;\r\n}\r\n\r\n\r\n.sidenav {\r\n    padding: 0px 0px 0px 0px;\r\n    background-color: rgba(44, 44, 44, 1) !important;\r\n    color: rgba(255, 255, 255, 1) !important;\r\n    /* max-width: 100px; */\r\n    display: inline-block !important;\r\n    top:0px;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n}\r\n\r\n.sidenav-container {\r\n    width: 100%;\r\n    height: 100% !important;\r\n    background-color:#FFFFFF;\r\n}\r\n\r\n::ng-deep .mat-drawer-backdrop.mat-drawer-shown {\r\n    background-color: transparent;\r\n}  ", ""]);
 
 // exports
 
@@ -10441,7 +10443,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<mat-sidenav-container class=\"sidenav-container\">\n  <mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\n    <app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\n  </mat-sidenav>\n\n  <mat-sidenav-content>\n    <div class=\"header\">\n      <button mat-icon-button *ngIf=\"showSidenav && this.showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\n        <mat-icon aria-label=\"Menu\">menu</mat-icon>\n      </button>\n    </div>\n    <app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n    <!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\n    <!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\n    <div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\n      <p>\n        {{'msg.home-welcome' | translate}}.\n      </p>\n    </div>\n  </mat-sidenav-content>\n\n</mat-sidenav-container>"
+module.exports = "<mat-sidenav-container class=\"sidenav-container\">\n  <mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\n    <app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\n  </mat-sidenav>\n\n  <mat-sidenav-content>\n    <div class=\"header\">\n      <button mat-icon-button *ngIf=\"showSidenav && this.showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\n        <mat-icon aria-label=\"Menu\">menu</mat-icon>\n      </button>\n    </div>\n    <app-fuxa-view style=\"padding-top: 5px;\" *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n    <!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\n    <!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\n    <div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\n      <p>\n        {{'msg.home-welcome' | translate}}.\n      </p>\n    </div>\n  </mat-sidenav-content>\n\n</mat-sidenav-container>"
 
 /***/ }),
 
@@ -11273,7 +11275,7 @@ var environment = {
     apiEndpoint: null,
     apiPort: null,
     serverEnabled: true,
-    type: 'winele'
+    type: null
 };
 
 

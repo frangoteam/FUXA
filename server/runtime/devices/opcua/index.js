@@ -61,6 +61,7 @@ function OpcUAclient(_data, _logger, _events) {
     var client = new opcua.OPCUAClient(options);
     const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === "DataType" || x === "AccessLevel" || x === "UserAccessLevel");//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
+    var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var daqInterval = 0;
     var lastDaqInterval = 0;
 
@@ -75,6 +76,7 @@ function OpcUAclient(_data, _logger, _events) {
                         const endpoint = data.property.address;//'opc.tcp://' + require('os').hostname() + ':48010';
                         client.connect(endpoint, function (err) {
                             if (err) {
+                                _clearVarsValue();
                                 logger.error(err);
                             } else {
                                 logger.info(data.name + ': connection step 1');
@@ -86,6 +88,7 @@ function OpcUAclient(_data, _logger, _events) {
                     function (callback) {
                         client.createSession(function (err, session) {
                             if (err) {
+                                _clearVarsValue();
                                 logger.error(err);
                             } else {
                                 the_session = session;
@@ -107,7 +110,7 @@ function OpcUAclient(_data, _logger, _events) {
                         if (err) {
                             logger.error(data.name + ': try to connect error! ' + err);
                             _emitStatus('connect-error');
-                            // _clearVarsValue();
+                            _clearVarsValue();
                             connected = false;
                             reject();
                             client.disconnect(function () { });
@@ -132,6 +135,7 @@ function OpcUAclient(_data, _logger, _events) {
             monitored = false;
             _checkWorking(false);
             _emitStatus('connect-off');
+            _clearVarsValue();
         });
     }
 
@@ -290,9 +294,10 @@ function OpcUAclient(_data, _logger, _events) {
             });
         } else if (the_session && client) {
             var varsValueChanged = _clearVarsChanged();
-            if (Object.keys(varsValueChanged).length) {
-                _emitValues(varsValueChanged);
-            }
+            // if (Object.keys(varsValueChanged).length) {
+            //     _emitValues(varsValueChanged);
+            // }
+            _emitValues(varsValue);
 
             if (this.addDaq) {
                 var current = new Date().getTime();
@@ -329,7 +334,7 @@ function OpcUAclient(_data, _logger, _events) {
 
     this.getTagProperty = function (id) {
         if (data.tags[id]) {
-            let prop = { id: id, name: id, type: data.tags[id].type };
+            let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
             return prop;
         } else {
             return null;
@@ -455,6 +460,13 @@ function OpcUAclient(_data, _logger, _events) {
         };
     }
 
+    var _clearVarsValue = function () {
+        for (let id in varsValue) {
+            varsValue[id].value = null;
+        }
+        _emitValues(varsValue);
+    }
+
     var _clearVarsChanged = function () {
         var result = {};
         for (var id in data.tags) {
@@ -462,6 +474,7 @@ function OpcUAclient(_data, _logger, _events) {
                 data.tags[id].changed = false;
                 result[id] = data.tags[id];
             }
+            varsValue[id] = data.tags[id];
         }
         return result;
     }

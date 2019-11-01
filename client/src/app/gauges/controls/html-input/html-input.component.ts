@@ -51,7 +51,9 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
       let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
       if (input) {
         let val = parseInt(sig.value, 10);
-        input.value = val;
+        if (!input.value || input.value.length <= 0) {
+          input.value = val;
+        }
       }
     }
   }

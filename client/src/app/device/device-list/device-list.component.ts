@@ -142,7 +142,7 @@ export class DeviceListComponent implements OnInit {
         result.nodes.forEach((n: Node) => {
           let tag: Tag = new Tag();
           tag.id = n.id;
-          tag.name = n.text;
+          tag.name = n.id;
           tag.type = n.type;
           tag.address = n.id;
           this.checkToAdd(tag, result.device);

@@ -95,7 +95,7 @@ export class ChartConfigComponent implements OnInit {
         if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
             this.selectedChart.lines.forEach(line => {
                 this.selectedDevice.tags.forEach(tag => {
-                    if (line.device === this.selectedDevice.name && line.id === ((tag.name) ? tag.name : tag.address)) {
+                    if (line.device === this.selectedDevice.name && line.id === tag.id) {
                         tag.selected = true;
                     }
                 });
@@ -118,7 +118,7 @@ export class ChartConfigComponent implements OnInit {
                     if (chart.lines[i].device === device.name) {
                         let found = -1;
                         for (let x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
+                            if (chart.lines[i].id === tags[x].id) {
                                 found = i;
                                 break;
                             }
@@ -141,14 +141,14 @@ export class ChartConfigComponent implements OnInit {
                 let found = false;
                 if (chart.lines) {
                     for (let i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.name && chart.lines[i].id === ((tags[x].name) ? tags[x].name : tags[x].address)) {
+                        if (chart.lines[i].device === device.name && chart.lines[i].id === tags[x].id) {
                             found = true;
                         }
                     }
                 }
                 if (!found) {
-                    const myCopiedObject = {}; //Object.assign({}, tags[x]);
-                    myCopiedObject['id'] = tags[x].name; // (tags[x].id) ? tags[x].id : tags[x].address;
+                    const myCopiedObject = {};
+                    myCopiedObject['id'] = tags[x].id;
                     myCopiedObject['name'] = tags[x].name;
                     myCopiedObject['device'] = device.name;
                     myCopiedObject['color'] = this.getNextColor();
