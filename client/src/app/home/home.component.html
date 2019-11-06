@@ -9,13 +9,15 @@
         <mat-icon aria-label="Menu">menu</mat-icon>
       </button>
     </div>
-    <app-fuxa-view style="padding-top: 5px;" *ngIf="showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
-    <!-- <app-fuxa-view [hidden]="!showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view> -->
-    <!-- <app-iframe [hidden]="isLoading && !showHomeLink" #iframeview [link]="homeLink" class="home-body"></app-iframe> -->
-    <div [style.visibility]="(showHomeView) ? 'hidden' : 'visible' " class="home-body home-info">
-      <p>
-        {{'msg.home-welcome' | translate}}.
-      </p>
+    <div style="padding-top: 5px;">
+      <app-fuxa-view *ngIf="showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+      <!-- <app-fuxa-view [hidden]="!showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view> -->
+      <!-- <app-iframe [hidden]="isLoading && !showHomeLink" #iframeview [link]="homeLink" class="home-body"></app-iframe> -->
+      <div [style.visibility]="(showHomeView) ? 'hidden' : 'visible' " class="home-body home-info">
+        <p>
+          {{'msg.home-welcome' | translate}}.
+        </p>
+      </div>
     </div>
   </mat-sidenav-content>
 
