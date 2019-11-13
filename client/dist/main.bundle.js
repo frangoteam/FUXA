@@ -2168,7 +2168,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\r\n  <app-header class=\"header\" [hidden]=\"isHidden()\"></app-header>\r\n  <div [ngClass]=\"(isHidden()) ? 'work-home' : 'work-editor'\">\r\n    <router-outlet></router-outlet>\r\n    <ngx-fab-button #fabmenu icon=\"menu\" iconOpen=\"menu\" class=\"fab-button\" color=\"rgba(68,138,255, 1)\">\r\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"editor\" (click)=\"onGoTo('editor')\">editor</ngx-fab-item-button>\r\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"lab\" (click)=\"onGoTo('lab')\">lab</ngx-fab-item-button>\r\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"home\" (click)=\"onGoTo('home')\">home</ngx-fab-item-button>\r\n    </ngx-fab-button>\r\n  </div>\r\n</div>"
+module.exports = "<div class=\"container\">\r\n  <app-header class=\"header\" [hidden]=\"isHidden()\"></app-header>\r\n  <div [ngClass]=\"(isHidden()) ? 'work-home' : 'work-editor'\">\r\n    <router-outlet></router-outlet>\r\n    <ngx-fab-button #fabmenu icon=\"menu\" iconOpen=\"menu\" class=\"fab-button\" color=\"rgba(68,138,255, 1)\">\r\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"editor\" (click)=\"onGoTo('editor')\" (touchend)=\"onGoTo('editor')\">editor</ngx-fab-item-button>\r\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"lab\" (click)=\"onGoTo('lab')\" (touchend)=\"onGoTo('lab')\">lab</ngx-fab-item-button>\r\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"home\" (click)=\"onGoTo('home')\" (touchend)=\"onGoTo('home')\">home</ngx-fab-item-button>\r\n    </ngx-fab-button>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -4507,7 +4507,7 @@ var EditorComponent = (function () {
      * @param option stroke type
      */
     EditorComponent.prototype.onSetStrokeOption = function (option) {
-        this.winRef.nativeWindow.svgEditor.onSetStrokeOption(option);
+        this.winRef.nativeWindow.svgEditor.setStrokeOption(option);
     };
     /**
      * set shadow to svg selected
@@ -9079,7 +9079,7 @@ var NgxFabButtonComponent = (function () {
             changeDetection: __WEBPACK_IMPORTED_MODULE_2__angular_core__["j" /* ChangeDetectionStrategy */].OnPush,
             selector: 'ngx-fab-button',
             styles: ["\n  :host {\n    position: absolute;\n  }\n  .fab-menu {\n      box-sizing: border-box;\n      font-size: 12px;\n      width:40px;\n      height: 40px;\n      text-align: left;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      cursor: pointer;\n      z-index: 9;\n  }\n  .fab-toggle {\n    border-radius: 100%;\n    width: 36px;\n    height: 36px;\n    color: white;\n    text-align: center;\n    line-height: 50px;\n    transform: translate3d(0, 0, 0);\n    transition: all ease-out 200ms;\n    z-index: 2;\n    transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);\n    transition-duration: 400ms;\n    transform: scale(1, 1) translate3d(0, 0, 0);\n    cursor: pointer;\n    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);\n  }\n  .fab-menu .fab-toggle:hover {\n    transform: scale(1.2, 1.2) translate3d(0, 0, 0);\n  }\n  .fab-menu /deep/ .item {\n     opacity: 0;\n  }\n  .fab-menu.active /deep/ .item {\n     opacity: 1;\n  }\n  .fab-menu.active /deep/ .content-wrapper {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n  }\n  .fab-menu.active /deep/ .content {\n    display: block;\n  }\n  .fab-menu.active .fab-toggle {\n    transition-timing-function: linear;\n    transition-duration: 200ms;\n    transform: scale(1, 1) translate3d(0, 0, 0);\n  }\n  "],
-            template: "\n    <div class=\"fab-menu\" [class.active]=\"(state | async).display\">\n        <a class=\"fab-toggle\" (click)=\"toggle()\" [style.backgroundColor]=\"color\">\n          <i class=\"material-icons\" *ngIf=\"!opened\"> {{icon}} </i>\n          <i class=\"material-icons\" *ngIf=\"opened\"> {{iconOpen}} </i>\n        </a>\n        <ng-content></ng-content>\n    </div>\n  "
+            template: "\n    <div class=\"fab-menu\" [class.active]=\"(state | async).display\">\n        <a class=\"fab-toggle\" (click)=\"toggle()\" (touchend)=\"toggle()\" [style.backgroundColor]=\"color\">\n          <i class=\"material-icons\" *ngIf=\"!opened\"> {{icon}} </i>\n          <i class=\"material-icons\" *ngIf=\"opened\"> {{iconOpen}} </i>\n        </a>\n        <ng-content></ng-content>\n    </div>\n  "
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_core__["u" /* ElementRef */], __WEBPACK_IMPORTED_MODULE_2__angular_core__["k" /* ChangeDetectorRef */]])
     ], NgxFabButtonComponent);
@@ -9629,7 +9629,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".mychart-panel {\n    display: block;\n    margin: 0 auto;\n    /*height: 600px;\n    width: 1000px;*/\n}\n.mychart-graph {\n    display: block;\n    margin: 0 auto;\n    /*height: 600px;*/\n    height: 100% !important;\n    width: 100% !important;\n}\n\n.mychar-toolbar {\n  display: block;\n  height: 34px !important;\n  width: 100% !important;\n  background-color:transparent;\n}\n\n.mychar-toolbar-button {\n  /* width: 30px; */\n  height: 26px;\n  cursor: pointer;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  border: 0;\n  background-color: #fff;\n  border-radius: 2px;\n\n}\n.mychar-toolbar-space {\n  /* min-width: calc(100% - 250px); */\n  /* width: calc(100% - 250px); */\n  width:100%;\n  height: 26px;\n  background-color: rgba(0, 0, 0, 0.1);\n  line-height: 26px;\n}\n\n.mychart-toolbar-select {\n  width:160px;\n  padding: 4px 3px 5px 4px;\n  background-color: #fff;\n  position: relative;\n  top: -5px;\n}\n\n.toolbar-cmp {\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 1px -2px rgba(0, 0, 0, 0.2);\n  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);\n}\n.toolbar-cmp:active {\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.01), 0 1px 3px 0 rgba(0, 0, 0, 0.01), 0 1px 1px -2px rgba(0, 0, 0, 0.02);\n  /* background-color: rgba(0, 0, 0, 0.01); */\n}\n\n.ng-dygraphs {\n  position: relative; }\n  .ng-dygraphs .name-nodes-holder {\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n    padding-right: 30px;\n    padding-left: 30px; }\n  .ng-dygraphs .ng-dygraphs-chart-container {\n    background-color: #fff;\n    padding: 0;\n    margin: 0px;}\n    .ng-dygraphs .ng-dygraphs-chart-container .nodata {\n      display: -ms-flexbox;\n      display: flex;\n      -ms-flex-pack: center;\n    justify-content: center;\n     -ms-flex-align: center;\n        align-items: center;\n      color: #5c5c5c;\n      font-weight: bold;\n      font-size: 24px; \n      display: flex;\n      -ms-flex-line-pack: center;\n          align-content: center; }\n    .ng-dygraphs .ng-dygraphs-chart-container .hide {\n       display: none; }\n  .ng-dygraphs .loader-holder {\n    position: absolute;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-align: center;\n        align-items: center;\n    width: 100%;\n    height: 100%;\n    background-color: #fff;\n    z-index: 55;\n    opacity: 0.9; }\n  .ng-dygraphs .loader {\n    color: #0dc5c1;\n    font-size: 20px;\n    margin: 100px auto;\n    width: 1em;\n    height: 1em;\n    border-radius: 50%;\n    position: relative;\n    text-indent: -9999em;\n    animation: load4 1.3s infinite linear;\n    transform: translateZ(0); }\n\n@keyframes load4 {\n  0%,\n  100% {\n    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0; }\n  12.5% {\n    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\n  25% {\n    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\n  37.5% {\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em; }\n  50% {\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em; }\n  62.5% {\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em; }\n  75% {\n    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0; }\n  87.5% {\n    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em; } }", ""]);
+exports.push([module.i, ".mychart-panel {\n    display: block;\n    margin: 0 auto;\n    /*height: 600px;\n    width: 1000px;*/\n}\n\n.mychart-edit #bord {\n  display: block;\n  position: absolute;\n  top: 10px;\n  bottom: 30px;\n  left: 30px;\n  right: 30px;\n  border-left: 1px solid #000;\n  border-bottom: 1px solid #000;\n}\n.mychart-edit #grido {\n  position: absolute;\n  top: 30%;\n  bottom: 40%;\n  left: 30px;\n  right: 30px;\n  border-top: 1px solid rgba(0, 0, 0, 0.05);\n  border-bottom: 1px solid rgba(0, 0, 0, 0.05);\n}\n.mychart-edit #gridv {\n  position: absolute;\n  top: 10px;\n  bottom: 30px;\n  left: 30%;\n  right: 30%;\n  border-left: 1px solid rgba(0, 0, 0, 0.05);\n  border-right: 1px solid rgba(0, 0, 0, 0.05);\n}\n.mychart-edit #a {\n  position: absolute;\n  left: 15px;\n  bottom: 10px;\n}\n.mychart-edit #b {\n  position: absolute;\n  left: 5px;\n  bottom: 50%;\n}\n.mychart-edit #c {\n  position: absolute;\n  left: 5px;\n  top: 10px;\n}\n.mychart-edit #x1 {\n  position: absolute;\n  left: 45%;\n  bottom: 10px;\n}\n.mychart-edit #x2 {\n  position: absolute;\n  right: 30px;\n  bottom: 10px;\n}\n\n.mychart-edit {\n  display: block;\n  position: absolute;\n  top: 34px;\n  bottom: 0px;\n  left: 20px;\n  right: 20px;\n  /* height: calc(100% - 40px) !important; */\n  /* height: 550px; */\n  /* width: 100% !important; */\n  /* background-color: black; */\n}\n\n.mychart-graph {\n    display: block;\n    margin: 0 auto;\n    /*height: 600px;*/\n    height: 100% !important;\n    width: 100% !important;\n}\n\n.mychar-toolbar {\n  display: block;\n  height: 34px !important;\n  width: 100% !important;\n  background-color:transparent;\n}\n\n.mychar-toolbar-button {\n  /* width: 30px; */\n  height: 26px;\n  cursor: pointer;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  border: 0;\n  background-color: #fff;\n  border-radius: 2px;\n\n}\n.mychar-toolbar-space {\n  /* min-width: calc(100% - 250px); */\n  /* width: calc(100% - 250px); */\n  width:100%;\n  height: 26px;\n  background-color: rgba(0, 0, 0, 0.1);\n  line-height: 26px;\n}\n\n.mychart-toolbar-select {\n  width:160px;\n  padding: 4px 3px 5px 4px;\n  background-color: #fff;\n  position: relative;\n  top: -5px;\n}\n\n.toolbar-cmp {\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 1px -2px rgba(0, 0, 0, 0.2);\n  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);\n}\n.toolbar-cmp:active {\n  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.01), 0 1px 3px 0 rgba(0, 0, 0, 0.01), 0 1px 1px -2px rgba(0, 0, 0, 0.02);\n  /* background-color: rgba(0, 0, 0, 0.01); */\n}\n\n.ng-dygraphs {\n  position: relative; }\n  .ng-dygraphs .name-nodes-holder {\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n    padding-right: 30px;\n    padding-left: 30px; }\n  .ng-dygraphs .ng-dygraphs-chart-container {\n    background-color: #fff;\n    padding: 0;\n    margin: 0px;}\n    .ng-dygraphs .ng-dygraphs-chart-container .nodata {\n      display: -ms-flexbox;\n      display: flex;\n      -ms-flex-pack: center;\n    justify-content: center;\n     -ms-flex-align: center;\n        align-items: center;\n      color: #5c5c5c;\n      font-weight: bold;\n      font-size: 24px; \n      display: flex;\n      -ms-flex-line-pack: center;\n          align-content: center; }\n    .ng-dygraphs .ng-dygraphs-chart-container .hide {\n       display: none; }\n  .ng-dygraphs .loader-holder {\n    position: absolute;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-align: center;\n        align-items: center;\n    width: 100%;\n    height: 100%;\n    background-color: #fff;\n    z-index: 55;\n    opacity: 0.9; }\n  .ng-dygraphs .loader {\n    color: #0dc5c1;\n    font-size: 20px;\n    margin: 100px auto;\n    width: 1em;\n    height: 1em;\n    border-radius: 50%;\n    position: relative;\n    text-indent: -9999em;\n    animation: load4 1.3s infinite linear;\n    transform: translateZ(0); }\n\n@keyframes load4 {\n  0%,\n  100% {\n    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0; }\n  12.5% {\n    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\n  25% {\n    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }\n  37.5% {\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em; }\n  50% {\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em; }\n  62.5% {\n    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em; }\n  75% {\n    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0; }\n  87.5% {\n    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em; } }", ""]);
 
 // exports
 
@@ -9642,7 +9642,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n    <div class=\"ng-dygraphs-chart-container\">\n        <div [ngClass]=\"{'hide': !data?.length}\" #chart [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n        </div>\n        <div *ngIf=\"!data?.length\" class=\"nodata\" [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n            {{noDataLabel}}\n        </div>\n    </div>\n</div> -->\n<div class=\"mychart-panel\">\n    <div class=\"mychar-toolbar\" *ngIf=\"withToolbar\">\n        <div class=\"mychar-toolbar-space\" *ngIf=\"isEditor\">Toolbar</div>\n        <div style=\"display: block; float:right; padding-right: 5px;\" class=\"my-form-field\" *ngIf=\"!isEditor\">\n            <mat-select [(value)]=\"rangeTypeValue\" class=\"mychart-toolbar-select toolbar-cmp\" (selectionChange)=\"onRangeChanged($event.source.value)\">\n                <mat-option *ngFor=\"let ev of rangeType | enumToArray\" [value]=\"ev.key\">\n                  {{ ev.value }}\n                </mat-option>\n            </mat-select>            \n            <!-- <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('T')\">T</button> -->\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('B')\">\n                <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">chevron_left</i>\n            </button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('F')\">\n                <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">chevron_right</i>\n            </button>\n          </div>\n    </div>\n    <div class=\"mychart-graph\" #chart>\n    </div>\n    <div *ngIf=\"!data?.length\" class=\"nodata\">\n        {{noDataLabel}}\n    </div>\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n</div>"
+module.exports = "<!-- <div class=\"ng-dygraphs\">\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n    <div class=\"ng-dygraphs-chart-container\">\n        <div [ngClass]=\"{'hide': !data?.length}\" #chart [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n        </div>\n        <div *ngIf=\"!data?.length\" class=\"nodata\" [style.width.px]=\"chartWidth\" [style.height.px]=\"chartHeight\">\n            {{noDataLabel}}\n        </div>\n    </div>\n</div> -->\n<div class=\"mychart-panel\">\n    <div class=\"mychar-toolbar\" *ngIf=\"withToolbar\">\n        <div class=\"mychar-toolbar-space\" *ngIf=\"isEditor\">Toolbar</div>\n        <div style=\"display: block; float:right; padding-right: 5px;\" class=\"my-form-field\" *ngIf=\"!isEditor\">\n            <mat-select [(value)]=\"rangeTypeValue\" class=\"mychart-toolbar-select toolbar-cmp\" (selectionChange)=\"onRangeChanged($event.source.value)\">\n                <mat-option *ngFor=\"let ev of rangeType | enumToArray\" [value]=\"ev.key\">\n                  {{ ev.value }}\n                </mat-option>\n            </mat-select>            \n            <!-- <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('T')\">T</button> -->\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('B')\">\n                <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">chevron_left</i>\n            </button>\n            <button class=\"mychar-toolbar-button toolbar-cmp\" style=\"margin-top:1px\" (click)=\"onClick('F')\">\n                <i class=\"material-icons\" style=\"font-size: 22px; cursor: pointer;\">chevron_right</i>\n            </button>\n        </div>\n    </div>\n    <div class=\"mychart-edit\" *ngIf=\"isEditor\">\n        <div id=\"grido\"></div>\n        <div id=\"gridv\"></div>\n        <div id=\"bord\"></div>\n        <span id=\"c\">1.0</span>\n        <span id=\"b\">0.5</span>\n        <span id=\"a\">0</span>      \n        <span id=\"x1\">12:30</span>\n        <span id=\"x2\">18.30</span>  \n    </div>\n    <!-- <div class=\"mychart-graph\" #chart [ngStyle]=\"(isEditor) ? 'mychart-hide' : 'mychart-show'\"> -->\n    <div class=\"mychart-graph\" #chart [ngStyle]=\"{'visibility': (isEditor) ? 'hidden' : 'visible', 'display': (isEditor) ? 'none' : 'block'}\">\n    </div>\n    <div *ngIf=\"!data?.length && !isEditor\" class=\"nodata\">\n        {{noDataLabel}}\n    </div>\n    <div *ngIf=\"loadingInProgress\" class=\"loader-holder\">\n        <div class=\"loader\"></div>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -9729,6 +9729,9 @@ var NgxDygraphsComponent = (function () {
     NgxDygraphsComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         this.data = this.sampleData;
+        if (this.isEditor) {
+            return;
+        }
         this.dygraph = new Dygraph(this.chart.nativeElement, this.data, this.options);
         this.loadingInProgress = false;
         this.dygraph.ready(function (graph) {
@@ -9820,11 +9823,15 @@ var NgxDygraphsComponent = (function () {
         }
         chart.style.height = h + 'px';
         chart.style.width = w + 'px';
-        this.dygraph.updateOptions({ height: h, width: w });
-        this.dygraph.resize(width, height);
+        if (this.dygraph) {
+            this.dygraph.updateOptions({ height: h, width: w });
+            this.dygraph.resize(width, height);
+        }
     };
     NgxDygraphsComponent.prototype.changeVisibility = function (index, value) {
-        this.dygraph.setVisibility(index, value);
+        if (this.dygraph) {
+            this.dygraph.setVisibility(index, value);
+        }
     };
     NgxDygraphsComponent.prototype.init = function () {
         this.options.labels = ['DateTime'];
@@ -9840,7 +9847,9 @@ var NgxDygraphsComponent = (function () {
     NgxDygraphsComponent.prototype.setOptions = function (options) {
         try {
             this.options = Object.assign(this.options, options);
-            this.dygraph.updateOptions(this.options);
+            if (this.dygraph) {
+                this.dygraph.updateOptions(this.options);
+            }
         }
         catch (e) {
         }
@@ -9850,7 +9859,9 @@ var NgxDygraphsComponent = (function () {
             this.mapData[id] = this.options.labels.length;
             this.options.labels.push(name);
             this.options.colors.push(color);
-            this.dygraph.updateOptions({ labels: this.options.labels, colors: this.options.colors });
+            if (this.dygraph) {
+                this.dygraph.updateOptions({ labels: this.options.labels, colors: this.options.colors });
+            }
         }
     };
     NgxDygraphsComponent.prototype.addValue = function (id, value) {
@@ -9864,16 +9875,22 @@ var NgxDygraphsComponent = (function () {
             if (this.data.length > 1000) {
                 this.data.shift();
             }
-            this.dygraph.updateOptions({ file: this.data });
+            if (this.dygraph) {
+                this.dygraph.updateOptions({ file: this.data });
+            }
         }
     };
     NgxDygraphsComponent.prototype.setValues = function (values) {
         this.data = values;
-        this.dygraph.updateOptions({ file: this.data, dateWindow: [this.range.from, this.range.to] });
+        if (this.dygraph) {
+            this.dygraph.updateOptions({ file: this.data, dateWindow: [this.range.from, this.range.to] });
+        }
     };
     NgxDygraphsComponent.prototype.clear = function () {
         this.data = [];
-        this.dygraph.updateOptions({ file: this.data });
+        if (this.dygraph) {
+            this.dygraph.updateOptions({ file: this.data });
+        }
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),

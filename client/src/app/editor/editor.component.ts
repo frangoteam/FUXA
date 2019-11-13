@@ -575,7 +575,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param option stroke type 
      */
     onSetStrokeOption(option) {
-        this.winRef.nativeWindow.svgEditor.onSetStrokeOption(option);
+        this.winRef.nativeWindow.svgEditor.setStrokeOption(option);
     }
 
     /**

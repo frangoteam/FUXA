@@ -74,7 +74,7 @@ import {
   `],
     template: `
     <div class="fab-menu" [class.active]="(state | async).display">
-        <a class="fab-toggle" (click)="toggle()" [style.backgroundColor]="color">
+        <a class="fab-toggle" (click)="toggle()" (touchend)="toggle()" [style.backgroundColor]="color">
           <i class="material-icons" *ngIf="!opened"> {{icon}} </i>
           <i class="material-icons" *ngIf="opened"> {{iconOpen}} </i>
         </a>
