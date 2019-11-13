@@ -4,6 +4,74 @@
     /*height: 600px;
     width: 1000px;*/
 }
+
+.mychart-edit #bord {
+  display: block;
+  position: absolute;
+  top: 10px;
+  bottom: 30px;
+  left: 30px;
+  right: 30px;
+  border-left: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+.mychart-edit #grido {
+  position: absolute;
+  top: 30%;
+  bottom: 40%;
+  left: 30px;
+  right: 30px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.mychart-edit #gridv {
+  position: absolute;
+  top: 10px;
+  bottom: 30px;
+  left: 30%;
+  right: 30%;
+  border-left: 1px solid rgba(0, 0, 0, 0.05);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+.mychart-edit #a {
+  position: absolute;
+  left: 15px;
+  bottom: 10px;
+}
+.mychart-edit #b {
+  position: absolute;
+  left: 5px;
+  bottom: 50%;
+}
+.mychart-edit #c {
+  position: absolute;
+  left: 5px;
+  top: 10px;
+}
+.mychart-edit #x1 {
+  position: absolute;
+  left: 45%;
+  bottom: 10px;
+}
+.mychart-edit #x2 {
+  position: absolute;
+  right: 30px;
+  bottom: 10px;
+}
+
+.mychart-edit {
+  display: block;
+  position: absolute;
+  top: 34px;
+  bottom: 0px;
+  left: 20px;
+  right: 20px;
+  /* height: calc(100% - 40px) !important; */
+  /* height: 550px; */
+  /* width: 100% !important; */
+  /* background-color: black; */
+}
+
 .mychart-graph {
     display: block;
     margin: 0 auto;

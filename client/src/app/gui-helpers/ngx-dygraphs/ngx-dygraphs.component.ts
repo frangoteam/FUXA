@@ -62,6 +62,9 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
 
     ngAfterViewInit() {
         this.data = this.sampleData;
+        if (this.isEditor) {
+            return;
+        }
         this.dygraph = new Dygraph(this.chart.nativeElement, this.data, this.options);
         this.loadingInProgress = false;
         this.dygraph.ready(graph => {
@@ -162,12 +165,16 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         }
         chart.style.height = h + 'px';
         chart.style.width = w + 'px';
-        this.dygraph.updateOptions({ height: h, width: w });
-        this.dygraph.resize(width, height);
+        if (this.dygraph) {
+            this.dygraph.updateOptions({ height: h, width: w });
+            this.dygraph.resize(width, height);
+        }
     }
 
     public changeVisibility(index, value) {
-        this.dygraph.setVisibility(index, value);
+        if (this.dygraph) {
+            this.dygraph.setVisibility(index, value);
+        }
     }
 
     public init() {
@@ -186,7 +193,9 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     public setOptions(options) {
         try {
             this.options = Object.assign(this.options, options);
-            this.dygraph.updateOptions(this.options);
+            if (this.dygraph) {
+                this.dygraph.updateOptions(this.options);
+            }
         } catch (e) {
         }
     }
@@ -196,7 +205,9 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
             this.mapData[id] = this.options.labels.length;
             this.options.labels.push(name);
             this.options.colors.push(color);
-            this.dygraph.updateOptions({ labels: this.options.labels, colors: this.options.colors });
+            if (this.dygraph) {
+                this.dygraph.updateOptions({ labels: this.options.labels, colors: this.options.colors });
+            }
         }
     }
 
@@ -211,18 +222,24 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
             if (this.data.length > 1000) {
                 this.data.shift();
             }
-            this.dygraph.updateOptions({ file: this.data });
+            if (this.dygraph) {
+                this.dygraph.updateOptions({ file: this.data });
+            }
         }
     }
 
     public setValues(values) {
         this.data = values;
-        this.dygraph.updateOptions({ file: this.data, dateWindow: [this.range.from, this.range.to] });
+        if (this.dygraph) {
+            this.dygraph.updateOptions({ file: this.data, dateWindow: [this.range.from, this.range.to] });
+        }
     }
 
     public clear() {
         this.data = [];
-        this.dygraph.updateOptions({ file: this.data });
+        if (this.dygraph) {
+            this.dygraph.updateOptions({ file: this.data });
+        }
     }
 
     //   private watchRangeSelector(graph) {
