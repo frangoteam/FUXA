@@ -17,18 +17,23 @@ function S7client(_data, _logger, _events) {
     var lastStatus = '';                // Last Device status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var varsItemsMap = {};              // Mapped Signale name with DbItem to find for set value
-    var daqInterval = 0;
-    var lastDaqInterval = 0;
+    var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
+    var lastDaqInterval = 0;            // Help to check daqInterval
+    var overloading = 0;                // Overloading counter to mange the break connection
 
+    /**
+     * Connect to PLC
+     * emit connection status to clients, clear all tags values
+     */
     this.connect = function () {
         return new Promise(function (resolve, reject) {
             if (data.property && data.property.rack >= 0 && data.property.slot >= 0) {
                 try {
-                    if (!s7client.Connected()) {
-                        _checkWorking(false);
+                    if (!s7client.Connected() && _checkWorking(true)) {
+                        logger.info(data.name + ': try to connect ' + data.property.address);
                         s7client.ConnectTo(data.property.address, data.property.rack, data.property.slot, function (err) {
                             if (err) {
-                                logger.error(data.name + ': try to connect failed! ' + err);
+                                logger.error(data.name + ': connect failed! ' + err);
                                 _emitStatus('connect-error');
                                 _clearVarsValue();
                                 reject();
@@ -37,11 +42,15 @@ function S7client(_data, _logger, _events) {
                                 _emitStatus('connect-ok');
                                 resolve();
                             }
+                            _checkWorking(false);
                             // var pdusize = s7client.GetParam(s7client['PDURequest']);
                         });
+                    } else {
+                        reject();
                     }
                 } catch (err) {
                     logger.error(data.name + ': try to connect error! ' + err);
+                    _checkWorking(false);
                     _emitStatus('connect-error');
                     _clearVarsValue();
                     reject();
@@ -55,6 +64,10 @@ function S7client(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Disconnect the PLC
+     * emit connection status to clients, clear all tags values
+     */
     this.disconnect = function () {
         return new Promise(function (resolve, reject) {
             _checkWorking(false);
@@ -76,8 +89,11 @@ function S7client(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Read values in polling mode 
+     * update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     */
     this.polling = function () {
-        // console.log(data.name + ': polling');
         if (_checkWorking(true)) {
             var readDBfnc = [];
             for (var dbnum in db) {
@@ -132,6 +148,9 @@ function S7client(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Load Tags attribute to read with polling
+     */
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
         db = {};
@@ -164,16 +183,22 @@ function S7client(_data, _logger, _events) {
     }
 
     /**
-     * Return values array { id: <name>, value: <value>, type: <type> }
+     * Return Tags values array { id: <name>, value: <value>, type: <type> }
      */
     this.getValues = function () {
         return varsValue;
     }
 
+    /**
+     * Return connection status 'connect-off', 'connect-ok', 'connect-error'
+     */
     this.getStatus = function () {
         return lastStatus;
     }
 
+    /**
+     * Return Tag property
+     */
     this.getTagProperty = function (id) {
         if (varsItemsMap[id]) {
             let prop = { id: id, name: id, type: varsItemsMap[id].type };
@@ -183,6 +208,10 @@ function S7client(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Set the Tag value
+     * read the current Tag and write the value
+     */
     this.setValue = function (sigid, value) {
         var varDb = _getDBValue(data.tags[sigid]);
 
@@ -191,8 +220,7 @@ function S7client(_data, _logger, _events) {
             varDb.value = value;
             console.log(dbitem);
             _writeVars([varDb]).then(result => {
-            // _writeDB(dbitem.dbnum, [dbitem]).then(result => {
-                console.log(result);
+                logger.info(data.name + ' setValue : ' + sigid + '=' + value);
             }, reason => {
                 if (reason.stack) {
                     logger.error(data.name + ' _writeDB error: ' + reason.stack);
@@ -203,17 +231,28 @@ function S7client(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Return if PLC is connected
+     * don't work if PLC will disconnect
+     */
     this.isConnected = function () {
         return s7client.Connected();
     }
 
+    /**
+     * Bind the DAQ store function and default daqInterval value in milliseconds
+     */
     this.bindAddDaq = function (fnc, intervalToSave) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
         daqInterval = intervalToSave;
     }
 
-    this.addDaq = null;                         // Add the DAQ value to db history
+    this.addDaq = null;                             // Add the DAQ value to db history
 
+    /**
+     * Clear the Tags values by setting to null
+     * emit to clients
+     */
     var _clearVarsValue = function () {
         for (let id in varsValue) {
             varsValue[id].value = null;
@@ -226,6 +265,10 @@ function S7client(_data, _logger, _events) {
         _emitValues(varsValue);
     }
 
+    /**
+     * Update the Tags values read
+     * @param {*} dbvalues 
+     */
     var _updateVarsValue = function (dbvalues) {
         var someval = false;
         var changed = [];
@@ -285,22 +328,41 @@ function S7client(_data, _logger, _events) {
     }
     //#endregion
 
+    /**
+     * Emit the PLC Tags values array { id: <name>, value: <value>, type: <type> }
+     * @param {*} values 
+     */
     var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.name, values: values });
     }
 
+    /**
+     * Emit the PLC connection status
+     * @param {*} status 
+     */
     var _emitStatus = function (status) {
         lastStatus = status;
         // console.log('device-status ' + data.name + ' ' + status);
         events.emit('device-status:changed', { id: data.name, status: status });
     }
 
+    /**
+     * Used to manage the async connection and polling automation (that not overloading)
+     * @param {*} check 
+     */
     var _checkWorking = function (check) {
         if (check && working) {
-            logger.error(data.name + ' working (polling) overload!');
-            return false;
+            overloading++;
+            logger.error(data.name + ' working (polling/connecting) overload! ' + overloading);
+            // !The driver don't give the break connection
+            if (overloading >= 3) {
+                s7client.Disconnect();
+            } else {
+                return false;
+            }
         }
         working = check;
+        overloading = 0;
         return true;
     }
 
@@ -417,14 +479,10 @@ function S7client(_data, _logger, _events) {
     }
 
     /**
+     * Return the Tag object (DbItem) with value
      * DB X DBX 10.3 = Bool, DB X DBB 10 = Byte/Char, DB X DBW 10 = Int/Word, DB X DBD 10 = DInt/DWord, DB X DBD 10 = Real
      */
     var _getDBValue = function (tag) {
-        // uint mDB;
-        // uint mByte;
-        // uint mBit;
-        // string txt = varup.str;     // remove spaces
-
         try {
             var variable = tag.address.toUpperCase().split(' ').join('');
             if (variable) {
@@ -525,6 +583,10 @@ function S7client(_data, _logger, _events) {
         return null;
     }
 
+    /**
+     * Return error message, from error code
+     * @param {*} s7err 
+     */
     var _getErr = function (s7err) {
         if (Array.isArray(s7err)) return new Error('Errors: ' + s7err.join('; '));
         return new Error(s7client.ErrorText(s7err));
