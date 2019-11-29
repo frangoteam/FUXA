@@ -16,38 +16,40 @@ const app = express();
 
 var server;
 var settingsFile;
-var projectFile;
 
 // Define work directory in AppData
-var workDir = path.join(paths.getAppDataPath(process.platform), ".fuxa");
-paths.ensureDirs(workDir);
+var workDir = path.resolve(__dirname, "_appdata");
+if (!fs.existsSync(workDir)) {
+    fs.mkdirSync(workDir);
+}
 
 // Read app settings 
 var userSettingsFile = path.join(workDir, "settings.js");
 if (fs.existsSync(userSettingsFile)) {
-    // $HOME/.fuxa/settings.js exists
+    // _appdata/settings.js exists
     settingsFile = userSettingsFile;
 } else {
     // Not exist, copy from code resource
-    var defaultSettings = path.join(__dirname, "settings.js");
+    var defaultSettings = path.join(__dirname, "settings.default.js");
     var settingsStat = fs.statSync(defaultSettings);
-    if (settingsStat.mtime.getTime() <= settingsStat.ctime.getTime()) {
-        // Default settings file has not been modified - safe to copy
-        fs.copyFileSync(defaultSettings, userSettingsFile, (err) => {
-            if (err) return logger.error(err);
-            logger.debug("settings.js default created successful!")
-        });
-        settingsFile = userSettingsFile;
-    } else {
-        // Use default settings.js as it has been modified
-        settingsFile = defaultSettings;
-    }
+    fs.copyFileSync(defaultSettings, userSettingsFile, (err) => {
+        if (err) return logger.error(err);
+        logger.debug("settings.js default created successful!")
+    });
+    settingsFile = userSettingsFile;
 }
 try {
+    // load settings and set some app variable
     var settings = require(settingsFile);
     settings.workDir = workDir;
     settings.appDir = __dirname;
     settings.settingsFile = settingsFile;
+    settings.environment = process.env.NODE_ENV || 'prod';
+    // check new settings from default and merge if not defined
+    var defSettings = require(path.join(__dirname, "settings.default.js"));
+    if (defSettings.version !== settings.version) {
+        settings = Object.assign(defSettings, settings);
+    }
 } catch (err) {
     logger.error("Error loading settings file: " + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {

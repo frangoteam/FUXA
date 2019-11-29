@@ -78,7 +78,7 @@ function S7client(_data, _logger, _events) {
             } else {
                 var result = s7client.Disconnect();
                 if (result) {
-                    logger.info(data.name + ' disconnected!');
+                    logger.info(data.name + ': disconnected!');
                 } else {
                     logger.error(data.name + ' try to disconnect failed!');
                 }
@@ -179,7 +179,7 @@ function S7client(_data, _logger, _events) {
                 varsItemsMap[id] = db[varDb.dbnum].Items[varDb.start];
             }
         }
-        logger.info(data.name + ' data loaded (' + count + ')');
+        logger.info(data.name + ': data loaded (' + count + ')');
     }
 
     /**

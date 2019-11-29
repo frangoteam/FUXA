@@ -321,7 +321,7 @@ function OpcUAclient(_data, _logger, _events) {
         // varsValue = [];
         // varsItemsMap = {};
         var count = Object.keys(data.tags).length;
-        logger.info(data.name + ' data loaded (' + count + ')');
+        logger.info(data.name + ': data loaded (' + count + ')');
     }
 
     this.getValues = function () {

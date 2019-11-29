@@ -280,6 +280,6 @@
     "msg.view-remove": "Would you like to remove View '{{value}}'",
     "msg.device-connection-error": "Device '{{value}}' connection error!",
     "msg.server-connection-error": "Server connection failed!",
-    "msg.project-save-error": "Project save failed!"
-
+    "msg.project-save-error": "Project save failed!",
+    "msg.project-save-ask": "You want to leave the project?"
 }

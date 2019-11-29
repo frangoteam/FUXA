@@ -38,7 +38,7 @@ function Device(data, logger, _events) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
-            logger.info(currentCmd + ': ' + property.name);
+            logger.info(property.name + ': ' + currentCmd);
             if (devicePolling) {
                 clearInterval(devicePolling);
                 devicePolling = null;
@@ -153,14 +153,14 @@ module.exports = {
 }
 
 var DeviceEnum = {
-    S7: "SiemensS7",
-    OPCUA: "OPCUA"
+    S7: 'SiemensS7',
+    OPCUA: 'OPCUA'
 }
 
 var DeviceStatusEnum = {
-    INIT: "init",
-    IDLE: "idle",
-    POLLING: "polling"
+    INIT: 'init',
+    IDLE: 'idle',
+    POLLING: 'polling'
 }
 
 var DeviceCmdEnum = {

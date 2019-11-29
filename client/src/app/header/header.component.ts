@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     @ViewChild('sidenav')sidenav: any; 
     @ViewChild('tutorial') tutorial: TutorialComponent;
+    @ViewChild('fileImportInput') fileImportInput: any;
 
     ineditor: boolean = false;
     winele: boolean = false;
@@ -58,17 +59,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     onChartConfig() {
-        this.chartConfig();
-    }
-
-    onShowHelp(page) {
-        let data = new HelpData();
-        data.page = page;
-        data.tag = 'device';
-        this.showHelp(data);
-    }
-
-    chartConfig() {
         let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
         let devices = this.projectService.getDevices();
         let dialogRef = this.dialog.open(ChartConfigComponent, {
@@ -79,9 +69,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.projectService.setCharts(result.charts);
-                this.projectService.saveProject();
             }
         });
+    }
+
+    onShowHelp(page) {
+        let data = new HelpData();
+        data.page = page;
+        data.tag = 'device';
+        this.showHelp(data);
     }
 
     showHelp(data: HelpData) {
@@ -113,7 +109,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             let msg = '';
             this.translateService.get('msg.project-save-ask').subscribe((txt: string) => { msg = txt });
             if (window.confirm(msg)) {
-                this.onSaveProject();
+                this.projectService.saveProject();
                 this.projectService.setNewProject();
             }
         } catch (e) {
@@ -122,7 +118,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * save Project and Download in Browser 
+     * Aave Project as JSON file and Download in Browser 
      */
     onSaveProjectAs() {
         try {
@@ -148,7 +144,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         let reader = new FileReader();
         reader.onload = (data) => {
             // console.log(reader.result);
-            let prj = JSON.parse(reader.result);
+            let prj = JSON.parse(reader.result.toString());
             this.projectService.setProject(prj, true);
         }
 
@@ -158,6 +154,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             alert(msg);
         };
         reader.readAsText(input.files[0]);
+        this.fileImportInput.nativeElement.value = null;
     }
 
     /**

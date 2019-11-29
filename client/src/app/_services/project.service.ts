@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Hmi } from '../_models/hmi';
+import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
@@ -19,16 +19,17 @@ export class ProjectService {
     @Output() onSaveCurrent: EventEmitter<boolean> = new EventEmitter();
     @Output() onLoadHmi: EventEmitter<boolean> = new EventEmitter();
 
+    private projectData = new ProjectData();            // Project data
+
     public version = '1.00';
     public separator = '^~^';
-    public started = false;
-    private projectData: ProjectData;
     public serverSettings: any;
 
     private prjresource = 'prj-data';
     private endPointConfig: string = EndPointApi.getURL(); //"http://localhost:1881";
     private projectOld: string = '';
     private saveworking = false;
+    private ready = false;
 
     constructor(private http: HttpClient,
         private translateService: TranslateService,
@@ -38,12 +39,73 @@ export class ProjectService {
             this.checkServer().subscribe(result => {
                 this.serverSettings = result;
                 this.load();
-                // this.toastr.success('Server connected!');
             }, error => {
+                console.error('project.service err: ' + error);
                 this.load();
-                console.error(error);
+                this.notifySaveError();
+            });
+        } else {
+            this.load();
+        }
+    }
+
+    /**
+     * Load Project from Server if enable.
+     * From Local Storage, from 'assets' if demo or create a local project
+     */
+    private load() {
+        if (this.serverSettings) {
+            this.getServerProject().subscribe(prj => {
+                this.projectData = prj;
+                // copy to check before save
+                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+                this.ready = true;
+                this.notifyToLoadHmi();
+                console.log('Load Server Project: ' + prj);
+            }, err => {
+                console.log('Load Server Project err: ' + err);
+            });
+        } else {
+            if (!this.projectData) {
+                let res = localStorage.getItem(this.prjresource);
+                if (res) {
+                    console.log('Load Local Project');
+                    this.projectData = JSON.parse(res);
+                } else if (environment.type === 'demo') {
+                    console.log('Load Demo Project');
+                    // try root path
+                    this.http.get<any>('./assets/project.demo.fuxap').subscribe(
+                        prj => {
+                            this.projectData = prj;
+                        }, err => {
+                        });
+                } else {
+                    console.log('Create Local Project');
+                    this.setNewProject();
+                }
+            }
+            this.ready = true;
+        }
+    }
+
+
+    private save(): boolean {
+        console.log('-save-');
+        // this.projectData.version = this.version;
+        // let prjData = this.convertToSave(this.projectData);
+        if (this.serverSettings) {
+            // check project change don't work some svg object change the order and this to check ...boooo
+            this.setServerProject(this.projectData).subscribe(result => {
+                this.load();
+                // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+                // console.log(result);
+                // this.checSaveWorking(false);
+                this.toastr.success('Project save successful!');
+            }, err => {
+                console.log(err);
+                // this.checSaveWorking(false);
                 var msg = '';
-                this.translateService.get('msg.server-connection-error').subscribe((txt: string) => {msg = txt});                      
+                this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
                 this.toastr.error(msg, '', {
                     timeOut: 3000,
                     closeButton: true,
@@ -51,87 +113,7 @@ export class ProjectService {
                 });
             });
         } else {
-            this.load();
-        }
-    }
-
-    load() {
-        console.log('load Project');
-
-        if (this.serverSettings) {
-            this.getServerProject().subscribe(prj => {
-                this.projectData = prj;
-                // copy to check before save
-                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-
-                this.notifyToLoadHmi();
-                console.log(prj);
-            }, err => {
-                console.log(err);
-            });
-        } else {
-            if (!this.projectData) {
-                let res = localStorage.getItem(this.prjresource);
-                if (res) {
-                    this.projectData = JSON.parse(res);
-                } else if (environment.type === 'demo') {
-                    console.log('load Demo');
-                    // try root path
-                    this.http.get<any>('./assets/project.demo.fuxap').subscribe(
-                        prj => {
-                            this.projectData = prj;
-                        }, err => {
-                    });                      
-                    // load demo from server
-                    // this.getDemoProject().subscribe(prj => {
-                    //     this.projectData = prj;
-                    // }, err => {
-                    //     console.log(err);                      
-                    // });
-                } else {
-                    this.projectData = new ProjectData();
-                    let server = new Device();
-                    server.name = 'Fuxa Server';
-                    server.id = '0';
-                    server.type = DeviceType.FuxaServer;
-                    server.property = new DeviceNetProperty();
-                    this.setServer(server);
-                }
-            }
-        }
-    }
-
-    save(): boolean {
-        console.log('-save-');
-        this.projectData.version = this.version;
-        let prjData = this.convertToSave(this.projectData);
-        if (this.serverSettings) {
-            // check project change don't work some svg object change the order and this to check ...boooo
-            // let prjdiff = this._deepEquals(this.projectData, this.projectOld);
-            // if (prjdiff) {
-            //     return true;
-            // }
-            if (this.checSaveWorking(true)) {
-                console.log('my save');
-                this.setServerProject(prjData).subscribe(result => {
-                    this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-                    console.log(result);
-                    this.checSaveWorking(false);
-                    // this.toastr.success('Project save successful!');
-                }, err => {
-                    console.log(err);
-                    this.checSaveWorking(false);
-                    var msg = '';
-                    this.translateService.get('msg.project-save-error').subscribe((txt: string) => {msg = txt});                  
-                    this.toastr.error(msg, '', {
-                        timeOut: 3000,
-                        closeButton: true,
-                        disableTimeOut: true
-                    });
-                });
-            }
-        } else {
-            localStorage.setItem(this.prjresource, JSON.stringify(prjData));
+            localStorage.setItem(this.prjresource, JSON.stringify(this.projectData));
         }
         return true;
     }
@@ -169,13 +151,119 @@ export class ProjectService {
         return result;
     }
 
-    private checSaveWorking (check: boolean) {
-        if (check && this.saveworking) {
-            return false;
-        }
-        this.saveworking = check;
-        return true;
+    private notifySaveError() {
+        let msg = '';
+        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
     }
+
+    // private checSaveWorking(check: boolean) {
+    //     if (check && this.saveworking) {
+    //         return false;
+    //     }
+    //     this.saveworking = check;
+    //     return true;
+    // }
+
+    //#region Device to Save
+    /**
+     * Add or update Device to Project.
+     * Save to Server
+     * @param device
+     * @param old
+     */
+    setDevice(device: Device, old: Device) {
+        this.projectData.devices[device.name] = device;
+        this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+            if (old && old.name && old.name !== device.name && old.id === device.id) {
+                this.removeDevice(old);
+            }
+        }, err => {
+            console.log(err);
+            this.notifySaveError();
+        });
+    }
+
+    /**
+     * Remove Device from Project.
+     * Save to Server
+     * @param device
+     */
+    removeDevice(device: Device) {
+        delete this.projectData.devices[device.name];
+        // Object.keys(this.projectData.devices).forEach((key) => {
+        //     if (this.projectData.devices[key].id === device.id) {
+        //         delete this.projectData.devices[key];
+        //         return;
+        //     }
+        // });
+        this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError();
+        });
+    }
+    //#endregion
+
+    //#region View to Save
+    /**
+     * Add or update View to Project.
+     * Save to Server
+     * @param view
+     */
+    setView(view: View) {
+        let v = null;
+        for (let i = 0; i < this.projectData.hmi.views.length; i++) {
+            if (this.projectData.hmi.views[i].id === view.id) {
+                v = this.projectData.hmi.views[i];
+            }
+        }
+        if (v) {
+            v = view;
+        } else {
+            this.projectData.hmi.views.push(view);
+        }
+        this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError();
+        });
+    }
+
+    /**
+     * Remove the View from Project
+     * Delete from Server
+     * @param view
+     */
+    removeView(view: View) {
+        for (let i = 0; i < this.projectData.hmi.views.length; i++) {
+            if (this.projectData.hmi.views[i].id === view.id) {
+                this.projectData.hmi.views.splice(i, 1);
+                break;
+            }
+        }
+        this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError();
+        });
+    }
+    //#endregion
+    setLayout(layout: LayoutSettings) {
+        this.projectData.hmi.layout = layout;
+        this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError();
+        });
+    }
+    //#region HMI
+
+    //#endregion
 
     //#region to server api
     getServerProject(): Observable<any> {
@@ -189,6 +277,12 @@ export class ProjectService {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.http.post<ProjectData>(this.endPointConfig + '/api/project', prj, { headers: header });
     }
+
+    setServerProjectData(cmd: ProjectDataCmdType, data: any) {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { cmd: cmd, data: data };
+        return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
+    }
     //#endregion
 
     //#region hmi resource json struct
@@ -196,19 +290,25 @@ export class ProjectService {
      * get hmi resource
      */
     getHmi() {
-        return (this.projectData) ? this.projectData.hmi : null;
+        return (this.ready && this.projectData) ? this.projectData.hmi : null;
     }
+    // getHmi(): Observable<Hmi> {
+    //     return new Observable((observer) => {
+    //         const handler = (e) => observer.next(e);
+    //         // return (this.projectData) ? this.projectData.hmi : null;
+    //     });
+    // }
 
-    /**
-     * save hmi resource to project
-     * @param hmi hmiresource to save
-     */
-    setHmi(hmi: Hmi, notify?: boolean) {
-        this.projectData.hmi = hmi;
-        if (notify) {
-            this.notifyToLoadHmi();
-        }
-    }
+    // /**
+    //  * save hmi resource to project
+    //  * @param hmi hmiresource to save
+    //  */
+    // setHmi(hmi: Hmi, notify?: boolean) {
+    //     this.projectData.hmi = hmi;
+    //     if (notify) {
+    //         this.notifyToLoadHmi();
+    //     }
+    // }
     //#endregion
 
     //#region charts resource
@@ -233,6 +333,11 @@ export class ProjectService {
      */
     setCharts(charts: Chart[]) {
         this.projectData.charts = charts;
+        this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError();
+        });        
     }
     //#endregion
 
@@ -244,12 +349,13 @@ export class ProjectService {
     //#endregion
 
     /**
-     * set Project data andf save resource to backend
+     * Set Project data and save resource to backend
+     * Used from open and upload JSON Project file
      * @param prj project data to save
      */
     setProject(prj: ProjectData, notify?: boolean) {
         // redefine variable list and device list throw views resurce used
-        prj.version = this.version;
+        // prj.version = this.version;
         // hmi.views.forEach(view => {
         //     for (let key in view.items) {
         //         // variable
@@ -276,9 +382,9 @@ export class ProjectService {
         // console.log('set-prj: ' + JSON.stringify(prj));
         this.projectData = prj;
         this.save();
-        if (notify) {
-            this.notifyToLoadHmi();
-        }
+        // if (notify) {
+            // this.notifyToLoadHmi();
+        // }
     }
 
     setNewProject() {
@@ -288,8 +394,27 @@ export class ProjectService {
         server.id = '0';
         server.type = DeviceType.FuxaServer;
         server.property = new DeviceNetProperty();
-        this.setServer(server);
-        this.notifyToLoadHmi();
+        this.projectData.server = server;
+        this.save();
+        // this.setServer(server);
+        // this.setServerProject(this.projectData).subscribe(result => {
+        //     this.load();
+        //     // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+        //     // console.log(result);
+        //     // this.checSaveWorking(false);
+        //     this.toastr.success('Project save successful!');
+        // }, err => {
+        //     console.log(err);
+        //     // this.checSaveWorking(false);
+        //     var msg = '';
+        //     this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+        //     this.toastr.error(msg, '', {
+        //         timeOut: 3000,
+        //         closeButton: true,
+        //         disableTimeOut: true
+        //     });
+        // });
+        // this.notifyToLoadHmi();
     }
 
     getProject() {
@@ -300,13 +425,13 @@ export class ProjectService {
         return (this.projectData) ? this.projectData.server : null;
     }
 
-    setServer(srv: Device, nosave?: boolean): boolean {
-        this.projectData.server = srv;
-        if (nosave) {
-            return true;
-        }
-        return this.save();
-    }
+    // setServer(srv: Device, nosave?: boolean): boolean {
+    //     this.projectData.server = srv;
+    //     if (nosave) {
+    //         return true;
+    //     }
+    //     return this.save();
+    // }
 
     getDevices(): any {
         return (this.projectData) ? this.projectData.devices : {};
@@ -339,6 +464,10 @@ export class ProjectService {
         return false;
     }
 
+    /**
+     * Send Save Project to to editor component
+     * @param saveas 
+     */
     saveProject(saveas?: boolean) {
         this.onSaveCurrent.emit(saveas);
     }
@@ -438,9 +567,17 @@ export class ProjectService {
 
 export class ProjectData {
     version: string = "1.00"
-    projectFile: string;
     server: Device = new Device();
     hmi: Hmi = new Hmi();
     devices = {};
     charts: Chart[] = [];
+}
+
+export enum ProjectDataCmdType {
+    SetDevice = 'set-device',
+    DelDevice = 'del-device',
+    SetView = 'set-view',
+    DelView = 'del-view',
+    HmiLayout = 'layout',
+    Charts = 'charts',
 }

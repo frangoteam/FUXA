@@ -28,11 +28,13 @@ export class FlexEventComponent implements OnInit {
 
   getEvents() {
     let result = [];
-    this.events.forEach(element => {
-      if (element.type) {
-        result.push(element);
-      }
-    });
+    if (this.events) {
+      this.events.forEach(element => {
+        if (element.type) {
+          result.push(element);
+        }
+      });
+    }
     return result;
   }
 

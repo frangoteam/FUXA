@@ -58,7 +58,7 @@ function DaqNode(_settings, _log, _id) {
         db_daqdata = result;
     }).catch(function (err) {
         if (err) {
-            logger.err(err);
+            logger.error(err);
         }
     });
 
@@ -67,16 +67,16 @@ function DaqNode(_settings, _log, _id) {
         logger.info('daqstorage: Connected to map ' + db_daqmap_file + ' database.');
         db_daqmap = result;
         _loadMap().then(result => {
-            logger.info("daqstorage init successful!");
+            logger.info("daqstorage: init successful!");
             initready = true;
         }).catch(function (err) {
             if (err) {
-                logger.err(err);
+                logger.error(err);
             }
         });
     }).catch(function (err) {
         if (err) {
-            logger.err(err);
+            logger.error(err);
         }
     });
 
@@ -107,12 +107,12 @@ function DaqNode(_settings, _log, _id) {
                         _getTagMap(prop.id, prop.name, prop.type).then(function (result) {
                             _addTagMap(result.mapid, prop.id, prop.name);
                         }).catch(function (err) {
-                            logger.err('addDaqValue _getTagMap error: ' + err);
+                            logger.error('addDaqValue _getTagMap error: ' + err);
                         });
                         _checkMapWorking(false);
                     }).catch(function (err) {
                         _checkMapWorking(false);
-                        logger.err('addDaqValue _insertTagToMap error: ' + err);
+                        logger.error('addDaqValue _insertTagToMap error: ' + err);
                     });
                 }
             } else {
@@ -136,7 +136,7 @@ function DaqNode(_settings, _log, _id) {
                                         _checkDataWorking(false);
                                     }).catch(function (err) {
                                         _checkDataWorking(false);
-                                        logger.err('addDaqValue _bindDaqData error: ' + err);
+                                        logger.error('addDaqValue _bindDaqData error: ' + err);
                                     });
                                 });
                             } else {
@@ -153,7 +153,7 @@ function DaqNode(_settings, _log, _id) {
                             _checkDataWorking(false);
                         }).catch(function (err) {
                             _checkDataWorking(false);
-                            logger.err('addDaqValue _bindDaqData error: ' + err);
+                            logger.error('addDaqValue _bindDaqData error: ' + err);
                         });
                     }
                 }
@@ -184,7 +184,7 @@ function DaqNode(_settings, _log, _id) {
                             _getTagMap(result[idx]).then(function (result) {
                                 _addTagMap(result.mapid, result.id, result.name);
                             }).catch(function (err) {
-                                logger.err('addDaqValues _getTagMap error: ' + err);
+                                logger.error('addDaqValues _getTagMap error: ' + err);
                             });
                         }
                     }, reason => {
@@ -218,7 +218,7 @@ function DaqNode(_settings, _log, _id) {
                                         _checkDataWorking(false);
                                     }).catch(function (err) {
                                         _checkDataWorking(false);
-                                        logger.err('addDaqValues _bindDaqData error: ' + err);
+                                        logger.error('addDaqValues _bindDaqData error: ' + err);
                                     });
                                 });
                             } else {
@@ -243,7 +243,7 @@ function DaqNode(_settings, _log, _id) {
                     _checkDataWorking(false);
                 }).catch(function (err) {
                     _checkDataWorking(false);
-                    logger.err('addDaqValue _bindDaqData error: ' + err);
+                    logger.error('addDaqValue _bindDaqData error: ' + err);
                 });
             }
         }
@@ -316,7 +316,7 @@ function DaqNode(_settings, _log, _id) {
             try {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
-                        logger.err('daq-map db: failed to bind: ' + err);
+                        logger.error('daq-map db: failed to bind: ' + err);
                         reject();
                     }
                     logger.info('daqstorage: Connected to ' + dbfile + ' database.');
@@ -324,7 +324,7 @@ function DaqNode(_settings, _log, _id) {
                 db.serialize(function () {
                     db.run("CREATE TABLE if not exists data (mapid INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT, name TEXT, type TEXT)", function (err) {
                         if (err) {
-                            logger.err('daq-map db: failed to create table: ' + err);
+                            logger.error('daq-map db: failed to create table: ' + err);
                             reject();
                         } else {
                             resolve(db);
@@ -342,7 +342,7 @@ function DaqNode(_settings, _log, _id) {
             try {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
-                        logger.err('daq-data db: failed to bind: ' + err);
+                        logger.error('daq-data db: failed to bind: ' + err);
                         reject();
                     }
                     logger.info('daqstorage: Connected to ' + dbfile + ' database.');
@@ -350,7 +350,7 @@ function DaqNode(_settings, _log, _id) {
                 db.serialize(function () {
                     db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
                         if (err) {
-                            logger.err('daq-data db: failed to create table: ' + err);
+                            logger.error('daq-data db: failed to create table: ' + err);
                             reject();
                         } else {
                             resolve(db);
@@ -381,10 +381,10 @@ function DaqNode(_settings, _log, _id) {
                     }
                 });
             }).catch(function (err) {
-                logger.err('checkToArchiveDBfile: error ' + err);
+                logger.error('checkToArchiveDBfile: error ' + err);
             });
         }).catch(function (err) {
-            logger.err('_checkToArchiveDBfile: error ' + err);
+            logger.error('_checkToArchiveDBfile: error ' + err);
         });
     }
 
