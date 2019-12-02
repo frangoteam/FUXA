@@ -5387,7 +5387,8 @@ var FuxaViewComponent = (function () {
         if (view) {
             this.id = view.id;
             this.view = view;
-            this.dataContainer.nativeElement.innerHTML = view.svgcontent;
+            this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+            ;
             if (view.profile.bkcolor) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
@@ -7977,7 +7978,7 @@ var GaugesManager = (function () {
             }
         }
         var clicks = this.getBindClick(ga);
-        if (clicks) {
+        if (clicks && clicks.length > 0) {
             this.eventGauge[ga.id] = ga;
             if (!this.mapGaugeView[ga.id]) {
                 this.mapGaugeView[ga.id] = {};
@@ -7987,6 +7988,11 @@ var GaugesManager = (function () {
             else if (!this.mapGaugeView[ga.id][domViewId]) {
                 this.mapGaugeView[ga.id][domViewId] = ga;
                 bindclick(ga);
+            }
+            // add pointer
+            var ele = document.getElementById(ga.id);
+            if (ele) {
+                ele.style.cursor = "pointer";
             }
             // bindclick(ga);
         }

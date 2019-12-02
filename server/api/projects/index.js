@@ -1,3 +1,7 @@
+/**
+ * 'api/project': Project API to GET/POST project data
+ */
+
 var express = require("express");
 var runtime;
 
@@ -15,7 +19,10 @@ module.exports = {
             }
         });
 
-        // Project
+        /**
+         * GET Project data
+         * Take from project storage and reply 
+         */
         prjApp.get("/api/project", function(req, res) {
             console.log('/api/project');
             const data = runtime.project.getProject(req.body).then(result => {
@@ -36,9 +43,13 @@ module.exports = {
             })
         });
 
+        /**
+         * POST Project data
+         * Set to project storage
+         */
         prjApp.post("/api/project", function(req, res, next) {
             runtime.project.setProject(req.body).then(function(data) {
-                runtime.updateProject().then(function(result) {
+                runtime.restart().then(function(result) {
                     res.end();
                 });
             }).catch(function(err) {
@@ -51,6 +62,10 @@ module.exports = {
             });
         });
 
+        /**
+         * POST Single Project data
+         * Set the value (general/view/device/...) to project storage
+         */
         prjApp.post("/api/projectData", function(req, res, next) {
             // var param = JSON.parse(JSON.stringify(req.body));
             runtime.project.setProjectData(req.body.cmd, req.body.data).then(setres => {
@@ -67,6 +82,10 @@ module.exports = {
             });
         });
 
+        /**
+         * GET Project demo data
+         * Take the project demo file from server folder 
+         */
         prjApp.get("/api/projectdemo", function (req, res) {
             console.log('/api/projectdemo');
             const data = runtime.project.getProjectDemo();

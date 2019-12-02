@@ -1,3 +1,6 @@
+/**
+ * 'api/project': API server initialization and general GET/POST
+ */
 
 var express = require("express");
 var bodyParser = require("body-parser");
@@ -22,6 +25,10 @@ function init(_server, _runtime) {
 
             prjApi.init(runtime);
             apiApp.use(prjApi.app());
+
+            /**
+             * GET Server setting data
+             */
             apiApp.get("/api/settings", function (req, res) {
                 console.log('/api/settings');
                 if (runtime.settings) {
@@ -32,7 +39,7 @@ function init(_server, _runtime) {
                     res.status(404).end();
                 }
             });
-            runtime.logger.info("api init successful!");
+            runtime.logger.info("api: init successful!");
         } else {
         }
         resolve();

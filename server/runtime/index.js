@@ -33,7 +33,6 @@ function init(_io, _api, _settings, log) {
     });
     devices.init(runtime);
 
-    events.on("project:change", updateProject);
     events.on("project-device:change", updateDevice);
     events.on("device-value:changed", updateDeviceValues);      // event from devices (S7/OPCUA/...)
     events.on("device-status:changed", updateDeviceStatus);     // event from devices (S7/OPCUA/...)
@@ -183,18 +182,6 @@ function update(cmd, data) {
             if (cmd === project.ProjectDataCmdType.SetDevice) {
                 devices.updateDevice(data);
             }
-            // if (devices.isWoking()) {
-            //     reject();
-            // }
-            // var changed = project.updateProject();
-            // if (changed === true) { // reset all
-            //     devices.update();
-            // } else {
-            //     for (var id in project.getDevices()) {
-            //         // manage: to remove, to update, to add
-            //         events.emit("project-device:change", { id: id, retain: true });
-            //     }
-            // }
             resolve(true);
         } catch (err) {
             if (err.stack) {
@@ -207,7 +194,7 @@ function update(cmd, data) {
     });
 }
 
-function updateProject(cmd, data) {
+function restart() {
     return new Promise(function (resolve, reject) {
         try {
             stop().then(function () {
@@ -223,19 +210,6 @@ function updateProject(cmd, data) {
                 logger.error('runtime.update-project-stop: ' + err);
                 reject();
             });
-            // if (devices.isWoking()) {
-            //     reject();
-            // }
-            // var changed = project.updateProject();
-            // if (changed === true) { // reset all
-            //     devices.update();
-            // } else {
-            //     for (var id in project.getDevices()) {
-            //         // manage: to remove, to update, to add
-            //         events.emit("project-device:change", { id: id, retain: true });
-            //     }
-            // }
-            // resolve(true);
         } catch (err) {
             if (err.stack) {
                 logger.error(err.stack);
@@ -283,12 +257,12 @@ var runtime = module.exports = {
     start: start,
     stop: stop,
     update: update,
+    restart: restart,
     
     get io() { return io },
     get logger() { return logger },
     get settings() { return settings },
     get daqStorage() { return daqstorage },
     events: events,
-    updateProject: updateProject
 
 }

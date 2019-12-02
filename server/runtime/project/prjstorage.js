@@ -9,9 +9,9 @@ const fs = require('fs');
 const path = require('path');
 var sqlite3 = require('sqlite3').verbose();
 
-var settings
-var logger;
-var db_prj;
+var settings        // Application settings
+var logger;         // Application logger
+var db_prj;         // Database of project
 
 /**
  * Init and bind the database resource
@@ -161,6 +161,9 @@ function close() {
     }
 }
 
+/**
+ * Clear all table in database
+ */
 function clearAll() {
     return new Promise(function (resolve, reject) {
         // prepare query
@@ -178,43 +181,13 @@ function clearAll() {
     });
 }
 
-// function _updateSection(section) {
-//     return new Promise(function (resolve, reject) {
-//         var sql = "UPDATE ? SET value = ? WHERE name = ?";
-//         db_prj.run(sql, [section.table, section.value, section.name], function (err) {
-//             if (err !== null) {
-//                 reject(err);
-//             } else {
-//                 resolve();
-//             }
-//         });
-//     });
-// }
-
-// export class ProjectData {
-//     version: string = "1.00"
-//     projectFile: string;
-//     server: Device = new Device();
-//     hmi: Hmi = new Hmi();
-//     devices = {};
-//     charts: Chart[] = [];
-// }
-// export class Hmi {
-//     _id: string;
-//     _version: string;
-//     name: string = '';
-//     layout: LayoutSettings = new LayoutSettings();
-//     views: View[] = [];
-//     // variables: Variable[] = [];
-//     // alarmes: Alarm[] = [];
-//     // devices = {};
-// }
-
+/**
+ * Database Table
+ */
 const TableType = {
     GENERAL: 'general',
     DEVICES: 'devices',
     VIEWS: 'views',
-    CHARTS: 'charts'
 }
 
 module.exports = {
@@ -227,7 +200,4 @@ module.exports = {
     deleteSection: deleteSection,
     setDefault: setDefault,
     TableType: TableType,
-    // reset: reset,
-    // addDaqNode: addDaqNode,
-    // getNodeValues: getNodeValues
 };

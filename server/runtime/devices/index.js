@@ -1,24 +1,30 @@
+/**
+ * Devices manager, manage all the configurated devices in project
+ */
+
 'use strict';
-var Device = require("./device");
+var Device = require('./device');
 
-var deviceList = [];
-var activeDevices = {};
-var runtime;
-var wokingStatus;
+var activeDevices = {};             // Actives Devices list
+var runtime;                        // Access to application resource like logger/settings
+var wokingStatus;                   // Current status (start/stop) to know if is working
 
+/**
+ * Init by set the access to application resource
+ * @param {*} _runtime 
+ */
 function init(_runtime) {
     runtime = _runtime;
-    // if (runtime.project) {
-    //     load();
-    // }
-    // init device from settings
 }
 
+/**
+ * Load and start all Devices actives
+ */
 function start() {
     wokingStatus = 'starting';
     devices.load();
     return new Promise(function (resolve, reject) {
-        runtime.logger.info("devices-start all (" + Object.keys(activeDevices).length + ")");
+        runtime.logger.info('devices.start-all (' + Object.keys(activeDevices).length + ')');
         // var deviceStartfnc = [];
         for (var id in activeDevices) {
             activeDevices[id].start();
@@ -29,41 +35,47 @@ function start() {
     });
 }
 
+/**
+ * Stop all Devices
+ */
 function stop() {
     wokingStatus = 'stopping';
     return new Promise(function (resolve, reject) {
-        runtime.logger.info("devices-stop all (" + Object.keys(activeDevices).length + ")");
+        runtime.logger.info('devices.stop-all (' + Object.keys(activeDevices).length + ')');
         var deviceStopfnc = [];
         for (var id in activeDevices) {
-            // activeDevices[id].stop();
             deviceStopfnc.push(activeDevices[id].stop());
         }
         return Promise.all(deviceStopfnc).then(values => {
-            console.log(values);
             resolve(true);
             wokingStatus = null;
         }, reason => {
-            console.log(reason);
+            runtime.logger.error('devices.stop-all: ' + reason);
             resolve(reason);
             wokingStatus = null;
         });
     });
 }
 
+/**
+ * Update all by restart all devices
+ */
 function update() {
     devices.stop().then(function () {
         devices.start().then(function () {
-            // devices.woking = null;
+
         }).catch(function (err) {
-            runtime.logger.error('devices start error');
-            // devices.woking = null;
+            runtime.logger.error('devices.update-start: ' + err);
         });
     }).catch(function (err) {
-        runtime.logger.error('devices stop error');
-        // devices.woking = null;
+        runtime.logger.error('devices.ipdate-stop: ' + err);
     });
 }
 
+/**
+ * Update the device, load and restart it
+ * @param {*} device 
+ */
 function updateDevice(device) {
     if (!activeDevices[device.name]) {
         devices.loadDevice(device);
@@ -77,8 +89,7 @@ function updateDevice(device) {
                 activeDevices[device.name].start();
             }
         }).catch(function (err) {
-            runtime.logger.error('Update Device ' + device.name + ' stop error');
-            // devices.woking = null;
+            runtime.logger.error('devices.update-device ' + device.name + ': ' + err);
         });
     }
 }
@@ -99,11 +110,15 @@ function load() {
     // log remove device not used
     for (var id in activeDevices) {
         if (Object.keys(tempdevices).indexOf(id) < 0) {
-            runtime.logger.info("device removed: " + id);
+            runtime.logger.info('devices.load-removed: ' + id);
         }
     }
 }
 
+/**
+ * Load the device to manage and set on depending of settings 
+ * @param {*} device 
+ */
 function loadDevice(device) {
     if (activeDevices[device.name]) {
         // device exist
@@ -120,6 +135,9 @@ function loadDevice(device) {
     }
 }
 
+/**
+ * Return all devices status 
+ */
 function getDevicesStatus() {
     var adev = {};
     for (var id in activeDevices) {
@@ -128,6 +146,9 @@ function getDevicesStatus() {
     return adev;
 }
 
+/**
+ * Return all devices values
+ */
 function getDevicesValues() {
     var adev = {};
     for (var id in activeDevices) {
@@ -136,16 +157,30 @@ function getDevicesValues() {
     return adev;
 }
 
+/**
+ * Return if manager is working (started or stopped)
+ */
 function isWoking() {
     return (wokingStatus) ? true : false;
 }
 
+/**
+ * Set the Device Tag value
+ * @param {*} deviceid 
+ * @param {*} sigid 
+ * @param {*} value 
+ */
 function setDeviceValue(deviceid, sigid, value) {
     if (activeDevices[deviceid]) {
         activeDevices[deviceid].setValue(sigid, value);
     }
 }
 
+/**
+ * Return the Device browser result Tags/Nodes
+ * @param {*} deviceid 
+ * @param {*} node 
+ */
 function browseDevice(deviceid, node) {
     return new Promise(function (resolve, reject) {
         if (activeDevices[deviceid] && activeDevices[deviceid].browse) {
@@ -160,6 +195,11 @@ function browseDevice(deviceid, node) {
     });
 }
 
+/**
+ * Return Device Tag/Node attribute
+ * @param {*} deviceid 
+ * @param {*} node 
+ */
 function readNodeAttribute(deviceid, node) {
     return new Promise(function (resolve, reject) {
         if (activeDevices[deviceid] && activeDevices[deviceid].readNodeAttribute) {

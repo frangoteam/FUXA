@@ -63,3 +63,6 @@ typings/
 
 # database
 _db/
+
+# appdata
+server/_appdata

@@ -7,10 +7,10 @@
 const fs = require('fs');
 const path = require('path');
 
-var events = require("../events");
+var events = require('../events');
 const prjstorage = require('./prjstorage');
 
-const version = "1.00";
+const version = '1.00';
 var settings;                   // Application settings
 var logger;                     // Application logger
 
@@ -28,27 +28,28 @@ function init(_settings, log) {
     // Init Project database
     return new Promise(function (resolve, reject) {
         prjstorage.init(settings, logger).then(result => {
-            logger.info('prjstorage init successful!');
+            logger.info('project.prjstorage-init-successful!');
             if (result) {
                 resolve();
             } else {
                 prjstorage.setDefault().then(result => {
-                    logger.info("prjstorage.seDefault successful!");
+                    logger.info('project.prjstorage-seDefault-successful!');
                     resolve();
                 }).catch(function (err) {
-                    logger.error("prjstorage.failed-seDefault " + err);
+                    logger.error('project.prjstorage.failed-seDefault: ' + err);
                     resolve();
                 });
             }
         }).catch(function (err) {
-            logger.error("prjstorage.failed-to-init");
+            logger.error('project.prjstorage.failed-to-init: ' + err);
             reject(err);
         });
     });
 }
 
 /**
- * Load project resource in a data
+ * Load project resource in a local data
+ * Read all storaged sections and fill in local data
  */
 function load() {
     return new Promise(function (resolve, reject) {
@@ -78,40 +79,23 @@ function load() {
                     }
                     resolve();
                 }).catch(function (err) {
-                    logger.error("prjstorage.failed-to-load " + prjstorage.TableType.DEVICES);
+                    logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.DEVICES + ': ' + err);
                     reject(err);
                 });
             }).catch(function (err) {
-                logger.error("prjstorage.failed-to-load " + prjstorage.TableType.VIEWS);
+                logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.VIEWS + ': ' + err);
                 reject(err);
             });
         }).catch(function (err) {
-            logger.error("prjstorage.failed-to-load " + prjstorage.TableType.GENERAL);
+            logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.GENERAL + ': ' + err);
             reject(err);
         });
     });
-    // // Read project settings 
-    // var prjfiles = getProjectFile();
-    // projectFile = path.join(settings.workDir, "project.fuxap");
-    // if (!prjfiles || prjfiles.length <= 0) {
-    //     logger.info("project not found!");
-    //     var defaultProject = path.join(settings.appDir, "project.default.json");
-    //     // Default settings file has not been modified - safe to copy
-    //     fs.copyFileSync(defaultProject, projectFile)
-    //     logger.info("project.fuxap default created successful!");
-    //     return updateProject();
-    // } else {
-    //     projectFile = path.join(settings.workDir, prjfiles[0]);
-    //     var result = updateProject();
-    //     if (result) {
-    //         logger.info("project: " + path.basename(projectFile) + " load successful!");
-    //     }
-    //     return result;
-    // }
 }
 
 /**
- * Save the value in project database
+ * Save the value in project storage
+ * First set the value in local data, then save in storage
  * @param {*} cmd 
  * @param {*} data 
  */
@@ -149,14 +133,14 @@ function setProjectData(cmd, value) {
                 prjstorage.deleteSection(section).then(result => {
                     resolve(true);
                 }).catch(function (err) {
-                    logger.error("prjstorage.failed-to-deletedata " + section.table);
+                    logger.error('prjstorage.failed-to-deletedata ' + section.table);
                     reject(err);
                 });
             } else {
                 prjstorage.setSection(section).then(result => {
                     resolve(true);
                 }).catch(function (err) {
-                    logger.error("prjstorage.failed-to-setdata " + section.table);
+                    logger.error('prjstorage.failed-to-setdata ' + section.table);
                     reject(err);
                 });
             }
@@ -199,19 +183,35 @@ function removeView(view) {
     return false;
 }
 
+/**
+ * Set Device to loacal data
+ * @param {*} device 
+ */
 function setDevice(device) {
     data.devices[device.name] = device;
 }
 
+/**
+ * Remove Device from local data
+ * @param {*} device 
+ */
 function removeDevice(device) {
     delete data.devices[device.name];
     return true;
 }
 
+/**
+ * Set HMI Layout to local data
+ * @param {*} layout 
+ */
 function setHmiLayout(layout) {
     data.hmi.layout = layout;
 }
 
+/**
+ * Set Charts  
+ * @param {*} charts 
+ */
 function setCharts(charts) {
     data.charts = charts;
 }
@@ -222,17 +222,6 @@ function getProject() {
     return new Promise(function (resolve, reject) {
         resolve(data);
     });
-}
-
-
-
-
-function getProjectFile() {
-    var filesList = fs.readdirSync(settings.workDir);
-    filesList = filesList.filter(function (file) {
-        return path.extname(file).toLowerCase() === '.fuxap' && path.basename(file).toLowerCase().startsWith('project');
-    });
-    return filesList;
 }
 
 /**
@@ -263,7 +252,7 @@ function setProject(prjcontent) {
                                     if (hmi[hk] && hmi[hk].length > 0) {
                                         for (var i = 0; i < hmi[hk].length; i++) {
                                             var view = hmi[hk][i];
-                                            scs.push({ table: prjstorage.TableType.VIEWS, name: view.name, value: view });
+                                            scs.push({ table: prjstorage.TableType.VIEWS, name: view.id, value: view });
                                         }
                                     }
                                 } else {
@@ -281,13 +270,13 @@ function setProject(prjcontent) {
                     }
                 });
                 prjstorage.setSections(scs).then(() => {
-                    logger.info('project.set-project successfull');
+                    logger.info('project.prjstorage.set-project successfull!');
                     resolve(true);
                 }).catch(function (err) {
                     reject(err);
                 });
             }).catch(function (err) {
-                logger.error("prjstorage.failed-to-clear ");
+                logger.error('project.prjstorage.failed-to-clear: ' + err);
                 reject(err);
             });
         } catch (err) {
@@ -296,34 +285,18 @@ function setProject(prjcontent) {
     });
 }
 
-function deleteProject(prjcontent) {
-    return new Promise(function (resolve, reject) {
-        try {
-
-            logger.info('project.delete-project successfull');
-            resolve(true);
-        } catch (err) {
-            reject();
-        }
-    });
-}
-
+/**
+ * Return Devices list
+ */
 function getDevices() {
     return data.devices;
 }
 
-function updateProject() {
-    var prjfiles = getProjectFile();
-    if (prjfiles) {
-        var tempfile = path.join(settings.workDir, prjfiles[0]);
-        projectdata = JSON.parse(fs.readFileSync(tempfile, 'utf8'));
-        return true;
-    }
-    return false;
-}
-
+/**
+ * Return Project demo from file
+ */
 function getProjectDemo() {
-    var demoProject = path.join(settings.appDir, "project.demo.fuxap");
+    var demoProject = path.join(settings.appDir, 'project.demo.fuxap');
     return JSON.parse(fs.readFileSync(demoProject, 'utf8'));;
 }
 
@@ -341,7 +314,6 @@ module.exports = {
     load: load,
     getDevices: getDevices,
     setProjectData: setProjectData,
-    updateProject: updateProject,
     getProject: getProject,
     setProject: setProject,
     getProjectDemo: getProjectDemo,
