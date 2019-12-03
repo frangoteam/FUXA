@@ -94,15 +94,18 @@ function OpcUAclient(_data, _logger, _events) {
      * Emit connection status, Clear the memory Tags value
      */
     this.disconnect = function () {
-        _disconnect(function (err) {
-            if (err) {
-                logger.error(data.name + ': disconnect failure, ' + err);
-            }
-            connected = false;
-            monitored = false;
-            _checkWorking(false);
-            _emitStatus('connect-off');
-            _clearVarsValue();
+        return new Promise(function (resolve, reject) {
+            _disconnect(function (err) {
+                if (err) {
+                    logger.error(data.name + ': disconnect failure, ' + err);
+                }
+                connected = false;
+                monitored = false;
+                _checkWorking(false);
+                _emitStatus('connect-off');
+                _clearVarsValue();
+                resolve(true);
+            });
         });
     }
 
