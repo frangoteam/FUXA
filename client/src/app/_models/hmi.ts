@@ -2,9 +2,6 @@ import { Tag, Device } from './device';
 import { extend } from 'webdriver-js-extender';
 
 export class Hmi {
-    _id: string;
-    _version: string;
-    name: string = '';
     layout: LayoutSettings = new LayoutSettings();
     views: View[] = [];
     // variables: Variable[] = [];

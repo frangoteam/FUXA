@@ -13,146 +13,146 @@ import { GaugesManager } from '../gauges/gauges.component';
 import { Hmi, View, NaviModeType } from '../_models/hmi';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+	selector: 'app-home',
+	templateUrl: './home.component.html',
+	styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('sidenav') sidenav: SidenavComponent;
-  @ViewChild('matsidenav') matsidenav: MatSidenav;
-  @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
-  // @ViewChild('iframeview') iframeview: IframeComponent;
+	@ViewChild('sidenav') sidenav: SidenavComponent;
+	@ViewChild('matsidenav') matsidenav: MatSidenav;
+	@ViewChild('fuxaview') fuxaview: FuxaViewComponent;
+	// @ViewChild('iframeview') iframeview: IframeComponent;
 
-  homeView: View = new View();
-  hmi: Hmi = new Hmi();
-  showSidenav = 'over';
-  showHomeView = false;
-  homeLink = '';
-  showHomeLink = false;
+	isLoading = true;
+	homeView: View = new View();
+	hmi: Hmi = new Hmi();
+	showSidenav = 'over';
+	showHomeView = false;
+	homeLink = '';
+	showHomeLink = false;
 
-  private subscriptionLoad: Subscription;
+	private subscriptionLoad: Subscription;
 
-  constructor(private projectService: ProjectService,
-    private router: Router,
-    private hmiService: HmiService,
-    private gaugesManager: GaugesManager) { }
+	constructor(private projectService: ProjectService,
+		private router: Router,
+		private hmiService: HmiService,
+		private gaugesManager: GaugesManager) { }
 
-  ngOnInit() {
-    try {
-      this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
-        try {
-          this.loadHmi();
-        }
-        catch (e) {
-          console.log(e);
-        }
-      });
-    }
-    catch (e) {
-      console.log(e);
-    }
-  }
+	ngOnInit() {
+		// try {
+		//   this.loadHmi();
+		//   this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
+		//     try {
+		//       this.loadHmi();
+		//     }
+		//     catch (e) {
+		//       console.log(e);
+		//     }
+		//   });
+		// }
+		// catch (e) {
+		//   console.log(e);
+		// }
+	}
 
-  ngAfterViewInit() {
-    try {
-      // this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
-      //   try {
-      //     this.loadHmi();
-      //   }
-      //   catch (e) {
-      //     console.log(e);
-      //   }
-      // });
-      this.loadHmi();
-      if (!this.homeView) {
-        setTimeout(() => {
-          this.loadHmi();
-        }, 4000);
-      }
-    }
-    catch (e) {
-      console.log(e);
-    }
-  }
+	ngAfterViewInit() {
+		try {
+			let hmi = this.projectService.getHmi();
+			if (!hmi) {
+				this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+					this.loadHmi();
+				}, error => {
+					console.log('Error loadHMI');
+				});
+			} else {
+				this.loadHmi();
+			}
+		}
+		catch (e) {
+			console.log(e);
+		}
+	}
 
-  ngOnDestroy() {
-    try {
-      if (this.subscriptionLoad) {
-        this.subscriptionLoad.unsubscribe();
-      }
-    } catch (e) {
-    }
-  }
+	ngOnDestroy() {
+		try {
+			if (this.subscriptionLoad) {
+				this.subscriptionLoad.unsubscribe();
+			}
+		} catch (e) {
+		}
+	}
 
-  onGoToPage(event: string) {
-    const view = this.hmi.views.find(x => x.id === event);
-    if (view) {
-      this.homeView = view;
-      this.fuxaview.loadHmi(this.homeView);
-    }
-    this.showHomeLink = false;
-    this.showHomeView = (this.homeView) ? true : false;
-  }
+	onGoToPage(event: string) {
+		const view = this.hmi.views.find(x => x.id === event);
+		if (view) {
+			this.homeView = view;
+			this.fuxaview.loadHmi(this.homeView);
+		}
+		this.showHomeLink = false;
+		this.showHomeView = (this.homeView) ? true : false;
+	}
 
-  onGoToLink(event: string) {
-    if (event.indexOf('://') >= 0) {
-      // this.showHomeView = false;
-      // this.showHomeLink = true;
-      // this.iframeview.loadLink(event);
+	onGoToLink(event: string) {
+		if (event.indexOf('://') >= 0) {
+			// this.showHomeView = false;
+			// this.showHomeLink = true;
+			// this.iframeview.loadLink(event);
 
-    } else {
-      this.router.navigate([event]).then(data => {
-        console.log('Route ' + event + ' exists, redirection is done');
-      }).catch(e => {
-        console.log('Route ' + event + '  not found, redirection stopped with no error raised');
-        // try iframe link
-      });
-    }
-    console.log(event);
-  }
+		} else {
+			this.router.navigate([event]).then(data => {
+				console.log('Route ' + event + ' exists, redirection is done');
+			}).catch(e => {
+				console.log('Route ' + event + '  not found, redirection stopped with no error raised');
+				// try iframe link
+			});
+		}
+		console.log(event);
+	}
 
-  askValue() {
-    this.hmiService.askDeviceValues();
-  }
+	askValue() {
+		this.hmiService.askDeviceValues();
+	}
 
-  askStatus() {
-    this.hmiService.askDeviceStatus();
-  }
+	askStatus() {
+		this.hmiService.askDeviceStatus();
+	}
 
-  private loadHmi() {
-    let hmi = this.projectService.getHmi();
-    if (hmi) {
-      this.hmi = hmi;
-    }
-    if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
-      if (this.hmi.layout.start) {
-        const startView = this.hmi.views.find(x => x.id === this.hmi.layout.start);
-        if (startView) {
-          this.homeView = startView;
-        }
-      } else {
-        this.homeView = this.hmi.views[0];
-      }
-      // check sidenav
-      let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
-      if (this.hmi.layout && nvoid !== NaviModeType.void) {
-        if (nvoid === NaviModeType.over) {
-          this.showSidenav = 'over';
-        } else if (nvoid === NaviModeType.fix) {
-          this.showSidenav = 'side';
-          this.matsidenav.open();
-        } else if (nvoid === NaviModeType.push) {
-          this.showSidenav = 'push';
-        }
-        this.sidenav.setLayout(this.hmi.layout);
-      } else {
-        this.showSidenav = null;
-      }
-    }
-    this.showHomeView =  (this.homeView) ? true : false;
-    if (this.homeView && this.fuxaview) {
-        this.fuxaview.loadHmi(this.homeView);
-    }
-  }
+	private loadHmi() {
+		let hmi = this.projectService.getHmi();
+		if (hmi) {
+			this.hmi = hmi;
+		}
+		if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
+			if (this.hmi.layout && this.hmi.layout.start) {
+				const startView = this.hmi.views.find(x => x.id === this.hmi.layout.start);
+				if (startView) {
+					this.homeView = startView;
+				}
+			} else {
+				this.homeView = this.hmi.views[0];
+			}
+			// check sidenav
+			this.showSidenav = null;
+			if (this.hmi.layout) {
+				let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
+				if (this.hmi.layout && nvoid !== NaviModeType.void) {
+					if (nvoid === NaviModeType.over) {
+						this.showSidenav = 'over';
+					} else if (nvoid === NaviModeType.fix) {
+						this.showSidenav = 'side';
+						this.matsidenav.open();
+					} else if (nvoid === NaviModeType.push) {
+						this.showSidenav = 'push';
+					}
+					this.sidenav.setLayout(this.hmi.layout);
+				}
+			}
+			this.showHomeView = (this.homeView) ? true : false;
+		}
+		if (this.homeView && this.fuxaview) {
+			this.fuxaview.loadHmi(this.homeView);
+		}
+		this.isLoading = false;
+	}
 }

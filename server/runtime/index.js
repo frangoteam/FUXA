@@ -18,23 +18,24 @@ function init(_io, _api, _settings, log) {
     io = _io;
     settings = _settings;
     logger = log;
-    if (!project.init(settings, logger)) {
-        logger.error("runtime.failed-to-init");
+    if (_api) {
+        apiDevice = _api;
     }
+
     if (!daqstorage.init(settings, logger)) {
         logger.error("daqstorage.failed-to-init");
     }
 
-    events.on("project:change", updateProject);
-    events.on("project-device:change", updateDevice);
-    events.on("device-value:changed", updateDeviceValues);
-    events.on("device-status:changed", updateDeviceStatus);
-
-    if (_api) {
-        apiDevice = _api;
-    }
+    project.init(settings, logger).then(result => {
+        logger.info("runtime init successful!");
+    }).catch(function (err) {
+        logger.error("runtime.failed-to-init project");
+    });
     devices.init(runtime);
-    logger.info("runtime init successful!");
+
+    events.on("project-device:change", updateDevice);
+    events.on("device-value:changed", updateDeviceValues);      // event from devices (S7/OPCUA/...)
+    events.on("device-status:changed", updateDeviceStatus);     // event from devices (S7/OPCUA/...)
 
     io.on('connection', (socket) => {
         logger.info('io client connected');
@@ -62,7 +63,7 @@ function init(_io, _api, _settings, log) {
                     devices.setDeviceValue(message.var.source, message.var.name, message.var.value)
                 }
             } catch (err) {
-                logger.error('socket.on:device-values error: ' + err);
+                logger.error('socket.on.device-values: ' + err);
             }
         });
         // client ask device browse
@@ -74,14 +75,14 @@ function init(_io, _api, _settings, log) {
                             message.result = result;
                             io.emit("device-browse", message);
                         }).catch(function (err) {
-                            logger.error('devices browse error: ' + err);
+                            logger.error('socket.on.device-browse: ' + err);
                             message.error = err;
                             io.emit("device-browse", message);
                         });
                     }
                 }
             } catch (err) {
-                logger.error('socket.on:device-values error: ' + err);
+                logger.error('socket.on.device-values: ' + err);
             }
         });
         // client ask device node attribute
@@ -93,14 +94,14 @@ function init(_io, _api, _settings, log) {
                             // message.result = result;
                             io.emit("device-node-attribute", message);
                         }).catch(function (err) {
-                            logger.error('device node attribute error: ' + err);
+                            logger.error('socket.on.read-node-attribute: ' + err);
                             message.error = err;
                             io.emit("device-node-attribute", message);
                         });
                     }
                 }
             } catch (err) {
-                logger.error('socket.on:device-values error: ' + err);
+                logger.error('socket.on.device-node-attribute: ' + err);
             }
         });
         // client query DAQ values
@@ -131,15 +132,15 @@ function init(_io, _api, _settings, log) {
                         io.emit('daq-result', {gid: msg.gid, values: res });
                     }, reason => {
                         if (reason && reason.stack) {
-                            logger.error('getDaqValue error: ' + reason.stack);
+                            logger.error('socket.on.daq-query: ' + reason.stack);
                         } else {
-                            logger.error('getDaqValue error: ' + reason);
+                            logger.error('socket.on.daq-query: ' + reason);
                         }
                         io.emit('daq-error', { gid: msg.gid, error: reason });
                     });
                 }
             } catch (err) {
-                logger.error('socket.on:daq-query error: ' + err);
+                logger.error('socket.on.daq-query: ' + err);
             }
         });
     });
@@ -147,13 +148,20 @@ function init(_io, _api, _settings, log) {
 
 function start() {
     return new Promise(function (resolve, reject) {
-        // check to start
-        devices.start().then(function () {
-            // devices.woking = null;
+        // load project
+        project.load().then(result => {
+            // start to comunicate with devices
+            devices.start().then(function () {
+                // devices.woking = null;
+                resolve(true);
+            }).catch(function (err) {
+                logger.error('runtime.failed-to-start: ' + err);
+                reject();
+            });
         }).catch(function (err) {
-            logger.error('devices start error: ' + err);
+            logger.error('runtime.failed-to-start: ' + err);
+            reject();
         });
-        resolve(true);
     });
 }
 
@@ -162,28 +170,46 @@ function stop() {
         devices.stop().then(function () {
 
         }).catch(function (err) {
-            logger.error('devices stop error: ' + err);
+            logger.error('runtime.failed-to-stop: ' + err);
         });
         resolve(true);
     });
 }
 
-function updateProject(event) {
+function update(cmd, data) {
     return new Promise(function (resolve, reject) {
         try {
-            if (devices.isWoking()) {
-                reject();
-            }
-            var changed = project.updateProject();
-            if (changed === true) { // reset all
-                devices.update();
-            } else {
-                for (var id in project.getDevices()) {
-                    // manage: to remove, to update, to add
-                    events.emit("project-device:change", { id: id, retain: true });
-                }
+            if (cmd === project.ProjectDataCmdType.SetDevice) {
+                devices.updateDevice(data);
             }
             resolve(true);
+        } catch (err) {
+            if (err.stack) {
+                logger.error(err.stack);
+            } else {
+                logger.error(err);
+            }
+            reject();
+        }
+    });
+}
+
+function restart() {
+    return new Promise(function (resolve, reject) {
+        try {
+            stop().then(function () {
+                logger.info('runtime.update-project: stopped!');
+                start().then(function () {
+                    logger.info('runtime.update-project: start!');
+                    resolve(true);
+                }).catch(function (err) {
+                    logger.error('runtime.update-project-start: ' + err);
+                    reject();
+                });                
+            }).catch(function (err) {
+                logger.error('runtime.update-project-stop: ' + err);
+                reject();
+            });
         } catch (err) {
             if (err.stack) {
                 logger.error(err.stack);
@@ -230,12 +256,13 @@ var runtime = module.exports = {
     project: project,
     start: start,
     stop: stop,
-
+    update: update,
+    restart: restart,
+    
     get io() { return io },
     get logger() { return logger },
     get settings() { return settings },
     get daqStorage() { return daqstorage },
     events: events,
-    updateProject: updateProject
 
 }

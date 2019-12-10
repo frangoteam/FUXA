@@ -12,6 +12,6 @@
   </div>
   <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
     <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-    <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    <button mat-raised-button [disabled]="!isValid(data.name)" color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
   </div>
 </div>

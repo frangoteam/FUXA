@@ -23,7 +23,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Connect to PLC
-     * emit connection status to clients, clear all tags values
+     * Emit connection status to clients, clear all Tags values
      */
     this.connect = function () {
         return new Promise(function (resolve, reject) {
@@ -66,7 +66,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Disconnect the PLC
-     * emit connection status to clients, clear all tags values
+     * Emit connection status to clients, clear all Tags values
      */
     this.disconnect = function () {
         return new Promise(function (resolve, reject) {
@@ -78,7 +78,7 @@ function S7client(_data, _logger, _events) {
             } else {
                 var result = s7client.Disconnect();
                 if (result) {
-                    logger.info(data.name + ' disconnected!');
+                    logger.info(data.name + ': disconnected!');
                 } else {
                     logger.error(data.name + ' try to disconnect failed!');
                 }
@@ -91,7 +91,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Read values in polling mode 
-     * update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
      */
     this.polling = function () {
         if (_checkWorking(true)) {
@@ -112,12 +112,6 @@ function S7client(_data, _logger, _events) {
                         } else if (varsValueChanged) {
                             this.addDaq(varsValueChanged);
                         }
-                        // for (var dbid in varsValue) {
-                        //     this.addDaq(dbid, varsValue[dbid].value);
-                        // }
-                        // for (var dbid in varsValueChanged) {
-                        //     this.addDaq(dbid, varsValueChanged[dbid].value);
-                        // }
                     }
                 } else {
                     // console.log('not');
@@ -130,21 +124,6 @@ function S7client(_data, _logger, _events) {
                 }
                 _checkWorking(false);
             });
-            // _readDB(parseInt(dbnum), Object.values(db[dbnum].Items)).then(function (result) {
-            //     _checkWorking(false);
-            //     if (result.length) {
-            //         _emitValues(result);
-            //     }
-            //     varsValue = result;
-            // }).catch(function (err) {
-            //     if (err.stack) {
-            //         logger.error(data.name + ' _readDB error: ' + err.stack);
-            //     } else {
-            //         logger.error(data.name + ' _readDB error: ' + err);
-            //     }
-            //     // devices.woking = null;
-            //     _checkWorking(false);
-            // });                    
         }
     }
 
@@ -179,7 +158,7 @@ function S7client(_data, _logger, _events) {
                 varsItemsMap[id] = db[varDb.dbnum].Items[varDb.start];
             }
         }
-        logger.info(data.name + ' data loaded (' + count + ')');
+        logger.info(data.name + ': data loaded (' + count + ')');
     }
 
     /**
@@ -210,7 +189,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Set the Tag value
-     * read the current Tag and write the value
+     * Read the current Tag object, write the value in object and send to SPS 
      */
     this.setValue = function (sigid, value) {
         var varDb = _getDBValue(data.tags[sigid]);
@@ -233,7 +212,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Return if PLC is connected
-     * don't work if PLC will disconnect
+     * Don't work if PLC will disconnect
      */
     this.isConnected = function () {
         return s7client.Connected();
@@ -251,7 +230,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Clear the Tags values by setting to null
-     * emit to clients
+     * Emit to clients
      */
     var _clearVarsValue = function () {
         for (let id in varsValue) {

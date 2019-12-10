@@ -1,50 +1,9 @@
-
+/**
+ * OPC UA Client Driver
+ */
 
 const opcua = require('node-opcua');
 const async = require('async');
-
-// try {
-//     var the_session;
-//     const endpoint = 'opc.tcp://' + require('os').hostname() + ':48010';//':4861';
-//     client.connect(endpoint, function (err) {
-//         if (err) {
-//             logger.error(err);
-//         } else {
-//             logger.debug("connected");
-//             createSession();
-//         }
-//     })
-//     // client.findServersOnNetwork(function (result) {
-//     //     console.log(result);
-//     // });
-// } catch (err) {
-//     console.log(err);
-// }
-
-// function createSession() {
-//     client.createSession(function (err, session) {
-//         if (err) {
-//             logger.error(err);
-//         } else {
-//             the_session = session;
-//             browserSession();
-//         }
-//     });
-// }
-
-// function browserSession() {
-//     the_session.browse('RootFolder', function (err, browseResult) {
-//         if (err) {
-//             logger.error(err);
-//         } else {
-//             browseResult.references.forEach(function (reference) {
-//                 console.log(reference.browseName.toString());
-//             })
-//         }
-//     })
-// }
-
-// console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
 function OpcUAclient(_data, _logger, _events) {
 
@@ -59,12 +18,16 @@ function OpcUAclient(_data, _logger, _events) {
     var the_subscription = null;
     var options = { connectionStrategy: { maxRetry: 1 }, keepSessionAlive: true };  // Connections options
     var client = new opcua.OPCUAClient(options);
-    const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === "DataType" || x === "AccessLevel" || x === "UserAccessLevel");//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
+    const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === 'DataType' || x === 'AccessLevel' || x === 'UserAccessLevel');//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-    var daqInterval = 0;
-    var lastDaqInterval = 0;
+    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
+    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
 
+    /**
+     * Connect the client to OPC UA server
+     * Open Session, Create Subscription, Emit connection status, Clear the memory Tags value
+     */
     this.connect = function () {
         return new Promise(function (resolve, reject) {
             if (!_checkWorking(true)) {
@@ -92,13 +55,13 @@ function OpcUAclient(_data, _logger, _events) {
                                 logger.error(err);
                             } else {
                                 the_session = session;
-                                the_session.on("session_closed", () => {
+                                the_session.on('session_closed', () => {
                                     logger.info(data.name + ': Warning => Session closed');
                                 });
-                                the_session.on("keepalive", () => {
+                                the_session.on('keepalive', () => {
                                     logger.info(data.name + ': session keepalive');
                                 });
-                                the_session.on("keepalive_failure", () => {
+                                the_session.on('keepalive_failure', () => {
                                     logger.error(data.name + ': session keepalive failure');
                                 });
                                 _createSubscription();
@@ -126,27 +89,38 @@ function OpcUAclient(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Disconnect the OPC UA server
+     * Emit connection status, Clear the memory Tags value
+     */
     this.disconnect = function () {
-        _disconnect(function (err) {
-            if (err) {
-                logger.error(data.name + ': disconnect failure, ' + err);
-            }
-            connected = false;
-            monitored = false;
-            _checkWorking(false);
-            _emitStatus('connect-off');
-            _clearVarsValue();
+        return new Promise(function (resolve, reject) {
+            _disconnect(function (err) {
+                if (err) {
+                    logger.error(data.name + ': disconnect failure, ' + err);
+                }
+                connected = false;
+                monitored = false;
+                _checkWorking(false);
+                _emitStatus('connect-off');
+                _clearVarsValue();
+                resolve(true);
+            });
         });
     }
 
+    /**
+     * Browse Server Nodes, read the childres of gived node
+     * The browser callback have a children nodes count limit and have to use _browseNext
+     */
     this.browse = function (node) {
-        let nodeId = (node) ? node.id : opcua.resolveNodeId("RootFolder");
+        let nodeId = (node) ? node.id : opcua.resolveNodeId('RootFolder');
         return new Promise(function (resolve, reject) {
             // "RootFolder"
             if (the_session) {
                 const b = [{
                     nodeId: nodeId,
-                    referenceTypeId: "Organizes",
+                    referenceTypeId: 'Organizes',
                     includeSubtypes: true,
                     browseDirection: opcua.BrowseDirection.Forward,
                     resultMask: 0x3f
@@ -154,7 +128,7 @@ function OpcUAclient(_data, _logger, _events) {
                 },
                 {
                     nodeId: nodeId,
-                    referenceTypeId: "Aggregates",
+                    referenceTypeId: 'Aggregates',
                     includeSubtypes: true,
                     browseDirection: opcua.BrowseDirection.Forward,
                     resultMask: 0x3f
@@ -162,7 +136,7 @@ function OpcUAclient(_data, _logger, _events) {
                 },
                 {
                     nodeId: nodeId,
-                    referenceTypeId: "HasSubtype",
+                    referenceTypeId: 'HasSubtype',
                     includeSubtypes: true,
                     browseDirection: opcua.BrowseDirection.Forward,
                     resultMask: 0x3f
@@ -202,6 +176,10 @@ function OpcUAclient(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Browser the next children nodes after contipoint position
+     * @param {*} contipoint 
+     */
     var _browseNext = function (contipoint) {
         var opcNodes = [];
         var browseNextRequest = new opcua.browse_service.BrowseNextRequest({
@@ -241,17 +219,10 @@ function OpcUAclient(_data, _logger, _events) {
             });
         });
     }
-
-    // var readNodesAttributefnc = [];
-    // readNodesAttributefnc.push(_readAttribute(node));
-    // Promise.all(readNodesAttributefnc).then(result => {
-    // }, reason => {
-    //     if (reason.stack) {
-    //     } else {
-    //     }
-    // });                        
-
-
+                 
+    /**
+     * Read node attribute
+     */
     this.readAttribute = function (node) {
 
         const attr = [];
@@ -265,7 +236,7 @@ function OpcUAclient(_data, _logger, _events) {
 
             the_session.read(nodesToRead, function (err, dataValues) {
                 if (err) {
-                    reject("#readAllAttributes returned " + err.message);
+                    reject('#readAllAttributes returned ' + err.message);
                 } else {
                     node.attribute = {};
                     for (let i = 0; i < nodesToRead.length; i++) {
@@ -285,6 +256,10 @@ function OpcUAclient(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Take the current Tags value (only changed), Reset the change flag, Emit Tags value
+     * Save DAQ value
+     */
     this.polling = function () {
         if (!monitored) {
             _startMonitor(function (ok) {
@@ -294,9 +269,6 @@ function OpcUAclient(_data, _logger, _events) {
             });
         } else if (the_session && client) {
             var varsValueChanged = _clearVarsChanged();
-            // if (Object.keys(varsValueChanged).length) {
-            //     _emitValues(varsValueChanged);
-            // }
             _emitValues(varsValue);
 
             if (this.addDaq) {
@@ -307,31 +279,37 @@ function OpcUAclient(_data, _logger, _events) {
                 } else if (Object.keys(varsValueChanged).length) {
                     this.addDaq(varsValueChanged);
                 }
-                // for (var dbid in dbvalues) {
-                //     addDaq(dbid, dbvalues[dbid].value);
-                // }
             }
 
         }
     }
 
+    /**
+     * Load Tags to read by polling
+     */
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
-        // db = {};
-        // varsValue = [];
-        // varsItemsMap = {};
         var count = Object.keys(data.tags).length;
-        logger.info(data.name + ' data loaded (' + count + ')');
+        logger.info(data.name + ': data loaded (' + count + ')');
     }
 
+    /**
+     * Return Tags values array { id: <name>, value: <value>, type: <type> }
+     */
     this.getValues = function () {
         return data.tags;
     }
 
+    /**
+     * Return Device status Connected/Disconnected 'connect-off', 'connect-ok', 'connect-error'
+     */
     this.getStatus = function () {
         return lastStatus;
     }
 
+    /**
+     * Return Tag property
+     */
     this.getTagProperty = function (id) {
         if (data.tags[id]) {
             let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
@@ -341,6 +319,9 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Set Tag value, used to set value from frontend
+     */
     this.setValue = function (sigid, value) {
         if (the_session && data.tags[sigid]) {
             console.log(sigid);
@@ -368,17 +349,26 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Is Connected true/false
+     */
     this.isConnected = function () {
         return connected;
     }
 
+    /**
+     * Set the callback to set value to DAQ
+     */
     this.bindAddDaq = function (fnc, intervalToSave) {
-        this.addDaq = fnc;                         // Add the DAQ value to db history
+        this.addDaq = fnc;                          // Add the DAQ value to db history
         daqInterval = intervalToSave;
     }
+    this.addDaq = null;                             // Callback to add the DAQ value to db history
 
-    this.addDaq = null;                         // Add the DAQ value to db history
-
+    /**
+     * Disconnect the OPC UA client and close session if used
+     * @param {*} callback 
+     */
     var _disconnect = function (callback) {
         if (!the_session) {
             client.disconnect(function (err) {
@@ -393,6 +383,9 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Create a session subscription to refresh Tags value
+     */
     var _createSubscription = function () {
         if (the_session) {
             const parameters = {
@@ -416,6 +409,11 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Start the monitor by subsribe the Tags to check if value change
+     * samplingInterval = 1000 msec.
+     * @param {*} callback 
+     */
     var _startMonitor = function (callback) {
 
         if (the_session && the_subscription) {
@@ -426,21 +424,7 @@ function OpcUAclient(_data, _logger, _events) {
                     { samplingInterval: 1000, discardOldest: true, queueSize: 1 },
                     opcua.read_service.TimestampsToReturn.Both,
                 );
-                monitoredItem.on("changed", _monitorcallback(nodeId));
-                // monitoredItem.on("changed", function (dataValue) {
-
-                //     console.log(" value ", node.browseName, node.nodeId.toString(), " changed to ", chalk.green(dataValue.value.toString()));
-                //     if (dataValue.value.value.toFixed) {
-                //         node.valueAsString = w(dataValue.value.value.toFixed(3), 16);
-                //     } else {
-                //         node.valueAsString = w(dataValue.value.value.toString(), 16);
-                //     }
-
-                //     monitoredItemData[2] = node.valueAsString;
-                //     monitoredItemsList.setRows(monitoredItemsListData);
-                //     monitoredItemsList.render();
-                // });
-
+                monitoredItem.on('changed', _monitorcallback(nodeId));
             }
             callback(true);
         } else {
@@ -448,10 +432,15 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Callback from monitor of changed Tag value
+     * And set the changed value to local Tags
+     * @param {*} _nodeId 
+     */
     var _monitorcallback = function (_nodeId) {
         var nodeId = _nodeId;
         return function (dataValue) {
-            console.log(nodeId.toString(), "\t value : ", dataValue.value.value.toString());
+            console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
             if (data.tags[nodeId]) {
                 data.tags[nodeId].value = dataValue.value.value;//.toString();
                 data.tags[nodeId].timestamp = dataValue.serverTimestamp.toString();
@@ -460,6 +449,9 @@ function OpcUAclient(_data, _logger, _events) {
         };
     }
 
+    /**
+     * Clear local Tags value by set all to null
+     */
     var _clearVarsValue = function () {
         for (let id in varsValue) {
             varsValue[id].value = null;
@@ -467,6 +459,9 @@ function OpcUAclient(_data, _logger, _events) {
         _emitValues(varsValue);
     }
 
+    /**
+     * Return the Tags that have value changed and clear value changed flag of all Tags 
+     */
     var _clearVarsChanged = function () {
         var result = {};
         for (var id in data.tags) {
@@ -479,6 +474,10 @@ function OpcUAclient(_data, _logger, _events) {
         return result;
     }
 
+    /**
+     * To manage a overloading connection
+     * @param {*} check 
+     */
     var _checkWorking = function (check) {
         if (check && working) {
             logger.error(data.name + ' working (connection || polling) overload!');
@@ -488,18 +487,31 @@ function OpcUAclient(_data, _logger, _events) {
         return true;
     }
 
+    /**
+     * Emit Tags in application
+     * @param {*} values 
+     */
     var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.name, values: values });
     }
 
+    /**
+     * Emit status in application
+     * @param {*} status 
+     */
     var _emitStatus = function (status) {
         lastStatus = status;
         events.emit('device-status:changed', { id: data.name, status: status });
     }
 
+    /**
+     * Return formatted Tag attribute
+     * @param {*} attribute 
+     * @param {*} dataValue 
+     */
     var _attrToObject = function (attribute, dataValue) {
 
-        if (!dataValue || !dataValue.value || !dataValue.value.hasOwnProperty("value")) {
+        if (!dataValue || !dataValue.value || !dataValue.value.hasOwnProperty('value')) {
             return null;
         }
         switch (attribute) {
@@ -551,6 +563,10 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Convert OPCUA data type from string
+     * @param {*} type 
+     */
     var _toDataType = function (type) {
         if (type === 'Boolean') {
             return opcua.DataType.Boolean;
@@ -585,6 +601,11 @@ function OpcUAclient(_data, _logger, _events) {
         }
     }
 
+    /**
+     * Convert value from string depending of type
+     * @param {*} type 
+     * @param {*} value 
+     */
     var _toValue = function (type, value) {
         switch (type) {
             case opcua.DataType.Boolean:
@@ -605,14 +626,6 @@ function OpcUAclient(_data, _logger, _events) {
                 return value;
         }
     }
-}
-
-function start() {
-    // start polling timer
-}
-
-function stop() {
-    // stop polling timer
 }
 
 module.exports = {

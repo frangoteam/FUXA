@@ -16,26 +16,7 @@ function init(_settings, _log) {
     settings = _settings;
     logger = _log;
 
-    logger.info("daqstorage init successful!");
-
-    //! to test
-    // setTimeout(function () {
-    //     var fromts = new Date(2019, 7, 19, 8, 0, 0).getTime();
-    //     var tots = new Date(2019, 7, 19, 16, 1, 0).getTime();
-    //     for (var nodeid in daqnodes) {
-    //         var map = daqnodes[nodeid].getDaqMap();
-    //         for (var id in map) {
-    //             daqnodes[nodeid].getDaqValue(id, fromts, tots).then(result => {
-    //                 console.log(result);
-
-    //             }).catch(function (err) {
-    //                 console.err('getDaqValue _getTagValues error: ' + err);
-    //             });
-    //         }
-    //     }
-
-    // }, 5000);
-    
+    logger.info("daqstorage: init successful!");  
     return true;
 }
 

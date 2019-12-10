@@ -1,11 +1,15 @@
+<div *ngIf="isLoading" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;">
+  <mat-progress-bar mode="indeterminate" color="warn"
+      style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
+  </mat-progress-bar>
+</div>
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #matsidenav *ngIf="showSidenav" class="sidenav" [mode]="showSidenav">
     <app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
   </mat-sidenav>
-
   <mat-sidenav-content>
     <div class="header">
-      <button mat-icon-button *ngIf="showSidenav && this.showSidenav !== 'side'" (click)="(matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
+      <button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" (click)="(matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
         <mat-icon aria-label="Menu">menu</mat-icon>
       </button>
     </div>

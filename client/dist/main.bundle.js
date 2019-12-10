@@ -874,9 +874,9 @@ var Utils = (function () {
     };
     Utils.getGUID = function () {
         var uuid = "", i, random;
-        for (i = 0; i < 32; i++) {
+        for (i = 0; i < 16; i++) {
             random = Math.random() * 16 | 0;
-            if (i == 8 || i == 12 || i == 16 || i == 20) {
+            if (i == 8) {
                 uuid += "-";
             }
             uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
@@ -886,12 +886,12 @@ var Utils = (function () {
     ;
     Utils.getShortGUID = function () {
         var uuid = "", i, random;
-        for (i = 0; i < 16; i++) {
+        for (i = 0; i < 12; i++) {
             random = Math.random() * 16 | 0;
             if (i == 8) {
                 uuid += "-";
             }
-            uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
+            uuid += (i == 4 ? 4 : (i == 6 ? (random & 3 | 8) : random)).toString(12);
         }
         return uuid;
     };
@@ -1119,7 +1119,6 @@ var __extends = (this && this.__extends) || (function () {
 
 var Hmi = (function () {
     function Hmi() {
-        this.name = '';
         this.layout = new LayoutSettings();
         this.views = [];
         // variables: Variable[] = [];
@@ -1695,6 +1694,7 @@ var ViewSignalGaugeMap = (function () {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProjectService; });
 /* unused harmony export ProjectData */
+/* unused harmony export ProjectDataCmdType */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__("../../../common/esm5/http.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__environments_environment__ = __webpack_require__("../../../../../src/environments/environment.ts");
@@ -1731,23 +1731,87 @@ var ProjectService = (function () {
         this.toastr = toastr;
         this.onSaveCurrent = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onLoadHmi = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.projectData = new ProjectData(); // Project data
         this.version = '1.00';
         this.separator = '^~^';
-        this.started = false;
         this.prjresource = 'prj-data';
         this.endPointConfig = __WEBPACK_IMPORTED_MODULE_5__helpers_endpointapi__["a" /* EndPointApi */].getURL(); //"http://localhost:1881";
         this.projectOld = '';
         this.saveworking = false;
+        this.ready = false;
         if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
             this.checkServer().subscribe(function (result) {
                 _this.serverSettings = result;
                 _this.load();
-                // this.toastr.success('Server connected!');
             }, function (error) {
+                console.error('project.service err: ' + error);
                 _this.load();
-                console.error(error);
+                _this.notifySaveError();
+            });
+        }
+        else {
+            this.load();
+        }
+    }
+    /**
+     * Load Project from Server if enable.
+     * From Local Storage, from 'assets' if demo or create a local project
+     */
+    ProjectService.prototype.load = function () {
+        var _this = this;
+        if (this.serverSettings) {
+            this.getServerProject().subscribe(function (prj) {
+                _this.projectData = prj;
+                // copy to check before save
+                _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
+                _this.ready = true;
+                _this.notifyToLoadHmi();
+                console.log('Load Server Project: ' + prj);
+            }, function (err) {
+                console.log('Load Server Project err: ' + err);
+            });
+        }
+        else {
+            if (!this.projectData) {
+                var res = localStorage.getItem(this.prjresource);
+                if (res) {
+                    console.log('Load Local Project');
+                    this.projectData = JSON.parse(res);
+                }
+                else if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].type === 'demo') {
+                    console.log('Load Demo Project');
+                    // try root path
+                    this.http.get('./assets/project.demo.fuxap').subscribe(function (prj) {
+                        _this.projectData = prj;
+                    }, function (err) {
+                    });
+                }
+                else {
+                    console.log('Create Local Project');
+                    this.setNewProject();
+                }
+            }
+            this.ready = true;
+        }
+    };
+    ProjectService.prototype.save = function () {
+        var _this = this;
+        console.log('-save-');
+        // this.projectData.version = this.version;
+        // let prjData = this.convertToSave(this.projectData);
+        if (this.serverSettings) {
+            // check project change don't work some svg object change the order and this to check ...boooo
+            this.setServerProject(this.projectData).subscribe(function (result) {
+                _this.load();
+                // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+                // console.log(result);
+                // this.checSaveWorking(false);
+                _this.toastr.success('Project save successful!');
+            }, function (err) {
+                console.log(err);
+                // this.checSaveWorking(false);
                 var msg = '';
-                _this.translateService.get('msg.server-connection-error').subscribe(function (txt) { msg = txt; });
+                _this.translateService.get('msg.project-save-error').subscribe(function (txt) { msg = txt; });
                 _this.toastr.error(msg, '', {
                     timeOut: 3000,
                     closeButton: true,
@@ -1756,88 +1820,7 @@ var ProjectService = (function () {
             });
         }
         else {
-            this.load();
-        }
-    }
-    ProjectService.prototype.load = function () {
-        var _this = this;
-        console.log('load Project');
-        if (this.serverSettings) {
-            this.getServerProject().subscribe(function (prj) {
-                _this.projectData = prj;
-                // copy to check before save
-                _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
-                _this.notifyToLoadHmi();
-                console.log(prj);
-            }, function (err) {
-                console.log(err);
-            });
-        }
-        else {
-            if (!this.projectData) {
-                var res = localStorage.getItem(this.prjresource);
-                if (res) {
-                    this.projectData = JSON.parse(res);
-                }
-                else if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].type === 'demo') {
-                    console.log('load Demo');
-                    // try root path
-                    this.http.get('./assets/project.demo.fuxap').subscribe(function (prj) {
-                        _this.projectData = prj;
-                    }, function (err) {
-                    });
-                    // load demo from server
-                    // this.getDemoProject().subscribe(prj => {
-                    //     this.projectData = prj;
-                    // }, err => {
-                    //     console.log(err);                      
-                    // });
-                }
-                else {
-                    this.projectData = new ProjectData();
-                    var server = new __WEBPACK_IMPORTED_MODULE_4__models_device__["a" /* Device */]();
-                    server.name = 'Fuxa Server';
-                    server.id = '0';
-                    server.type = __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].FuxaServer;
-                    server.property = new __WEBPACK_IMPORTED_MODULE_4__models_device__["b" /* DeviceNetProperty */]();
-                    this.setServer(server);
-                }
-            }
-        }
-    };
-    ProjectService.prototype.save = function () {
-        var _this = this;
-        console.log('-save-');
-        this.projectData.version = this.version;
-        var prjData = this.convertToSave(this.projectData);
-        if (this.serverSettings) {
-            // check project change don't work some svg object change the order and this to check ...boooo
-            // let prjdiff = this._deepEquals(this.projectData, this.projectOld);
-            // if (prjdiff) {
-            //     return true;
-            // }
-            if (this.checSaveWorking(true)) {
-                console.log('my save');
-                this.setServerProject(prjData).subscribe(function (result) {
-                    _this.projectOld = JSON.parse(JSON.stringify(_this.projectData));
-                    console.log(result);
-                    _this.checSaveWorking(false);
-                    // this.toastr.success('Project save successful!');
-                }, function (err) {
-                    console.log(err);
-                    _this.checSaveWorking(false);
-                    var msg = '';
-                    _this.translateService.get('msg.project-save-error').subscribe(function (txt) { msg = txt; });
-                    _this.toastr.error(msg, '', {
-                        timeOut: 3000,
-                        closeButton: true,
-                        disableTimeOut: true
-                    });
-                });
-            }
-        }
-        else {
-            localStorage.setItem(this.prjresource, JSON.stringify(prjData));
+            localStorage.setItem(this.prjresource, JSON.stringify(this.projectData));
         }
         return true;
     };
@@ -1871,13 +1854,119 @@ var ProjectService = (function () {
         }
         return result;
     };
-    ProjectService.prototype.checSaveWorking = function (check) {
-        if (check && this.saveworking) {
-            return false;
-        }
-        this.saveworking = check;
-        return true;
+    ProjectService.prototype.notifySaveError = function () {
+        var msg = '';
+        this.translateService.get('msg.project-save-error').subscribe(function (txt) { msg = txt; });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
     };
+    // private checSaveWorking(check: boolean) {
+    //     if (check && this.saveworking) {
+    //         return false;
+    //     }
+    //     this.saveworking = check;
+    //     return true;
+    // }
+    //#region Device to Save
+    /**
+     * Add or update Device to Project.
+     * Save to Server
+     * @param device
+     * @param old
+     */
+    ProjectService.prototype.setDevice = function (device, old) {
+        var _this = this;
+        this.projectData.devices[device.name] = device;
+        this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(function (result) {
+            if (old && old.name && old.name !== device.name && old.id === device.id) {
+                _this.removeDevice(old);
+            }
+        }, function (err) {
+            console.log(err);
+            _this.notifySaveError();
+        });
+    };
+    /**
+     * Remove Device from Project.
+     * Save to Server
+     * @param device
+     */
+    ProjectService.prototype.removeDevice = function (device) {
+        var _this = this;
+        delete this.projectData.devices[device.name];
+        // Object.keys(this.projectData.devices).forEach((key) => {
+        //     if (this.projectData.devices[key].id === device.id) {
+        //         delete this.projectData.devices[key];
+        //         return;
+        //     }
+        // });
+        this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(function (result) {
+        }, function (err) {
+            console.log(err);
+            _this.notifySaveError();
+        });
+    };
+    //#endregion
+    //#region View to Save
+    /**
+     * Add or update View to Project.
+     * Save to Server
+     * @param view
+     */
+    ProjectService.prototype.setView = function (view) {
+        var _this = this;
+        var v = null;
+        for (var i = 0; i < this.projectData.hmi.views.length; i++) {
+            if (this.projectData.hmi.views[i].id === view.id) {
+                v = this.projectData.hmi.views[i];
+            }
+        }
+        if (v) {
+            v = view;
+        }
+        else {
+            this.projectData.hmi.views.push(view);
+        }
+        this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(function (result) {
+        }, function (err) {
+            console.log(err);
+            _this.notifySaveError();
+        });
+    };
+    /**
+     * Remove the View from Project
+     * Delete from Server
+     * @param view
+     */
+    ProjectService.prototype.removeView = function (view) {
+        var _this = this;
+        for (var i = 0; i < this.projectData.hmi.views.length; i++) {
+            if (this.projectData.hmi.views[i].id === view.id) {
+                this.projectData.hmi.views.splice(i, 1);
+                break;
+            }
+        }
+        this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(function (result) {
+        }, function (err) {
+            console.log(err);
+            _this.notifySaveError();
+        });
+    };
+    //#endregion
+    ProjectService.prototype.setLayout = function (layout) {
+        var _this = this;
+        this.projectData.hmi.layout = layout;
+        this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(function (result) {
+        }, function (err) {
+            console.log(err);
+            _this.notifySaveError();
+        });
+    };
+    //#region HMI
+    //#endregion
     //#region to server api
     ProjectService.prototype.getServerProject = function () {
         return this.http.get(this.endPointConfig + '/api/project', {});
@@ -1889,24 +1978,35 @@ var ProjectService = (function () {
         var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
         return this.http.post(this.endPointConfig + '/api/project', prj, { headers: header });
     };
+    ProjectService.prototype.setServerProjectData = function (cmd, data) {
+        var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
+        var params = { cmd: cmd, data: data };
+        return this.http.post(this.endPointConfig + '/api/projectData', params, { headers: header });
+    };
     //#endregion
     //#region hmi resource json struct
     /**
      * get hmi resource
      */
     ProjectService.prototype.getHmi = function () {
-        return (this.projectData) ? this.projectData.hmi : null;
+        return (this.ready && this.projectData) ? this.projectData.hmi : null;
     };
-    /**
-     * save hmi resource to project
-     * @param hmi hmiresource to save
-     */
-    ProjectService.prototype.setHmi = function (hmi, notify) {
-        this.projectData.hmi = hmi;
-        if (notify) {
-            this.notifyToLoadHmi();
-        }
-    };
+    // getHmi(): Observable<Hmi> {
+    //     return new Observable((observer) => {
+    //         const handler = (e) => observer.next(e);
+    //         // return (this.projectData) ? this.projectData.hmi : null;
+    //     });
+    // }
+    // /**
+    //  * save hmi resource to project
+    //  * @param hmi hmiresource to save
+    //  */
+    // setHmi(hmi: Hmi, notify?: boolean) {
+    //     this.projectData.hmi = hmi;
+    //     if (notify) {
+    //         this.notifyToLoadHmi();
+    //     }
+    // }
     //#endregion
     //#region charts resource
     /**
@@ -1927,7 +2027,13 @@ var ProjectService = (function () {
      * @param charts
      */
     ProjectService.prototype.setCharts = function (charts) {
+        var _this = this;
         this.projectData.charts = charts;
+        this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(function (result) {
+        }, function (err) {
+            console.log(err);
+            _this.notifySaveError();
+        });
     };
     //#endregion
     //#region Notify
@@ -1936,12 +2042,13 @@ var ProjectService = (function () {
     };
     //#endregion
     /**
-     * set Project data andf save resource to backend
+     * Set Project data and save resource to backend
+     * Used from open and upload JSON Project file
      * @param prj project data to save
      */
     ProjectService.prototype.setProject = function (prj, notify) {
         // redefine variable list and device list throw views resurce used
-        prj.version = this.version;
+        // prj.version = this.version;
         // hmi.views.forEach(view => {
         //     for (let key in view.items) {
         //         // variable
@@ -1968,9 +2075,9 @@ var ProjectService = (function () {
         // console.log('set-prj: ' + JSON.stringify(prj));
         this.projectData = prj;
         this.save();
-        if (notify) {
-            this.notifyToLoadHmi();
-        }
+        // if (notify) {
+        // this.notifyToLoadHmi();
+        // }
     };
     ProjectService.prototype.setNewProject = function () {
         this.projectData = new ProjectData();
@@ -1979,8 +2086,27 @@ var ProjectService = (function () {
         server.id = '0';
         server.type = __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].FuxaServer;
         server.property = new __WEBPACK_IMPORTED_MODULE_4__models_device__["b" /* DeviceNetProperty */]();
-        this.setServer(server);
-        this.notifyToLoadHmi();
+        this.projectData.server = server;
+        this.save();
+        // this.setServer(server);
+        // this.setServerProject(this.projectData).subscribe(result => {
+        //     this.load();
+        //     // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+        //     // console.log(result);
+        //     // this.checSaveWorking(false);
+        //     this.toastr.success('Project save successful!');
+        // }, err => {
+        //     console.log(err);
+        //     // this.checSaveWorking(false);
+        //     var msg = '';
+        //     this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+        //     this.toastr.error(msg, '', {
+        //         timeOut: 3000,
+        //         closeButton: true,
+        //         disableTimeOut: true
+        //     });
+        // });
+        // this.notifyToLoadHmi();
     };
     ProjectService.prototype.getProject = function () {
         return this.projectData;
@@ -1988,13 +2114,13 @@ var ProjectService = (function () {
     ProjectService.prototype.getServer = function () {
         return (this.projectData) ? this.projectData.server : null;
     };
-    ProjectService.prototype.setServer = function (srv, nosave) {
-        this.projectData.server = srv;
-        if (nosave) {
-            return true;
-        }
-        return this.save();
-    };
+    // setServer(srv: Device, nosave?: boolean): boolean {
+    //     this.projectData.server = srv;
+    //     if (nosave) {
+    //         return true;
+    //     }
+    //     return this.save();
+    // }
     ProjectService.prototype.getDevices = function () {
         return (this.projectData) ? this.projectData.devices : {};
     };
@@ -2023,6 +2149,10 @@ var ProjectService = (function () {
         }
         return false;
     };
+    /**
+     * Send Save Project to to editor component
+     * @param saveas
+     */
     ProjectService.prototype.saveProject = function (saveas) {
         this.onSaveCurrent.emit(saveas);
     };
@@ -2143,6 +2273,15 @@ var ProjectData = (function () {
     return ProjectData;
 }());
 
+var ProjectDataCmdType;
+(function (ProjectDataCmdType) {
+    ProjectDataCmdType["SetDevice"] = "set-device";
+    ProjectDataCmdType["DelDevice"] = "del-device";
+    ProjectDataCmdType["SetView"] = "set-view";
+    ProjectDataCmdType["DelView"] = "del-view";
+    ProjectDataCmdType["HmiLayout"] = "layout";
+    ProjectDataCmdType["Charts"] = "charts";
+})(ProjectDataCmdType || (ProjectDataCmdType = {}));
 
 
 /***/ }),
@@ -2575,7 +2714,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-list/device-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <div class=\"filter\" *ngIf=\"deviceSelected\">\n    <button mat-icon-button title=\"Device Map\" (click)=\"onGoBack()\" style=\"margin-right:10px;margin-left:-10px;\">\n      <mat-icon aria-label=\"Show devices map\">arrow_back</mat-icon>\n    </button>\n    <div class=\"my-form-field\" style=\"\">\n      <span>{{'device.list-device' | translate}}</span>\n      <mat-select [(value)]=\"deviceSelected\" style=\"width: 300px\" (selectionChange)=\"onDeviceChange($event.source)\">\n        <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device\">\n          {{ device.name }}\n        </mat-option>\n      </mat-select>\n    </div>\n    <div class=\"my-form-field\" style=\"\">\n      <span>{{'device.list-filter' | translate}}</span>\n      <input (keyup)=\"applyFilter($event.target.value)\" style=\"width: 450px\" type=\"text\">\n    </div>\n    <!-- <mat-form-field>\n      <input matInput (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\">\n    </mat-form-field> -->\n    <!-- <div class=\"my-form-field\" style=\"padding: 10 20 10 20\">\n      <input (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\" type=\"text\" style=\"width: 100%\">\n    </div> -->\n  </div>\n  <mat-table #table [dataSource]=\"dataSource\" matSort>\n    <!-- Checkbox Column -->\n    <ng-container matColumnDef=\"select\">\n      <mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\n        <button mat-icon-button (click)=\"onAddTag()\" class=\"remove\">\n          <mat-icon>add</mat-icon>\n        </button>\n        <!-- <mat-checkbox (change)=\"$event ? masterToggle() : null\" [checked]=\"selection.hasValue() && isAllSelected()\"\n          [indeterminate]=\"selection.hasValue() && !isAllSelected()\">\n        </mat-checkbox> -->\n      </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\n        <button mat-icon-button (click)=\"onEditRow(element)\" class=\"remove\" *ngIf=\"deviceSelected.type === deviceType.SiemensS7\">\n          <mat-icon>edit</mat-icon>\n        </button>\n        <!-- <mat-checkbox (click)=\"$event.stopPropagation()\" (change)=\"$event ? selection.toggle(row) : null\" [checked]=\"selection.isSelected(row)\">\n        </mat-checkbox> -->\n      </mat-cell>\n    </ng-container>\n\n    <!-- Name Column -->\n    <ng-container matColumnDef=\"name\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.name}} </mat-cell>\n    </ng-container>\n\n    <!-- Address Column -->\n    <ng-container matColumnDef=\"address\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.address}} </mat-cell>\n    </ng-container>\n\n    <!-- Device Column -->\n    <ng-container matColumnDef=\"device\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{deviceSelected.name}} </mat-cell>\n    </ng-container>\n\n    <!-- Device Column -->\n    <ng-container matColumnDef=\"type\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.type}} </mat-cell>\n    </ng-container>\n\n    <!-- Min Column -->\n    <ng-container matColumnDef=\"min\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.min}} </mat-cell>\n    </ng-container>\n\n    <!-- Max Column -->\n    <ng-container matColumnDef=\"max\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.max}} </mat-cell>\n    </ng-container>\n\n    <!-- Value Column -->\n    <ng-container matColumnDef=\"value\">\n      <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\"> {{element.value}} </mat-cell>\n    </ng-container>\n\n    <!-- Button remove Column -->\n    <ng-container matColumnDef=\"remove\">\n      <mat-header-cell *matHeaderCellDef> </mat-header-cell>\n      <mat-cell *matCellDef=\"let element\">\n        <button mat-icon-button (click)=\"$event.stopPropagation();onRemoveRow(element)\" class=\"remove\">\n          <mat-icon>clear</mat-icon>\n        </button>\n      </mat-cell>\n    </ng-container>\n\n    <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n    <mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\n  </mat-table>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"onAddTag()\" style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n  <mat-icon class=\"\">add</mat-icon>\n</button>"
+module.exports = "<div class=\"container\">\n    <div class=\"filter\" *ngIf=\"deviceSelected\">\n        <button mat-icon-button title=\"Device Map\" (click)=\"onGoBack()\" style=\"margin-right:10px;margin-left:-10px;\">\n            <mat-icon aria-label=\"Show devices map\">arrow_back</mat-icon>\n        </button>\n        <div class=\"my-form-field\" style=\"\">\n            <span>{{'device.list-device' | translate}}</span>\n            <mat-select [(value)]=\"deviceSelected\" style=\"width: 300px\"\n                (selectionChange)=\"onDeviceChange($event.source)\">\n                <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device\">\n                    {{ device.name }}\n                </mat-option>\n            </mat-select>\n        </div>\n        <div class=\"my-form-field\" style=\"\">\n            <span>{{'device.list-filter' | translate}}</span>\n            <input (keyup)=\"applyFilter($event.target.value)\" style=\"width: 450px\" type=\"text\">\n        </div>\n        <!-- <mat-form-field>\n      <input matInput (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\">\n    </mat-form-field> -->\n        <!-- <div class=\"my-form-field\" style=\"padding: 10 20 10 20\">\n      <input (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\" type=\"text\" style=\"width: 100%\">\n    </div> -->\n    </div>\n    <mat-table #table [dataSource]=\"dataSource\" matSort>\n        <!-- Checkbox Column -->\n        <ng-container matColumnDef=\"select\">\n            <mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\n                <button mat-icon-button (click)=\"onAddTag()\" class=\"remove\">\n                    <mat-icon>add</mat-icon>\n                </button>\n                <!-- <mat-checkbox (change)=\"$event ? masterToggle() : null\" [checked]=\"selection.hasValue() && isAllSelected()\"\n          [indeterminate]=\"selection.hasValue() && !isAllSelected()\">\n        </mat-checkbox> -->\n            </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\n                <button mat-icon-button (click)=\"onEditRow(element)\" class=\"remove\"\n                    *ngIf=\"deviceSelected.type === deviceType.SiemensS7\">\n                    <mat-icon>edit</mat-icon>\n                </button>\n                <!-- <mat-checkbox (click)=\"$event.stopPropagation()\" (change)=\"$event ? selection.toggle(row) : null\" [checked]=\"selection.isSelected(row)\">\n        </mat-checkbox> -->\n            </mat-cell>\n        </ng-container>\n\n        <!-- Name Column -->\n        <ng-container matColumnDef=\"name\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.name}} </mat-cell>\n        </ng-container>\n\n        <!-- Address Column -->\n        <ng-container matColumnDef=\"address\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.address}} </mat-cell>\n        </ng-container>\n\n        <!-- Device Column -->\n        <ng-container matColumnDef=\"device\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{deviceSelected.name}} </mat-cell>\n        </ng-container>\n\n        <!-- Device Column -->\n        <ng-container matColumnDef=\"type\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.type}} </mat-cell>\n        </ng-container>\n\n        <!-- Min Column -->\n        <ng-container matColumnDef=\"min\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.min}} </mat-cell>\n        </ng-container>\n\n        <!-- Max Column -->\n        <ng-container matColumnDef=\"max\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.max}} </mat-cell>\n        </ng-container>\n\n        <!-- Value Column -->\n        <ng-container matColumnDef=\"value\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.value}} </mat-cell>\n        </ng-container>\n\n        <!-- Button remove Column -->\n        <ng-container matColumnDef=\"remove\">\n            <mat-header-cell *matHeaderCellDef> </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\">\n                <button mat-icon-button (click)=\"$event.stopPropagation();onRemoveRow(element)\" class=\"remove\">\n                    <mat-icon>clear</mat-icon>\n                </button>\n            </mat-cell>\n        </ng-container>\n\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\n    </mat-table>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"onAddTag()\"\n    style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n    <mat-icon class=\"\">add</mat-icon>\n</button>"
 
 /***/ }),
 
@@ -2669,7 +2808,7 @@ var DeviceListComponent = (function () {
             delete this.deviceSelected.tags[this.dataSource.data[index].id];
         }
         this.bindToTable(this.deviceSelected.tags);
-        this.save.emit();
+        this.projectService.setDevice(this.deviceSelected, null);
     };
     /** Whether the number of selected elements matches the total number of rows. */
     DeviceListComponent.prototype.isAllSelected = function () {
@@ -2722,7 +2861,7 @@ var DeviceListComponent = (function () {
                     tag.address = n.id;
                     _this.checkToAdd(tag, result.device);
                 });
-                _this.save.emit();
+                _this.projectService.setDevice(_this.deviceSelected, null);
             }
         });
     };
@@ -2757,7 +2896,7 @@ var DeviceListComponent = (function () {
                     delete result.device.tags[oldtag];
                     _this.checkToAdd(tag, result.device);
                 }
-                _this.save.emit();
+                _this.projectService.setDevice(_this.deviceSelected, null);
             }
         });
     };
@@ -2887,15 +3026,14 @@ var DeviceMapComponent = (function () {
         this.dialog = dialog;
         this.projectService = projectService;
         this.goto = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
-        this.save = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.devices = {};
         this.devicesStatus = {};
         this.dirty = false;
     }
     DeviceMapComponent.prototype.ngOnInit = function () {
+        this.loadCurrentProject();
     };
     DeviceMapComponent.prototype.ngAfterViewInit = function () {
-        this.loadCurrentProject();
     };
     DeviceMapComponent.prototype.ngOnDestroy = function () {
     };
@@ -2911,15 +3049,7 @@ var DeviceMapComponent = (function () {
         if (prj && prj.devices) {
             this.devices = prj.devices;
         }
-        // this.server = this.projectService.getServer();//JSON.parse(JSON.stringify(this.projectService.getServer()));
-        // this.devices = this.projectService.getDevices();//JSON.parse(JSON.stringify(this.projectService.getDevices()));
     };
-    // saveDeviceMap() {
-    //   if (this.dirty) {
-    //     this.projectService.setServer(this.server, true);
-    //     this.projectService.setDevices(this.devices, true);
-    //   }
-    // }
     DeviceMapComponent.prototype.addDevice = function () {
         var device = new __WEBPACK_IMPORTED_MODULE_4__models_device__["a" /* Device */]();
         device.id = __WEBPACK_IMPORTED_MODULE_5__helpers_utils__["b" /* Utils */].getGUID();
@@ -2933,19 +3063,6 @@ var DeviceMapComponent = (function () {
     };
     DeviceMapComponent.prototype.removeDevice = function (device) {
         delete this.devices[device.name];
-    };
-    DeviceMapComponent.prototype.checkToAddDevice = function (device) {
-        var _this = this;
-        // let dev = this.devices[device.name];
-        // this.devices[device.name] = device;
-        // for (let key in Object.keys(this.devices)) {
-        Object.keys(this.devices).forEach(function (key) {
-            if (_this.devices[key].id === device.id) {
-                delete _this.devices[key];
-                return;
-            }
-        });
-        this.devices[device.name] = device;
     };
     DeviceMapComponent.prototype.getDevicePosition = function (index) {
         if (this.devices && Object.values(this.devices).length) {
@@ -2984,11 +3101,8 @@ var DeviceMapComponent = (function () {
     };
     DeviceMapComponent.prototype.devicesValue = function () {
         if (this.devices && Object.values(this.devices).length) {
-            var result_1 = [];
-            Object.values(this.devices).forEach(function (value) {
-                result_1.push(value);
-            });
-            return result_1.sort(function (a, b) { return (a.name > b.name) ? 1 : -1; });
+            var result = Object.values(this.devices);
+            return result.sort(function (a, b) { return (a.name > b.name) ? 1 : -1; });
         }
         return [];
     };
@@ -3021,12 +3135,14 @@ var DeviceMapComponent = (function () {
     DeviceMapComponent.prototype.editDevice = function (device, toremove) {
         var _this = this;
         // console.log('The Edit Device open');
+        var exist = Object.values(this.devices).filter(function (d) { return d.id !== device.id; }).map(function (d) { return d.name; });
+        exist.push('server');
         var tempdevice = JSON.parse(JSON.stringify(device));
         var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_2__device_property_device_property_component__["a" /* DevicePropertyComponent */], {
             // minWidth: '700px',
             // minHeight: '700px',
             panelClass: 'dialog-property',
-            data: { device: tempdevice, remove: toremove },
+            data: { device: tempdevice, remove: toremove, exist: exist },
             position: { top: '80px' }
         });
         dialogRef.afterClosed().subscribe(function (result) {
@@ -3034,9 +3150,11 @@ var DeviceMapComponent = (function () {
                 _this.dirty = true;
                 if (toremove) {
                     _this.removeDevice(device);
+                    _this.projectService.removeDevice(device);
                 }
                 else {
                     // console.log('The Edit Device was closed');
+                    var olddevice = JSON.parse(JSON.stringify(device));
                     device.name = tempdevice.name;
                     device.type = tempdevice.type;
                     device.enabled = tempdevice.enabled;
@@ -3046,17 +3164,7 @@ var DeviceMapComponent = (function () {
                         device.property.slot = parseInt(tempdevice.property.slot);
                         device.property.rack = parseInt(tempdevice.property.rack);
                     }
-                    if (device.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].SiemensS7) {
-                        _this.checkToAddDevice(device);
-                    }
-                    else if (device.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].OPCUA) {
-                        _this.checkToAddDevice(device);
-                    }
-                    _this.save.emit();
-                    // callback(result.settings);
-                    // if (this.isToInitInEditor(result.settings)) {
-                    //   this.checkElementToInit(result.settings);
-                    // }
+                    _this.projectService.setDevice(device, olddevice);
                 }
             }
         });
@@ -3065,10 +3173,6 @@ var DeviceMapComponent = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
     ], DeviceMapComponent.prototype, "goto", void 0);
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
-        __metadata("design:type", Object)
-    ], DeviceMapComponent.prototype, "save", void 0);
     DeviceMapComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
             selector: 'app-device-map',
@@ -3106,7 +3210,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-property/device-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    {{'msg.device-remove' | translate}} '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      {{'device.property-client' | translate}}</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">\n      {{'device.property-server' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>{{'device.property-name' | translate}}</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>{{'device.property-type' | translate}}</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>{{'device.property-enable' | translate}}</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>{{'device.property-address' | translate}}</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-port' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-rack' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-slot' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    {{'msg.device-remove' | translate}} '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      {{'device.property-client' | translate}}</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">\n      {{'device.property-server' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>{{'device.property-name' | translate}}</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>{{'device.property-type' | translate}}</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>{{'device.property-enable' | translate}}</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>{{'device.property-address' | translate}}</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-port' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-rack' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-slot' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" [disabled]=\"!isValid(data.device)\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -3158,6 +3262,12 @@ var DevicePropertyComponent = (function () {
     };
     DevicePropertyComponent.prototype.isSiemensS7 = function (type) {
         return (type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].SiemensS7) ? true : false;
+    };
+    DevicePropertyComponent.prototype.isValid = function (device) {
+        if (!device.name) {
+            return false;
+        }
+        return (this.data.exist.find(function (n) { return n === device.name; })) ? false : true;
     };
     DevicePropertyComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -3232,12 +3342,6 @@ var DeviceComponent = (function () {
     }
     DeviceComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.subscriptionSave = this.projectService.onSaveCurrent.subscribe(function (saveas) {
-            _this.saveDevices();
-            if (saveas) {
-                _this.projectService.saveAs();
-            }
-        });
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (res) {
             _this.deviceMap.loadCurrentProject();
             // this.deviceList.loadCurrentProject();
@@ -3248,6 +3352,11 @@ var DeviceComponent = (function () {
         this.subscriptionVariableChange = this.hmiService.onVariableChanged.subscribe(function (event) {
             _this.deviceList.updateDeviceValue();
         });
+        this.subscriptionSave = this.projectService.onSaveCurrent.subscribe(function (saveas) {
+            if (saveas) {
+                _this.projectService.saveAs();
+            }
+        });
         this.hmiService.askDeviceStatus();
     };
     DeviceComponent.prototype.ngAfterViewInit = function () {
@@ -3256,9 +3365,6 @@ var DeviceComponent = (function () {
     DeviceComponent.prototype.ngOnDestroy = function () {
         // this.checkToSave();
         try {
-            if (this.subscriptionSave) {
-                this.subscriptionSave.unsubscribe();
-            }
             if (this.subscriptionLoad) {
                 this.subscriptionLoad.unsubscribe();
             }
@@ -3267,6 +3373,9 @@ var DeviceComponent = (function () {
             }
             if (this.subscriptionVariableChange) {
                 this.subscriptionVariableChange.unsubscribe();
+            }
+            if (this.subscriptionSave) {
+                this.subscriptionSave.unsubscribe();
             }
         }
         catch (e) {
@@ -3286,20 +3395,6 @@ var DeviceComponent = (function () {
             }
         }
     };
-    DeviceComponent.prototype.saveDevices = function () {
-        // this.deviceMap.saveDeviceMap();
-        // this.deviceList.saveDeviceList(); 
-        this.projectService.save();
-        this.deviceMap.dirty = false;
-        this.deviceList.dirty = false;
-    };
-    // checkToSave() {
-    //   if (this.deviceList.dirty || this.deviceMap.dirty) {
-    //     // if (window.confirm('You want to save the Project change?')) {
-    //       this.saveDevices();
-    //     // }
-    //   }
-    // }
     DeviceComponent.prototype.gotoMap = function () {
         this.show('map');
     };
@@ -3944,7 +4039,7 @@ module.exports = "<div>\r\n    <h1 mat-dialog-title style=\"display:inline-block
 /***/ "../../../../../src/app/editor/docname.dialog.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'dlg.docname-title' | translate}}</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>{{'dlg.docname-name' | translate}}</span>\r\n        <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div>\r\n    <!-- <div style=\"display: grid; margin-bottom: 20px;\">\r\n      <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div> -->\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n    <button mat-raised-button color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n  </div>\r\n</div>"
+module.exports = "<div>\r\n  <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'dlg.docname-title' | translate}}</h1>\r\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n  <div mat-dialog-content>\r\n    <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>{{'dlg.docname-name' | translate}}</span>\r\n        <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div>\r\n    <!-- <div style=\"display: grid; margin-bottom: 20px;\">\r\n      <input [(ngModel)]=\"data.name\" type=\"text\" width=\"100%\" [readonly]=\"data.readonly\">\r\n    </div> -->\r\n  </div>\r\n  <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n    <button mat-raised-button [disabled]=\"!isValid(data.name)\" color=\"primary\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -3976,7 +4071,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/editor/editor.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"svg_editor_container\">\r\n  <mat-drawer-container class=\"svg-workarea-container\">\r\n    <!-- LEFT BAR -->\r\n    <mat-drawer mode=\"side\" opened=\"true\" class=\"svg-sidenav leave-header-area\">\r\n      <mat-accordion multi=\"true\">\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelA=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelA=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelA\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelA\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelA\">expand_more</mat-icon>\r\n              <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->\r\n            </mat-panel-title>\r\n            <mat-icon aria-label=\"Set\" title=\"{{'editor.layout-settings' | translate}}\" *ngIf=\"panelsState.panelA\" class=\"leftbar-edit-btn\"\r\n              (click)=\"onLayoutProperty();$event.stopPropagation()\">settings</mat-icon>\r\n            <mat-icon aria-label=\"Add\" title=\"Add View\" *ngIf=\"panelsState.panelA\" class=\"leftbar-edit-btn\" (click)=\"onAddView();$event.stopPropagation()\">add</mat-icon>\r\n          </mat-expansion-panel-header>\r\n          <div class=\"leftbar-panel view-panel\">\r\n            <div *ngIf=\"hmi.views && hmi.views.length <= 0\">\r\n              <br>\r\n            </div>\r\n            <div *ngFor=\"let item of hmi.views; let i = index\" (click)=\"onSelectView(item)\" [ngClass]=\"{'leftbar-item-active': isViewActive(item)}\"\r\n              class=\"leftbar-item mycursor-pointer\">\r\n              <span>{{item.name}}</span>\r\n              <mat-icon aria-label=\"More\" [matMenuTriggerFor]=\"menuview\" class=\"\">more_vert</mat-icon>\r\n              <mat-menu #menuview=\"matMenu\" class=\"leftbar-item-menu\">\r\n                <button mat-menu-item (click)=\"onDeleteView(item)\">{{'editor.view-delete' | translate}}</button>\r\n                <button mat-menu-item (click)=\"onRenameView(item)\">{{'editor.view-rename' | translate}}</button>\r\n                <button mat-menu-item (click)=\"onPropertyView(item)\">{{'editor.view-property' | translate}}</button>\r\n              </mat-menu>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelB=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelB=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelB\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelB\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelB\">expand_more</mat-icon>\r\n              <span>{{'editor.general' | translate}}</span> <!-- GENERAL -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('select')}\" (click)=\"setMode('select')\">\r\n              <span class=\"icon-select\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('fhpath')}\" (click)=\"setMode('fhpath')\">\r\n              <span class=\"icon-pencil\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('line')}\" (click)=\"setMode('line')\">\r\n              <span class=\"icon-line\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('rect')}\" (click)=\"setMode('rect')\">\r\n              <span class=\"icon-rect\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('circle')}\" (click)=\"setMode('circle')\">\r\n              <span class=\"icon-circle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('ellipse')}\" (click)=\"setMode('ellipse')\">\r\n              <span class=\"icon-ellipse\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div>\r\n            <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div> -->\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('text')}\" (click)=\"setMode('text')\">\r\n              <span class=\"icon-text\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}\"\r\n              (click)=\"imagefile.value = '';imagefile.click();\">\r\n              <span class=\"icon-image\"></span>\r\n              <input #imagefile type=\"file\" style=\"display: none;\" (change)=\"onSetImage($event)\" accept=\"image/png|jpg|svg\" />\r\n            </div>\r\n            <div id=\"tool_line\" style=\"display: none;\">\r\n              <span class=\"icon-image\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelS=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelS=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelS\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelS\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelS\">expand_more</mat-icon>\r\n              <span>{{'editor.shape' | translate}}</span> <!-- SHAPE -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-diamond')}\" (click)=\"setMode('shape-diamond')\">\r\n              <span class=\"icon-tool icon-shape-diamond\"> </span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-triangle')}\" (click)=\"setMode('shape-triangle')\">\r\n              <span class=\"icon-tool icon-shape-triangle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-halfcircle')}\" (click)=\"setMode('shape-halfcircle')\">\r\n              <span class=\"icon-tool icon-shape-halfcircle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-delay')}\" (click)=\"setMode('shape-delay')\">\r\n              <span class=\"icon-tool icon-shape-delay\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-looplimit')}\" (click)=\"setMode('shape-looplimit')\">\r\n              <span class=\"icon-tool icon-shape-looplimit\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-prepara')}\" (click)=\"setMode('shape-prepara')\">\r\n              <span class=\"icon-tool icon-shape-prepara\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-trape')}\" (click)=\"setMode('shape-trape')\">\r\n              <span class=\"icon-tool icon-shape-trape\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-offpage')}\" (click)=\"setMode('shape-offpage')\">\r\n              <span class=\"icon-tool icon-shape-offpage\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-ticket')}\" (click)=\"setMode('shape-ticket')\">\r\n              <span class=\"icon-tool icon-shape-ticket\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-arrow')}\" (click)=\"setMode('shape-arrow')\">\r\n              <span class=\"icon-tool icon-shape-arrow\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-doublearrow')}\" (click)=\"setMode('shape-doublearrow')\">\r\n              <span class=\"icon-tool icon-shape-doublearrow\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-rectindi')}\" (click)=\"setMode('shape-rectindi')\">\r\n              <span class=\"icon-tool icon-shape-rectindi\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-circleindi')}\" (click)=\"setMode('shape-circleindi')\">\r\n              <span class=\"icon-tool icon-shape-circleindi\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelC=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelC=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelC\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelC\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelC\">expand_more</mat-icon>\r\n              <span>{{'editor.processeng' | translate}}</span> <!-- PROCESS  -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('switch')}\" (click)=\"setMode('switch')\">\r\n              <span class=\"icon-tool icon-switch\"></span>\r\n            </div> -->\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-void')}\" (click)=\"setMode('compressor-void')\">\r\n              <span class=\"icon-tool icon-compressor-void\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-fan')}\" (click)=\"setMode('compressor-fan')\">\r\n              <span class=\"icon-tool icon-compressor-fan\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-piston')}\" (click)=\"setMode('compressor-piston')\">\r\n              <span class=\"icon-tool icon-compressor-piston\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-ax')}\" (click)=\"setMode('valve-ax')\">\r\n              <span class=\"icon-tool icon-valve-ax\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-bx')}\" (click)=\"setMode('valve-bx')\">\r\n              <span class=\"icon-tool icon-valve-bx\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-cx')}\" (click)=\"setMode('valve-cx')\">\r\n              <span class=\"icon-tool icon-valve-cx\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('motor-simb')}\" (click)=\"setMode('motor-simb')\">\r\n              <span class=\"icon-tool icon-motor-simb\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-filter')}\" (click)=\"setMode('exchanger-filter')\">\r\n              <span class=\"icon-tool icon-exchanger-filter\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-heat')}\" (click)=\"setMode('exchanger-heat')\">\r\n              <span class=\"icon-tool icon-exchanger-heat\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-tube')}\" (click)=\"setMode('exchanger-tube')\">\r\n              <span class=\"icon-tool icon-exchanger-tube\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelD=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelD=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelD\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelD\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelD\">expand_more</mat-icon>\r\n              <span>{{'editor.controls' | translate}}</span> <!-- CONTROLS  -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_input')}\" (click)=\"setMode('html_input')\">\r\n              <span class=\"icon-tool icon-editvalue\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('value')}\" (click)=\"setMode('value')\">\r\n              <span class=\"icon-tool icon-value\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_button')}\" (click)=\"setMode('html_button')\">\r\n              <span class=\"icon-tool icon-button\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_select')}\" (click)=\"setMode('html_select')\">\r\n              <span class=\"icon-tool icon-selectvalue\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_progress')}\" (click)=\"setMode('gauge_progress')\">\r\n              <span class=\"icon-tool icon-progress-v\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_semaphore')}\" (click)=\"setMode('gauge_semaphore')\">\r\n              <span class=\"icon-tool icon-semaphore\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_chart')}\" (click)=\"setMode('html_chart')\">\r\n              <span class=\"icon-tool icon-chart\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n      </mat-accordion>\r\n    </mat-drawer>\r\n    <!-- END LEFT BAR -->\r\n    <!-- WORK AREA -->\r\n    <mat-drawer-content>\r\n      <!-- RIGHT BAR -->\r\n      <div class=\"svg-tools-fly\">\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyIdOpenState = true\" (closed)=\"panelPropertyIdOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\" style=\"display:none\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-flybar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyIdOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyIdOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"_selected_panel\">\r\n            <div class=\"_toolset\">\r\n              <label id=\"idLabel\" title=\"{{'editor.interactivity-id-title' | translate}}\" class=\"svg-property\">\r\n                <span>{{'editor.interactivity-id' | translate}}</span>\r\n                <input id=\"elem_id\" #selid class=\"attr_changer\" data-attr=\"id\" type=\"text\" />\r\n              </label>\r\n              <label id=\"classLabel\" title=\"{{'editor.interactivity-class-title' | translate}}\" class=\"svg-property\">\r\n                <span>{{'editor.interactivity-class' | translate}}</span>\r\n                <input id=\"elem_class\" class=\"attr_changer\" data-attr=\"class\" type=\"text\" />\r\n              </label>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyTransformOpenState = true\" (closed)=\"panelPropertyTransformOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyTransformOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyTransformOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.transform' | translate}}</span> <!-- TRANSFORM SIZE/POSITION-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"_selected_panel\" class=\"rightbar-panel\">\r\n            <div class=\"_toolset\">\r\n              <div id=\"xy_panel\" class=\"_toolset\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x' | translate}}</span>\r\n                    <input id=\"selected_x\" class=\"attr_changer\" title=\"{{'editor.transform-x-title' | translate}}\" size=\"4\" data-attr=\"x\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y' | translate}}</span>\r\n                    <input id=\"selected_y\" class=\"attr_changer\" title=\"{{'editor.transform-y-title' | translate}}\" size=\"3\" data-attr=\"y\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"line_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x1' | translate}}</span>\r\n                    <input id=\"line_x1\" class=\"attr_changer\" title=\"{{'editor.transform-x1-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"x1\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y1' | translate}}</span>\r\n                    <input id=\"line_y1\" class=\"attr_changer\" title=\"{{'editor.transform-y1-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"y1\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x2' | translate}}</span>\r\n                    <input id=\"line_x2\" class=\"attr_changer\" title=\"{{'editor.transform-x2-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"x2\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y2' | translate}}</span>\r\n                    <input id=\"line_y2\" class=\"attr_changer\" title=\"{{'editor.transform-y2-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"y2\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"rect_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-radius-title' | translate}}\">\r\n                    <span>{{'editor.transform-radiuscorner' | translate}}</span>\r\n                    <input id=\"rect_rx\" size=\"3\" value=\"0\" type=\"text\" data-attr=\"Corner Radius\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"htmlctrl_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"htmlctrl_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"htmlctrl_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"shape_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"shape_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"shape_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"circle_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circlecx' | translate}}</span>\r\n                    <input id=\"circle_cx\" class=\"attr_changer\" title=\"{{'editor.transform-circlecx-title' | translate}}\" size=\"3\" data-attr=\"cx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circlecy' | translate}}</span>\r\n                    <input id=\"circle_cy\" class=\"attr_changer\" title=\"{{'editor.transform-circlecy-title' | translate}}\" size=\"3\" data-attr=\"cy\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circler' | translate}}</span>\r\n                    <input id=\"circle_r\" class=\"attr_changer\" title=\"{{'editor.transform-circler-title' | translate}}\" size=\"3\" data-attr=\"r\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"ellipse_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsecx' | translate}}</span>\r\n                    <input id=\"ellipse_cx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecx-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"cx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsecy' | translate}}</span>\r\n                    <input id=\"ellipse_cy\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecy-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"cy\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipserx' | translate}}</span>\r\n                    <input id=\"ellipse_rx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipserx-title' | translate}}\" size=\"3\" data-attr=\"rx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsery' | translate}}</span>\r\n                    <input id=\"ellipse_ry\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsery-title' | translate}}\" size=\"3\" data-attr=\"ry\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"text_panel\">\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.transform-fontfamily' | translate}}</span>\r\n                  <select class=\"font-family\" id=\"font_family\" #fontfamily (change)=\"onFontFamilyChange(fontfamily.value)\">\r\n                    <option style=\"font-family:serif\">{{'editor.transform-font-serif' | translate}}</option>\r\n                    <option style=\"font-family:sans-serif\">{{'editor.transform-font-sansserif' | translate}}</option>\r\n                    <option style=\"font-family:cursive\">{{'editor.transform-font-cursive' | translate}}</option>\r\n                    <option style=\"font-family:fantasy\">{{'editor.transform-font-fantasy' | translate}}</option>\r\n                    <option style=\"font-family:monospace\">{{'editor.transform-font-monospace' | translate}}</option>\r\n                  </select>\r\n                </div>\r\n\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-fontsize' | translate}}</span>\r\n                    <input id=\"font_size\" size=\"3\" value=\"0\" class=\"attr_changer\" title=\"{{'editor.transform-fontsize-title' | translate}}\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-textalign' | translate}}</span>\r\n                    <select class=\"text-align\" id=\"text_anchor\" #textalign (change)=\"onTextAlignChange(textalign.value)\">\r\n                      <option value=\"start\">{{'editor.transform-left' | translate}}</option>\r\n                      <option value=\"middle\">{{'editor.transform-center' | translate}}</option>\r\n                      <option value=\"end\">{{'editor.transform-right' | translate}}</option>\r\n                    </select>\r\n                    <!-- <div class=\"tool_button\" id=\"tool_bold\" title=\"Bold Text [B]\">\r\n                      <span>B</span>\r\n                    </div> -->\r\n                  </div>\r\n                  <!-- <div class=\"svg-property\">\r\n                    <div class=\"tool_button\" id=\"tool_italic\" title=\"Italic Text [I]\">\r\n                      <span>i</span>\r\n                    </div>\r\n                  </div> -->\r\n                </div>\r\n\r\n                <!-- Not visible, but still used -->\r\n                <input id=\"text\" type=\"text\" size=\"35\" />\r\n              </div>\r\n              <div id=\"image_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"image_width\" class=\"attr_changer\" title=\"{{'editor.transform-image-width-title' | translate}}\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"image_height\" class=\"attr_changer\" title=\"{{'editor.transform-image-height-title' | translate}}\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property\" style=\"display: none;\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-url' | translate}}</span>\r\n                    <input id=\"image_url\" class=\"attr_changer\" type=\"text\" title=\"{{'editor.transform-image-url-title' | translate}}\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <div class=\"svg-property\">\r\n                      <button id=\"change_image_url\" style=\"display:none;\">{{'editor.transform-change-image' | translate}}</button>\r\n                      <span id=\"url_notice\" title=\"{{'editor.transform-change-image-title' | translate}}\"></span>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <!-- <div id=\"hw_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"Change rectangle width\">\r\n                    <span>width</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"Change rectangle height\">\r\n                    <span>height</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div> -->\r\n              <div id=\"tool_angle\" title=\"{{'editor.transform-angle-title' | translate}}\" class=\"svg-property\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-angle' | translate}}</span>\r\n                    <input id=\"angle\" size=\"2\" value=\"0\" type=\"text\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <!-- <div class=\"svg-tool-button\" (click)=\"flipSelected('vertical')\" title=\"Flip vertically\">\r\n                      <span class=\"icon-flip-vertical\"></span>\r\n                    </div>\r\n                    <div class=\"svg-tool-button\" (click)=\"flipSelected('orizontal')\" title=\"Flip orizontally\">\r\n                      <span class=\"icon-flip-orizontal\"></span>\r\n                    </div> -->\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelAlignOpenState = true\" (closed)=\"panelAlignOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelAlignOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelAlignOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.align' | translate}}</span> <!-- ALIGN-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"align_panel\" class=\"rightbar_panel\">\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('left')\" title=\"{{'editor.align-left-title' | translate}}\">\r\n              <span class=\"icon-align-left\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('center')\" title=\"{{'editor.align-center-title' | translate}}Align Center\">\r\n              <span class=\"icon-align-center\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('right')\" title=\"{{'editor.align-right-title' | translate}}Align Right\">\r\n              <span class=\"icon-align-right\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('top')\" title=\"{{'editor.align-top-title' | translate}}Align Top\">\r\n              <span class=\"icon-align-top\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('middle')\" title=\"{{'editor.align-middle-title' | translate}}Align Middle\">\r\n              <span class=\"icon-align-middle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('bottom')\" title=\"{{'editor.align-bottom-title' | translate}}Align Bottom\">\r\n              <span class=\"icon-align-bottom\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelFillOpenState = true\" (closed)=\"panelFillOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelFillOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelFillOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.stroke' | translate}}</span> <!-- STROKE-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div class=\"rightbar_panel\">\r\n            <div class=\"_color_tool\" id=\"tool_stroke\">\r\n              <div class=\"svg-property-split2\">\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.stroke-width' | translate}}</span>\r\n                  <input id=\"stroke_width\" title=\"{{'editor.stroke-width-title' | translate}}\" size=\"2\"\r\n                    value=\"1\" type=\"text\" data-attr=\"Stroke Width\" />\r\n                </div>\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.stroke-style' | translate}}</span>\r\n                  <select id=\"stroke_style\" class=\"style-stroke\" title=\"{{'editor.stroke-style-title' | translate}}\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <div class=\"svg-tool-button\" id=\"linejoin_miter\" #linejoinmiter (click)=\"onSetStrokeOption(linejoinmiter)\"\r\n                  title=\"{{'editor.stroke-joinmiter-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-miter\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linejoin_round\" #linejoinround (click)=\"onSetStrokeOption(linejoinround)\"\r\n                  title=\"{{'editor.stroke-joinround-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-round\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linejoin_bevel\" #linejoinbevel (click)=\"onSetStrokeOption(linejoinbevel)\"\r\n                  title=\"{{'editor.stroke-joinbevel-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-bevel\"></span>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <div class=\"svg-tool-button\" id=\"linecap_butt\" #linecapbutt (click)=\"onSetStrokeOption(linecapbutt)\"\r\n                  title=\"{{'editor.stroke-capbutt-title' | translate}}\">\r\n                  <span class=\"icon-linecap-butt\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linecap_square\" #linecapsquare (click)=\"onSetStrokeOption(linecapsquare)\"\r\n                  title=\"{{'editor.stroke-capsquare-title' | translate}}\">\r\n                  <span class=\"icon-linecap-square\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linecap_round\" #linecapround (click)=\"onSetStrokeOption(linecapround)\"\r\n                  title=\"{{'editor.stroke-capround-title' | translate}}\">\r\n                  <span class=\"icon-linecap-round\"></span>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property-split2\" style=\"display: none\">\r\n                <div class=\"svg-property\">\r\n                  <span for=\"class_shadow\">{{'editor.stroke-shadow' | translate}}</span>\r\n                  <input type=\"checkbox\" id=\"class_shadow\" name=\"class_shadow\" class=\"attr_changer\" title=\"{{'editor.stroke-shadow-title' | translate}}\"\r\n                    (change)=\"onSetShadowOption($event.target.checked)\" label=\"shadow\" />\r\n                </div>\r\n                <div class=\"svg-property\">\r\n                </div>\r\n              </div>\r\n              <!-- <ul id=\"linejoin_opts\">\r\n                <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n              </ul>\r\n\r\n              <ul id=\"linecap_opts\">\r\n                <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n              </ul> -->\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelMarkerOpenState = true\" (closed)=\"panelMarkerOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelMarkerOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelMarkerOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.marker' | translate}}</span> <!-- MARKER-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"marker_panel\" class=\"rightbar_panel\">\r\n            <div class=\"svg-property-split3\">\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-start' | translate}}</span>\r\n                <select id=\"start_marker\" #smarker class=\"style-stroke\" title=\"{{'editor.marker-start-title' | translate}}\" (click)=\"onSetMarker('start_marker', smarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-middle' | translate}}</span>\r\n                <select id=\"mid_marker\" #mmarker class=\"style-stroke\" title=\"{{'editor.marker-middle-title' | translate}}\" (click)=\"onSetMarker('mid_marker', mmarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-end' | translate}}</span>\r\n                <select id=\"end_marker\" #emarker class=\"style-stroke\" title=\"{{'editor.marker-end-title' | translate}}\" (click)=\"onSetMarker('end_marker', emarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelEventOpenState = true\" (closed)=\"panelEventOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelEventOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelEventOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n            </mat-panel-title>\r\n            <!-- <mat-icon aria-label=\"Add\" class=\"leftbar-edit-btn\" (click)=\"addEvent();$event.stopPropagation()\" *ngif=\"selectedElement\">add</mat-icon> -->\r\n          </mat-expansion-panel-header>\r\n          <div id=\"interaction_panel\" class=\"rightbar_panel\">\r\n            <gauge-base #gaugepanel *ngIf=\"selectedElement\" [settings]=getGaugeSettings(selectedElement) (edit)=\"onGaugeEdit($event)\"></gauge-base>\r\n            <!-- (edit)=\"onGaugeEdit($event)\" [withEvents]=\"isWithEvents(selectedElement)\"></gauge-base> -->\r\n          </div>\r\n        </mat-expansion-panel>\r\n      </div>\r\n      <!-- END RIGHT BAR -->\r\n      <!-- Work Area -->\r\n      <div id=\"svg_editor\" style=\"z-index:-1\">\r\n        <!-- Rules bar -->\r\n        <div id=\"rulers\">\r\n          <div id=\"ruler_corner\"></div>\r\n          <div id=\"ruler_x\">\r\n            <div>\r\n              <canvas height=\"15\"></canvas>\r\n            </div>\r\n          </div>\r\n          <div id=\"ruler_y\">\r\n            <div>\r\n              <canvas width=\"15\"></canvas>\r\n            </div>\r\n          </div>\r\n        </div>\r\n        <!-- END Rules bar -->\r\n        <!-- Draw Area -->\r\n        <div id=\"workarea\">\r\n          <style id=\"styleoverrides\" type=\"text/css\" media=\"screen\" scoped=\"scoped\"></style>\r\n          <div id=\"svgcanvas\" style=\"position:relative\">\r\n          </div>\r\n        </div>\r\n        <!-- END Draw Area -->\r\n        <!-- Draw top tool bar -->\r\n        <div id=\"tools_top\" class=\"tools_panel\">\r\n          <div id=\"editor_panel\">\r\n            <!-- <button mat-button title=\"Save Project\" [matMenuTriggerFor]=\"prjview\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n            </button> -->\r\n            <!-- <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu\" yPosition=\"below\" [overlapTrigger]=\"false\"> -->\r\n            <!-- <button mat-menu-item (click)=\"onSaveProject()\">Save</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onSaveProjectAs()\">Save as...</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">Open Project</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n            <!-- <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\" accept=\".wvc\"/> -->\r\n            <!-- </mat-menu> -->\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button title=\"{{'editor.tools-launch-title' | translate}}\" class=\"main-btn\" (click)=\"onStartCurrent()\">\r\n              <mat-icon aria-label=\"Launch Current View\">play_arrow</mat-icon>\r\n            </button>\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button title=\"{{'editor.tools-zoom-title' | translate}}\" class=\"main-btn\" (click)=\"onZoomSelect()\">\r\n              <mat-icon aria-label=\"Zoom Tool [Ctrl+Up/Down]\">zoom_in</mat-icon>\r\n            </button>\r\n            <button mat-button title=\"{{'editor.tools-grid-title' | translate}}\" class=\"main-btn\" (click)=\"onShowGrid()\">\r\n              <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"!gridOn\">grid_on</mat-icon>\r\n              <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"gridOn\">grid_off</mat-icon>\r\n            </button>\r\n            <div id=\"history_panel\">\r\n              <button mat-button id=\"tool_undo\" title=\"{{'editor.tools-undo-title' | translate}}\" class=\"main-btn\">\r\n                <mat-icon aria-label=\"Undo [Z]\">undo</mat-icon>\r\n              </button>\r\n              <button mat-button id=\"tool_redo\" title=\"{{'editor.tools-redo-title' | translate}}\" class=\"main-btn\">\r\n                <mat-icon aria-label=\"Redo [Y]\">redo</mat-icon>\r\n              </button>\r\n            </div>\r\n\r\n            <!-- <div class=\"push_button\" title=\"Save Project\" (click)=\"saveProject()\"></div> -->\r\n            <!-- <div class=\"tool_sep\"></div> -->\r\n            <!-- <div class=\"push_button\" id=\"tool_source\" title=\"Edit Source [U]\"></div> -->\r\n            <!-- <div class=\"tool_button\" id=\"tool_wireframe\" title=\"Wireframe Mode [F]\"></div> -->\r\n            <!-- <div class=\"tool_sep\"></div> -->\r\n            <!-- <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div> -->\r\n          </div>\r\n          <div id=\"selected_panel\">\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button id=\"tool_clone\" title=\"{{'editor.tools-clone-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Duplicate Element [D]\">content_copy</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_delete\" title=\"{{'editor.tools-delete-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Delete Element [Delete/Backspace]\">content_cut</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_move_bottom\" title=\"{{'editor.tools-movebottom-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"to-bottom\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_move_top\" title=\"{{'editor.tools-movetop-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"to-top\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_topath\" title=\"{{'editor.tools-topath-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>linear_scale</mat-icon>\r\n            </button>\r\n          </div>\r\n          <div id=\"multiselected_panel\">\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button id=\"tool_clone_multi\" title=\"{{'editor.tools-clonemulti-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Clone Elements [C]\">content_copy</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_delete_multi\" title=\"{{'editor.tools-deletemulti-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Delete Selected Elements [Delete/Backspace]\">content_cut</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_group_elements\" title=\"{{'editor.tools-group-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"group\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_alignleft\" title=\"{{'editor.tools-alignleft-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_left</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_aligncenter\" title=\"{{'editor.tools-aligncenter-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_center</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignright\" title=\"{{'editor.tools-alignright-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_right</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_aligntop\" title=\"{{'editor.tools-aligntop-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_top</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignmiddle\" title=\"{{'editor.tools-alignmiddle-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_center</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignbottom\" title=\"{{'editor.tools-alignbottom-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_bottom</mat-icon>\r\n            </button>\r\n          </div>\r\n          <div id=\"g_panel\">\r\n            <button mat-button id=\"tool_ungroup\" title=\"{{'editor.tools-ungroup-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"ungroup\"></span>\r\n            </button>\r\n          </div>\r\n\r\n          <!-- History buttons -->\r\n          <!-- <div id=\"history_panel\">\r\n            <div class=\"tool_sep\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_undo\" title=\"Undo [Z]\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_redo\" title=\"Redo [Y]\"></div>\r\n          </div> -->\r\n          <!-- Buttons when a single element is selected -->\r\n          <!-- <div id=\"_selected_panel\"> -->\r\n          <!-- <div class=\"toolset\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_clone\" title=\"Duplicate Element [D]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_delete\" title=\"Delete Element [Delete/Backspace]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_move_top\" title=\"Bring to Front [ Ctrl+Shift+] ]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_move_bottom\" title=\"Send to Back [ Ctrl+Shift+[ ]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_topath\" title=\"Convert to Path\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_reorient\" title=\"Reorient path\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_make_link\" title=\"Make (hyper)link\"></div> -->\r\n          <!-- </div> -->\r\n          <!-- </div> -->\r\n          <!-- select panel END -->\r\n          <!-- Buttons when multiple elements are selected -->\r\n          <!-- <div id=\"_multiselected_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_clone_multi\" title=\"Clone Elements [C]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_delete_multi\" title=\"Delete Selected Elements [Delete/Backspace]\"></div> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_group_elements\" title=\"Group Elements [G]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_make_link_multi\" title=\"Make (hyper)link\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignleft\" title=\"Align Left\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_aligncenter\" title=\"Align Center\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignright\" title=\"Align Right\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_aligntop\" title=\"Align Top\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignmiddle\" title=\"Align Middle\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignbottom\" title=\"Align Bottom\"></div> -->\r\n          <!-- <label id=\"tool_align_relative\">\r\n              <span id=\"relativeToLabel\">relative to:</span>\r\n              <select id=\"align_relative_to\" title=\"Align relative to ...\">\r\n                <option id=\"selected_objects\" value=\"selected\">selected objects</option>\r\n                <option id=\"largest_object\" value=\"largest\">largest object</option>\r\n                <option id=\"smallest_object\" value=\"smallest\">smallest object</option>\r\n                <option id=\"page\" value=\"page\">page</option>\r\n              </select>\r\n            </label> -->\r\n          <!-- </div> -->\r\n\r\n          <!-- formerly gsvg_panel -->\r\n          <!-- <div id=\"container_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- Add viewBox field here? -->\r\n          <!-- <label id=\"group_title\" title=\"Group identification label\">\r\n              <span>label:</span>\r\n              <input id=\"g_title\" data-attr=\"title\" size=\"10\" type=\"text\" />\r\n            </label> -->\r\n          <!-- </div> -->\r\n\r\n          <!-- <div id=\"use_panel\">\r\n            <div class=\"push_button\" id=\"tool_unlink_use\" title=\"Break link to reference element (make unique)\"></div>\r\n          </div> -->\r\n\r\n          <!-- <div id=\"g_panel\">\r\n            <div class=\"push_button\" id=\"tool_ungroup\" title=\"Ungroup Elements [G]\"></div>\r\n          </div> -->\r\n\r\n          <!-- For anchor elements -->\r\n          <!-- <div id=\"a_panel\">\r\n            <label id=\"tool_link_url\" title=\"Set link URL (leave empty to remove)\">\r\n              <span id=\"linkLabel\" class=\"icon_label\"></span>\r\n              <input id=\"link_url\" type=\"text\" size=\"35\" />\r\n            </label>\r\n          </div> -->\r\n\r\n          <!-- <div id=\"path_node_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"tool_button push_button_pressed\" id=\"tool_node_link\" title=\"Link Control Points\"></div> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <label id=\"tool_node_x\">x:\r\n              <input id=\"path_node_x\" class=\"attr_changer\" title=\"Change node's x coordinate\" size=\"3\" data-attr=\"x\" />\r\n            </label>\r\n            <label id=\"tool_node_y\">y:\r\n              <input id=\"path_node_y\" class=\"attr_changer\" title=\"Change node's y coordinate\" size=\"3\" data-attr=\"y\" />\r\n            </label> -->\r\n\r\n          <!-- <select id=\"seg_type\" title=\"Change Segment type\">\r\n              <option id=\"straight_segments\" selected=\"selected\" value=\"4\">Straight</option>\r\n              <option id=\"curve_segments\" value=\"6\">Curve</option>\r\n            </select> -->\r\n          <!-- <div class=\"tool_button\" id=\"tool_node_clone\" title=\"Clone Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_node_delete\" title=\"Delete Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_openclose_path\" title=\"Open/close sub-path\"></div>\r\n            <div class=\"tool_button\" id=\"tool_add_subpath\" title=\"Add sub-path\"></div> -->\r\n          <!-- </div> -->\r\n        </div>\r\n        <!-- tools_top -->\r\n        <div id=\"cur_context_panel\">\r\n\r\n        </div>\r\n\r\n        <!-- tools_left -->\r\n        <!-- <div id=\"tools_left\" class=\"tools_panel\">\r\n      <div class=\"tool_button\" id=\"tool_select\" title=\"Select Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_fhpath\" title=\"Pencil Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_line\" title=\"Line Tool\"></div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_rect_show\" title=\"Square/Rect Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_ellipse_show\" title=\"Ellipse/Circle Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button\" id=\"tool_path\" title=\"Path Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_text\" title=\"Text Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_image\" title=\"Image Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div>\r\n\r\n      <div style=\"display: none\">\r\n        <div id=\"tool_rect\" title=\"Rectangle\"></div>\r\n        <div id=\"tool_square\" title=\"Square\"></div>\r\n        <div id=\"tool_fhrect\" title=\"Free-Hand Rectangle\"></div>\r\n        <div id=\"tool_ellipse\" title=\"Ellipse\"></div>\r\n        <div id=\"tool_circle\" title=\"Circle\"></div>\r\n        <div id=\"tool_fhellipse\" title=\"Free-Hand Ellipse\"></div>\r\n      </div>\r\n    </div> -->\r\n        <!-- tools_left -->\r\n\r\n        <!-- tool bottom -->\r\n        <div class=\"bottom-bar tools_panel\">\r\n          <!-- Zoom buttons -->\r\n          <div class=\"zoom-menu\" title=\"{{'editor.tools-zoomlevel-title' | translate}}\">\r\n            <div class=\"zoom-value\">\r\n              <input id=\"zoom\" size=\"3\" value=\"100\" type=\"text\" #zoomValue hidden />\r\n              <span id=\"zoomLabel\">{{zoomValue.value}} %</span>\r\n              <div id=\"zoom_dropdown\" class=\"dropdown selection\">\r\n                <button>O\r\n                </button>\r\n                <ul>\r\n                  <li>1000%</li>\r\n                  <li>400%</li>\r\n                  <li>200%</li>\r\n                  <li>100%</li>\r\n                  <li>50%</li>\r\n                  <li>25%</li>\r\n                  <li id=\"fit_to_canvas\" data-val=\"canvas\">{{'editor.tools-zoomlevel-fitcanvas' | translate}}</li>\r\n                  <li id=\"fit_to_sel\" data-val=\"selection\">{{'editor.tools-zoomlevel-fitsection' | translate}}</li>\r\n                  <!-- <li id=\"fit_to_layer_content\" data-val=\"layer\">Fit to layer content</li> -->\r\n                  <li id=\"fit_to_all\" data-val=\"content\">{{'editor.tools-zoomlevel-fitcontent' | translate}}</li>\r\n                  <li>100%</li>\r\n                </ul>\r\n              </div>\r\n            </div>\r\n          </div>\r\n\r\n          <div id=\"tools_bottom_2\" class=\"colors\">\r\n            <input readonly [(colorPicker)]=\"colorFill\" class=\"color-fill\" title=\"{{'editor.tools-fillcolor-title' | translate}}\" [style.background]=\"colorFill\"\r\n              [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeFillColor($event)\"\r\n              [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\r\n              [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n            <input readonly [(colorPicker)]=\"colorStroke\" class=\"color-stroke\" title=\"{{'editor.tools-strokecolor-title' | translate}}\"\r\n              [style.background]=\"colorStroke\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeStrokeColor($event)\"\r\n              [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\r\n              [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n            <!-- <div id=\"color_tools\"> -->\r\n            <div class=\"color_tool\" id=\"tool_fill\" hidden>\r\n              <label class=\"icon_label\" for=\"fill_color\" title=\"{{'editor.tools-fillcolor-title' | translate}}\"></label>\r\n              <div class=\"color_block\">\r\n                <div id=\"fill_color\" class=\"color_block\" [style.border-color]=\"colorFill\"></div>\r\n              </div>\r\n            </div>\r\n            <div class=\"color_tool\" id=\"tool_stroke\" hidden>\r\n              <label class=\"icon_label\" title=\"Change stroke color\"></label>\r\n              <div class=\"color_block\">\r\n                <div id=\"stroke_bg\"></div>\r\n                <div id=\"stroke_color\" class=\"color_block\" title=\"{{'editor.tools-strokecolor-title' | translate}}\" [style.border-color]=\"colorStroke\"></div>\r\n              </div>\r\n\r\n              <!-- <div id=\"toggle_stroke_tools\" title=\"Show/hide more stroke tools\"></div> -->\r\n\r\n              <!-- <label class=\"stroke_tool\">\r\n                  <select id=\"stroke_style\" title=\"Change stroke dash style\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </label> -->\r\n\r\n              <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linejoin\">\r\n                  <div id=\"cur_linejoin\" title=\"Linejoin: Miter\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n              <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linecap\">\r\n                  <div id=\"cur_linecap\" title=\"Linecap: Butt\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n              <!-- </div> -->\r\n\r\n              <!-- <div class=\"color_tool\" id=\"tool_opacity\" title=\"Change selected item opacity\">\r\n                <label>\r\n                  <span id=\"group_opacityLabel\" class=\"icon_label\"></span>\r\n                  <input id=\"group_opacity\" size=\"3\" value=\"100\" type=\"text\" />\r\n                </label>\r\n                <div id=\"opacity_dropdown\" class=\"dropdown\">\r\n                  <button></button>\r\n                  <ul>\r\n                    <li>0%</li>\r\n                    <li>25%</li>\r\n                    <li>50%</li>\r\n                    <li>75%</li>\r\n                    <li>100%</li>\r\n                    <li class=\"special\">\r\n                      <div id=\"opac_slider\"></div>\r\n                    </li>\r\n                  </ul>\r\n                </div>\r\n              </div> -->\r\n            </div>\r\n          </div>\r\n\r\n          <div id=\"tools_bottom_3\" class=\"colors-palette\">\r\n            <div id=\"palette_holder\">\r\n              <div id=\"palette\" title=\"{{'editor.tools-palettecolor-title' | translate}}\"></div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n        <div id=\"option_lists\" class=\"dropdown\">\r\n          <!-- <ul id=\"linejoin_opts\">\r\n            <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n          </ul>\r\n\r\n          <ul id=\"linecap_opts\">\r\n            <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n          </ul> -->\r\n\r\n          <ul id=\"position_opts\" class=\"optcols3\">\r\n            <li class=\"push_button\" id=\"tool_posleft\" title=\"Align Left\"></li>\r\n            <li class=\"push_button\" id=\"tool_poscenter\" title=\"Align Center\"></li>\r\n            <li class=\"push_button\" id=\"tool_posright\" title=\"Align Right\"></li>\r\n            <li class=\"push_button\" id=\"tool_postop\" title=\"Align Top\"></li>\r\n            <li class=\"push_button\" id=\"tool_posmiddle\" title=\"Align Middle\"></li>\r\n            <li class=\"push_button\" id=\"tool_posbottom\" title=\"Align Bottom\"></li>\r\n          </ul>\r\n        </div>\r\n\r\n\r\n        <!-- hidden divs -->\r\n        <!-- <div id=\"color_picker\"></div> -->\r\n\r\n      </div>\r\n    </mat-drawer-content>\r\n    <!-- work area END -->\r\n  </mat-drawer-container>\r\n\r\n  <!-- svg_editor -->\r\n\r\n  <!-- NOT USED -->\r\n  <div id=\"svg_source_editor\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_source_container\">\r\n      <div id=\"tool_source_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_source_save\">Apply Changes</button>\r\n        <button id=\"tool_source_cancel\">Cancel</button>\r\n      </div>\r\n      <div id=\"save_output_btns\">\r\n        <p id=\"copy_save_note\">Copy the contents of this box into a text editor, then save the file with a .svg\r\n          extension.</p>\r\n        <button id=\"copy_save_done\">Done</button>\r\n      </div>\r\n      <form>\r\n        <textarea id=\"svg_source_textarea\" spellcheck=\"false\"></textarea>\r\n      </form>\r\n    </div>\r\n  </div>\r\n\r\n  <div id=\"svg_docprops\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_docprops_container\">\r\n      <div id=\"tool_docprops_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_docprops_save\">OK</button>\r\n        <button id=\"tool_docprops_cancel\">Cancel</button>\r\n      </div>\r\n\r\n\r\n      <fieldset id=\"svg_docprops_docprops\">\r\n        <legend id=\"svginfo_image_props\">Image Properties</legend>\r\n        <label>\r\n          <span id=\"svginfo_title\">Title:</span>\r\n          <input type=\"text\" id=\"canvas_title\" />\r\n        </label>\r\n\r\n        <fieldset id=\"change_resolution\">\r\n          <legend id=\"svginfo_dim\">Canvas Dimensions</legend>\r\n\r\n          <label>\r\n            <span id=\"svginfo_width\">width:</span>\r\n            <input type=\"text\" id=\"canvas_width\" size=\"6\" />\r\n          </label>\r\n\r\n          <label>\r\n            <span id=\"svginfo_height\">height:</span>\r\n            <input type=\"text\" id=\"canvas_height\" size=\"6\" />\r\n          </label>\r\n\r\n          <label>\r\n            <select id=\"resolution\">\r\n              <option id=\"selectedPredefined\" selected=\"selected\">Select predefined:</option>\r\n              <option>640x480</option>\r\n              <option>800x600</option>\r\n              <option>1024x768</option>\r\n              <option>1280x960</option>\r\n              <option>1600x1200</option>\r\n              <option id=\"fitToContent\" value=\"content\">Fit to Content</option>\r\n            </select>\r\n          </label>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"image_save_opts\">\r\n          <legend id=\"includedImages\">Included Images</legend>\r\n          <label>\r\n            <input type=\"radio\" name=\"image_opt\" value=\"embed\" checked=\"checked\" />\r\n            <span id=\"image_opt_embed\">Embed data (local files)</span>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"image_opt\" value=\"ref\" />\r\n            <span id=\"image_opt_ref\">Use file reference</span>\r\n          </label>\r\n        </fieldset>\r\n      </fieldset>\r\n\r\n    </div>\r\n  </div>\r\n\r\n  <div id=\"svg_prefs\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_prefs_container\">\r\n      <div id=\"tool_prefs_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_prefs_save\">OK</button>\r\n        <button id=\"tool_prefs_cancel\">Cancel</button>\r\n      </div>\r\n\r\n      <fieldset>\r\n        <legend id=\"svginfo_editor_prefs\">Editor Preferences</legend>\r\n\r\n        <label>\r\n          <span id=\"svginfo_lang\">Language:</span>\r\n          <!-- Source: http://en.wikipedia.org/wiki/Language_names -->\r\n          <select id=\"lang_select\">\r\n            <option id=\"lang_ar\" value=\"ar\">العربية</option>\r\n            <option id=\"lang_cs\" value=\"cs\">Čeština</option>\r\n            <option id=\"lang_de\" value=\"de\">Deutsch</option>\r\n            <option id=\"lang_en\" value=\"en\" selected=\"selected\">English</option>\r\n            <option id=\"lang_es\" value=\"es\">Español</option>\r\n            <option id=\"lang_fa\" value=\"fa\">فارسی</option>\r\n            <option id=\"lang_fr\" value=\"fr\">Français</option>\r\n            <option id=\"lang_fy\" value=\"fy\">Frysk</option>\r\n            <option id=\"lang_hi\" value=\"hi\">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;,\r\n              &#2361;&#2367;&#2306;&#2342;&#2368;</option>\r\n            <option id=\"lang_it\" value=\"it\">Italiano</option>\r\n            <option id=\"lang_ja\" value=\"ja\">日本語</option>\r\n            <option id=\"lang_nl\" value=\"nl\">Nederlands</option>\r\n            <option id=\"lang_pl\" value=\"pl\">Polski</option>\r\n            <option id=\"lang_pt-BR\" value=\"pt-BR\">Português (BR)</option>\r\n            <option id=\"lang_ro\" value=\"ro\">Română</option>\r\n            <option id=\"lang_ru\" value=\"ru\">Русский</option>\r\n            <option id=\"lang_sk\" value=\"sk\">Slovenčina</option>\r\n            <option id=\"lang_sl\" value=\"sl\">Slovenščina</option>\r\n            <option id=\"lang_zh-TW\" value=\"zh-TW\">繁體中文</option>\r\n          </select>\r\n        </label>\r\n\r\n        <label>\r\n          <span id=\"svginfo_icons\">Icon size:</span>\r\n          <select id=\"iconsize\">\r\n            <option id=\"icon_small\" value=\"s\">Small</option>\r\n            <option id=\"icon_medium\" value=\"m\" selected=\"selected\">Medium</option>\r\n            <option id=\"icon_large\" value=\"l\">Large</option>\r\n            <option id=\"icon_xlarge\" value=\"xl\">Extra Large</option>\r\n          </select>\r\n        </label>\r\n\r\n        <fieldset id=\"change_background\">\r\n          <legend id=\"svginfo_change_background\">Editor Background</legend>\r\n          <div id=\"bg_blocks\"></div>\r\n          <label>\r\n            <span id=\"svginfo_bg_url\">URL:</span>\r\n            <input type=\"text\" id=\"canvas_bg_url\" />\r\n          </label>\r\n          <p id=\"svginfo_bg_note\">Note: Background will not be saved with image.</p>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"change_grid\">\r\n          <legend id=\"svginfo_grid_settings\">Grid</legend>\r\n          <label>\r\n            <span id=\"svginfo_snap_onoff\">Snapping on/off</span>\r\n            <input type=\"checkbox\" value=\"snapping_on\" id=\"grid_snapping_on\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_snap_step\">Snapping Step-Size:</span>\r\n            <input type=\"text\" id=\"grid_snapping_step\" size=\"3\" value=\"10\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_grid_color\">Grid color:</span>\r\n            <input type=\"text\" id=\"grid_color\" size=\"3\" value=\"#000\" />\r\n          </label>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"units_rulers\">\r\n          <legend id=\"svginfo_units_rulers\">Units &amp; Rulers</legend>\r\n          <label>\r\n            <span id=\"svginfo_rulers_onoff\">Show rulers</span>\r\n            <input type=\"checkbox\" value=\"show_rulers\" id=\"show_rulers\" checked=\"checked\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_unit\">Base Unit:</span>\r\n            <select id=\"base_unit\">\r\n              <option value=\"px\">Pixels</option>\r\n              <option value=\"cm\">Centimeters</option>\r\n              <option value=\"mm\">Millimeters</option>\r\n              <option value=\"in\">Inches</option>\r\n              <option value=\"pt\">Points</option>\r\n              <option value=\"pc\">Picas</option>\r\n              <option value=\"em\">Ems</option>\r\n              <option value=\"ex\">Exs</option>\r\n            </select>\r\n          </label>\r\n          <!-- Should this be an export option instead? -->\r\n          <!-- \r\n          <span id=\"svginfo_unit_system\">Unit System:</span>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"single\" checked=\"checked\"/>\r\n            <span id=\"svginfo_single_type_unit\">Single type unit</span>\r\n            <small id=\"svginfo_single_type_unit_sub\">CSS unit type is set on root element. If a different unit type is entered in a text field, it is converted back to user units on export.</small>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"multi\"/>\r\n            <span id=\"svginfo_multi_units\">Multiple CSS units</span> \r\n            <small id=\"svginfo_single_type_unit_sub\">Attributes can be given different CSS units, which may lead to inconsistant results among viewers.</small>\r\n          </label>\r\n   -->\r\n        </fieldset>\r\n\r\n      </fieldset>\r\n\r\n    </div>\r\n  </div>\r\n  <!-- NOT USED END -->\r\n\r\n  <div id=\"dialog_box\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"dialog_container\">\r\n      <div id=\"dialog_content\"></div>\r\n      <div id=\"dialog_buttons\"></div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- canvas context menu -->\r\n  <ul id=\"cmenu_canvas\" class=\"contextMenu svg-workarea-contextmenu\">\r\n    <!-- <li>\r\n      <a href=\"#deselect\">Clear selection</a>\r\n    </li> -->\r\n    <li>\r\n      <a id=\"#interactivity\" (click)=\"isInteractivtyEnabled(selectedElement) && onGaugeEditEx()\">{{'editor.interactivity' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#cut\">{{'editor.cmenu-cut' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#copy\">{{'editor.cmenu-copy' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#paste\">{{'editor.cmenu-paste' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#paste_in_place\">{{'editor.cmenu-paste-place' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#delete\">{{'editor.cmenu-delete' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#group\">{{'editor.cmenu-group' | translate}}\r\n        <span class=\"shortcut\">G</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#ungroup\">{{'editor.cmenu-ungroup' | translate}}\r\n        <span class=\"shortcut\">G</span>\r\n      </a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#move_front\">{{'editor.cmenu-bring-front' | translate}}\r\n        <span class=\"shortcut\">SHFT+CTRL+]</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_up\">{{'editor.cmenu-bring-forward' | translate}}\r\n        <span class=\"shortcut\">CTRL+]</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_down\">{{'editor.cmenu-send-backward' | translate}}\r\n        <span class=\"shortcut\">CTRL+[</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_back\">{{'editor.cmenu-send-back' | translate}}\r\n        <span class=\"shortcut\">SHFT+CTRL+[</span>\r\n      </a>\r\n    </li>\r\n  </ul>\r\n  <!-- canvas context menu END -->\r\n\r\n  <!-- layers context menu -->\r\n  <ul id=\"cmenu_layers\" class=\"contextMenu\" style=\"display: none\">\r\n    <li>\r\n      <a href=\"#dupe\">{{'editor.cmenu-layer-duplicate' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#delete\">{{'editor.cmenu-layer-delete' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#merge_down\">{{'editor.cmenu-layer-marge-down' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#merge_all\">{{'editor.cmenu-layer-marge-all' | translate}}</a>\r\n    </li>\r\n  </ul>\r\n  <!-- layers context menu END -->\r\n</div>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n    <!-- <mat-spinner mode=\"indeterminate\" color=\"rgba(48,89,175,1)\" diameter=\"50\" \r\n            style=\"position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);\">\r\n    </mat-spinner> -->\r\n    <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\r\n        style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n    </mat-progress-bar>\r\n</div>\r\n<div id=\"svg_editor_container\">\r\n  <mat-drawer-container class=\"svg-workarea-container\">\r\n    <!-- LEFT BAR -->\r\n    <mat-drawer mode=\"side\" opened=\"true\" class=\"svg-sidenav leave-header-area\">\r\n      <mat-accordion multi=\"true\">\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelA=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelA=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelA\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelA\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelA\">expand_more</mat-icon>\r\n              <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->\r\n            </mat-panel-title>\r\n            <mat-icon aria-label=\"Set\" title=\"{{'editor.layout-settings' | translate}}\" *ngIf=\"panelsState.panelA\" class=\"leftbar-edit-btn\"\r\n              (click)=\"onLayoutProperty();$event.stopPropagation()\">settings</mat-icon>\r\n            <mat-icon aria-label=\"Add\" title=\"Add View\" *ngIf=\"panelsState.panelA\" class=\"leftbar-edit-btn\" (click)=\"onAddView();$event.stopPropagation()\">add</mat-icon>\r\n          </mat-expansion-panel-header>\r\n          <div class=\"leftbar-panel view-panel\">\r\n            <div *ngIf=\"hmi.views && hmi.views.length <= 0\">\r\n              <br>\r\n            </div>\r\n            <div *ngFor=\"let item of getViewsSorted()\" (click)=\"onSelectView(item)\" [ngClass]=\"{'leftbar-item-active': isViewActive(item)}\"\r\n              class=\"leftbar-item mycursor-pointer\">\r\n              <span>{{item.name}}</span>\r\n              <mat-icon aria-label=\"More\" [matMenuTriggerFor]=\"menuview\" class=\"\">more_vert</mat-icon>\r\n              <mat-menu #menuview=\"matMenu\" class=\"leftbar-item-menu\">\r\n                <button mat-menu-item (click)=\"onDeleteView(item)\">{{'editor.view-delete' | translate}}</button>\r\n                <button mat-menu-item (click)=\"onRenameView(item)\">{{'editor.view-rename' | translate}}</button>\r\n                <button mat-menu-item (click)=\"onPropertyView(item)\">{{'editor.view-property' | translate}}</button>\r\n              </mat-menu>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelB=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelB=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelB\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelB\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelB\">expand_more</mat-icon>\r\n              <span>{{'editor.general' | translate}}</span> <!-- GENERAL -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('select')}\" (click)=\"setMode('select')\">\r\n              <span class=\"icon-select\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('fhpath')}\" (click)=\"setMode('fhpath')\">\r\n              <span class=\"icon-pencil\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('line')}\" (click)=\"setMode('line')\">\r\n              <span class=\"icon-line\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('rect')}\" (click)=\"setMode('rect')\">\r\n              <span class=\"icon-rect\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('circle')}\" (click)=\"setMode('circle')\">\r\n              <span class=\"icon-circle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('ellipse')}\" (click)=\"setMode('ellipse')\">\r\n              <span class=\"icon-ellipse\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div>\r\n            <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div> -->\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('text')}\" (click)=\"setMode('text')\">\r\n              <span class=\"icon-text\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}\"\r\n              (click)=\"imagefile.value = '';imagefile.click();\">\r\n              <span class=\"icon-image\"></span>\r\n              <input #imagefile type=\"file\" style=\"display: none;\" (change)=\"onSetImage($event)\" accept=\"image/png|jpg|svg\" />\r\n            </div>\r\n            <div id=\"tool_line\" style=\"display: none;\">\r\n              <span class=\"icon-image\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelS=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelS=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelS\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelS\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelS\">expand_more</mat-icon>\r\n              <span>{{'editor.shape' | translate}}</span> <!-- SHAPE -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-diamond')}\" (click)=\"setMode('shape-diamond')\">\r\n              <span class=\"icon-tool icon-shape-diamond\"> </span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-triangle')}\" (click)=\"setMode('shape-triangle')\">\r\n              <span class=\"icon-tool icon-shape-triangle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-halfcircle')}\" (click)=\"setMode('shape-halfcircle')\">\r\n              <span class=\"icon-tool icon-shape-halfcircle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-delay')}\" (click)=\"setMode('shape-delay')\">\r\n              <span class=\"icon-tool icon-shape-delay\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-looplimit')}\" (click)=\"setMode('shape-looplimit')\">\r\n              <span class=\"icon-tool icon-shape-looplimit\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-prepara')}\" (click)=\"setMode('shape-prepara')\">\r\n              <span class=\"icon-tool icon-shape-prepara\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-trape')}\" (click)=\"setMode('shape-trape')\">\r\n              <span class=\"icon-tool icon-shape-trape\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-offpage')}\" (click)=\"setMode('shape-offpage')\">\r\n              <span class=\"icon-tool icon-shape-offpage\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-ticket')}\" (click)=\"setMode('shape-ticket')\">\r\n              <span class=\"icon-tool icon-shape-ticket\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-arrow')}\" (click)=\"setMode('shape-arrow')\">\r\n              <span class=\"icon-tool icon-shape-arrow\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-doublearrow')}\" (click)=\"setMode('shape-doublearrow')\">\r\n              <span class=\"icon-tool icon-shape-doublearrow\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-rectindi')}\" (click)=\"setMode('shape-rectindi')\">\r\n              <span class=\"icon-tool icon-shape-rectindi\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-circleindi')}\" (click)=\"setMode('shape-circleindi')\">\r\n              <span class=\"icon-tool icon-shape-circleindi\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelC=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelC=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelC\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelC\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelC\">expand_more</mat-icon>\r\n              <span>{{'editor.processeng' | translate}}</span> <!-- PROCESS  -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('switch')}\" (click)=\"setMode('switch')\">\r\n              <span class=\"icon-tool icon-switch\"></span>\r\n            </div> -->\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-void')}\" (click)=\"setMode('compressor-void')\">\r\n              <span class=\"icon-tool icon-compressor-void\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-fan')}\" (click)=\"setMode('compressor-fan')\">\r\n              <span class=\"icon-tool icon-compressor-fan\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-piston')}\" (click)=\"setMode('compressor-piston')\">\r\n              <span class=\"icon-tool icon-compressor-piston\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-ax')}\" (click)=\"setMode('valve-ax')\">\r\n              <span class=\"icon-tool icon-valve-ax\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-bx')}\" (click)=\"setMode('valve-bx')\">\r\n              <span class=\"icon-tool icon-valve-bx\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-cx')}\" (click)=\"setMode('valve-cx')\">\r\n              <span class=\"icon-tool icon-valve-cx\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('motor-simb')}\" (click)=\"setMode('motor-simb')\">\r\n              <span class=\"icon-tool icon-motor-simb\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-filter')}\" (click)=\"setMode('exchanger-filter')\">\r\n              <span class=\"icon-tool icon-exchanger-filter\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-heat')}\" (click)=\"setMode('exchanger-heat')\">\r\n              <span class=\"icon-tool icon-exchanger-heat\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-tube')}\" (click)=\"setMode('exchanger-tube')\">\r\n              <span class=\"icon-tool icon-exchanger-tube\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelD=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelD=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelD\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelD\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelD\">expand_more</mat-icon>\r\n              <span>{{'editor.controls' | translate}}</span> <!-- CONTROLS  -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_input')}\" (click)=\"setMode('html_input')\">\r\n              <span class=\"icon-tool icon-editvalue\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('value')}\" (click)=\"setMode('value')\">\r\n              <span class=\"icon-tool icon-value\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_button')}\" (click)=\"setMode('html_button')\">\r\n              <span class=\"icon-tool icon-button\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_select')}\" (click)=\"setMode('html_select')\">\r\n              <span class=\"icon-tool icon-selectvalue\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_progress')}\" (click)=\"setMode('gauge_progress')\">\r\n              <span class=\"icon-tool icon-progress-v\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_semaphore')}\" (click)=\"setMode('gauge_semaphore')\">\r\n              <span class=\"icon-tool icon-semaphore\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_chart')}\" (click)=\"setMode('html_chart')\">\r\n              <span class=\"icon-tool icon-chart\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n      </mat-accordion>\r\n    </mat-drawer>\r\n    <!-- END LEFT BAR -->\r\n    <!-- WORK AREA -->\r\n    <mat-drawer-content>\r\n      <!-- RIGHT BAR -->\r\n      <div class=\"svg-tools-fly\">\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyIdOpenState = true\" (closed)=\"panelPropertyIdOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\" style=\"display:none\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-flybar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyIdOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyIdOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"_selected_panel\">\r\n            <div class=\"_toolset\">\r\n              <label id=\"idLabel\" title=\"{{'editor.interactivity-id-title' | translate}}\" class=\"svg-property\">\r\n                <span>{{'editor.interactivity-id' | translate}}</span>\r\n                <input id=\"elem_id\" #selid class=\"attr_changer\" data-attr=\"id\" type=\"text\" />\r\n              </label>\r\n              <label id=\"classLabel\" title=\"{{'editor.interactivity-class-title' | translate}}\" class=\"svg-property\">\r\n                <span>{{'editor.interactivity-class' | translate}}</span>\r\n                <input id=\"elem_class\" class=\"attr_changer\" data-attr=\"class\" type=\"text\" />\r\n              </label>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyTransformOpenState = true\" (closed)=\"panelPropertyTransformOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyTransformOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyTransformOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.transform' | translate}}</span> <!-- TRANSFORM SIZE/POSITION-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"_selected_panel\" class=\"rightbar-panel\">\r\n            <div class=\"_toolset\">\r\n              <div id=\"xy_panel\" class=\"_toolset\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x' | translate}}</span>\r\n                    <input id=\"selected_x\" class=\"attr_changer\" title=\"{{'editor.transform-x-title' | translate}}\" size=\"4\" data-attr=\"x\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y' | translate}}</span>\r\n                    <input id=\"selected_y\" class=\"attr_changer\" title=\"{{'editor.transform-y-title' | translate}}\" size=\"3\" data-attr=\"y\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"line_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x1' | translate}}</span>\r\n                    <input id=\"line_x1\" class=\"attr_changer\" title=\"{{'editor.transform-x1-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"x1\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y1' | translate}}</span>\r\n                    <input id=\"line_y1\" class=\"attr_changer\" title=\"{{'editor.transform-y1-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"y1\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x2' | translate}}</span>\r\n                    <input id=\"line_x2\" class=\"attr_changer\" title=\"{{'editor.transform-x2-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"x2\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y2' | translate}}</span>\r\n                    <input id=\"line_y2\" class=\"attr_changer\" title=\"{{'editor.transform-y2-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"y2\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"rect_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-radius-title' | translate}}\">\r\n                    <span>{{'editor.transform-radiuscorner' | translate}}</span>\r\n                    <input id=\"rect_rx\" size=\"3\" value=\"0\" type=\"text\" data-attr=\"Corner Radius\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"htmlctrl_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"htmlctrl_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"htmlctrl_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"shape_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"shape_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"shape_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"circle_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circlecx' | translate}}</span>\r\n                    <input id=\"circle_cx\" class=\"attr_changer\" title=\"{{'editor.transform-circlecx-title' | translate}}\" size=\"3\" data-attr=\"cx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circlecy' | translate}}</span>\r\n                    <input id=\"circle_cy\" class=\"attr_changer\" title=\"{{'editor.transform-circlecy-title' | translate}}\" size=\"3\" data-attr=\"cy\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circler' | translate}}</span>\r\n                    <input id=\"circle_r\" class=\"attr_changer\" title=\"{{'editor.transform-circler-title' | translate}}\" size=\"3\" data-attr=\"r\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"ellipse_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsecx' | translate}}</span>\r\n                    <input id=\"ellipse_cx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecx-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"cx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsecy' | translate}}</span>\r\n                    <input id=\"ellipse_cy\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecy-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"cy\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipserx' | translate}}</span>\r\n                    <input id=\"ellipse_rx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipserx-title' | translate}}\" size=\"3\" data-attr=\"rx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsery' | translate}}</span>\r\n                    <input id=\"ellipse_ry\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsery-title' | translate}}\" size=\"3\" data-attr=\"ry\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"text_panel\">\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.transform-fontfamily' | translate}}</span>\r\n                  <select class=\"font-family\" id=\"font_family\" #fontfamily (change)=\"onFontFamilyChange(fontfamily.value)\">\r\n                    <option style=\"font-family:serif\">{{'editor.transform-font-serif' | translate}}</option>\r\n                    <option style=\"font-family:sans-serif\">{{'editor.transform-font-sansserif' | translate}}</option>\r\n                    <option style=\"font-family:cursive\">{{'editor.transform-font-cursive' | translate}}</option>\r\n                    <option style=\"font-family:fantasy\">{{'editor.transform-font-fantasy' | translate}}</option>\r\n                    <option style=\"font-family:monospace\">{{'editor.transform-font-monospace' | translate}}</option>\r\n                  </select>\r\n                </div>\r\n\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-fontsize' | translate}}</span>\r\n                    <input id=\"font_size\" size=\"3\" value=\"0\" class=\"attr_changer\" title=\"{{'editor.transform-fontsize-title' | translate}}\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-textalign' | translate}}</span>\r\n                    <select class=\"text-align\" id=\"text_anchor\" #textalign (change)=\"onTextAlignChange(textalign.value)\">\r\n                      <option value=\"start\">{{'editor.transform-left' | translate}}</option>\r\n                      <option value=\"middle\">{{'editor.transform-center' | translate}}</option>\r\n                      <option value=\"end\">{{'editor.transform-right' | translate}}</option>\r\n                    </select>\r\n                    <!-- <div class=\"tool_button\" id=\"tool_bold\" title=\"Bold Text [B]\">\r\n                      <span>B</span>\r\n                    </div> -->\r\n                  </div>\r\n                  <!-- <div class=\"svg-property\">\r\n                    <div class=\"tool_button\" id=\"tool_italic\" title=\"Italic Text [I]\">\r\n                      <span>i</span>\r\n                    </div>\r\n                  </div> -->\r\n                </div>\r\n\r\n                <!-- Not visible, but still used -->\r\n                <input id=\"text\" type=\"text\" size=\"35\" />\r\n              </div>\r\n              <div id=\"image_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"image_width\" class=\"attr_changer\" title=\"{{'editor.transform-image-width-title' | translate}}\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"image_height\" class=\"attr_changer\" title=\"{{'editor.transform-image-height-title' | translate}}\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property\" style=\"display: none;\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-url' | translate}}</span>\r\n                    <input id=\"image_url\" class=\"attr_changer\" type=\"text\" title=\"{{'editor.transform-image-url-title' | translate}}\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <div class=\"svg-property\">\r\n                      <button id=\"change_image_url\" style=\"display:none;\">{{'editor.transform-change-image' | translate}}</button>\r\n                      <span id=\"url_notice\" title=\"{{'editor.transform-change-image-title' | translate}}\"></span>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <!-- <div id=\"hw_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"Change rectangle width\">\r\n                    <span>width</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"Change rectangle height\">\r\n                    <span>height</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div> -->\r\n              <div id=\"tool_angle\" title=\"{{'editor.transform-angle-title' | translate}}\" class=\"svg-property\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-angle' | translate}}</span>\r\n                    <input id=\"angle\" size=\"2\" value=\"0\" type=\"text\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <!-- <div class=\"svg-tool-button\" (click)=\"flipSelected('vertical')\" title=\"Flip vertically\">\r\n                      <span class=\"icon-flip-vertical\"></span>\r\n                    </div>\r\n                    <div class=\"svg-tool-button\" (click)=\"flipSelected('orizontal')\" title=\"Flip orizontally\">\r\n                      <span class=\"icon-flip-orizontal\"></span>\r\n                    </div> -->\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelAlignOpenState = true\" (closed)=\"panelAlignOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelAlignOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelAlignOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.align' | translate}}</span> <!-- ALIGN-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"align_panel\" class=\"rightbar_panel\">\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('left')\" title=\"{{'editor.align-left-title' | translate}}\">\r\n              <span class=\"icon-align-left\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('center')\" title=\"{{'editor.align-center-title' | translate}}Align Center\">\r\n              <span class=\"icon-align-center\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('right')\" title=\"{{'editor.align-right-title' | translate}}Align Right\">\r\n              <span class=\"icon-align-right\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('top')\" title=\"{{'editor.align-top-title' | translate}}Align Top\">\r\n              <span class=\"icon-align-top\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('middle')\" title=\"{{'editor.align-middle-title' | translate}}Align Middle\">\r\n              <span class=\"icon-align-middle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('bottom')\" title=\"{{'editor.align-bottom-title' | translate}}Align Bottom\">\r\n              <span class=\"icon-align-bottom\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelFillOpenState = true\" (closed)=\"panelFillOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelFillOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelFillOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.stroke' | translate}}</span> <!-- STROKE-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div class=\"rightbar_panel\">\r\n            <div class=\"_color_tool\" id=\"tool_stroke\">\r\n              <div class=\"svg-property-split2\">\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.stroke-width' | translate}}</span>\r\n                  <input id=\"stroke_width\" title=\"{{'editor.stroke-width-title' | translate}}\" size=\"2\"\r\n                    value=\"1\" type=\"text\" data-attr=\"Stroke Width\" />\r\n                </div>\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.stroke-style' | translate}}</span>\r\n                  <select id=\"stroke_style\" class=\"style-stroke\" title=\"{{'editor.stroke-style-title' | translate}}\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <div class=\"svg-tool-button\" id=\"linejoin_miter\" #linejoinmiter (click)=\"onSetStrokeOption(linejoinmiter)\"\r\n                  title=\"{{'editor.stroke-joinmiter-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-miter\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linejoin_round\" #linejoinround (click)=\"onSetStrokeOption(linejoinround)\"\r\n                  title=\"{{'editor.stroke-joinround-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-round\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linejoin_bevel\" #linejoinbevel (click)=\"onSetStrokeOption(linejoinbevel)\"\r\n                  title=\"{{'editor.stroke-joinbevel-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-bevel\"></span>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <div class=\"svg-tool-button\" id=\"linecap_butt\" #linecapbutt (click)=\"onSetStrokeOption(linecapbutt)\"\r\n                  title=\"{{'editor.stroke-capbutt-title' | translate}}\">\r\n                  <span class=\"icon-linecap-butt\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linecap_square\" #linecapsquare (click)=\"onSetStrokeOption(linecapsquare)\"\r\n                  title=\"{{'editor.stroke-capsquare-title' | translate}}\">\r\n                  <span class=\"icon-linecap-square\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linecap_round\" #linecapround (click)=\"onSetStrokeOption(linecapround)\"\r\n                  title=\"{{'editor.stroke-capround-title' | translate}}\">\r\n                  <span class=\"icon-linecap-round\"></span>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property-split2\" style=\"display: none\">\r\n                <div class=\"svg-property\">\r\n                  <span for=\"class_shadow\">{{'editor.stroke-shadow' | translate}}</span>\r\n                  <input type=\"checkbox\" id=\"class_shadow\" name=\"class_shadow\" class=\"attr_changer\" title=\"{{'editor.stroke-shadow-title' | translate}}\"\r\n                    (change)=\"onSetShadowOption($event.target.checked)\" label=\"shadow\" />\r\n                </div>\r\n                <div class=\"svg-property\">\r\n                </div>\r\n              </div>\r\n              <!-- <ul id=\"linejoin_opts\">\r\n                <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n              </ul>\r\n\r\n              <ul id=\"linecap_opts\">\r\n                <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n              </ul> -->\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelMarkerOpenState = true\" (closed)=\"panelMarkerOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelMarkerOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelMarkerOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.marker' | translate}}</span> <!-- MARKER-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"marker_panel\" class=\"rightbar_panel\">\r\n            <div class=\"svg-property-split3\">\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-start' | translate}}</span>\r\n                <select id=\"start_marker\" #smarker class=\"style-stroke\" title=\"{{'editor.marker-start-title' | translate}}\" (click)=\"onSetMarker('start_marker', smarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-middle' | translate}}</span>\r\n                <select id=\"mid_marker\" #mmarker class=\"style-stroke\" title=\"{{'editor.marker-middle-title' | translate}}\" (click)=\"onSetMarker('mid_marker', mmarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-end' | translate}}</span>\r\n                <select id=\"end_marker\" #emarker class=\"style-stroke\" title=\"{{'editor.marker-end-title' | translate}}\" (click)=\"onSetMarker('end_marker', emarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelEventOpenState = true\" (closed)=\"panelEventOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelEventOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelEventOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n            </mat-panel-title>\r\n            <!-- <mat-icon aria-label=\"Add\" class=\"leftbar-edit-btn\" (click)=\"addEvent();$event.stopPropagation()\" *ngif=\"selectedElement\">add</mat-icon> -->\r\n          </mat-expansion-panel-header>\r\n          <div id=\"interaction_panel\" class=\"rightbar_panel\">\r\n            <gauge-base #gaugepanel *ngIf=\"selectedElement\" [settings]=getGaugeSettings(selectedElement) (edit)=\"onGaugeEdit($event)\"></gauge-base>\r\n            <!-- (edit)=\"onGaugeEdit($event)\" [withEvents]=\"isWithEvents(selectedElement)\"></gauge-base> -->\r\n          </div>\r\n        </mat-expansion-panel>\r\n      </div>\r\n      <!-- END RIGHT BAR -->\r\n      <!-- Work Area -->\r\n      <div id=\"svg_editor\" style=\"z-index:-1\">\r\n        <!-- Rules bar -->\r\n        <div id=\"rulers\">\r\n          <div id=\"ruler_corner\"></div>\r\n          <div id=\"ruler_x\">\r\n            <div>\r\n              <canvas height=\"15\"></canvas>\r\n            </div>\r\n          </div>\r\n          <div id=\"ruler_y\">\r\n            <div>\r\n              <canvas width=\"15\"></canvas>\r\n            </div>\r\n          </div>\r\n        </div>\r\n        <!-- END Rules bar -->\r\n        <!-- Draw Area -->\r\n        <div id=\"workarea\">\r\n          <style id=\"styleoverrides\" type=\"text/css\" media=\"screen\" scoped=\"scoped\"></style>\r\n          <div id=\"svgcanvas\" style=\"position:relative\">\r\n          </div>\r\n        </div>\r\n        <!-- END Draw Area -->\r\n        <!-- Draw top tool bar -->\r\n        <div id=\"tools_top\" class=\"tools_panel\">\r\n          <div id=\"editor_panel\">\r\n            <!-- <button mat-button title=\"Save Project\" [matMenuTriggerFor]=\"prjview\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n            </button> -->\r\n            <!-- <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu\" yPosition=\"below\" [overlapTrigger]=\"false\"> -->\r\n            <!-- <button mat-menu-item (click)=\"onSaveProject()\">Save</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onSaveProjectAs()\">Save as...</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">Open Project</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n            <!-- <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\" accept=\".wvc\"/> -->\r\n            <!-- </mat-menu> -->\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button title=\"{{'editor.tools-launch-title' | translate}}\" class=\"main-btn\" (click)=\"onStartCurrent()\">\r\n              <mat-icon aria-label=\"Launch Current View\">play_arrow</mat-icon>\r\n            </button>\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button title=\"{{'editor.tools-zoom-title' | translate}}\" class=\"main-btn\" (click)=\"onZoomSelect()\">\r\n              <mat-icon aria-label=\"Zoom Tool [Ctrl+Up/Down]\">zoom_in</mat-icon>\r\n            </button>\r\n            <button mat-button title=\"{{'editor.tools-grid-title' | translate}}\" class=\"main-btn\" (click)=\"onShowGrid()\">\r\n              <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"!gridOn\">grid_on</mat-icon>\r\n              <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"gridOn\">grid_off</mat-icon>\r\n            </button>\r\n            <div id=\"history_panel\">\r\n              <button mat-button id=\"tool_undo\" title=\"{{'editor.tools-undo-title' | translate}}\" class=\"main-btn\">\r\n                <mat-icon aria-label=\"Undo [Z]\">undo</mat-icon>\r\n              </button>\r\n              <button mat-button id=\"tool_redo\" title=\"{{'editor.tools-redo-title' | translate}}\" class=\"main-btn\">\r\n                <mat-icon aria-label=\"Redo [Y]\">redo</mat-icon>\r\n              </button>\r\n            </div>\r\n\r\n            <!-- <div class=\"push_button\" title=\"Save Project\" (click)=\"saveProject()\"></div> -->\r\n            <!-- <div class=\"tool_sep\"></div> -->\r\n            <!-- <div class=\"push_button\" id=\"tool_source\" title=\"Edit Source [U]\"></div> -->\r\n            <!-- <div class=\"tool_button\" id=\"tool_wireframe\" title=\"Wireframe Mode [F]\"></div> -->\r\n            <!-- <div class=\"tool_sep\"></div> -->\r\n            <!-- <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div> -->\r\n          </div>\r\n          <div id=\"selected_panel\">\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button id=\"tool_clone\" title=\"{{'editor.tools-clone-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Duplicate Element [D]\">content_copy</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_delete\" title=\"{{'editor.tools-delete-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Delete Element [Delete/Backspace]\">content_cut</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_move_bottom\" title=\"{{'editor.tools-movebottom-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"to-bottom\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_move_top\" title=\"{{'editor.tools-movetop-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"to-top\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_topath\" title=\"{{'editor.tools-topath-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>linear_scale</mat-icon>\r\n            </button>\r\n          </div>\r\n          <div id=\"multiselected_panel\">\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button id=\"tool_clone_multi\" title=\"{{'editor.tools-clonemulti-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Clone Elements [C]\">content_copy</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_delete_multi\" title=\"{{'editor.tools-deletemulti-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Delete Selected Elements [Delete/Backspace]\">content_cut</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_group_elements\" title=\"{{'editor.tools-group-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"group\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_alignleft\" title=\"{{'editor.tools-alignleft-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_left</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_aligncenter\" title=\"{{'editor.tools-aligncenter-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_center</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignright\" title=\"{{'editor.tools-alignright-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_right</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_aligntop\" title=\"{{'editor.tools-aligntop-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_top</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignmiddle\" title=\"{{'editor.tools-alignmiddle-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_center</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignbottom\" title=\"{{'editor.tools-alignbottom-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_bottom</mat-icon>\r\n            </button>\r\n          </div>\r\n          <div id=\"g_panel\">\r\n            <button mat-button id=\"tool_ungroup\" title=\"{{'editor.tools-ungroup-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"ungroup\"></span>\r\n            </button>\r\n          </div>\r\n\r\n          <!-- History buttons -->\r\n          <!-- <div id=\"history_panel\">\r\n            <div class=\"tool_sep\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_undo\" title=\"Undo [Z]\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_redo\" title=\"Redo [Y]\"></div>\r\n          </div> -->\r\n          <!-- Buttons when a single element is selected -->\r\n          <!-- <div id=\"_selected_panel\"> -->\r\n          <!-- <div class=\"toolset\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_clone\" title=\"Duplicate Element [D]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_delete\" title=\"Delete Element [Delete/Backspace]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_move_top\" title=\"Bring to Front [ Ctrl+Shift+] ]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_move_bottom\" title=\"Send to Back [ Ctrl+Shift+[ ]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_topath\" title=\"Convert to Path\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_reorient\" title=\"Reorient path\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_make_link\" title=\"Make (hyper)link\"></div> -->\r\n          <!-- </div> -->\r\n          <!-- </div> -->\r\n          <!-- select panel END -->\r\n          <!-- Buttons when multiple elements are selected -->\r\n          <!-- <div id=\"_multiselected_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_clone_multi\" title=\"Clone Elements [C]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_delete_multi\" title=\"Delete Selected Elements [Delete/Backspace]\"></div> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_group_elements\" title=\"Group Elements [G]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_make_link_multi\" title=\"Make (hyper)link\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignleft\" title=\"Align Left\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_aligncenter\" title=\"Align Center\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignright\" title=\"Align Right\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_aligntop\" title=\"Align Top\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignmiddle\" title=\"Align Middle\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignbottom\" title=\"Align Bottom\"></div> -->\r\n          <!-- <label id=\"tool_align_relative\">\r\n              <span id=\"relativeToLabel\">relative to:</span>\r\n              <select id=\"align_relative_to\" title=\"Align relative to ...\">\r\n                <option id=\"selected_objects\" value=\"selected\">selected objects</option>\r\n                <option id=\"largest_object\" value=\"largest\">largest object</option>\r\n                <option id=\"smallest_object\" value=\"smallest\">smallest object</option>\r\n                <option id=\"page\" value=\"page\">page</option>\r\n              </select>\r\n            </label> -->\r\n          <!-- </div> -->\r\n\r\n          <!-- formerly gsvg_panel -->\r\n          <!-- <div id=\"container_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- Add viewBox field here? -->\r\n          <!-- <label id=\"group_title\" title=\"Group identification label\">\r\n              <span>label:</span>\r\n              <input id=\"g_title\" data-attr=\"title\" size=\"10\" type=\"text\" />\r\n            </label> -->\r\n          <!-- </div> -->\r\n\r\n          <!-- <div id=\"use_panel\">\r\n            <div class=\"push_button\" id=\"tool_unlink_use\" title=\"Break link to reference element (make unique)\"></div>\r\n          </div> -->\r\n\r\n          <!-- <div id=\"g_panel\">\r\n            <div class=\"push_button\" id=\"tool_ungroup\" title=\"Ungroup Elements [G]\"></div>\r\n          </div> -->\r\n\r\n          <!-- For anchor elements -->\r\n          <!-- <div id=\"a_panel\">\r\n            <label id=\"tool_link_url\" title=\"Set link URL (leave empty to remove)\">\r\n              <span id=\"linkLabel\" class=\"icon_label\"></span>\r\n              <input id=\"link_url\" type=\"text\" size=\"35\" />\r\n            </label>\r\n          </div> -->\r\n\r\n          <!-- <div id=\"path_node_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"tool_button push_button_pressed\" id=\"tool_node_link\" title=\"Link Control Points\"></div> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <label id=\"tool_node_x\">x:\r\n              <input id=\"path_node_x\" class=\"attr_changer\" title=\"Change node's x coordinate\" size=\"3\" data-attr=\"x\" />\r\n            </label>\r\n            <label id=\"tool_node_y\">y:\r\n              <input id=\"path_node_y\" class=\"attr_changer\" title=\"Change node's y coordinate\" size=\"3\" data-attr=\"y\" />\r\n            </label> -->\r\n\r\n          <!-- <select id=\"seg_type\" title=\"Change Segment type\">\r\n              <option id=\"straight_segments\" selected=\"selected\" value=\"4\">Straight</option>\r\n              <option id=\"curve_segments\" value=\"6\">Curve</option>\r\n            </select> -->\r\n          <!-- <div class=\"tool_button\" id=\"tool_node_clone\" title=\"Clone Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_node_delete\" title=\"Delete Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_openclose_path\" title=\"Open/close sub-path\"></div>\r\n            <div class=\"tool_button\" id=\"tool_add_subpath\" title=\"Add sub-path\"></div> -->\r\n          <!-- </div> -->\r\n        </div>\r\n        <!-- tools_top -->\r\n        <div id=\"cur_context_panel\">\r\n\r\n        </div>\r\n\r\n        <!-- tools_left -->\r\n        <!-- <div id=\"tools_left\" class=\"tools_panel\">\r\n      <div class=\"tool_button\" id=\"tool_select\" title=\"Select Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_fhpath\" title=\"Pencil Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_line\" title=\"Line Tool\"></div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_rect_show\" title=\"Square/Rect Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_ellipse_show\" title=\"Ellipse/Circle Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button\" id=\"tool_path\" title=\"Path Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_text\" title=\"Text Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_image\" title=\"Image Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div>\r\n\r\n      <div style=\"display: none\">\r\n        <div id=\"tool_rect\" title=\"Rectangle\"></div>\r\n        <div id=\"tool_square\" title=\"Square\"></div>\r\n        <div id=\"tool_fhrect\" title=\"Free-Hand Rectangle\"></div>\r\n        <div id=\"tool_ellipse\" title=\"Ellipse\"></div>\r\n        <div id=\"tool_circle\" title=\"Circle\"></div>\r\n        <div id=\"tool_fhellipse\" title=\"Free-Hand Ellipse\"></div>\r\n      </div>\r\n    </div> -->\r\n        <!-- tools_left -->\r\n\r\n        <!-- tool bottom -->\r\n        <div class=\"bottom-bar tools_panel\">\r\n          <!-- Zoom buttons -->\r\n          <div class=\"zoom-menu\" title=\"{{'editor.tools-zoomlevel-title' | translate}}\">\r\n            <div class=\"zoom-value\">\r\n              <input id=\"zoom\" size=\"3\" value=\"100\" type=\"text\" #zoomValue hidden />\r\n              <span id=\"zoomLabel\">{{zoomValue.value}} %</span>\r\n              <div id=\"zoom_dropdown\" class=\"dropdown selection\">\r\n                <button>O\r\n                </button>\r\n                <ul>\r\n                  <li>1000%</li>\r\n                  <li>400%</li>\r\n                  <li>200%</li>\r\n                  <li>100%</li>\r\n                  <li>50%</li>\r\n                  <li>25%</li>\r\n                  <li id=\"fit_to_canvas\" data-val=\"canvas\">{{'editor.tools-zoomlevel-fitcanvas' | translate}}</li>\r\n                  <li id=\"fit_to_sel\" data-val=\"selection\">{{'editor.tools-zoomlevel-fitsection' | translate}}</li>\r\n                  <!-- <li id=\"fit_to_layer_content\" data-val=\"layer\">Fit to layer content</li> -->\r\n                  <li id=\"fit_to_all\" data-val=\"content\">{{'editor.tools-zoomlevel-fitcontent' | translate}}</li>\r\n                  <li>100%</li>\r\n                </ul>\r\n              </div>\r\n            </div>\r\n          </div>\r\n\r\n          <div id=\"tools_bottom_2\" class=\"colors\">\r\n            <input readonly [(colorPicker)]=\"colorFill\" class=\"color-fill\" title=\"{{'editor.tools-fillcolor-title' | translate}}\" [style.background]=\"colorFill\"\r\n              [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeFillColor($event)\"\r\n              [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\r\n              [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n            <input readonly [(colorPicker)]=\"colorStroke\" class=\"color-stroke\" title=\"{{'editor.tools-strokecolor-title' | translate}}\"\r\n              [style.background]=\"colorStroke\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeStrokeColor($event)\"\r\n              [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\r\n              [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n            <!-- <div id=\"color_tools\"> -->\r\n            <div class=\"color_tool\" id=\"tool_fill\" hidden>\r\n              <label class=\"icon_label\" for=\"fill_color\" title=\"{{'editor.tools-fillcolor-title' | translate}}\"></label>\r\n              <div class=\"color_block\">\r\n                <div id=\"fill_color\" class=\"color_block\" [style.border-color]=\"colorFill\"></div>\r\n              </div>\r\n            </div>\r\n            <div class=\"color_tool\" id=\"tool_stroke\" hidden>\r\n              <label class=\"icon_label\" title=\"Change stroke color\"></label>\r\n              <div class=\"color_block\">\r\n                <div id=\"stroke_bg\"></div>\r\n                <div id=\"stroke_color\" class=\"color_block\" title=\"{{'editor.tools-strokecolor-title' | translate}}\" [style.border-color]=\"colorStroke\"></div>\r\n              </div>\r\n\r\n              <!-- <div id=\"toggle_stroke_tools\" title=\"Show/hide more stroke tools\"></div> -->\r\n\r\n              <!-- <label class=\"stroke_tool\">\r\n                  <select id=\"stroke_style\" title=\"Change stroke dash style\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </label> -->\r\n\r\n              <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linejoin\">\r\n                  <div id=\"cur_linejoin\" title=\"Linejoin: Miter\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n              <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linecap\">\r\n                  <div id=\"cur_linecap\" title=\"Linecap: Butt\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n              <!-- </div> -->\r\n\r\n              <!-- <div class=\"color_tool\" id=\"tool_opacity\" title=\"Change selected item opacity\">\r\n                <label>\r\n                  <span id=\"group_opacityLabel\" class=\"icon_label\"></span>\r\n                  <input id=\"group_opacity\" size=\"3\" value=\"100\" type=\"text\" />\r\n                </label>\r\n                <div id=\"opacity_dropdown\" class=\"dropdown\">\r\n                  <button></button>\r\n                  <ul>\r\n                    <li>0%</li>\r\n                    <li>25%</li>\r\n                    <li>50%</li>\r\n                    <li>75%</li>\r\n                    <li>100%</li>\r\n                    <li class=\"special\">\r\n                      <div id=\"opac_slider\"></div>\r\n                    </li>\r\n                  </ul>\r\n                </div>\r\n              </div> -->\r\n            </div>\r\n          </div>\r\n\r\n          <div id=\"tools_bottom_3\" class=\"colors-palette\">\r\n            <div id=\"palette_holder\">\r\n              <div id=\"palette\" title=\"{{'editor.tools-palettecolor-title' | translate}}\"></div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n        <div id=\"option_lists\" class=\"dropdown\">\r\n          <!-- <ul id=\"linejoin_opts\">\r\n            <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n          </ul>\r\n\r\n          <ul id=\"linecap_opts\">\r\n            <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n          </ul> -->\r\n\r\n          <ul id=\"position_opts\" class=\"optcols3\">\r\n            <li class=\"push_button\" id=\"tool_posleft\" title=\"Align Left\"></li>\r\n            <li class=\"push_button\" id=\"tool_poscenter\" title=\"Align Center\"></li>\r\n            <li class=\"push_button\" id=\"tool_posright\" title=\"Align Right\"></li>\r\n            <li class=\"push_button\" id=\"tool_postop\" title=\"Align Top\"></li>\r\n            <li class=\"push_button\" id=\"tool_posmiddle\" title=\"Align Middle\"></li>\r\n            <li class=\"push_button\" id=\"tool_posbottom\" title=\"Align Bottom\"></li>\r\n          </ul>\r\n        </div>\r\n\r\n\r\n        <!-- hidden divs -->\r\n        <!-- <div id=\"color_picker\"></div> -->\r\n\r\n      </div>\r\n    </mat-drawer-content>\r\n    <!-- work area END -->\r\n  </mat-drawer-container>\r\n\r\n  <!-- svg_editor -->\r\n\r\n  <!-- NOT USED -->\r\n  <div id=\"svg_source_editor\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_source_container\">\r\n      <div id=\"tool_source_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_source_save\">Apply Changes</button>\r\n        <button id=\"tool_source_cancel\">Cancel</button>\r\n      </div>\r\n      <div id=\"save_output_btns\">\r\n        <p id=\"copy_save_note\">Copy the contents of this box into a text editor, then save the file with a .svg\r\n          extension.</p>\r\n        <button id=\"copy_save_done\">Done</button>\r\n      </div>\r\n      <form>\r\n        <textarea id=\"svg_source_textarea\" spellcheck=\"false\"></textarea>\r\n      </form>\r\n    </div>\r\n  </div>\r\n\r\n  <div id=\"svg_docprops\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_docprops_container\">\r\n      <div id=\"tool_docprops_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_docprops_save\">OK</button>\r\n        <button id=\"tool_docprops_cancel\">Cancel</button>\r\n      </div>\r\n\r\n\r\n      <fieldset id=\"svg_docprops_docprops\">\r\n        <legend id=\"svginfo_image_props\">Image Properties</legend>\r\n        <label>\r\n          <span id=\"svginfo_title\">Title:</span>\r\n          <input type=\"text\" id=\"canvas_title\" />\r\n        </label>\r\n\r\n        <fieldset id=\"change_resolution\">\r\n          <legend id=\"svginfo_dim\">Canvas Dimensions</legend>\r\n\r\n          <label>\r\n            <span id=\"svginfo_width\">width:</span>\r\n            <input type=\"text\" id=\"canvas_width\" size=\"6\" />\r\n          </label>\r\n\r\n          <label>\r\n            <span id=\"svginfo_height\">height:</span>\r\n            <input type=\"text\" id=\"canvas_height\" size=\"6\" />\r\n          </label>\r\n\r\n          <label>\r\n            <select id=\"resolution\">\r\n              <option id=\"selectedPredefined\" selected=\"selected\">Select predefined:</option>\r\n              <option>640x480</option>\r\n              <option>800x600</option>\r\n              <option>1024x768</option>\r\n              <option>1280x960</option>\r\n              <option>1600x1200</option>\r\n              <option id=\"fitToContent\" value=\"content\">Fit to Content</option>\r\n            </select>\r\n          </label>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"image_save_opts\">\r\n          <legend id=\"includedImages\">Included Images</legend>\r\n          <label>\r\n            <input type=\"radio\" name=\"image_opt\" value=\"embed\" checked=\"checked\" />\r\n            <span id=\"image_opt_embed\">Embed data (local files)</span>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"image_opt\" value=\"ref\" />\r\n            <span id=\"image_opt_ref\">Use file reference</span>\r\n          </label>\r\n        </fieldset>\r\n      </fieldset>\r\n\r\n    </div>\r\n  </div>\r\n\r\n  <div id=\"svg_prefs\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_prefs_container\">\r\n      <div id=\"tool_prefs_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_prefs_save\">OK</button>\r\n        <button id=\"tool_prefs_cancel\">Cancel</button>\r\n      </div>\r\n\r\n      <fieldset>\r\n        <legend id=\"svginfo_editor_prefs\">Editor Preferences</legend>\r\n\r\n        <label>\r\n          <span id=\"svginfo_lang\">Language:</span>\r\n          <!-- Source: http://en.wikipedia.org/wiki/Language_names -->\r\n          <select id=\"lang_select\">\r\n            <option id=\"lang_ar\" value=\"ar\">العربية</option>\r\n            <option id=\"lang_cs\" value=\"cs\">Čeština</option>\r\n            <option id=\"lang_de\" value=\"de\">Deutsch</option>\r\n            <option id=\"lang_en\" value=\"en\" selected=\"selected\">English</option>\r\n            <option id=\"lang_es\" value=\"es\">Español</option>\r\n            <option id=\"lang_fa\" value=\"fa\">فارسی</option>\r\n            <option id=\"lang_fr\" value=\"fr\">Français</option>\r\n            <option id=\"lang_fy\" value=\"fy\">Frysk</option>\r\n            <option id=\"lang_hi\" value=\"hi\">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;,\r\n              &#2361;&#2367;&#2306;&#2342;&#2368;</option>\r\n            <option id=\"lang_it\" value=\"it\">Italiano</option>\r\n            <option id=\"lang_ja\" value=\"ja\">日本語</option>\r\n            <option id=\"lang_nl\" value=\"nl\">Nederlands</option>\r\n            <option id=\"lang_pl\" value=\"pl\">Polski</option>\r\n            <option id=\"lang_pt-BR\" value=\"pt-BR\">Português (BR)</option>\r\n            <option id=\"lang_ro\" value=\"ro\">Română</option>\r\n            <option id=\"lang_ru\" value=\"ru\">Русский</option>\r\n            <option id=\"lang_sk\" value=\"sk\">Slovenčina</option>\r\n            <option id=\"lang_sl\" value=\"sl\">Slovenščina</option>\r\n            <option id=\"lang_zh-TW\" value=\"zh-TW\">繁體中文</option>\r\n          </select>\r\n        </label>\r\n\r\n        <label>\r\n          <span id=\"svginfo_icons\">Icon size:</span>\r\n          <select id=\"iconsize\">\r\n            <option id=\"icon_small\" value=\"s\">Small</option>\r\n            <option id=\"icon_medium\" value=\"m\" selected=\"selected\">Medium</option>\r\n            <option id=\"icon_large\" value=\"l\">Large</option>\r\n            <option id=\"icon_xlarge\" value=\"xl\">Extra Large</option>\r\n          </select>\r\n        </label>\r\n\r\n        <fieldset id=\"change_background\">\r\n          <legend id=\"svginfo_change_background\">Editor Background</legend>\r\n          <div id=\"bg_blocks\"></div>\r\n          <label>\r\n            <span id=\"svginfo_bg_url\">URL:</span>\r\n            <input type=\"text\" id=\"canvas_bg_url\" />\r\n          </label>\r\n          <p id=\"svginfo_bg_note\">Note: Background will not be saved with image.</p>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"change_grid\">\r\n          <legend id=\"svginfo_grid_settings\">Grid</legend>\r\n          <label>\r\n            <span id=\"svginfo_snap_onoff\">Snapping on/off</span>\r\n            <input type=\"checkbox\" value=\"snapping_on\" id=\"grid_snapping_on\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_snap_step\">Snapping Step-Size:</span>\r\n            <input type=\"text\" id=\"grid_snapping_step\" size=\"3\" value=\"10\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_grid_color\">Grid color:</span>\r\n            <input type=\"text\" id=\"grid_color\" size=\"3\" value=\"#000\" />\r\n          </label>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"units_rulers\">\r\n          <legend id=\"svginfo_units_rulers\">Units &amp; Rulers</legend>\r\n          <label>\r\n            <span id=\"svginfo_rulers_onoff\">Show rulers</span>\r\n            <input type=\"checkbox\" value=\"show_rulers\" id=\"show_rulers\" checked=\"checked\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_unit\">Base Unit:</span>\r\n            <select id=\"base_unit\">\r\n              <option value=\"px\">Pixels</option>\r\n              <option value=\"cm\">Centimeters</option>\r\n              <option value=\"mm\">Millimeters</option>\r\n              <option value=\"in\">Inches</option>\r\n              <option value=\"pt\">Points</option>\r\n              <option value=\"pc\">Picas</option>\r\n              <option value=\"em\">Ems</option>\r\n              <option value=\"ex\">Exs</option>\r\n            </select>\r\n          </label>\r\n          <!-- Should this be an export option instead? -->\r\n          <!-- \r\n          <span id=\"svginfo_unit_system\">Unit System:</span>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"single\" checked=\"checked\"/>\r\n            <span id=\"svginfo_single_type_unit\">Single type unit</span>\r\n            <small id=\"svginfo_single_type_unit_sub\">CSS unit type is set on root element. If a different unit type is entered in a text field, it is converted back to user units on export.</small>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"multi\"/>\r\n            <span id=\"svginfo_multi_units\">Multiple CSS units</span> \r\n            <small id=\"svginfo_single_type_unit_sub\">Attributes can be given different CSS units, which may lead to inconsistant results among viewers.</small>\r\n          </label>\r\n   -->\r\n        </fieldset>\r\n\r\n      </fieldset>\r\n\r\n    </div>\r\n  </div>\r\n  <!-- NOT USED END -->\r\n\r\n  <div id=\"dialog_box\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"dialog_container\">\r\n      <div id=\"dialog_content\"></div>\r\n      <div id=\"dialog_buttons\"></div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- canvas context menu -->\r\n  <ul id=\"cmenu_canvas\" class=\"contextMenu svg-workarea-contextmenu\">\r\n    <!-- <li>\r\n      <a href=\"#deselect\">Clear selection</a>\r\n    </li> -->\r\n    <li>\r\n      <a id=\"#interactivity\" (click)=\"isInteractivtyEnabled(selectedElement) && onGaugeEditEx()\">{{'editor.interactivity' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#cut\">{{'editor.cmenu-cut' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#copy\">{{'editor.cmenu-copy' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#paste\">{{'editor.cmenu-paste' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#paste_in_place\">{{'editor.cmenu-paste-place' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#delete\">{{'editor.cmenu-delete' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#group\">{{'editor.cmenu-group' | translate}}\r\n        <span class=\"shortcut\">G</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#ungroup\">{{'editor.cmenu-ungroup' | translate}}\r\n        <span class=\"shortcut\">G</span>\r\n      </a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#move_front\">{{'editor.cmenu-bring-front' | translate}}\r\n        <span class=\"shortcut\">SHFT+CTRL+]</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_up\">{{'editor.cmenu-bring-forward' | translate}}\r\n        <span class=\"shortcut\">CTRL+]</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_down\">{{'editor.cmenu-send-backward' | translate}}\r\n        <span class=\"shortcut\">CTRL+[</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_back\">{{'editor.cmenu-send-back' | translate}}\r\n        <span class=\"shortcut\">SHFT+CTRL+[</span>\r\n      </a>\r\n    </li>\r\n  </ul>\r\n  <!-- canvas context menu END -->\r\n\r\n  <!-- layers context menu -->\r\n  <ul id=\"cmenu_layers\" class=\"contextMenu\" style=\"display: none\">\r\n    <li>\r\n      <a href=\"#dupe\">{{'editor.cmenu-layer-duplicate' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#delete\">{{'editor.cmenu-layer-delete' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#merge_down\">{{'editor.cmenu-layer-marge-down' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#merge_all\">{{'editor.cmenu-layer-marge-all' | translate}}</a>\r\n    </li>\r\n  </ul>\r\n  <!-- layers context menu END -->\r\n</div>"
 
 /***/ }),
 
@@ -4039,6 +4134,7 @@ var EditorComponent = (function () {
         this.resolver = resolver;
         this.mdIconRegistry = mdIconRegistry;
         this.sanitizer = sanitizer;
+        this.isLoading = true;
         this.defaultColor = __WEBPACK_IMPORTED_MODULE_12__helpers_utils__["b" /* Utils */].defaultColor;
         this.colorFill = '#FFFFFF';
         this.colorStroke = '#000000';
@@ -4063,7 +4159,7 @@ var EditorComponent = (function () {
     }
     //#region Implemented onInit / onAfterInit event
     /**
-     * init event
+     * Init Save Project event and clear gauge memory (to manage event signal/gauge)
      */
     EditorComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -4073,9 +4169,6 @@ var EditorComponent = (function () {
                 if (saveas) {
                     _this.projectService.saveAs();
                 }
-            });
-            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (load) {
-                _this.loadHmi();
             });
             this.gaugesManager.clearMemory();
         }
@@ -4091,8 +4184,15 @@ var EditorComponent = (function () {
         setTimeout(function () {
             _this.myInit();
             _this.setMode('select');
-            _this.loadHmi();
-            _this.loadPanelState();
+            var hmi = _this.projectService.getHmi();
+            if (hmi) {
+                _this.loadHmi();
+            }
+            _this.subscriptionLoad = _this.projectService.onLoadHmi.subscribe(function (load) {
+                _this.loadHmi();
+            }, function (error) {
+                console.log('Error loadHMI');
+            });
         }, 1000);
     };
     EditorComponent.prototype.ngOnDestroy = function () {
@@ -4108,18 +4208,16 @@ var EditorComponent = (function () {
         }
         if (this.currentView) {
             this.currentView.svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
-            this.saveHmi();
+            this.saveView(this.currentView);
         }
     };
     //#endregion
     //#region General private function
     /**
-     * init, first init the svg-editor component
+     * Init, first init the svg-editor component
      */
     EditorComponent.prototype.myInit = function () {
         var _this = this;
-        // this.winRef.nativeWindow.svgEditor = null;
-        console.log('myInit');
         try {
             // first init svg-editor component
             mypathseg.initPathSeg();
@@ -4173,16 +4271,15 @@ var EditorComponent = (function () {
         this.setFillColor(this.colorStroke);
     };
     /**
-     * load the hmi resource and bind it
+     * Load the hmi resource and bind it
      */
     EditorComponent.prototype.loadHmi = function () {
+        this.currentView = null;
         this.hmi = this.projectService.getHmi();
         // check new hmi
         if (!this.hmi.views || this.hmi.views.length <= 0) {
             this.hmi.views = [];
             this.onAddView();
-            this.currentView = this.hmi.views[0];
-            this.saveHmi();
             // this.selectView(this.hmi.views[0].name);
         }
         else {
@@ -4197,14 +4294,35 @@ var EditorComponent = (function () {
                 }
             }
         }
+        this.loadPanelState();
+        this.isLoading = false;
     };
     /**
-     * save hmi
+     * Set or Add the View to Project
+     * Save the View to Server
      */
+    EditorComponent.prototype.saveView = function (view) {
+        // console.log('ave current View');
+        this.projectService.setView(view);
+    };
+    /**
+     * Remove the View from Project
+     * Remove the View from Server
+     * @param view
+     */
+    EditorComponent.prototype.removeView = function (view) {
+        this.projectService.removeView(view);
+    };
+    /**
+     * Set the HMI Layout to Project
+     * Save the Layout to Server
+     * @param layout
+     */
+    EditorComponent.prototype.saveLayout = function (layout) {
+        this.projectService.setLayout(layout);
+    };
     EditorComponent.prototype.saveHmi = function () {
-        // console.log('savehmi');
-        this.projectService.setHmi(this.hmi);
-        this.projectService.save();
+        console.log('TO REMOVE!!!!!!!!!');
     };
     /**
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
@@ -4276,7 +4394,6 @@ var EditorComponent = (function () {
         var _this = this;
         if (view) {
             this.clearEditor();
-            // this.loadHmi();
             var svgcontent = '';
             var v_1 = this.getView(view.name);
             if (v_1) {
@@ -4296,8 +4413,10 @@ var EditorComponent = (function () {
                 //     '</g>' +
                 //     '</g></svg>';
             }
-            this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
-            this.winRef.nativeWindow.svgEditor.setSvgString(svgcontent);
+            if (this.winRef.nativeWindow.svgEditor) {
+                this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
+                this.winRef.nativeWindow.svgEditor.setSvgString(svgcontent);
+            }
             // check gauge to init
             this.gaugesRef = [];
             setTimeout(function () {
@@ -4321,6 +4440,14 @@ var EditorComponent = (function () {
         }
         return null;
     };
+    EditorComponent.prototype.getViewsSorted = function () {
+        return this.hmi.views.sort(function (a, b) {
+            if (a.name > b.name) {
+                return 1;
+            }
+            return -1;
+        });
+    };
     //#endregion
     //#region Svg-editor event and function interface 
     /**
@@ -4343,7 +4470,9 @@ var EditorComponent = (function () {
      * clear svg-editor and the canvas
      */
     EditorComponent.prototype.clearEditor = function () {
-        this.winRef.nativeWindow.svgEditor.clickClearAll();
+        if (this.winRef.nativeWindow.svgEditor) {
+            this.winRef.nativeWindow.svgEditor.clickClearAll();
+        }
     };
     /**
      * event from svg-editor by new selection svg element
@@ -4418,7 +4547,9 @@ var EditorComponent = (function () {
         if (color.charAt(0) === '#')
             color = color.slice(1);
         var alfa = 100;
-        this.winRef.nativeWindow.svgEditor.setColor(color, alfa, "fill");
+        if (this.winRef.nativeWindow.svgEditor) {
+            this.winRef.nativeWindow.svgEditor.setColor(color, alfa, "fill");
+        }
         // this.fillcolor;
     };
     /**
@@ -4562,13 +4693,14 @@ var EditorComponent = (function () {
     //#endregion
     //#region Project Events
     /**
-     * save Project
+     * Save Project
+     * Save the current View
      */
     EditorComponent.prototype.onSaveProject = function () {
         if (this.currentView) {
             this.currentView.svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
+            this.saveView(this.currentView);
         }
-        this.saveHmi();
     };
     //#endregion
     //#region View Events (Add/Rename/Delete/...)
@@ -4598,9 +4730,10 @@ var EditorComponent = (function () {
                 v.name = nn + idx;
                 v.profile.bkcolor = '#ffffffff';
             }
-            v.id = 'v_' + Date.now();
+            v.id = 'v_' + __WEBPACK_IMPORTED_MODULE_12__helpers_utils__["b" /* Utils */].getShortGUID();
             this.hmi.views.push(v);
             this.onSelectView(v);
+            this.saveView(this.currentView);
         }
     };
     /**
@@ -4620,18 +4753,22 @@ var EditorComponent = (function () {
             if (result && _this.hmi.views) {
                 var toselect = null;
                 for (var i = 0; i < _this.hmi.views.length; i++) {
-                    if (_this.hmi.views[i].name == view.name) {
+                    if (_this.hmi.views[i].id === view.id) {
                         _this.hmi.views.splice(i, 1);
-                        if (i > 0) {
-                            toselect = _this.hmi.views[i - 1];
+                        if (i > 0 && i < _this.hmi.views.length) {
+                            toselect = _this.hmi.views[i];
                         }
                         break;
                     }
                 }
-                // if (toselect) {
-                //     this.onSelectView(toselect);
-                // }
-                _this.saveHmi();
+                _this.currentView = null;
+                if (toselect) {
+                    _this.onSelectView(toselect);
+                }
+                else if (_this.hmi.views.length > 0) {
+                    _this.onSelectView(_this.hmi.views[0]);
+                }
+                _this.removeView(view);
             }
         });
     };
@@ -4641,13 +4778,14 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.onRenameView = function (view) {
         var _this = this;
+        var exist = this.hmi.views.filter(function (v) { return v.id !== view.id; }).map(function (v) { return v.name; });
         var dialogRef = this.dialog.open(DialogDocName, {
             minWidth: '250px',
-            data: { name: view.name }
+            data: { name: view.name, exist: exist }
         });
         dialogRef.afterClosed().subscribe(function (result) {
             view.name = result.name;
-            _this.saveHmi();
+            _this.saveView(view);
         });
     };
     /**
@@ -4665,9 +4803,8 @@ var EditorComponent = (function () {
             view.profile.height = parseInt(result.height);
             view.profile.bkcolor = result.bkcolor;
             _this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
-            _this.saveHmi();
+            _this.onSelectView(view);
         });
-        // this.winRef.nativeWindow.svgEditor.showDocProperties();
     };
     /**
      * select the view, save current vieww before
@@ -4680,10 +4817,9 @@ var EditorComponent = (function () {
         }
         else {
             this.setFillColor(this.colorFill);
-            // this.setFillColor(this.colorStroke);
         }
         if (this.currentView) {
-            this.saveHmi();
+            this.saveView(this.currentView);
         }
         this.currentView = view;
         localStorage.setItem("@frango.webeditor.currentview", this.currentView.name);
@@ -4694,7 +4830,7 @@ var EditorComponent = (function () {
      * @param view view to check
      */
     EditorComponent.prototype.isViewActive = function (view) {
-        return (this.currentView && this.currentView.name == view.name);
+        return (this.currentView && this.currentView.name === view.name);
     };
     /**
      * edit the layout property of project views
@@ -4716,7 +4852,7 @@ var EditorComponent = (function () {
         dialogRef.afterClosed().subscribe(function (result) {
             if (result) {
                 _this.hmi.layout = JSON.parse(JSON.stringify(result.layout));
-                _this.saveHmi();
+                _this.saveLayout(_this.hmi.layout);
             }
         });
     };
@@ -4821,6 +4957,7 @@ var EditorComponent = (function () {
             // console.log('The Edit Gauge was closed');
             if (result) {
                 callback(result.settings);
+                _this.saveView(_this.currentView);
                 if (_this.gaugesManager.isToInitInEditor(result.settings)) {
                     _this.gaugesManager.checkElementToInit(result.settings);
                 }
@@ -4902,6 +5039,9 @@ var DialogDocName = (function () {
     }
     DialogDocName.prototype.onNoClick = function () {
         this.dialogRef.close();
+    };
+    DialogDocName.prototype.isValid = function (name) {
+        return (this.data.exist.find(function (n) { return n === name; })) ? false : true;
     };
     DialogDocName = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -5247,7 +5387,8 @@ var FuxaViewComponent = (function () {
         if (view) {
             this.id = view.id;
             this.view = view;
-            this.dataContainer.nativeElement.innerHTML = view.svgcontent;
+            this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+            ;
             if (view.profile.bkcolor) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
@@ -6815,11 +6956,13 @@ var FlexEventComponent = (function () {
     };
     FlexEventComponent.prototype.getEvents = function () {
         var result = [];
-        this.events.forEach(function (element) {
-            if (element.type) {
-                result.push(element);
-            }
-        });
+        if (this.events) {
+            this.events.forEach(function (element) {
+                if (element.type) {
+                    result.push(element);
+                }
+            });
+        }
         return result;
     };
     FlexEventComponent.prototype.onAddEvent = function () {
@@ -7835,7 +7978,7 @@ var GaugesManager = (function () {
             }
         }
         var clicks = this.getBindClick(ga);
-        if (clicks) {
+        if (clicks && clicks.length > 0) {
             this.eventGauge[ga.id] = ga;
             if (!this.mapGaugeView[ga.id]) {
                 this.mapGaugeView[ga.id] = {};
@@ -7845,6 +7988,11 @@ var GaugesManager = (function () {
             else if (!this.mapGaugeView[ga.id][domViewId]) {
                 this.mapGaugeView[ga.id][domViewId] = ga;
                 bindclick(ga);
+            }
+            // add pointer
+            var ele = document.getElementById(ga.id);
+            if (ele) {
+                ele.style.cursor = "pointer";
             }
             // bindclick(ga);
         }
@@ -10219,15 +10367,6 @@ var HeaderComponent = (function () {
         this.sidenav.close();
     };
     HeaderComponent.prototype.onChartConfig = function () {
-        this.chartConfig();
-    };
-    HeaderComponent.prototype.onShowHelp = function (page) {
-        var data = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["i" /* HelpData */]();
-        data.page = page;
-        data.tag = 'device';
-        this.showHelp(data);
-    };
-    HeaderComponent.prototype.chartConfig = function () {
         var _this = this;
         var chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
         var devices = this.projectService.getDevices();
@@ -10238,9 +10377,14 @@ var HeaderComponent = (function () {
         dialogRef.afterClosed().subscribe(function (result) {
             if (result) {
                 _this.projectService.setCharts(result.charts);
-                _this.projectService.saveProject();
             }
         });
+    };
+    HeaderComponent.prototype.onShowHelp = function (page) {
+        var data = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["i" /* HelpData */]();
+        data.page = page;
+        data.tag = 'device';
+        this.showHelp(data);
     };
     HeaderComponent.prototype.showHelp = function (data) {
         console.log('show help: ' + data.page);
@@ -10268,7 +10412,7 @@ var HeaderComponent = (function () {
             var msg_1 = '';
             this.translateService.get('msg.project-save-ask').subscribe(function (txt) { msg_1 = txt; });
             if (window.confirm(msg_1)) {
-                this.onSaveProject();
+                this.projectService.saveProject();
                 this.projectService.setNewProject();
             }
         }
@@ -10276,7 +10420,7 @@ var HeaderComponent = (function () {
         }
     };
     /**
-     * save Project and Download in Browser
+     * Aave Project as JSON file and Download in Browser
      */
     HeaderComponent.prototype.onSaveProjectAs = function () {
         try {
@@ -10301,7 +10445,7 @@ var HeaderComponent = (function () {
         var reader = new FileReader();
         reader.onload = function (data) {
             // console.log(reader.result);
-            var prj = JSON.parse(reader.result);
+            var prj = JSON.parse(reader.result.toString());
             _this.projectService.setProject(prj, true);
         };
         reader.onerror = function () {
@@ -10310,6 +10454,7 @@ var HeaderComponent = (function () {
             alert(msg);
         };
         reader.readAsText(input.files[0]);
+        this.fileImportInput.nativeElement.value = null;
     };
     /**
      * save Project and Download in Browser
@@ -10329,6 +10474,10 @@ var HeaderComponent = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('tutorial'),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_7__help_tutorial_tutorial_component__["a" /* TutorialComponent */])
     ], HeaderComponent.prototype, "tutorial", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('fileImportInput'),
+        __metadata("design:type", Object)
+    ], HeaderComponent.prototype, "fileImportInput", void 0);
     HeaderComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
             moduleId: module.i,
@@ -10460,7 +10609,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<mat-sidenav-container class=\"sidenav-container\">\n  <mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\n    <app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\n  </mat-sidenav>\n\n  <mat-sidenav-content>\n    <div class=\"header\">\n      <button mat-icon-button *ngIf=\"showSidenav && this.showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\n        <mat-icon aria-label=\"Menu\">menu</mat-icon>\n      </button>\n    </div>\n    <div style=\"padding-top: 5px;\">\n      <app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n      <!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\n      <!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\n      <div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\n        <p>\n          {{'msg.home-welcome' | translate}}.\n        </p>\n      </div>\n    </div>\n  </mat-sidenav-content>\n\n</mat-sidenav-container>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\n  <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\n      style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\n  </mat-progress-bar>\n</div>\n<mat-sidenav-container class=\"sidenav-container\">\n  <mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\n    <app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\n  </mat-sidenav>\n  <mat-sidenav-content>\n    <div class=\"header\">\n      <button mat-icon-button *ngIf=\"showSidenav && showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\n        <mat-icon aria-label=\"Menu\">menu</mat-icon>\n      </button>\n    </div>\n    <div style=\"padding-top: 5px;\">\n      <app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n      <!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\n      <!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\n      <div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\n        <p>\n          {{'msg.home-welcome' | translate}}.\n        </p>\n      </div>\n    </div>\n  </mat-sidenav-content>\n\n</mat-sidenav-container>"
 
 /***/ }),
 
@@ -10503,6 +10652,7 @@ var HomeComponent = (function () {
         this.hmiService = hmiService;
         this.gaugesManager = gaugesManager;
         // @ViewChild('iframeview') iframeview: IframeComponent;
+        this.isLoading = true;
         this.homeView = new __WEBPACK_IMPORTED_MODULE_8__models_hmi__["q" /* View */]();
         this.hmi = new __WEBPACK_IMPORTED_MODULE_8__models_hmi__["j" /* Hmi */]();
         this.showSidenav = 'over';
@@ -10511,37 +10661,34 @@ var HomeComponent = (function () {
         this.showHomeLink = false;
     }
     HomeComponent.prototype.ngOnInit = function () {
-        var _this = this;
-        try {
-            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (res) {
-                try {
-                    _this.loadHmi();
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            });
-        }
-        catch (e) {
-            console.log(e);
-        }
+        // try {
+        //   this.loadHmi();
+        //   this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
+        //     try {
+        //       this.loadHmi();
+        //     }
+        //     catch (e) {
+        //       console.log(e);
+        //     }
+        //   });
+        // }
+        // catch (e) {
+        //   console.log(e);
+        // }
     };
     HomeComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
         try {
-            // this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
-            //   try {
-            //     this.loadHmi();
-            //   }
-            //   catch (e) {
-            //     console.log(e);
-            //   }
-            // });
-            this.loadHmi();
-            if (!this.homeView) {
-                setTimeout(function () {
+            var hmi = this.projectService.getHmi();
+            if (!hmi) {
+                this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (load) {
                     _this.loadHmi();
-                }, 4000);
+                }, function (error) {
+                    console.log('Error loadHMI');
+                });
+            }
+            else {
+                this.loadHmi();
             }
         }
         catch (e) {
@@ -10595,7 +10742,7 @@ var HomeComponent = (function () {
             this.hmi = hmi;
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
-            if (this.hmi.layout.start) {
+            if (this.hmi.layout && this.hmi.layout.start) {
                 var startView = this.hmi.views.find(function (x) { return x.id === _this.hmi.layout.start; });
                 if (startView) {
                     this.homeView = startView;
@@ -10605,28 +10752,29 @@ var HomeComponent = (function () {
                 this.homeView = this.hmi.views[0];
             }
             // check sidenav
-            var nvoid = __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */][this.hmi.layout.navigation.mode];
-            if (this.hmi.layout && nvoid !== __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].void) {
-                if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].over) {
-                    this.showSidenav = 'over';
+            this.showSidenav = null;
+            if (this.hmi.layout) {
+                var nvoid = __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */][this.hmi.layout.navigation.mode];
+                if (this.hmi.layout && nvoid !== __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].void) {
+                    if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].over) {
+                        this.showSidenav = 'over';
+                    }
+                    else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].fix) {
+                        this.showSidenav = 'side';
+                        this.matsidenav.open();
+                    }
+                    else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].push) {
+                        this.showSidenav = 'push';
+                    }
+                    this.sidenav.setLayout(this.hmi.layout);
                 }
-                else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].fix) {
-                    this.showSidenav = 'side';
-                    this.matsidenav.open();
-                }
-                else if (nvoid === __WEBPACK_IMPORTED_MODULE_8__models_hmi__["n" /* NaviModeType */].push) {
-                    this.showSidenav = 'push';
-                }
-                this.sidenav.setLayout(this.hmi.layout);
             }
-            else {
-                this.showSidenav = null;
-            }
+            this.showHomeView = (this.homeView) ? true : false;
         }
-        this.showHomeView = (this.homeView) ? true : false;
         if (this.homeView && this.fuxaview) {
             this.fuxaview.loadHmi(this.homeView);
         }
+        this.isLoading = false;
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('sidenav'),

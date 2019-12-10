@@ -1,4 +1,12 @@
-﻿<div id="svg_editor_container">
+﻿<div *ngIf="isLoading" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;">
+    <!-- <mat-spinner mode="indeterminate" color="rgba(48,89,175,1)" diameter="50" 
+            style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
+    </mat-spinner> -->
+    <mat-progress-bar mode="indeterminate" color="warn"
+        style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
+    </mat-progress-bar>
+</div>
+<div id="svg_editor_container">
   <mat-drawer-container class="svg-workarea-container">
     <!-- LEFT BAR -->
     <mat-drawer mode="side" opened="true" class="svg-sidenav leave-header-area">
@@ -19,7 +27,7 @@
             <div *ngIf="hmi.views && hmi.views.length <= 0">
               <br>
             </div>
-            <div *ngFor="let item of hmi.views; let i = index" (click)="onSelectView(item)" [ngClass]="{'leftbar-item-active': isViewActive(item)}"
+            <div *ngFor="let item of getViewsSorted()" (click)="onSelectView(item)" [ngClass]="{'leftbar-item-active': isViewActive(item)}"
               class="leftbar-item mycursor-pointer">
               <span>{{item.name}}</span>
               <mat-icon aria-label="More" [matMenuTriggerFor]="menuview" class="">more_vert</mat-icon>

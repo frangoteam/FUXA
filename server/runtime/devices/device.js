@@ -1,5 +1,8 @@
-'use strict';
+/**
+ * Device interface managed with StateMachine INIT/IDLE/POLLING
+ */
 
+'use strict';
 var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 
@@ -9,13 +12,13 @@ var DEVICE_POLLING_INTERVAL = 4000;             // with DAQ enabled, will be sav
 var DEVICE_DAQ_MIN_INTERVAL = 60000;            // with DAQ enabled, interval to save DAQ value anyway !!bigger as DEVICE_POLLING_INTERVAL
 
 function Device(data, logger, _events) {
-    var property = { id: data.id, name: data.name };
-    var status = DeviceStatusEnum.INIT;
-    var events = _events;
-    var comm;
-    var currentCmd = null;
-    var deviceCheckStatus = null;
-    var devicePolling = null;
+    var property = { id: data.id, name: data.name };        // Device property (name, id)
+    var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
+    var events = _events;                                   // Events to commit change to runtime
+    var comm;                                               // Interface to OPCUA/S7 Device
+    var currentCmd = null;                                  // Current Command (StateMachine)
+    var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
+    var devicePolling = null;                               // TimerInterval to polling read device value
 
     if (data.type === DeviceEnum.S7) {
         comm = S7client.create(data, logger, events);
@@ -23,6 +26,9 @@ function Device(data, logger, _events) {
         comm = OpcUAclient.create(data, logger, events);
     }
 
+    /**
+     * Start StateMachine, init and start TimerInterval to check Device status
+     */
     this.start = function () {
         currentCmd = DeviceCmdEnum.START;
         if (status === DeviceStatusEnum.INIT) {
@@ -35,10 +41,13 @@ function Device(data, logger, _events) {
         }
     }
 
+    /**
+     * Stop StateMachine, Close Device connection, break all TimerInterval (Device status/polling)
+     */
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
-            logger.info(currentCmd + ': ' + property.name);
+            logger.info(property.name + ': ' + currentCmd);
             if (devicePolling) {
                 clearInterval(devicePolling);
                 devicePolling = null;
@@ -54,6 +63,9 @@ function Device(data, logger, _events) {
         });
     }
 
+    /**
+     * Check the Device connection, Reconnect
+     */
     this.checkStatus = function () {
         if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START) {
             this.connect().then(function () {
@@ -70,10 +82,16 @@ function Device(data, logger, _events) {
         }
     }
 
+    /**
+     * Call Device to polling
+     */
     this.polling = function () {
         comm.polling();
     }
 
+    /**
+     * Call Device to connect and start TimerInterval for read value polling
+     */
     this.connect = function () {
         var self = this;
         return comm.connect().then(function () {
@@ -83,26 +101,44 @@ function Device(data, logger, _events) {
         });
     }
 
+    /**
+     * Call Device to disconnect 
+     */
     this.disconnect = function () {
         return comm.disconnect();
     }
 
+    /**
+     * Call Device to load Tags propperty in local for polling read values
+     */
     this.load = function (data) {
         return comm.load(data);
     }
 
+    /**
+     * Call Device to retrun Tags with values
+     */
     this.getValues = function () {
         return comm.getValues();
     }
 
+    /**
+     * Call Device to return current status
+     */
     this.getStatus = function () {
         return comm.getStatus();
     }
 
-    this.setValue = function (sigid, value) {
-        return comm.setValue(sigid, value);
+    /**
+     * Call Device to set Tag value
+     */
+    this.setValue = function (id, value) {
+        return comm.setValue(id, value);
     }
 
+    /**
+     * Call Device to return browser result Tags/Nodes (only OPCUA)
+     */
     this.browse = function (path) {
         return new Promise(function (resolve, reject) {
             if (data.type === DeviceEnum.OPCUA) {
@@ -117,6 +153,9 @@ function Device(data, logger, _events) {
         });
     }
 
+    /**
+     * Call Device to return Tag/Node attribute (only OPCUA)
+     */
     this.readNodeAttribute = function(node) {
         return new Promise(function (resolve, reject) {
             if (data.type === DeviceEnum.OPCUA) {
@@ -131,11 +170,17 @@ function Device(data, logger, _events) {
         });
     }
 
+    /**
+     * Call Device to bind the DAQ store function
+     */
     this.bindSaveDaqValue = function (fnc) {
         comm.bindAddDaq(fnc, DEVICE_DAQ_MIN_INTERVAL);
         //return comm.addDaq = fnc;
     }
 
+    /**
+     * Call Device to return Tag property
+     */
     this.getTagProperty = function (id) {
         return comm.getTagProperty(id);
     }
@@ -152,17 +197,26 @@ module.exports = {
     }
 }
 
+/**
+ * Device type supported
+ */
 var DeviceEnum = {
-    S7: "SiemensS7",
-    OPCUA: "OPCUA"
+    S7: 'SiemensS7',
+    OPCUA: 'OPCUA'
 }
 
+/**
+ * State of StateMachine
+ */
 var DeviceStatusEnum = {
-    INIT: "init",
-    IDLE: "idle",
-    POLLING: "polling"
+    INIT: 'init',
+    IDLE: 'idle',
+    POLLING: 'polling'
 }
 
+/**
+ * Command of StateMachine
+ */
 var DeviceCmdEnum = {
     STOP: 'stop',
     START: 'start',

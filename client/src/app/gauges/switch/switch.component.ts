@@ -65,20 +65,6 @@ export class SwitchComponent extends GaugeBaseComponent implements AfterViewInit
       }
     }
   }
-  // gaugeSettings() {
-  //   let dialogRef = this.dialog.open(DialogSwitchSettings, {
-  //     width: '250px',
-  //     // data: { name: view.name, width: view.profile.width, height: view.profile.height }
-  // });
-
-  // dialogRef.afterClosed().subscribe(result => {
-  //     console.log('The DialogDocProperty was closed');
-  //     // view.profile.width = result.width;
-  //     // view.profile.height = result.height;
-  //     // this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height);
-  //     // this.saveHmi();
-  // });
-  // }
 }
 
 export class SwitchProperty {
