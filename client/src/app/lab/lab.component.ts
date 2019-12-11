@@ -1,6 +1,5 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { ViewChild } from '@angular/core';
-import { ViewContainerRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
+import { Subscription } from "rxjs/Subscription";
 
 import { ProjectService } from '../_services/project.service';
 import { Hmi, View, GaugeSettings } from '../_models/hmi';
@@ -17,44 +16,55 @@ declare var Raphael: any;
     styleUrls: ['lab.component.css']
 })
 
-export class LabComponent implements OnInit, AfterViewInit {
+export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    currentView: View = null;
+    @ViewChild('messagecontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
+    @ViewChild('tester') tester: TesterComponent;
+
+    isLoading = true;
+    currentView: View = new View();
     hmi: Hmi = new Hmi();
     svgMain: any;
     componentRef: any;
     labView: View = null;
 
-    @ViewChild('messagecontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
-    @ViewChild('tester') tester: TesterComponent;
+	private subscriptionLoad: Subscription;
 
     constructor(private projectService: ProjectService,
         private gaugesManager: GaugesManager,
+        private changeDetector: ChangeDetectorRef,        
         private testerService: TesterService) {
     }
 
     ngOnInit() {
+
+    }
+
+    ngAfterViewInit() {
         try {
-            // this.gaugesManager.stopDemo();
-            this.loadHmi();
-            // this.gaugesManager.startDemo();
+            let hmi = this.projectService.getHmi();
+            if (!hmi) {
+                this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+                    this.loadHmi();
+                }, error => {
+                    console.log('Error loadHMI');
+                });
+            } else {
+                this.loadHmi();
+            }
+            this.changeDetector.detectChanges();
         }
         catch (e) {
             console.log(e);
         }
     }
 
-    ngAfterViewInit() {
+    ngOnDestroy() {
         try {
-            this.loadHmi();
-            if (!this.labView) {
-                setTimeout(() => {
-                    this.loadHmi();
-                }, 3000);
+            if (this.subscriptionLoad) {
+                this.subscriptionLoad.unsubscribe();
             }
-        }
-        catch (e) {
-            console.log(e);
+        } catch (e) {
         }
     }
 
@@ -81,5 +91,6 @@ export class LabComponent implements OnInit, AfterViewInit {
             }
             // this.dataContainer.nativeElement.innerHTML = this.currentView.svgcontent;
         }
+        this.isLoading = false;
     }
 }

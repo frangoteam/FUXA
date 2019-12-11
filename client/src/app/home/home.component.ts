@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
@@ -34,26 +34,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	private subscriptionLoad: Subscription;
 
-	constructor(private projectService: ProjectService,
+    constructor(private projectService: ProjectService,
+        private changeDetector: ChangeDetectorRef,
 		private router: Router,
 		private hmiService: HmiService,
 		private gaugesManager: GaugesManager) { }
 
 	ngOnInit() {
-		// try {
-		//   this.loadHmi();
-		//   this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
-		//     try {
-		//       this.loadHmi();
-		//     }
-		//     catch (e) {
-		//       console.log(e);
-		//     }
-		//   });
-		// }
-		// catch (e) {
-		//   console.log(e);
-		// }
+
 	}
 
 	ngAfterViewInit() {
@@ -67,7 +55,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 				});
 			} else {
 				this.loadHmi();
-			}
+            }
+            this.changeDetector.detectChanges();
 		}
 		catch (e) {
 			console.log(e);

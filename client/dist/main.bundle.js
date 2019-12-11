@@ -2714,7 +2714,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-list/device-list.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n    <div class=\"filter\" *ngIf=\"deviceSelected\">\n        <button mat-icon-button title=\"Device Map\" (click)=\"onGoBack()\" style=\"margin-right:10px;margin-left:-10px;\">\n            <mat-icon aria-label=\"Show devices map\">arrow_back</mat-icon>\n        </button>\n        <div class=\"my-form-field\" style=\"\">\n            <span>{{'device.list-device' | translate}}</span>\n            <mat-select [(value)]=\"deviceSelected\" style=\"width: 300px\"\n                (selectionChange)=\"onDeviceChange($event.source)\">\n                <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device\">\n                    {{ device.name }}\n                </mat-option>\n            </mat-select>\n        </div>\n        <div class=\"my-form-field\" style=\"\">\n            <span>{{'device.list-filter' | translate}}</span>\n            <input (keyup)=\"applyFilter($event.target.value)\" style=\"width: 450px\" type=\"text\">\n        </div>\n        <!-- <mat-form-field>\n      <input matInput (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\">\n    </mat-form-field> -->\n        <!-- <div class=\"my-form-field\" style=\"padding: 10 20 10 20\">\n      <input (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\" type=\"text\" style=\"width: 100%\">\n    </div> -->\n    </div>\n    <mat-table #table [dataSource]=\"dataSource\" matSort>\n        <!-- Checkbox Column -->\n        <ng-container matColumnDef=\"select\">\n            <mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\n                <button mat-icon-button (click)=\"onAddTag()\" class=\"remove\">\n                    <mat-icon>add</mat-icon>\n                </button>\n                <!-- <mat-checkbox (change)=\"$event ? masterToggle() : null\" [checked]=\"selection.hasValue() && isAllSelected()\"\n          [indeterminate]=\"selection.hasValue() && !isAllSelected()\">\n        </mat-checkbox> -->\n            </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\n                <button mat-icon-button (click)=\"onEditRow(element)\" class=\"remove\"\n                    *ngIf=\"deviceSelected.type === deviceType.SiemensS7\">\n                    <mat-icon>edit</mat-icon>\n                </button>\n                <!-- <mat-checkbox (click)=\"$event.stopPropagation()\" (change)=\"$event ? selection.toggle(row) : null\" [checked]=\"selection.isSelected(row)\">\n        </mat-checkbox> -->\n            </mat-cell>\n        </ng-container>\n\n        <!-- Name Column -->\n        <ng-container matColumnDef=\"name\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.name}} </mat-cell>\n        </ng-container>\n\n        <!-- Address Column -->\n        <ng-container matColumnDef=\"address\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.address}} </mat-cell>\n        </ng-container>\n\n        <!-- Device Column -->\n        <ng-container matColumnDef=\"device\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{deviceSelected.name}} </mat-cell>\n        </ng-container>\n\n        <!-- Device Column -->\n        <ng-container matColumnDef=\"type\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.type}} </mat-cell>\n        </ng-container>\n\n        <!-- Min Column -->\n        <ng-container matColumnDef=\"min\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.min}} </mat-cell>\n        </ng-container>\n\n        <!-- Max Column -->\n        <ng-container matColumnDef=\"max\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.max}} </mat-cell>\n        </ng-container>\n\n        <!-- Value Column -->\n        <ng-container matColumnDef=\"value\">\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\"> {{element.value}} </mat-cell>\n        </ng-container>\n\n        <!-- Button remove Column -->\n        <ng-container matColumnDef=\"remove\">\n            <mat-header-cell *matHeaderCellDef> </mat-header-cell>\n            <mat-cell *matCellDef=\"let element\">\n                <button mat-icon-button (click)=\"$event.stopPropagation();onRemoveRow(element)\" class=\"remove\">\n                    <mat-icon>clear</mat-icon>\n                </button>\n            </mat-cell>\n        </ng-container>\n\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\n    </mat-table>\n</div>\n\n<button mat-fab color=\"primary\" (click)=\"onAddTag()\"\n    style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n    <mat-icon class=\"\">add</mat-icon>\n</button>"
+module.exports = "<div class=\"container\">\r\n    <div class=\"filter\" *ngIf=\"deviceSelected\">\r\n        <button mat-icon-button title=\"Device Map\" (click)=\"onGoBack()\" style=\"margin-right:10px;margin-left:-10px;\">\r\n            <mat-icon aria-label=\"Show devices map\">arrow_back</mat-icon>\r\n        </button>\r\n        <div class=\"my-form-field\" style=\"\">\r\n            <span>{{'device.list-device' | translate}}</span>\r\n            <mat-select [(value)]=\"deviceSelected\" style=\"width: 300px\"\r\n                (selectionChange)=\"onDeviceChange($event.source)\">\r\n                <mat-option *ngFor=\"let device of devicesValue()\" [value]=\"device\">\r\n                    {{ device.name }}\r\n                </mat-option>\r\n            </mat-select>\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"\">\r\n            <span>{{'device.list-filter' | translate}}</span>\r\n            <input (keyup)=\"applyFilter($event.target.value)\" style=\"width: 450px\" type=\"text\">\r\n        </div>\r\n        <!-- <mat-form-field>\r\n      <input matInput (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\">\r\n    </mat-form-field> -->\r\n        <!-- <div class=\"my-form-field\" style=\"padding: 10 20 10 20\">\r\n      <input (keyup)=\"applyFilter($event.target.value)\" placeholder=\"Filter\" type=\"text\" style=\"width: 100%\">\r\n    </div> -->\r\n    </div>\r\n    <mat-table #table [dataSource]=\"dataSource\" matSort>\r\n        <!-- Checkbox Column -->\r\n        <ng-container matColumnDef=\"select\">\r\n            <mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\r\n                <button mat-icon-button (click)=\"onAddTag()\" class=\"remove\">\r\n                    <mat-icon>add</mat-icon>\r\n                </button>\r\n                <!-- <mat-checkbox (change)=\"$event ? masterToggle() : null\" [checked]=\"selection.hasValue() && isAllSelected()\"\r\n          [indeterminate]=\"selection.hasValue() && !isAllSelected()\">\r\n        </mat-checkbox> -->\r\n            </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\r\n                <button mat-icon-button (click)=\"onEditRow(element)\" class=\"remove\"\r\n                    *ngIf=\"deviceSelected.type === deviceType.SiemensS7\">\r\n                    <mat-icon>edit</mat-icon>\r\n                </button>\r\n                <!-- <mat-checkbox (click)=\"$event.stopPropagation()\" (change)=\"$event ? selection.toggle(row) : null\" [checked]=\"selection.isSelected(row)\">\r\n        </mat-checkbox> -->\r\n            </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Name Column -->\r\n        <ng-container matColumnDef=\"name\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{element.name}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Address Column -->\r\n        <ng-container matColumnDef=\"address\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{element.address}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Device Column -->\r\n        <ng-container matColumnDef=\"device\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{deviceSelected.name}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Device Column -->\r\n        <ng-container matColumnDef=\"type\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{element.type}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Min Column -->\r\n        <ng-container matColumnDef=\"min\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{element.min}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Max Column -->\r\n        <ng-container matColumnDef=\"max\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{element.max}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Value Column -->\r\n        <ng-container matColumnDef=\"value\">\r\n            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\"> {{element.value}} </mat-cell>\r\n        </ng-container>\r\n\r\n        <!-- Button remove Column -->\r\n        <ng-container matColumnDef=\"remove\">\r\n            <mat-header-cell *matHeaderCellDef> </mat-header-cell>\r\n            <mat-cell *matCellDef=\"let element\">\r\n                <button mat-icon-button (click)=\"$event.stopPropagation();onRemoveRow(element)\" class=\"remove\">\r\n                    <mat-icon>clear</mat-icon>\r\n                </button>\r\n            </mat-cell>\r\n        </ng-container>\r\n\r\n        <mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\r\n        <mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\r\n    </mat-table>\r\n</div>\r\n\r\n<button mat-fab color=\"primary\" (click)=\"onAddTag()\"\r\n    style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\r\n    <mat-icon class=\"\">add</mat-icon>\r\n</button>"
 
 /***/ }),
 
@@ -3210,7 +3210,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-property/device-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n    {{'msg.device-remove' | translate}} '{{data.device.name}}' ?\n  </div>\n  <div *ngIf=\"!isToRemove\">\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n      {{'device.property-client' | translate}}</h1>\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">\n      {{'device.property-server' | translate}}</h1>\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  </div>\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n    <div style=\"display: block;\">\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n        <span>{{'device.property-name' | translate}}</span>\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n        <span>{{'device.property-type' | translate}}</span>\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n            {{ type.value }}\n          </mat-option>\n        </mat-select>\n      </div>\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n        <span>{{'device.property-enable' | translate}}</span>\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n      </div>      \n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n        <span>{{'device.property-address' | translate}}</span>\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\n      </div>\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-port' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-rack' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n        </div>\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n          <span>{{'device.property-slot' | translate}}</span>\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n        </div>\n      </div>\n    </div>\n  </div>\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" [disabled]=\"!isValid(data.device)\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+module.exports = "<!-- <div style=\"width: 100%;\"> -->\r\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\r\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\r\n    {{'msg.device-remove' | translate}} '{{data.device.name}}' ?\r\n  </div>\r\n  <div *ngIf=\"!isToRemove\">\r\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\r\n      {{'device.property-client' | translate}}</h1>\r\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">\r\n      {{'device.property-server' | translate}}</h1>\r\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\r\n  </div>\r\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\r\n    <div style=\"display: block;\">\r\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>{{'device.property-name' | translate}}</span>\r\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\r\n      </div>\r\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\r\n        <span>{{'device.property-type' | translate}}</span>\r\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\r\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\r\n            {{ type.value }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </div>\r\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\r\n        <span>{{'device.property-enable' | translate}}</span>\r\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\r\n      </div>      \r\n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>{{'device.property-address' | translate}}</span>\r\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\r\n      </div>\r\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\r\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n          <span>{{'device.property-port' | translate}}</span>\r\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n          <span>{{'device.property-rack' | translate}}</span>\r\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n          <span>{{'device.property-slot' | translate}}</span>\r\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n    <button mat-raised-button color=\"primary\" [disabled]=\"!isValid(data.device)\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -9817,11 +9817,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var NgxDygraphsComponent = (function () {
-    function NgxDygraphsComponent() {
+    function NgxDygraphsComponent(changeDetector) {
+        this.changeDetector = changeDetector;
         this.onTimeRange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.withToolbar = false;
         this.isEditor = false;
+        this.rangeTypeValue = Object.keys(__WEBPACK_IMPORTED_MODULE_1__models_chart__["b" /* ChartRangeType */])[0];
         this.range = { from: Date.now(), to: Date.now() };
         //   public chartWidth: number;
         //   public chartHeight: number;
@@ -9843,30 +9846,6 @@ var NgxDygraphsComponent = (function () {
             axisLabelFontSize: 12
         };
         this.sampleData = [[new Date('1967/09/14'), 0], [new Date('1968/09/14'), 1]];
-        //   private watchRangeSelector(graph) {
-        //     const observer = new MutationObserver(function(mutations) {
-        //       // called on style changes of range selector handles
-        //       if (mutations.length === 2) {
-        //         // both range selector handles have style changed -> assume move
-        //         // Zoom to the same zoom to trigger zoomCallback
-        //         const zoomCallback = graph.getFunctionOption("zoomCallback");
-        //         const [minX, maxX] = graph.xAxisRange();
-        //         zoomCallback.call(graph, minX, maxX, graph.yAxisRanges());
-        //       }
-        //     });
-        //     Array.from(
-        //       document.getElementsByClassName("dygraph-rangesel-zoomhandle")
-        //     ).forEach(
-        //       // work on range selector handles
-        //       function(element, idx, arr) {
-        //         // watch for style changes
-        //         observer.observe(element, {
-        //           attributes: true,
-        //           attributeFilter: ["style"]
-        //         });
-        //       }
-        //     );
-        //   }
     }
     NgxDygraphsComponent.prototype.ngOnInit = function () {
         this.options = Object.assign(this.defOptions, this.options);
@@ -9894,6 +9873,7 @@ var NgxDygraphsComponent = (function () {
         if (this.withToolbar && !this.isEditor) {
             this.onRangeChanged(this.rangeTypeValue);
         }
+        this.changeDetector.detectChanges();
     };
     /**
      * ngOnChanges
@@ -10075,6 +10055,8 @@ var NgxDygraphsComponent = (function () {
          *
          * @class NgDygraphsComponent
          */
+        ,
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* ChangeDetectorRef */]])
     ], NgxDygraphsComponent);
     return NgxDygraphsComponent;
 }());
@@ -10609,7 +10591,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\n  <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\n      style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\n  </mat-progress-bar>\n</div>\n<mat-sidenav-container class=\"sidenav-container\">\n  <mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\n    <app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\n  </mat-sidenav>\n  <mat-sidenav-content>\n    <div class=\"header\">\n      <button mat-icon-button *ngIf=\"showSidenav && showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\n        <mat-icon aria-label=\"Menu\">menu</mat-icon>\n      </button>\n    </div>\n    <div style=\"padding-top: 5px;\">\n      <app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\n      <!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\n      <!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\n      <div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\n        <p>\n          {{'msg.home-welcome' | translate}}.\n        </p>\n      </div>\n    </div>\n  </mat-sidenav-content>\n\n</mat-sidenav-container>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n  <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\r\n      style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n  </mat-progress-bar>\r\n</div>\r\n<mat-sidenav-container class=\"sidenav-container\">\r\n  <mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\r\n    <app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\r\n  </mat-sidenav>\r\n  <mat-sidenav-content>\r\n    <div class=\"header\">\r\n      <button mat-icon-button *ngIf=\"showSidenav && showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\r\n        <mat-icon aria-label=\"Menu\">menu</mat-icon>\r\n      </button>\r\n    </div>\r\n    <div style=\"padding-top: 5px;\">\r\n      <app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n      <!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\r\n      <!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\r\n      <div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\r\n        <p>\r\n          {{'msg.home-welcome' | translate}}.\r\n        </p>\r\n      </div>\r\n    </div>\r\n  </mat-sidenav-content>\r\n\r\n</mat-sidenav-container>"
 
 /***/ }),
 
@@ -10646,8 +10628,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var HomeComponent = (function () {
-    function HomeComponent(projectService, router, hmiService, gaugesManager) {
+    function HomeComponent(projectService, changeDetector, router, hmiService, gaugesManager) {
         this.projectService = projectService;
+        this.changeDetector = changeDetector;
         this.router = router;
         this.hmiService = hmiService;
         this.gaugesManager = gaugesManager;
@@ -10661,20 +10644,6 @@ var HomeComponent = (function () {
         this.showHomeLink = false;
     }
     HomeComponent.prototype.ngOnInit = function () {
-        // try {
-        //   this.loadHmi();
-        //   this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
-        //     try {
-        //       this.loadHmi();
-        //     }
-        //     catch (e) {
-        //       console.log(e);
-        //     }
-        //   });
-        // }
-        // catch (e) {
-        //   console.log(e);
-        // }
     };
     HomeComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -10690,6 +10659,7 @@ var HomeComponent = (function () {
             else {
                 this.loadHmi();
             }
+            this.changeDetector.detectChanges();
         }
         catch (e) {
             console.log(e);
@@ -10795,6 +10765,7 @@ var HomeComponent = (function () {
             styles: [__webpack_require__("../../../../../src/app/home/home.component.css")]
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_6__services_project_service__["a" /* ProjectService */],
+            __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* ChangeDetectorRef */],
             __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */],
             __WEBPACK_IMPORTED_MODULE_5__services_hmi_service__["a" /* HmiService */],
             __WEBPACK_IMPORTED_MODULE_7__gauges_gauges_component__["a" /* GaugesManager */]])
@@ -10922,7 +10893,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/lab/lab.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n  <app-fuxa-view *ngIf=\"labView\" class=\"lab-body\" id=\"lab\" [view]=\"currentView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n  <div *ngIf=\"!labView\">\r\n      Loading...\r\n  </div>\r\n  <template #messagecontainer>\r\n  </template>    \r\n  <button mat-mini-fab color=\"warn\" class=\"fab-btn\" (click)=\"onTest()\">Test</button>\r\n  <app-tester #tester></app-tester>\r\n</div>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n    <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\r\n        style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n    </mat-progress-bar>\r\n</div>\r\n<div>\r\n  <app-fuxa-view *ngIf=\"labView\" class=\"lab-body\" id=\"lab\" [view]=\"currentView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n  <div *ngIf=\"!labView\">\r\n      Loading...\r\n  </div>\r\n  <template #messagecontainer>\r\n  </template>    \r\n  <button mat-mini-fab color=\"warn\" class=\"fab-btn\" (click)=\"onTest()\">Test</button>\r\n  <app-tester #tester></app-tester>\r\n</div>"
 
 /***/ }),
 
@@ -10952,39 +10923,46 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
-
 var LabComponent = (function () {
-    function LabComponent(projectService, gaugesManager, testerService) {
+    function LabComponent(projectService, gaugesManager, changeDetector, testerService) {
         this.projectService = projectService;
         this.gaugesManager = gaugesManager;
+        this.changeDetector = changeDetector;
         this.testerService = testerService;
-        this.currentView = null;
+        this.isLoading = true;
+        this.currentView = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["q" /* View */]();
         this.hmi = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["j" /* Hmi */]();
         this.labView = null;
     }
     LabComponent.prototype.ngOnInit = function () {
+    };
+    LabComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
         try {
-            // this.gaugesManager.stopDemo();
-            this.loadHmi();
-            // this.gaugesManager.startDemo();
+            var hmi = this.projectService.getHmi();
+            if (!hmi) {
+                this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (load) {
+                    _this.loadHmi();
+                }, function (error) {
+                    console.log('Error loadHMI');
+                });
+            }
+            else {
+                this.loadHmi();
+            }
+            this.changeDetector.detectChanges();
         }
         catch (e) {
             console.log(e);
         }
     };
-    LabComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
+    LabComponent.prototype.ngOnDestroy = function () {
         try {
-            this.loadHmi();
-            if (!this.labView) {
-                setTimeout(function () {
-                    _this.loadHmi();
-                }, 3000);
+            if (this.subscriptionLoad) {
+                this.subscriptionLoad.unsubscribe();
             }
         }
         catch (e) {
-            console.log(e);
         }
     };
     LabComponent.prototype.onTest = function () {
@@ -11009,6 +10987,7 @@ var LabComponent = (function () {
             }
             // this.dataContainer.nativeElement.innerHTML = this.currentView.svgcontent;
         }
+        this.isLoading = false;
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('messagecontainer', { read: __WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* ViewContainerRef */] }),
@@ -11026,6 +11005,7 @@ var LabComponent = (function () {
         }),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_project_service__["a" /* ProjectService */],
             __WEBPACK_IMPORTED_MODULE_3__gauges_gauges_component__["a" /* GaugesManager */],
+            __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* ChangeDetectorRef */],
             __WEBPACK_IMPORTED_MODULE_4__tester_tester_service__["a" /* TesterService */]])
     ], LabComponent);
     return LabComponent;

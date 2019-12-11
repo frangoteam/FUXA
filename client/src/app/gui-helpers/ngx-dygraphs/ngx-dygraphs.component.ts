@@ -1,4 +1,5 @@
 import { Component, Input, Output, ElementRef, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef  } from '@angular/core';
 import { DygraphOptions } from './dygraphOptions';
 
 import { ChartRangeType, ChartRangeConverter } from '../../_models/chart';
@@ -27,7 +28,7 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     public loadingInProgress: boolean;
     public withToolbar = false;
     public isEditor = false;
-    public rangeTypeValue: any;
+    public rangeTypeValue = <ChartRangeType>Object.keys(ChartRangeType)[0];
     public rangeType: ChartRangeType;
     public range = { from: Date.now(), to: Date.now() };
 
@@ -53,6 +54,10 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         axisLabelFontSize: 12
     };
     public sampleData = [[new Date('1967/09/14'), 0], [new Date('1968/09/14'), 1]];
+
+    constructor(private changeDetector: ChangeDetectorRef) {
+    }
+
     public ngOnInit() {
         this.options = Object.assign(this.defOptions, this.options);
         this.noDataLabel = this.noDataLabel || 'NO DATA AVAILABLE';
@@ -79,6 +84,7 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         if (this.withToolbar && !this.isEditor) {
             this.onRangeChanged(this.rangeTypeValue);
         }
+        this.changeDetector.detectChanges();
     }
 
     /**

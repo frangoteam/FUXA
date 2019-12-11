@@ -440,11 +440,13 @@ function OpcUAclient(_data, _logger, _events) {
     var _monitorcallback = function (_nodeId) {
         var nodeId = _nodeId;
         return function (dataValue) {
-            console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
-            if (data.tags[nodeId]) {
-                data.tags[nodeId].value = dataValue.value.value;//.toString();
-                data.tags[nodeId].timestamp = dataValue.serverTimestamp.toString();
-                data.tags[nodeId].changed = true;
+            if (dataValue && dataValue.value) {
+                console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
+                if (data.tags[nodeId]) {
+                    data.tags[nodeId].value = dataValue.value.value;
+                    data.tags[nodeId].timestamp = dataValue.serverTimestamp.toString();
+                    data.tags[nodeId].changed = true;
+                }
             }
         };
     }
