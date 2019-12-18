@@ -66,7 +66,7 @@ export class ProjectService {
                 console.log('Load Server Project err: ' + err);
             });
         } else {
-            if (!this.projectData) {
+            if (!this.projectData || this.projectData.hmi.views.length <= 0) {
                 let res = localStorage.getItem(this.prjresource);
                 if (res) {
                     console.log('Load Local Project');
@@ -178,14 +178,16 @@ export class ProjectService {
      */
     setDevice(device: Device, old: Device) {
         this.projectData.devices[device.name] = device;
-        this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
-            if (old && old.name && old.name !== device.name && old.id === device.id) {
-                this.removeDevice(old);
-            }
-        }, err => {
-            console.log(err);
-            this.notifySaveError();
-        });
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+                if (old && old.name && old.name !== device.name && old.id === device.id) {
+                    this.removeDevice(old);
+                }
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
     }
 
     /**
@@ -201,11 +203,13 @@ export class ProjectService {
         //         return;
         //     }
         // });
-        this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
-        }, err => {
-            console.log(err);
-            this.notifySaveError();
-        });
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
     }
     //#endregion
 
@@ -227,11 +231,13 @@ export class ProjectService {
         } else {
             this.projectData.hmi.views.push(view);
         }
-        this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
-        }, err => {
-            console.log(err);
-            this.notifySaveError();
-        });
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
     }
 
     /**
@@ -246,20 +252,24 @@ export class ProjectService {
                 break;
             }
         }
-        this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
-        }, err => {
-            console.log(err);
-            this.notifySaveError();
-        });
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
     }
     //#endregion
     setLayout(layout: LayoutSettings) {
         this.projectData.hmi.layout = layout;
-        this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
-        }, err => {
-            console.log(err);
-            this.notifySaveError();
-        });
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
     }
     //#region HMI
 
@@ -333,11 +343,13 @@ export class ProjectService {
      */
     setCharts(charts: Chart[]) {
         this.projectData.charts = charts;
-        this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
-        }, err => {
-            console.log(err);
-            this.notifySaveError();
-        });        
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
     }
     //#endregion
 
@@ -383,7 +395,7 @@ export class ProjectService {
         this.projectData = prj;
         this.save();
         // if (notify) {
-            // this.notifyToLoadHmi();
+        // this.notifyToLoadHmi();
         // }
     }
 

@@ -1,4 +1,5 @@
 ﻿import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
@@ -91,6 +92,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(private projectService: ProjectService,
         private winRef: WindowRef,
         public dialog: MatDialog,
+        private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
         private gaugesManager: GaugesManager,
         private viewContainerRef: ViewContainerRef,
@@ -125,19 +127,18 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * after init event
      */
     ngAfterViewInit() {
-        setTimeout(() => {
-            this.myInit();
-            this.setMode('select');
-            let hmi = this.projectService.getHmi();
-            if (hmi) {
-                this.loadHmi();
-            }
-            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-                this.loadHmi();
-            }, error => {
-                console.log('Error loadHMI');
-            });
-        }, 1000);
+        this.myInit();
+        this.setMode('select');
+        let hmi = this.projectService.getHmi();
+        if (hmi) {
+            this.loadHmi();
+        }
+        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+            this.loadHmi();
+        }, error => {
+            console.log('Error loadHMI');
+        });
+        this.changeDetector.detectChanges();
     }
 
     ngOnDestroy() {
@@ -162,7 +163,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Init, first init the svg-editor component
      */
     private myInit() {
-        try {
+        try {             
             // first init svg-editor component
             mypathseg.initPathSeg();
             mybrowser.initBrowser();
@@ -202,19 +203,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.onRemoveElement(eleremoved);
                 }
             );
-            // this.winRef.nativeWindow.svgEditor.ready(function() {
-            //     this.winRef.nativeWindow.svgEditor.init();
-            //     $(initLocale);
-            //     $(initContextmenu);
-            // });
+        
             this.winRef.nativeWindow.svgEditor.init();
-            $(initLocale);
             $(initContextmenu);
-            console.log('myInit End');
+
         } catch (Error) {
             console.log(Error);
         }
-        // mycontextmenu.initContextmenu();
         this.setFillColor(this.colorFill);
         this.setFillColor(this.colorStroke);
     }

@@ -1772,7 +1772,7 @@ var ProjectService = (function () {
             });
         }
         else {
-            if (!this.projectData) {
+            if (!this.projectData || this.projectData.hmi.views.length <= 0) {
                 var res = localStorage.getItem(this.prjresource);
                 if (res) {
                     console.log('Load Local Project');
@@ -1880,14 +1880,16 @@ var ProjectService = (function () {
     ProjectService.prototype.setDevice = function (device, old) {
         var _this = this;
         this.projectData.devices[device.name] = device;
-        this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(function (result) {
-            if (old && old.name && old.name !== device.name && old.id === device.id) {
-                _this.removeDevice(old);
-            }
-        }, function (err) {
-            console.log(err);
-            _this.notifySaveError();
-        });
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(function (result) {
+                if (old && old.name && old.name !== device.name && old.id === device.id) {
+                    _this.removeDevice(old);
+                }
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
     };
     /**
      * Remove Device from Project.
@@ -1903,11 +1905,13 @@ var ProjectService = (function () {
         //         return;
         //     }
         // });
-        this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(function (result) {
-        }, function (err) {
-            console.log(err);
-            _this.notifySaveError();
-        });
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(function (result) {
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
     };
     //#endregion
     //#region View to Save
@@ -1930,11 +1934,13 @@ var ProjectService = (function () {
         else {
             this.projectData.hmi.views.push(view);
         }
-        this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(function (result) {
-        }, function (err) {
-            console.log(err);
-            _this.notifySaveError();
-        });
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(function (result) {
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
     };
     /**
      * Remove the View from Project
@@ -1949,21 +1955,25 @@ var ProjectService = (function () {
                 break;
             }
         }
-        this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(function (result) {
-        }, function (err) {
-            console.log(err);
-            _this.notifySaveError();
-        });
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(function (result) {
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
     };
     //#endregion
     ProjectService.prototype.setLayout = function (layout) {
         var _this = this;
         this.projectData.hmi.layout = layout;
-        this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(function (result) {
-        }, function (err) {
-            console.log(err);
-            _this.notifySaveError();
-        });
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(function (result) {
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
     };
     //#region HMI
     //#endregion
@@ -2029,11 +2039,13 @@ var ProjectService = (function () {
     ProjectService.prototype.setCharts = function (charts) {
         var _this = this;
         this.projectData.charts = charts;
-        this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(function (result) {
-        }, function (err) {
-            console.log(err);
-            _this.notifySaveError();
-        });
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(function (result) {
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
     };
     //#endregion
     //#region Notify
@@ -4123,11 +4135,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
+
 var EditorComponent = (function () {
-    function EditorComponent(projectService, winRef, dialog, translateService, gaugesManager, viewContainerRef, resolver, mdIconRegistry, sanitizer) {
+    function EditorComponent(projectService, winRef, dialog, changeDetector, translateService, gaugesManager, viewContainerRef, resolver, mdIconRegistry, sanitizer) {
         this.projectService = projectService;
         this.winRef = winRef;
         this.dialog = dialog;
+        this.changeDetector = changeDetector;
         this.translateService = translateService;
         this.gaugesManager = gaugesManager;
         this.viewContainerRef = viewContainerRef;
@@ -4181,19 +4195,18 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        setTimeout(function () {
-            _this.myInit();
-            _this.setMode('select');
-            var hmi = _this.projectService.getHmi();
-            if (hmi) {
-                _this.loadHmi();
-            }
-            _this.subscriptionLoad = _this.projectService.onLoadHmi.subscribe(function (load) {
-                _this.loadHmi();
-            }, function (error) {
-                console.log('Error loadHMI');
-            });
-        }, 1000);
+        this.myInit();
+        this.setMode('select');
+        var hmi = this.projectService.getHmi();
+        if (hmi) {
+            this.loadHmi();
+        }
+        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(function (load) {
+            _this.loadHmi();
+        }, function (error) {
+            console.log('Error loadHMI');
+        });
+        this.changeDetector.detectChanges();
     };
     EditorComponent.prototype.ngOnDestroy = function () {
         try {
@@ -4253,20 +4266,12 @@ var EditorComponent = (function () {
             }, function (eleremoved) {
                 _this.onRemoveElement(eleremoved);
             });
-            // this.winRef.nativeWindow.svgEditor.ready(function() {
-            //     this.winRef.nativeWindow.svgEditor.init();
-            //     $(initLocale);
-            //     $(initContextmenu);
-            // });
             this.winRef.nativeWindow.svgEditor.init();
-            $(initLocale);
             $(initContextmenu);
-            console.log('myInit End');
         }
         catch (Error) {
             console.log(Error);
         }
-        // mycontextmenu.initContextmenu();
         this.setFillColor(this.colorFill);
         this.setFillColor(this.colorStroke);
     };
@@ -5003,6 +5008,7 @@ var EditorComponent = (function () {
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__services_project_service__["a" /* ProjectService */],
             __WEBPACK_IMPORTED_MODULE_6__helpers_windowref__["a" /* WindowRef */],
             __WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */],
+            __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* ChangeDetectorRef */],
             __WEBPACK_IMPORTED_MODULE_3__ngx_translate_core__["c" /* TranslateService */],
             __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* ViewContainerRef */],
