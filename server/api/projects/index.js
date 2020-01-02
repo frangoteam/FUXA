@@ -97,6 +97,47 @@ module.exports = {
                 res.status(404).end();
             }
         });
+
+        /**
+         * GET Device property like security
+         * Take from project storage and reply 
+         */
+        prjApp.get("/api/device", function(req, res) {
+            console.log('/api/device');
+            const data = runtime.project.getDeviceProperty(req.query).then(result => {
+                // res.header("Access-Control-Allow-Origin", "*");
+                // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                if (result) {
+                    res.json(result);
+                } else {
+                    res.end();
+                }
+            }).catch(function(err) {
+                console.log(err.stack);
+                if (err.code) {
+                    res.status(400).json({error:err.code, message: err.message});
+                } else {
+                    res.status(400).json({error:"unexpected_error", message:err.toString()});
+                }
+            })
+        });
+
+        /**
+         * POST Device property
+         * Set to project storage
+         */
+        prjApp.post("/api/device", function(req, res, next) {
+            runtime.project.setDeviceProperty(req.body.params).then(function(data) {
+                res.end();
+            }).catch(function(err) {
+                console.log(err.stack);
+                if (err.code) {
+                    res.status(400).json({error:err.code, message: err.message});
+                } else {
+                    res.status(400).json({error:"unexpected_error", message:err.toString()});
+                }
+            });
+        });
         return prjApp;
     }
 }

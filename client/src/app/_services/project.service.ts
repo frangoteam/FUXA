@@ -26,7 +26,7 @@ export class ProjectService {
     public serverSettings: any;
 
     private prjresource = 'prj-data';
-    private endPointConfig: string = EndPointApi.getURL(); //"http://localhost:1881";
+    private endPointConfig: string = EndPointApi.getURL();
     private projectOld: string = '';
     private saveworking = false;
     private ready = false;
@@ -42,7 +42,7 @@ export class ProjectService {
             }, error => {
                 console.error('project.service err: ' + error);
                 this.load();
-                this.notifySaveError();
+                this.notifyServerError();
             });
         } else {
             this.load();
@@ -137,16 +137,6 @@ export class ProjectService {
             for (let tagid in result.devices[devid].tags) {
                 delete result.devices[devid].tags[tagid].value;
             }
-            // Object.values(result.devices[devid].tags).forEach(tag => {
-            // delete tag.value;
-
-            // if (val[domViewId]) {
-            //   delete val[domViewId];
-            // }
-            // });
-            // for (let tag in Object.values(result.devices[devid].tags)) {
-            // delete tag.value;
-            // };
         }
         return result;
     }
@@ -161,14 +151,15 @@ export class ProjectService {
         });
     }
 
-    // private checSaveWorking(check: boolean) {
-    //     if (check && this.saveworking) {
-    //         return false;
-    //     }
-    //     this.saveworking = check;
-    //     return true;
-    // }
-
+    private notifyServerError() {
+        let msg = '';
+        this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
+    }
     //#region Device to Save
     /**
      * Add or update Device to Project.
@@ -176,17 +167,33 @@ export class ProjectService {
      * @param device
      * @param old
      */
-    setDevice(device: Device, old: Device) {
+    setDevice(device: Device, old: Device, security?: any) {
         this.projectData.devices[device.name] = device;
         if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
-                if (old && old.name && old.name !== device.name && old.id === device.id) {
-                    this.removeDevice(old);
-                }
+            this.setDeviceSecurity(device.name, security).subscribe(() => {
+                this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+                    if (old && old.name && old.name !== device.name && old.id === device.id) {
+                        this.removeDevice(old);
+                    }
+                }, err => {
+                    console.log(err);
+                    this.notifySaveError();
+                });                
             }, err => {
                 console.log(err);
                 this.notifySaveError();
             });
+        }
+    }
+
+    setDeviceTags(device: Device) {
+        this.projectData.devices[device.name] = device;
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });                
         }
     }
 
@@ -209,6 +216,11 @@ export class ProjectService {
                 console.log(err);
                 this.notifySaveError();
             });
+            this.setDeviceSecurity(device.name, '').subscribe(() => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });            
         }
     }
     //#endregion
@@ -293,6 +305,18 @@ export class ProjectService {
         let params = { cmd: cmd, data: data };
         return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
     }
+    
+    getDeviceSecurity(name: string): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: 'security', name: name };
+        return this.http.get<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
+    }
+
+    setDeviceSecurity(name: string, value: string): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: 'security', name: name, value: value };
+        return this.http.post<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
+    }
     //#endregion
 
     //#region hmi resource json struct
@@ -302,23 +326,6 @@ export class ProjectService {
     getHmi() {
         return (this.ready && this.projectData) ? this.projectData.hmi : null;
     }
-    // getHmi(): Observable<Hmi> {
-    //     return new Observable((observer) => {
-    //         const handler = (e) => observer.next(e);
-    //         // return (this.projectData) ? this.projectData.hmi : null;
-    //     });
-    // }
-
-    // /**
-    //  * save hmi resource to project
-    //  * @param hmi hmiresource to save
-    //  */
-    // setHmi(hmi: Hmi, notify?: boolean) {
-    //     this.projectData.hmi = hmi;
-    //     if (notify) {
-    //         this.notifyToLoadHmi();
-    //     }
-    // }
     //#endregion
 
     //#region charts resource
@@ -366,37 +373,9 @@ export class ProjectService {
      * @param prj project data to save
      */
     setProject(prj: ProjectData, notify?: boolean) {
-        // redefine variable list and device list throw views resurce used
-        // prj.version = this.version;
-        // hmi.views.forEach(view => {
-        //     for (let key in view.items) {
-        //         // variable
-        //         if (view.items[key].property.variableSrc && view.items[key].property.variable) {
-        //             let device = hmi.devices[view.items[key].property.variableSrc];
-        //             if (!device) {
-        //                 device = new Device();
-        //                 device.name = view.items[key].property.variableSrc;
-        //                 // search in project
-        //                 if (devices) {
-        //                     let prjdevice = devices[view.items[key].property.variableSrc];
-        //                     if (prjdevice) {
-        //                         device = JSON.parse(JSON.stringify(prjdevice));
-        //                         device.tags = {};
-        //                     }
-        //                 }
-        //                 hmi.devices[view.items[key].property.variableSrc] = device;
-        //             }
-        //             // let tag = 
-        //         }
-        //         // alarm
-        //     }
-        // });
-        // console.log('set-prj: ' + JSON.stringify(prj));
+
         this.projectData = prj;
         this.save();
-        // if (notify) {
-        // this.notifyToLoadHmi();
-        // }
     }
 
     setNewProject() {
@@ -408,25 +387,6 @@ export class ProjectService {
         server.property = new DeviceNetProperty();
         this.projectData.server = server;
         this.save();
-        // this.setServer(server);
-        // this.setServerProject(this.projectData).subscribe(result => {
-        //     this.load();
-        //     // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-        //     // console.log(result);
-        //     // this.checSaveWorking(false);
-        //     this.toastr.success('Project save successful!');
-        // }, err => {
-        //     console.log(err);
-        //     // this.checSaveWorking(false);
-        //     var msg = '';
-        //     this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
-        //     this.toastr.error(msg, '', {
-        //         timeOut: 3000,
-        //         closeButton: true,
-        //         disableTimeOut: true
-        //     });
-        // });
-        // this.notifyToLoadHmi();
     }
 
     getProject() {
@@ -436,14 +396,6 @@ export class ProjectService {
     getServer(): Device {
         return (this.projectData) ? this.projectData.server : null;
     }
-
-    // setServer(srv: Device, nosave?: boolean): boolean {
-    //     this.projectData.server = srv;
-    //     if (nosave) {
-    //         return true;
-    //     }
-    //     return this.save();
-    // }
 
     getDevices(): any {
         return (this.projectData) ? this.projectData.devices : {};

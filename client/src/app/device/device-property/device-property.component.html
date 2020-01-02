@@ -1,55 +1,81 @@
 <!-- <div style="width: 100%;"> -->
 <div style="width: 100%;position: relative;padding-bottom: 40px">
-  <div *ngIf="isToRemove" style="margin-top: 20px;margin-bottom: 20px;">
-    {{'msg.device-remove' | translate}} '{{data.device.name}}' ?
-  </div>
-  <div *ngIf="!isToRemove">
-    <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable *ngIf="!isFuxaServer">
-      {{'device.property-client' | translate}}</h1>
-    <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable *ngIf="isFuxaServer">
-      {{'device.property-server' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
-  </div>
-  <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove">
-    <div style="display: block;">
-      <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-        <span>{{'device.property-name' | translate}}</span>
-        <input [(ngModel)]="data.device.name" style="width: 300px" type="text">
-      </div>
-      <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;" *ngIf="!isFuxaServer">
-        <span>{{'device.property-type' | translate}}</span>
-        <mat-select [(value)]="data.device.type" style="width: 200px" [disabled]="isFuxaServer">
-          <mat-option *ngFor="let type of deviceType | enumToArray" [value]="type.key">
-            {{ type.value }}
-          </mat-option>
-        </mat-select>
-      </div>
-      <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;margin-left: 20px;" *ngIf="!isFuxaServer">
-        <span>{{'device.property-enable' | translate}}</span>
-        <mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
-      </div>      
-      <div class="my-form-field" *ngIf="data.device.property" style="display: block;margin-bottom: 10px;">
-        <span>{{'device.property-address' | translate}}</span>
-        <input [(ngModel)]="data.device.property.address" style="width: 300px" type="ip">
-      </div>
-      <div *ngIf="data.device.property && isSiemensS7(data.device.type)">
-        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
-          <span>{{'device.property-port' | translate}}</span>
-          <input numberOnly [(ngModel)]="data.device.property.port" style="width: 80px" type="text">
-        </div>
-        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
-          <span>{{'device.property-rack' | translate}}</span>
-          <input numberOnly [(ngModel)]="data.device.property.rack" style="width: 80px" type="text">
-        </div>
-        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
-          <span>{{'device.property-slot' | translate}}</span>
-          <input numberOnly [(ngModel)]="data.device.property.slot" style="width: 80px" type="text">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
-    <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-    <button mat-raised-button color="primary" [disabled]="!isValid(data.device)" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
-  </div>
+	<div *ngIf="isToRemove" style="margin-top: 20px;margin-bottom: 20px;">
+		{{'msg.device-remove' | translate}} '{{data.device.name}}' ?
+	</div>
+	<div *ngIf="!isToRemove">
+		<h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable *ngIf="!isFuxaServer">
+			{{'device.property-client' | translate}}</h1>
+		<h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable *ngIf="isFuxaServer">
+			{{'device.property-server' | translate}}</h1>
+		<mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+	</div>
+	<div style="overflow-y: hidden; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove">
+		<div style="display: block;">
+			<div class="my-form-field" style="display: block;margin-bottom: 10px;">
+				<span>{{'device.property-name' | translate}}</span>
+				<input [(ngModel)]="data.device.name" style="width: 300px" type="text">
+			</div>
+			<div class="my-form-field" style="display: inline-block;margin-bottom: 10px;" *ngIf="!isFuxaServer">
+				<span>{{'device.property-type' | translate}}</span>
+				<mat-select [(value)]="data.device.type" style="width: 200px" [disabled]="isFuxaServer">
+					<mat-option *ngFor="let type of deviceType | enumToArray" [value]="type.key">
+						{{ type.value }}
+					</mat-option>
+				</mat-select>
+			</div>
+			<div class="my-form-field" style="display: inline-block;margin-bottom: 10px;margin-left: 20px;" *ngIf="!isFuxaServer">
+				<span>{{'device.property-enable' | translate}}</span>
+				<mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
+			</div>
+			<div class="my-form-field" *ngIf="data.device.property" style="display: block;margin-bottom: 10px;">
+				<span>{{'device.property-address' | translate}}</span>
+				<input [(ngModel)]="data.device.property.address" style="width: 300px" type="ip" (click)="onAddressChanged()">
+			</div>
+			<div class="my-form-field" *ngIf="data.device.property && isOpcUa(data.device.type)" style="width: 306px">
+				<mat-expansion-panel #panelProperty class="my-expansion-panel" style="box-shadow:none !important; background-color: #f1f3f4;" (closed)="onPropertyExpand(false)" (opened)="onPropertyExpand(true);onCheckOpcUaServer()">
+					<mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'" style="padding-left:5px !important;padding-right:17px !important">
+						<mat-panel-title>
+							<span *ngIf="propertyExpanded">{{'device.property-security' | translate}}</span>
+							<span *ngIf="!propertyExpanded">{{'device.not-property-security' | translate}}</span>
+						</mat-panel-title>
+					</mat-expansion-panel-header>
+					<div *ngIf="propertyLoading">
+						<mat-spinner style="margin: auto" diameter="20"></mat-spinner>
+					</div>
+					<div *ngIf="!propertyLoading">
+						<mat-radio-group [(ngModel)]="securityRadio">
+							<mat-radio-button style="display:block;padding-left:10px;padding-bottom:2px;" *ngFor="let sec of securityMode;" [value]="sec.value">{{sec.text}}</mat-radio-button>
+						</mat-radio-group>
+						<div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+							<span>{{'general.username' | translate}}</span>
+							<input [(ngModel)]="security.username" style="width: 265px;border:1px solid#dcdcdc" type="text">
+						</div>
+						<div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+							<span>{{'general.password' | translate}}</span>
+							<input [(ngModel)]="security.password" style="width: 265px;border:1px solid #dcdcdc" type="text">
+						</div>
+					</div>
+				</mat-expansion-panel>
+			</div>
+			<div *ngIf="data.device.property && isSiemensS7(data.device.type)">
+				<div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
+					<span>{{'device.property-port' | translate}}</span>
+					<input numberOnly [(ngModel)]="data.device.property.port" style="width: 80px" type="text">
+				</div>
+				<div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
+					<span>{{'device.property-rack' | translate}}</span>
+					<input numberOnly [(ngModel)]="data.device.property.rack" style="width: 80px" type="text">
+				</div>
+				<div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
+					<span>{{'device.property-slot' | translate}}</span>
+					<input numberOnly [(ngModel)]="data.device.property.slot" style="width: 80px" type="text">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
+		<button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+		<button mat-raised-button color="primary" [disabled]="!isValid(data.device)" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+	</div>
 </div>

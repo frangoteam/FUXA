@@ -215,6 +215,7 @@ function setHmiLayout(layout) {
 function setCharts(charts) {
     data.charts = charts;
 }
+
 /**
  * Get the project data in accordance with autorization
  */
@@ -293,6 +294,46 @@ function getDevices() {
 }
 
 /**
+ * Get the device property
+ */
+function getDeviceProperty(query) {
+    return new Promise(function (resolve, reject) {
+        if (query.query === 'security') {
+            prjstorage.getSection(prjstorage.TableType.DEVICESSECURITY, query.name).then(drows => {
+                if (drows.length > 0) {
+                    resolve(drows[0]);
+                } else {
+                    resolve();
+                }
+            }).catch(function (err) {
+                logger.error('project.prjstorage.failed-to-getdevice-property ' + prjstorage.TableType.DEVICESSECURITY + ': ' + err);
+                reject(err);
+            });
+        } else {
+            reject();
+        }
+    });
+}
+
+/**
+ * Set the device property
+ */
+function setDeviceProperty(query) {
+    return new Promise(function (resolve, reject) {
+        if (query.query === 'security') {
+            prjstorage.setSection({ table: prjstorage.TableType.DEVICESSECURITY, name: query.name, value: query.value }).then(() => {
+                resolve();
+            }).catch(function (err) {
+                logger.error('project.prjstorage.failed-to-setdevice-property ' + prjstorage.TableType.DEVICESSECURITY + ': ' + err);
+                reject(err);
+            });
+        } else {
+            reject();
+        }
+    });
+}
+
+/**
  * Return Project demo from file
  */
 function getProjectDemo() {
@@ -313,6 +354,8 @@ module.exports = {
     init: init,
     load: load,
     getDevices: getDevices,
+    getDeviceProperty: getDeviceProperty,
+    setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,
     getProject: getProject,
     setProject: setProject,

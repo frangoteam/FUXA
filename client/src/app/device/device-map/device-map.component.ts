@@ -172,7 +172,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 						device.property.slot = parseInt(tempdevice.property.slot);
 						device.property.rack = parseInt(tempdevice.property.rack);
 					}
-					this.projectService.setDevice(device, olddevice);
+					this.projectService.setDevice(device, olddevice, result.security);
 				}
 			}
 		});

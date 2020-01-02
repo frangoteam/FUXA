@@ -91,7 +91,7 @@ export class DeviceListComponent implements OnInit {
             delete this.deviceSelected.tags[this.dataSource.data[index].id];
         }
         this.bindToTable(this.deviceSelected.tags);
-        this.projectService.setDevice(this.deviceSelected, null);
+        this.projectService.setDeviceTags(this.deviceSelected);
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
@@ -147,7 +147,7 @@ export class DeviceListComponent implements OnInit {
                     tag.address = n.id;
                     this.checkToAdd(tag, result.device);
                 });
-                this.projectService.setDevice(this.deviceSelected, null);
+                this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
     }
@@ -181,7 +181,7 @@ export class DeviceListComponent implements OnInit {
                     delete result.device.tags[oldtag];
                     this.checkToAdd(tag, result.device);
                 }
-                this.projectService.setDevice(this.deviceSelected, null);
+                this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
     }

@@ -51,6 +51,27 @@ function init(_io, _api, _settings, log) {
                 updateDeviceStatus(message);
             }
         });
+        // client ask device property
+        socket.on('device-property', (message) => {
+            try {
+                if (message && message.endpoint && message.type) {
+                    devices.getSupportedProperty(message.endpoint, message.type).then(result => {
+                        message.result = result;
+                        io.emit("device-property", message);
+                    }).catch(function (err) {
+                        logger.error('socket.on.device-property: ' + err);
+                        message.error = err;
+                        io.emit("device-property", message);
+                    });
+                } else {
+                    logger.error('socket.on.device-property: wrong message');
+                    message.error = 'wrong message';
+                    io.emit("device-property", message);
+                }
+            } catch (err) {
+                logger.error('socket.on.device-values: ' + err);
+            }
+        });        
         // client ask device values
         socket.on('device-values', (message) => {
             try {

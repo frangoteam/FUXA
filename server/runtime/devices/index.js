@@ -128,6 +128,7 @@ function loadDevice(device) {
         // device create
         runtime.logger.info(device.name + ': device created');
         activeDevices[device.name] = Device.create(device, runtime.logger, runtime.events);
+        activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);
     }
     if (runtime.settings.daqEnabled) {
         var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.name, activeDevices[device.name].getTagProperty);
@@ -214,6 +215,15 @@ function readNodeAttribute(deviceid, node) {
     });
 }
 
+/**
+ * Return the property (security mode) supported from device
+ * @param {*} endpoint 
+ * @param {*} type 
+ */
+function getSupportedProperty(endpoint, type) {
+    return Device.getSupportedProperty(endpoint, type);
+}
+
 var devices = module.exports = {
     init: init,
     start: start,
@@ -227,5 +237,6 @@ var devices = module.exports = {
     setDeviceValue: setDeviceValue,
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,
-    isWoking: isWoking
+    isWoking: isWoking,
+    getSupportedProperty: getSupportedProperty
 }

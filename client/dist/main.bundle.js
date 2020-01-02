@@ -1034,10 +1034,13 @@ var ChartRangeConverter = (function () {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Device; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return Tag; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return Tag; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DeviceNetProperty; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DeviceType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return TagType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DeviceSecurity; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return DeviceType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return TagType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return MessageSecurityMode; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return SecurityPolicy; });
 var Device = (function () {
     function Device() {
     }
@@ -1056,6 +1059,12 @@ var DeviceNetProperty = (function () {
     return DeviceNetProperty;
 }());
 
+var DeviceSecurity = (function () {
+    function DeviceSecurity() {
+    }
+    return DeviceSecurity;
+}());
+
 var DeviceType;
 (function (DeviceType) {
     DeviceType["FuxaServer"] = "FuxaServer";
@@ -1072,6 +1081,36 @@ var TagType;
     TagType["DWord"] = "DWord";
     TagType["Real"] = "Real";
 })(TagType || (TagType = {}));
+var MessageSecurityMode;
+(function (MessageSecurityMode) {
+    /** The MessageSecurityMode is invalid */
+    MessageSecurityMode[MessageSecurityMode["INVALID"] = 0] = "INVALID";
+    /** No security is applied. */
+    MessageSecurityMode["NONE"] = "NONE";
+    /** All messages are signed but not encrypted. */
+    MessageSecurityMode["SIGN"] = "SIGN";
+    /** All messages are signed and encrypted. */
+    MessageSecurityMode["SIGNANDENCRYPT"] = "SIGNANDENCRYPT";
+})(MessageSecurityMode || (MessageSecurityMode = {}));
+var SecurityPolicy;
+(function (SecurityPolicy) {
+    /** see http://opcfoundation.org/UA/SecurityPolicy#None */
+    SecurityPolicy["None"] = "None";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic128 */
+    SecurityPolicy["Basic128"] = "Basic128";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15 */
+    SecurityPolicy["Basic128Rsa15"] = "Basic128Rsa15";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic192 */
+    SecurityPolicy["Basic192"] = "Basic192";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic192Rsa15 */
+    SecurityPolicy["Basic192Rsa15"] = "Basic192Rsa15";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic256 */
+    SecurityPolicy["Basic256"] = "Basic256";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic256Rsa15 */
+    SecurityPolicy["Basic256Rsa15"] = "Basic256Rsa15";
+    /** see http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha25 */
+    SecurityPolicy["Basic256Sha256"] = "Basic256Sha256";
+})(SecurityPolicy || (SecurityPolicy = {}));
 
 
 /***/ }),
@@ -1260,7 +1299,7 @@ var Alarm = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return Alarm;
-}(__WEBPACK_IMPORTED_MODULE_0__device__["d" /* Tag */]));
+}(__WEBPACK_IMPORTED_MODULE_0__device__["g" /* Tag */]));
 
 var WindowLink = (function () {
     function WindowLink() {
@@ -1351,6 +1390,7 @@ var HmiService = (function () {
         this.onDeviceBrowse = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onDeviceNodeAttribute = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onDaqResult = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
+        this.onDeviceProperty = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.version = "1.00";
         this.hmiresource = "hmi-config";
         this.viewSignalGaugeMap = new ViewSignalGaugeMap();
@@ -1414,6 +1454,11 @@ var HmiService = (function () {
                 }
                 // console.log('dev-st ' + message);
             });
+            // device property
+            this.socket.on('device-property', function (message) {
+                console.log('dev-property ' + message);
+                _this.onDeviceProperty.emit(message);
+            });
             // devices values
             this.socket.on('device-values', function (message) {
                 for (var idx = 0; idx < message.values.length; idx++) {
@@ -1446,6 +1491,15 @@ var HmiService = (function () {
     HmiService.prototype.askDeviceStatus = function () {
         if (this.socket) {
             this.socket.emit('device-status', 'get');
+        }
+    };
+    /**
+     * Ask device status to backend
+     */
+    HmiService.prototype.askDeviceProperty = function (endpoint, type) {
+        if (this.socket) {
+            var msg = { endpoint: endpoint, type: type };
+            this.socket.emit('device-property', msg);
         }
     };
     /**
@@ -1633,6 +1687,10 @@ var HmiService = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
     ], HmiService.prototype, "onDaqResult", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
+    ], HmiService.prototype, "onDeviceProperty", void 0);
     HmiService = HmiService_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_4__services_project_service__["a" /* ProjectService */],
@@ -1735,7 +1793,7 @@ var ProjectService = (function () {
         this.version = '1.00';
         this.separator = '^~^';
         this.prjresource = 'prj-data';
-        this.endPointConfig = __WEBPACK_IMPORTED_MODULE_5__helpers_endpointapi__["a" /* EndPointApi */].getURL(); //"http://localhost:1881";
+        this.endPointConfig = __WEBPACK_IMPORTED_MODULE_5__helpers_endpointapi__["a" /* EndPointApi */].getURL();
         this.projectOld = '';
         this.saveworking = false;
         this.ready = false;
@@ -1746,7 +1804,7 @@ var ProjectService = (function () {
             }, function (error) {
                 console.error('project.service err: ' + error);
                 _this.load();
-                _this.notifySaveError();
+                _this.notifyServerError();
             });
         }
         else {
@@ -1842,15 +1900,6 @@ var ProjectService = (function () {
             for (var tagid in result.devices[devid].tags) {
                 delete result.devices[devid].tags[tagid].value;
             }
-            // Object.values(result.devices[devid].tags).forEach(tag => {
-            // delete tag.value;
-            // if (val[domViewId]) {
-            //   delete val[domViewId];
-            // }
-            // });
-            // for (let tag in Object.values(result.devices[devid].tags)) {
-            // delete tag.value;
-            // };
         }
         return result;
     };
@@ -1863,13 +1912,15 @@ var ProjectService = (function () {
             disableTimeOut: true
         });
     };
-    // private checSaveWorking(check: boolean) {
-    //     if (check && this.saveworking) {
-    //         return false;
-    //     }
-    //     this.saveworking = check;
-    //     return true;
-    // }
+    ProjectService.prototype.notifyServerError = function () {
+        var msg = '';
+        this.translateService.get('msg.server-connection-error').subscribe(function (txt) { msg = txt; });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
+    };
     //#region Device to Save
     /**
      * Add or update Device to Project.
@@ -1877,14 +1928,30 @@ var ProjectService = (function () {
      * @param device
      * @param old
      */
-    ProjectService.prototype.setDevice = function (device, old) {
+    ProjectService.prototype.setDevice = function (device, old, security) {
+        var _this = this;
+        this.projectData.devices[device.name] = device;
+        if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
+            this.setDeviceSecurity(device.name, security).subscribe(function () {
+                _this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(function (result) {
+                    if (old && old.name && old.name !== device.name && old.id === device.id) {
+                        _this.removeDevice(old);
+                    }
+                }, function (err) {
+                    console.log(err);
+                    _this.notifySaveError();
+                });
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+        }
+    };
+    ProjectService.prototype.setDeviceTags = function (device) {
         var _this = this;
         this.projectData.devices[device.name] = device;
         if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
             this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(function (result) {
-                if (old && old.name && old.name !== device.name && old.id === device.id) {
-                    _this.removeDevice(old);
-                }
             }, function (err) {
                 console.log(err);
                 _this.notifySaveError();
@@ -1907,6 +1974,11 @@ var ProjectService = (function () {
         // });
         if (__WEBPACK_IMPORTED_MODULE_2__environments_environment__["a" /* environment */].serverEnabled) {
             this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(function (result) {
+            }, function (err) {
+                console.log(err);
+                _this.notifySaveError();
+            });
+            this.setDeviceSecurity(device.name, '').subscribe(function () {
             }, function (err) {
                 console.log(err);
                 _this.notifySaveError();
@@ -1993,6 +2065,16 @@ var ProjectService = (function () {
         var params = { cmd: cmd, data: data };
         return this.http.post(this.endPointConfig + '/api/projectData', params, { headers: header });
     };
+    ProjectService.prototype.getDeviceSecurity = function (name) {
+        var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
+        var params = { query: 'security', name: name };
+        return this.http.get(this.endPointConfig + '/api/device', { headers: header, params: params });
+    };
+    ProjectService.prototype.setDeviceSecurity = function (name, value) {
+        var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
+        var params = { query: 'security', name: name, value: value };
+        return this.http.post(this.endPointConfig + '/api/device', { headers: header, params: params });
+    };
     //#endregion
     //#region hmi resource json struct
     /**
@@ -2001,22 +2083,6 @@ var ProjectService = (function () {
     ProjectService.prototype.getHmi = function () {
         return (this.ready && this.projectData) ? this.projectData.hmi : null;
     };
-    // getHmi(): Observable<Hmi> {
-    //     return new Observable((observer) => {
-    //         const handler = (e) => observer.next(e);
-    //         // return (this.projectData) ? this.projectData.hmi : null;
-    //     });
-    // }
-    // /**
-    //  * save hmi resource to project
-    //  * @param hmi hmiresource to save
-    //  */
-    // setHmi(hmi: Hmi, notify?: boolean) {
-    //     this.projectData.hmi = hmi;
-    //     if (notify) {
-    //         this.notifyToLoadHmi();
-    //     }
-    // }
     //#endregion
     //#region charts resource
     /**
@@ -2059,66 +2125,18 @@ var ProjectService = (function () {
      * @param prj project data to save
      */
     ProjectService.prototype.setProject = function (prj, notify) {
-        // redefine variable list and device list throw views resurce used
-        // prj.version = this.version;
-        // hmi.views.forEach(view => {
-        //     for (let key in view.items) {
-        //         // variable
-        //         if (view.items[key].property.variableSrc && view.items[key].property.variable) {
-        //             let device = hmi.devices[view.items[key].property.variableSrc];
-        //             if (!device) {
-        //                 device = new Device();
-        //                 device.name = view.items[key].property.variableSrc;
-        //                 // search in project
-        //                 if (devices) {
-        //                     let prjdevice = devices[view.items[key].property.variableSrc];
-        //                     if (prjdevice) {
-        //                         device = JSON.parse(JSON.stringify(prjdevice));
-        //                         device.tags = {};
-        //                     }
-        //                 }
-        //                 hmi.devices[view.items[key].property.variableSrc] = device;
-        //             }
-        //             // let tag = 
-        //         }
-        //         // alarm
-        //     }
-        // });
-        // console.log('set-prj: ' + JSON.stringify(prj));
         this.projectData = prj;
         this.save();
-        // if (notify) {
-        // this.notifyToLoadHmi();
-        // }
     };
     ProjectService.prototype.setNewProject = function () {
         this.projectData = new ProjectData();
         var server = new __WEBPACK_IMPORTED_MODULE_4__models_device__["a" /* Device */]();
         server.name = 'Fuxa Server';
         server.id = '0';
-        server.type = __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].FuxaServer;
+        server.type = __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* DeviceType */].FuxaServer;
         server.property = new __WEBPACK_IMPORTED_MODULE_4__models_device__["b" /* DeviceNetProperty */]();
         this.projectData.server = server;
         this.save();
-        // this.setServer(server);
-        // this.setServerProject(this.projectData).subscribe(result => {
-        //     this.load();
-        //     // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-        //     // console.log(result);
-        //     // this.checSaveWorking(false);
-        //     this.toastr.success('Project save successful!');
-        // }, err => {
-        //     console.log(err);
-        //     // this.checSaveWorking(false);
-        //     var msg = '';
-        //     this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
-        //     this.toastr.error(msg, '', {
-        //         timeOut: 3000,
-        //         closeButton: true,
-        //         disableTimeOut: true
-        //     });
-        // });
-        // this.notifyToLoadHmi();
     };
     ProjectService.prototype.getProject = function () {
         return this.projectData;
@@ -2126,13 +2144,6 @@ var ProjectService = (function () {
     ProjectService.prototype.getServer = function () {
         return (this.projectData) ? this.projectData.server : null;
     };
-    // setServer(srv: Device, nosave?: boolean): boolean {
-    //     this.projectData.server = srv;
-    //     if (nosave) {
-    //         return true;
-    //     }
-    //     return this.save();
-    // }
     ProjectService.prototype.getDevices = function () {
         return (this.projectData) ? this.projectData.devices : {};
     };
@@ -2765,10 +2776,10 @@ var DeviceListComponent = (function () {
         this.hmiService = hmiService;
         this.projectService = projectService;
         this.displayedColumns = ['select', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
-        this.dataSource = new __WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTableDataSource */]([]);
+        this.dataSource = new __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTableDataSource */]([]);
         this.selection = new __WEBPACK_IMPORTED_MODULE_2__angular_cdk_collections__["b" /* SelectionModel */](true, []);
         this.dirty = false;
-        this.deviceType = __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */];
+        this.deviceType = __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* DeviceType */];
         this.save = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.goto = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
     }
@@ -2820,7 +2831,7 @@ var DeviceListComponent = (function () {
             delete this.deviceSelected.tags[this.dataSource.data[index].id];
         }
         this.bindToTable(this.deviceSelected.tags);
-        this.projectService.setDevice(this.deviceSelected, null);
+        this.projectService.setDeviceTags(this.deviceSelected);
     };
     /** Whether the number of selected elements matches the total number of rows. */
     DeviceListComponent.prototype.isAllSelected = function () {
@@ -2844,11 +2855,11 @@ var DeviceListComponent = (function () {
         this.editTag(row, false);
     };
     DeviceListComponent.prototype.onAddTag = function () {
-        if (this.deviceSelected.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["c" /* DeviceType */].OPCUA) {
+        if (this.deviceSelected.type === __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* DeviceType */].OPCUA) {
             this.addOpcTags(null);
         }
         else {
-            var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* Tag */]();
+            var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["g" /* Tag */]();
             this.editTag(tag, true);
         }
     };
@@ -2866,14 +2877,14 @@ var DeviceListComponent = (function () {
             if (result) {
                 _this.dirty = true;
                 result.nodes.forEach(function (n) {
-                    var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* Tag */]();
+                    var tag = new __WEBPACK_IMPORTED_MODULE_4__models_device__["g" /* Tag */]();
                     tag.id = n.id;
                     tag.name = n.id;
                     tag.type = n.type;
                     tag.address = n.id;
                     _this.checkToAdd(tag, result.device);
                 });
-                _this.projectService.setDevice(_this.deviceSelected, null);
+                _this.projectService.setDeviceTags(_this.deviceSelected);
             }
         });
     };
@@ -2908,7 +2919,7 @@ var DeviceListComponent = (function () {
                     delete result.device.tags[oldtag];
                     _this.checkToAdd(tag, result.device);
                 }
-                _this.projectService.setDevice(_this.deviceSelected, null);
+                _this.projectService.setDeviceTags(_this.deviceSelected);
             }
         });
     };
@@ -2954,16 +2965,16 @@ var DeviceListComponent = (function () {
         __metadata("design:type", Object)
     ], DeviceListComponent.prototype, "goto", void 0);
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatTable */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatTable */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTable */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTable */])
     ], DeviceListComponent.prototype, "table", void 0);
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSort */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSort */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSort */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSort */])
     ], DeviceListComponent.prototype, "sort", void 0);
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["t" /* MatMenuTrigger */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["t" /* MatMenuTrigger */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["u" /* MatMenuTrigger */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["u" /* MatMenuTrigger */])
     ], DeviceListComponent.prototype, "trigger", void 0);
     DeviceListComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -3176,7 +3187,7 @@ var DeviceMapComponent = (function () {
                         device.property.slot = parseInt(tempdevice.property.slot);
                         device.property.rack = parseInt(tempdevice.property.rack);
                     }
-                    _this.projectService.setDevice(device, olddevice);
+                    _this.projectService.setDevice(device, olddevice, result.security);
                 }
             }
         });
@@ -3209,7 +3220,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "\r\n ::ng-deep .mat-expansion-panel-body {\r\n    padding-left: 5px !important;\r\n    padding-right: 5px !important;\r\n }", ""]);
 
 // exports
 
@@ -3222,7 +3233,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/device/device-property/device-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div style=\"width: 100%;\"> -->\r\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\r\n  <div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\r\n    {{'msg.device-remove' | translate}} '{{data.device.name}}' ?\r\n  </div>\r\n  <div *ngIf=\"!isToRemove\">\r\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\r\n      {{'device.property-client' | translate}}</h1>\r\n    <h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">\r\n      {{'device.property-server' | translate}}</h1>\r\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\r\n  </div>\r\n  <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\r\n    <div style=\"display: block;\">\r\n      <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>{{'device.property-name' | translate}}</span>\r\n        <input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\r\n      </div>\r\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\r\n        <span>{{'device.property-type' | translate}}</span>\r\n        <mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\r\n          <mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\r\n            {{ type.value }}\r\n          </mat-option>\r\n        </mat-select>\r\n      </div>\r\n      <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\r\n        <span>{{'device.property-enable' | translate}}</span>\r\n        <mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\r\n      </div>      \r\n      <div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\r\n        <span>{{'device.property-address' | translate}}</span>\r\n        <input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\">\r\n      </div>\r\n      <div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\r\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n          <span>{{'device.property-port' | translate}}</span>\r\n          <input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n          <span>{{'device.property-rack' | translate}}</span>\r\n          <input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\r\n          <span>{{'device.property-slot' | translate}}</span>\r\n          <input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\r\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n    <button mat-raised-button color=\"primary\" [disabled]=\"!isValid(data.device)\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n  </div>\r\n</div>"
+module.exports = "<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;position: relative;padding-bottom: 40px\">\n\t<div *ngIf=\"isToRemove\" style=\"margin-top: 20px;margin-bottom: 20px;\">\n\t\t{{'msg.device-remove' | translate}} '{{data.device.name}}' ?\n\t</div>\n\t<div *ngIf=\"!isToRemove\">\n\t\t<h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"!isFuxaServer\">\n\t\t\t{{'device.property-client' | translate}}</h1>\n\t\t<h1 mat-dialog-title style=\"display:inline-block; cursor:move; padding-top: 15px\" mat-dialog-draggable *ngIf=\"isFuxaServer\">\n\t\t\t{{'device.property-server' | translate}}</h1>\n\t\t<mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n\t</div>\n\t<div style=\"overflow-y: hidden; overflow-x: hidden; padding-top: 5px;\" *ngIf=\"!isToRemove\">\n\t\t<div style=\"display: block;\">\n\t\t\t<div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\n\t\t\t\t<span>{{'device.property-name' | translate}}</span>\n\t\t\t\t<input [(ngModel)]=\"data.device.name\" style=\"width: 300px\" type=\"text\">\n\t\t\t</div>\n\t\t\t<div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\" *ngIf=\"!isFuxaServer\">\n\t\t\t\t<span>{{'device.property-type' | translate}}</span>\n\t\t\t\t<mat-select [(value)]=\"data.device.type\" style=\"width: 200px\" [disabled]=\"isFuxaServer\">\n\t\t\t\t\t<mat-option *ngFor=\"let type of deviceType | enumToArray\" [value]=\"type.key\">\n\t\t\t\t\t\t{{ type.value }}\n\t\t\t\t\t</mat-option>\n\t\t\t\t</mat-select>\n\t\t\t</div>\n\t\t\t<div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;margin-left: 20px;\" *ngIf=\"!isFuxaServer\">\n\t\t\t\t<span>{{'device.property-enable' | translate}}</span>\n\t\t\t\t<mat-slide-toggle color=\"primary\" [(ngModel)]=\"data.device.enabled\"></mat-slide-toggle>\n\t\t\t</div>\n\t\t\t<div class=\"my-form-field\" *ngIf=\"data.device.property\" style=\"display: block;margin-bottom: 10px;\">\n\t\t\t\t<span>{{'device.property-address' | translate}}</span>\n\t\t\t\t<input [(ngModel)]=\"data.device.property.address\" style=\"width: 300px\" type=\"ip\" (click)=\"onAddressChanged()\">\n\t\t\t</div>\n\t\t\t<div class=\"my-form-field\" *ngIf=\"data.device.property && isOpcUa(data.device.type)\" style=\"width: 306px\">\n\t\t\t\t<mat-expansion-panel #panelProperty class=\"my-expansion-panel\" style=\"box-shadow:none !important; background-color: #f1f3f4;\" (closed)=\"onPropertyExpand(false)\" (opened)=\"onPropertyExpand(true);onCheckOpcUaServer()\">\n\t\t\t\t\t<mat-expansion-panel-header class=\"header\" [collapsedHeight]=\"'40px'\" [expandedHeight]=\"'40px'\" style=\"padding-left:5px !important;padding-right:17px !important\">\n\t\t\t\t\t\t<mat-panel-title>\n\t\t\t\t\t\t\t<span *ngIf=\"propertyExpanded\">{{'device.property-security' | translate}}</span>\n\t\t\t\t\t\t\t<span *ngIf=\"!propertyExpanded\">{{'device.not-property-security' | translate}}</span>\n\t\t\t\t\t\t</mat-panel-title>\n\t\t\t\t\t</mat-expansion-panel-header>\n\t\t\t\t\t<div *ngIf=\"propertyLoading\">\n\t\t\t\t\t\t<mat-spinner style=\"margin: auto\" diameter=\"20\"></mat-spinner>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div *ngIf=\"!propertyLoading\">\n\t\t\t\t\t\t<mat-radio-group [(ngModel)]=\"securityRadio\">\n\t\t\t\t\t\t\t<mat-radio-button style=\"display:block;padding-left:10px;padding-bottom:2px;\" *ngFor=\"let sec of securityMode;\" [value]=\"sec.value\">{{sec.text}}</mat-radio-button>\n\t\t\t\t\t\t</mat-radio-group>\n\t\t\t\t\t\t<div class=\"my-form-field\" style=\"display: block;margin: 5px 10px 0px 10px;\">\n\t\t\t\t\t\t\t<span>{{'general.username' | translate}}</span>\n\t\t\t\t\t\t\t<input [(ngModel)]=\"security.username\" style=\"width: 265px;border:1px solid#dcdcdc\" type=\"text\">\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class=\"my-form-field\" style=\"display: block;margin: 5px 10px 0px 10px;\">\n\t\t\t\t\t\t\t<span>{{'general.password' | translate}}</span>\n\t\t\t\t\t\t\t<input [(ngModel)]=\"security.password\" style=\"width: 265px;border:1px solid #dcdcdc\" type=\"text\">\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</mat-expansion-panel>\n\t\t\t</div>\n\t\t\t<div *ngIf=\"data.device.property && isSiemensS7(data.device.type)\">\n\t\t\t\t<div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n\t\t\t\t\t<span>{{'device.property-port' | translate}}</span>\n\t\t\t\t\t<input numberOnly [(ngModel)]=\"data.device.property.port\" style=\"width: 80px\" type=\"text\">\n\t\t\t\t</div>\n\t\t\t\t<div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n\t\t\t\t\t<span>{{'device.property-rack' | translate}}</span>\n\t\t\t\t\t<input numberOnly [(ngModel)]=\"data.device.property.rack\" style=\"width: 80px\" type=\"text\">\n\t\t\t\t</div>\n\t\t\t\t<div class=\"my-form-field\" style=\"display: inline-block;margin-bottom: 10px;\">\n\t\t\t\t\t<span>{{'device.property-slot' | translate}}</span>\n\t\t\t\t\t<input numberOnly [(ngModel)]=\"data.device.property.slot\" style=\"width: 80px\" type=\"text\">\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n\t<div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n\t\t<button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n\t\t<button mat-raised-button color=\"primary\" [disabled]=\"!isValid(data.device)\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n\t</div>\n</div>"
 
 /***/ }),
 
@@ -3233,7 +3244,10 @@ module.exports = "<!-- <div style=\"width: 100%;\"> -->\r\n<div style=\"width: 1
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DevicePropertyComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_device__ = __webpack_require__("../../../../../src/app/_models/device.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_device__ = __webpack_require__("../../../../../src/app/_models/device.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3249,31 +3263,114 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
+
+
+
 var DevicePropertyComponent = (function () {
-    function DevicePropertyComponent(dialogRef, data) {
+    function DevicePropertyComponent(hmiService, projectService, translateService, dialogRef, data) {
+        this.hmiService = hmiService;
+        this.projectService = projectService;
+        this.translateService = translateService;
         this.dialogRef = dialogRef;
         this.data = data;
-        // @Input() name: any;
         this.deviceType = {};
         this.isFuxaServer = false;
         this.isToRemove = false;
+        this.securityMode = [];
+        this.security = new __WEBPACK_IMPORTED_MODULE_5__models_device__["c" /* DeviceSecurity */]();
     }
     DevicePropertyComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.isToRemove = this.data.remove;
-        this.isFuxaServer = (this.data.device.type && this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].FuxaServer) ? true : false;
-        for (var key in __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */]) {
-            if (!this.isFuxaServer && key !== __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].FuxaServer) {
-                this.deviceType[key] = __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */][key];
+        this.isFuxaServer = (this.data.device.type && this.data.device.type === __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].FuxaServer) ? true : false;
+        for (var key in __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */]) {
+            if (!this.isFuxaServer && key !== __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].FuxaServer) {
+                this.deviceType[key] = __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */][key];
             }
+        }
+        this.subscriptionDeviceProperty = this.hmiService.onDeviceProperty.subscribe(function (res) {
+            if (res.type === __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].OPCUA) {
+                _this.securityMode = [];
+                if (res.result) {
+                    var secPol = __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */];
+                    for (var idx = 0; idx < res.result.length; idx++) {
+                        var sec = res.result[idx];
+                        var mode = _this.securityModeToString(sec.securityMode);
+                        if (sec.securityPolicy.indexOf(secPol.None) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].None.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic128) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic128.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic128Rsa15) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic128Rsa15.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic192) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic192.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic192Rsa15) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic192Rsa15.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic256) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic256.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic256Rsa15) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic256Rsa15.toString() + ' - ' + mode });
+                        }
+                        else if (sec.securityPolicy.indexOf(secPol.Basic256Sha256) !== -1) {
+                            _this.securityMode.push({ value: sec, text: __WEBPACK_IMPORTED_MODULE_5__models_device__["f" /* SecurityPolicy */].Basic256Sha256.toString() + ' - ' + mode });
+                        }
+                        if (_this.isSecurityMode(sec)) {
+                            _this.securityRadio = sec;
+                        }
+                    }
+                    console.log();
+                }
+                else if (res.error) {
+                }
+            }
+            _this.propertyLoading = false;
+        });
+        // check security
+        if (this.data.device.name && this.data.device.type === __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].OPCUA) {
+            this.projectService.getDeviceSecurity(this.data.device.name).subscribe(function (result) {
+                _this.setSecurity(result.value);
+            }, function (err) {
+                console.log('get Device Security err: ' + err);
+            });
+        }
+    };
+    DevicePropertyComponent.prototype.ngOnDestroy = function () {
+        try {
+            if (this.subscriptionDeviceProperty) {
+                this.subscriptionDeviceProperty.unsubscribe();
+            }
+        }
+        catch (e) {
         }
     };
     DevicePropertyComponent.prototype.onNoClick = function () {
         this.dialogRef.close();
     };
     DevicePropertyComponent.prototype.onOkClick = function () {
+        this.data.security = this.getSecurity();
+    };
+    DevicePropertyComponent.prototype.onCheckOpcUaServer = function () {
+        console.log('checkOpcUa');
+        this.propertyLoading = true;
+        this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
+    };
+    DevicePropertyComponent.prototype.onPropertyExpand = function (status) {
+        this.propertyExpanded = status;
+    };
+    DevicePropertyComponent.prototype.onAddressChanged = function () {
+        this.propertyLoading = false;
     };
     DevicePropertyComponent.prototype.isSiemensS7 = function (type) {
-        return (type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].SiemensS7) ? true : false;
+        return (type === __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].SiemensS7) ? true : false;
+    };
+    DevicePropertyComponent.prototype.isOpcUa = function (type) {
+        return (type === __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].OPCUA) ? true : false;
     };
     DevicePropertyComponent.prototype.isValid = function (device) {
         if (!device.name) {
@@ -3281,14 +3378,66 @@ var DevicePropertyComponent = (function () {
         }
         return (this.data.exist.find(function (n) { return n === device.name; })) ? false : true;
     };
+    DevicePropertyComponent.prototype.isSecurityMode = function (sec) {
+        if (JSON.stringify(this.mode) === JSON.stringify(sec)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    DevicePropertyComponent.prototype.getSecurity = function () {
+        if (this.data.device.type !== __WEBPACK_IMPORTED_MODULE_5__models_device__["d" /* DeviceType */].OPCUA || !this.propertyExpanded) {
+            return null;
+        }
+        else {
+            if (this.securityRadio || this.security.username || this.security.password) {
+                var result = { mode: this.securityRadio, uid: this.security.username, pwd: this.security.password };
+                return result;
+            }
+            else {
+                return null;
+            }
+        }
+    };
+    DevicePropertyComponent.prototype.setSecurity = function (security) {
+        if (security && security !== 'null') {
+            var value = JSON.parse(security);
+            this.mode = value.mode;
+            this.security.username = value.uid;
+            this.security.password = value.pwd;
+            this.panelProperty.open();
+        }
+    };
+    DevicePropertyComponent.prototype.securityModeToString = function (mode) {
+        var secMode = __WEBPACK_IMPORTED_MODULE_5__models_device__["e" /* MessageSecurityMode */];
+        var result = '';
+        if (mode === secMode.NONE) {
+            this.translateService.get('device.security-none').subscribe(function (txt) { result = txt; });
+        }
+        else if (mode === secMode.SIGN) {
+            this.translateService.get('device.security-sign').subscribe(function (txt) { result = txt; });
+        }
+        else if (mode === secMode.SIGNANDENCRYPT) {
+            this.translateService.get('device.security-signandencrypt').subscribe(function (txt) { result = txt; });
+        }
+        return result;
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["n" /* MatExpansionPanel */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["n" /* MatExpansionPanel */])
+    ], DevicePropertyComponent.prototype, "panelProperty", void 0);
     DevicePropertyComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
             selector: 'app-device-property',
             template: __webpack_require__("../../../../../src/app/device/device-property/device-property.component.html"),
             styles: [__webpack_require__("../../../../../src/app/device/device-property/device-property.component.css")]
         }),
-        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+        __param(4, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */],
+            __WEBPACK_IMPORTED_MODULE_4__services_project_service__["a" /* ProjectService */],
+            __WEBPACK_IMPORTED_MODULE_2__ngx_translate_core__["c" /* TranslateService */],
+            __WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
     ], DevicePropertyComponent);
     return DevicePropertyComponent;
 }());
@@ -3502,7 +3651,7 @@ var TagPropertyComponent = (function () {
         this.existing = [];
         this.withtree = false;
         this.config = { width: '100%', height: '600px' };
-        if (this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].OPCUA) {
+        if (this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["d" /* DeviceType */].OPCUA) {
             this.withtree = true;
         }
         else {
@@ -3522,9 +3671,9 @@ var TagPropertyComponent = (function () {
     }
     TagPropertyComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.tagType = __WEBPACK_IMPORTED_MODULE_2__models_device__["e" /* TagType */];
+        this.tagType = __WEBPACK_IMPORTED_MODULE_2__models_device__["h" /* TagType */];
         if (this.withtree) {
-            if (this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["c" /* DeviceType */].OPCUA) {
+            if (this.data.device.type === __WEBPACK_IMPORTED_MODULE_2__models_device__["d" /* DeviceType */].OPCUA) {
                 this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(function (values) {
                     if (_this.data.device.name === values.device) {
                         if (values.error) {
@@ -3998,8 +4147,8 @@ var ChartConfigComponent = (function () {
         return __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].lineColor[0];
     };
     __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSelectionList */]),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSelectionList */])
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["D" /* MatSelectionList */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["D" /* MatSelectionList */])
     ], ChartConfigComponent.prototype, "selTags", void 0);
     ChartConfigComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -5013,7 +5162,7 @@ var EditorComponent = (function () {
             __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* ViewContainerRef */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["p" /* ComponentFactoryResolver */],
-            __WEBPACK_IMPORTED_MODULE_1__angular_material__["p" /* MatIconRegistry */], __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */]])
+            __WEBPACK_IMPORTED_MODULE_1__angular_material__["q" /* MatIconRegistry */], __WEBPACK_IMPORTED_MODULE_2__angular_platform_browser__["c" /* DomSanitizer */]])
     ], EditorComponent);
     return EditorComponent;
 }());
@@ -9715,8 +9864,8 @@ var MatSelectSearchComponent = (function () {
             ],
             changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["j" /* ChangeDetectionStrategy */].OnPush
         }),
-        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_2__angular_material__["A" /* MatSelect */])),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_material__["A" /* MatSelect */],
+        __param(0, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_2__angular_material__["B" /* MatSelect */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_material__["B" /* MatSelect */],
             __WEBPACK_IMPORTED_MODULE_5__ngx_translate_core__["c" /* TranslateService */],
             __WEBPACK_IMPORTED_MODULE_0__angular_core__["k" /* ChangeDetectorRef */]])
     ], MatSelectSearchComponent);
@@ -9755,15 +9904,15 @@ var MatSelectSearchModule = (function () {
             imports: [
                 __WEBPACK_IMPORTED_MODULE_3__angular_common__["b" /* CommonModule */],
                 __WEBPACK_IMPORTED_MODULE_2__angular_material__["c" /* MatButtonModule */],
-                __WEBPACK_IMPORTED_MODULE_2__angular_material__["o" /* MatIconModule */],
-                __WEBPACK_IMPORTED_MODULE_2__angular_material__["q" /* MatInputModule */]
+                __WEBPACK_IMPORTED_MODULE_2__angular_material__["p" /* MatIconModule */],
+                __WEBPACK_IMPORTED_MODULE_2__angular_material__["r" /* MatInputModule */]
             ],
             declarations: [
                 __WEBPACK_IMPORTED_MODULE_1__mat_select_search_component__["a" /* MatSelectSearchComponent */]
             ],
             exports: [
                 __WEBPACK_IMPORTED_MODULE_2__angular_material__["c" /* MatButtonModule */],
-                __WEBPACK_IMPORTED_MODULE_2__angular_material__["q" /* MatInputModule */],
+                __WEBPACK_IMPORTED_MODULE_2__angular_material__["r" /* MatInputModule */],
                 __WEBPACK_IMPORTED_MODULE_1__mat_select_search_component__["a" /* MatSelectSearchComponent */]
             ]
         })
@@ -10758,7 +10907,7 @@ var HomeComponent = (function () {
     ], HomeComponent.prototype, "sidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('matsidenav'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["D" /* MatSidenav */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSidenav */])
     ], HomeComponent.prototype, "matsidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('fuxaview'),
@@ -11051,31 +11200,31 @@ var MaterialModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["e" /* MatCardModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["f" /* MatCheckboxModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["g" /* MatChipsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatStepperModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatStepperModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["h" /* MatDatepickerModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["k" /* MatDialogModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["m" /* MatExpansionModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["n" /* MatGridListModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["o" /* MatIconModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["q" /* MatInputModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["r" /* MatListModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["s" /* MatMenuModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["u" /* MatNativeDateModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["v" /* MatPaginatorModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["w" /* MatProgressBarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["x" /* MatProgressSpinnerModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["y" /* MatRadioModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["z" /* MatRippleModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["B" /* MatSelectModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSidenavModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSliderModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSlideToggleModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSnackBarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSortModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTableModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatTabsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatToolbarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["Q" /* MatTooltipModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["o" /* MatGridListModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["p" /* MatIconModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["r" /* MatInputModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["s" /* MatListModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["t" /* MatMenuModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["v" /* MatNativeDateModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["w" /* MatPaginatorModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["x" /* MatProgressBarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["y" /* MatProgressSpinnerModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["z" /* MatRadioModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["A" /* MatRippleModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSelectModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSidenavModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSliderModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSlideToggleModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSnackBarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatSortModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatTableModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatTabsModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["Q" /* MatToolbarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["R" /* MatTooltipModule */],
             ],
             exports: [
                 __WEBPACK_IMPORTED_MODULE_2__angular_cdk_table__["m" /* CdkTableModule */],
@@ -11085,31 +11234,31 @@ var MaterialModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["e" /* MatCardModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["f" /* MatCheckboxModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["g" /* MatChipsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatStepperModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["L" /* MatStepperModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["h" /* MatDatepickerModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["k" /* MatDialogModule */],
                 __WEBPACK_IMPORTED_MODULE_1__angular_material__["m" /* MatExpansionModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["n" /* MatGridListModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["o" /* MatIconModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["q" /* MatInputModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["r" /* MatListModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["s" /* MatMenuModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["u" /* MatNativeDateModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["v" /* MatPaginatorModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["w" /* MatProgressBarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["x" /* MatProgressSpinnerModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["y" /* MatRadioModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["z" /* MatRippleModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["B" /* MatSelectModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["E" /* MatSidenavModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSliderModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSlideToggleModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSnackBarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSortModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTableModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatTabsModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatToolbarModule */],
-                __WEBPACK_IMPORTED_MODULE_1__angular_material__["Q" /* MatTooltipModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["o" /* MatGridListModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["p" /* MatIconModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["r" /* MatInputModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["s" /* MatListModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["t" /* MatMenuModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["v" /* MatNativeDateModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["w" /* MatPaginatorModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["x" /* MatProgressBarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["y" /* MatProgressSpinnerModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["z" /* MatRadioModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["A" /* MatRippleModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["C" /* MatSelectModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["F" /* MatSidenavModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["H" /* MatSliderModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["G" /* MatSlideToggleModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["I" /* MatSnackBarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["K" /* MatSortModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["O" /* MatTableModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["P" /* MatTabsModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["Q" /* MatToolbarModule */],
+                __WEBPACK_IMPORTED_MODULE_1__angular_material__["R" /* MatTooltipModule */],
             ]
         })
     ], MaterialModule);
@@ -11193,7 +11342,7 @@ var SidenavComponent = (function () {
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__angular_material__["D" /* MatSidenav */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__angular_material__["E" /* MatSidenav */])
     ], SidenavComponent.prototype, "sidenav", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),

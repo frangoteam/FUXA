@@ -48,6 +48,9 @@
     "general.close": "Close",
     "general.search": "Search...",
     "general.search-notfound": "No options found",
+    "general.username": "Username",
+    "general.password": "Password",
+
     
     "tester.title": "Variable",
     
@@ -238,9 +241,14 @@
     "device.property-type": "Type",
     "device.property-enable": "Enable",
     "device.property-address": "Address (IP or opc.tcp://[server]:[port])",
+    "device.property-security": "Security and encryption mode",
+    "device.not-property-security": "Without Security and encryption mode",
     "device.property-port": "Port",
     "device.property-rack": "Rack",
     "device.property-slot": "Slot",
+    "device.security-none": "None",
+    "device.security-sign": "Sign",
+    "device.security-signandencrypt": "Sign & Encript",
     
     "device.tag-property-title": "Tag Property",
     "device.opctag-property-title": "Browse Tags in OPC UA Server",

@@ -11,6 +11,11 @@ $my-checkbox-accent: mat-palette($mat-grey, 800);
 $my-checkbox-theme:  mat-light-theme($my-checkbox-primary, $my-checkbox-accent);
 @include mat-checkbox-theme($my-checkbox-theme);
 
+$my-radio-primary: mat-palette($mat-grey, 800);
+$my-radio-accent: mat-palette($mat-grey, 800);
+$my-radio-theme:  mat-light-theme($my-radio-primary, $my-radio-accent);
+@include mat-radio-theme($my-radio-theme);
+
 $my-button-primary: mat-palette($mat-blue, A200);
 $my-button-accent: mat-palette($mat-red, 600);
 $my-button-theme:  mat-light-theme($my-button-primary, $my-button-accent);

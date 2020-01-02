@@ -23,6 +23,7 @@ function OpcUAclient(_data, _logger, _events) {
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
+    var getProperty = null;             // Function to ask property (security)
 
     /**
      * Connect the client to OPC UA server
@@ -33,10 +34,43 @@ function OpcUAclient(_data, _logger, _events) {
             if (!_checkWorking(true)) {
                 reject();
             } else {
+                var property = null;
                 async.series([
-                    // step 1 connect
+                    // step 1 check property
                     function (callback) {
-                        const endpoint = data.property.address;//'opc.tcp://' + require('os').hostname() + ':48010';
+                        if (getProperty) {
+                            getProperty({query: 'security', name: data.name}).then(result => {
+                                if (result && result.value && result.value !== 'null') {
+                                    // property security mode
+                                    property = JSON.parse(result.value);
+                                    var opts = { 
+                                        endpoint_must_exist: false, 
+                                        keepSessionAlive: true,
+                                        connectionStrategy: { maxRetry: 1 } };
+                                    if (property.mode) {
+                                        if (property.mode.securityMode) {
+                                            opts['securityMode'] = property.mode.securityMode;
+                                        }
+                                        if (property.mode.securityPolicy) {
+                                            opts['securityPolicy'] = property.mode.securityPolicy;
+                                        }
+                                        if (property.mode.securityPolicy) {
+                                            opts['securityPolicy'] = property.mode.securityPolicy;
+                                        }
+                                    }
+                                    client = new opcua.OPCUAClient(opts);  
+                                }
+                                callback();
+                            }).catch(function (err) {
+                                callback(err);
+                            });  
+                        } else {
+                            callback();
+                        }
+                    },                    
+                    // step 2 connect
+                    function (callback) {
+                        const endpoint = data.property.address;
                         client.connect(endpoint, function (err) {
                             if (err) {
                                 _clearVarsValue();
@@ -47,9 +81,14 @@ function OpcUAclient(_data, _logger, _events) {
                             callback(err);
                         })
                     },
-                    // step 2 create session
+                    // step 3 create session
                     function (callback) {
-                        client.createSession(function (err, session) {
+                        const userIdentityInfo = { };
+                        if (property && property.uid && property.pwd) {
+                            userIdentityInfo['userName'] = property.uid;
+                            userIdentityInfo['password'] = property.pwd;
+                        }
+                        client.createSession(userIdentityInfo, function (err, session) {
                             if (err) {
                                 _clearVarsValue();
                                 logger.error(err);
@@ -364,6 +403,13 @@ function OpcUAclient(_data, _logger, _events) {
         daqInterval = intervalToSave;
     }
     this.addDaq = null;                             // Callback to add the DAQ value to db history
+    
+    /**
+     * Set function to ask property (security)
+     */
+    this.bindGetProperty = function (fnc) {
+        getProperty = fnc;
+    }
 
     /**
      * Disconnect the OPC UA client and close session if used
@@ -630,13 +676,46 @@ function OpcUAclient(_data, _logger, _events) {
     }
 }
 
+/**
+ * Return security and encryption mode supported from server endpoint
+ */
+function getEndPoints(endpointUrl) {
+    return new Promise(function (resolve, reject) {
+        let opts = { connectionStrategy: { maxRetry: 1 } };
+        let client = new opcua.OPCUAClient(opts);
+        try {
+            client.connect(endpointUrl, function (err) {
+                if (err) {
+                    reject('getendpoints-connect-error: ' + err.message);
+                } else {
+                    const endpoints = client.getEndpoints().then(endpoints => {
+                        const reducedEndpoints = endpoints.map(endpoint => ({ 
+                            endpointUrl: endpoint.endpointUrl, 
+                            securityMode: endpoint.securityMode.toString(), 
+                            securityPolicy: endpoint.securityPolicyUri.toString(),
+                        }));
+                        resolve( reducedEndpoints);
+                        client.disconnect();
+                    }, reason => {
+                        reject('getendpoints-error: ' + reason);
+                        client.disconnect();
+                    });
+                }
+            });
+        } catch (err) {
+            reject('getendpoints-error: ' + err);
+         }
+    });
+}
+
 module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events) {
         return new OpcUAclient(data, logger, events);
-    }
+    },
+    getEndPoints: getEndPoints
 }
 
 function OpcNode(name) {

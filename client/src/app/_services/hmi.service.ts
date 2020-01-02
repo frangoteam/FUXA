@@ -20,6 +20,7 @@ export class HmiService {
     @Output() onDeviceBrowse: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceNodeAttribute: EventEmitter<any> = new EventEmitter();
     @Output() onDaqResult: EventEmitter<DaqResult> = new EventEmitter();
+    @Output() onDeviceProperty: EventEmitter<any> = new EventEmitter();
 
     public version = "1.00";
     public static separator = '^~^';
@@ -96,6 +97,11 @@ export class HmiService {
                 }
                 // console.log('dev-st ' + message);
             });
+            // device property
+            this.socket.on('device-property', (message) => {
+                console.log('dev-property ' + message);
+                this.onDeviceProperty.emit(message);
+            });                
             // devices values
             this.socket.on('device-values', (message) => {
                 for (let idx = 0; idx < message.values.length; idx++) {
@@ -130,6 +136,16 @@ export class HmiService {
     public askDeviceStatus() {
         if (this.socket) {
             this.socket.emit('device-status', 'get');
+        }
+    }
+
+    /**
+     * Ask device status to backend
+     */
+    public askDeviceProperty(endpoint, type) {
+        if (this.socket) {
+            let msg = { endpoint: endpoint, type: type };
+            this.socket.emit('device-property', msg);
         }
     }
 

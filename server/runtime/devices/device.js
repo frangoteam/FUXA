@@ -185,7 +185,35 @@ function Device(data, logger, _events) {
         return comm.getTagProperty(id);
     }
 
+    /**
+     * Bind function to ask project stored property (security)
+     */
+    this.bindGetProperty = function (fnc) {
+        if (data.type === DeviceEnum.OPCUA) {
+            comm.bindGetProperty(fnc);
+        }
+    }
+
     this.load(data);
+}
+
+/**
+ * Return the property (security mode) supported from device
+ * @param {*} endpoint 
+ * @param {*} type 
+ */
+function getSupportedProperty(endpoint, type) {
+    return new Promise(function (resolve, reject) {
+        if (type === DeviceEnum.OPCUA) {
+            OpcUAclient.getEndPoints(endpoint).then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else {
+            reject('getSupportedProperty not supported!');
+        }
+    });
 }
 
 module.exports = {
@@ -194,7 +222,8 @@ module.exports = {
     },
     create: function (data, logger, events) {
         return new Device(data, logger, events);
-    }
+    },
+    getSupportedProperty: getSupportedProperty
 }
 
 /**
