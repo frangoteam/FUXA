@@ -86,12 +86,12 @@ export class TreetableComponent implements OnInit {
           }
       });
       return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
+    } else {
+      return [];
     }
-    return [];
   }
 
   changeStatus(node: Node, $event) {
-    // console.log(node);
   }
 
   expandable(type: NodeType) {
@@ -101,13 +101,6 @@ export class TreetableComponent implements OnInit {
       return false;
     }
   }
-
-
-  // nodeToItems(nodes: Node[], items: Node[]) {    
-  //   nodes.forEach(node => {
-
-  //   });
-  // }
 }
 
 export class Node {
