@@ -6,6 +6,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 
 var prjApi = require("./projects");
+var usersApi = require("./users");
 
 var apiApp;
 var server;
@@ -25,6 +26,8 @@ function init(_server, _runtime) {
 
             prjApi.init(runtime);
             apiApp.use(prjApi.app());
+            usersApi.init(runtime);
+            apiApp.use(usersApi.app());
 
             /**
              * GET Server setting data

@@ -1348,6 +1348,66 @@ var HelpData = (function () {
 
 /***/ }),
 
+/***/ "../../../../../src/app/_models/user.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return User; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return UserGroups; });
+var User = (function () {
+    function User() {
+    }
+    return User;
+}());
+
+var UserGroups = (function () {
+    function UserGroups() {
+    }
+    UserGroups.GroupsToValue = function (grps) {
+        var result = 0;
+        if (grps) {
+            for (var i = 0; i < grps.length; i++) {
+                result += grps[i].id;
+            }
+        }
+        return result;
+    };
+    UserGroups.ValueToGroups = function (value) {
+        var result = [];
+        for (var i = 0; i < this.Groups.length; i++) {
+            if (value & this.Groups[i].id) {
+                result.push(this.Groups[i]);
+            }
+        }
+        return result;
+    };
+    UserGroups.GroupToLabel = function (value) {
+        var result = '';
+        for (var i = 0; i < this.Groups.length; i++) {
+            if (value & this.Groups[i].id) {
+                if (result) {
+                    result += ',';
+                }
+                result += this.Groups[i].label;
+            }
+        }
+        return result;
+    };
+    UserGroups.Groups = [{ id: 1, label: 'A' },
+        { id: 2, label: 'B' },
+        { id: 4, label: 'C' },
+        { id: 8, label: 'D' },
+        { id: 16, label: 'E' },
+        { id: 32, label: 'F' },
+        { id: 64, label: 'G' },
+        { id: 128, label: 'H' }];
+    return UserGroups;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/_services/hmi.service.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2309,6 +2369,106 @@ var ProjectDataCmdType;
 
 /***/ }),
 
+/***/ "../../../../../src/app/_services/user.service.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UserService; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_common_http__ = __webpack_require__("../../../common/esm5/http.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs__ = __webpack_require__("../../../../rxjs/Rx.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers_endpointapi__ = __webpack_require__("../../../../../src/app/_helpers/endpointapi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__environments_environment__ = __webpack_require__("../../../../../src/environments/environment.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_ngx_toastr__ = __webpack_require__("../../../../ngx-toastr/fesm5/ngx-toastr.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+
+
+var UserService = (function () {
+    function UserService(http, translateService, toastr) {
+        this.http = http;
+        this.translateService = translateService;
+        this.toastr = toastr;
+        this.endPointConfig = __WEBPACK_IMPORTED_MODULE_3__helpers_endpointapi__["a" /* EndPointApi */].getURL();
+    }
+    UserService.prototype.getUsers = function (user) {
+        var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
+        var params = user;
+        return this.http.get(this.endPointConfig + '/api/users', { headers: header, params: params });
+    };
+    UserService.prototype.setUser = function (user) {
+        var _this = this;
+        return new __WEBPACK_IMPORTED_MODULE_2_rxjs__["Observable"](function (observer) {
+            if (__WEBPACK_IMPORTED_MODULE_4__environments_environment__["a" /* environment */].serverEnabled) {
+                var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
+                _this.http.post(_this.endPointConfig + '/api/users', { headers: header, params: user }).subscribe(function (result) {
+                    observer.next();
+                }, function (err) {
+                    console.log(err);
+                    _this.notifySaveError();
+                    observer.error(err);
+                });
+            }
+            else {
+                observer.next();
+            }
+        });
+    };
+    UserService.prototype.removeUser = function (user) {
+        var _this = this;
+        return new __WEBPACK_IMPORTED_MODULE_2_rxjs__["Observable"](function (observer) {
+            if (__WEBPACK_IMPORTED_MODULE_4__environments_environment__["a" /* environment */].serverEnabled) {
+                var header = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]({ 'Content-Type': 'application/json' });
+                _this.http.delete(_this.endPointConfig + '/api/users', { headers: header, params: { param: user.username } }).subscribe(function (result) {
+                    observer.next();
+                }, function (err) {
+                    console.log(err);
+                    _this.notifySaveError();
+                    observer.error(err);
+                });
+            }
+            else {
+                observer.next();
+            }
+        });
+    };
+    //#region Notify
+    UserService.prototype.notifySaveError = function () {
+        var msg = '';
+        this.translateService.get('msg.users-save-error').subscribe(function (txt) { msg = txt; });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
+    };
+    UserService = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_common_http__["a" /* HttpClient */],
+            __WEBPACK_IMPORTED_MODULE_6__ngx_translate_core__["c" /* TranslateService */],
+            __WEBPACK_IMPORTED_MODULE_5_ngx_toastr__["b" /* ToastrService */]])
+    ], UserService);
+    return UserService;
+}());
+
+
+
+/***/ }),
+
 /***/ "../../../../../src/app/app.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2449,44 +2609,46 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__tester_tester_component__ = __webpack_require__("../../../../../src/app/tester/tester.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__helpers_custom_http__ = __webpack_require__("../../../../../src/app/_helpers/custom-http.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__tester_tester_service__ = __webpack_require__("../../../../../src/app/tester/tester.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__help_tutorial_tutorial_component__ = __webpack_require__("../../../../../src/app/help/tutorial/tutorial.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__helpers_windowref__ = __webpack_require__("../../../../../src/app/_helpers/windowref.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__helpers_define__ = __webpack_require__("../../../../../src/app/_helpers/define.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__helpers_dictionary__ = __webpack_require__("../../../../../src/app/_helpers/dictionary.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__gui_helpers_fab_button_ngx_fab_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gui_helpers_fab_button_ngx_fab_item_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-item-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_58__gauges_chart_property_chart_property_component__ = __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_60__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_62__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_67__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_68__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__services_user_service__ = __webpack_require__("../../../../../src/app/_services/user.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__services_project_service__ = __webpack_require__("../../../../../src/app/_services/project.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__help_tutorial_tutorial_component__ = __webpack_require__("../../../../../src/app/help/tutorial/tutorial.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__helpers_windowref__ = __webpack_require__("../../../../../src/app/_helpers/windowref.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__helpers_define__ = __webpack_require__("../../../../../src/app/_helpers/define.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__helpers_dictionary__ = __webpack_require__("../../../../../src/app/_helpers/dictionary.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__gui_helpers_fab_button_ngx_fab_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__gui_helpers_fab_button_ngx_fab_item_button_component__ = __webpack_require__("../../../../../src/app/gui-helpers/fab-button/ngx-fab-item-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__gui_helpers_treetable_treetable_component__ = __webpack_require__("../../../../../src/app/gui-helpers/treetable/treetable.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__gui_helpers_confirm_dialog_confirm_dialog_component__ = __webpack_require__("../../../../../src/app/gui-helpers/confirm-dialog/confirm-dialog.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__directives_dialog_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/dialog-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__directives_modal_position_cache__ = __webpack_require__("../../../../../src/app/_directives/modal-position.cache.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__directives_ngx_draggable_directive__ = __webpack_require__("../../../../../src/app/_directives/ngx-draggable.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__directives_number_directive__ = __webpack_require__("../../../../../src/app/_directives/number.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__directives_lazyFor_directive__ = __webpack_require__("../../../../../src/app/_directives/lazyFor.directive.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__gauges_gauges_component__ = __webpack_require__("../../../../../src/app/gauges/gauges.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_51__dynamic_dynamic_component__ = __webpack_require__("../../../../../src/app/dynamic/dynamic.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_59__gauges_chart_property_chart_property_component__ = __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_60__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_62__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_63__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_67__gauges_controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_68__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_69__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_70__users_users_component__ = __webpack_require__("../../../../../src/app/users/users.component.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2494,6 +2656,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -2589,40 +2753,42 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_27__fuxa_view_fuxa_view_component__["a" /* FuxaViewComponent */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["a" /* DialogDocName */],
-                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
+                __WEBPACK_IMPORTED_MODULE_42__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_49__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
-                __WEBPACK_IMPORTED_MODULE_51__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_53__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
-                __WEBPACK_IMPORTED_MODULE_67__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_68__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_58__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_50__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
+                __WEBPACK_IMPORTED_MODULE_52__gauges_switch_switch_component__["a" /* SwitchComponent */],
+                __WEBPACK_IMPORTED_MODULE_54__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
+                __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
+                __WEBPACK_IMPORTED_MODULE_57__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
+                __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_67__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
+                __WEBPACK_IMPORTED_MODULE_68__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_69__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_28__tester_tester_component__["a" /* TesterComponent */],
-                __WEBPACK_IMPORTED_MODULE_33__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_60__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
-                __WEBPACK_IMPORTED_MODULE_50__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_52__gauges_controls_value_value_component__["a" /* ValueComponent */],
-                __WEBPACK_IMPORTED_MODULE_43__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
-                __WEBPACK_IMPORTED_MODULE_35__helpers_utils__["a" /* EnumToArrayPipe */],
-                __WEBPACK_IMPORTED_MODULE_45__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
-                __WEBPACK_IMPORTED_MODULE_46__directives_number_directive__["a" /* NumberOnlyDirective */],
-                __WEBPACK_IMPORTED_MODULE_38__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_39__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_40__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */],
-                __WEBPACK_IMPORTED_MODULE_47__directives_lazyFor_directive__["a" /* LazyForDirective */],
-                __WEBPACK_IMPORTED_MODULE_42__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
+                __WEBPACK_IMPORTED_MODULE_34__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
+                __WEBPACK_IMPORTED_MODULE_60__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_62__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_51__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_53__gauges_controls_value_value_component__["a" /* ValueComponent */],
+                __WEBPACK_IMPORTED_MODULE_44__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_36__helpers_utils__["a" /* EnumToArrayPipe */],
+                __WEBPACK_IMPORTED_MODULE_46__directives_ngx_draggable_directive__["a" /* DraggableDirective */],
+                __WEBPACK_IMPORTED_MODULE_47__directives_number_directive__["a" /* NumberOnlyDirective */],
+                __WEBPACK_IMPORTED_MODULE_39__gui_helpers_fab_button_ngx_fab_button_component__["a" /* NgxFabButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_40__gui_helpers_fab_button_ngx_fab_item_button_component__["a" /* NgxFabItemButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_treetable_treetable_component__["b" /* TreetableComponent */],
+                __WEBPACK_IMPORTED_MODULE_48__directives_lazyFor_directive__["a" /* LazyForDirective */],
+                __WEBPACK_IMPORTED_MODULE_43__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
                 __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */],
-                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */]
+                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */],
+                __WEBPACK_IMPORTED_MODULE_70__users_users_component__["b" /* UsersComponent */],
+                __WEBPACK_IMPORTED_MODULE_70__users_users_component__["a" /* DialogUser */]
             ],
             imports: [
                 __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__["a" /* BrowserModule */],
@@ -2634,7 +2800,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_62__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_63__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
                     positionClass: "toast-bottom-right",
@@ -2650,32 +2816,34 @@ var AppModule = (function () {
                 })
             ],
             providers: [
-                __WEBPACK_IMPORTED_MODULE_32__services_hmi_service__["a" /* HmiService */],
-                __WEBPACK_IMPORTED_MODULE_31__services_project_service__["a" /* ProjectService */],
+                __WEBPACK_IMPORTED_MODULE_33__services_hmi_service__["a" /* HmiService */],
+                __WEBPACK_IMPORTED_MODULE_32__services_project_service__["a" /* ProjectService */],
+                __WEBPACK_IMPORTED_MODULE_31__services_user_service__["a" /* UserService */],
                 __WEBPACK_IMPORTED_MODULE_30__tester_tester_service__["a" /* TesterService */],
                 __WEBPACK_IMPORTED_MODULE_29__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_48__gauges_gauges_component__["a" /* GaugesManager */],
-                __WEBPACK_IMPORTED_MODULE_34__helpers_windowref__["a" /* WindowRef */],
-                __WEBPACK_IMPORTED_MODULE_35__helpers_utils__["b" /* Utils */],
-                __WEBPACK_IMPORTED_MODULE_37__helpers_dictionary__["a" /* Dictionary */],
-                __WEBPACK_IMPORTED_MODULE_44__directives_modal_position_cache__["a" /* ModalPositionCache */],
-                __WEBPACK_IMPORTED_MODULE_36__helpers_define__["a" /* Define */]
+                __WEBPACK_IMPORTED_MODULE_49__gauges_gauges_component__["a" /* GaugesManager */],
+                __WEBPACK_IMPORTED_MODULE_35__helpers_windowref__["a" /* WindowRef */],
+                __WEBPACK_IMPORTED_MODULE_36__helpers_utils__["b" /* Utils */],
+                __WEBPACK_IMPORTED_MODULE_38__helpers_dictionary__["a" /* Dictionary */],
+                __WEBPACK_IMPORTED_MODULE_45__directives_modal_position_cache__["a" /* ModalPositionCache */],
+                __WEBPACK_IMPORTED_MODULE_37__helpers_define__["a" /* Define */]
             ],
             entryComponents: [
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_50__dynamic_dynamic_component__["a" /* DynamicComponent */],
-                __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_58__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_51__dynamic_dynamic_component__["a" /* DynamicComponent */],
+                __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_23__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_24__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_41__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
+                __WEBPACK_IMPORTED_MODULE_42__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__["b" /* LayoutPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_19__editor_layout_property_layout_property_component__["a" /* DialogMenuItem */],
-                __WEBPACK_IMPORTED_MODULE_42__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
+                __WEBPACK_IMPORTED_MODULE_43__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
                 __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */],
-                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */]
+                __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */],
+                __WEBPACK_IMPORTED_MODULE_70__users_users_component__["a" /* DialogUser */]
             ],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_12__app_component__["a" /* AppComponent */]]
         })
@@ -2697,6 +2865,8 @@ var AppModule = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__editor_editor_component__ = __webpack_require__("../../../../../src/app/editor/editor.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__device_device_component__ = __webpack_require__("../../../../../src/app/device/device.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__lab_lab_component__ = __webpack_require__("../../../../../src/app/lab/lab.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__users_users_component__ = __webpack_require__("../../../../../src/app/users/users.component.ts");
+
 
 
 
@@ -2708,6 +2878,7 @@ var appRoutes = [
     { path: 'editor', component: __WEBPACK_IMPORTED_MODULE_2__editor_editor_component__["c" /* EditorComponent */] },
     { path: 'lab', component: __WEBPACK_IMPORTED_MODULE_4__lab_lab_component__["a" /* LabComponent */] },
     { path: 'device', component: __WEBPACK_IMPORTED_MODULE_3__device_device_component__["a" /* DeviceComponent */] },
+    { path: 'users', component: __WEBPACK_IMPORTED_MODULE_5__users_users_component__["b" /* UsersComponent */] },
     // otherwise redirect to home
     { path: '**', redirectTo: '' }
 ];
@@ -10241,7 +10412,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/treetable/treetable.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n  <div *lazyFor=\"let node of list; index as i\" class=\"item\">\n    <div *ngIf=\"node.visible\">\n      <div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n        <button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\" *ngIf=\"node.class === nodeType.Object\">\n          <mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n          <mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n        </button>\n        <div *ngIf=\"!node.childs.length\" class=\"item-waiting\" [ngStyle]=\"{'width': (node.expanded) ? '40px' : '0px'}\">\n            <mat-spinner diameter=\"20\"></mat-spinner>\n        </div>\n        <button mat-icon-button enabled=\"false\" *ngIf=\"node.class !== nodeType.Object\">\n          <mat-icon >label</mat-icon>\n        </button>\n          {{node.text}}\n      </div>\n      <div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n        {{node.property}}\n      </div>\n      <div class=\"item-check\">\n        <mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\"  (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n      </div>\n    </div>\n  </div>\n</div>"
+module.exports = "<div #treetable class=\"container\" [style.height]=\"containerProperty.height\" [style.width]=\"containerProperty.width\">\n\t<div *lazyFor=\"let node of list; index as i\" class=\"item\">\n\t\t<div *ngIf=\"node.visible\">\n\t\t\t<div class=\"item-text\" [style.left.px]=\"node.childPos * 15\" [style.width.px]=\"500 - node.childPos * 15\">\n\t\t\t\t<button mat-icon-button (click)=\"onExpandToggle(node)\" enabled=\"node.childs\">\n\t\t\t\t\t<mat-icon *ngIf=\"node.expanded\">expand_more</mat-icon>\n\t\t\t\t\t<mat-icon *ngIf=\"!node.expanded\">chevron_right</mat-icon>\n\t\t\t\t</button>\n\t\t\t\t<div *ngIf=\"!node.childs.length\" class=\"item-waiting\" style=\"width:40px\" [ngStyle]=\"{'display': (node.expanded) ? 'inline-block' : 'none'}\">\n\t\t\t\t\t<mat-spinner diameter=\"20\"></mat-spinner>\n\t\t\t\t</div>\n\t\t\t\t<button mat-icon-button enabled=\"false\" *ngIf=\"node.class === nodeType.Variable\">\n\t\t\t\t\t<mat-icon>label</mat-icon>\n\t\t\t\t</button>\n\t\t\t\t{{node.text}}\n\t\t\t</div>\n\t\t\t<div class=\"item-property\" [style.left.px]=\"node.childPos * 15\">\n\t\t\t\t{{node.property}}\n\t\t\t</div>\n\t\t\t<div class=\"item-check\">\n\t\t\t\t<mat-checkbox [(ngModel)]=\"node.checked\" [disabled]=\"!node.enabled\" (change)=\"changeStatus(node,$event)\" *ngIf=\"node.class === nodeType.Variable\"></mat-checkbox>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>"
 
 /***/ }),
 
@@ -10334,10 +10505,11 @@ var TreetableComponent = (function () {
             });
             return result_1.sort(function (a, b) { return (a.path > b.path) ? 1 : -1; });
         }
-        return [];
+        else {
+            return [];
+        }
     };
     TreetableComponent.prototype.changeStatus = function (node, $event) {
-        // console.log(node);
     };
     TreetableComponent.prototype.expandable = function (type) {
         if (type === NodeType.Object) {
@@ -10432,7 +10604,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/header/header.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button mat-button title=\"{{'header.save-project' | translate}}\" [matMenuTriggerFor]=\"prjview\" #prjviewtrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjedittrigger.closeMenu()\">\r\n    <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n  </button>\r\n  <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"onNewProject()\">{{'header.new-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onSaveProject()\">{{'header.save-project' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onSaveProjectAs()\">{{'header.saveas-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">{{'header.open-project' | translate}}</button>\r\n    <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n    <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\"\r\n      accept=\".fuxap\" />\r\n  </mat-menu>\r\n  <button mat-button title=\"{{'header.edit-project' | translate}}\" [matMenuTriggerFor]=\"prjedit\" #prjedittrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjviewtrigger.closeMenu()\">\r\n      <mat-icon aria-label=\"Edit Views\">widgets</mat-icon>\r\n  </button>\r\n  <mat-menu #prjedit=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"goTo('/editor')\">{{'header.edit-views' | translate}}</button>\r\n    <button mat-menu-item (click)=\"goTo('/device')\">{{'header.edit-devices' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onChartConfig()\">{{'header.edit-charts' | translate}}</button>\r\n  </mat-menu>\r\n\r\n</div>\r\n<div class=\"header-help\" *ngIf=\"ineditor && !winele\">\r\n    <button mat-button title=\"{{'header.help' | translate}}\" [matMenuTriggerFor]=\"helpmenu\" class=\"main-btn\" style=\"padding-top: 3px !important;\">\r\n        <mat-icon aria-label=\"HELP\">help_outline</mat-icon>\r\n    </button>\r\n    <mat-menu #helpmenu=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n        <button mat-menu-item (click)=\"onShowHelp('help')\">{{'header.help-tutorial' | translate}}</button>\r\n        <mat-divider class=\"menu-separator\"></mat-divider>\r\n        <button mat-menu-item (click)=\"onShowHelp('info')\">{{'header.help-info' | translate}}</button>\r\n    </mat-menu>\r\n</div>\r\n<app-tutorial #tutorial></app-tutorial>\r\n"
+module.exports = "<div class=\"header-panel\" *ngIf=\"ineditor\">\r\n  <button mat-button title=\"{{'header.save-project' | translate}}\" [matMenuTriggerFor]=\"prjview\" #prjviewtrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjedittrigger.closeMenu()\">\r\n    <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n  </button>\r\n  <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"onNewProject()\">{{'header.new-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onSaveProject()\">{{'header.save-project' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onSaveProjectAs()\">{{'header.saveas-project' | translate}}</button>\r\n    <mat-divider class=\"menu-separator\"></mat-divider>\r\n    <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">{{'header.open-project' | translate}}</button>\r\n    <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n    <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\"\r\n      accept=\".fuxap\" />\r\n  </mat-menu>\r\n  <button mat-button title=\"{{'header.edit-project' | translate}}\" [matMenuTriggerFor]=\"prjedit\" #prjedittrigger=\"matMenuTrigger\" class=\"main-btn\"\r\n   (click)=\"prjviewtrigger.closeMenu()\">\r\n      <mat-icon aria-label=\"Edit Views\">widgets</mat-icon>\r\n  </button>\r\n  <mat-menu #prjedit=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n    <button mat-menu-item (click)=\"goTo('/editor')\">{{'header.edit-views' | translate}}</button>\r\n    <button mat-menu-item (click)=\"goTo('/device')\">{{'header.edit-devices' | translate}}</button>\r\n    <button mat-menu-item (click)=\"onChartConfig()\">{{'header.edit-charts' | translate}}</button>\r\n    <button mat-menu-item (click)=\"goTo('/users')\">{{'header.edit-users' | translate}}</button>\r\n  </mat-menu>\r\n\r\n</div>\r\n<div class=\"header-help\" *ngIf=\"ineditor && !winele\">\r\n    <button mat-button title=\"{{'header.help' | translate}}\" [matMenuTriggerFor]=\"helpmenu\" class=\"main-btn\" style=\"padding-top: 3px !important;\">\r\n        <mat-icon aria-label=\"HELP\">help_outline</mat-icon>\r\n    </button>\r\n    <mat-menu #helpmenu=\"matMenu\" class=\"leftbar-item-menu header-menu\" yPosition=\"below\" [overlapTrigger]=\"false\">\r\n        <button mat-menu-item (click)=\"onShowHelp('help')\">{{'header.help-tutorial' | translate}}</button>\r\n        <mat-divider class=\"menu-separator\"></mat-divider>\r\n        <button mat-menu-item (click)=\"onShowHelp('info')\">{{'header.help-info' | translate}}</button>\r\n    </mat-menu>\r\n</div>\r\n<app-tutorial #tutorial></app-tutorial>\r\n"
 
 /***/ }),
 
@@ -10482,7 +10654,8 @@ var HeaderComponent = (function () {
         this.ineditor = false;
         this.winele = false;
         this.router.events.subscribe(function () {
-            _this.ineditor = (_this.router.url.indexOf('editor') >= 0 || _this.router.url.indexOf('device') >= 0) ? true : false;
+            _this.ineditor = (_this.router.url.indexOf('editor') >= 0 || _this.router.url.indexOf('device') >= 0 ||
+                _this.router.url.indexOf('users') >= 0) ? true : false;
         });
     }
     HeaderComponent.prototype.ngOnInit = function () {
@@ -11558,6 +11731,226 @@ var TesterService = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])()
     ], TesterService);
     return TesterService;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/users/user.dialog.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div>\r\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'dlg.userproperty-title' | translate}}</h1>\r\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n    <div mat-dialog-content *ngIf=\"data.editmode < 0\">\r\n\t\t{{'msg.user-remove' | translate}} '{{data.user.username}}' ?\r\n\t</div>\r\n    <div mat-dialog-content *ngIf=\"data.editmode >= 0\">\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'general.username' | translate}}</span>\r\n            <input [(ngModel)]=\"data.user.username\" type=\"text\" width=\"100%\" [readonly]=\"data.editmode == 0\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'general.password' | translate}}</span>\r\n            <input [(ngModel)]=\"data.user.password\" type=\"text\" width=\"100%\" *ngIf=\"data.editmode >= 1\">\r\n            <input [(ngModel)]=\"data.user.password\" type=\"text\" width=\"100%\" placeholder=\"******\" *ngIf=\"data.editmode == 0\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'dlg.userproperty-groups' | translate}}</span>\r\n            <mat-selection-list #selGroups [(ngModel)]=\"selectedGroups\" style=\"padding-top: 0px;\" [disabled]=\"isAdmin()\">\r\n                <mat-list-option *ngFor=\"let grp of groups\" [selected]=\"grp.selected\" [value]=\"grp\" style=\"font-size: 14px;height: 26px !important;cursor: pointer;\" checkboxPosition=\"before\">\r\n                    {{grp.label}}\r\n                </mat-list-option>\r\n            </mat-selection-list>\r\n        </div>        \r\n    </div>\r\n    <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n        <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n        <button mat-raised-button [disabled]=\"!isValid(data.user.username)\" color=\"primary\" (click)=\"onOkClick()\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n    </div>\r\n</div>"
+
+/***/ }),
+
+/***/ "../../../../../src/app/users/users.component.css":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".header-panel {\r\n    /* z-index: 9999 !important; */\r\n    position: fixed;\r\n    top: 0px;\r\n    left: 0px;\r\n    background-color: rgba(33,33,33,1);\r\n    /* background-color: rgba(33,33,33,0.92); */\r\n    color: rgba(255,255,255,1);\r\n    height: 40px;\r\n    width: 100%;\r\n}\r\n\r\n.work-panel {\r\n    position: absolute;\r\n    top: 40px;\r\n    left: 0px;\r\n    right: 0px;\r\n    bottom: 0px;\r\n}\r\n\r\n.mat-table {\r\n    overflow: auto;\r\n    /* margin: 5px; */\r\n    /* max-height: 500px; */\r\n}\r\n  \r\n.mat-header-cell.mat-sort-header-sorted {\r\n    color: black;\r\n}\r\n\r\n.mat-header-row {\r\n    top: 0;\r\n    position: -webkit-sticky;\r\n    position: sticky;\r\n    z-index: 1;\r\n    background-color: rgba(0,0,0,0.7);\r\n    color: white;\r\n}\r\n.mat-header-cell {\r\n    color: white;\r\n    font-size: 14px;\r\n}\r\n\r\n.mat-column-select {\r\n    overflow: visible;\r\n    -ms-flex: 0 0 100px;\r\n        flex: 0 0 100px;\r\n}\r\n\r\n.mat-column-username {\r\n    -ms-flex: 0 0 400px;\r\n        flex: 0 0 400px;\r\n}\r\n\r\n\r\n.mat-column-groups {\r\n    -ms-flex: 0 0 860px;\r\n        flex: 0 0 860px;\r\n}\r\n\r\n.mat-column-remove {\r\n    -ms-flex: 0 0 160px;\r\n        flex: 0 0 160px;\r\n}\r\n\r\n.selectidthClass{\r\n    -ms-flex: 0 0 50px;\r\n        flex: 0 0 50px;\r\n }", ""]);
+
+// exports
+
+
+/*** EXPORTS FROM exports-loader ***/
+module.exports = module.exports.toString();
+
+/***/ }),
+
+/***/ "../../../../../src/app/users/users.component.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"header-panel\">\n</div>\n<diV class=\"work-panel\">\n\t<mat-table #table [dataSource]=\"dataSource\" matSort>\n\t\t<!-- Edit Column -->\n\t\t<ng-container matColumnDef=\"select\">\n\t\t\t<mat-header-cell *matHeaderCellDef [ngClass]=\"'selectidthClass'\">\n\t\t\t\t<button mat-icon-button (click)=\"onAddUser()\" class=\"remove\">\n\t\t\t\t\t<mat-icon>add</mat-icon>\n\t\t\t\t</button>\n\t\t\t</mat-header-cell>\n\t\t\t<mat-cell *matCellDef=\"let element\" [ngClass]=\"'selectidthClass'\">\n\t\t\t\t<button mat-icon-button (click)=\"onEditUser(element)\" class=\"remove\">\n\t\t\t\t\t<mat-icon>edit</mat-icon>\n\t\t\t\t</button>\n\t\t\t</mat-cell>\n\t\t</ng-container>\n\n\t\t<!-- Username Column -->\n\t\t<ng-container matColumnDef=\"username\">\n\t\t\t<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-name' | translate}} </mat-header-cell>\n\t\t\t<mat-cell *matCellDef=\"let element\"> {{element.username}} </mat-cell>\n\t\t</ng-container>\n\n\t\t<!-- Access Column -->\n\t\t<ng-container matColumnDef=\"groups\">\n\t\t\t<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-groups' | translate}} </mat-header-cell>\n\t\t\t<mat-cell *matCellDef=\"let element\"> {{groupValueToLabel(element.groups)}} </mat-cell>\n\t\t</ng-container>\n\n\t\t<!-- Button remove Column -->\n\t\t<ng-container matColumnDef=\"remove\">\n\t\t\t<mat-header-cell *matHeaderCellDef> </mat-header-cell>\n\t\t\t<mat-cell *matCellDef=\"let element\">\n\t\t\t\t<button mat-icon-button (click)=\"$event.stopPropagation();onRemoveUser(element)\" class=\"remove\" *ngIf=\"!isAdmin(element)\">\n\t\t\t\t\t<mat-icon>clear</mat-icon>\n\t\t\t\t</button>\n\t\t\t</mat-cell>\n\t\t</ng-container>\n\n\t\t<mat-header-row *matHeaderRowDef=\"displayedColumns\"></mat-header-row>\n\t\t<mat-row *matRowDef=\"let row; columns: displayedColumns;\" class=\"my-mat-row\"></mat-row>\n\t</mat-table>\n</diV>\n\n<button mat-fab color=\"primary\" (click)=\"onAddUser()\"\n    style=\"position: absolute; right: 20px; bottom: 30px; z-index: 9999;\">\n    <mat-icon class=\"\">add</mat-icon>\n</button>"
+
+/***/ }),
+
+/***/ "../../../../../src/app/users/users.component.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return UsersComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DialogUser; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__services_user_service__ = __webpack_require__("../../../../../src/app/_services/user.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__models_user__ = __webpack_require__("../../../../../src/app/_models/user.ts");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+
+
+
+
+
+var UsersComponent = (function () {
+    function UsersComponent(dialog, userService) {
+        this.dialog = dialog;
+        this.userService = userService;
+        this.displayedColumns = ['select', 'username', 'groups', 'remove'];
+        this.dataSource = new __WEBPACK_IMPORTED_MODULE_1__angular_material__["N" /* MatTableDataSource */]([]);
+    }
+    UsersComponent.prototype.ngOnInit = function () {
+        this.loadUsers();
+    };
+    UsersComponent.prototype.ngAfterViewInit = function () {
+        this.dataSource.sort = this.sort;
+    };
+    UsersComponent.prototype.onAddUser = function () {
+        var user = new __WEBPACK_IMPORTED_MODULE_3__models_user__["a" /* User */]();
+        this.editUser(user, 1);
+    };
+    UsersComponent.prototype.onEditUser = function (user) {
+        this.editUser(user, 0);
+    };
+    UsersComponent.prototype.onRemoveUser = function (user) {
+        this.editUser(user, -1);
+    };
+    UsersComponent.prototype.isAdmin = function (user) {
+        if (user && user.username === 'admin') {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    UsersComponent.prototype.groupValueToLabel = function (grp) {
+        return __WEBPACK_IMPORTED_MODULE_3__models_user__["b" /* UserGroups */].GroupToLabel(grp);
+    };
+    UsersComponent.prototype.loadUsers = function () {
+        var _this = this;
+        this.users = [];
+        this.userService.getUsers(null).subscribe(function (result) {
+            Object.values(result).forEach(function (u) {
+                _this.users.push(u);
+            });
+            // for (var u in result) {
+            // 	this.users.push(JSON.parse(u));
+            // }
+            _this.bindToTable(_this.users);
+        }, function (err) {
+            console.log('get Users err: ' + err);
+        });
+    };
+    UsersComponent.prototype.editUser = function (user, toAdd) {
+        var _this = this;
+        var muser = JSON.parse(JSON.stringify(user));
+        muser.password = '';
+        var dialogRef = this.dialog.open(DialogUser, {
+            // minWidth: '700px',
+            // minHeight: '700px',
+            // panelClass: 'dialog-property',
+            data: { user: muser, editmode: toAdd, users: this.users.map(function (u) { return u.username; }) },
+            position: { top: '80px' }
+        });
+        dialogRef.afterClosed().subscribe(function (result) {
+            if (result) {
+                if (toAdd < 0) {
+                    _this.userService.removeUser(result).subscribe(function (result) {
+                        _this.users = _this.users.filter(function (el) { return el.username !== muser.username; });
+                        _this.bindToTable(_this.users);
+                    }, function (err) {
+                    });
+                }
+                else {
+                    _this.userService.setUser(result).subscribe(function (result) {
+                        if (toAdd < 0) {
+                            _this.users.push(muser);
+                        }
+                        else if (toAdd > 0) {
+                            _this.users.push(muser);
+                        }
+                        else {
+                            user.groups = muser.groups;
+                            if (muser.password) {
+                                user.password = muser.password;
+                            }
+                        }
+                        _this.bindToTable(_this.users);
+                    }, function (err) {
+                    });
+                }
+            }
+        }, function (err) {
+        });
+    };
+    UsersComponent.prototype.bindToTable = function (users) {
+        this.dataSource.data = users;
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTable */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["M" /* MatTable */])
+    ], UsersComponent.prototype, "table", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSort */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1__angular_material__["J" /* MatSort */])
+    ], UsersComponent.prototype, "sort", void 0);
+    UsersComponent = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'app-users',
+            template: __webpack_require__("../../../../../src/app/users/users.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/users/users.component.css")]
+        }),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */],
+            __WEBPACK_IMPORTED_MODULE_2__services_user_service__["a" /* UserService */]])
+    ], UsersComponent);
+    return UsersComponent;
+}());
+
+var DialogUser = (function () {
+    function DialogUser(dialogRef, data) {
+        this.dialogRef = dialogRef;
+        this.data = data;
+        // defaultColor = Utils.defaultColor;
+        this.selectedGroups = [];
+        this.groups = __WEBPACK_IMPORTED_MODULE_3__models_user__["b" /* UserGroups */].Groups;
+        this.selectedGroups = __WEBPACK_IMPORTED_MODULE_3__models_user__["b" /* UserGroups */].ValueToGroups(this.data.user.groups);
+    }
+    DialogUser.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    DialogUser.prototype.onOkClick = function () {
+        this.data.user.groups = __WEBPACK_IMPORTED_MODULE_3__models_user__["b" /* UserGroups */].GroupsToValue(this.selectedGroups);
+        this.dialogRef.close(this.data.user);
+    };
+    DialogUser.prototype.isValid = function (name) {
+        if (this.data.editmode <= 0) {
+            return true;
+        }
+        else {
+            return (this.data.users.find(function (n) { return n === name; })) ? false : true;
+        }
+    };
+    DialogUser.prototype.isAdmin = function () {
+        if (this.data.user && this.data.user.username === 'admin') {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+    DialogUser = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'dialog-user',
+            template: __webpack_require__("../../../../../src/app/users/user.dialog.html"),
+        }),
+        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+    ], DialogUser);
+    return DialogUser;
 }());
 
 

@@ -316,7 +316,7 @@ export class ProjectService {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = { query: 'security', name: name, value: value };
         return this.http.post<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
-    }
+    } 
     //#endregion
 
     //#region hmi resource json struct

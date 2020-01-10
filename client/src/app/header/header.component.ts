@@ -34,7 +34,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 private projectService: ProjectService){
 
         this.router.events.subscribe(()=> {
-            this.ineditor = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0) ? true : false;
+            this.ineditor = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0 ||
+            this.router.url.indexOf('users') >= 0) ? true : false;
         });
     }
 

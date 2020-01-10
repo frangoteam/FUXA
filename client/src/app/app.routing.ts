@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { EditorComponent } from './editor/editor.component';
 import { DeviceComponent } from './device/device.component';
 import { LabComponent } from './lab/lab.component';
+import { UsersComponent } from './users/users.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -11,6 +12,7 @@ const appRoutes: Routes = [
     { path: 'editor', component: EditorComponent },
     { path: 'lab', component: LabComponent },
     { path: 'device', component: DeviceComponent },
+    { path: 'users', component: UsersComponent },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }

@@ -1,0 +1,49 @@
+<div class="header-panel">
+</div>
+<diV class="work-panel">
+	<mat-table #table [dataSource]="dataSource" matSort>
+		<!-- Edit Column -->
+		<ng-container matColumnDef="select">
+			<mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+				<button mat-icon-button (click)="onAddUser()" class="remove">
+					<mat-icon>add</mat-icon>
+				</button>
+			</mat-header-cell>
+			<mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+				<button mat-icon-button (click)="onEditUser(element)" class="remove">
+					<mat-icon>edit</mat-icon>
+				</button>
+			</mat-cell>
+		</ng-container>
+
+		<!-- Username Column -->
+		<ng-container matColumnDef="username">
+			<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-name' | translate}} </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{element.username}} </mat-cell>
+		</ng-container>
+
+		<!-- Access Column -->
+		<ng-container matColumnDef="groups">
+			<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-groups' | translate}} </mat-header-cell>
+			<mat-cell *matCellDef="let element"> {{groupValueToLabel(element.groups)}} </mat-cell>
+		</ng-container>
+
+		<!-- Button remove Column -->
+		<ng-container matColumnDef="remove">
+			<mat-header-cell *matHeaderCellDef> </mat-header-cell>
+			<mat-cell *matCellDef="let element">
+				<button mat-icon-button (click)="$event.stopPropagation();onRemoveUser(element)" class="remove" *ngIf="!isAdmin(element)">
+					<mat-icon>clear</mat-icon>
+				</button>
+			</mat-cell>
+		</ng-container>
+
+		<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+		<mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+	</mat-table>
+</diV>
+
+<button mat-fab color="primary" (click)="onAddUser()"
+    style="position: absolute; right: 20px; bottom: 30px; z-index: 9999;">
+    <mat-icon class="">add</mat-icon>
+</button>
