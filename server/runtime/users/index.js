@@ -95,9 +95,29 @@ function removeUsers(username) {
     });
 }
 
+
+/**
+ * Find the user
+ */
+function findOne(user) {
+    return new Promise(function (resolve, reject) {
+        usrstorage.getUsers(user).then(drows => {
+            if (drows.length > 0) {
+                resolve(drows);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error('users.usrstorage.failed-to-find-user: ' + err);
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
     init: init,
     getUsers: getUsers,
     setUsers: setUsers,
-    removeUsers: removeUsers
+    removeUsers: removeUsers,
+    findOne: findOne
 };

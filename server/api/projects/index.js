@@ -3,13 +3,16 @@
  */
 
 var express = require("express");
+const authJwt = require('../jwt-helper');
 var runtime;
+var secureFnc;
 
 module.exports = {
-    init: function(_runtime) {
+    init: function (_runtime, _secureFnc) {
         runtime = _runtime;
+        secureFnc = _secureFnc;
     },
-    app: function() {
+    app: function () {
         var prjApp = express();
         prjApp.use(function(req,res,next) {
             if (!runtime.project) {
@@ -23,8 +26,10 @@ module.exports = {
          * GET Project data
          * Take from project storage and reply 
          */
-        prjApp.get("/api/project", function(req, res) {
+        prjApp.get("/api/project", secureFnc, function(req, res) {
             console.log('/api/project');
+            // if (runtime.settings && runtime.settings.secureEnabled) {
+
             const data = runtime.project.getProject(req.body).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -47,7 +52,7 @@ module.exports = {
          * POST Project data
          * Set to project storage
          */
-        prjApp.post("/api/project", function(req, res, next) {
+        prjApp.post("/api/project", secureFnc, function(req, res, next) {
             runtime.project.setProject(req.body).then(function(data) {
                 runtime.restart().then(function(result) {
                     res.end();
@@ -66,7 +71,7 @@ module.exports = {
          * POST Single Project data
          * Set the value (general/view/device/...) to project storage
          */
-        prjApp.post("/api/projectData", function(req, res, next) {
+        prjApp.post("/api/projectData", secureFnc, function(req, res, next) {
             // var param = JSON.parse(JSON.stringify(req.body));
             runtime.project.setProjectData(req.body.cmd, req.body.data).then(setres => {
                 runtime.update(req.body.cmd, req.body.data).then(result => {
@@ -86,7 +91,7 @@ module.exports = {
          * GET Project demo data
          * Take the project demo file from server folder 
          */
-        prjApp.get("/api/projectdemo", function (req, res) {
+        prjApp.get("/api/projectdemo", secureFnc, function (req, res) {
             console.log('/api/projectdemo');
             const data = runtime.project.getProjectDemo();
             // res.header("Access-Control-Allow-Origin", "*");
@@ -102,7 +107,7 @@ module.exports = {
          * GET Device property like security
          * Take from project storage and reply 
          */
-        prjApp.get("/api/device", function(req, res) {
+        prjApp.get("/api/device", secureFnc, function(req, res) {
             console.log('/api/device');
             const data = runtime.project.getDeviceProperty(req.query).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
@@ -126,7 +131,7 @@ module.exports = {
          * POST Device property
          * Set to project storage
          */
-        prjApp.post("/api/device", function(req, res, next) {
+        prjApp.post("/api/device", secureFnc, function(req, res, next) {
             runtime.project.setDeviceProperty(req.body.params).then(function(data) {
                 res.end();
             }).catch(function(err) {

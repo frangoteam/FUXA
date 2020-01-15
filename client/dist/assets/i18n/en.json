@@ -43,6 +43,9 @@
     "dlg.docname-title": "Rename",
     "dlg.docname-name": "Name:",
 
+    "dlg.login-title": "Sign in...",
+    "dlg.logout-btn": "Sign out",
+
     "dlg.ok": "OK",
     "dlg.cancel": "CANCEL",
     
@@ -298,5 +301,8 @@
     "msg.users-save-error": "User save failed!",
     "msg.user-remove": "Would you like to remove User ",
     "msg.project-save-error": "Project save failed!",
-    "msg.project-save-ask": "You want to leave the project?"
+    "msg.project-save-ask": "You want to leave the project?",
+    "msg.login-username-required": "Enter a username",
+    "msg.login-password-required": "Enter a password",
+    "msg.signin-failed": "Unauthorized"
 }

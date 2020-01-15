@@ -23,7 +23,7 @@ export class ProjectService {
 
     public version = '1.00';
     public separator = '^~^';
-    public serverSettings: any;
+    public serverSettings: ServerSettings;
 
     private prjresource = 'prj-data';
     private endPointConfig: string = EndPointApi.getURL();
@@ -49,6 +49,7 @@ export class ProjectService {
         }
     }
 
+    //#region Load and Save
     /**
      * Load Project from Server if enable.
      * From Local Storage, from 'assets' if demo or create a local project
@@ -88,22 +89,18 @@ export class ProjectService {
         }
     }
 
-
+    /**
+     * Save Project to Server if enabled
+     */
     private save(): boolean {
         console.log('-save-');
-        // this.projectData.version = this.version;
-        // let prjData = this.convertToSave(this.projectData);
         if (this.serverSettings) {
             // check project change don't work some svg object change the order and this to check ...boooo
             this.setServerProject(this.projectData).subscribe(result => {
                 this.load();
-                // this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-                // console.log(result);
-                // this.checSaveWorking(false);
                 this.toastr.success('Project save successful!');
             }, err => {
                 console.log(err);
-                // this.checSaveWorking(false);
                 var msg = '';
                 this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
                 this.toastr.error(msg, '', {
@@ -140,26 +137,8 @@ export class ProjectService {
         }
         return result;
     }
+    //#endregion
 
-    private notifySaveError() {
-        let msg = '';
-        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
-        this.toastr.error(msg, '', {
-            timeOut: 3000,
-            closeButton: true,
-            disableTimeOut: true
-        });
-    }
-
-    private notifyServerError() {
-        let msg = '';
-        this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt });
-        this.toastr.error(msg, '', {
-            timeOut: 3000,
-            closeButton: true,
-            disableTimeOut: true
-        });
-    }
     //#region Device to Save
     /**
      * Add or update Device to Project.
@@ -273,21 +252,8 @@ export class ProjectService {
         }
     }
     //#endregion
-    setLayout(layout: LayoutSettings) {
-        this.projectData.hmi.layout = layout;
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError();
-            });
-        }
-    }
-    //#region HMI
 
-    //#endregion
-
-    //#region to server api
+    //#region ToServer api
     getServerProject(): Observable<any> {
         return this.http.get<any>(this.endPointConfig + '/api/project', {});
     }
@@ -319,16 +285,28 @@ export class ProjectService {
     } 
     //#endregion
 
-    //#region hmi resource json struct
+    //#region Hmi, Layout resource json struct
+
     /**
      * get hmi resource
      */
     getHmi() {
         return (this.ready && this.projectData) ? this.projectData.hmi : null;
     }
+
+    setLayout(layout: LayoutSettings) {
+        this.projectData.hmi.layout = layout;
+        if (environment.serverEnabled) {
+            this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
+            }, err => {
+                console.log(err);
+                this.notifySaveError();
+            });
+        }
+    }
     //#endregion
 
-    //#region charts resource
+    //#region Charts resource
     /**
      * get charts resource
      */
@@ -364,6 +342,26 @@ export class ProjectService {
 
     notifyToLoadHmi() {
         this.onLoadHmi.emit(true);
+    }
+
+    private notifySaveError() {
+        let msg = '';
+        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
+    }
+
+    private notifyServerError() {
+        let msg = '';
+        this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
     }
     //#endregion
 
@@ -444,7 +442,15 @@ export class ProjectService {
         return this.http.get<any>(this.endPointConfig + '/api/projectdemo');
     }
 
-    _deepEquals(x, y) {
+    isSecurityEnabled() {
+        if (environment.serverEnabled && this.serverSettings && this.serverSettings.secureEnabled) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private _deepEquals(x, y) {
         if (JSON.stringify(x) === JSON.stringify(y)) {
             return true; // if both x and y are null or undefined and exactly the same
 
@@ -491,7 +497,7 @@ export class ProjectService {
      * This function coverts a DOM Tree into JavaScript Object. 
      * @param srcDOM: DOM Tree to be converted. 
      */
-    _xml2json(xml) {
+    private _xml2json(xml) {
         // Create the return object
         var obj = {};
 
@@ -530,7 +536,7 @@ export class ProjectService {
 }
 
 export class ProjectData {
-    version: string = "1.00"
+    version: string = "1.00";
     server: Device = new Device();
     hmi: Hmi = new Hmi();
     devices = {};
@@ -544,4 +550,9 @@ export enum ProjectDataCmdType {
     DelView = 'del-view',
     HmiLayout = 'layout',
     Charts = 'charts',
+}
+
+export class ServerSettings {
+    version: string;
+    secureEnabled: boolean;
 }

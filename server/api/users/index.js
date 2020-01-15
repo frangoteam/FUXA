@@ -1,13 +1,16 @@
 /**
- * 'api/project': Project API to GET/POST project data
+ * 'api/users': Users API to GET/POST users data
  */
 
 var express = require("express");
+const authJwt = require('../jwt-helper');
 var runtime;
+var secureFnc;
 
 module.exports = {
-    init: function(_runtime) {
+    init: function (_runtime, _secureFnc) {
         runtime = _runtime;
+        secureFnc = _secureFnc;
     },
     app: function() {
         var usersApp = express();
@@ -23,7 +26,7 @@ module.exports = {
          * GET Users
          * Take from users storage and reply 
          */
-        usersApp.get("/api/users", function(req, res) {
+        usersApp.get("/api/users", secureFnc, function(req, res) {
             console.log('/api/users');
             const data = runtime.users.getUsers(req.query).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
@@ -47,7 +50,7 @@ module.exports = {
          * POST Users
          * Set to users storage
          */
-        usersApp.post("/api/users", function(req, res, next) {
+        usersApp.post("/api/users", secureFnc, function(req, res, next) {
             runtime.users.setUsers(req.body.params).then(function(data) {
                 res.end();
             }).catch(function(err) {
@@ -64,7 +67,7 @@ module.exports = {
          * DELETE User
          * Set to project storage
          */
-        usersApp.delete("/api/users", function(req, res, next) {
+        usersApp.delete("/api/users", secureFnc, function(req, res, next) {
             runtime.users.removeUsers(req.query.param).then(function(data) {
                 res.end();
             }).catch(function(err) {

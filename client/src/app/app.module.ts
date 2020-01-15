@@ -35,6 +35,7 @@ import { TesterComponent } from './tester/tester.component';
 import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
 import { UserService } from './_services/user.service';
+import { AuthService } from './_services/auth.service';
 import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
@@ -56,7 +57,6 @@ import { LazyForDirective } from './_directives/lazyFor.directive';
 
 import { GaugesManager } from './gauges/gauges.component';
 import { GaugeBaseComponent } from './gauges/gauge-base/gauge-base.component';
-import { DynamicComponent } from './dynamic/dynamic.component';
 import { SwitchComponent } from './gauges/switch/switch.component';
 import { ValueComponent } from './gauges/controls/value/value.component';
 
@@ -77,78 +77,83 @@ import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.comp
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { UsersComponent, DialogUser } from './users/users.component';
+import { LoginComponent } from './login/login.component';
+import { DialogUserInfo } from './home/home.component';
+
+import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
 export function createTranslateLoader(http: HttpClient) {
 	return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
-	declarations: [
-		HomeComponent,
-		EditorComponent,
-		HeaderComponent,
-		SidenavComponent,
-		IframeComponent,
-		AppComponent,
-		LabComponent,
-		DeviceComponent,
-		TagPropertyComponent,
-		DevicePropertyComponent,
-		LayoutPropertyComponent,
-		DialogMenuItem,
-		DeviceListComponent,
-		DeviceMapComponent,
-		FuxaViewComponent,
-		DialogDocProperty,
-		DialogDocName,
-		ConfirmDialogComponent,
-		DialogInfo,
-		GaugeBaseComponent,
-		SwitchComponent,
-		CompressorComponent,
-		ValveComponent,
-		MotorComponent,
-		ExchangerComponent,
-		HtmlInputComponent,
-		HtmlButtonComponent,
-		HtmlSelectComponent,
-		HtmlChartComponent,
-		GaugeProgressComponent,
-		GaugeSemaphoreComponent,
-		GaugePropertyComponent,
-		ChartPropertyComponent,
-		TesterComponent,
-		TutorialComponent,
-		FlexInputComponent,
-		FlexHeadComponent,
-		FlexEventComponent,
-		DynamicComponent,
-		ValueComponent,
-		DialogDraggableDirective,
-		EnumToArrayPipe,
-		DraggableDirective,
-		NumberOnlyDirective,
-		NgxFabButtonComponent,
-		NgxFabItemButtonComponent,
-		TreetableComponent,
-		LazyForDirective,
-		NgxDygraphsComponent,
-		ChartConfigComponent,
-		DialogListItem,
-		UsersComponent,
-		DialogUser
-	],
-	imports: [
-		BrowserModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpClientModule,
-		routing,
-		MaterialModule,
-		BrowserAnimationsModule,
-		ColorPickerModule,
-		Ng5SliderModule,
-		MatSelectSearchModule,
+   declarations: [
+      HomeComponent,
+      EditorComponent,
+      HeaderComponent,
+      SidenavComponent,
+      IframeComponent,
+      AppComponent,
+      LabComponent,
+      DeviceComponent,
+      TagPropertyComponent,
+      DevicePropertyComponent,
+      LayoutPropertyComponent,
+      DialogMenuItem,
+      DeviceListComponent,
+      DeviceMapComponent,
+      FuxaViewComponent,
+      DialogDocProperty,
+      DialogDocName,
+      ConfirmDialogComponent,
+      DialogInfo,
+      GaugeBaseComponent,
+      SwitchComponent,
+      CompressorComponent,
+      ValveComponent,
+      MotorComponent,
+      ExchangerComponent,
+      HtmlInputComponent,
+      HtmlButtonComponent,
+      HtmlSelectComponent,
+      HtmlChartComponent,
+      GaugeProgressComponent,
+      GaugeSemaphoreComponent,
+      GaugePropertyComponent,
+      ChartPropertyComponent,
+      TesterComponent,
+      TutorialComponent,
+      FlexInputComponent,
+      FlexHeadComponent,
+      FlexEventComponent,
+      ValueComponent,
+      DialogDraggableDirective,
+      EnumToArrayPipe,
+      DraggableDirective,
+      NumberOnlyDirective,
+      NgxFabButtonComponent,
+      NgxFabItemButtonComponent,
+      TreetableComponent,
+      LazyForDirective,
+      NgxDygraphsComponent,
+      ChartConfigComponent,
+      DialogListItem,
+      UsersComponent,
+      DialogUser,
+      LoginComponent,
+      DialogUserInfo
+   ],
+   imports: [
+      BrowserModule,
+      FormsModule,
+      ReactiveFormsModule,
+      HttpClientModule,
+      routing,
+      MaterialModule,
+      BrowserAnimationsModule,
+      ColorPickerModule,
+      Ng5SliderModule,
+      MatSelectSearchModule,
 		ToastrModule.forRoot({
 			timeOut: 3000,
 			positionClass: "toast-bottom-right",
@@ -166,21 +171,22 @@ export function createTranslateLoader(http: HttpClient) {
 	providers: [
 		HmiService,
 		ProjectService,
-		UserService,
+      UserService,
 		TesterService,
 		customHttpProvider,
+      httpInterceptorProviders,
+      AuthService,
 		GaugesManager,
 		WindowRef,
 		Utils,
 		Dictionary,
 		ModalPositionCache,
-		Define
+      Define
 	],
 	entryComponents: [
 		DialogDocProperty,
 		DialogDocName,
 		DialogInfo,
-		DynamicComponent,
 		GaugePropertyComponent,
 		ChartPropertyComponent,
 		DevicePropertyComponent,
@@ -191,7 +197,9 @@ export function createTranslateLoader(http: HttpClient) {
 		NgxDygraphsComponent,
 		ChartConfigComponent,
 		DialogListItem,
-		DialogUser
+      DialogUser,
+      LoginComponent,
+      DialogUserInfo
 	],
 	bootstrap: [AppComponent]
 })

@@ -1,0 +1,28 @@
+<div style="width: 100%;position: relative;padding-bottom: 40px">
+	<form [formGroup]="loginForm" novalidate>
+		<h1 mat-dialog-title style="display:inline-block;margin-bottom: 14px !important;">{{'dlg.login-title' | translate}}</h1>
+		<div mat-dialog-content>
+			<div class="my-form-field" style="display: block;margin-bottom: 10px;margin-right: 5px;">
+				<span>{{'general.username' | translate}}</span>
+				<input cdkFocusInitial autocomplete="off" [type]="'text'" [formControl]="username" style="width:100%;">
+				<mat-error class="error" *ngIf="errorEnabled && username.errors && username.errors.required">{{'msg.login-username-required' | translate}}</mat-error>
+			</div>
+			<div class="my-form-field" style="display: block;margin-bottom: 10px;margin-right: 5px;">
+				<span>{{'general.password' | translate}}</span>
+				<input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [formControl]="password" style="width:100%;">
+				<mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+				<mat-error class="error" *ngIf="errorEnabled && password.errors && password.errors.required">{{'msg.login-password-required' | translate}}</mat-error>
+			</div>
+		</div>
+		<div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
+			<button mat-raised-button [mat-dialog-close]="">{{'dlg.cancel' | translate}}</button>
+			<button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+		</div>
+		<div *ngIf="messageError" class="message-error">
+			{{messageError}}
+		</div>
+		<div *ngIf="submitLoading">
+			<mat-spinner style="margin: auto" diameter="20"></mat-spinner>
+		</div>		
+	</form>
+</div>

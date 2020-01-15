@@ -3,10 +3,6 @@
     margin: 0 auto;
 }
 
-.home-info {
-    
-}
-
 .header {
     display: block;
     z-index: 9999 !important;
@@ -37,4 +33,10 @@
 
 ::ng-deep .mat-drawer-backdrop.mat-drawer-shown {
     background-color: transparent;
-}  
+} 
+
+::ng-deep #myuserinfo {
+    padding: unset !important;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.18);
+}
+

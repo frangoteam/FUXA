@@ -4,8 +4,10 @@
 
 var express = require("express");
 var bodyParser = require("body-parser");
+const authJwt = require('./jwt-helper');
 
 var prjApi = require("./projects");
+var authApi = require("./auth");
 var usersApi = require("./users");
 
 var apiApp;
@@ -23,11 +25,13 @@ function init(_server, _runtime) {
             var maxApiRequestSize = runtime.settings.apiMaxLength || '15mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize,extended:true}));
-
-            prjApi.init(runtime);
+            authJwt.init(runtime.settings.secretCode);
+            prjApi.init(runtime, authJwt.verifyToken);
             apiApp.use(prjApi.app());
-            usersApi.init(runtime);
+            usersApi.init(runtime, authJwt.verifyToken);
             apiApp.use(usersApi.app());
+            authApi.init(runtime, authJwt.secretCode);
+            apiApp.use(authApi.app());
 
             /**
              * GET Server setting data

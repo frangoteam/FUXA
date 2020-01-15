@@ -1,4 +1,5 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from "rxjs/Subscription";
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
@@ -9,8 +10,11 @@ import { IframeComponent } from '../iframe/iframe.component';
 
 import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
+import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Hmi, View, NaviModeType } from '../_models/hmi';
+import { LoginComponent } from '../login/login.component';
+
 
 @Component({
 	selector: 'app-home',
@@ -31,13 +35,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	showHomeView = false;
 	homeLink = '';
 	showHomeLink = false;
+	securityEnabled = false;
 
 	private subscriptionLoad: Subscription;
 
     constructor(private projectService: ProjectService,
-        private changeDetector: ChangeDetectorRef,
+		private changeDetector: ChangeDetectorRef,
+        public dialog: MatDialog,
 		private router: Router,
 		private hmiService: HmiService,
+		private authService: AuthService,
 		private gaugesManager: GaugesManager) { }
 
 	ngOnInit() {
@@ -99,6 +106,31 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		console.log(event);
 	}
 
+	onLogin() {
+		let cuser = this.authService.getUser();
+		if (cuser) {
+			let dialogRef = this.dialog.open(DialogUserInfo, {
+				id: 'myuserinfo',
+				minWidth: '250px',
+				position: { top: '50px', right: '15px' },
+				backdropClass: 'user-info',
+				data: cuser
+			});
+			dialogRef.afterClosed().subscribe(result => {
+				if (result) {
+					this.authService.signOut();
+				}
+			});
+		} else {
+			let dialogRef = this.dialog.open(LoginComponent, {
+				minWidth: '250px',
+				data: { }
+			});
+			dialogRef.afterClosed().subscribe(result => {
+			});
+		}
+	}
+
 	askValue() {
 		this.hmiService.askDeviceValues();
 	}
@@ -107,6 +139,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.hmiService.askDeviceStatus();
 	}
 
+	isLoggedIn() {
+		return (this.authService.getUser()) ? true : false;
+	}
+
+	private goTo(destination:string) {
+        this.router.navigate([destination]);//, this.ID]);
+	}
+	
 	private loadHmi() {
 		let hmi = this.projectService.getHmi();
 		if (hmi) {
@@ -143,5 +183,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.fuxaview.loadHmi(this.homeView);
 		}
 		this.isLoading = false;
+		this.securityEnabled = this.projectService.isSecurityEnabled();
 	}
+}
+
+@Component({
+    selector: 'user-info',
+    templateUrl: 'userinfo.dialog.html',
+})
+export class DialogUserInfo {
+    constructor(
+        public dialogRef: MatDialogRef<DialogUserInfo>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+    onOkClick(): void {
+        this.dialogRef.close(true);
+    }
 }

@@ -1,7 +1,7 @@
 
 module.exports = {
     // version to manage update
-    version: 1.0,
+    version: 1.1,
     
     // the tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,
@@ -50,4 +50,9 @@ module.exports = {
     //    key: fs.readFileSync('privatekey.pem'),
     //    cert: fs.readFileSync('certificate.pem')
     //},
+
+    // Used to enable security, authentication and authorization and crypt Token
+    //secureEnabled: true,
+    //secretCode: 'frangoteam751'
+
 }

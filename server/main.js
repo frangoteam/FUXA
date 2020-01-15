@@ -48,7 +48,8 @@ try {
     // check new settings from default and merge if not defined
     var defSettings = require(path.join(__dirname, "settings.default.js"));
     if (defSettings.version !== settings.version) {
-        settings = Object.assign(defSettings, settings);
+        logger.warn("Settings aren't up to date! Please check 'settings.json'.");
+        // settings = Object.assign(defSettings, settings);
     }
 } catch (err) {
     logger.error("Error loading settings file: " + settingsFile)
@@ -124,7 +125,7 @@ try {
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'x-access-token, Origin, Content-Type, Accept');
 
     next();
     try {

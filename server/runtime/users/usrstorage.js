@@ -97,20 +97,34 @@ function getUsers(user) {
 function setUser(usr, pwd, groups) {
     return new Promise(function (resolve, reject) {
         // prepare query
-        var sql = "";
-        if (pwd) {
-            sql += "INSERT OR REPLACE INTO users (username, password, groups) VALUES('" + usr + "','"+ bcrypt.hashSync(pwd, 10) + "','" + groups + "');";
-        } else {
-            sql += "INSERT OR REPLACE INTO users (username, groups) VALUES('" + usr + "','" + groups + "');";
-        }
-        db_usr.exec(sql, function (err) {
-            if (err) {
-                logger.error('usrstorage.failed-to-set: ' + err);
-                reject();
-            } else {
-                resolve();
+        var exist = false;
+        getUsers({username: usr}).then(function(data) {
+            if (data && data.length) {
+                exist = true;
             }
-        });     
+            var sql = "";
+            if (pwd) {
+                sql = "INSERT OR REPLACE INTO users (username, password, groups) VALUES('" + usr + "','"+ bcrypt.hashSync(pwd, 10) + "','" + groups + "');";
+                if (exist) {
+                    sql = "UPDATE users SET password = '"+ bcrypt.hashSync(pwd, 10) + "', groups = '" + groups + "' WHERE username = '" + usr + "';";
+                }
+            } else {
+                sql = "INSERT OR REPLACE INTO users (username, groups) VALUES('" + usr + "','" + groups + "');";
+                if (exist) {
+                    sql = "UPDATE users SET groups = '" + groups + "' WHERE username = '" + usr + "';";
+                }
+            }
+            db_usr.exec(sql, function (err) {
+                if (err) {
+                    logger.error('usrstorage.failed-to-set: ' + err);
+                    reject();
+                } else {
+                    resolve();
+                }
+            });  
+        }).catch(function(err) {
+            reject();
+        });   
     });
 }
 
