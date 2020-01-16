@@ -16,7 +16,7 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend). You can use the [released](/../../releases) Windows desktop version build with Electron framework or follow the installation.
 
-You need to have installed [Node](https://nodejs.org) (Version 10.17) and NPM (Version 6.11).
+You need to have installed [Node](https://nodejs.org) (Version 10.17) and NPM (Version 6.11). You need Python 2.7 (in Windows add to Environment Variable PATH) why some packages must be compiled from the source.
 
 Clone this repository or download it
 ```
