@@ -51,6 +51,7 @@
     
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Groups:",
+    "dlg.useraccess-groups": "Authorization (void = full for everyone):",
 
     "general.close": "Close",
     "general.search": "Search...",
@@ -301,6 +302,7 @@
     "msg.users-save-error": "User save failed!",
     "msg.user-remove": "Would you like to remove User ",
     "msg.project-save-error": "Project save failed!",
+    "msg.project-save-unauthorized": "Project save failed! Unauthorized!",
     "msg.project-save-ask": "You want to leave the project?",
     "msg.login-username-required": "Enter a username",
     "msg.login-password-required": "Enter a password",

@@ -241,51 +241,51 @@ app-root {
   margin: 5px;
 }
 
-.manu-item-content-icon {
+.menu-item-content-icon {
   padding-top: 10px;
   padding-bottom: 5px;
 }
-.manu-item-content-icon .mat-icon {
+.menu-item-content-icon .mat-icon {
   font-size: 32px;
   height: 32px;
   width: 32px;
 }
 
-.manu-item-content-text {
+.menu-item-content-text {
   padding: 10px 10px 10px 10px;
 }
-.manu-item-content-text span{
+.menu-item-content-text span{
   text-align: left !important;
 }
 
-.manu-item-content-block {
+.menu-item-content-block {
   display: inline-block;
   padding: 10px 0px 10px 0px;
   text-align: -webkit-center;
 }
-.manu-item-content-block .mat-icon {
+.menu-item-content-block .mat-icon {
   display: block;
   font-size: 32px;
   height: 32px;
   width: 32px;
 }
-.manu-item-content-block span {
+.menu-item-content-block span {
   display: block;
   font-size: 14px;
 }
 
-.manu-item-content-inline {
+.menu-item-content-inline {
   text-align: left;
   padding: 10px 10px 10px 10px;
 }
-.manu-item-content-inline .mat-icon {
+.menu-item-content-inline .mat-icon {
   display: inline-block;
   font-size: 22px;
   height: 22px;
   width: 22px;
   vertical-align: text-bottom;
 }
-.manu-item-content-inline span {
+.menu-item-content-inline span {
   padding-left: 5px;
   display: inline-block;
   font-size: 16px;

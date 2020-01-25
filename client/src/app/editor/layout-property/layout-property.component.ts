@@ -1,10 +1,13 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
+import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
+
 import { LayoutSettings, NaviModeType, NaviItem, NaviItemType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
+import { UserGroups } from '../../_models/user';
 
 @Component({
     selector: 'app-layout-property',
@@ -70,7 +73,7 @@ export class LayoutPropertyComponent implements OnInit {
         views.unshift({id: '', name: ''});
         let dialogRef = this.dialog.open(DialogMenuItem, {
             minWidth: '350px',
-            data: { item: eitem, views: views },
+            data: { item: eitem, views: views, permission: item.permission },
             position: { top: '90px' }
         });
 
@@ -81,6 +84,7 @@ export class LayoutPropertyComponent implements OnInit {
                     item.text = result.item.text;
                     item.view = result.item.view;
                     item.link = result.item.link;
+                    item.permission = result.permission; 
                     if (item.view) {
                         item.link = '';
                     }
@@ -90,6 +94,7 @@ export class LayoutPropertyComponent implements OnInit {
                     nitem.text = result.item.text;
                     nitem.view = result.item.view;
                     nitem.link = result.item.link;
+                    nitem.permission = result.permission; 
                     if (nitem.view) {
                         nitem.link = '';
                     }
@@ -167,18 +172,25 @@ export class LayoutPropertyComponent implements OnInit {
 })
 export class DialogMenuItem {
     // defaultColor = Utils.defaultColor;
-
+	selectedGroups = [];
+    groups = UserGroups.Groups;    
     icons = Define.materialIcons;
+
+    @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+
     constructor(
         public dialogRef: MatDialogRef<DialogMenuItem>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+            this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
+        }
 
     onNoClick(): void {
         this.dialogRef.close();
     }
 
     onOkClick(): void {
-        this.dialogRef.close(true);
+		this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
+        this.dialogRef.close(this.data);
     }
 
 }

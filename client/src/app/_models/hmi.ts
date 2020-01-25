@@ -55,7 +55,7 @@ export class NaviItem {
     link: string;
     view: string;
     icon: string;
-    level: number;
+    permission: number;
 }
 
 export class HeaderSettings {

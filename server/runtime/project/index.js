@@ -219,9 +219,10 @@ function setCharts(charts) {
 /**
  * Get the project data in accordance with autorization
  */
-function getProject() {
+function getProject(userId, userGroups) {
     return new Promise(function (resolve, reject) {
-        resolve(data);
+        const pdata = _filterProjectGroups(userGroups);
+        resolve(pdata);
     });
 }
 
@@ -339,6 +340,37 @@ function setDeviceProperty(query) {
 function getProjectDemo() {
     var demoProject = path.join(settings.appDir, 'project.demo.fuxap');
     return JSON.parse(fs.readFileSync(demoProject, 'utf8'));;
+}
+
+function _filterProjectGroups(groups) {
+    var result = JSON.parse(JSON.stringify(data));// = { devices: {}, hmi: { views: [] } };
+    var admin = (groups === -1 || groups === 255) ? true : false;
+    if (!admin) {
+        delete result.devices;
+        delete result.server;
+        // check navigation permission
+        if (result.hmi.layout.navigation.items) {
+            for (var i = result.hmi.layout.navigation.items.length - 1; i >= 0; i--) {
+                var permission = result.hmi.layout.navigation.items[i].permission;
+                if (permission && !(permission & groups)) {
+                    result.hmi.layout.navigation.items.splice(i, 1);
+                }
+            }
+        }
+        // check view item event permission
+        for (var i = 0; i < result.hmi.views.length; i++) {
+            if (result.hmi.views[i].items) {
+                Object.values(result.hmi.views[i].items).forEach((item) => {
+                    if (item.property && item.property.events) {
+                        for (var x = item.property.events.length - 1; x >= 0; x--) {
+                            var event = item.property.events[x];
+                        } 
+                    }
+                });    
+            }
+        }
+    }
+    return result;
 }
 
 const ProjectDataCmdType = {

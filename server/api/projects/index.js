@@ -6,11 +6,13 @@ var express = require("express");
 const authJwt = require('../jwt-helper');
 var runtime;
 var secureFnc;
+var checkGroupsFnc;
 
 module.exports = {
-    init: function (_runtime, _secureFnc) {
+    init: function (_runtime, _secureFnc, _checkGroupsFnc) {
         runtime = _runtime;
         secureFnc = _secureFnc;
+        checkGroupsFnc = _checkGroupsFnc;
     },
     app: function () {
         var prjApp = express();
@@ -27,25 +29,24 @@ module.exports = {
          * Take from project storage and reply 
          */
         prjApp.get("/api/project", secureFnc, function(req, res) {
-            console.log('/api/project');
-            // if (runtime.settings && runtime.settings.secureEnabled) {
-
-            const data = runtime.project.getProject(req.body).then(result => {
+            var groups = checkGroupsFnc(req);
+            runtime.project.getProject(req.userId, groups).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
                     res.json(result);
                 } else {
                     res.status(404).end();
+                    runtime.logger.error("api get project: Not Found!");
                 }
             }).catch(function(err) {
-                console.log(err.stack);
                 if (err.code) {
                     res.status(400).json({error:err.code, message: err.message});
                 } else {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }
-            })
+                runtime.logger.error("api get project: " + err.message);
+            });
         });
 
         /**
@@ -53,18 +54,26 @@ module.exports = {
          * Set to project storage
          */
         prjApp.post("/api/project", secureFnc, function(req, res, next) {
-            runtime.project.setProject(req.body).then(function(data) {
-                runtime.restart().then(function(result) {
-                    res.end();
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post project: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post project: Unauthorized");
+            } else {
+                runtime.project.setProject(req.body).then(function(data) {
+                    runtime.restart().then(function(result) {
+                        res.end();
+                    });
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api post project: " + err.message);
                 });
-            }).catch(function(err) {
-                console.log(err.stack);
-                if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
-                }
-            });
+            }
         });
 
         /**
@@ -72,19 +81,26 @@ module.exports = {
          * Set the value (general/view/device/...) to project storage
          */
         prjApp.post("/api/projectData", secureFnc, function(req, res, next) {
-            // var param = JSON.parse(JSON.stringify(req.body));
-            runtime.project.setProjectData(req.body.cmd, req.body.data).then(setres => {
-                runtime.update(req.body.cmd, req.body.data).then(result => {
-                    res.end();
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post projectData: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post projectData: Unauthorized");
+            } else {
+                runtime.project.setProjectData(req.body.cmd, req.body.data).then(setres => {
+                    runtime.update(req.body.cmd, req.body.data).then(result => {
+                        res.end();
+                    });
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api post projectData: " + err.message);
                 });
-            }).catch(function(err) {
-                console.log(err.stack);
-                if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
-                }
-            });
+            }
         });
 
         /**
@@ -100,6 +116,7 @@ module.exports = {
                 res.json(data);
             } else {
                 res.status(404).end();
+                runtime.logger.error("api get project: Not Found!");
             }
         });
 
@@ -108,23 +125,30 @@ module.exports = {
          * Take from project storage and reply 
          */
         prjApp.get("/api/device", secureFnc, function(req, res) {
-            console.log('/api/device');
-            const data = runtime.project.getDeviceProperty(req.query).then(result => {
-                // res.header("Access-Control-Allow-Origin", "*");
-                // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                if (result) {
-                    res.json(result);
-                } else {
-                    res.end();
-                }
-            }).catch(function(err) {
-                console.log(err.stack);
-                if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
-                }
-            })
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get device: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get device: Unauthorized");
+            } else {
+                runtime.project.getDeviceProperty(req.query).then(result => {
+                    // res.header("Access-Control-Allow-Origin", "*");
+                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.end();
+                    }
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api get device: " + err.message);
+                });
+            }
         });
 
         /**
@@ -132,16 +156,24 @@ module.exports = {
          * Set to project storage
          */
         prjApp.post("/api/device", secureFnc, function(req, res, next) {
-            runtime.project.setDeviceProperty(req.body.params).then(function(data) {
-                res.end();
-            }).catch(function(err) {
-                console.log(err.stack);
-                if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
-                }
-            });
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post device: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post device: Unauthorized");
+            } else {
+                runtime.project.setDeviceProperty(req.body.params).then(function(data) {
+                    res.end();
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api post device: " + err.message);
+                });                
+            }
         });
  
         return prjApp;

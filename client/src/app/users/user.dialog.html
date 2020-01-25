@@ -16,11 +16,7 @@
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.userproperty-groups' | translate}}</span>
-            <mat-selection-list #selGroups [(ngModel)]="selectedGroups" style="padding-top: 0px;" [disabled]="isAdmin()">
-                <mat-list-option *ngFor="let grp of groups" [selected]="grp.selected" [value]="grp" style="font-size: 14px;height: 26px !important;cursor: pointer;" checkboxPosition="before">
-                    {{grp.label}}
-                </mat-list-option>
-            </mat-selection-list>
+            <sel-options #seloptions [selected]="selectedGroups" [disabled]="isAdmin()" [options]="groups"></sel-options>
         </div>        
     </div>
     <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">

@@ -48,6 +48,7 @@ import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item
 import { TreetableComponent } from './gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dialog.component';
 import { NgxDygraphsComponent } from './gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
+import { SelOptionsComponent } from './gui-helpers/sel-options/sel-options.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -134,6 +135,7 @@ export function createTranslateLoader(http: HttpClient) {
       NgxFabButtonComponent,
       NgxFabItemButtonComponent,
       TreetableComponent,
+      SelOptionsComponent,
       LazyForDirective,
       NgxDygraphsComponent,
       ChartConfigComponent,

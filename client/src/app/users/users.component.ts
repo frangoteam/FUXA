@@ -2,6 +2,8 @@ import { Component, Inject, OnInit, AfterViewInit, ViewChild, Input, Output, Eve
 import { MatTable, MatTableDataSource, MatSort, MatMenuTrigger } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
+import { SelOptionsComponent } from '../gui-helpers/sel-options/sel-options.component';
+
 import { UserService } from '../_services/user.service';
 import { User, UserGroups } from '../_models/user';
 
@@ -120,6 +122,8 @@ export class DialogUser {
 	selectedGroups = [];
 	groups = UserGroups.Groups;
 
+	@ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+
 	constructor(public dialogRef: MatDialogRef<DialogUser>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {
 		this.selectedGroups = UserGroups.ValueToGroups(this.data.user.groups);
@@ -130,7 +134,7 @@ export class DialogUser {
 	}
 
 	onOkClick(): void {
-		this.data.user.groups = UserGroups.GroupsToValue(this.selectedGroups);
+		this.data.user.groups = UserGroups.GroupsToValue(this.seloptions.selected);
 		this.dialogRef.close(this.data.user);
 	}
 

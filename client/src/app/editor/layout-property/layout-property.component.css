@@ -22,6 +22,7 @@
 .layout-menu-item-link {
     /* min-width: 150px; */
     /* color: rgba(0,0,0,0.3); */
-    font-size: 14px;
+    display: block;
+    font-size: 12px;
     white-space: nowrap;
   }

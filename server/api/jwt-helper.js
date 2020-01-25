@@ -3,10 +3,16 @@
 const jwt = require('jsonwebtoken');
 
 var secretCode = 'frangoteam751';
+var tokenExpiresIn = 60 * 15;   // 15 minutes
+const adminGroups = [-1, 255];
 
-function init(_secretCode) {
+
+function init(_secretCode, _tokenExpires) {
     if (_secretCode) {
         secretCode = _secretCode;
+    }
+    if (_tokenExpires) {
+        tokenExpiresIn = _tokenExpires;
     }
 }
 
@@ -17,6 +23,11 @@ function verifyToken (req, res, next) {
         jwt.verify(token, secretCode, (err, decoded) => {
             if (err) {
                 req.userId = null;
+                req.userGroups = null;
+                if (err.name === 'TokenExpiredError') {
+                    req.tokenExpired = true;
+                    res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
+                }
                 next();
                 // return res.status(500).send({
                 //     auth: false,
@@ -24,19 +35,26 @@ function verifyToken (req, res, next) {
                 // });
             } else {
                 req.userId = decoded.id;
+                req.userGroups = decoded.groups;
                 next();
             }
         });
     } else {
         // notice that no token was provided...}
-        req.userId = null;        
+        req.userId = null;
+        req.userGroups = null;
         next();
     }
 }
 
+function getTokenExpiresIn() {
+    return tokenExpiresIn;
+}
 
 module.exports = {
     init: init,
     verifyToken: verifyToken,
-    secretCode: secretCode
+    get secretCode() { return secretCode },
+    get tokenExpiresIn() { return tokenExpiresIn },
+    adminGroups: adminGroups
 };

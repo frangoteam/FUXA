@@ -39,9 +39,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	private subscriptionLoad: Subscription;
 
-    constructor(private projectService: ProjectService,
+	constructor(private projectService: ProjectService,
 		private changeDetector: ChangeDetectorRef,
-        public dialog: MatDialog,
+		public dialog: MatDialog,
 		private router: Router,
 		private hmiService: HmiService,
 		private authService: AuthService,
@@ -54,16 +54,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngAfterViewInit() {
 		try {
 			let hmi = this.projectService.getHmi();
-			if (!hmi) {
-				this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-					this.loadHmi();
-				}, error => {
-					console.log('Error loadHMI');
-				});
-			} else {
+			if (hmi) {
 				this.loadHmi();
-            }
-            this.changeDetector.detectChanges();
+			}
+			this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+				this.loadHmi();
+			}, error => {
+				console.log('Error loadHMI');
+			});
+			this.changeDetector.detectChanges();
 		}
 		catch (e) {
 			console.log(e);
@@ -119,12 +118,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			dialogRef.afterClosed().subscribe(result => {
 				if (result) {
 					this.authService.signOut();
+					this.projectService.reload();
 				}
 			});
 		} else {
 			let dialogRef = this.dialog.open(LoginComponent, {
 				minWidth: '250px',
-				data: { }
+				data: {}
 			});
 			dialogRef.afterClosed().subscribe(result => {
 			});
@@ -143,10 +143,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		return (this.authService.getUser()) ? true : false;
 	}
 
-	private goTo(destination:string) {
-        this.router.navigate([destination]);//, this.ID]);
+	private goTo(destination: string) {
+		this.router.navigate([destination]);//, this.ID]);
 	}
-	
+
 	private loadHmi() {
 		let hmi = this.projectService.getHmi();
 		if (hmi) {
@@ -188,15 +188,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 }
 
 @Component({
-    selector: 'user-info',
-    templateUrl: 'userinfo.dialog.html',
+	selector: 'user-info',
+	templateUrl: 'userinfo.dialog.html',
 })
 export class DialogUserInfo {
-    constructor(
-        public dialogRef: MatDialogRef<DialogUserInfo>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+	constructor(
+		public dialogRef: MatDialogRef<DialogUserInfo>,
+		@Inject(MAT_DIALOG_DATA) public data: any) { }
 
-    onOkClick(): void {
-        this.dialogRef.close(true);
-    }
+	onOkClick(): void {
+		this.dialogRef.close(true);
+	}
 }

@@ -123,6 +123,10 @@ export class ProjectService {
         FileSaver.saveAs(blob, filename);
     }
 
+    reload() {
+        this.load();
+    }
+    
     /**
      * Remove Tag value to save without value
      * Value was added by HmiService from socketIo event
@@ -147,21 +151,23 @@ export class ProjectService {
      * @param old
      */
     setDevice(device: Device, old: Device, security?: any) {
-        this.projectData.devices[device.name] = device;
-        if (environment.serverEnabled) {
-            this.setDeviceSecurity(device.name, security).subscribe(() => {
-                this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
-                    if (old && old.name && old.name !== device.name && old.id === device.id) {
-                        this.removeDevice(old);
-                    }
+        if (this.projectData.devices) {
+            this.projectData.devices[device.name] = device;
+            if (environment.serverEnabled) {
+                this.setDeviceSecurity(device.name, security).subscribe(() => {
+                    this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+                        if (old && old.name && old.name !== device.name && old.id === device.id) {
+                            this.removeDevice(old);
+                        }
+                    }, err => {
+                        console.log(err);
+                        this.notifySaveError(err);
+                    });                
                 }, err => {
                     console.log(err);
-                    this.notifySaveError();
-                });                
-            }, err => {
-                console.log(err);
-                this.notifySaveError();
-            });
+                    this.notifySaveError(err);
+                });
+            }
         }
     }
 
@@ -171,7 +177,7 @@ export class ProjectService {
             this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });                
         }
     }
@@ -193,12 +199,12 @@ export class ProjectService {
             this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });
             this.setDeviceSecurity(device.name, '').subscribe(() => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });            
         }
     }
@@ -226,7 +232,7 @@ export class ProjectService {
             this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });
         }
     }
@@ -247,7 +253,7 @@ export class ProjectService {
             this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });
         }
     }
@@ -300,7 +306,7 @@ export class ProjectService {
             this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });
         }
     }
@@ -332,7 +338,7 @@ export class ProjectService {
             this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
             }, err => {
                 console.log(err);
-                this.notifySaveError();
+                this.notifySaveError(err);
             });
         }
     }
@@ -344,9 +350,12 @@ export class ProjectService {
         this.onLoadHmi.emit(true);
     }
 
-    private notifySaveError() {
+    private notifySaveError(err: any) {
         let msg = '';
         this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+        if (err.status === 401) {
+            this.translateService.get('msg.project-save-unauthorized').subscribe((txt: string) => { msg = txt });
+        }
         this.toastr.error(msg, '', {
             timeOut: 3000,
             closeButton: true,

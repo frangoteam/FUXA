@@ -1,0 +1,5 @@
+<mat-selection-list #selGroups [(ngModel)]="selected" style="padding-top: 0px;" [disabled]="disabled">
+  <mat-list-option *ngFor="let opt of options" [selected]="opt.selected" [value]="opt" style="font-size: 14px;height: 26px !important;cursor: pointer;" checkboxPosition="before">
+      {{opt.label}}
+  </mat-list-option>
+</mat-selection-list>
