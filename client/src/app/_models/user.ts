@@ -5,6 +5,7 @@ export class User {
 }
 
 export class UserGroups {
+    static EXTENSION = 8;
     static Groups = [{id: 1, label: 'A'},
             {id: 2, label: 'B'},
             {id: 4, label: 'C'},
@@ -14,20 +15,22 @@ export class UserGroups {
             {id: 64, label: 'G'},
             {id: 128, label: 'H'}];
 
-    static GroupsToValue (grps: any): number {
+    static GroupsToValue (grps: any, extended?: boolean): number {
         let result = 0;
         if (grps) {
             for (let i = 0; i < grps.length; i++) {
                 result += grps[i].id;
             }
         } 
-        return result;
+        let shift = (extended) ? this.EXTENSION : 0;
+        return result << shift;
     }
 
-    static ValueToGroups(value: number): any {
+    static ValueToGroups(value: number, extended?: boolean): any {
         let result = [];
+        let shift = (extended) ? this.EXTENSION : 0;
         for (let i = 0; i < this.Groups.length; i++) {
-            if (value & this.Groups[i].id) {
+            if ((value >> shift) & this.Groups[i].id) {
                 result.push(this.Groups[i]);
             }
         }

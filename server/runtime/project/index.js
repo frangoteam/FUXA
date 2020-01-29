@@ -357,16 +357,28 @@ function _filterProjectGroups(groups) {
                 }
             }
         }
-        // check view item event permission
+        // check view item permission show / enabled
         for (var i = 0; i < result.hmi.views.length; i++) {
             if (result.hmi.views[i].items) {
                 Object.values(result.hmi.views[i].items).forEach((item) => {
-                    if (item.property && item.property.events) {
-                        for (var x = item.property.events.length - 1; x >= 0; x--) {
-                            var event = item.property.events[x];
-                        } 
+                    if (item.property && item.property.permission) {
+                        var show = (item.property.permission >> 8) & groups;
+                        var enabled = (item.property.permission & 255) & groups;
+                        if (!show) {
+                            var view = result.hmi.views[i];
+                            var position = view.svgcontent.indexOf(item.id);                            
+                            if (position) {
+                                position += item.id.length + 1;
+                                var hidetext = ' visibility="hidden" ';
+                                view.svgcontent = view.svgcontent.slice(0, position) + hidetext +  view.svgcontent.slice(position);
+                            }
+                        } else if (!enabled) {
+                            for (var x = item.property.events.length - 1; x >= 0; x--) {
+                                var event = item.property.events[x];
+                            }
+                        }
                     }
-                });    
+                });
             }
         }
     }

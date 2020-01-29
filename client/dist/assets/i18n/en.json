@@ -50,8 +50,13 @@
     "dlg.cancel": "CANCEL",
     
     "dlg.userproperty-title": "User",
-    "dlg.userproperty-groups": "Groups:",
-    "dlg.useraccess-groups": "Authorization (void = full for everyone):",
+    "dlg.userproperty-groups": "Authorization Groups",
+    "dlg.useraccess-groups": "Authorization (void = full for everyone)",
+
+    "dlg.gauge-permission-title": "Authorization",
+    "dlg.gauge-permission-label": "(void = full for everyone)",
+    "dlg.gauge-permission-show": "Show",
+    "dlg.gauge-permission-enabled": "Enabled",
 
     "general.close": "Close",
     "general.search": "Search...",
@@ -274,6 +279,7 @@
     "gauges.property-events": "Events",
     "gauges.property-title": "Property",
     "gauges.property-name": "Name",
+    "gauges.property-permission": "Authorization",
     "gauges.property-event-type": "Type",
     "gauges.property-event-action": "Action",
     "gauges.property-event-destination": "Destination",

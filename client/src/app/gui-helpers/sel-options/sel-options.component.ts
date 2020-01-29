@@ -10,8 +10,7 @@ export class SelOptionsComponent implements OnInit {
   @Input() disabled: any;
 	@Input() selected = [];
 	@Input() options = [];
-
-  // @Output() expand = new EventEmitter();
+	@Input() extSelected;
 
   constructor() { }
 

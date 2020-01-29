@@ -24,7 +24,7 @@ function verifyToken (req, res, next) {
             if (err) {
                 req.userId = null;
                 req.userGroups = null;
-                if (err.name === 'TokenExpiredError') {
+                if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
                     req.tokenExpired = true;
                     res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
                 }

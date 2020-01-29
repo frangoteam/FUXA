@@ -88,6 +88,7 @@ export class GaugeProperty {
     alarmSrc: string;
     alarm: string;
     alarmColor: string;
+    permission: number;
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
 }

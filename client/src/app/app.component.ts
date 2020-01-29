@@ -4,42 +4,42 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.css']
 })
 
 export class AppComponent implements OnInit, AfterViewInit {
-  title = 'app';
-  location: Location;
+	title = 'app';
+	location: Location;
 
-  @ViewChild('fabmenu') fabmenu: any;
+	@ViewChild('fabmenu') fabmenu: any;
 
-  constructor(private router: Router,
-    private fuxaLanguage: TranslateService,
-    location: Location) {
-    this.location = location;
+	constructor(private router: Router,
+		private fuxaLanguage: TranslateService,
+		location: Location) {
+		this.location = location;
 
-    // this language will be used as a fallback when a translation isn't found in the current language
-    fuxaLanguage.setDefaultLang('en');
-    // the lang to use, if the lang isn't available, it will use the current loader to get them
-    fuxaLanguage.use('en');
-  }
+		// this language will be used as a fallback when a translation isn't found in the current language
+		fuxaLanguage.setDefaultLang('en');
+		// the lang to use, if the lang isn't available, it will use the current loader to get them
+		fuxaLanguage.use('en');
+	}
 
-  ngOnInit() {
-  }
+	ngOnInit() {
+	}
 
-  ngAfterViewInit() {
-  }
+	ngAfterViewInit() {
+	}
 
-  isHidden() {
-    let list = ['/lab', '/home'],
-      route = this.location.path();
-    return (list.indexOf(route) > -1);
-  }
+	isHidden() {
+		let list = ['/lab', '/home'],
+			route = this.location.path();
+		return (list.indexOf(route) > -1);
+	}
 
-  onGoTo(goto) {
-    this.router.navigate([goto]);
-    this.fabmenu.toggle();
-  }
+	onGoTo(goto) {
+		this.router.navigate([goto]);
+		this.fabmenu.toggle();
+	}
 }

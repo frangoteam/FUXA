@@ -65,7 +65,7 @@ import { CompressorComponent } from './gauges/proc-eng/compressor/compressor.com
 import { ExchangerComponent } from './gauges/proc-eng/exchanger/exchanger.component';
 import { ValveComponent } from './gauges/proc-eng/valve/valve.component';
 import { MotorComponent } from './gauges/proc-eng/motor/motor.component';
-import { GaugePropertyComponent } from './gauges/gauge-property/gauge-property.component';
+import { GaugePropertyComponent, DialogGaugePermission } from './gauges/gauge-property/gauge-property.component';
 import { ChartPropertyComponent } from './gauges/chart-property/chart-property.component';
 import { FlexInputComponent } from './gauges/gauge-property/flex-input/flex-input.component';
 import { FlexHeadComponent } from './gauges/gauge-property/flex-head/flex-head.component';
@@ -121,6 +121,7 @@ export function createTranslateLoader(http: HttpClient) {
       GaugeProgressComponent,
       GaugeSemaphoreComponent,
       GaugePropertyComponent,
+      DialogGaugePermission,
       ChartPropertyComponent,
       TesterComponent,
       TutorialComponent,
@@ -189,7 +190,8 @@ export function createTranslateLoader(http: HttpClient) {
 		DialogDocProperty,
 		DialogDocName,
 		DialogInfo,
-		GaugePropertyComponent,
+      GaugePropertyComponent,
+      DialogGaugePermission,
 		ChartPropertyComponent,
 		DevicePropertyComponent,
 		TagPropertyComponent,

@@ -1434,19 +1434,21 @@ var User = (function () {
 var UserGroups = (function () {
     function UserGroups() {
     }
-    UserGroups.GroupsToValue = function (grps) {
+    UserGroups.GroupsToValue = function (grps, extended) {
         var result = 0;
         if (grps) {
             for (var i = 0; i < grps.length; i++) {
                 result += grps[i].id;
             }
         }
-        return result;
+        var shift = (extended) ? this.EXTENSION : 0;
+        return result << shift;
     };
-    UserGroups.ValueToGroups = function (value) {
+    UserGroups.ValueToGroups = function (value, extended) {
         var result = [];
+        var shift = (extended) ? this.EXTENSION : 0;
         for (var i = 0; i < this.Groups.length; i++) {
-            if (value & this.Groups[i].id) {
+            if ((value >> shift) & this.Groups[i].id) {
                 result.push(this.Groups[i]);
             }
         }
@@ -1464,6 +1466,7 @@ var UserGroups = (function () {
         }
         return result;
     };
+    UserGroups.EXTENSION = 8;
     UserGroups.Groups = [{ id: 1, label: 'A' },
         { id: 2, label: 'B' },
         { id: 4, label: 'C' },
@@ -2974,7 +2977,8 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_68__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
                 __WEBPACK_IMPORTED_MODULE_69__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
                 __WEBPACK_IMPORTED_MODULE_70__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["a" /* DialogGaugePermission */],
                 __WEBPACK_IMPORTED_MODULE_60__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_28__tester_tester_component__["a" /* TesterComponent */],
                 __WEBPACK_IMPORTED_MODULE_35__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
@@ -3043,7 +3047,8 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["a" /* DialogGaugePermission */],
                 __WEBPACK_IMPORTED_MODULE_60__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_23__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_24__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
@@ -5378,7 +5383,7 @@ var EditorComponent = (function () {
         var defaultValue = __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].getDefaultValue(settings.type);
         // settings.property = JSON.parse(settings.property);
         var dialogRef;
-        if (dlgType === __WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Chart) {
+        if (dlgType === __WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Chart) {
             dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_8__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */], {
                 minWidth: '700px',
                 minHeight: '700px',
@@ -5391,7 +5396,7 @@ var EditorComponent = (function () {
             });
         }
         else {
-            dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["b" /* GaugePropertyComponent */], {
+            dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */], {
                 minWidth: '700px',
                 minHeight: '700px',
                 panelClass: 'dialog-property',
@@ -8063,6 +8068,13 @@ var InputItemType;
 
 /***/ }),
 
+/***/ "../../../../../src/app/gauges/gauge-property/gauge-permission.dialog.html":
+/***/ (function(module, exports) {
+
+module.exports = "<div>\r\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'dlg.gauge-permission-title' | translate}}</h1>\r\n    <div mat-dialog-content>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span style=\"display:inline-block; width: 45px; text-align: center;\">{{'dlg.gauge-permission-show' | translate}}</span>\r\n            <span style=\"display:inline-block; width: 70px;\">{{'dlg.gauge-permission-enabled' | translate}}</span>\r\n            <span style=\"display:inline-block\">{{'dlg.gauge-permission-label' | translate}}</span>\r\n            <sel-options style=\"display:block\" #seloptions [selected]=\"selectedGroups\" [options]=\"groups\" [extSelected]=\"extensionGroups\"></sel-options>\r\n        </div>\r\n    </div>\r\n    <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n        <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n        <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n    </div>\r\n</div>"
+
+/***/ }),
+
 /***/ "../../../../../src/app/gauges/gauge-property/gauge-property.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8084,7 +8096,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gauges/gauge-property/gauge-property.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <h1 mat-dialog-title style=\"display:inline-block; cursor:move\" mat-dialog-draggable>Property</h1> -->\n<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n  <mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n  <mat-tab-group style=\"width: 100%;\">\n    <mat-tab label=\"{{'gauges.property-props' | translate}}\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"my-form-field\">\n            <span>{{'gauges.property-name' | translate}}</span>\n            <input [(ngModel)]=\"data.settings.name\" style=\"width: 220px\" type=\"text\">\n          </div>\n          <div class=\"toolbox\" *ngIf=\"isToolboxToShow()\">\n            <button mat-icon-button (click)=\"onAddInput()\">\n              <mat-icon>add_circle_outline</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button>\n          </div>\n        </div>\n        <div mat-dialog-content style=\"overflow: hidden; width:100%\">\n          <flex-head [data]=\"data\" [property]=\"property\" #flexhead></flex-head>\n        </div>\n      </div>\n    </mat-tab>\n    <mat-tab label=\"{{'gauges.property-events' | translate}}\" *ngIf=\"eventsSupported\">\n      <div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n        <div style=\"display: block;\">\n          <div class=\"toolbox\">\n            <button mat-icon-button (click)=\"onAddEvent()\">\n              <mat-icon>add_circle_outline</mat-icon>\n            </button>\n            <!-- <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button> -->\n          </div>\n        </div>\n        <div mat-dialog-content style=\"overflow: hidden; width:100%\">\n          <flex-event [property]=\"property\" [views]=\"views\" #flexevent *ngIf=\"eventsSupported\" style=\"padding-bottom: 5px\"></flex-event>\n        </div>\n      </div>\n    </mat-tab>\n  </mat-tab-group>\n  <!-- <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px; margin-top: 5px\"> -->\n  <div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n    <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n    <button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n  </div>\n</div>"
+module.exports = "<!-- <h1 mat-dialog-title style=\"display:inline-block; cursor:move\" mat-dialog-draggable>Property</h1> -->\n<!-- <div style=\"width: 100%;\"> -->\n<div style=\"width: 100%;min-height: 400px;position: relative;padding-bottom: 40px\">\n\t<mat-icon (click)=\"onNoClick()\" style=\"float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px\">clear</mat-icon>\n\t<mat-tab-group style=\"width: 100%;\">\n\t\t<mat-tab label=\"{{'gauges.property-props' | translate}}\">\n\t\t\t<div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n\t\t\t\t<div style=\"display: block;\">\n\t\t\t\t\t<div class=\"my-form-field\">\n\t\t\t\t\t\t<span>{{'gauges.property-name' | translate}}</span>\n\t\t\t\t\t\t<input [(ngModel)]=\"data.settings.name\" style=\"width: 220px\" type=\"text\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"my-form-field\" style=\"vertical-align: bottom; margin-left: 13px;\">\n\t\t\t\t\t\t<span>{{'gauges.property-permission' | translate}}</span>\n\t\t\t\t\t\t<div style=\"width:80px;height:30px;background-color:#f1f3f4;text-align:center;cursor:pointer;\" (click)=\"onEditPermission()\">\n\t\t\t\t\t\t\t<mat-icon class=\"header-icon\" style=\"line-height: 30px;\" *ngIf=\"!property || !property.permission\">lock_open</mat-icon>\n\t\t\t\t\t\t\t<mat-icon class=\"header-icon\" style=\"line-height: 30px;\" *ngIf=\"property && property.permission\">lock</mat-icon>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"toolbox\" *ngIf=\"isToolboxToShow()\">\n\t\t\t\t\t\t<button mat-icon-button (click)=\"onAddInput()\">\n\t\t\t\t\t\t\t<mat-icon>add_circle_outline</mat-icon>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n\t\t\t\t\t\t\t<mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n\t\t\t\t\t\t\t<mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n\t\t\t\t\t\t\t<mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n\t\t\t\t\t\t\t<mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div mat-dialog-content style=\"overflow: hidden; width:100%\">\n\t\t\t\t\t<flex-head [data]=\"data\" [property]=\"property\" #flexhead></flex-head>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</mat-tab>\n\t\t<mat-tab label=\"{{'gauges.property-events' | translate}}\" *ngIf=\"eventsSupported\">\n\t\t\t<div style=\"max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;\">\n\t\t\t\t<div style=\"display: block;\">\n\t\t\t\t\t<div class=\"toolbox\">\n\t\t\t\t\t\t<button mat-icon-button (click)=\"onAddEvent()\">\n\t\t\t\t\t\t\t<mat-icon>add_circle_outline</mat-icon>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<!-- <button mat-icon-button (click)=\"slideView = !slideView;onRangeViewToggle()\" *ngIf=\"isRangeToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"slideView\">toll</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"!slideView\">input</mat-icon>\n            </button>\n            <button mat-icon-button (click)=\"withAlarm = !withAlarm;onAlarmToggle();\" *ngIf=\"isAlarmToShow()\">\n              <mat-icon class=\"header-icon\" *ngIf=\"!withAlarm\">notifications</mat-icon>\n              <mat-icon class=\"header-icon\" *ngIf=\"withAlarm\">notifications_off</mat-icon>\n            </button> -->\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div mat-dialog-content style=\"overflow: hidden; width:100%\">\n\t\t\t\t\t<flex-event [property]=\"property\" [views]=\"views\" #flexevent *ngIf=\"eventsSupported\" style=\"padding-bottom: 5px\"></flex-event>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</mat-tab>\n\t</mat-tab-group>\n\t<!-- <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px; margin-top: 5px\"> -->\n\t<div mat-dialog-actions style=\"display: inline-block; position: absolute; bottom: 10px; right: 10px\">\n\t\t<button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\n\t\t<button mat-raised-button color=\"primary\" (click)=\"onOkClick()\" [mat-dialog-close]=\"data\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\n\t</div>\n</div>"
 
 /***/ }),
 
@@ -8092,12 +8104,16 @@ module.exports = "<!-- <h1 mat-dialog-title style=\"display:inline-block; cursor
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return GaugePropertyComponent; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GaugeDialogType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return GaugePropertyComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return GaugeDialogType; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DialogGaugePermission; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_material__ = __webpack_require__("../../../material/esm5/material.es5.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gui_helpers_sel_options_sel_options_component__ = __webpack_require__("../../../../../src/app/gui-helpers/sel-options/sel-options.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_user__ = __webpack_require__("../../../../../src/app/_models/user.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8114,8 +8130,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 
 
 
+
+
+
 var GaugePropertyComponent = (function () {
-    function GaugePropertyComponent(dialogRef, data) {
+    function GaugePropertyComponent(dialog, dialogRef, data) {
+        this.dialog = dialog;
         this.dialogRef = dialogRef;
         this.data = data;
         this.withAlarm = false;
@@ -8127,6 +8147,9 @@ var GaugePropertyComponent = (function () {
         this.eventsSupported = this.data.withEvents;
         this.views = this.data.views;
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
+        if (!this.property) {
+            this.property = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["f" /* GaugeProperty */]();
+        }
         this.defaultValue = this.data.default;
         if (this.dialogType === GaugeDialogType.OnlyValue) {
             this.flexHead.withInput = null;
@@ -8194,17 +8217,31 @@ var GaugePropertyComponent = (function () {
         }
         return false;
     };
+    GaugePropertyComponent.prototype.onEditPermission = function () {
+        var _this = this;
+        var permission = this.property.permission;
+        var dialogRef = this.dialog.open(DialogGaugePermission, {
+            minWidth: '350px',
+            data: { permission: permission },
+            position: { top: '90px' }
+        });
+        dialogRef.afterClosed().subscribe(function (result) {
+            if (result) {
+                _this.property.permission = result.permission;
+            }
+        });
+    };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
         __metadata("design:type", Object)
     ], GaugePropertyComponent.prototype, "name", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('flexhead'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__flex_head_flex_head_component__["a" /* FlexHeadComponent */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_3__flex_head_flex_head_component__["a" /* FlexHeadComponent */])
     ], GaugePropertyComponent.prototype, "flexHead", void 0);
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('flexevent'),
-        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_3__flex_event_flex_event_component__["a" /* FlexEventComponent */])
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_4__flex_event_flex_event_component__["a" /* FlexEventComponent */])
     ], GaugePropertyComponent.prototype, "flexEvent", void 0);
     GaugePropertyComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -8212,8 +8249,9 @@ var GaugePropertyComponent = (function () {
             template: __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.html"),
             styles: [__webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.css")]
         }),
-        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
-        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+        __param(2, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */],
+            __WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
     ], GaugePropertyComponent);
     return GaugePropertyComponent;
 }());
@@ -8229,6 +8267,40 @@ var GaugeDialogType;
     GaugeDialogType[GaugeDialogType["MinMax"] = 6] = "MinMax";
     GaugeDialogType[GaugeDialogType["Chart"] = 7] = "Chart";
 })(GaugeDialogType || (GaugeDialogType = {}));
+var DialogGaugePermission = (function () {
+    function DialogGaugePermission(dialogRef, data) {
+        this.dialogRef = dialogRef;
+        this.data = data;
+        // defaultColor = Utils.defaultColor;
+        this.selectedGroups = [];
+        this.extensionGroups = [];
+        this.groups = __WEBPACK_IMPORTED_MODULE_6__models_user__["b" /* UserGroups */].Groups;
+        this.selectedGroups = __WEBPACK_IMPORTED_MODULE_6__models_user__["b" /* UserGroups */].ValueToGroups(this.data.permission);
+        this.extensionGroups = __WEBPACK_IMPORTED_MODULE_6__models_user__["b" /* UserGroups */].ValueToGroups(this.data.permission, true);
+    }
+    DialogGaugePermission.prototype.onNoClick = function () {
+        this.dialogRef.close();
+    };
+    DialogGaugePermission.prototype.onOkClick = function () {
+        this.data.permission = __WEBPACK_IMPORTED_MODULE_6__models_user__["b" /* UserGroups */].GroupsToValue(this.seloptions.selected);
+        this.data.permission += __WEBPACK_IMPORTED_MODULE_6__models_user__["b" /* UserGroups */].GroupsToValue(this.seloptions.extSelected, true);
+        this.dialogRef.close(this.data);
+    };
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])(__WEBPACK_IMPORTED_MODULE_2__gui_helpers_sel_options_sel_options_component__["a" /* SelOptionsComponent */]),
+        __metadata("design:type", __WEBPACK_IMPORTED_MODULE_2__gui_helpers_sel_options_sel_options_component__["a" /* SelOptionsComponent */])
+    ], DialogGaugePermission.prototype, "seloptions", void 0);
+    DialogGaugePermission = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
+            selector: 'dialog-gaugepermission',
+            template: __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-permission.dialog.html"),
+        }),
+        __param(1, Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Inject */])(__WEBPACK_IMPORTED_MODULE_1__angular_material__["a" /* MAT_DIALOG_DATA */])),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__angular_material__["l" /* MatDialogRef */], Object])
+    ], DialogGaugePermission);
+    return DialogGaugePermission;
+}());
+
 
 
 /***/ }),
@@ -8647,40 +8719,40 @@ var GaugesManager = (function () {
     };
     GaugesManager.getEditDialogTypeToUse = function (type) {
         if (type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].ValueAndUnit;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].ValueAndUnit;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].RangeWithAlarm;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].OnlyValue;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Step;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Step;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].MinMax;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].MinMax;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Range;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Range;
         }
         else if (type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["a" /* GaugeDialogType */].Chart;
+            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Chart;
         }
     };
     GaugesManager.getDefaultValue = function (type) {
@@ -10550,7 +10622,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/sel-options/sel-options.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<mat-selection-list #selGroups [(ngModel)]=\"selected\" style=\"padding-top: 0px;\" [disabled]=\"disabled\">\n  <mat-list-option *ngFor=\"let opt of options\" [selected]=\"opt.selected\" [value]=\"opt\" style=\"font-size: 14px;height: 26px !important;cursor: pointer;\" checkboxPosition=\"before\">\n      {{opt.label}}\n  </mat-list-option>\n</mat-selection-list>"
+module.exports = "<mat-selection-list *ngIf=\"extSelected\" #extGroups [(ngModel)]=\"extSelected\" style=\"display: inline-block; width: 40px;padding-top: 0px; padding-bottom: 10px;\" [disabled]=\"disabled\">\n\t<mat-list-option *ngFor=\"let opt of options\" [selected]=\"opt.selected\" [value]=\"opt\" style=\"height: 26px;cursor: pointer;\" checkboxPosition=\"before\">\n\t</mat-list-option>\t\n</mat-selection-list>\n<mat-selection-list #selGroups [(ngModel)]=\"selected\" style=\"display: inline-block; padding-top: 0px; padding-bottom: 10px;\" [disabled]=\"disabled\">\n\t<mat-list-option *ngFor=\"let opt of options\" [selected]=\"opt.selected\" [value]=\"opt\" style=\"font-size: 14px;height: 26px !important;cursor: pointer;\" checkboxPosition=\"before\">\n\t\t{{opt.label}}\n\t</mat-list-option>\n</mat-selection-list>"
 
 /***/ }),
 
@@ -10571,7 +10643,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 var SelOptionsComponent = (function () {
-    // @Output() expand = new EventEmitter();
     function SelOptionsComponent() {
         this.selected = [];
         this.options = [];
@@ -10590,6 +10661,10 @@ var SelOptionsComponent = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
         __metadata("design:type", Object)
     ], SelOptionsComponent.prototype, "options", void 0);
+    __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
+        __metadata("design:type", Object)
+    ], SelOptionsComponent.prototype, "extSelected", void 0);
     SelOptionsComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
             selector: 'sel-options',
@@ -12144,7 +12219,7 @@ var TesterService = (function () {
 /***/ "../../../../../src/app/users/user.dialog.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'dlg.userproperty-title' | translate}}</h1>\r\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n    <div mat-dialog-content *ngIf=\"data.editmode < 0\">\r\n\t\t{{'msg.user-remove' | translate}} '{{data.user.username}}' ?\r\n\t</div>\r\n    <div mat-dialog-content *ngIf=\"data.editmode >= 0\">\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'general.username' | translate}}</span>\r\n            <input [(ngModel)]=\"data.user.username\" type=\"text\" width=\"100%\" [readonly]=\"data.editmode == 0\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'general.password' | translate}}</span>\r\n            <input [(ngModel)]=\"data.user.password\" type=\"text\" width=\"100%\" *ngIf=\"data.editmode >= 1\">\r\n            <input [(ngModel)]=\"data.user.password\" type=\"text\" width=\"100%\" placeholder=\"******\" *ngIf=\"data.editmode == 0\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'dlg.userproperty-groups' | translate}}</span>\r\n            <sel-options #seloptions [selected]=\"selectedGroups\" [disabled]=\"isAdmin()\" [options]=\"groups\"></sel-options>\r\n            <!-- <mat-selection-list #selGroups [(ngModel)]=\"selectedGroups\" style=\"padding-top: 0px;\" [disabled]=\"isAdmin()\">\r\n                <mat-list-option *ngFor=\"let grp of groups\" [selected]=\"grp.selected\" [value]=\"grp\" style=\"font-size: 14px;height: 26px !important;cursor: pointer;\" checkboxPosition=\"before\">\r\n                    {{grp.label}}\r\n                </mat-list-option>\r\n            </mat-selection-list> -->\r\n        </div>        \r\n    </div>\r\n    <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n        <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n        <button mat-raised-button [disabled]=\"!isValid(data.user.username)\" color=\"primary\" (click)=\"onOkClick()\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n    </div>\r\n</div>"
+module.exports = "<div>\r\n    <h1 mat-dialog-title style=\"display:inline-block\" mat-dialog-draggable>{{'dlg.userproperty-title' | translate}}</h1>\r\n    <mat-icon (click)=\"onNoClick()\" style=\"float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;\">clear</mat-icon>\r\n    <div mat-dialog-content *ngIf=\"data.editmode < 0\">\r\n\t\t{{'msg.user-remove' | translate}} '{{data.user.username}}' ?\r\n\t</div>\r\n    <div mat-dialog-content *ngIf=\"data.editmode >= 0\">\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'general.username' | translate}}</span>\r\n            <input [(ngModel)]=\"data.user.username\" type=\"text\" width=\"100%\" [readonly]=\"data.editmode == 0\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'general.password' | translate}}</span>\r\n            <input [(ngModel)]=\"data.user.password\" type=\"text\" width=\"100%\" *ngIf=\"data.editmode >= 1\">\r\n            <input [(ngModel)]=\"data.user.password\" type=\"text\" width=\"100%\" placeholder=\"******\" *ngIf=\"data.editmode == 0\">\r\n        </div>\r\n        <div class=\"my-form-field\" style=\"display: block;margin-bottom: 10px;\">\r\n            <span>{{'dlg.userproperty-groups' | translate}}</span>\r\n            <sel-options #seloptions [selected]=\"selectedGroups\" [disabled]=\"isAdmin()\" [options]=\"groups\"></sel-options>\r\n        </div>        \r\n    </div>\r\n    <div mat-dialog-actions style=\"float:right; margin-bottom:0px;padding-bottom:0px\">\r\n        <button mat-raised-button (click)=\"onNoClick()\">{{'dlg.cancel' | translate}}</button>\r\n        <button mat-raised-button [disabled]=\"!isValid(data.user.username)\" color=\"primary\" (click)=\"onOkClick()\" cdkFocusInitial>{{'dlg.ok' | translate}}</button>\r\n    </div>\r\n</div>"
 
 /***/ }),
 

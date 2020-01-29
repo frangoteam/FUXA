@@ -192,5 +192,4 @@ export class DialogMenuItem {
 		this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
         this.dialogRef.close(this.data);
     }
-
 }
