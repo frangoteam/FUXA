@@ -10,7 +10,7 @@
                             <span>{{'chart.config-charts' | translate}}</span>
                             <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart()">add</mat-icon>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let chart of data.charts" class="list-item" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
+                        <mat-list-item *ngFor="let chart of data.charts" matTooltip="{{chart.name}}" class="list-item" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
                             <span>{{chart.name}}</span>
                             <mat-icon [matMenuTriggerFor]="configMenu" style="position: absolute; right: 10px;cursor:pointer;color:gray;">more_vert</mat-icon>
                             <mat-menu #configMenu [overlapTrigger]="false" style="color:#000000">
@@ -25,7 +25,7 @@
                         <mat-list-item class="list-item list-header">
                             <span>{{'chart.config-devices' | translate}}</span>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let device of data.devices;" class="list-item" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
+                        <mat-list-item *ngFor="let device of data.devices;" matTooltip="{{device.name}}" class="list-item" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
                             <span>{{device.name}}</span>
                         </mat-list-item>
                     </mat-list>
@@ -36,7 +36,7 @@
                             <span>{{'chart.config-tags' | translate}}</span>
                         </mat-list-item>
                         <mat-selection-list #selTags [(ngModel)]="selectedTags" [disabled]="(selectedChart.id)?false:true" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
-                            <mat-list-option *ngFor="let tag of selectedDevice.tags" [selected]="tag.selected" [value]="tag" class="list-item" checkboxPosition="before">
+                            <mat-list-option *ngFor="let tag of selectedDevice.tags" matTooltip="{{tag.name}}" [selected]="tag.selected" [value]="tag" class="list-item" checkboxPosition="before">
                                 {{tag.name}}
                             </mat-list-option>
                         </mat-selection-list>

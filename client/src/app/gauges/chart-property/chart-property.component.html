@@ -26,11 +26,11 @@
           <mat-list class="list" style="padding-left: 8px;padding-right: 8px;">
             <div style="height: calc(100% - 36px); overflow-y: auto" *ngIf="chartCtrl.value">
                 <mat-list-item *ngFor="let tag of chartCtrl.value.lines" style="font-size:14px;height: 27px;">
-                    <div style="width: 50%;">
-                        <span>{{tag.name}}</span>
+                    <div style="width: 50%;text-overflow: ellipsis;display: block; overflow: hidden; white-space: nowrap;">
+                        <span matTooltip="{{tag.name}}">{{tag.name}}</span>
                     </div>
-                    <div style="width: 40%;">
-                        <span>{{tag.device}}</span>
+                    <div style="width: 40%;text-overflow: ellipsis;display: block; overflow: hidden; white-space: nowrap;">
+                        <span matTooltip="{{tag.device}}">{{tag.device}}</span>
                     </div>
                     <div [style.background-color]="tag.color" style="height:20px; width:30px">
                     </div>

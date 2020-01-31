@@ -294,6 +294,8 @@ app-root {
 
 .dygraph-legend {
   background: transparent !important;
+  width: fit-content !important;
+  left: 100px !important;
 }
 
 .sidenav-btn {

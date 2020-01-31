@@ -28,6 +28,7 @@
 
 .list span  {
     padding-left: 10px;
+    white-space: nowrap;
     /* padding-right: 10px; */
 }
 
@@ -46,12 +47,20 @@
     display: block;
     font-size: 14px;
     height: 26px !important;
-
+    white-space: nowrap;
     cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .list-item mat-icon {
     font-size: 20px;
+}
+
+.list-item span {
+    width: calc(100% - 26px);
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .list-item-selected {
@@ -61,6 +70,7 @@
 .list-header {
     background-color: rgba(0, 0, 0, 0.8);
     color: #ffffff;
+    line-height: 26px;
 }
 
 .device-list {
