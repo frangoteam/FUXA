@@ -2380,7 +2380,7 @@ var ProjectService = (function () {
     ProjectService.prototype.setNewProject = function () {
         this.projectData = new ProjectData();
         var server = new __WEBPACK_IMPORTED_MODULE_4__models_device__["a" /* Device */]();
-        server.name = 'Fuxa Server';
+        server.name = 'FUXA Server';
         server.id = '0';
         server.type = __WEBPACK_IMPORTED_MODULE_4__models_device__["d" /* DeviceType */].FuxaServer;
         server.property = new __WEBPACK_IMPORTED_MODULE_4__models_device__["b" /* DeviceNetProperty */]();
@@ -4208,7 +4208,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "\r\n.panelTop {\r\n    display: block;\r\n    /* position: relative;\r\n    top: 20px; */\r\n    /* margin-top: 10px; */\r\n    width: 100%;\r\n    height: 580px;\r\n    /* border: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.panelBottom {\r\n    /* position: relative; */\r\n    /* bottom: 10px; */\r\n    display: block;\r\n    width: 100%;\r\n    height: 160px;\r\n    /* margin-top: 2px; */\r\n    /* border: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.list {\r\n    width: 100% !important; \r\n    height: 100% !important; \r\n    font-size: 16px !important; \r\n    padding-top: 0px !important;\r\n}\r\n\r\n.list span  {\r\n    padding-left: 10px;\r\n    white-space: nowrap;\r\n    /* padding-right: 10px; */\r\n}\r\n\r\n.list mat-list-option  {\r\n    padding-left: 10px;\r\n    /* padding-right: 10px; */\r\n}\r\n\r\n.chart-list {\r\n    /* margin-right: 2px; */\r\n    overflow-y: auto;\r\n}\r\n\r\n.list-item {\r\n    width: 100%;\r\n    display: block;\r\n    font-size: 14px;\r\n    height: 26px !important;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.list-item mat-icon {\r\n    font-size: 20px;\r\n}\r\n\r\n.list-item span {\r\n    width: calc(100% - 26px);\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n    /* overflow: hidden;\r\n    display: block;\r\n    white-space: nowrap;\r\n    text-overflow: ellipsis; */\r\n}\r\n\r\n.list-item-selected {\r\n  background-color: rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.list-header {\r\n    background-color: rgba(0, 0, 0, 0.8);\r\n    color: #ffffff;\r\n    line-height: 26px;\r\n}\r\n\r\n.device-list {\r\n    margin-right: 2px;\r\n    overflow-y: auto;\r\n    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.tag-list {\r\n    margin-right: 2px;\r\n    overflow-y: auto;\r\n    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.color-line {\r\n    width: 30px;\r\n    border: unset;\r\n    border: 1px solid rgba(0,0,0,0.1);\r\n    border-radius: 2px;\r\n    opacity: 1;\r\n    background-color: #f1f3f4;\r\n  }\r\n\r\n/* ::ng-deep .mat-dialog-container {\r\n    display: inline-table !important;\r\n    padding: 0px 10px 10px 10px;\r\n} */\r\n\r\n/* ::ng-deep .mat-list-item-content {\r\n    padding-left: 8px !important;\r\n    padding-right: 8px !important;\r\n} */", ""]);
+exports.push([module.i, "\r\n.panelTop {\r\n    display: block;\r\n    /* position: relative;\r\n    top: 20px; */\r\n    /* margin-top: 10px; */\r\n    width: 100%;\r\n    height: 580px;\r\n    /* border: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.panelBottom {\r\n    /* position: relative; */\r\n    /* bottom: 10px; */\r\n    display: block;\r\n    width: 100%;\r\n    height: 160px;\r\n    /* margin-top: 2px; */\r\n    /* border: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.list {\r\n    width: 100% !important; \r\n    height: 100% !important; \r\n    font-size: 16px !important; \r\n    padding-top: 0px !important;\r\n}\r\n\r\n.list span  {\r\n    padding-left: 10px;\r\n    white-space: nowrap;\r\n    /* padding-right: 10px; */\r\n}\r\n\r\n.list mat-list-option  {\r\n    padding-left: 10px;\r\n    /* padding-right: 10px; */\r\n}\r\n\r\n.chart-list {\r\n    /* margin-right: 2px; */\r\n    overflow-y: auto;\r\n}\r\n\r\n.list-item {\r\n    width: 100%;\r\n    display: block;\r\n    font-size: 14px;\r\n    height: 26px !important;\r\n    white-space: nowrap;\r\n    cursor: pointer;\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.list-item mat-icon {\r\n    font-size: 20px;\r\n}\r\n\r\n.list-item span {\r\n    width: calc(100% - 26px);\r\n    text-overflow: ellipsis;\r\n    overflow: hidden;\r\n}\r\n\r\n.list-item-selected {\r\n  background-color: rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.list-header {\r\n    background-color: rgba(0, 0, 0, 0.8);\r\n    color: #ffffff;\r\n    line-height: 26px;\r\n}\r\n\r\n.device-list {\r\n    margin-right: 2px;\r\n    overflow-y: auto;\r\n    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.tag-list {\r\n    margin-right: 2px;\r\n    overflow-y: auto;\r\n    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */\r\n}\r\n\r\n.color-line {\r\n    width: 30px;\r\n    border: unset;\r\n    border: 1px solid rgba(0,0,0,0.1);\r\n    border-radius: 2px;\r\n    opacity: 1;\r\n    background-color: #f1f3f4;\r\n  }\r\n\r\n/* ::ng-deep .mat-dialog-container {\r\n    display: inline-table !important;\r\n    padding: 0px 10px 10px 10px;\r\n} */\r\n\r\n/* ::ng-deep .mat-list-item-content {\r\n    padding-left: 8px !important;\r\n    padding-right: 8px !important;\r\n} */", ""]);
 
 // exports
 
@@ -6522,6 +6522,10 @@ var GaugeSemaphoreComponent = (function (_super) {
             var g = svgele.node.children[0];
             var clr = '';
             var val = parseFloat(sig.value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
             if (ga.property && ga.property.ranges) {
                 for (var idx = 0; idx < ga.property.ranges.length; idx++) {
                     if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
@@ -6919,7 +6923,14 @@ var HtmlInputComponent = (function (_super) {
         if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
             var input = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(svgele.node, this.prefix);
             if (input) {
-                var val = parseInt(sig.value, 10);
+                var val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                }
+                else {
+                    val = parseFloat(val.toFixed(5));
+                }
                 if (!input.value || input.value.length <= 0) {
                     input.value = val;
                 }
@@ -7065,7 +7076,14 @@ var HtmlSelectComponent = (function (_super) {
     HtmlSelectComponent.processValue = function (ga, svgele, sig) {
         var select = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(svgele.node, this.prefix);
         if (select) {
-            var val = parseInt(sig.value, 10);
+            var val = parseFloat(sig.value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
+            else {
+                val = parseFloat(val.toFixed(5));
+            }
             select.value = val;
         }
     };
@@ -7209,7 +7227,14 @@ var ValueComponent = (function (_super) {
         // console.log('gaid value: ' + ga.id);
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             var g = svgele.node.children[0];
-            var val = parseInt(sig.value, 10);
+            var val = parseFloat(sig.value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
+            else {
+                val = parseFloat(val.toFixed(5));
+            }
             var unit = __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */].getUnit(ga.property);
             g.textContent = val;
             if (unit) {
@@ -8963,7 +8988,14 @@ var CompressorComponent = (function (_super) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             var g = svgele.node.children[0];
             var clr = '';
-            var val = parseInt(sig.value, 10);
+            var val = parseFloat(sig.value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
+            else {
+                val = parseFloat(val.toFixed(5));
+            }
             if (ga.property && ga.property.ranges) {
                 for (var idx = 0; idx < ga.property.ranges.length; idx++) {
                     if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
@@ -9075,7 +9107,14 @@ var ExchangerComponent = (function (_super) {
             for (var x = 0; x < svgele.node.children.length; x++) {
                 var g = svgele.node.children[x];
                 var clr = '';
-                var val = parseInt(sig.value, 10);
+                var val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                }
+                else {
+                    val = parseFloat(val.toFixed(5));
+                }
                 if (ga.property && ga.property.ranges) {
                     for (var idx = 0; idx < ga.property.ranges.length; idx++) {
                         if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
@@ -9186,7 +9225,14 @@ var MotorComponent = (function (_super) {
                 var g = svgele.node.children[x];
                 if (g.id.startsWith("c")) {
                     var clr = '';
-                    var val = parseInt(sig.value, 10);
+                    var val = parseFloat(sig.value);
+                    if (Number.isNaN(val)) {
+                        // maybe boolean
+                        val = Number(sig.value);
+                    }
+                    else {
+                        val = parseFloat(val.toFixed(5));
+                    }
                     if (ga.property && ga.property.ranges) {
                         for (var idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
@@ -9300,7 +9346,14 @@ var ValveComponent = (function (_super) {
             for (var x = 0; x < svgele.node.children.length; x++) {
                 var g = svgele.node.children[x];
                 var clr = '';
-                var val = parseInt(sig.value, 10);
+                var val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                }
+                else {
+                    val = parseFloat(val.toFixed(5));
+                }
                 if (ga.property && ga.property.ranges) {
                     for (var idx = 0; idx < ga.property.ranges.length; idx++) {
                         if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
