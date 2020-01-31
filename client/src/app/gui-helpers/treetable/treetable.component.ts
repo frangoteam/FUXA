@@ -31,7 +31,8 @@ export class TreetableComponent implements OnInit {
     }
   }
 
-  onExpandToggle(node: Node) {
+  onExpandToggle(node: Node, event: any) {
+    const currentPosition = this.treetable.nativeElement.scrollTop;
     node.expanded = (node.expanded) ? false : true;
     if (node.expanded) {
         if (!node.childs.length) {
@@ -42,6 +43,7 @@ export class TreetableComponent implements OnInit {
       this.hideNode(node, false);
     }
     this.list = this.nodeToItems();
+    setTimeout(()=>{ this.treetable.nativeElement.scrollTop = currentPosition; },1);
   }
 
   hideNode(node: Node, visible: boolean) {
