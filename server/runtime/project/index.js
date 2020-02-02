@@ -351,7 +351,7 @@ function _filterProjectGroups(groups) {
         // delete result.devices;
         delete result.server;
         // check navigation permission
-        if (result.hmi.layout.navigation.items) {
+        if (result.hmi.layout && result.hmi.layout.navigation.items) {
             for (var i = result.hmi.layout.navigation.items.length - 1; i >= 0; i--) {
                 var permission = result.hmi.layout.navigation.items[i].permission;
                 if (permission && !(permission & groups)) {

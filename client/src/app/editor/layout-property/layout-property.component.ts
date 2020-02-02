@@ -73,7 +73,7 @@ export class LayoutPropertyComponent implements OnInit {
         views.unshift({id: '', name: ''});
         let dialogRef = this.dialog.open(DialogMenuItem, {
             minWidth: '350px',
-            data: { item: eitem, views: views, permission: item.permission },
+            data: { item: eitem, views: views, permission: eitem.permission },
             position: { top: '90px' }
         });
 
