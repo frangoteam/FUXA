@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 var events = require('../events');
+var utils = require('../utils');
 const prjstorage = require('./prjstorage');
 
 const version = '1.00';
@@ -346,7 +347,8 @@ function _filterProjectGroups(groups) {
     var result = JSON.parse(JSON.stringify(data));// = { devices: {}, hmi: { views: [] } };
     var admin = (groups === -1 || groups === 255) ? true : false;
     if (!admin) {
-        delete result.devices;
+        // from device remove the not used (no permission)
+        // delete result.devices;
         delete result.server;
         // check navigation permission
         if (result.hmi.layout.navigation.items) {
@@ -362,19 +364,25 @@ function _filterProjectGroups(groups) {
             if (result.hmi.views[i].items) {
                 Object.values(result.hmi.views[i].items).forEach((item) => {
                     if (item.property && item.property.permission) {
-                        var show = (item.property.permission >> 8) & groups;
-                        var enabled = (item.property.permission & 255) & groups;
+                        var view = result.hmi.views[i];
+                        var mask = (item.property.permission >> 8);
+                        var show = (mask) ? mask & groups : 1;
+                        mask = (item.property.permission & 255);
+                        var enabled = (mask) ? mask & groups : 1;
                         if (!show) {
-                            var view = result.hmi.views[i];
-                            var position = view.svgcontent.indexOf(item.id);                            
+                            var position = view.svgcontent.indexOf(item.id);
                             if (position) {
                                 position += item.id.length + 1;
                                 var hidetext = ' visibility="hidden" ';
-                                view.svgcontent = view.svgcontent.slice(0, position) + hidetext +  view.svgcontent.slice(position);
+                                view.svgcontent = view.svgcontent.slice(0, position) + hidetext + view.svgcontent.slice(position);
                             }
                         } else if (!enabled) {
-                            for (var x = item.property.events.length - 1; x >= 0; x--) {
-                                var event = item.property.events[x];
+                            item.property.events = [];
+                            // disable the html controls (select, input, button)
+                            var splitted = utils.domStringSplitter(view.svgcontent, 'foreignobject', view.svgcontent.indexOf(item.id));
+                            if (splitted.tagcontent && splitted.tagcontent.length) {
+                                var disabled = utils.domStringSetAttribute(splitted.tagcontent, ['select', 'input', 'button'], 'disabled');
+                                view.svgcontent = splitted.before + disabled + splitted.after;
                             }
                         }
                     }

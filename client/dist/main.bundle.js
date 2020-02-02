@@ -10794,7 +10794,9 @@ var TreetableComponent = (function () {
             }
         }
     };
-    TreetableComponent.prototype.onExpandToggle = function (node) {
+    TreetableComponent.prototype.onExpandToggle = function (node, event) {
+        var _this = this;
+        var currentPosition = this.treetable.nativeElement.scrollTop;
         node.expanded = (node.expanded) ? false : true;
         if (node.expanded) {
             if (!node.childs.length) {
@@ -10806,6 +10808,7 @@ var TreetableComponent = (function () {
             this.hideNode(node, false);
         }
         this.list = this.nodeToItems();
+        setTimeout(function () { _this.treetable.nativeElement.scrollTop = currentPosition; }, 1);
     };
     TreetableComponent.prototype.hideNode = function (node, visible) {
         var _this = this;

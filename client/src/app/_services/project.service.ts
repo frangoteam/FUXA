@@ -388,7 +388,7 @@ export class ProjectService {
     setNewProject() {
         this.projectData = new ProjectData();
         let server = new Device();
-        server.name = 'Fuxa Server';
+        server.name = 'FUXA Server';
         server.id = '0';
         server.type = DeviceType.FuxaServer;
         server.property = new DeviceNetProperty();

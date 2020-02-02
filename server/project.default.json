@@ -4,7 +4,7 @@
     "hmi": {},
     "server": {
         "id": "0",
-        "name": "Fuxa Server",
+        "name": "FUXA Server",
         "type": "FuxaServer",
         "property": {}
     }
