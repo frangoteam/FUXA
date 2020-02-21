@@ -304,7 +304,8 @@ color: rgba(255,255,255,1);
   font-size: 11px;
   /* background-color: rgb(34, 107, 241); */
   background-color: rgba(47,47,47,1);
-  /* overflow: auto; */
+  overflow: auto;
+  max-height: 200px;
 }
 
 .leftbar-item {
@@ -675,32 +676,16 @@ select#start_marker option[value="D"] { background:url('/assets/images/select-po
 }
 
 .icon-tool {
-  background-size: contain;
+  background-size: auto;
   height: 30px;
   width: 30px;
   color: rgba(255,255,255,1);
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
 }
 
 .icon-switch {
   background: url('/assets/images/switch.svg') no-repeat center center;
-}
-.icon-compressor-void {
-  background: url('/assets/images/compressor-void.svg') no-repeat center center;
-}
-.icon-compressor-fan {
-  background: url('/assets/images/compressor-fan.svg') no-repeat center center;
-}
-.icon-compressor-piston {
-  background: url('/assets/images/compressor-piston.svg') no-repeat center center;
-}
-.icon-valve-ax {
-  background: url('/assets/images/valve-ax.svg') no-repeat center center;
-}
-.icon-valve-bx {
-  background: url('/assets/images/valve-bx.svg') no-repeat center center;
-}
-.icon-valve-cx {
-  background: url('/assets/images/valve-cx.svg') no-repeat center center;
 }
 .icon-value {
   background: url('/assets/images/value.svg') no-repeat center center;
@@ -717,59 +702,8 @@ select#start_marker option[value="D"] { background:url('/assets/images/select-po
 .icon-semaphore {
   background: url('/assets/images/semaphore.svg') no-repeat center center;
 }
-.icon-shape-diamond {
-  background: url('/assets/images/shape-diamond.svg') no-repeat center center;
-}
-.icon-shape-triangle {
-  background: url('/assets/images/shape-triangle.svg') no-repeat center center;
-}
-.icon-shape-halfcircle {
-  background: url('/assets/images/shape-halfcircle.svg') no-repeat center center;
-}
-.icon-shape-delay {
-  background: url('/assets/images/shape-delay.svg') no-repeat center center;
-}
-.icon-shape-looplimit {
-  background: url('/assets/images/shape-looplimit.svg') no-repeat center center;
-}
-.icon-shape-prepara {
-  background: url('/assets/images/shape-prepara.svg') no-repeat center center;
-}
-.icon-shape-trape {
-  background: url('/assets/images/shape-trape.svg') no-repeat center center;
-}
-.icon-shape-offpage {
-  background: url('/assets/images/shape-offpage.svg') no-repeat center center;
-}
-.icon-shape-ticket {
-  background: url('/assets/images/shape-ticket.svg') no-repeat center center;
-}
-.icon-shape-arrow {
-  background: url('/assets/images/shape-arrow.svg') no-repeat center center;
-}
-.icon-shape-doublearrow {
-  background: url('/assets/images/shape-doublearrow.svg') no-repeat center center;
-}
-.icon-shape-rectindi {
-  background: url('/assets/images/shape-rectindi.svg') no-repeat center center;
-}
-.icon-shape-circleindi {
-  background: url('/assets/images/shape-circleindi.svg') no-repeat center center;
-}
 .icon-button {
   background: url('/assets/images/button.svg') no-repeat center center;
-}
-.icon-motor-simb {
-  background: url('/assets/images/motor-simb.svg') no-repeat center center;
-}
-.icon-exchanger-filter {
-  background: url('/assets/images/exchanger-filter.svg') no-repeat center center;
-}
-.icon-exchanger-heat {
-  background: url('/assets/images/exchanger-heat.svg') no-repeat center center;
-}
-.icon-exchanger-tube {
-  background: url('/assets/images/exchanger-tube.svg') no-repeat center center;
 }
 .icon-chart {
   background: url('/assets/images/chart.svg') no-repeat center center;

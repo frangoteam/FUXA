@@ -10,10 +10,6 @@ import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { SwitchComponent } from './switch/switch.component';
 import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
-import { CompressorComponent } from './proc-eng/compressor/compressor.component';
-import { ValveComponent } from './proc-eng/valve/valve.component';
-import { MotorComponent } from './proc-eng/motor/motor.component';
-import { ExchangerComponent } from './proc-eng/exchanger/exchanger.component';
 import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
 import { HtmlButtonComponent } from './controls/html-button/html-button.component';
@@ -21,154 +17,133 @@ import { HtmlSelectComponent } from './controls/html-select/html-select.componen
 import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
 import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaphore.component';
+import { ShapesComponent } from './shapes/shapes.component';
+import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
 
 import { Dictionary } from '../_helpers/dictionary';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
+import { forEach } from '@angular/router/src/utils/collection';
 
 
 @Injectable()
 export class GaugesManager {
 
-	@Output() onchange: EventEmitter<Variable> = new EventEmitter();
-	@Output() onevent: EventEmitter<Event> = new EventEmitter();
+    @Output() onchange: EventEmitter<Variable> = new EventEmitter();
+    @Output() onevent: EventEmitter<Event> = new EventEmitter();
 
-	// signalGaugeMap = new ViewSignalGaugeMap();      // map of all gauges (GaugeSettings) pro signals
+    // signalGaugeMap = new ViewSignalGaugeMap();      // map of all gauges (GaugeSettings) pro signals
 
-	eventGauge: MapGaugesSetting = {};
-	mapGaugeView = {};
-	memorySigGauges = {};
-	mapChart = {};
+    // map of gauges that have a click/html event
+    eventGauge: MapGaugesSetting = {};
+    // map of gauges with views
+    mapGaugeView = {};
+    // map of all signals and binded gauges of current view
+    memorySigGauges = {};
 
-	gaugeWithProperty = [CompressorComponent.TypeTag, ValveComponent.TypeTag, MotorComponent.TypeTag, ExchangerComponent.TypeTag, ValueComponent.TypeTag,
-	HtmlInputComponent.TypeTag, HtmlButtonComponent.TypeTag, HtmlSelectComponent.TypeTag, GaugeProgressComponent.TypeTag,
-	GaugeSemaphoreComponent.TypeTag];
-	gaugeWithEvents = [CompressorComponent.TypeTag, ValveComponent.TypeTag, MotorComponent.TypeTag, ExchangerComponent.TypeTag, HtmlButtonComponent.TypeTag];
+    mapChart = {};
+    // list of gauges tags to speed up the check
+    gaugesTags = [];
 
-	constructor(private hmiService: HmiService,
-		private translateService: TranslateService,
-		private dialog: MatDialog) {
-		this.hmiService.onVariableChanged.subscribe(sig => {
-			try {
-				this.onchange.emit(sig);
-			} catch (err) {
+    // list of gauges tags to check who as events
+    gaugeWithEvents = [HtmlButtonComponent.TypeTag,
+    GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag];
+    // list of gauges components
+    static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent,
+        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent];
 
-			}
-		});
-		this.hmiService.onDaqResult.subscribe(message => {
-			try {
-				if (this.mapChart[message.gid]) {
-					let gauge: NgxDygraphsComponent = this.mapChart[message.gid];
-					for (let i = 0; i < message.values.length; i++) {
-						message.values[i][0] = new Date(message.values[i][0]);
-					}
-					gauge.setValues(message.values);
-				}
-			} catch (err) {
+    constructor(private hmiService: HmiService,
+        private translateService: TranslateService,
+        private dialog: MatDialog) {
+        // subscription to the change of variable value, then emit to the gauges of fuxa-view 
+        this.hmiService.onVariableChanged.subscribe(sig => {
+            try {
+                this.onchange.emit(sig);
+            } catch (err) {
 
-			}
-		});
-	}
+            }
+        });
+        // subscription to DAQ values, then emit to charts gauges of fuxa-view 
+        this.hmiService.onDaqResult.subscribe(message => {
+            try {
+                if (this.mapChart[message.gid]) {
+                    let gauge: NgxDygraphsComponent = this.mapChart[message.gid];
+                    for (let i = 0; i < message.values.length; i++) {
+                        message.values[i][0] = new Date(message.values[i][0]);
+                    }
+                    gauge.setValues(message.values);
+                }
+            } catch (err) {
 
-	ngOnDestroy() {
-		console.log('GaugesManager destroy');
-	}
+            }
+        });
+        // make the list of gauges tags to speed up the check
+        GaugesManager.Gauges.forEach(g => {
+            this.gaugesTags.push(g.TypeTag);
+        });
+    }
 
-	private randomRange(min, max) {
-		return (Math.random() * (max - min + 1)) + min;
-	}
+    ngOnDestroy() {
+        console.log('GaugesManager destroy');
+    }
 
-	createSettings(id: string, type: string) {
-		let gs: GaugeSettings = null;
-		switch (type) {
-			case CompressorComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = CompressorComponent.LabelTag;
-				break;
-			case ValveComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = ValveComponent.LabelTag;
-				break;
-			case MotorComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = MotorComponent.LabelTag;
-				break;
-			case ExchangerComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = ExchangerComponent.LabelTag;
-				break;
-			case ValueComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = ValueComponent.LabelTag;
-				break;
-			case SwitchComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = SwitchComponent.LabelTag;
-				break;
-			case HtmlInputComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = HtmlInputComponent.LabelTag;
-				break;
-			case HtmlButtonComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = HtmlButtonComponent.LabelTag;
-				break;
-			case HtmlSelectComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = HtmlSelectComponent.LabelTag;
-				break;
-			case HtmlChartComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = HtmlChartComponent.LabelTag;
-				break;
-			case GaugeProgressComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = GaugeProgressComponent.LabelTag;
-				break;
-			case GaugeSemaphoreComponent.TypeTag:
-				gs = new GaugeSettings(id, type);
-				gs.label = GaugeSemaphoreComponent.LabelTag;
-				break;
-		}
-		return gs;
-	}
+    createSettings(id: string, type: string) {
+        let gs: GaugeSettings = null;
+        for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+            if (GaugesManager.Gauges[i].TypeTag === type) {
+                gs = new GaugeSettings(id, type);
+                gs.label = GaugesManager.Gauges[i].LabelTag;
+                return gs;
+            }
+        }
+        return gs;
+    }
 
-	isWithEvents(type) {
-		if (type) {
-			return this.gaugeWithEvents.indexOf(type) > -1;
-		}
-		return false;
-	}
+    isWithEvents(type) {
+        if (type) {
+            return this.gaugeWithEvents.indexOf(type) > -1;
+        }
+        return false;
+    }
 
-	isGauge(type: string) {
-		return this.gaugeWithProperty.indexOf(type) > -1;
-	}
+    isGauge(type: string) {
+        return this.gaugesTags.indexOf(type) > -1;
+    }
 
-	public isToInitInEditor(ga: GaugeSettings) {
-		if (ga.type === GaugeProgressComponent.TypeTag) {
-			GaugeProgressComponent.initElement(ga);
-		} else if (ga.type === HtmlButtonComponent.TypeTag) {
-			HtmlButtonComponent.initElement(ga);
-		} else if (ga.type === HtmlChartComponent.TypeTag) {
-			HtmlChartComponent.detectChange(ga);
-		}
-		return false;
-	}
+    /**
+     * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
+     * @param ga 
+     */
+    initInEditor(ga: GaugeSettings) {
+        if (ga.type === GaugeProgressComponent.TypeTag) {
+            GaugeProgressComponent.initElement(ga);
+        } else if (ga.type === HtmlButtonComponent.TypeTag) {
+            HtmlButtonComponent.initElement(ga);
+        } else if (ga.type === HtmlChartComponent.TypeTag) {
+            HtmlChartComponent.detectChange(ga);
+        }
+        return false;
+    }
 
-	setSignalValue(sig: Variable) {
-		console.log('end set ' + sig.id + ' ' + sig.value);
-		this.onchange.emit(sig);
-	}
+    //! toremove
+    setSignalValue(sig: Variable) {
+        this.onchange.emit(sig);
+    }
 
-	public initGaugesMap() {
-		this.eventGauge = {};
-		this.mapGaugeView = {};
-	}
+    //! toremove
+    initGaugesMap() {
+        this.eventGauge = {};
+        this.mapGaugeView = {};
+    }
 
-	public emitBindedSignals(domViewId: string) {
-		this.hmiService.emitMappedSignalsGauge(domViewId);
-	}
+    /**
+     * called from fuxa-view, is used to emit message for a refresh of all signals values and the gauges of view
+     * @param domViewId 
+     */
+    emitBindedSignals(domViewId: string) {
+        this.hmiService.emitMappedSignalsGauge(domViewId);
+    }
 	/**
-	 * bind dom view, gauge with signal (for animation) and event
+	 * called from fuxa-view, bind dom view, gauge with signal (for animation) and event
 	 * @param gaugekey
 	 * @param gauge
 	 * @param domViewId 
@@ -176,156 +151,152 @@ export class GaugesManager {
 	 * @param bindclick 
 	 * @param bindhtmlevent 
 	 */
-	public bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, bindclick: any, bindhtmlevent: any) {
-		let sigsid: string[] = this.getBindSignals(ga);
-		if (sigsid) {
-			for (let i = 0; i < sigsid.length; i++) {
-				this.hmiService.addSignalGaugeToMap(domViewId, sigsid[i], ga);
-				// check for special gauge to save in memory binded to sigid (chart-html)
-				if (gauge) {
-					if (!this.memorySigGauges[sigsid[i]]) {
-						this.memorySigGauges[sigsid[i]] = {};
-						this.memorySigGauges[sigsid[i]][ga.id] = gauge;
-					} else if (!this.memorySigGauges[sigsid[i]][ga.id]) {
-						this.memorySigGauges[sigsid[i]][ga.id] = gauge;
-					}
-				}
-			}
-		}
-		let clicks: GaugeEvent[] = this.getBindClick(ga);
-		if (clicks && clicks.length > 0) { // && !this.eventGauge[ga.id]) {
-			this.eventGauge[ga.id] = ga;
-			if (!this.mapGaugeView[ga.id]) {
-				this.mapGaugeView[ga.id] = {};
-				this.mapGaugeView[ga.id][domViewId] = ga;
-				bindclick(ga);
-			} else if (!this.mapGaugeView[ga.id][domViewId]) {
-				this.mapGaugeView[ga.id][domViewId] = ga;
-				bindclick(ga);
-			}
-			// add pointer
-			let ele = document.getElementById(ga.id);
-			if (ele) {
-				ele.style.cursor = "pointer";
-			}
-			// bindclick(ga);
-		}
-		let htmlEvents = this.getHtmlEvents(ga);
-		if (htmlEvents) {
-			this.eventGauge[htmlEvents.dom.id] = ga;
-			bindhtmlevent(htmlEvents);
-		}
-		this.checkElementToInit(ga);
-	}
+    bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, bindclick: any, bindhtmlevent: any) {
+        let sigsid: string[] = this.getBindSignals(ga);
+        if (sigsid) {
+            for (let i = 0; i < sigsid.length; i++) {
+                this.hmiService.addSignalGaugeToMap(domViewId, sigsid[i], ga);
+                // check for special gauge to save in memory binded to sigid (chart-html)
+                if (gauge) {
+                    if (!this.memorySigGauges[sigsid[i]]) {
+                        this.memorySigGauges[sigsid[i]] = {};
+                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
+                    } else if (!this.memorySigGauges[sigsid[i]][ga.id]) {
+                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
+                    }
+                }
+            }
+        }
+        let clicks: GaugeEvent[] = this.getBindClick(ga);
+        if (clicks && clicks.length > 0) { // && !this.eventGauge[ga.id]) {
+            this.eventGauge[ga.id] = ga;
+            if (!this.mapGaugeView[ga.id]) {
+                this.mapGaugeView[ga.id] = {};
+                this.mapGaugeView[ga.id][domViewId] = ga;
+                bindclick(ga);
+            } else if (!this.mapGaugeView[ga.id][domViewId]) {
+                this.mapGaugeView[ga.id][domViewId] = ga;
+                bindclick(ga);
+            }
+            // add pointer
+            let ele = document.getElementById(ga.id);
+            if (ele) {
+                ele.style.cursor = "pointer";
+            }
+            // bindclick(ga);
+        }
+        let htmlEvents = this.getHtmlEvents(ga);
+        if (htmlEvents) {
+            this.eventGauge[htmlEvents.dom.id] = ga;
+            bindhtmlevent(htmlEvents);
+        }
+        this.checkElementToInit(ga);
+    }
 
 
 	/**
-	 * remove bind of dom view gauge
-	 * @param domViewId 
+     * @param domViewId 
+	 * called from fuxa-view, remove bind of dom view gauge
 	 */
-	public unbindGauge(domViewId: string) {
-		// first remove special gauge like chart from memorySigGauges
-		let sigGaugeSettingsIdremoved = this.hmiService.removeSignalGaugeFromMap(domViewId);
-		Object.keys(sigGaugeSettingsIdremoved).forEach(sid => {
-			if (this.memorySigGauges[sid] && this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]]) {
-				delete this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
-			}
-		});
-		// remove mapped gauge for events of this view
-		Object.values(this.mapGaugeView).forEach(val => {
-			if (val[domViewId]) {
-				delete val[domViewId];
-			}
-		});
-	}
+    unbindGauge(domViewId: string) {
+        // first remove special gauge like chart from memorySigGauges
+        let sigGaugeSettingsIdremoved = this.hmiService.removeSignalGaugeFromMap(domViewId);
+        Object.keys(sigGaugeSettingsIdremoved).forEach(sid => {
+            if (this.memorySigGauges[sid] && this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]]) {
+                delete this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+            }
+        });
+        // remove mapped gauge for events of this view
+        Object.values(this.mapGaugeView).forEach(val => {
+            if (val[domViewId]) {
+                delete val[domViewId];
+            }
+        });
+    }
 
-	checkElementToInit(ga: GaugeSettings) {
-		if (ga.type === HtmlSelectComponent.TypeTag) {
-			return HtmlSelectComponent.initElement(ga);
-		}
-		// } else if (ga.type === GaugeProgressComponent.TypeTag) {
-		//   return GaugeProgressComponent.initElement(ga);
-		// }
-		return null;
-	}
-
-	public onGaugeClick(evt: any) {
-
-	}
+    /**
+     * init element of fuxa-view,
+     * @param ga 
+     */
+    checkElementToInit(ga: GaugeSettings) {
+        if (ga.type === HtmlSelectComponent.TypeTag) {
+            return HtmlSelectComponent.initElement(ga);
+        }
+        // } else if (ga.type === GaugeProgressComponent.TypeTag) {
+        //   return GaugeProgressComponent.initElement(ga);
+        // }
+        return null;
+    }
 
 	/**
 	 * get all gauge settings binded to dom view with the signal
 	 * @param domViewId 
 	 * @param sigid 
 	 */
-	public getGaugeSettings(domViewId: string, sigid: string): GaugeSettings[] {
-		let gslist = this.hmiService.getMappedSignalsGauges(domViewId, sigid);
-		return gslist;
-	}
+    getGaugeSettings(domViewId: string, sigid: string): GaugeSettings[] {
+        let gslist = this.hmiService.getMappedSignalsGauges(domViewId, sigid);
+        return gslist;
+    }
 
 	/**
-	 * get all signals mapped in all dom views
+	 * get all signals mapped in all dom views, used from LabComponent
 	 * @param fulltext a copy with item name and source 
 	 */
-	public getMappedGaugesSignals(fulltext: boolean) {
-		return this.hmiService.getMappedVariables(fulltext);
-	}
+    getMappedGaugesSignals(fulltext: boolean) {
+        return this.hmiService.getMappedVariables(fulltext);
+    }
 
-	public getBindSignals(ga: GaugeSettings) {    // to remove
-		if (ga.property) {
-			if (ga.type === SwitchComponent.TypeTag) {
-				return SwitchComponent.getSignals(ga.property);
-			} else if (ga.type === ValveComponent.TypeTag) {
-				return ValveComponent.getSignals(ga.property);
-			} else if (ga.type === MotorComponent.TypeTag) {
-				return MotorComponent.getSignals(ga.property);
-			} else if (ga.type === ExchangerComponent.TypeTag) {
-				return ExchangerComponent.getSignals(ga.property);
-			} else if (ga.type === ValueComponent.TypeTag) {
-				return ValueComponent.getSignals(ga.property);
-			} else if (ga.type === CompressorComponent.TypeTag) {
-				return CompressorComponent.getSignals(ga.property);
-			} else if (ga.type === HtmlInputComponent.TypeTag) {
-				return HtmlInputComponent.getSignal(ga.property);
-			} else if (ga.type === HtmlButtonComponent.TypeTag) {
-				return HtmlButtonComponent.getSignal(ga.property);
-			} else if (ga.type === HtmlSelectComponent.TypeTag) {
-				return HtmlSelectComponent.getSignal(ga.property);
-			} else if (ga.type === GaugeProgressComponent.TypeTag) {
-				return GaugeProgressComponent.getSignal(ga.property);
-			} else if (ga.type === GaugeSemaphoreComponent.TypeTag) {
-				return GaugeSemaphoreComponent.getSignal(ga.property);
-			} else if (ga.type === HtmlChartComponent.TypeTag) {
-				let sigs = this.hmiService.getChartSignal(ga.property.id)
-				return sigs;
-			}
-		}
-		return null;
-	}
+    /**
+     * return all signals binded to the gauge
+     * @param ga 
+     */
+    getBindSignals(ga: GaugeSettings) {
+        if (ga.property) {
+            for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+                if (GaugesManager.Gauges[i].TypeTag === ga.type) {
+                    if (ga.type === HtmlChartComponent.TypeTag) {
+                        let sigs = this.hmiService.getChartSignal(ga.property.id)
+                        return sigs;
+                    } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
+                        return GaugesManager.Gauges[i]['getSignals'](ga.property);
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
-	public getBindClick(ga: GaugeSettings) {
-		if (ga.type === CompressorComponent.TypeTag) {
-			return CompressorComponent.getEvents(ga.property, GaugeEventType.click);
-		} else if (ga.type === ValveComponent.TypeTag) {
-			return ValveComponent.getEvents(ga.property, GaugeEventType.click);
-		} else if (ga.type === MotorComponent.TypeTag) {
-			return MotorComponent.getEvents(ga.property, GaugeEventType.click);
-		} else if (ga.type === ExchangerComponent.TypeTag) {
-			return ExchangerComponent.getEvents(ga.property, GaugeEventType.click);
-		} else if (ga.type === HtmlButtonComponent.TypeTag) {
-			return HtmlButtonComponent.getEvents(ga.property, GaugeEventType.click);
-		}
-		return null;
-	}
+    /**
+     * return all events binded to the gauge with click event
+     * @param ga 
+     */
+    getBindClick(ga: GaugeSettings) {
+        for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+            if (GaugesManager.Gauges[i].TypeTag === ga.type) {
+                if (typeof GaugesManager.Gauges[i]['getEvents'] === 'function') {
+                    return GaugesManager.Gauges[i]['getEvents'](ga.property, GaugeEventType.click);
+                } else {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
 
-	public getHtmlEvents(ga: GaugeSettings): Event {
-		if (ga.type === HtmlInputComponent.TypeTag) {
-			return HtmlInputComponent.getHtmlEvents(ga);
-		} else if (ga.type === HtmlSelectComponent.TypeTag) {
-			return HtmlSelectComponent.getHtmlEvents(ga);
-		}
-		return null;
-	}
+    /**
+     * return all events binded to the html gauge ('key-enter' of input, 'change' of select)
+     * @param ga
+     */
+    getHtmlEvents(ga: GaugeSettings): Event {
+        if (ga.type === HtmlInputComponent.TypeTag) {
+            return HtmlInputComponent.getHtmlEvents(ga);
+        } else if (ga.type === HtmlSelectComponent.TypeTag) {
+            return HtmlSelectComponent.getHtmlEvents(ga);
+        }
+        return null;
+    }
 
 	/**
 	 * manage to which gauge to forward the process function
@@ -333,129 +304,120 @@ export class GaugesManager {
 	 * @param svgele 
 	 * @param sig 
 	 */
-	public processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
-		// console.log('gaid: ' + ga.id);
-		if (ga.type === SwitchComponent.TypeTag) {
-			return SwitchComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === ValveComponent.TypeTag) {
-			return ValveComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === MotorComponent.TypeTag) {
-			return MotorComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === ValueComponent.TypeTag) {
-			return ValueComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === CompressorComponent.TypeTag) {
-			return CompressorComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === ExchangerComponent.TypeTag) {
-			return ExchangerComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === HtmlInputComponent.TypeTag) {
-			return HtmlInputComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === HtmlButtonComponent.TypeTag) {
-			return HtmlButtonComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === HtmlSelectComponent.TypeTag) {
-			return HtmlSelectComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === GaugeProgressComponent.TypeTag) {
-			return GaugeProgressComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === GaugeSemaphoreComponent.TypeTag) {
-			return GaugeSemaphoreComponent.processValue(ga, svgele, sig);
-		} else if (ga.type === HtmlChartComponent.TypeTag) {
-			if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
-				Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
-					if (k === ga.id) {
-						HtmlChartComponent.processValue(ga, svgele, sig, this.memorySigGauges[sig.id][k]);
-					}
-				});
-			}
-		}
-	}
+    processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+        for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+            if (GaugesManager.Gauges[i].TypeTag === ga.type) {
+                if (ga.type === HtmlChartComponent.TypeTag) {
+                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                            if (k === ga.id) {
+                                HtmlChartComponent.processValue(ga, svgele, sig, this.memorySigGauges[sig.id][k]);
+                            }
+                        });
+                    }
+                } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
+                    return GaugesManager.Gauges[i]['processValue'](ga, svgele, sig);
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 
-	public putEvent(event: Event) {
-		if (event.ga.property && event.ga.property.variableId) {
-			this.hmiService.putSignalValue(event.ga.property.variableId, event.value);
-			event.dbg = 'put ' + event.ga.property.variableId + ' ' + event.value;
-		}
-		this.onevent.emit(event);
-	}
+    /**
+     * called from fuxa-view to emit and send signal value from a gauge event ('key-enter' of input, 'change' of select)
+     * @param event 
+     */
+    putEvent(event: Event) {
+        if (event.ga.property && event.ga.property.variableId) {
+            this.hmiService.putSignalValue(event.ga.property.variableId, event.value);
+            event.dbg = 'put ' + event.ga.property.variableId + ' ' + event.value;
+        }
+        this.onevent.emit(event);
+    }
 
-	public putSignalValue(sigid: string, val: string) {
-		this.hmiService.putSignalValue(sigid, val);
-	}
+    /**
+     * called from fuxa-view to emit and send signal value from a gauge event (click)
+     * @param sigid 
+     * @param val 
+     */
+    putSignalValue(sigid: string, val: string) {
+        this.hmiService.putSignalValue(sigid, val);
+    }
 
-	public static getEditDialogTypeToUse(type: string): GaugeDialogType {
-		if (type === SwitchComponent.TypeTag) {
-			return GaugeDialogType.OnlyValue;
-		} else if (type === ValveComponent.TypeTag) {
-			return GaugeDialogType.RangeWithAlarm;
-		} else if (type === MotorComponent.TypeTag) {
-			return GaugeDialogType.RangeWithAlarm;
-		} else if (type === ValueComponent.TypeTag) {
-			return GaugeDialogType.ValueAndUnit;
-		} else if (type === CompressorComponent.TypeTag) {
-			return GaugeDialogType.RangeWithAlarm;
-		} else if (type === ExchangerComponent.TypeTag) {
-			return GaugeDialogType.RangeWithAlarm;
-		} else if (type === HtmlInputComponent.TypeTag) {
-			return GaugeDialogType.OnlyValue;
-		} else if (type === HtmlButtonComponent.TypeTag) {
-			return GaugeDialogType.OnlyValue;
-		} else if (type === HtmlSelectComponent.TypeTag) {
-			return GaugeDialogType.Step;
-		} else if (type === GaugeProgressComponent.TypeTag) {
-			return GaugeDialogType.MinMax;
-		} else if (type === GaugeSemaphoreComponent.TypeTag) {
-			return GaugeDialogType.Range;
-		} else if (type === HtmlChartComponent.TypeTag) {
-			return GaugeDialogType.Chart;
-		}
-	}
+    static getEditDialogTypeToUse(type: string): GaugeDialogType {
+        for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+            if (GaugesManager.Gauges[i].TypeTag === type) {
+                if (typeof GaugesManager.Gauges[i]['getDialogType'] === 'function') {
+                    return GaugesManager.Gauges[i]['getDialogType']();
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 
-	public static getDefaultValue(type: string): any {
-		if (type === GaugeProgressComponent.TypeTag) {
-			return GaugeProgressComponent.getDefaultValue();
-		}
-		return null;
-	}
+    /**
+     * used from controls in editor to get default value of edit gauge property
+     */
+    static getDefaultValue(type: string): any {
+        if (type === GaugeProgressComponent.TypeTag) {
+            return GaugeProgressComponent.getDefaultValue();
+        }
+        return null;
+    }
 
-	public static checkGaugeColor(ele: any, eles: any, colors: any): boolean {
-		if (ele && eles && (eles.length <= 1 || !eles[1])) {
-			if (ele.type === GaugeProgressComponent.TypeTag) {
-				colors.fill = GaugeProgressComponent.getFillColor(eles[0]);
-				colors.stroke = GaugeProgressComponent.getStrokeColor(eles[0]);
-				return true;
-			} else if (ele.type === GaugeSemaphoreComponent.TypeTag) {
-				colors.fill = GaugeSemaphoreComponent.getFillColor(eles[0]);
-				colors.stroke = GaugeSemaphoreComponent.getStrokeColor(eles[0]);
-				return true;
-			} else if (ele.type === HtmlButtonComponent.TypeTag) {
-				colors.fill = HtmlButtonComponent.getFillColor(eles[0]);
-				colors.stroke = HtmlButtonComponent.getStrokeColor(eles[0]);
-				return true;
-			} else if (ele.type === HtmlInputComponent.TypeTag) {
-				colors.fill = HtmlInputComponent.getFillColor(eles[0]);
-				colors.stroke = HtmlInputComponent.getStrokeColor(eles[0]);
-				return true;
-			} else if (ele.type === HtmlSelectComponent.TypeTag) {
-				colors.fill = HtmlSelectComponent.getFillColor(eles[0]);
-				colors.stroke = HtmlSelectComponent.getStrokeColor(eles[0]);
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * used from controls in editor, to set the colorpicker of selected control
+     */
+    static checkGaugeColor(ele: any, eles: any, colors: any): boolean {
+        if (ele && eles && (eles.length <= 1 || !eles[1])) {
+            if (ele.type === GaugeProgressComponent.TypeTag) {
+                colors.fill = GaugeProgressComponent.getFillColor(eles[0]);
+                colors.stroke = GaugeProgressComponent.getStrokeColor(eles[0]);
+                return true;
+            } else if (ele.type === GaugeSemaphoreComponent.TypeTag) {
+                colors.fill = GaugeSemaphoreComponent.getFillColor(eles[0]);
+                colors.stroke = GaugeSemaphoreComponent.getStrokeColor(eles[0]);
+                return true;
+            } else if (ele.type === HtmlButtonComponent.TypeTag) {
+                colors.fill = HtmlButtonComponent.getFillColor(eles[0]);
+                colors.stroke = HtmlButtonComponent.getStrokeColor(eles[0]);
+                return true;
+            } else if (ele.type === HtmlInputComponent.TypeTag) {
+                colors.fill = HtmlInputComponent.getFillColor(eles[0]);
+                colors.stroke = HtmlInputComponent.getStrokeColor(eles[0]);
+                return true;
+            } else if (ele.type === HtmlSelectComponent.TypeTag) {
+                colors.fill = HtmlSelectComponent.getFillColor(eles[0]);
+                colors.stroke = HtmlSelectComponent.getStrokeColor(eles[0]);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public static initElementColor(bkcolor, color, elems) {
-		for (let i = 0; i < elems.length; i++) {
-			let type = elems[i].getAttribute('type');
-			if (type === GaugeProgressComponent.TypeTag) {
-				GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
-			} else if (type === HtmlButtonComponent.TypeTag) {
-				HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
-			} else if (type === HtmlInputComponent.TypeTag) {
-				HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
-			} else if (type === HtmlSelectComponent.TypeTag) {
-				HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
-			}
-		}
-	}
+    /**
+     * used from controls in editor to change fill and stroke colors
+     * @param bkcolor 
+     * @param color 
+     * @param elems 
+     */
+    static initElementColor(bkcolor, color, elements) {
+        var elems = elements.filter(function(el) { return el; });
+        for (let i = 0; i < elems.length; i++) {
+            let type = elems[i].getAttribute('type');
+            if (type === GaugeProgressComponent.TypeTag) {
+                GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
+            } else if (type === HtmlButtonComponent.TypeTag) {
+                HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
+            } else if (type === HtmlInputComponent.TypeTag) {
+                HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
+            } else if (type === HtmlSelectComponent.TypeTag) {
+                HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
+            }
+        }
+    }
 
 	/**
 	 * initialize the gauge element found in svg, 
@@ -465,53 +427,53 @@ export class GaugesManager {
 	 * @param ref reference to factory
 	 * @param isview in view or editor, in editor have to disable mouse activity
 	 */
-	public initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
-		// add variable
-		let sigsid: string[] = this.getBindSignals(ga);
-		if (sigsid) {
-			for (let i = 0; i < sigsid.length; i++) {
-				this.hmiService.addSignal(sigsid[i], ga);
-			}
-		}
-		if (ga.type === HtmlChartComponent.TypeTag) {
-			// prepare attribute
-			let chartRange = ChartRangeType;
-			Object.keys(chartRange).forEach(key => {
-				this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
-			});
-			let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
-			gauge.init();
-			if (ga.property) {
-				let chart = this.hmiService.getChart(ga.property.id)
-				chart.lines.forEach(line => {
-					let sigid = HmiService.toVariableId(line.device, line.id);
-					let sigProperty = this.hmiService.getMappedVariable(sigid, true);
-					if (sigProperty) {
-						gauge.addLine(sigid, sigProperty.name, line.color);
-					}
-				});
-				gauge.setOptions({ title: chart.name });
-			}
-			this.mapChart[ga.id] = gauge;
-			gauge.resize();
-			gauge.onTimeRange.subscribe(data => {
-				console.log(ga.id + ' ' + data);
-				this.hmiService.queryDaqValues(data);
-			});
-			gauge.setRange(Object.keys(chartRange)[0]);
-			// gauge.onTimeRange = this.onTimeRange;
-			return gauge;
-		}
-	}
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
+        // add variable
+        let sigsid: string[] = this.getBindSignals(ga);
+        if (sigsid) {
+            for (let i = 0; i < sigsid.length; i++) {
+                this.hmiService.addSignal(sigsid[i], ga);
+            }
+        }
+        if (ga.type === HtmlChartComponent.TypeTag) {
+            // prepare attribute
+            let chartRange = ChartRangeType;
+            Object.keys(chartRange).forEach(key => {
+                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
+            });
+            let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
+            gauge.init();
+            if (ga.property) {
+                let chart = this.hmiService.getChart(ga.property.id)
+                chart.lines.forEach(line => {
+                    let sigid = HmiService.toVariableId(line.device, line.id);
+                    let sigProperty = this.hmiService.getMappedVariable(sigid, true);
+                    if (sigProperty) {
+                        gauge.addLine(sigid, sigProperty.name, line.color);
+                    }
+                });
+                gauge.setOptions({ title: chart.name });
+            }
+            this.mapChart[ga.id] = gauge;
+            gauge.resize();
+            gauge.onTimeRange.subscribe(data => {
+                console.log(ga.id + ' ' + data);
+                this.hmiService.queryDaqValues(data);
+            });
+            gauge.setRange(Object.keys(chartRange)[0]);
+            // gauge.onTimeRange = this.onTimeRange;
+            return gauge;
+        }
+    }
 
 	/**
 	 * clear memory object used from view, some reset
 	 */
-	public clearMemory() {
-		this.memorySigGauges = {};
-	}
+    clearMemory() {
+        this.memorySigGauges = {};
+    }
 }
 
 interface MapGaugesSetting {
-	[x: string]: GaugeSettings
+    [x: string]: GaugeSettings
 }

@@ -2836,25 +2836,23 @@ var appConfig = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_52__gauges_gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_53__gauges_switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_54__gauges_controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_58__gauges_proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_60__gauges_chart_property_chart_property_component__ = __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_62__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_63__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_64__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_67__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_68__gauges_controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_69__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_70__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_71__users_users_component__ = __webpack_require__("../../../../../src/app/users/users.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_72__login_login_component__ = __webpack_require__("../../../../../src/app/login/login.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_73__helpers_auth_interceptor__ = __webpack_require__("../../../../../src/app/_helpers/auth-interceptor.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_55__gauges_gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_56__gauges_chart_property_chart_property_component__ = __webpack_require__("../../../../../src/app/gauges/chart-property/chart-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_flex_input_flex_input_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-input/flex-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_flex_head_flex_head_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-head/flex-head.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_event_flex_event_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/flex-event/flex-event.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_60__gui_helpers_mat_select_search_mat_select_search_module__ = __webpack_require__("../../../../../src/app/gui-helpers/mat-select-search/mat-select-search.module.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_61__gauges_controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_62__gauges_controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_65__gauges_controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_66__gauges_controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_67__users_users_component__ = __webpack_require__("../../../../../src/app/users/users.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_68__login_login_component__ = __webpack_require__("../../../../../src/app/login/login.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_69__gauges_shapes_shapes_component__ = __webpack_require__("../../../../../src/app/gauges/shapes/shapes.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_70__gauges_shapes_proc_eng_proc_eng_component__ = __webpack_require__("../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_71__helpers_auth_interceptor__ = __webpack_require__("../../../../../src/app/_helpers/auth-interceptor.ts");
 // the start/root module that tells Angular how to assemble the application.
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2862,8 +2860,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
-
 
 
 
@@ -2967,24 +2963,22 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
                 __WEBPACK_IMPORTED_MODULE_52__gauges_gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */],
                 __WEBPACK_IMPORTED_MODULE_53__gauges_switch_switch_component__["a" /* SwitchComponent */],
-                __WEBPACK_IMPORTED_MODULE_55__gauges_proc_eng_compressor_compressor_component__["a" /* CompressorComponent */],
-                __WEBPACK_IMPORTED_MODULE_57__gauges_proc_eng_valve_valve_component__["a" /* ValveComponent */],
-                __WEBPACK_IMPORTED_MODULE_58__gauges_proc_eng_motor_motor_component__["a" /* MotorComponent */],
-                __WEBPACK_IMPORTED_MODULE_56__gauges_proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */],
-                __WEBPACK_IMPORTED_MODULE_65__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_66__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
-                __WEBPACK_IMPORTED_MODULE_67__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
-                __WEBPACK_IMPORTED_MODULE_68__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
-                __WEBPACK_IMPORTED_MODULE_69__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
-                __WEBPACK_IMPORTED_MODULE_70__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["a" /* DialogGaugePermission */],
-                __WEBPACK_IMPORTED_MODULE_60__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_61__gauges_controls_html_input_html_input_component__["a" /* HtmlInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_62__gauges_controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+                __WEBPACK_IMPORTED_MODULE_63__gauges_controls_html_select_html_select_component__["a" /* HtmlSelectComponent */],
+                __WEBPACK_IMPORTED_MODULE_64__gauges_controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */],
+                __WEBPACK_IMPORTED_MODULE_65__gauges_controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */],
+                __WEBPACK_IMPORTED_MODULE_66__gauges_controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_gauge_property_gauge_property_component__["a" /* DialogGaugePermission */],
+                __WEBPACK_IMPORTED_MODULE_56__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_69__gauges_shapes_shapes_component__["a" /* ShapesComponent */],
+                __WEBPACK_IMPORTED_MODULE_70__gauges_shapes_proc_eng_proc_eng_component__["a" /* ProcEngComponent */],
                 __WEBPACK_IMPORTED_MODULE_28__tester_tester_component__["a" /* TesterComponent */],
                 __WEBPACK_IMPORTED_MODULE_35__help_tutorial_tutorial_component__["a" /* TutorialComponent */],
-                __WEBPACK_IMPORTED_MODULE_61__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
-                __WEBPACK_IMPORTED_MODULE_62__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
-                __WEBPACK_IMPORTED_MODULE_63__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
+                __WEBPACK_IMPORTED_MODULE_57__gauges_gauge_property_flex_input_flex_input_component__["a" /* FlexInputComponent */],
+                __WEBPACK_IMPORTED_MODULE_58__gauges_gauge_property_flex_head_flex_head_component__["a" /* FlexHeadComponent */],
+                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_flex_event_flex_event_component__["a" /* FlexEventComponent */],
                 __WEBPACK_IMPORTED_MODULE_54__gauges_controls_value_value_component__["a" /* ValueComponent */],
                 __WEBPACK_IMPORTED_MODULE_46__directives_dialog_draggable_directive__["a" /* DialogDraggableDirective */],
                 __WEBPACK_IMPORTED_MODULE_37__helpers_utils__["a" /* EnumToArrayPipe */],
@@ -2998,9 +2992,9 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_44__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
                 __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */],
                 __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */],
-                __WEBPACK_IMPORTED_MODULE_71__users_users_component__["b" /* UsersComponent */],
-                __WEBPACK_IMPORTED_MODULE_71__users_users_component__["a" /* DialogUser */],
-                __WEBPACK_IMPORTED_MODULE_72__login_login_component__["a" /* LoginComponent */],
+                __WEBPACK_IMPORTED_MODULE_67__users_users_component__["b" /* UsersComponent */],
+                __WEBPACK_IMPORTED_MODULE_67__users_users_component__["a" /* DialogUser */],
+                __WEBPACK_IMPORTED_MODULE_68__login_login_component__["a" /* LoginComponent */],
                 __WEBPACK_IMPORTED_MODULE_14__home_home_component__["a" /* DialogUserInfo */]
             ],
             imports: [
@@ -3013,7 +3007,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
                 __WEBPACK_IMPORTED_MODULE_6_ngx_color_picker__["a" /* ColorPickerModule */],
                 __WEBPACK_IMPORTED_MODULE_7_ng5_slider__["a" /* Ng5SliderModule */],
-                __WEBPACK_IMPORTED_MODULE_64__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
+                __WEBPACK_IMPORTED_MODULE_60__gui_helpers_mat_select_search_mat_select_search_module__["a" /* MatSelectSearchModule */],
                 __WEBPACK_IMPORTED_MODULE_8_ngx_toastr__["a" /* ToastrModule */].forRoot({
                     timeOut: 3000,
                     positionClass: "toast-bottom-right",
@@ -3034,7 +3028,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_31__services_user_service__["a" /* UserService */],
                 __WEBPACK_IMPORTED_MODULE_30__tester_tester_service__["a" /* TesterService */],
                 __WEBPACK_IMPORTED_MODULE_29__helpers_custom_http__["a" /* customHttpProvider */],
-                __WEBPACK_IMPORTED_MODULE_73__helpers_auth_interceptor__["a" /* httpInterceptorProviders */],
+                __WEBPACK_IMPORTED_MODULE_71__helpers_auth_interceptor__["a" /* httpInterceptorProviders */],
                 __WEBPACK_IMPORTED_MODULE_32__services_auth_service__["a" /* AuthService */],
                 __WEBPACK_IMPORTED_MODULE_51__gauges_gauges_component__["a" /* GaugesManager */],
                 __WEBPACK_IMPORTED_MODULE_36__helpers_windowref__["a" /* WindowRef */],
@@ -3047,9 +3041,9 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["b" /* DialogDocProperty */],
                 __WEBPACK_IMPORTED_MODULE_18__editor_editor_component__["a" /* DialogDocName */],
                 __WEBPACK_IMPORTED_MODULE_15__header_header_component__["a" /* DialogInfo */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */],
-                __WEBPACK_IMPORTED_MODULE_59__gauges_gauge_property_gauge_property_component__["a" /* DialogGaugePermission */],
-                __WEBPACK_IMPORTED_MODULE_60__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_gauge_property_gauge_property_component__["c" /* GaugePropertyComponent */],
+                __WEBPACK_IMPORTED_MODULE_55__gauges_gauge_property_gauge_property_component__["a" /* DialogGaugePermission */],
+                __WEBPACK_IMPORTED_MODULE_56__gauges_chart_property_chart_property_component__["a" /* ChartPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_23__device_device_property_device_property_component__["a" /* DevicePropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_24__device_tag_property_tag_property_component__["a" /* TagPropertyComponent */],
                 __WEBPACK_IMPORTED_MODULE_43__gui_helpers_confirm_dialog_confirm_dialog_component__["a" /* ConfirmDialogComponent */],
@@ -3058,8 +3052,8 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_44__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */],
                 __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["a" /* ChartConfigComponent */],
                 __WEBPACK_IMPORTED_MODULE_20__editor_chart_config_chart_config_component__["b" /* DialogListItem */],
-                __WEBPACK_IMPORTED_MODULE_71__users_users_component__["a" /* DialogUser */],
-                __WEBPACK_IMPORTED_MODULE_72__login_login_component__["a" /* LoginComponent */],
+                __WEBPACK_IMPORTED_MODULE_67__users_users_component__["a" /* DialogUser */],
+                __WEBPACK_IMPORTED_MODULE_68__login_login_component__["a" /* LoginComponent */],
                 __WEBPACK_IMPORTED_MODULE_14__home_home_component__["a" /* DialogUserInfo */]
             ],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_12__app_component__["a" /* AppComponent */]]
@@ -4519,7 +4513,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "#svg_editor_container {\r\n  /* position: absolute; */\r\n  /* bottom: 0px; */\r\n  /* left: 0px; */\r\n  /* right: 0px; */\r\n  /* display: block; */\r\n  background:#AAA;\r\n  height:100%; \r\n  width:100%;\r\n  display: -ms-flexbox;\r\n  display: flex;\r\n  -ms-flex-direction: column;\r\n      flex-direction: column;\r\n  position: absolute;\r\n  top: 0px;\r\n  left: 0px;\r\n}\r\n\r\n.svg-workarea-toolbar {\r\n  min-height: 46px;\r\n  height: 46px;\r\n}\r\n.svg-workarea-leftbar-p {\r\n  box-shadow: none !important;\r\n  background-color: rgba(33,33,33,1);\r\n}\r\n\r\n.svg-workarea-leftbar-h {\r\nmax-height: 26px;\r\ntext-align: center;\r\nvertical-align: middle;\r\npadding-left: 0px;\r\npadding-right: 0px;\r\nbackground-color: rgba(33,33,33,1);\r\ncolor: rgba(255,255,255,1);\r\n/* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */\r\n}\r\n\r\n.svg-workarea-leftbar-h mat-icon {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.svg-workarea-leftbar-h span {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  padding-top: 5px !important;\r\n  padding-left: 3px;\r\n  font-size: 11px;\r\n}\r\n\r\n/* .svg-workarea-leftbar-h:hover {\r\n} */\r\n\r\n.svg-workarea-leftbar-h:enabled .svg-workarea-leftbar-h::-moz-selection{\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.svg-workarea-leftbar-h:enabled .svg-workarea-leftbar-h::selection{\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n/* .mat-expansion-panel-content {\r\n  background-color: rgb(53, 3, 3);\r\n} */\r\n\r\n.svg-workarea-flybar-h {\r\n  max-height: 26px;\r\n  text-align: center;\r\n  vertical-align: middle;\r\n  padding-left: 0px;\r\n  padding-right: 0px;\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  /* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */\r\n }\r\n \r\n .svg-workarea-flybar-h mat-icon {\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n }\r\n \r\n .svg-workarea-flybar-h span {\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n     padding-top: 5px !important;\r\n     padding-left: 3px;\r\n     font-size: 11px;\r\n }\r\n \r\n /* .svg-workarea-flybar-h:hover {\r\n } */\r\n \r\n .svg-workarea-flybar-h:enabled .svg-workarea-flybar-h::-moz-selection{\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n }\r\n \r\n .svg-workarea-flybar-h:enabled .svg-workarea-flybar-h::selection{\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n }   \r\n\r\n.svg-workarea-fly-p {\r\n  box-shadow: none !important;\r\n  background-color: rgba(33,33,33,1);\r\n  width: 200px;\r\n  padding-left: 0px;\r\n  padding-right: 0px;\r\n}\r\n\r\n.svg-property-split3:after {\r\n  display: table;\r\n  clear: both;\r\n}\r\n\r\n.svg-property-split3 div {\r\n  /* float: left; */\r\n  /* width: 49%; */\r\n  display: inline-block;\r\n}\r\n\r\n.svg-property-split2:after {\r\n  display: table;\r\n  clear: both;\r\n}\r\n\r\n.svg-property-split2 div {\r\n  /* float: left; */\r\n  /* width: 49%; */\r\n  display: inline-block;\r\n}\r\n\r\n.svg-property {\r\n  /* display: block; */\r\n  color: rgba(255,255,255,0.75);\r\n  /* position: relative; */\r\n  /* left: 5px; */\r\n  /* right: 5px; */\r\n  /* width: 100%; */\r\n}\r\n\r\n.svg-property span {\r\n  /* float: left; */\r\n  display: block;\r\n  font-size: 10px;\r\n  margin: 0px 5px 0px 10px;\r\n}\r\n\r\n.svg-property input {\r\n  /* float: right; */\r\n  /* position: relative; */\r\n  /* left: 0px; */\r\n  /* right: 0px; */\r\n  display: block;\r\n  margin: 0px 10px 12px 10px;\r\n  border: unset;\r\n  background-color: inherit;\r\n  color: inherit;\r\n  border-bottom: 1px solid rgba(255,255,255,0.75);\r\n}\r\n\r\n.svg-workarea-container {\r\n  /* position: relative; */\r\n  display: block;\r\n  height: 100%;\r\n  /* height: calc(100% - 46px);  */\r\n  /* bottom: 0px; */\r\n  /* top: 0px; */\r\n  /* left: 0px; */\r\n  /* right: 0px; */\r\n}\r\n\r\n.svg-tools-fly {\r\n  z-index: 9999;\r\n  position:absolute; \r\n  right:25px; \r\n  top:55px; \r\n  overflow-y: auto;\r\n  max-height: calc(100% - 75px); \r\n\r\n}\r\n\r\n.svg-tool-button {\r\n  vertical-align: middle;\r\n  display: inline-table;\r\n  /* display: inline-block; */\r\n  cursor: pointer;\r\n  height: 30px;\r\n  width: 30px;\r\n  border-radius: 50%;\r\n  margin: 2px 2px 2px 2px;\r\n  /* padding-top: 5px; */\r\n}\r\n\r\n.svg-tool-button span {\r\n  display: block;\r\n  margin: auto;\r\n  /* height: 30px; */\r\n  /* width: 30px; */\r\n}\r\n\r\n.svg-tool-button:hover {\r\n  background: rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.svg-tool-active:active {\r\n  /* border: 1px solid #000000; */\r\n  background-color: rgba(48,89,175,1);        \r\n}\r\n\r\n.svg-tool-active {\r\n  /* border: 1px solid #000000; */\r\n  background-color: rgba(48,89,175,1);        \r\n}\r\n\r\n.leave-header-area {\r\n  margin-top: 36px;\r\n}\r\n\r\n.svg-sidenav {\r\n  min-width: 160px;\r\n  max-width: 200px;\r\n  background: rgba(33,33,33,1);\r\n}\r\n\r\n/* tool bar top */\r\n.tools_panel {\r\n  background-color: rgba(33,33,33,0.92);\r\n  color: rgba(255,255,255,1);\r\n}\r\n.main-btn {\r\n  height: 34px;\r\n  width: 34px;\r\n  min-width: unset !important;\r\n  padding:unset !important;\r\n  line-height: 34px;\r\n  margin-left: 5px;\r\n  margin-right: 5px;\r\n}\r\n\r\n.main-btn mat-icon {\r\n  font-size: 24px;\r\n  height: unset;\r\n  width: unset;\r\n}\r\n\r\n.main-btn .to-top {\r\n  background: url('/assets/images/to-top.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .to-bottom {\r\n  background: url('/assets/images/to-bottom.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .to-path {\r\n  background: url('/assets/images/to-path.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .group {\r\n  background: url('/assets/images/group.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .ungroup {\r\n  background: url('/assets/images/ungroup.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn-sep {\r\n  width: 1px;\r\n  background: #888;\r\n  border-left: 1px outset #888;\r\n  margin: 5px 3px;\r\n  padding: 0;\r\n  height: 24px;\r\n}\r\n\r\n/* --------------- */\r\n/* left panel */\r\n/* --------------- */\r\n.view-panel {\r\n  max-height: 400px;\r\n  overflow: auto;\r\n}\r\n.leftbar-edit-btn {\r\n  margin-top: 2px;\r\n  font-size: 18px;\r\n  height: 18px;\r\n  width: 18px;\r\n  padding-right: 15px;\r\n}\r\n\r\n.leftbar-panel {\r\n  padding: 0px 0px 0px 0px;\r\n  font-size: 11px;\r\n  /* background-color: rgb(34, 107, 241); */\r\n  background-color: rgba(47,47,47,1);\r\n  /* overflow: auto; */\r\n}\r\n\r\n.leftbar-item {\r\n  /* padding-top: 6px; */\r\n  /* padding-bottom: 6px; */\r\n  /* width: 100%; */\r\n  padding: 3px 0px 1px 0px;\r\n  display: flow-root;\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.leftbar-item-active {\r\n  /* font-weight: 600; */\r\n  background-color: rgba(48,89,175,1);    \r\n}\r\n\r\n.leftbar-item span {\r\n  padding-left: 15px;    \r\n  float: left;\r\n}\r\n.leftbar-item mat-icon {\r\n  float: right;\r\n  font-size: 18px;\r\n  /* color: rgba(0, 0, 0, 0.4); */\r\n}\r\n\r\n::ng-deep .leftbar-item-menu {\r\n  background-color: rgba(47,47,47,1);\r\n}\r\n\r\n::ng-deep .svg-workarea-leftbar-p .mat-expansion-panel-body {\r\n  margin: 0px 0px 0px 0px !important;\r\n  padding: 0px 0px 0px 0px !important;\r\n  /* padding-left: 10px !important; */\r\n  -ms-flex-wrap: wrap !important;\r\n      flex-wrap: wrap !important;\r\n}\r\n\r\n::ng-deep .svg-workarea-fly-p .mat-expansion-panel-body {\r\n  margin: 0px 0px 0px 0px !important;\r\n  padding: 0px 0px 0px 0px !important;\r\n  /* padding-left: 10px !important; */\r\n  -ms-flex-wrap: wrap !important;\r\n      flex-wrap: wrap !important;\r\n  background-color: rgba(47,47,47,1);\r\n  \r\n}\r\n\r\n::ng-deep .mat-menu-item {\r\n  font-size: 11px;\r\n  color: rgba(255,255,255,1);\r\n  height: 30px !important;\r\n  line-height: unset !important;\r\n}\r\n\r\n.rightbar-panel {\r\n  /* padding: 0px 0px 0px 0px; */\r\n  /* font-size: 11px; */\r\n  /* background-color: rgb(34, 107, 241); */\r\n  background-color: rgba(47,47,47,1);\r\n  /* overflow: auto; */\r\n}\r\n\r\n.mat-expansion-panel-header-title span {\r\n  padding-top: 3px;\r\n}\r\n.mat-expansion-panel-spacing {\r\n  margin: 0px 0px 0px 0px !important;\r\n}\r\n\r\n.bottom-bar {\r\n  position: absolute;\r\n  left: 0px;\r\n  right: 0;\r\n  bottom: 0;\r\n  height: 30px;\r\n  overflow: visible;\r\n}\r\n\r\n.zoom-menu {\r\n  float: left;\r\n  padding-left: 5px;\r\n  width: 90px;  \r\n}\r\n\r\n.zoom-value {\r\n  background-color: inherit;\r\n  color: rgba(255,255,255,1);\r\n  border: unset;\r\n  display: inline-block;\r\n}\r\n\r\n.zoom-label {\r\n  display: inline-block;\r\n  height: 25px;\r\n}\r\n.zoom-value span {\r\n  display: inline-block;\r\n  /* position: absolute; */\r\n  /* top: 5px; */\r\n  /* left: 5px; */\r\n  /* height: 10px; */\r\n  /* width: 10px; */\r\n}\r\n\r\n.zoom-value .selection, button {\r\n  display: inline-block;\r\n  /* height: 10px; */\r\n  /* width: 10px; */\r\n  /* position: absolute; */\r\n  /* top: 3px; */\r\n  /* left: 55px; */\r\n}\r\n.zoom-value button {\r\n  /* width: unset; */\r\n  z-index: 9999;\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  border: unset;\r\n}\r\n\r\n.zoom-value ul, li {\r\n  /* width: unset; */\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  border: unset;\r\n}\r\n\r\n.zoom-value ul {\r\n  left: 0px;\r\n}\r\n\r\n.zoom-value li:hover {\r\n  background-color: rgb(22, 22, 22);\r\n  \r\n}\r\n\r\n.colors {\r\n  position: absolute;\r\n  left: 25px;\r\n  top: 0px;\r\n}\r\n\r\n.colors-palette {\r\n  position: absolute;\r\n  left: 850px;\r\n  top: 0px;\r\n}\r\n\r\n.color-fill {\r\n  position: relative;\r\n  top: 3px;\r\n  left: 10px;\r\n  cursor: pointer;\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 1px solid  rgba(255,255,255,0.75);\r\n}\r\n\r\n.color-stroke {\r\n  position: absolute;\r\n  top: 3px;\r\n  left: 30px;\r\n  cursor: pointer;\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 1px solid  rgba(255,255,255,0.75);\r\n}\r\n\r\n.style-stroke {\r\n  display: block !important;\r\n  margin: 0px 10px 12px 10px;\r\n  background-color: inherit;\r\n  color: inherit;\r\n}\r\n\r\n.style-stroke option {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.font-family {\r\n  display: block;\r\n  margin: 0px 10px 12px 10px;\r\n  background-color: inherit;\r\n  color: inherit;\r\n}\r\n\r\n.font-family option {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.text-align {\r\n  display: block;\r\n  margin: 0px 10px 12px 10px;\r\n  background-color: inherit;\r\n  color: inherit;\r\n}\r\n\r\n.text-align option {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\nselect#start_marker option[value=\"A\"] { background:url('/assets/images/select-pointer.svg');   }\r\nselect#start_marker option[value=\"B\"] { background:url('/assets/images/select-pointer.svg'); }\r\nselect#start_marker option[value=\"C\"] { background:url('/assets/images/select-pointer.svg'); }\r\nselect#start_marker option[value=\"D\"] { background:url('/assets/images/select-pointer.svg'); }\r\n\r\n.icon-select {\r\n  background: url('/assets/images/select-pointer.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-pencil {\r\n  background: url('/assets/images/pencil.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-line {\r\n  background: url('/assets/images/line.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-rect {\r\n  background: url('/assets/images/rect.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-circle {\r\n  background: url('/assets/images/circle.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-ellipse {\r\n  background: url('/assets/images/ellipse.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-path {\r\n  background: url('/assets/images/path.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-text {\r\n  background: url('/assets/images/text.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px; \r\n}\r\n\r\n.icon-image {\r\n  background: url('/assets/images/image.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-left {\r\n  background: url('/assets/images/align-left.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-center {\r\n  background: url('/assets/images/align-center.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-right {\r\n  background: url('/assets/images/align-right.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-top {\r\n  background: url('/assets/images/align-top.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-middle {\r\n  background: url('/assets/images/align-middle.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-bottom {\r\n  background: url('/assets/images/align-bottom.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-flip-orizontal {\r\n  background: url('/assets/images/flip-orizontal.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-flip-vertical {\r\n  background: url('/assets/images/flip-vertical.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linejoin-miter {\r\n  background: url('/assets/images/linejoin-miter.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linejoin-round {\r\n  background: url('/assets/images/linejoin-round.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linejoin-bevel {\r\n  background: url('/assets/images/linejoin-bevel.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linecap-butt {\r\n  background: url('/assets/images/linecap-butt.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linecap-square {\r\n  background: url('/assets/images/linecap-square.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linecap-round {\r\n  background: url('/assets/images/linecap-round.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-tool {\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.icon-switch {\r\n  background: url('/assets/images/switch.svg') no-repeat center center;\r\n}\r\n.icon-compressor-void {\r\n  background: url('/assets/images/compressor-void.svg') no-repeat center center;\r\n}\r\n.icon-compressor-fan {\r\n  background: url('/assets/images/compressor-fan.svg') no-repeat center center;\r\n}\r\n.icon-compressor-piston {\r\n  background: url('/assets/images/compressor-piston.svg') no-repeat center center;\r\n}\r\n.icon-valve-ax {\r\n  background: url('/assets/images/valve-ax.svg') no-repeat center center;\r\n}\r\n.icon-valve-bx {\r\n  background: url('/assets/images/valve-bx.svg') no-repeat center center;\r\n}\r\n.icon-valve-cx {\r\n  background: url('/assets/images/valve-cx.svg') no-repeat center center;\r\n}\r\n.icon-value {\r\n  background: url('/assets/images/value.svg') no-repeat center center;\r\n}\r\n.icon-editvalue {\r\n  background: url('/assets/images/editvalue.svg') no-repeat center center;\r\n}\r\n.icon-selectvalue {\r\n  background: url('/assets/images/selectvalue.svg') no-repeat center center;\r\n}\r\n.icon-progress-v {\r\n  background: url('/assets/images/progress-v.svg') no-repeat center center;\r\n}\r\n.icon-semaphore {\r\n  background: url('/assets/images/semaphore.svg') no-repeat center center;\r\n}\r\n.icon-shape-diamond {\r\n  background: url('/assets/images/shape-diamond.svg') no-repeat center center;\r\n}\r\n.icon-shape-triangle {\r\n  background: url('/assets/images/shape-triangle.svg') no-repeat center center;\r\n}\r\n.icon-shape-halfcircle {\r\n  background: url('/assets/images/shape-halfcircle.svg') no-repeat center center;\r\n}\r\n.icon-shape-delay {\r\n  background: url('/assets/images/shape-delay.svg') no-repeat center center;\r\n}\r\n.icon-shape-looplimit {\r\n  background: url('/assets/images/shape-looplimit.svg') no-repeat center center;\r\n}\r\n.icon-shape-prepara {\r\n  background: url('/assets/images/shape-prepara.svg') no-repeat center center;\r\n}\r\n.icon-shape-trape {\r\n  background: url('/assets/images/shape-trape.svg') no-repeat center center;\r\n}\r\n.icon-shape-offpage {\r\n  background: url('/assets/images/shape-offpage.svg') no-repeat center center;\r\n}\r\n.icon-shape-ticket {\r\n  background: url('/assets/images/shape-ticket.svg') no-repeat center center;\r\n}\r\n.icon-shape-arrow {\r\n  background: url('/assets/images/shape-arrow.svg') no-repeat center center;\r\n}\r\n.icon-shape-doublearrow {\r\n  background: url('/assets/images/shape-doublearrow.svg') no-repeat center center;\r\n}\r\n.icon-shape-rectindi {\r\n  background: url('/assets/images/shape-rectindi.svg') no-repeat center center;\r\n}\r\n.icon-shape-circleindi {\r\n  background: url('/assets/images/shape-circleindi.svg') no-repeat center center;\r\n}\r\n.icon-button {\r\n  background: url('/assets/images/button.svg') no-repeat center center;\r\n}\r\n.icon-motor-simb {\r\n  background: url('/assets/images/motor-simb.svg') no-repeat center center;\r\n}\r\n.icon-exchanger-filter {\r\n  background: url('/assets/images/exchanger-filter.svg') no-repeat center center;\r\n}\r\n.icon-exchanger-heat {\r\n  background: url('/assets/images/exchanger-heat.svg') no-repeat center center;\r\n}\r\n.icon-exchanger-tube {\r\n  background: url('/assets/images/exchanger-tube.svg') no-repeat center center;\r\n}\r\n.icon-chart {\r\n  background: url('/assets/images/chart.svg') no-repeat center center;\r\n}", ""]);
+exports.push([module.i, "#svg_editor_container {\r\n  /* position: absolute; */\r\n  /* bottom: 0px; */\r\n  /* left: 0px; */\r\n  /* right: 0px; */\r\n  /* display: block; */\r\n  background:#AAA;\r\n  height:100%; \r\n  width:100%;\r\n  display: -ms-flexbox;\r\n  display: flex;\r\n  -ms-flex-direction: column;\r\n      flex-direction: column;\r\n  position: absolute;\r\n  top: 0px;\r\n  left: 0px;\r\n}\r\n\r\n.svg-workarea-toolbar {\r\n  min-height: 46px;\r\n  height: 46px;\r\n}\r\n.svg-workarea-leftbar-p {\r\n  box-shadow: none !important;\r\n  background-color: rgba(33,33,33,1);\r\n}\r\n\r\n.svg-workarea-leftbar-h {\r\nmax-height: 26px;\r\ntext-align: center;\r\nvertical-align: middle;\r\npadding-left: 0px;\r\npadding-right: 0px;\r\nbackground-color: rgba(33,33,33,1);\r\ncolor: rgba(255,255,255,1);\r\n/* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */\r\n}\r\n\r\n.svg-workarea-leftbar-h mat-icon {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.svg-workarea-leftbar-h span {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  padding-top: 5px !important;\r\n  padding-left: 3px;\r\n  font-size: 11px;\r\n}\r\n\r\n/* .svg-workarea-leftbar-h:hover {\r\n} */\r\n\r\n.svg-workarea-leftbar-h:enabled .svg-workarea-leftbar-h::-moz-selection{\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.svg-workarea-leftbar-h:enabled .svg-workarea-leftbar-h::selection{\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n/* .mat-expansion-panel-content {\r\n  background-color: rgb(53, 3, 3);\r\n} */\r\n\r\n.svg-workarea-flybar-h {\r\n  max-height: 26px;\r\n  text-align: center;\r\n  vertical-align: middle;\r\n  padding-left: 0px;\r\n  padding-right: 0px;\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  /* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */\r\n }\r\n \r\n .svg-workarea-flybar-h mat-icon {\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n }\r\n \r\n .svg-workarea-flybar-h span {\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n     padding-top: 5px !important;\r\n     padding-left: 3px;\r\n     font-size: 11px;\r\n }\r\n \r\n /* .svg-workarea-flybar-h:hover {\r\n } */\r\n \r\n .svg-workarea-flybar-h:enabled .svg-workarea-flybar-h::-moz-selection{\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n }\r\n \r\n .svg-workarea-flybar-h:enabled .svg-workarea-flybar-h::selection{\r\n     background-color: rgba(33,33,33,1);\r\n     color: rgba(255,255,255,1);\r\n }   \r\n\r\n.svg-workarea-fly-p {\r\n  box-shadow: none !important;\r\n  background-color: rgba(33,33,33,1);\r\n  width: 200px;\r\n  padding-left: 0px;\r\n  padding-right: 0px;\r\n}\r\n\r\n.svg-property-split3:after {\r\n  display: table;\r\n  clear: both;\r\n}\r\n\r\n.svg-property-split3 div {\r\n  /* float: left; */\r\n  /* width: 49%; */\r\n  display: inline-block;\r\n}\r\n\r\n.svg-property-split2:after {\r\n  display: table;\r\n  clear: both;\r\n}\r\n\r\n.svg-property-split2 div {\r\n  /* float: left; */\r\n  /* width: 49%; */\r\n  display: inline-block;\r\n}\r\n\r\n.svg-property {\r\n  /* display: block; */\r\n  color: rgba(255,255,255,0.75);\r\n  /* position: relative; */\r\n  /* left: 5px; */\r\n  /* right: 5px; */\r\n  /* width: 100%; */\r\n}\r\n\r\n.svg-property span {\r\n  /* float: left; */\r\n  display: block;\r\n  font-size: 10px;\r\n  margin: 0px 5px 0px 10px;\r\n}\r\n\r\n.svg-property input {\r\n  /* float: right; */\r\n  /* position: relative; */\r\n  /* left: 0px; */\r\n  /* right: 0px; */\r\n  display: block;\r\n  margin: 0px 10px 12px 10px;\r\n  border: unset;\r\n  background-color: inherit;\r\n  color: inherit;\r\n  border-bottom: 1px solid rgba(255,255,255,0.75);\r\n}\r\n\r\n.svg-workarea-container {\r\n  /* position: relative; */\r\n  display: block;\r\n  height: 100%;\r\n  /* height: calc(100% - 46px);  */\r\n  /* bottom: 0px; */\r\n  /* top: 0px; */\r\n  /* left: 0px; */\r\n  /* right: 0px; */\r\n}\r\n\r\n.svg-tools-fly {\r\n  z-index: 9999;\r\n  position:absolute; \r\n  right:25px; \r\n  top:55px; \r\n  overflow-y: auto;\r\n  max-height: calc(100% - 75px); \r\n\r\n}\r\n\r\n.svg-tool-button {\r\n  vertical-align: middle;\r\n  display: inline-table;\r\n  /* display: inline-block; */\r\n  cursor: pointer;\r\n  height: 30px;\r\n  width: 30px;\r\n  border-radius: 50%;\r\n  margin: 2px 2px 2px 2px;\r\n  /* padding-top: 5px; */\r\n}\r\n\r\n.svg-tool-button span {\r\n  display: block;\r\n  margin: auto;\r\n  /* height: 30px; */\r\n  /* width: 30px; */\r\n}\r\n\r\n.svg-tool-button:hover {\r\n  background: rgba(0, 0, 0, 0.1);\r\n}\r\n\r\n.svg-tool-active:active {\r\n  /* border: 1px solid #000000; */\r\n  background-color: rgba(48,89,175,1);        \r\n}\r\n\r\n.svg-tool-active {\r\n  /* border: 1px solid #000000; */\r\n  background-color: rgba(48,89,175,1);        \r\n}\r\n\r\n.leave-header-area {\r\n  margin-top: 36px;\r\n}\r\n\r\n.svg-sidenav {\r\n  min-width: 160px;\r\n  max-width: 200px;\r\n  background: rgba(33,33,33,1);\r\n}\r\n\r\n/* tool bar top */\r\n.tools_panel {\r\n  background-color: rgba(33,33,33,0.92);\r\n  color: rgba(255,255,255,1);\r\n}\r\n.main-btn {\r\n  height: 34px;\r\n  width: 34px;\r\n  min-width: unset !important;\r\n  padding:unset !important;\r\n  line-height: 34px;\r\n  margin-left: 5px;\r\n  margin-right: 5px;\r\n}\r\n\r\n.main-btn mat-icon {\r\n  font-size: 24px;\r\n  height: unset;\r\n  width: unset;\r\n}\r\n\r\n.main-btn .to-top {\r\n  background: url('/assets/images/to-top.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .to-bottom {\r\n  background: url('/assets/images/to-bottom.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .to-path {\r\n  background: url('/assets/images/to-path.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .group {\r\n  background: url('/assets/images/group.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn .ungroup {\r\n  background: url('/assets/images/ungroup.svg') no-repeat center center;\r\n  background-size: contain;\r\n  display: inline-block;\r\n  height: 34px;\r\n  width: 34px;\r\n}\r\n\r\n.main-btn-sep {\r\n  width: 1px;\r\n  background: #888;\r\n  border-left: 1px outset #888;\r\n  margin: 5px 3px;\r\n  padding: 0;\r\n  height: 24px;\r\n}\r\n\r\n/* --------------- */\r\n/* left panel */\r\n/* --------------- */\r\n.view-panel {\r\n  max-height: 400px;\r\n  overflow: auto;\r\n}\r\n.leftbar-edit-btn {\r\n  margin-top: 2px;\r\n  font-size: 18px;\r\n  height: 18px;\r\n  width: 18px;\r\n  padding-right: 15px;\r\n}\r\n\r\n.leftbar-panel {\r\n  padding: 0px 0px 0px 0px;\r\n  font-size: 11px;\r\n  /* background-color: rgb(34, 107, 241); */\r\n  background-color: rgba(47,47,47,1);\r\n  overflow: auto;\r\n  max-height: 200px;\r\n}\r\n\r\n.leftbar-item {\r\n  /* padding-top: 6px; */\r\n  /* padding-bottom: 6px; */\r\n  /* width: 100%; */\r\n  padding: 3px 0px 1px 0px;\r\n  display: flow-root;\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.leftbar-item-active {\r\n  /* font-weight: 600; */\r\n  background-color: rgba(48,89,175,1);    \r\n}\r\n\r\n.leftbar-item span {\r\n  padding-left: 15px;    \r\n  float: left;\r\n}\r\n.leftbar-item mat-icon {\r\n  float: right;\r\n  font-size: 18px;\r\n  /* color: rgba(0, 0, 0, 0.4); */\r\n}\r\n\r\n::ng-deep .leftbar-item-menu {\r\n  background-color: rgba(47,47,47,1);\r\n}\r\n\r\n::ng-deep .svg-workarea-leftbar-p .mat-expansion-panel-body {\r\n  margin: 0px 0px 0px 0px !important;\r\n  padding: 0px 0px 0px 0px !important;\r\n  /* padding-left: 10px !important; */\r\n  -ms-flex-wrap: wrap !important;\r\n      flex-wrap: wrap !important;\r\n}\r\n\r\n::ng-deep .svg-workarea-fly-p .mat-expansion-panel-body {\r\n  margin: 0px 0px 0px 0px !important;\r\n  padding: 0px 0px 0px 0px !important;\r\n  /* padding-left: 10px !important; */\r\n  -ms-flex-wrap: wrap !important;\r\n      flex-wrap: wrap !important;\r\n  background-color: rgba(47,47,47,1);\r\n  \r\n}\r\n\r\n::ng-deep .mat-menu-item {\r\n  font-size: 11px;\r\n  color: rgba(255,255,255,1);\r\n  height: 30px !important;\r\n  line-height: unset !important;\r\n}\r\n\r\n.rightbar-panel {\r\n  /* padding: 0px 0px 0px 0px; */\r\n  /* font-size: 11px; */\r\n  /* background-color: rgb(34, 107, 241); */\r\n  background-color: rgba(47,47,47,1);\r\n  /* overflow: auto; */\r\n}\r\n\r\n.mat-expansion-panel-header-title span {\r\n  padding-top: 3px;\r\n}\r\n.mat-expansion-panel-spacing {\r\n  margin: 0px 0px 0px 0px !important;\r\n}\r\n\r\n.bottom-bar {\r\n  position: absolute;\r\n  left: 0px;\r\n  right: 0;\r\n  bottom: 0;\r\n  height: 30px;\r\n  overflow: visible;\r\n}\r\n\r\n.zoom-menu {\r\n  float: left;\r\n  padding-left: 5px;\r\n  width: 90px;  \r\n}\r\n\r\n.zoom-value {\r\n  background-color: inherit;\r\n  color: rgba(255,255,255,1);\r\n  border: unset;\r\n  display: inline-block;\r\n}\r\n\r\n.zoom-label {\r\n  display: inline-block;\r\n  height: 25px;\r\n}\r\n.zoom-value span {\r\n  display: inline-block;\r\n  /* position: absolute; */\r\n  /* top: 5px; */\r\n  /* left: 5px; */\r\n  /* height: 10px; */\r\n  /* width: 10px; */\r\n}\r\n\r\n.zoom-value .selection, button {\r\n  display: inline-block;\r\n  /* height: 10px; */\r\n  /* width: 10px; */\r\n  /* position: absolute; */\r\n  /* top: 3px; */\r\n  /* left: 55px; */\r\n}\r\n.zoom-value button {\r\n  /* width: unset; */\r\n  z-index: 9999;\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  border: unset;\r\n}\r\n\r\n.zoom-value ul, li {\r\n  /* width: unset; */\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n  border: unset;\r\n}\r\n\r\n.zoom-value ul {\r\n  left: 0px;\r\n}\r\n\r\n.zoom-value li:hover {\r\n  background-color: rgb(22, 22, 22);\r\n  \r\n}\r\n\r\n.colors {\r\n  position: absolute;\r\n  left: 25px;\r\n  top: 0px;\r\n}\r\n\r\n.colors-palette {\r\n  position: absolute;\r\n  left: 850px;\r\n  top: 0px;\r\n}\r\n\r\n.color-fill {\r\n  position: relative;\r\n  top: 3px;\r\n  left: 10px;\r\n  cursor: pointer;\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 1px solid  rgba(255,255,255,0.75);\r\n}\r\n\r\n.color-stroke {\r\n  position: absolute;\r\n  top: 3px;\r\n  left: 30px;\r\n  cursor: pointer;\r\n  width: 14px;\r\n  height: 14px;\r\n  border: 1px solid  rgba(255,255,255,0.75);\r\n}\r\n\r\n.style-stroke {\r\n  display: block !important;\r\n  margin: 0px 10px 12px 10px;\r\n  background-color: inherit;\r\n  color: inherit;\r\n}\r\n\r\n.style-stroke option {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.font-family {\r\n  display: block;\r\n  margin: 0px 10px 12px 10px;\r\n  background-color: inherit;\r\n  color: inherit;\r\n}\r\n\r\n.font-family option {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\n.text-align {\r\n  display: block;\r\n  margin: 0px 10px 12px 10px;\r\n  background-color: inherit;\r\n  color: inherit;\r\n}\r\n\r\n.text-align option {\r\n  background-color: rgba(33,33,33,1);\r\n  color: rgba(255,255,255,1);\r\n}\r\n\r\nselect#start_marker option[value=\"A\"] { background:url('/assets/images/select-pointer.svg');   }\r\nselect#start_marker option[value=\"B\"] { background:url('/assets/images/select-pointer.svg'); }\r\nselect#start_marker option[value=\"C\"] { background:url('/assets/images/select-pointer.svg'); }\r\nselect#start_marker option[value=\"D\"] { background:url('/assets/images/select-pointer.svg'); }\r\n\r\n.icon-select {\r\n  background: url('/assets/images/select-pointer.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-pencil {\r\n  background: url('/assets/images/pencil.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-line {\r\n  background: url('/assets/images/line.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-rect {\r\n  background: url('/assets/images/rect.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-circle {\r\n  background: url('/assets/images/circle.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-ellipse {\r\n  background: url('/assets/images/ellipse.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-path {\r\n  background: url('/assets/images/path.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-text {\r\n  background: url('/assets/images/text.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px; \r\n}\r\n\r\n.icon-image {\r\n  background: url('/assets/images/image.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-left {\r\n  background: url('/assets/images/align-left.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-center {\r\n  background: url('/assets/images/align-center.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-right {\r\n  background: url('/assets/images/align-right.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-top {\r\n  background: url('/assets/images/align-top.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-middle {\r\n  background: url('/assets/images/align-middle.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-align-bottom {\r\n  background: url('/assets/images/align-bottom.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-flip-orizontal {\r\n  background: url('/assets/images/flip-orizontal.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-flip-vertical {\r\n  background: url('/assets/images/flip-vertical.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linejoin-miter {\r\n  background: url('/assets/images/linejoin-miter.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linejoin-round {\r\n  background: url('/assets/images/linejoin-round.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linejoin-bevel {\r\n  background: url('/assets/images/linejoin-bevel.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linecap-butt {\r\n  background: url('/assets/images/linecap-butt.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linecap-square {\r\n  background: url('/assets/images/linecap-square.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-linecap-round {\r\n  background: url('/assets/images/linecap-round.svg') no-repeat center center;\r\n  background-size: contain;\r\n  height: 30px;\r\n  width: 30px;\r\n}\r\n\r\n.icon-tool {\r\n  background-size: auto;\r\n  height: 30px;\r\n  width: 30px;\r\n  color: rgba(255,255,255,1);\r\n  background-position: center; /* Center the image */\r\n  background-repeat: no-repeat; /* Do not repeat the image */\r\n}\r\n\r\n.icon-switch {\r\n  background: url('/assets/images/switch.svg') no-repeat center center;\r\n}\r\n.icon-value {\r\n  background: url('/assets/images/value.svg') no-repeat center center;\r\n}\r\n.icon-editvalue {\r\n  background: url('/assets/images/editvalue.svg') no-repeat center center;\r\n}\r\n.icon-selectvalue {\r\n  background: url('/assets/images/selectvalue.svg') no-repeat center center;\r\n}\r\n.icon-progress-v {\r\n  background: url('/assets/images/progress-v.svg') no-repeat center center;\r\n}\r\n.icon-semaphore {\r\n  background: url('/assets/images/semaphore.svg') no-repeat center center;\r\n}\r\n.icon-button {\r\n  background: url('/assets/images/button.svg') no-repeat center center;\r\n}\r\n.icon-chart {\r\n  background: url('/assets/images/chart.svg') no-repeat center center;\r\n}", ""]);
 
 // exports
 
@@ -4532,7 +4526,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/editor/editor.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n    <!-- <mat-spinner mode=\"indeterminate\" color=\"rgba(48,89,175,1)\" diameter=\"50\" \r\n            style=\"position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);\">\r\n    </mat-spinner> -->\r\n    <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\r\n        style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n    </mat-progress-bar>\r\n</div>\r\n<div id=\"svg_editor_container\">\r\n  <mat-drawer-container class=\"svg-workarea-container\">\r\n    <!-- LEFT BAR -->\r\n    <mat-drawer mode=\"side\" opened=\"true\" class=\"svg-sidenav leave-header-area\">\r\n      <mat-accordion multi=\"true\">\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelA=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelA=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelA\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelA\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelA\">expand_more</mat-icon>\r\n              <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->\r\n            </mat-panel-title>\r\n            <mat-icon aria-label=\"Set\" title=\"{{'editor.layout-settings' | translate}}\" *ngIf=\"panelsState.panelA\" class=\"leftbar-edit-btn\"\r\n              (click)=\"onLayoutProperty();$event.stopPropagation()\">settings</mat-icon>\r\n            <mat-icon aria-label=\"Add\" title=\"Add View\" *ngIf=\"panelsState.panelA\" class=\"leftbar-edit-btn\" (click)=\"onAddView();$event.stopPropagation()\">add</mat-icon>\r\n          </mat-expansion-panel-header>\r\n          <div class=\"leftbar-panel view-panel\">\r\n            <div *ngIf=\"hmi.views && hmi.views.length <= 0\">\r\n              <br>\r\n            </div>\r\n            <div *ngFor=\"let item of getViewsSorted()\" (click)=\"onSelectView(item)\" [ngClass]=\"{'leftbar-item-active': isViewActive(item)}\"\r\n              class=\"leftbar-item mycursor-pointer\">\r\n              <span>{{item.name}}</span>\r\n              <mat-icon aria-label=\"More\" [matMenuTriggerFor]=\"menuview\" class=\"\">more_vert</mat-icon>\r\n              <mat-menu #menuview=\"matMenu\" class=\"leftbar-item-menu\">\r\n                <button mat-menu-item (click)=\"onDeleteView(item)\">{{'editor.view-delete' | translate}}</button>\r\n                <button mat-menu-item (click)=\"onRenameView(item)\">{{'editor.view-rename' | translate}}</button>\r\n                <button mat-menu-item (click)=\"onPropertyView(item)\">{{'editor.view-property' | translate}}</button>\r\n              </mat-menu>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelB=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelB=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelB\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelB\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelB\">expand_more</mat-icon>\r\n              <span>{{'editor.general' | translate}}</span> <!-- GENERAL -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('select')}\" (click)=\"setMode('select')\">\r\n              <span class=\"icon-select\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('fhpath')}\" (click)=\"setMode('fhpath')\">\r\n              <span class=\"icon-pencil\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('line')}\" (click)=\"setMode('line')\">\r\n              <span class=\"icon-line\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('rect')}\" (click)=\"setMode('rect')\">\r\n              <span class=\"icon-rect\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('circle')}\" (click)=\"setMode('circle')\">\r\n              <span class=\"icon-circle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('ellipse')}\" (click)=\"setMode('ellipse')\">\r\n              <span class=\"icon-ellipse\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div>\r\n            <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div> -->\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('text')}\" (click)=\"setMode('text')\">\r\n              <span class=\"icon-text\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}\"\r\n              (click)=\"imagefile.value = '';imagefile.click();\">\r\n              <span class=\"icon-image\"></span>\r\n              <input #imagefile type=\"file\" style=\"display: none;\" (change)=\"onSetImage($event)\" accept=\"image/png|jpg|svg\" />\r\n            </div>\r\n            <div id=\"tool_line\" style=\"display: none;\">\r\n              <span class=\"icon-image\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelS=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelS=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelS\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelS\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelS\">expand_more</mat-icon>\r\n              <span>{{'editor.shape' | translate}}</span> <!-- SHAPE -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-diamond')}\" (click)=\"setMode('shape-diamond')\">\r\n              <span class=\"icon-tool icon-shape-diamond\"> </span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-triangle')}\" (click)=\"setMode('shape-triangle')\">\r\n              <span class=\"icon-tool icon-shape-triangle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-halfcircle')}\" (click)=\"setMode('shape-halfcircle')\">\r\n              <span class=\"icon-tool icon-shape-halfcircle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-delay')}\" (click)=\"setMode('shape-delay')\">\r\n              <span class=\"icon-tool icon-shape-delay\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-looplimit')}\" (click)=\"setMode('shape-looplimit')\">\r\n              <span class=\"icon-tool icon-shape-looplimit\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-prepara')}\" (click)=\"setMode('shape-prepara')\">\r\n              <span class=\"icon-tool icon-shape-prepara\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-trape')}\" (click)=\"setMode('shape-trape')\">\r\n              <span class=\"icon-tool icon-shape-trape\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-offpage')}\" (click)=\"setMode('shape-offpage')\">\r\n              <span class=\"icon-tool icon-shape-offpage\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-ticket')}\" (click)=\"setMode('shape-ticket')\">\r\n              <span class=\"icon-tool icon-shape-ticket\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-arrow')}\" (click)=\"setMode('shape-arrow')\">\r\n              <span class=\"icon-tool icon-shape-arrow\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-doublearrow')}\" (click)=\"setMode('shape-doublearrow')\">\r\n              <span class=\"icon-tool icon-shape-doublearrow\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-rectindi')}\" (click)=\"setMode('shape-rectindi')\">\r\n              <span class=\"icon-tool icon-shape-rectindi\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('shape-circleindi')}\" (click)=\"setMode('shape-circleindi')\">\r\n              <span class=\"icon-tool icon-shape-circleindi\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelC=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelC=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelC\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelC\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelC\">expand_more</mat-icon>\r\n              <span>{{'editor.processeng' | translate}}</span> <!-- PROCESS  -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('switch')}\" (click)=\"setMode('switch')\">\r\n              <span class=\"icon-tool icon-switch\"></span>\r\n            </div> -->\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-void')}\" (click)=\"setMode('compressor-void')\">\r\n              <span class=\"icon-tool icon-compressor-void\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-fan')}\" (click)=\"setMode('compressor-fan')\">\r\n              <span class=\"icon-tool icon-compressor-fan\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('compressor-piston')}\" (click)=\"setMode('compressor-piston')\">\r\n              <span class=\"icon-tool icon-compressor-piston\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-ax')}\" (click)=\"setMode('valve-ax')\">\r\n              <span class=\"icon-tool icon-valve-ax\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-bx')}\" (click)=\"setMode('valve-bx')\">\r\n              <span class=\"icon-tool icon-valve-bx\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('valve-cx')}\" (click)=\"setMode('valve-cx')\">\r\n              <span class=\"icon-tool icon-valve-cx\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('motor-simb')}\" (click)=\"setMode('motor-simb')\">\r\n              <span class=\"icon-tool icon-motor-simb\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-filter')}\" (click)=\"setMode('exchanger-filter')\">\r\n              <span class=\"icon-tool icon-exchanger-filter\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-heat')}\" (click)=\"setMode('exchanger-heat')\">\r\n              <span class=\"icon-tool icon-exchanger-heat\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('exchanger-tube')}\" (click)=\"setMode('exchanger-tube')\">\r\n              <span class=\"icon-tool icon-exchanger-tube\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelD=true;savePanelState()\"\r\n          (closed)=\"panelsState.panelD=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelD\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelD\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelD\">expand_more</mat-icon>\r\n              <span>{{'editor.controls' | translate}}</span> <!-- CONTROLS  -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_input')}\" (click)=\"setMode('html_input')\">\r\n              <span class=\"icon-tool icon-editvalue\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('value')}\" (click)=\"setMode('value')\">\r\n              <span class=\"icon-tool icon-value\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_button')}\" (click)=\"setMode('html_button')\">\r\n              <span class=\"icon-tool icon-button\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_select')}\" (click)=\"setMode('html_select')\">\r\n              <span class=\"icon-tool icon-selectvalue\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_progress')}\" (click)=\"setMode('gauge_progress')\">\r\n              <span class=\"icon-tool icon-progress-v\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_semaphore')}\" (click)=\"setMode('gauge_semaphore')\">\r\n              <span class=\"icon-tool icon-semaphore\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_chart')}\" (click)=\"setMode('html_chart')\">\r\n              <span class=\"icon-tool icon-chart\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n      </mat-accordion>\r\n    </mat-drawer>\r\n    <!-- END LEFT BAR -->\r\n    <!-- WORK AREA -->\r\n    <mat-drawer-content>\r\n      <!-- RIGHT BAR -->\r\n      <div class=\"svg-tools-fly\">\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyIdOpenState = true\" (closed)=\"panelPropertyIdOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\" style=\"display:none\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-flybar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyIdOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyIdOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"_selected_panel\">\r\n            <div class=\"_toolset\">\r\n              <label id=\"idLabel\" title=\"{{'editor.interactivity-id-title' | translate}}\" class=\"svg-property\">\r\n                <span>{{'editor.interactivity-id' | translate}}</span>\r\n                <input id=\"elem_id\" #selid class=\"attr_changer\" data-attr=\"id\" type=\"text\" />\r\n              </label>\r\n              <label id=\"classLabel\" title=\"{{'editor.interactivity-class-title' | translate}}\" class=\"svg-property\">\r\n                <span>{{'editor.interactivity-class' | translate}}</span>\r\n                <input id=\"elem_class\" class=\"attr_changer\" data-attr=\"class\" type=\"text\" />\r\n              </label>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyTransformOpenState = true\" (closed)=\"panelPropertyTransformOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyTransformOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyTransformOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.transform' | translate}}</span> <!-- TRANSFORM SIZE/POSITION-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"_selected_panel\" class=\"rightbar-panel\">\r\n            <div class=\"_toolset\">\r\n              <div id=\"xy_panel\" class=\"_toolset\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x' | translate}}</span>\r\n                    <input id=\"selected_x\" class=\"attr_changer\" title=\"{{'editor.transform-x-title' | translate}}\" size=\"4\" data-attr=\"x\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y' | translate}}</span>\r\n                    <input id=\"selected_y\" class=\"attr_changer\" title=\"{{'editor.transform-y-title' | translate}}\" size=\"3\" data-attr=\"y\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"line_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x1' | translate}}</span>\r\n                    <input id=\"line_x1\" class=\"attr_changer\" title=\"{{'editor.transform-x1-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"x1\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y1' | translate}}</span>\r\n                    <input id=\"line_y1\" class=\"attr_changer\" title=\"{{'editor.transform-y1-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"y1\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-x2' | translate}}</span>\r\n                    <input id=\"line_x2\" class=\"attr_changer\" title=\"{{'editor.transform-x2-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"x2\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-y2' | translate}}</span>\r\n                    <input id=\"line_y2\" class=\"attr_changer\" title=\"{{'editor.transform-y2-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"y2\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"rect_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-radius-title' | translate}}\">\r\n                    <span>{{'editor.transform-radiuscorner' | translate}}</span>\r\n                    <input id=\"rect_rx\" size=\"3\" value=\"0\" type=\"text\" data-attr=\"Corner Radius\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"htmlctrl_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"htmlctrl_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"htmlctrl_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"shape_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"shape_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"shape_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"circle_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circlecx' | translate}}</span>\r\n                    <input id=\"circle_cx\" class=\"attr_changer\" title=\"{{'editor.transform-circlecx-title' | translate}}\" size=\"3\" data-attr=\"cx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circlecy' | translate}}</span>\r\n                    <input id=\"circle_cy\" class=\"attr_changer\" title=\"{{'editor.transform-circlecy-title' | translate}}\" size=\"3\" data-attr=\"cy\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-circler' | translate}}</span>\r\n                    <input id=\"circle_r\" class=\"attr_changer\" title=\"{{'editor.transform-circler-title' | translate}}\" size=\"3\" data-attr=\"r\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"ellipse_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsecx' | translate}}</span>\r\n                    <input id=\"ellipse_cx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecx-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"cx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsecy' | translate}}</span>\r\n                    <input id=\"ellipse_cy\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecy-title' | translate}}\" size=\"3\"\r\n                      data-attr=\"cy\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipserx' | translate}}</span>\r\n                    <input id=\"ellipse_rx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipserx-title' | translate}}\" size=\"3\" data-attr=\"rx\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-ellipsery' | translate}}</span>\r\n                    <input id=\"ellipse_ry\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsery-title' | translate}}\" size=\"3\" data-attr=\"ry\" />\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <div id=\"text_panel\">\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.transform-fontfamily' | translate}}</span>\r\n                  <select class=\"font-family\" id=\"font_family\" #fontfamily (change)=\"onFontFamilyChange(fontfamily.value)\">\r\n                    <option style=\"font-family:serif\">{{'editor.transform-font-serif' | translate}}</option>\r\n                    <option style=\"font-family:sans-serif\">{{'editor.transform-font-sansserif' | translate}}</option>\r\n                    <option style=\"font-family:cursive\">{{'editor.transform-font-cursive' | translate}}</option>\r\n                    <option style=\"font-family:fantasy\">{{'editor.transform-font-fantasy' | translate}}</option>\r\n                    <option style=\"font-family:monospace\">{{'editor.transform-font-monospace' | translate}}</option>\r\n                  </select>\r\n                </div>\r\n\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-fontsize' | translate}}</span>\r\n                    <input id=\"font_size\" size=\"3\" value=\"0\" class=\"attr_changer\" title=\"{{'editor.transform-fontsize-title' | translate}}\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-textalign' | translate}}</span>\r\n                    <select class=\"text-align\" id=\"text_anchor\" #textalign (change)=\"onTextAlignChange(textalign.value)\">\r\n                      <option value=\"start\">{{'editor.transform-left' | translate}}</option>\r\n                      <option value=\"middle\">{{'editor.transform-center' | translate}}</option>\r\n                      <option value=\"end\">{{'editor.transform-right' | translate}}</option>\r\n                    </select>\r\n                    <!-- <div class=\"tool_button\" id=\"tool_bold\" title=\"Bold Text [B]\">\r\n                      <span>B</span>\r\n                    </div> -->\r\n                  </div>\r\n                  <!-- <div class=\"svg-property\">\r\n                    <div class=\"tool_button\" id=\"tool_italic\" title=\"Italic Text [I]\">\r\n                      <span>i</span>\r\n                    </div>\r\n                  </div> -->\r\n                </div>\r\n\r\n                <!-- Not visible, but still used -->\r\n                <input id=\"text\" type=\"text\" size=\"35\" />\r\n              </div>\r\n              <div id=\"image_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-width' | translate}}</span>\r\n                    <input id=\"image_width\" class=\"attr_changer\" title=\"{{'editor.transform-image-width-title' | translate}}\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-height' | translate}}</span>\r\n                    <input id=\"image_height\" class=\"attr_changer\" title=\"{{'editor.transform-image-height-title' | translate}}\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n                <div class=\"svg-property\" style=\"display: none;\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-url' | translate}}</span>\r\n                    <input id=\"image_url\" class=\"attr_changer\" type=\"text\" title=\"{{'editor.transform-image-url-title' | translate}}\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <div class=\"svg-property\">\r\n                      <button id=\"change_image_url\" style=\"display:none;\">{{'editor.transform-change-image' | translate}}</button>\r\n                      <span id=\"url_notice\" title=\"{{'editor.transform-change-image-title' | translate}}\"></span>\r\n                    </div>\r\n                  </div>\r\n                </div>\r\n              </div>\r\n              <!-- <div id=\"hw_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"Change rectangle width\">\r\n                    <span>width</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"Change rectangle height\">\r\n                    <span>height</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div> -->\r\n              <div id=\"tool_angle\" title=\"{{'editor.transform-angle-title' | translate}}\" class=\"svg-property\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\">\r\n                    <span>{{'editor.transform-angle' | translate}}</span>\r\n                    <input id=\"angle\" size=\"2\" value=\"0\" type=\"text\" />\r\n                  </div>\r\n                  <div class=\"svg-property\">\r\n                    <!-- <div class=\"svg-tool-button\" (click)=\"flipSelected('vertical')\" title=\"Flip vertically\">\r\n                      <span class=\"icon-flip-vertical\"></span>\r\n                    </div>\r\n                    <div class=\"svg-tool-button\" (click)=\"flipSelected('orizontal')\" title=\"Flip orizontally\">\r\n                      <span class=\"icon-flip-orizontal\"></span>\r\n                    </div> -->\r\n                  </div>\r\n                </div>\r\n              </div>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelAlignOpenState = true\" (closed)=\"panelAlignOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelAlignOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelAlignOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.align' | translate}}</span> <!-- ALIGN-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"align_panel\" class=\"rightbar_panel\">\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('left')\" title=\"{{'editor.align-left-title' | translate}}\">\r\n              <span class=\"icon-align-left\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('center')\" title=\"{{'editor.align-center-title' | translate}}Align Center\">\r\n              <span class=\"icon-align-center\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('right')\" title=\"{{'editor.align-right-title' | translate}}Align Right\">\r\n              <span class=\"icon-align-right\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('top')\" title=\"{{'editor.align-top-title' | translate}}Align Top\">\r\n              <span class=\"icon-align-top\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('middle')\" title=\"{{'editor.align-middle-title' | translate}}Align Middle\">\r\n              <span class=\"icon-align-middle\"></span>\r\n            </div>\r\n            <div class=\"svg-tool-button\" (click)=\"onAlignSelected('bottom')\" title=\"{{'editor.align-bottom-title' | translate}}Align Bottom\">\r\n              <span class=\"icon-align-bottom\"></span>\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelFillOpenState = true\" (closed)=\"panelFillOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelFillOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelFillOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.stroke' | translate}}</span> <!-- STROKE-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div class=\"rightbar_panel\">\r\n            <div class=\"_color_tool\" id=\"tool_stroke\">\r\n              <div class=\"svg-property-split2\">\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.stroke-width' | translate}}</span>\r\n                  <input id=\"stroke_width\" title=\"{{'editor.stroke-width-title' | translate}}\" size=\"2\"\r\n                    value=\"1\" type=\"text\" data-attr=\"Stroke Width\" />\r\n                </div>\r\n                <div class=\"svg-property\">\r\n                  <span>{{'editor.stroke-style' | translate}}</span>\r\n                  <select id=\"stroke_style\" class=\"style-stroke\" title=\"{{'editor.stroke-style-title' | translate}}\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <div class=\"svg-tool-button\" id=\"linejoin_miter\" #linejoinmiter (click)=\"onSetStrokeOption(linejoinmiter)\"\r\n                  title=\"{{'editor.stroke-joinmiter-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-miter\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linejoin_round\" #linejoinround (click)=\"onSetStrokeOption(linejoinround)\"\r\n                  title=\"{{'editor.stroke-joinround-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-round\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linejoin_bevel\" #linejoinbevel (click)=\"onSetStrokeOption(linejoinbevel)\"\r\n                  title=\"{{'editor.stroke-joinbevel-title' | translate}}\">\r\n                  <span class=\"icon-linejoin-bevel\"></span>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <div class=\"svg-tool-button\" id=\"linecap_butt\" #linecapbutt (click)=\"onSetStrokeOption(linecapbutt)\"\r\n                  title=\"{{'editor.stroke-capbutt-title' | translate}}\">\r\n                  <span class=\"icon-linecap-butt\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linecap_square\" #linecapsquare (click)=\"onSetStrokeOption(linecapsquare)\"\r\n                  title=\"{{'editor.stroke-capsquare-title' | translate}}\">\r\n                  <span class=\"icon-linecap-square\"></span>\r\n                </div>\r\n                <div class=\"svg-tool-button\" id=\"linecap_round\" #linecapround (click)=\"onSetStrokeOption(linecapround)\"\r\n                  title=\"{{'editor.stroke-capround-title' | translate}}\">\r\n                  <span class=\"icon-linecap-round\"></span>\r\n                </div>\r\n              </div>\r\n              <div class=\"svg-property-split2\" style=\"display: none\">\r\n                <div class=\"svg-property\">\r\n                  <span for=\"class_shadow\">{{'editor.stroke-shadow' | translate}}</span>\r\n                  <input type=\"checkbox\" id=\"class_shadow\" name=\"class_shadow\" class=\"attr_changer\" title=\"{{'editor.stroke-shadow-title' | translate}}\"\r\n                    (change)=\"onSetShadowOption($event.target.checked)\" label=\"shadow\" />\r\n                </div>\r\n                <div class=\"svg-property\">\r\n                </div>\r\n              </div>\r\n              <!-- <ul id=\"linejoin_opts\">\r\n                <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n              </ul>\r\n\r\n              <ul id=\"linecap_opts\">\r\n                <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n              </ul> -->\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelMarkerOpenState = true\" (closed)=\"panelMarkerOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelMarkerOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelMarkerOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.marker' | translate}}</span> <!-- MARKER-->\r\n            </mat-panel-title>\r\n          </mat-expansion-panel-header>\r\n          <div id=\"marker_panel\" class=\"rightbar_panel\">\r\n            <div class=\"svg-property-split3\">\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-start' | translate}}</span>\r\n                <select id=\"start_marker\" #smarker class=\"style-stroke\" title=\"{{'editor.marker-start-title' | translate}}\" (click)=\"onSetMarker('start_marker', smarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-middle' | translate}}</span>\r\n                <select id=\"mid_marker\" #mmarker class=\"style-stroke\" title=\"{{'editor.marker-middle-title' | translate}}\" (click)=\"onSetMarker('mid_marker', mmarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n              <div class=\"svg-property\">\r\n                <span>{{'editor.marker-end' | translate}}</span>\r\n                <select id=\"end_marker\" #emarker class=\"style-stroke\" title=\"{{'editor.marker-end-title' | translate}}\" (click)=\"onSetMarker('end_marker', emarker.selectedIndex);\"\r\n                  onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                </select>\r\n              </div>\r\n\r\n            </div>\r\n          </div>\r\n        </mat-expansion-panel>\r\n        <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelEventOpenState = true\" (closed)=\"panelEventOpenState = false\"\r\n          hideToggle=\"true\" expanded=\"true\">\r\n          <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n            <mat-panel-title>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"panelEventOpenState\">expand_less</mat-icon>\r\n              <mat-icon aria-label=\"Select\" *ngIf=\"!panelEventOpenState\">expand_more</mat-icon>\r\n              <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n            </mat-panel-title>\r\n            <!-- <mat-icon aria-label=\"Add\" class=\"leftbar-edit-btn\" (click)=\"addEvent();$event.stopPropagation()\" *ngif=\"selectedElement\">add</mat-icon> -->\r\n          </mat-expansion-panel-header>\r\n          <div id=\"interaction_panel\" class=\"rightbar_panel\">\r\n            <gauge-base #gaugepanel *ngIf=\"selectedElement\" [settings]=getGaugeSettings(selectedElement) (edit)=\"onGaugeEdit($event)\"></gauge-base>\r\n            <!-- (edit)=\"onGaugeEdit($event)\" [withEvents]=\"isWithEvents(selectedElement)\"></gauge-base> -->\r\n          </div>\r\n        </mat-expansion-panel>\r\n      </div>\r\n      <!-- END RIGHT BAR -->\r\n      <!-- Work Area -->\r\n      <div id=\"svg_editor\" style=\"z-index:-1\">\r\n        <!-- Rules bar -->\r\n        <div id=\"rulers\">\r\n          <div id=\"ruler_corner\"></div>\r\n          <div id=\"ruler_x\">\r\n            <div>\r\n              <canvas height=\"15\"></canvas>\r\n            </div>\r\n          </div>\r\n          <div id=\"ruler_y\">\r\n            <div>\r\n              <canvas width=\"15\"></canvas>\r\n            </div>\r\n          </div>\r\n        </div>\r\n        <!-- END Rules bar -->\r\n        <!-- Draw Area -->\r\n        <div id=\"workarea\">\r\n          <style id=\"styleoverrides\" type=\"text/css\" media=\"screen\" scoped=\"scoped\"></style>\r\n          <div id=\"svgcanvas\" style=\"position:relative\">\r\n          </div>\r\n        </div>\r\n        <!-- END Draw Area -->\r\n        <!-- Draw top tool bar -->\r\n        <div id=\"tools_top\" class=\"tools_panel\">\r\n          <div id=\"editor_panel\">\r\n            <!-- <button mat-button title=\"Save Project\" [matMenuTriggerFor]=\"prjview\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n            </button> -->\r\n            <!-- <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu\" yPosition=\"below\" [overlapTrigger]=\"false\"> -->\r\n            <!-- <button mat-menu-item (click)=\"onSaveProject()\">Save</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onSaveProjectAs()\">Save as...</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">Open Project</button> -->\r\n            <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n            <!-- <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\" accept=\".wvc\"/> -->\r\n            <!-- </mat-menu> -->\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button title=\"{{'editor.tools-launch-title' | translate}}\" class=\"main-btn\" (click)=\"onStartCurrent()\">\r\n              <mat-icon aria-label=\"Launch Current View\">play_arrow</mat-icon>\r\n            </button>\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button title=\"{{'editor.tools-zoom-title' | translate}}\" class=\"main-btn\" (click)=\"onZoomSelect()\">\r\n              <mat-icon aria-label=\"Zoom Tool [Ctrl+Up/Down]\">zoom_in</mat-icon>\r\n            </button>\r\n            <button mat-button title=\"{{'editor.tools-grid-title' | translate}}\" class=\"main-btn\" (click)=\"onShowGrid()\">\r\n              <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"!gridOn\">grid_on</mat-icon>\r\n              <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"gridOn\">grid_off</mat-icon>\r\n            </button>\r\n            <div id=\"history_panel\">\r\n              <button mat-button id=\"tool_undo\" title=\"{{'editor.tools-undo-title' | translate}}\" class=\"main-btn\">\r\n                <mat-icon aria-label=\"Undo [Z]\">undo</mat-icon>\r\n              </button>\r\n              <button mat-button id=\"tool_redo\" title=\"{{'editor.tools-redo-title' | translate}}\" class=\"main-btn\">\r\n                <mat-icon aria-label=\"Redo [Y]\">redo</mat-icon>\r\n              </button>\r\n            </div>\r\n\r\n            <!-- <div class=\"push_button\" title=\"Save Project\" (click)=\"saveProject()\"></div> -->\r\n            <!-- <div class=\"tool_sep\"></div> -->\r\n            <!-- <div class=\"push_button\" id=\"tool_source\" title=\"Edit Source [U]\"></div> -->\r\n            <!-- <div class=\"tool_button\" id=\"tool_wireframe\" title=\"Wireframe Mode [F]\"></div> -->\r\n            <!-- <div class=\"tool_sep\"></div> -->\r\n            <!-- <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div> -->\r\n          </div>\r\n          <div id=\"selected_panel\">\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button id=\"tool_clone\" title=\"{{'editor.tools-clone-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Duplicate Element [D]\">content_copy</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_delete\" title=\"{{'editor.tools-delete-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Delete Element [Delete/Backspace]\">content_cut</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_move_bottom\" title=\"{{'editor.tools-movebottom-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"to-bottom\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_move_top\" title=\"{{'editor.tools-movetop-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"to-top\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_topath\" title=\"{{'editor.tools-topath-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>linear_scale</mat-icon>\r\n            </button>\r\n          </div>\r\n          <div id=\"multiselected_panel\">\r\n            <div class=\"main-btn-sep\"></div>\r\n            <button mat-button id=\"tool_clone_multi\" title=\"{{'editor.tools-clonemulti-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Clone Elements [C]\">content_copy</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_delete_multi\" title=\"{{'editor.tools-deletemulti-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Delete Selected Elements [Delete/Backspace]\">content_cut</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_group_elements\" title=\"{{'editor.tools-group-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"group\"></span>\r\n            </button>\r\n            <button mat-button id=\"tool_alignleft\" title=\"{{'editor.tools-alignleft-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_left</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_aligncenter\" title=\"{{'editor.tools-aligncenter-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_center</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignright\" title=\"{{'editor.tools-alignright-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>format_align_right</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_aligntop\" title=\"{{'editor.tools-aligntop-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_top</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignmiddle\" title=\"{{'editor.tools-alignmiddle-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_center</mat-icon>\r\n            </button>\r\n            <button mat-button id=\"tool_alignbottom\" title=\"{{'editor.tools-alignbottom-title' | translate}}\" class=\"main-btn\">\r\n              <mat-icon>vertical_align_bottom</mat-icon>\r\n            </button>\r\n          </div>\r\n          <div id=\"g_panel\">\r\n            <button mat-button id=\"tool_ungroup\" title=\"{{'editor.tools-ungroup-title' | translate}}\" class=\"main-btn\">\r\n              <span class=\"ungroup\"></span>\r\n            </button>\r\n          </div>\r\n\r\n          <!-- History buttons -->\r\n          <!-- <div id=\"history_panel\">\r\n            <div class=\"tool_sep\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_undo\" title=\"Undo [Z]\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_redo\" title=\"Redo [Y]\"></div>\r\n          </div> -->\r\n          <!-- Buttons when a single element is selected -->\r\n          <!-- <div id=\"_selected_panel\"> -->\r\n          <!-- <div class=\"toolset\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_clone\" title=\"Duplicate Element [D]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_delete\" title=\"Delete Element [Delete/Backspace]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_move_top\" title=\"Bring to Front [ Ctrl+Shift+] ]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_move_bottom\" title=\"Send to Back [ Ctrl+Shift+[ ]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_topath\" title=\"Convert to Path\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_reorient\" title=\"Reorient path\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_make_link\" title=\"Make (hyper)link\"></div> -->\r\n          <!-- </div> -->\r\n          <!-- </div> -->\r\n          <!-- select panel END -->\r\n          <!-- Buttons when multiple elements are selected -->\r\n          <!-- <div id=\"_multiselected_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_clone_multi\" title=\"Clone Elements [C]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_delete_multi\" title=\"Delete Selected Elements [Delete/Backspace]\"></div> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_group_elements\" title=\"Group Elements [G]\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_make_link_multi\" title=\"Make (hyper)link\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignleft\" title=\"Align Left\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_aligncenter\" title=\"Align Center\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignright\" title=\"Align Right\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_aligntop\" title=\"Align Top\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignmiddle\" title=\"Align Middle\"></div> -->\r\n          <!-- <div class=\"push_button\" id=\"tool_alignbottom\" title=\"Align Bottom\"></div> -->\r\n          <!-- <label id=\"tool_align_relative\">\r\n              <span id=\"relativeToLabel\">relative to:</span>\r\n              <select id=\"align_relative_to\" title=\"Align relative to ...\">\r\n                <option id=\"selected_objects\" value=\"selected\">selected objects</option>\r\n                <option id=\"largest_object\" value=\"largest\">largest object</option>\r\n                <option id=\"smallest_object\" value=\"smallest\">smallest object</option>\r\n                <option id=\"page\" value=\"page\">page</option>\r\n              </select>\r\n            </label> -->\r\n          <!-- </div> -->\r\n\r\n          <!-- formerly gsvg_panel -->\r\n          <!-- <div id=\"container_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- Add viewBox field here? -->\r\n          <!-- <label id=\"group_title\" title=\"Group identification label\">\r\n              <span>label:</span>\r\n              <input id=\"g_title\" data-attr=\"title\" size=\"10\" type=\"text\" />\r\n            </label> -->\r\n          <!-- </div> -->\r\n\r\n          <!-- <div id=\"use_panel\">\r\n            <div class=\"push_button\" id=\"tool_unlink_use\" title=\"Break link to reference element (make unique)\"></div>\r\n          </div> -->\r\n\r\n          <!-- <div id=\"g_panel\">\r\n            <div class=\"push_button\" id=\"tool_ungroup\" title=\"Ungroup Elements [G]\"></div>\r\n          </div> -->\r\n\r\n          <!-- For anchor elements -->\r\n          <!-- <div id=\"a_panel\">\r\n            <label id=\"tool_link_url\" title=\"Set link URL (leave empty to remove)\">\r\n              <span id=\"linkLabel\" class=\"icon_label\"></span>\r\n              <input id=\"link_url\" type=\"text\" size=\"35\" />\r\n            </label>\r\n          </div> -->\r\n\r\n          <!-- <div id=\"path_node_panel\"> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <div class=\"tool_button push_button_pressed\" id=\"tool_node_link\" title=\"Link Control Points\"></div> -->\r\n          <!-- <div class=\"tool_sep\"></div> -->\r\n          <!-- <label id=\"tool_node_x\">x:\r\n              <input id=\"path_node_x\" class=\"attr_changer\" title=\"Change node's x coordinate\" size=\"3\" data-attr=\"x\" />\r\n            </label>\r\n            <label id=\"tool_node_y\">y:\r\n              <input id=\"path_node_y\" class=\"attr_changer\" title=\"Change node's y coordinate\" size=\"3\" data-attr=\"y\" />\r\n            </label> -->\r\n\r\n          <!-- <select id=\"seg_type\" title=\"Change Segment type\">\r\n              <option id=\"straight_segments\" selected=\"selected\" value=\"4\">Straight</option>\r\n              <option id=\"curve_segments\" value=\"6\">Curve</option>\r\n            </select> -->\r\n          <!-- <div class=\"tool_button\" id=\"tool_node_clone\" title=\"Clone Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_node_delete\" title=\"Delete Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_openclose_path\" title=\"Open/close sub-path\"></div>\r\n            <div class=\"tool_button\" id=\"tool_add_subpath\" title=\"Add sub-path\"></div> -->\r\n          <!-- </div> -->\r\n        </div>\r\n        <!-- tools_top -->\r\n        <div id=\"cur_context_panel\">\r\n\r\n        </div>\r\n\r\n        <!-- tools_left -->\r\n        <!-- <div id=\"tools_left\" class=\"tools_panel\">\r\n      <div class=\"tool_button\" id=\"tool_select\" title=\"Select Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_fhpath\" title=\"Pencil Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_line\" title=\"Line Tool\"></div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_rect_show\" title=\"Square/Rect Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_ellipse_show\" title=\"Ellipse/Circle Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button\" id=\"tool_path\" title=\"Path Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_text\" title=\"Text Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_image\" title=\"Image Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div>\r\n\r\n      <div style=\"display: none\">\r\n        <div id=\"tool_rect\" title=\"Rectangle\"></div>\r\n        <div id=\"tool_square\" title=\"Square\"></div>\r\n        <div id=\"tool_fhrect\" title=\"Free-Hand Rectangle\"></div>\r\n        <div id=\"tool_ellipse\" title=\"Ellipse\"></div>\r\n        <div id=\"tool_circle\" title=\"Circle\"></div>\r\n        <div id=\"tool_fhellipse\" title=\"Free-Hand Ellipse\"></div>\r\n      </div>\r\n    </div> -->\r\n        <!-- tools_left -->\r\n\r\n        <!-- tool bottom -->\r\n        <div class=\"bottom-bar tools_panel\">\r\n          <!-- Zoom buttons -->\r\n          <div class=\"zoom-menu\" title=\"{{'editor.tools-zoomlevel-title' | translate}}\">\r\n            <div class=\"zoom-value\">\r\n              <input id=\"zoom\" size=\"3\" value=\"100\" type=\"text\" #zoomValue hidden />\r\n              <span id=\"zoomLabel\">{{zoomValue.value}} %</span>\r\n              <div id=\"zoom_dropdown\" class=\"dropdown selection\">\r\n                <button>O\r\n                </button>\r\n                <ul>\r\n                  <li>1000%</li>\r\n                  <li>400%</li>\r\n                  <li>200%</li>\r\n                  <li>100%</li>\r\n                  <li>50%</li>\r\n                  <li>25%</li>\r\n                  <li id=\"fit_to_canvas\" data-val=\"canvas\">{{'editor.tools-zoomlevel-fitcanvas' | translate}}</li>\r\n                  <li id=\"fit_to_sel\" data-val=\"selection\">{{'editor.tools-zoomlevel-fitsection' | translate}}</li>\r\n                  <!-- <li id=\"fit_to_layer_content\" data-val=\"layer\">Fit to layer content</li> -->\r\n                  <li id=\"fit_to_all\" data-val=\"content\">{{'editor.tools-zoomlevel-fitcontent' | translate}}</li>\r\n                  <li>100%</li>\r\n                </ul>\r\n              </div>\r\n            </div>\r\n          </div>\r\n\r\n          <div id=\"tools_bottom_2\" class=\"colors\">\r\n            <input readonly [(colorPicker)]=\"colorFill\" class=\"color-fill\" title=\"{{'editor.tools-fillcolor-title' | translate}}\" [style.background]=\"colorFill\"\r\n              [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeFillColor($event)\"\r\n              [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\r\n              [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n            <input readonly [(colorPicker)]=\"colorStroke\" class=\"color-stroke\" title=\"{{'editor.tools-strokecolor-title' | translate}}\"\r\n              [style.background]=\"colorStroke\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeStrokeColor($event)\"\r\n              [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\"\r\n              [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n            <!-- <div id=\"color_tools\"> -->\r\n            <div class=\"color_tool\" id=\"tool_fill\" hidden>\r\n              <label class=\"icon_label\" for=\"fill_color\" title=\"{{'editor.tools-fillcolor-title' | translate}}\"></label>\r\n              <div class=\"color_block\">\r\n                <div id=\"fill_color\" class=\"color_block\" [style.border-color]=\"colorFill\"></div>\r\n              </div>\r\n            </div>\r\n            <div class=\"color_tool\" id=\"tool_stroke\" hidden>\r\n              <label class=\"icon_label\" title=\"Change stroke color\"></label>\r\n              <div class=\"color_block\">\r\n                <div id=\"stroke_bg\"></div>\r\n                <div id=\"stroke_color\" class=\"color_block\" title=\"{{'editor.tools-strokecolor-title' | translate}}\" [style.border-color]=\"colorStroke\"></div>\r\n              </div>\r\n\r\n              <!-- <div id=\"toggle_stroke_tools\" title=\"Show/hide more stroke tools\"></div> -->\r\n\r\n              <!-- <label class=\"stroke_tool\">\r\n                  <select id=\"stroke_style\" title=\"Change stroke dash style\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </label> -->\r\n\r\n              <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linejoin\">\r\n                  <div id=\"cur_linejoin\" title=\"Linejoin: Miter\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n              <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linecap\">\r\n                  <div id=\"cur_linecap\" title=\"Linecap: Butt\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n              <!-- </div> -->\r\n\r\n              <!-- <div class=\"color_tool\" id=\"tool_opacity\" title=\"Change selected item opacity\">\r\n                <label>\r\n                  <span id=\"group_opacityLabel\" class=\"icon_label\"></span>\r\n                  <input id=\"group_opacity\" size=\"3\" value=\"100\" type=\"text\" />\r\n                </label>\r\n                <div id=\"opacity_dropdown\" class=\"dropdown\">\r\n                  <button></button>\r\n                  <ul>\r\n                    <li>0%</li>\r\n                    <li>25%</li>\r\n                    <li>50%</li>\r\n                    <li>75%</li>\r\n                    <li>100%</li>\r\n                    <li class=\"special\">\r\n                      <div id=\"opac_slider\"></div>\r\n                    </li>\r\n                  </ul>\r\n                </div>\r\n              </div> -->\r\n            </div>\r\n          </div>\r\n\r\n          <div id=\"tools_bottom_3\" class=\"colors-palette\">\r\n            <div id=\"palette_holder\">\r\n              <div id=\"palette\" title=\"{{'editor.tools-palettecolor-title' | translate}}\"></div>\r\n            </div>\r\n          </div>\r\n        </div>\r\n\r\n        <div id=\"option_lists\" class=\"dropdown\">\r\n          <!-- <ul id=\"linejoin_opts\">\r\n            <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n          </ul>\r\n\r\n          <ul id=\"linecap_opts\">\r\n            <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n          </ul> -->\r\n\r\n          <ul id=\"position_opts\" class=\"optcols3\">\r\n            <li class=\"push_button\" id=\"tool_posleft\" title=\"Align Left\"></li>\r\n            <li class=\"push_button\" id=\"tool_poscenter\" title=\"Align Center\"></li>\r\n            <li class=\"push_button\" id=\"tool_posright\" title=\"Align Right\"></li>\r\n            <li class=\"push_button\" id=\"tool_postop\" title=\"Align Top\"></li>\r\n            <li class=\"push_button\" id=\"tool_posmiddle\" title=\"Align Middle\"></li>\r\n            <li class=\"push_button\" id=\"tool_posbottom\" title=\"Align Bottom\"></li>\r\n          </ul>\r\n        </div>\r\n\r\n\r\n        <!-- hidden divs -->\r\n        <!-- <div id=\"color_picker\"></div> -->\r\n\r\n      </div>\r\n    </mat-drawer-content>\r\n    <!-- work area END -->\r\n  </mat-drawer-container>\r\n\r\n  <!-- svg_editor -->\r\n\r\n  <!-- NOT USED -->\r\n  <div id=\"svg_source_editor\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_source_container\">\r\n      <div id=\"tool_source_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_source_save\">Apply Changes</button>\r\n        <button id=\"tool_source_cancel\">Cancel</button>\r\n      </div>\r\n      <div id=\"save_output_btns\">\r\n        <p id=\"copy_save_note\">Copy the contents of this box into a text editor, then save the file with a .svg\r\n          extension.</p>\r\n        <button id=\"copy_save_done\">Done</button>\r\n      </div>\r\n      <form>\r\n        <textarea id=\"svg_source_textarea\" spellcheck=\"false\"></textarea>\r\n      </form>\r\n    </div>\r\n  </div>\r\n\r\n  <div id=\"svg_docprops\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_docprops_container\">\r\n      <div id=\"tool_docprops_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_docprops_save\">OK</button>\r\n        <button id=\"tool_docprops_cancel\">Cancel</button>\r\n      </div>\r\n\r\n\r\n      <fieldset id=\"svg_docprops_docprops\">\r\n        <legend id=\"svginfo_image_props\">Image Properties</legend>\r\n        <label>\r\n          <span id=\"svginfo_title\">Title:</span>\r\n          <input type=\"text\" id=\"canvas_title\" />\r\n        </label>\r\n\r\n        <fieldset id=\"change_resolution\">\r\n          <legend id=\"svginfo_dim\">Canvas Dimensions</legend>\r\n\r\n          <label>\r\n            <span id=\"svginfo_width\">width:</span>\r\n            <input type=\"text\" id=\"canvas_width\" size=\"6\" />\r\n          </label>\r\n\r\n          <label>\r\n            <span id=\"svginfo_height\">height:</span>\r\n            <input type=\"text\" id=\"canvas_height\" size=\"6\" />\r\n          </label>\r\n\r\n          <label>\r\n            <select id=\"resolution\">\r\n              <option id=\"selectedPredefined\" selected=\"selected\">Select predefined:</option>\r\n              <option>640x480</option>\r\n              <option>800x600</option>\r\n              <option>1024x768</option>\r\n              <option>1280x960</option>\r\n              <option>1600x1200</option>\r\n              <option id=\"fitToContent\" value=\"content\">Fit to Content</option>\r\n            </select>\r\n          </label>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"image_save_opts\">\r\n          <legend id=\"includedImages\">Included Images</legend>\r\n          <label>\r\n            <input type=\"radio\" name=\"image_opt\" value=\"embed\" checked=\"checked\" />\r\n            <span id=\"image_opt_embed\">Embed data (local files)</span>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"image_opt\" value=\"ref\" />\r\n            <span id=\"image_opt_ref\">Use file reference</span>\r\n          </label>\r\n        </fieldset>\r\n      </fieldset>\r\n\r\n    </div>\r\n  </div>\r\n\r\n  <div id=\"svg_prefs\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"svg_prefs_container\">\r\n      <div id=\"tool_prefs_back\" class=\"toolbar_button\">\r\n        <button id=\"tool_prefs_save\">OK</button>\r\n        <button id=\"tool_prefs_cancel\">Cancel</button>\r\n      </div>\r\n\r\n      <fieldset>\r\n        <legend id=\"svginfo_editor_prefs\">Editor Preferences</legend>\r\n\r\n        <label>\r\n          <span id=\"svginfo_lang\">Language:</span>\r\n          <!-- Source: http://en.wikipedia.org/wiki/Language_names -->\r\n          <select id=\"lang_select\">\r\n            <option id=\"lang_ar\" value=\"ar\">العربية</option>\r\n            <option id=\"lang_cs\" value=\"cs\">Čeština</option>\r\n            <option id=\"lang_de\" value=\"de\">Deutsch</option>\r\n            <option id=\"lang_en\" value=\"en\" selected=\"selected\">English</option>\r\n            <option id=\"lang_es\" value=\"es\">Español</option>\r\n            <option id=\"lang_fa\" value=\"fa\">فارسی</option>\r\n            <option id=\"lang_fr\" value=\"fr\">Français</option>\r\n            <option id=\"lang_fy\" value=\"fy\">Frysk</option>\r\n            <option id=\"lang_hi\" value=\"hi\">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;,\r\n              &#2361;&#2367;&#2306;&#2342;&#2368;</option>\r\n            <option id=\"lang_it\" value=\"it\">Italiano</option>\r\n            <option id=\"lang_ja\" value=\"ja\">日本語</option>\r\n            <option id=\"lang_nl\" value=\"nl\">Nederlands</option>\r\n            <option id=\"lang_pl\" value=\"pl\">Polski</option>\r\n            <option id=\"lang_pt-BR\" value=\"pt-BR\">Português (BR)</option>\r\n            <option id=\"lang_ro\" value=\"ro\">Română</option>\r\n            <option id=\"lang_ru\" value=\"ru\">Русский</option>\r\n            <option id=\"lang_sk\" value=\"sk\">Slovenčina</option>\r\n            <option id=\"lang_sl\" value=\"sl\">Slovenščina</option>\r\n            <option id=\"lang_zh-TW\" value=\"zh-TW\">繁體中文</option>\r\n          </select>\r\n        </label>\r\n\r\n        <label>\r\n          <span id=\"svginfo_icons\">Icon size:</span>\r\n          <select id=\"iconsize\">\r\n            <option id=\"icon_small\" value=\"s\">Small</option>\r\n            <option id=\"icon_medium\" value=\"m\" selected=\"selected\">Medium</option>\r\n            <option id=\"icon_large\" value=\"l\">Large</option>\r\n            <option id=\"icon_xlarge\" value=\"xl\">Extra Large</option>\r\n          </select>\r\n        </label>\r\n\r\n        <fieldset id=\"change_background\">\r\n          <legend id=\"svginfo_change_background\">Editor Background</legend>\r\n          <div id=\"bg_blocks\"></div>\r\n          <label>\r\n            <span id=\"svginfo_bg_url\">URL:</span>\r\n            <input type=\"text\" id=\"canvas_bg_url\" />\r\n          </label>\r\n          <p id=\"svginfo_bg_note\">Note: Background will not be saved with image.</p>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"change_grid\">\r\n          <legend id=\"svginfo_grid_settings\">Grid</legend>\r\n          <label>\r\n            <span id=\"svginfo_snap_onoff\">Snapping on/off</span>\r\n            <input type=\"checkbox\" value=\"snapping_on\" id=\"grid_snapping_on\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_snap_step\">Snapping Step-Size:</span>\r\n            <input type=\"text\" id=\"grid_snapping_step\" size=\"3\" value=\"10\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_grid_color\">Grid color:</span>\r\n            <input type=\"text\" id=\"grid_color\" size=\"3\" value=\"#000\" />\r\n          </label>\r\n        </fieldset>\r\n\r\n        <fieldset id=\"units_rulers\">\r\n          <legend id=\"svginfo_units_rulers\">Units &amp; Rulers</legend>\r\n          <label>\r\n            <span id=\"svginfo_rulers_onoff\">Show rulers</span>\r\n            <input type=\"checkbox\" value=\"show_rulers\" id=\"show_rulers\" checked=\"checked\" />\r\n          </label>\r\n          <label>\r\n            <span id=\"svginfo_unit\">Base Unit:</span>\r\n            <select id=\"base_unit\">\r\n              <option value=\"px\">Pixels</option>\r\n              <option value=\"cm\">Centimeters</option>\r\n              <option value=\"mm\">Millimeters</option>\r\n              <option value=\"in\">Inches</option>\r\n              <option value=\"pt\">Points</option>\r\n              <option value=\"pc\">Picas</option>\r\n              <option value=\"em\">Ems</option>\r\n              <option value=\"ex\">Exs</option>\r\n            </select>\r\n          </label>\r\n          <!-- Should this be an export option instead? -->\r\n          <!-- \r\n          <span id=\"svginfo_unit_system\">Unit System:</span>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"single\" checked=\"checked\"/>\r\n            <span id=\"svginfo_single_type_unit\">Single type unit</span>\r\n            <small id=\"svginfo_single_type_unit_sub\">CSS unit type is set on root element. If a different unit type is entered in a text field, it is converted back to user units on export.</small>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"multi\"/>\r\n            <span id=\"svginfo_multi_units\">Multiple CSS units</span> \r\n            <small id=\"svginfo_single_type_unit_sub\">Attributes can be given different CSS units, which may lead to inconsistant results among viewers.</small>\r\n          </label>\r\n   -->\r\n        </fieldset>\r\n\r\n      </fieldset>\r\n\r\n    </div>\r\n  </div>\r\n  <!-- NOT USED END -->\r\n\r\n  <div id=\"dialog_box\">\r\n    <div class=\"overlay\"></div>\r\n    <div id=\"dialog_container\">\r\n      <div id=\"dialog_content\"></div>\r\n      <div id=\"dialog_buttons\"></div>\r\n    </div>\r\n  </div>\r\n\r\n  <!-- canvas context menu -->\r\n  <ul id=\"cmenu_canvas\" class=\"contextMenu svg-workarea-contextmenu\">\r\n    <!-- <li>\r\n      <a href=\"#deselect\">Clear selection</a>\r\n    </li> -->\r\n    <li>\r\n      <a id=\"#interactivity\" (click)=\"isInteractivtyEnabled(selectedElement) && onGaugeEditEx()\">{{'editor.interactivity' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#cut\">{{'editor.cmenu-cut' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#copy\">{{'editor.cmenu-copy' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#paste\">{{'editor.cmenu-paste' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#paste_in_place\">{{'editor.cmenu-paste-place' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#delete\">{{'editor.cmenu-delete' | translate}}</a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#group\">{{'editor.cmenu-group' | translate}}\r\n        <span class=\"shortcut\">G</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#ungroup\">{{'editor.cmenu-ungroup' | translate}}\r\n        <span class=\"shortcut\">G</span>\r\n      </a>\r\n    </li>\r\n    <li class=\"separator\">\r\n      <a id=\"#move_front\">{{'editor.cmenu-bring-front' | translate}}\r\n        <span class=\"shortcut\">SHFT+CTRL+]</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_up\">{{'editor.cmenu-bring-forward' | translate}}\r\n        <span class=\"shortcut\">CTRL+]</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_down\">{{'editor.cmenu-send-backward' | translate}}\r\n        <span class=\"shortcut\">CTRL+[</span>\r\n      </a>\r\n    </li>\r\n    <li>\r\n      <a id=\"#move_back\">{{'editor.cmenu-send-back' | translate}}\r\n        <span class=\"shortcut\">SHFT+CTRL+[</span>\r\n      </a>\r\n    </li>\r\n  </ul>\r\n  <!-- canvas context menu END -->\r\n\r\n  <!-- layers context menu -->\r\n  <ul id=\"cmenu_layers\" class=\"contextMenu\" style=\"display: none\">\r\n    <li>\r\n      <a href=\"#dupe\">{{'editor.cmenu-layer-duplicate' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#delete\">{{'editor.cmenu-layer-delete' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#merge_down\">{{'editor.cmenu-layer-marge-down' | translate}}</a>\r\n    </li>\r\n    <li>\r\n      <a href=\"#merge_all\">{{'editor.cmenu-layer-marge-all' | translate}}</a>\r\n    </li>\r\n  </ul>\r\n  <!-- layers context menu END -->\r\n</div>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n    <!-- <mat-spinner mode=\"indeterminate\" color=\"rgba(48,89,175,1)\" diameter=\"50\" \r\n            style=\"position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);\">\r\n    </mat-spinner> -->\r\n    <mat-progress-bar mode=\"indeterminate\" color=\"warn\" style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n    </mat-progress-bar>\r\n</div>\r\n<div id=\"svg_editor_container\">\r\n    <mat-drawer-container class=\"svg-workarea-container\">\r\n        <!-- LEFT BAR -->\r\n        <mat-drawer mode=\"side\" opened=\"true\" class=\"svg-sidenav leave-header-area\">\r\n            <mat-accordion multi=\"true\">\r\n                <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelView=true;savePanelState()\" (closed)=\"panelsState.panelView=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelView\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelView\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelView\">expand_more</mat-icon>\r\n                            <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->\r\n                        </mat-panel-title>\r\n                        <mat-icon aria-label=\"Set\" title=\"{{'editor.layout-settings' | translate}}\" *ngIf=\"panelsState.panelView\" class=\"leftbar-edit-btn\" (click)=\"onLayoutProperty();$event.stopPropagation()\">settings</mat-icon>\r\n                        <mat-icon aria-label=\"Add\" title=\"Add View\" *ngIf=\"panelsState.panelView\" class=\"leftbar-edit-btn\" (click)=\"onAddView();$event.stopPropagation()\">add</mat-icon>\r\n                    </mat-expansion-panel-header>\r\n                    <div class=\"leftbar-panel view-panel\">\r\n                        <div *ngIf=\"hmi.views && hmi.views.length <= 0\">\r\n                            <br>\r\n                        </div>\r\n                        <div *ngFor=\"let item of getViewsSorted()\" (click)=\"onSelectView(item)\" [ngClass]=\"{'leftbar-item-active': isViewActive(item)}\" class=\"leftbar-item mycursor-pointer\">\r\n                            <span>{{item.name}}</span>\r\n                            <mat-icon aria-label=\"More\" [matMenuTriggerFor]=\"menuview\" class=\"\">more_vert</mat-icon>\r\n                            <mat-menu #menuview=\"matMenu\" class=\"leftbar-item-menu\">\r\n                                <button mat-menu-item (click)=\"onDeleteView(item)\">{{'editor.view-delete' | translate}}</button>\r\n                                <button mat-menu-item (click)=\"onRenameView(item)\">{{'editor.view-rename' | translate}}</button>\r\n                                <button mat-menu-item (click)=\"onPropertyView(item)\">{{'editor.view-property' | translate}}</button>\r\n                            </mat-menu>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelGeneral=true;savePanelState()\" (closed)=\"panelsState.panelGeneral=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelGeneral\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelGeneral\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelGeneral\">expand_more</mat-icon>\r\n                            <span>{{'editor.general' | translate}}</span> <!-- GENERAL -->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n\r\n                    <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('select')}\" (click)=\"setMode('select')\">\r\n                            <span class=\"icon-select\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('fhpath')}\" (click)=\"setMode('fhpath')\">\r\n                            <span class=\"icon-pencil\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('line')}\" (click)=\"setMode('line')\">\r\n                            <span class=\"icon-line\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('rect')}\" (click)=\"setMode('rect')\">\r\n                            <span class=\"icon-rect\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('circle')}\" (click)=\"setMode('circle')\">\r\n                            <span class=\"icon-circle\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('ellipse')}\" (click)=\"setMode('ellipse')\">\r\n                            <span class=\"icon-ellipse\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n                            <span class=\"icon-path\"></span>\r\n                        </div>\r\n                        <!-- <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('path')}\" (click)=\"setMode('path')\">\r\n              <span class=\"icon-path\"></span>\r\n            </div> -->\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('text')}\" (click)=\"setMode('text')\">\r\n                            <span class=\"icon-text\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}\" (click)=\"imagefile.value = '';imagefile.click();\">\r\n                            <span class=\"icon-image\"></span>\r\n                            <input #imagefile type=\"file\" style=\"display: none;\" (change)=\"onSetImage($event)\" accept=\"image/png|jpg|svg\" />\r\n                        </div>\r\n                        <div id=\"tool_line\" style=\"display: none;\">\r\n                            <span class=\"icon-image\"></span>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <!-- SHAPES -->\r\n                <mat-expansion-panel *ngFor=\"let shGrp of shapesGrps\" class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState[shGrp.name]=true;savePanelState()\" (closed)=\"panelsState[shGrp.name]=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState[shGrp.name]\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelsState[shGrp.name]\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState[shGrp.name]\">expand_more</mat-icon>\r\n                            <span>{{shGrp.name}}</span>\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n                        <div *ngFor=\"let shape of shGrp.shapes\" style=\"margin-left: 3px;margin-right: 3px;\" class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive(shape.name)}\" (click)=\"setMode(shape.name)\">\r\n                            <span class=\"icon-tool\" [style.backgroundImage]=\"'url(' + shape.ico + ')'\"> </span>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n\r\n                <mat-expansion-panel class=\"svg-workarea-leftbar-p\" (opened)=\"panelsState.panelD=true;savePanelState()\" (closed)=\"panelsState.panelD=false;savePanelState()\" hideToggle=\"true\" [expanded]=\"panelsState.panelD\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelsState.panelD\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelsState.panelD\">expand_more</mat-icon>\r\n                            <span>{{'editor.controls' | translate}}</span> <!-- CONTROLS  -->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"__tools_left\" class=\"leftbar-panel\">\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_input')}\" (click)=\"setMode('html_input')\">\r\n                            <span class=\"icon-tool icon-editvalue\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('value')}\" (click)=\"setMode('value')\">\r\n                            <span class=\"icon-tool icon-value\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_button')}\" (click)=\"setMode('html_button')\">\r\n                            <span class=\"icon-tool icon-button\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_select')}\" (click)=\"setMode('html_select')\">\r\n                            <span class=\"icon-tool icon-selectvalue\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_progress')}\" (click)=\"setMode('gauge_progress')\">\r\n                            <span class=\"icon-tool icon-progress-v\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('gauge_semaphore')}\" (click)=\"setMode('gauge_semaphore')\">\r\n                            <span class=\"icon-tool icon-semaphore\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" [ngClass]=\"{'svg-tool-active': isModeActive('html_chart')}\" (click)=\"setMode('html_chart')\">\r\n                            <span class=\"icon-tool icon-chart\"></span>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n            </mat-accordion>\r\n        </mat-drawer>\r\n        <!-- END LEFT BAR -->\r\n        <!-- WORK AREA -->\r\n        <mat-drawer-content>\r\n            <!-- RIGHT BAR -->\r\n            <div class=\"svg-tools-fly\">\r\n                <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyIdOpenState = true\" (closed)=\"panelPropertyIdOpenState = false\" hideToggle=\"true\" expanded=\"true\" style=\"display:none\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-flybar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyIdOpenState\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyIdOpenState\">expand_more</mat-icon>\r\n                            <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"_selected_panel\">\r\n                        <div class=\"_toolset\">\r\n                            <label id=\"idLabel\" title=\"{{'editor.interactivity-id-title' | translate}}\" class=\"svg-property\">\r\n                                <span>{{'editor.interactivity-id' | translate}}</span>\r\n                                <input id=\"elem_id\" #selid class=\"attr_changer\" data-attr=\"id\" type=\"text\" />\r\n                            </label>\r\n                            <label id=\"classLabel\" title=\"{{'editor.interactivity-class-title' | translate}}\" class=\"svg-property\">\r\n                                <span>{{'editor.interactivity-class' | translate}}</span>\r\n                                <input id=\"elem_class\" class=\"attr_changer\" data-attr=\"class\" type=\"text\" />\r\n                            </label>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelPropertyTransformOpenState = true\" (closed)=\"panelPropertyTransformOpenState = false\" hideToggle=\"true\" expanded=\"true\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelPropertyTransformOpenState\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelPropertyTransformOpenState\">expand_more</mat-icon>\r\n                            <span>{{'editor.transform' | translate}}</span> <!-- TRANSFORM SIZE/POSITION-->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"_selected_panel\" class=\"rightbar-panel\">\r\n                        <div class=\"_toolset\">\r\n                            <div id=\"xy_panel\" class=\"_toolset\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-x' | translate}}</span>\r\n                                        <input id=\"selected_x\" class=\"attr_changer\" title=\"{{'editor.transform-x-title' | translate}}\" size=\"4\" data-attr=\"x\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-y' | translate}}</span>\r\n                                        <input id=\"selected_y\" class=\"attr_changer\" title=\"{{'editor.transform-y-title' | translate}}\" size=\"3\" data-attr=\"y\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"line_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-x1' | translate}}</span>\r\n                                        <input id=\"line_x1\" class=\"attr_changer\" title=\"{{'editor.transform-x1-title' | translate}}\" size=\"3\" data-attr=\"x1\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-y1' | translate}}</span>\r\n                                        <input id=\"line_y1\" class=\"attr_changer\" title=\"{{'editor.transform-y1-title' | translate}}\" size=\"3\" data-attr=\"y1\" />\r\n                                    </div>\r\n                                </div>\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-x2' | translate}}</span>\r\n                                        <input id=\"line_x2\" class=\"attr_changer\" title=\"{{'editor.transform-x2-title' | translate}}\" size=\"3\" data-attr=\"x2\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-y2' | translate}}</span>\r\n                                        <input id=\"line_y2\" class=\"attr_changer\" title=\"{{'editor.transform-y2-title' | translate}}\" size=\"3\" data-attr=\"y2\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"rect_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                                        <span>{{'editor.transform-width' | translate}}</span>\r\n                                        <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                                        <span>{{'editor.transform-height' | translate}}</span>\r\n                                        <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                                    </div>\r\n                                </div>\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-radius-title' | translate}}\">\r\n                                        <span>{{'editor.transform-radiuscorner' | translate}}</span>\r\n                                        <input id=\"rect_rx\" size=\"3\" value=\"0\" type=\"text\" data-attr=\"Corner Radius\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"htmlctrl_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                                        <span>{{'editor.transform-width' | translate}}</span>\r\n                                        <input id=\"htmlctrl_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                                        <span>{{'editor.transform-height' | translate}}</span>\r\n                                        <input id=\"htmlctrl_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"shape_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-width-title' | translate}}\">\r\n                                        <span>{{'editor.transform-width' | translate}}</span>\r\n                                        <input id=\"shape_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\" title=\"{{'editor.transform-rect-height-title' | translate}}\">\r\n                                        <span>{{'editor.transform-height' | translate}}</span>\r\n                                        <input id=\"shape_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"circle_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-circlecx' | translate}}</span>\r\n                                        <input id=\"circle_cx\" class=\"attr_changer\" title=\"{{'editor.transform-circlecx-title' | translate}}\" size=\"3\" data-attr=\"cx\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-circlecy' | translate}}</span>\r\n                                        <input id=\"circle_cy\" class=\"attr_changer\" title=\"{{'editor.transform-circlecy-title' | translate}}\" size=\"3\" data-attr=\"cy\" />\r\n                                    </div>\r\n                                </div>\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-circler' | translate}}</span>\r\n                                        <input id=\"circle_r\" class=\"attr_changer\" title=\"{{'editor.transform-circler-title' | translate}}\" size=\"3\" data-attr=\"r\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"ellipse_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-ellipsecx' | translate}}</span>\r\n                                        <input id=\"ellipse_cx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecx-title' | translate}}\" size=\"3\" data-attr=\"cx\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-ellipsecy' | translate}}</span>\r\n                                        <input id=\"ellipse_cy\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsecy-title' | translate}}\" size=\"3\" data-attr=\"cy\" />\r\n                                    </div>\r\n                                </div>\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-ellipserx' | translate}}</span>\r\n                                        <input id=\"ellipse_rx\" class=\"attr_changer\" title=\"{{'editor.transform-ellipserx-title' | translate}}\" size=\"3\" data-attr=\"rx\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-ellipsery' | translate}}</span>\r\n                                        <input id=\"ellipse_ry\" class=\"attr_changer\" title=\"{{'editor.transform-ellipsery-title' | translate}}\" size=\"3\" data-attr=\"ry\" />\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <div id=\"text_panel\">\r\n                                <div class=\"svg-property\">\r\n                                    <span>{{'editor.transform-fontfamily' | translate}}</span>\r\n                                    <select class=\"font-family\" id=\"font_family\" #fontfamily (change)=\"onFontFamilyChange(fontfamily.value)\">\r\n                                        <option style=\"font-family:serif\">{{'editor.transform-font-serif' | translate}}</option>\r\n                                        <option style=\"font-family:sans-serif\">{{'editor.transform-font-sansserif' | translate}}</option>\r\n                                        <option style=\"font-family:cursive\">{{'editor.transform-font-cursive' | translate}}</option>\r\n                                        <option style=\"font-family:fantasy\">{{'editor.transform-font-fantasy' | translate}}</option>\r\n                                        <option style=\"font-family:monospace\">{{'editor.transform-font-monospace' | translate}}</option>\r\n                                    </select>\r\n                                </div>\r\n\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-fontsize' | translate}}</span>\r\n                                        <input id=\"font_size\" size=\"3\" value=\"0\" class=\"attr_changer\" title=\"{{'editor.transform-fontsize-title' | translate}}\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-textalign' | translate}}</span>\r\n                                        <select class=\"text-align\" id=\"text_anchor\" #textalign (change)=\"onTextAlignChange(textalign.value)\">\r\n                                            <option value=\"start\">{{'editor.transform-left' | translate}}</option>\r\n                                            <option value=\"middle\">{{'editor.transform-center' | translate}}</option>\r\n                                            <option value=\"end\">{{'editor.transform-right' | translate}}</option>\r\n                                        </select>\r\n                                        <!-- <div class=\"tool_button\" id=\"tool_bold\" title=\"Bold Text [B]\">\r\n                      <span>B</span>\r\n                    </div> -->\r\n                                    </div>\r\n                                    <!-- <div class=\"svg-property\">\r\n                    <div class=\"tool_button\" id=\"tool_italic\" title=\"Italic Text [I]\">\r\n                      <span>i</span>\r\n                    </div>\r\n                  </div> -->\r\n                                </div>\r\n\r\n                                <!-- Not visible, but still used -->\r\n                                <input id=\"text\" type=\"text\" size=\"35\" />\r\n                            </div>\r\n                            <div id=\"image_panel\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-width' | translate}}</span>\r\n                                        <input id=\"image_width\" class=\"attr_changer\" title=\"{{'editor.transform-image-width-title' | translate}}\" size=\"3\" data-attr=\"width\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-height' | translate}}</span>\r\n                                        <input id=\"image_height\" class=\"attr_changer\" title=\"{{'editor.transform-image-height-title' | translate}}\" size=\"3\" data-attr=\"height\" />\r\n                                    </div>\r\n                                </div>\r\n                                <div class=\"svg-property\" style=\"display: none;\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-url' | translate}}</span>\r\n                                        <input id=\"image_url\" class=\"attr_changer\" type=\"text\" title=\"{{'editor.transform-image-url-title' | translate}}\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <div class=\"svg-property\">\r\n                                            <button id=\"change_image_url\" style=\"display:none;\">{{'editor.transform-change-image' | translate}}</button>\r\n                                            <span id=\"url_notice\" title=\"{{'editor.transform-change-image-title' | translate}}\"></span>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                            <!-- <div id=\"hw_panel\">\r\n                <div class=\"svg-property-split2\">\r\n                  <div class=\"svg-property\" title=\"Change rectangle width\">\r\n                    <span>width</span>\r\n                    <input id=\"rect_width\" class=\"attr_changer\" size=\"3\" data-attr=\"width\" />\r\n                  </div>\r\n                  <div class=\"svg-property\" title=\"Change rectangle height\">\r\n                    <span>height</span>\r\n                    <input id=\"rect_height\" class=\"attr_changer\" size=\"3\" data-attr=\"height\" />\r\n                  </div>\r\n                </div>\r\n              </div> -->\r\n                            <div id=\"tool_angle\" title=\"{{'editor.transform-angle-title' | translate}}\" class=\"svg-property\">\r\n                                <div class=\"svg-property-split2\">\r\n                                    <div class=\"svg-property\">\r\n                                        <span>{{'editor.transform-angle' | translate}}</span>\r\n                                        <input id=\"angle\" size=\"2\" value=\"0\" type=\"text\" />\r\n                                    </div>\r\n                                    <div class=\"svg-property\">\r\n                                        <!-- <div class=\"svg-tool-button\" (click)=\"flipSelected('vertical')\" title=\"Flip vertically\">\r\n                      <span class=\"icon-flip-vertical\"></span>\r\n                    </div>\r\n                    <div class=\"svg-tool-button\" (click)=\"flipSelected('orizontal')\" title=\"Flip orizontally\">\r\n                      <span class=\"icon-flip-orizontal\"></span>\r\n                    </div> -->\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelAlignOpenState = true\" (closed)=\"panelAlignOpenState = false\" hideToggle=\"true\" expanded=\"true\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelAlignOpenState\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelAlignOpenState\">expand_more</mat-icon>\r\n                            <span>{{'editor.align' | translate}}</span> <!-- ALIGN-->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"align_panel\" class=\"rightbar_panel\">\r\n                        <div class=\"svg-tool-button\" (click)=\"onAlignSelected('left')\" title=\"{{'editor.align-left-title' | translate}}\">\r\n                            <span class=\"icon-align-left\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" (click)=\"onAlignSelected('center')\" title=\"{{'editor.align-center-title' | translate}}Align Center\">\r\n                            <span class=\"icon-align-center\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" (click)=\"onAlignSelected('right')\" title=\"{{'editor.align-right-title' | translate}}Align Right\">\r\n                            <span class=\"icon-align-right\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" (click)=\"onAlignSelected('top')\" title=\"{{'editor.align-top-title' | translate}}Align Top\">\r\n                            <span class=\"icon-align-top\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" (click)=\"onAlignSelected('middle')\" title=\"{{'editor.align-middle-title' | translate}}Align Middle\">\r\n                            <span class=\"icon-align-middle\"></span>\r\n                        </div>\r\n                        <div class=\"svg-tool-button\" (click)=\"onAlignSelected('bottom')\" title=\"{{'editor.align-bottom-title' | translate}}Align Bottom\">\r\n                            <span class=\"icon-align-bottom\"></span>\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelFillOpenState = true\" (closed)=\"panelFillOpenState = false\" hideToggle=\"true\" expanded=\"true\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelFillOpenState\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelFillOpenState\">expand_more</mat-icon>\r\n                            <span>{{'editor.stroke' | translate}}</span> <!-- STROKE-->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div class=\"rightbar_panel\">\r\n                        <div class=\"_color_tool\" id=\"tool_stroke\">\r\n                            <div class=\"svg-property-split2\">\r\n                                <div class=\"svg-property\">\r\n                                    <span>{{'editor.stroke-width' | translate}}</span>\r\n                                    <input id=\"stroke_width\" title=\"{{'editor.stroke-width-title' | translate}}\" size=\"2\" value=\"1\" type=\"text\" data-attr=\"Stroke Width\" />\r\n                                </div>\r\n                                <div class=\"svg-property\">\r\n                                    <span>{{'editor.stroke-style' | translate}}</span>\r\n                                    <select id=\"stroke_style\" class=\"style-stroke\" title=\"{{'editor.stroke-style-title' | translate}}\">\r\n                                        <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                                        <option value=\"2,2\">...</option>\r\n                                        <option value=\"5,5\">- -</option>\r\n                                        <option value=\"5,2,2,2\">- .</option>\r\n                                        <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                                    </select>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"svg-property\">\r\n                                <div class=\"svg-tool-button\" id=\"linejoin_miter\" #linejoinmiter (click)=\"onSetStrokeOption(linejoinmiter)\" title=\"{{'editor.stroke-joinmiter-title' | translate}}\">\r\n                                    <span class=\"icon-linejoin-miter\"></span>\r\n                                </div>\r\n                                <div class=\"svg-tool-button\" id=\"linejoin_round\" #linejoinround (click)=\"onSetStrokeOption(linejoinround)\" title=\"{{'editor.stroke-joinround-title' | translate}}\">\r\n                                    <span class=\"icon-linejoin-round\"></span>\r\n                                </div>\r\n                                <div class=\"svg-tool-button\" id=\"linejoin_bevel\" #linejoinbevel (click)=\"onSetStrokeOption(linejoinbevel)\" title=\"{{'editor.stroke-joinbevel-title' | translate}}\">\r\n                                    <span class=\"icon-linejoin-bevel\"></span>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"svg-property\">\r\n                                <div class=\"svg-tool-button\" id=\"linecap_butt\" #linecapbutt (click)=\"onSetStrokeOption(linecapbutt)\" title=\"{{'editor.stroke-capbutt-title' | translate}}\">\r\n                                    <span class=\"icon-linecap-butt\"></span>\r\n                                </div>\r\n                                <div class=\"svg-tool-button\" id=\"linecap_square\" #linecapsquare (click)=\"onSetStrokeOption(linecapsquare)\" title=\"{{'editor.stroke-capsquare-title' | translate}}\">\r\n                                    <span class=\"icon-linecap-square\"></span>\r\n                                </div>\r\n                                <div class=\"svg-tool-button\" id=\"linecap_round\" #linecapround (click)=\"onSetStrokeOption(linecapround)\" title=\"{{'editor.stroke-capround-title' | translate}}\">\r\n                                    <span class=\"icon-linecap-round\"></span>\r\n                                </div>\r\n                            </div>\r\n                            <div class=\"svg-property-split2\" style=\"display: none\">\r\n                                <div class=\"svg-property\">\r\n                                    <span for=\"class_shadow\">{{'editor.stroke-shadow' | translate}}</span>\r\n                                    <input type=\"checkbox\" id=\"class_shadow\" name=\"class_shadow\" class=\"attr_changer\" title=\"{{'editor.stroke-shadow-title' | translate}}\" (change)=\"onSetShadowOption($event.target.checked)\" label=\"shadow\" />\r\n                                </div>\r\n                                <div class=\"svg-property\">\r\n                                </div>\r\n                            </div>\r\n                            <!-- <ul id=\"linejoin_opts\">\r\n                <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n                <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n              </ul>\r\n\r\n              <ul id=\"linecap_opts\">\r\n                <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n                <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n              </ul> -->\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelMarkerOpenState = true\" (closed)=\"panelMarkerOpenState = false\" hideToggle=\"true\" expanded=\"true\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelMarkerOpenState\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelMarkerOpenState\">expand_more</mat-icon>\r\n                            <span>{{'editor.marker' | translate}}</span> <!-- MARKER-->\r\n                        </mat-panel-title>\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"marker_panel\" class=\"rightbar_panel\">\r\n                        <div class=\"svg-property-split3\">\r\n                            <div class=\"svg-property\">\r\n                                <span>{{'editor.marker-start' | translate}}</span>\r\n                                <select id=\"start_marker\" #smarker class=\"style-stroke\" title=\"{{'editor.marker-start-title' | translate}}\" (click)=\"onSetMarker('start_marker', smarker.selectedIndex);\" onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                                </select>\r\n                            </div>\r\n                            <div class=\"svg-property\">\r\n                                <span>{{'editor.marker-middle' | translate}}</span>\r\n                                <select id=\"mid_marker\" #mmarker class=\"style-stroke\" title=\"{{'editor.marker-middle-title' | translate}}\" (click)=\"onSetMarker('mid_marker', mmarker.selectedIndex);\" onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                                </select>\r\n                            </div>\r\n                            <div class=\"svg-property\">\r\n                                <span>{{'editor.marker-end' | translate}}</span>\r\n                                <select id=\"end_marker\" #emarker class=\"style-stroke\" title=\"{{'editor.marker-end-title' | translate}}\" (click)=\"onSetMarker('end_marker', emarker.selectedIndex);\" onfocus=\"this.selectedIndex=-1;this.blur();\">\r\n                                </select>\r\n                            </div>\r\n\r\n                        </div>\r\n                    </div>\r\n                </mat-expansion-panel>\r\n                <mat-expansion-panel class=\"svg-workarea-fly-p\" (opened)=\"panelEventOpenState = true\" (closed)=\"panelEventOpenState = false\" hideToggle=\"true\" expanded=\"true\">\r\n                    <mat-expansion-panel-header class=\"svg-workarea-leftbar-h\">\r\n                        <mat-panel-title>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"panelEventOpenState\">expand_less</mat-icon>\r\n                            <mat-icon aria-label=\"Select\" *ngIf=\"!panelEventOpenState\">expand_more</mat-icon>\r\n                            <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->\r\n                        </mat-panel-title>\r\n                        <!-- <mat-icon aria-label=\"Add\" class=\"leftbar-edit-btn\" (click)=\"addEvent();$event.stopPropagation()\" *ngif=\"selectedElement\">add</mat-icon> -->\r\n                    </mat-expansion-panel-header>\r\n                    <div id=\"interaction_panel\" class=\"rightbar_panel\">\r\n                        <gauge-base #gaugepanel *ngIf=\"selectedElement\" [settings]=getGaugeSettings(selectedElement) (edit)=\"onGaugeEdit($event)\"></gauge-base>\r\n                        <!-- (edit)=\"onGaugeEdit($event)\" [withEvents]=\"isWithEvents(selectedElement)\"></gauge-base> -->\r\n                    </div>\r\n                </mat-expansion-panel>\r\n            </div>\r\n            <!-- END RIGHT BAR -->\r\n            <!-- Work Area -->\r\n            <div id=\"svg_editor\" style=\"z-index:-1\">\r\n                <!-- Rules bar -->\r\n                <div id=\"rulers\">\r\n                    <div id=\"ruler_corner\"></div>\r\n                    <div id=\"ruler_x\">\r\n                        <div>\r\n                            <canvas height=\"15\"></canvas>\r\n                        </div>\r\n                    </div>\r\n                    <div id=\"ruler_y\">\r\n                        <div>\r\n                            <canvas width=\"15\"></canvas>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n                <!-- END Rules bar -->\r\n                <!-- Draw Area -->\r\n                <div id=\"workarea\">\r\n                    <style id=\"styleoverrides\" type=\"text/css\" media=\"screen\" scoped=\"scoped\"></style>\r\n                    <div id=\"svgcanvas\" style=\"position:relative\">\r\n                    </div>\r\n                </div>\r\n                <!-- END Draw Area -->\r\n                <!-- Draw top tool bar -->\r\n                <div id=\"tools_top\" class=\"tools_panel\">\r\n                    <div id=\"editor_panel\">\r\n                        <!-- <button mat-button title=\"Save Project\" [matMenuTriggerFor]=\"prjview\" class=\"main-btn\">\r\n              <mat-icon aria-label=\"Save Project\">save</mat-icon>\r\n            </button> -->\r\n                        <!-- <mat-menu #prjview=\"matMenu\" class=\"leftbar-item-menu\" yPosition=\"below\" [overlapTrigger]=\"false\"> -->\r\n                        <!-- <button mat-menu-item (click)=\"onSaveProject()\">Save</button> -->\r\n                        <!-- <button mat-menu-item (click)=\"onSaveProjectAs()\">Save as...</button> -->\r\n                        <!-- <button mat-menu-item (click)=\"onOpenProject();$event.stopPropagation()\">Open Project</button> -->\r\n                        <!-- <button mat-menu-item (click)=\"onImportVariable();$event.stopPropagation()\">Import Variable</button> -->\r\n                        <!-- <input type=\"file\" #fileImportInput style=\"display: none\" id=\"projectFileUpload\" (change)=\"onFileChangeListener($event)\" accept=\".wvc\"/> -->\r\n                        <!-- </mat-menu> -->\r\n                        <div class=\"main-btn-sep\"></div>\r\n                        <button mat-button title=\"{{'editor.tools-launch-title' | translate}}\" class=\"main-btn\" (click)=\"onStartCurrent()\">\r\n                            <mat-icon aria-label=\"Launch Current View\">play_arrow</mat-icon>\r\n                        </button>\r\n                        <div class=\"main-btn-sep\"></div>\r\n                        <button mat-button title=\"{{'editor.tools-zoom-title' | translate}}\" class=\"main-btn\" (click)=\"onZoomSelect()\">\r\n                            <mat-icon aria-label=\"Zoom Tool [Ctrl+Up/Down]\">zoom_in</mat-icon>\r\n                        </button>\r\n                        <button mat-button title=\"{{'editor.tools-grid-title' | translate}}\" class=\"main-btn\" (click)=\"onShowGrid()\">\r\n                            <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"!gridOn\">grid_on</mat-icon>\r\n                            <mat-icon aria-label=\"Show Hide Grid\" *ngIf=\"gridOn\">grid_off</mat-icon>\r\n                        </button>\r\n                        <div id=\"history_panel\">\r\n                            <button mat-button id=\"tool_undo\" title=\"{{'editor.tools-undo-title' | translate}}\" class=\"main-btn\">\r\n                                <mat-icon aria-label=\"Undo [Z]\">undo</mat-icon>\r\n                            </button>\r\n                            <button mat-button id=\"tool_redo\" title=\"{{'editor.tools-redo-title' | translate}}\" class=\"main-btn\">\r\n                                <mat-icon aria-label=\"Redo [Y]\">redo</mat-icon>\r\n                            </button>\r\n                        </div>\r\n\r\n                        <!-- <div class=\"push_button\" title=\"Save Project\" (click)=\"saveProject()\"></div> -->\r\n                        <!-- <div class=\"tool_sep\"></div> -->\r\n                        <!-- <div class=\"push_button\" id=\"tool_source\" title=\"Edit Source [U]\"></div> -->\r\n                        <!-- <div class=\"tool_button\" id=\"tool_wireframe\" title=\"Wireframe Mode [F]\"></div> -->\r\n                        <!-- <div class=\"tool_sep\"></div> -->\r\n                        <!-- <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div> -->\r\n                    </div>\r\n                    <div id=\"selected_panel\">\r\n                        <div class=\"main-btn-sep\"></div>\r\n                        <button mat-button id=\"tool_clone\" title=\"{{'editor.tools-clone-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon aria-label=\"Duplicate Element [D]\">content_copy</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_delete\" title=\"{{'editor.tools-delete-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon aria-label=\"Delete Element [Delete/Backspace]\">content_cut</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_move_bottom\" title=\"{{'editor.tools-movebottom-title' | translate}}\" class=\"main-btn\">\r\n                            <span class=\"to-bottom\"></span>\r\n                        </button>\r\n                        <button mat-button id=\"tool_move_top\" title=\"{{'editor.tools-movetop-title' | translate}}\" class=\"main-btn\">\r\n                            <span class=\"to-top\"></span>\r\n                        </button>\r\n                        <button mat-button id=\"tool_topath\" title=\"{{'editor.tools-topath-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>linear_scale</mat-icon>\r\n                        </button>\r\n                    </div>\r\n                    <div id=\"multiselected_panel\">\r\n                        <div class=\"main-btn-sep\"></div>\r\n                        <button mat-button id=\"tool_clone_multi\" title=\"{{'editor.tools-clonemulti-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon aria-label=\"Clone Elements [C]\">content_copy</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_delete_multi\" title=\"{{'editor.tools-deletemulti-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon aria-label=\"Delete Selected Elements [Delete/Backspace]\">content_cut</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_group_elements\" title=\"{{'editor.tools-group-title' | translate}}\" class=\"main-btn\">\r\n                            <span class=\"group\"></span>\r\n                        </button>\r\n                        <button mat-button id=\"tool_alignleft\" title=\"{{'editor.tools-alignleft-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>format_align_left</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_aligncenter\" title=\"{{'editor.tools-aligncenter-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>format_align_center</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_alignright\" title=\"{{'editor.tools-alignright-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>format_align_right</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_aligntop\" title=\"{{'editor.tools-aligntop-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>vertical_align_top</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_alignmiddle\" title=\"{{'editor.tools-alignmiddle-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>vertical_align_center</mat-icon>\r\n                        </button>\r\n                        <button mat-button id=\"tool_alignbottom\" title=\"{{'editor.tools-alignbottom-title' | translate}}\" class=\"main-btn\">\r\n                            <mat-icon>vertical_align_bottom</mat-icon>\r\n                        </button>\r\n                    </div>\r\n                    <div id=\"g_panel\">\r\n                        <button mat-button id=\"tool_ungroup\" title=\"{{'editor.tools-ungroup-title' | translate}}\" class=\"main-btn\">\r\n                            <span class=\"ungroup\"></span>\r\n                        </button>\r\n                    </div>\r\n\r\n                    <!-- History buttons -->\r\n                    <!-- <div id=\"history_panel\">\r\n            <div class=\"tool_sep\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_undo\" title=\"Undo [Z]\"></div>\r\n            <div class=\"push_button tool_button_disabled\" id=\"tool_redo\" title=\"Redo [Y]\"></div>\r\n          </div> -->\r\n                    <!-- Buttons when a single element is selected -->\r\n                    <!-- <div id=\"_selected_panel\"> -->\r\n                    <!-- <div class=\"toolset\"> -->\r\n                    <!-- <div class=\"tool_sep\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_clone\" title=\"Duplicate Element [D]\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_delete\" title=\"Delete Element [Delete/Backspace]\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_move_top\" title=\"Bring to Front [ Ctrl+Shift+] ]\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_move_bottom\" title=\"Send to Back [ Ctrl+Shift+[ ]\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_topath\" title=\"Convert to Path\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_reorient\" title=\"Reorient path\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_make_link\" title=\"Make (hyper)link\"></div> -->\r\n                    <!-- </div> -->\r\n                    <!-- </div> -->\r\n                    <!-- select panel END -->\r\n                    <!-- Buttons when multiple elements are selected -->\r\n                    <!-- <div id=\"_multiselected_panel\"> -->\r\n                    <!-- <div class=\"tool_sep\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_clone_multi\" title=\"Clone Elements [C]\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_delete_multi\" title=\"Delete Selected Elements [Delete/Backspace]\"></div> -->\r\n                    <!-- <div class=\"tool_sep\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_group_elements\" title=\"Group Elements [G]\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_make_link_multi\" title=\"Make (hyper)link\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_alignleft\" title=\"Align Left\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_aligncenter\" title=\"Align Center\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_alignright\" title=\"Align Right\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_aligntop\" title=\"Align Top\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_alignmiddle\" title=\"Align Middle\"></div> -->\r\n                    <!-- <div class=\"push_button\" id=\"tool_alignbottom\" title=\"Align Bottom\"></div> -->\r\n                    <!-- <label id=\"tool_align_relative\">\r\n              <span id=\"relativeToLabel\">relative to:</span>\r\n              <select id=\"align_relative_to\" title=\"Align relative to ...\">\r\n                <option id=\"selected_objects\" value=\"selected\">selected objects</option>\r\n                <option id=\"largest_object\" value=\"largest\">largest object</option>\r\n                <option id=\"smallest_object\" value=\"smallest\">smallest object</option>\r\n                <option id=\"page\" value=\"page\">page</option>\r\n              </select>\r\n            </label> -->\r\n                    <!-- </div> -->\r\n\r\n                    <!-- formerly gsvg_panel -->\r\n                    <!-- <div id=\"container_panel\"> -->\r\n                    <!-- <div class=\"tool_sep\"></div> -->\r\n                    <!-- Add viewBox field here? -->\r\n                    <!-- <label id=\"group_title\" title=\"Group identification label\">\r\n              <span>label:</span>\r\n              <input id=\"g_title\" data-attr=\"title\" size=\"10\" type=\"text\" />\r\n            </label> -->\r\n                    <!-- </div> -->\r\n\r\n                    <!-- <div id=\"use_panel\">\r\n            <div class=\"push_button\" id=\"tool_unlink_use\" title=\"Break link to reference element (make unique)\"></div>\r\n          </div> -->\r\n\r\n                    <!-- <div id=\"g_panel\">\r\n            <div class=\"push_button\" id=\"tool_ungroup\" title=\"Ungroup Elements [G]\"></div>\r\n          </div> -->\r\n\r\n                    <!-- For anchor elements -->\r\n                    <!-- <div id=\"a_panel\">\r\n            <label id=\"tool_link_url\" title=\"Set link URL (leave empty to remove)\">\r\n              <span id=\"linkLabel\" class=\"icon_label\"></span>\r\n              <input id=\"link_url\" type=\"text\" size=\"35\" />\r\n            </label>\r\n          </div> -->\r\n\r\n                    <!-- <div id=\"path_node_panel\"> -->\r\n                    <!-- <div class=\"tool_sep\"></div> -->\r\n                    <!-- <div class=\"tool_button push_button_pressed\" id=\"tool_node_link\" title=\"Link Control Points\"></div> -->\r\n                    <!-- <div class=\"tool_sep\"></div> -->\r\n                    <!-- <label id=\"tool_node_x\">x:\r\n              <input id=\"path_node_x\" class=\"attr_changer\" title=\"Change node's x coordinate\" size=\"3\" data-attr=\"x\" />\r\n            </label>\r\n            <label id=\"tool_node_y\">y:\r\n              <input id=\"path_node_y\" class=\"attr_changer\" title=\"Change node's y coordinate\" size=\"3\" data-attr=\"y\" />\r\n            </label> -->\r\n\r\n                    <!-- <select id=\"seg_type\" title=\"Change Segment type\">\r\n              <option id=\"straight_segments\" selected=\"selected\" value=\"4\">Straight</option>\r\n              <option id=\"curve_segments\" value=\"6\">Curve</option>\r\n            </select> -->\r\n                    <!-- <div class=\"tool_button\" id=\"tool_node_clone\" title=\"Clone Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_node_delete\" title=\"Delete Node\"></div>\r\n            <div class=\"tool_button\" id=\"tool_openclose_path\" title=\"Open/close sub-path\"></div>\r\n            <div class=\"tool_button\" id=\"tool_add_subpath\" title=\"Add sub-path\"></div> -->\r\n                    <!-- </div> -->\r\n                </div>\r\n                <!-- tools_top -->\r\n                <div id=\"cur_context_panel\">\r\n\r\n                </div>\r\n\r\n                <!-- tools_left -->\r\n                <!-- <div id=\"tools_left\" class=\"tools_panel\">\r\n      <div class=\"tool_button\" id=\"tool_select\" title=\"Select Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_fhpath\" title=\"Pencil Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_line\" title=\"Line Tool\"></div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_rect_show\" title=\"Square/Rect Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button flyout_current\" id=\"tools_ellipse_show\" title=\"Ellipse/Circle Tool\">\r\n        <div class=\"flyout_arrow_horiz\"></div>\r\n      </div>\r\n      <div class=\"tool_button\" id=\"tool_path\" title=\"Path Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_text\" title=\"Text Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_image\" title=\"Image Tool\"></div>\r\n      <div class=\"tool_button\" id=\"tool_zoom\" title=\"Zoom Tool [Ctrl+Up/Down]\"></div>\r\n\r\n      <div style=\"display: none\">\r\n        <div id=\"tool_rect\" title=\"Rectangle\"></div>\r\n        <div id=\"tool_square\" title=\"Square\"></div>\r\n        <div id=\"tool_fhrect\" title=\"Free-Hand Rectangle\"></div>\r\n        <div id=\"tool_ellipse\" title=\"Ellipse\"></div>\r\n        <div id=\"tool_circle\" title=\"Circle\"></div>\r\n        <div id=\"tool_fhellipse\" title=\"Free-Hand Ellipse\"></div>\r\n      </div>\r\n    </div> -->\r\n                <!-- tools_left -->\r\n\r\n                <!-- tool bottom -->\r\n                <div class=\"bottom-bar tools_panel\">\r\n                    <!-- Zoom buttons -->\r\n                    <div class=\"zoom-menu\" title=\"{{'editor.tools-zoomlevel-title' | translate}}\">\r\n                        <div class=\"zoom-value\">\r\n                            <input id=\"zoom\" size=\"3\" value=\"100\" type=\"text\" #zoomValue hidden />\r\n                            <span id=\"zoomLabel\">{{zoomValue.value}} %</span>\r\n                            <div id=\"zoom_dropdown\" class=\"dropdown selection\">\r\n                                <button>O\r\n                                </button>\r\n                                <ul>\r\n                                    <li>1000%</li>\r\n                                    <li>400%</li>\r\n                                    <li>200%</li>\r\n                                    <li>100%</li>\r\n                                    <li>50%</li>\r\n                                    <li>25%</li>\r\n                                    <li id=\"fit_to_canvas\" data-val=\"canvas\">{{'editor.tools-zoomlevel-fitcanvas' | translate}}</li>\r\n                                    <li id=\"fit_to_sel\" data-val=\"selection\">{{'editor.tools-zoomlevel-fitsection' | translate}}</li>\r\n                                    <!-- <li id=\"fit_to_layer_content\" data-val=\"layer\">Fit to layer content</li> -->\r\n                                    <li id=\"fit_to_all\" data-val=\"content\">{{'editor.tools-zoomlevel-fitcontent' | translate}}</li>\r\n                                    <li>100%</li>\r\n                                </ul>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n\r\n                    <div id=\"tools_bottom_2\" class=\"colors\">\r\n                        <input readonly [(colorPicker)]=\"colorFill\" class=\"color-fill\" title=\"{{'editor.tools-fillcolor-title' | translate}}\" [style.background]=\"colorFill\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeFillColor($event)\" [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n                        <input readonly [(colorPicker)]=\"colorStroke\" class=\"color-stroke\" title=\"{{'editor.tools-strokecolor-title' | translate}}\" [style.background]=\"colorStroke\" [cpAlphaChannel]=\"'always'\" [cpPosition]=\"'top'\" (colorPickerChange)=\"onChangeStrokeColor($event)\" [cpPresetColors]=\"defaultColor\" [cpCancelButton]=\"true\" [cpCancelButtonClass]=\"'cpCancelButtonClass'\" [cpCancelButtonText]=\"'Cancel'\" [cpOKButton]=\"true\" [cpOKButtonText]=\"'OK'\" [cpOKButtonClass]=\"'cpOKButtonClass'\" />\r\n                        <!-- <div id=\"color_tools\"> -->\r\n                        <div class=\"color_tool\" id=\"tool_fill\" hidden>\r\n                            <label class=\"icon_label\" for=\"fill_color\" title=\"{{'editor.tools-fillcolor-title' | translate}}\"></label>\r\n                            <div class=\"color_block\">\r\n                                <div id=\"fill_color\" class=\"color_block\" [style.border-color]=\"colorFill\"></div>\r\n                            </div>\r\n                        </div>\r\n                        <div class=\"color_tool\" id=\"tool_stroke\" hidden>\r\n                            <label class=\"icon_label\" title=\"Change stroke color\"></label>\r\n                            <div class=\"color_block\">\r\n                                <div id=\"stroke_bg\"></div>\r\n                                <div id=\"stroke_color\" class=\"color_block\" title=\"{{'editor.tools-strokecolor-title' | translate}}\" [style.border-color]=\"colorStroke\"></div>\r\n                            </div>\r\n\r\n                            <!-- <div id=\"toggle_stroke_tools\" title=\"Show/hide more stroke tools\"></div> -->\r\n\r\n                            <!-- <label class=\"stroke_tool\">\r\n                  <select id=\"stroke_style\" title=\"Change stroke dash style\">\r\n                    <option selected=\"selected\" value=\"none\">&#8212;</option>\r\n                    <option value=\"2,2\">...</option>\r\n                    <option value=\"5,5\">- -</option>\r\n                    <option value=\"5,2,2,2\">- .</option>\r\n                    <option value=\"5,2,2,2,2,2\">- ..</option>\r\n                  </select>\r\n                </label> -->\r\n\r\n                            <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linejoin\">\r\n                  <div id=\"cur_linejoin\" title=\"Linejoin: Miter\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n                            <!-- <div class=\"stroke_tool dropdown\" id=\"stroke_linecap\">\r\n                  <div id=\"cur_linecap\" title=\"Linecap: Butt\"></div>\r\n                  <button></button>\r\n                </div> -->\r\n\r\n                            <!-- </div> -->\r\n\r\n                            <!-- <div class=\"color_tool\" id=\"tool_opacity\" title=\"Change selected item opacity\">\r\n                <label>\r\n                  <span id=\"group_opacityLabel\" class=\"icon_label\"></span>\r\n                  <input id=\"group_opacity\" size=\"3\" value=\"100\" type=\"text\" />\r\n                </label>\r\n                <div id=\"opacity_dropdown\" class=\"dropdown\">\r\n                  <button></button>\r\n                  <ul>\r\n                    <li>0%</li>\r\n                    <li>25%</li>\r\n                    <li>50%</li>\r\n                    <li>75%</li>\r\n                    <li>100%</li>\r\n                    <li class=\"special\">\r\n                      <div id=\"opac_slider\"></div>\r\n                    </li>\r\n                  </ul>\r\n                </div>\r\n              </div> -->\r\n                        </div>\r\n                    </div>\r\n\r\n                    <div id=\"tools_bottom_3\" class=\"colors-palette\">\r\n                        <div id=\"palette_holder\">\r\n                            <div id=\"palette\" title=\"{{'editor.tools-palettecolor-title' | translate}}\"></div>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n\r\n                <div id=\"option_lists\" class=\"dropdown\">\r\n                    <!-- <ul id=\"linejoin_opts\">\r\n            <li class=\"tool_button current\" id=\"linejoin_miter\" title=\"Linejoin: Miter\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_round\" title=\"Linejoin: Round\"></li>\r\n            <li class=\"tool_button\" id=\"linejoin_bevel\" title=\"Linejoin: Bevel\"></li>\r\n          </ul>\r\n\r\n          <ul id=\"linecap_opts\">\r\n            <li class=\"tool_button current\" id=\"linecap_butt\" title=\"Linecap: Butt\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_square\" title=\"Linecap: Square\"></li>\r\n            <li class=\"tool_button\" id=\"linecap_round\" title=\"Linecap: Round\"></li>\r\n          </ul> -->\r\n\r\n                    <ul id=\"position_opts\" class=\"optcols3\">\r\n                        <li class=\"push_button\" id=\"tool_posleft\" title=\"Align Left\"></li>\r\n                        <li class=\"push_button\" id=\"tool_poscenter\" title=\"Align Center\"></li>\r\n                        <li class=\"push_button\" id=\"tool_posright\" title=\"Align Right\"></li>\r\n                        <li class=\"push_button\" id=\"tool_postop\" title=\"Align Top\"></li>\r\n                        <li class=\"push_button\" id=\"tool_posmiddle\" title=\"Align Middle\"></li>\r\n                        <li class=\"push_button\" id=\"tool_posbottom\" title=\"Align Bottom\"></li>\r\n                    </ul>\r\n                </div>\r\n\r\n\r\n                <!-- hidden divs -->\r\n                <!-- <div id=\"color_picker\"></div> -->\r\n\r\n            </div>\r\n        </mat-drawer-content>\r\n        <!-- work area END -->\r\n    </mat-drawer-container>\r\n\r\n    <!-- svg_editor -->\r\n\r\n    <!-- NOT USED -->\r\n    <div id=\"svg_source_editor\">\r\n        <div class=\"overlay\"></div>\r\n        <div id=\"svg_source_container\">\r\n            <div id=\"tool_source_back\" class=\"toolbar_button\">\r\n                <button id=\"tool_source_save\">Apply Changes</button>\r\n                <button id=\"tool_source_cancel\">Cancel</button>\r\n            </div>\r\n            <div id=\"save_output_btns\">\r\n                <p id=\"copy_save_note\">Copy the contents of this box into a text editor, then save the file with a .svg\r\n                    extension.</p>\r\n                <button id=\"copy_save_done\">Done</button>\r\n            </div>\r\n            <form>\r\n                <textarea id=\"svg_source_textarea\" spellcheck=\"false\"></textarea>\r\n            </form>\r\n        </div>\r\n    </div>\r\n\r\n    <div id=\"svg_docprops\">\r\n        <div class=\"overlay\"></div>\r\n        <div id=\"svg_docprops_container\">\r\n            <div id=\"tool_docprops_back\" class=\"toolbar_button\">\r\n                <button id=\"tool_docprops_save\">OK</button>\r\n                <button id=\"tool_docprops_cancel\">Cancel</button>\r\n            </div>\r\n\r\n\r\n            <fieldset id=\"svg_docprops_docprops\">\r\n                <legend id=\"svginfo_image_props\">Image Properties</legend>\r\n                <label>\r\n                    <span id=\"svginfo_title\">Title:</span>\r\n                    <input type=\"text\" id=\"canvas_title\" />\r\n                </label>\r\n\r\n                <fieldset id=\"change_resolution\">\r\n                    <legend id=\"svginfo_dim\">Canvas Dimensions</legend>\r\n\r\n                    <label>\r\n                        <span id=\"svginfo_width\">width:</span>\r\n                        <input type=\"text\" id=\"canvas_width\" size=\"6\" />\r\n                    </label>\r\n\r\n                    <label>\r\n                        <span id=\"svginfo_height\">height:</span>\r\n                        <input type=\"text\" id=\"canvas_height\" size=\"6\" />\r\n                    </label>\r\n\r\n                    <label>\r\n                        <select id=\"resolution\">\r\n                            <option id=\"selectedPredefined\" selected=\"selected\">Select predefined:</option>\r\n                            <option>640x480</option>\r\n                            <option>800x600</option>\r\n                            <option>1024x768</option>\r\n                            <option>1280x960</option>\r\n                            <option>1600x1200</option>\r\n                            <option id=\"fitToContent\" value=\"content\">Fit to Content</option>\r\n                        </select>\r\n                    </label>\r\n                </fieldset>\r\n\r\n                <fieldset id=\"image_save_opts\">\r\n                    <legend id=\"includedImages\">Included Images</legend>\r\n                    <label>\r\n                        <input type=\"radio\" name=\"image_opt\" value=\"embed\" checked=\"checked\" />\r\n                        <span id=\"image_opt_embed\">Embed data (local files)</span>\r\n                    </label>\r\n                    <label>\r\n                        <input type=\"radio\" name=\"image_opt\" value=\"ref\" />\r\n                        <span id=\"image_opt_ref\">Use file reference</span>\r\n                    </label>\r\n                </fieldset>\r\n            </fieldset>\r\n\r\n        </div>\r\n    </div>\r\n\r\n    <div id=\"svg_prefs\">\r\n        <div class=\"overlay\"></div>\r\n        <div id=\"svg_prefs_container\">\r\n            <div id=\"tool_prefs_back\" class=\"toolbar_button\">\r\n                <button id=\"tool_prefs_save\">OK</button>\r\n                <button id=\"tool_prefs_cancel\">Cancel</button>\r\n            </div>\r\n\r\n            <fieldset>\r\n                <legend id=\"svginfo_editor_prefs\">Editor Preferences</legend>\r\n\r\n                <label>\r\n                    <span id=\"svginfo_lang\">Language:</span>\r\n                    <!-- Source: http://en.wikipedia.org/wiki/Language_names -->\r\n                    <select id=\"lang_select\">\r\n                        <option id=\"lang_ar\" value=\"ar\">العربية</option>\r\n                        <option id=\"lang_cs\" value=\"cs\">Čeština</option>\r\n                        <option id=\"lang_de\" value=\"de\">Deutsch</option>\r\n                        <option id=\"lang_en\" value=\"en\" selected=\"selected\">English</option>\r\n                        <option id=\"lang_es\" value=\"es\">Español</option>\r\n                        <option id=\"lang_fa\" value=\"fa\">فارسی</option>\r\n                        <option id=\"lang_fr\" value=\"fr\">Français</option>\r\n                        <option id=\"lang_fy\" value=\"fy\">Frysk</option>\r\n                        <option id=\"lang_hi\" value=\"hi\">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;,\r\n                            &#2361;&#2367;&#2306;&#2342;&#2368;</option>\r\n                        <option id=\"lang_it\" value=\"it\">Italiano</option>\r\n                        <option id=\"lang_ja\" value=\"ja\">日本語</option>\r\n                        <option id=\"lang_nl\" value=\"nl\">Nederlands</option>\r\n                        <option id=\"lang_pl\" value=\"pl\">Polski</option>\r\n                        <option id=\"lang_pt-BR\" value=\"pt-BR\">Português (BR)</option>\r\n                        <option id=\"lang_ro\" value=\"ro\">Română</option>\r\n                        <option id=\"lang_ru\" value=\"ru\">Русский</option>\r\n                        <option id=\"lang_sk\" value=\"sk\">Slovenčina</option>\r\n                        <option id=\"lang_sl\" value=\"sl\">Slovenščina</option>\r\n                        <option id=\"lang_zh-TW\" value=\"zh-TW\">繁體中文</option>\r\n                    </select>\r\n                </label>\r\n\r\n                <label>\r\n                    <span id=\"svginfo_icons\">Icon size:</span>\r\n                    <select id=\"iconsize\">\r\n                        <option id=\"icon_small\" value=\"s\">Small</option>\r\n                        <option id=\"icon_medium\" value=\"m\" selected=\"selected\">Medium</option>\r\n                        <option id=\"icon_large\" value=\"l\">Large</option>\r\n                        <option id=\"icon_xlarge\" value=\"xl\">Extra Large</option>\r\n                    </select>\r\n                </label>\r\n\r\n                <fieldset id=\"change_background\">\r\n                    <legend id=\"svginfo_change_background\">Editor Background</legend>\r\n                    <div id=\"bg_blocks\"></div>\r\n                    <label>\r\n                        <span id=\"svginfo_bg_url\">URL:</span>\r\n                        <input type=\"text\" id=\"canvas_bg_url\" />\r\n                    </label>\r\n                    <p id=\"svginfo_bg_note\">Note: Background will not be saved with image.</p>\r\n                </fieldset>\r\n\r\n                <fieldset id=\"change_grid\">\r\n                    <legend id=\"svginfo_grid_settings\">Grid</legend>\r\n                    <label>\r\n                        <span id=\"svginfo_snap_onoff\">Snapping on/off</span>\r\n                        <input type=\"checkbox\" value=\"snapping_on\" id=\"grid_snapping_on\" />\r\n                    </label>\r\n                    <label>\r\n                        <span id=\"svginfo_snap_step\">Snapping Step-Size:</span>\r\n                        <input type=\"text\" id=\"grid_snapping_step\" size=\"3\" value=\"10\" />\r\n                    </label>\r\n                    <label>\r\n                        <span id=\"svginfo_grid_color\">Grid color:</span>\r\n                        <input type=\"text\" id=\"grid_color\" size=\"3\" value=\"#000\" />\r\n                    </label>\r\n                </fieldset>\r\n\r\n                <fieldset id=\"units_rulers\">\r\n                    <legend id=\"svginfo_units_rulers\">Units &amp; Rulers</legend>\r\n                    <label>\r\n                        <span id=\"svginfo_rulers_onoff\">Show rulers</span>\r\n                        <input type=\"checkbox\" value=\"show_rulers\" id=\"show_rulers\" checked=\"checked\" />\r\n                    </label>\r\n                    <label>\r\n                        <span id=\"svginfo_unit\">Base Unit:</span>\r\n                        <select id=\"base_unit\">\r\n                            <option value=\"px\">Pixels</option>\r\n                            <option value=\"cm\">Centimeters</option>\r\n                            <option value=\"mm\">Millimeters</option>\r\n                            <option value=\"in\">Inches</option>\r\n                            <option value=\"pt\">Points</option>\r\n                            <option value=\"pc\">Picas</option>\r\n                            <option value=\"em\">Ems</option>\r\n                            <option value=\"ex\">Exs</option>\r\n                        </select>\r\n                    </label>\r\n                    <!-- Should this be an export option instead? -->\r\n                    <!-- \r\n          <span id=\"svginfo_unit_system\">Unit System:</span>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"single\" checked=\"checked\"/>\r\n            <span id=\"svginfo_single_type_unit\">Single type unit</span>\r\n            <small id=\"svginfo_single_type_unit_sub\">CSS unit type is set on root element. If a different unit type is entered in a text field, it is converted back to user units on export.</small>\r\n          </label>\r\n          <label>\r\n            <input type=\"radio\" name=\"unit_system\" value=\"multi\"/>\r\n            <span id=\"svginfo_multi_units\">Multiple CSS units</span> \r\n            <small id=\"svginfo_single_type_unit_sub\">Attributes can be given different CSS units, which may lead to inconsistant results among viewers.</small>\r\n          </label>\r\n   -->\r\n                </fieldset>\r\n\r\n            </fieldset>\r\n\r\n        </div>\r\n    </div>\r\n    <!-- NOT USED END -->\r\n\r\n    <div id=\"dialog_box\">\r\n        <div class=\"overlay\"></div>\r\n        <div id=\"dialog_container\">\r\n            <div id=\"dialog_content\"></div>\r\n            <div id=\"dialog_buttons\"></div>\r\n        </div>\r\n    </div>\r\n\r\n    <!-- canvas context menu -->\r\n    <ul id=\"cmenu_canvas\" class=\"contextMenu svg-workarea-contextmenu\">\r\n        <!-- <li>\r\n      <a href=\"#deselect\">Clear selection</a>\r\n    </li> -->\r\n        <li>\r\n            <a id=\"#interactivity\" (click)=\"isInteractivtyEnabled(selectedElement) && onGaugeEditEx()\">{{'editor.interactivity' | translate}}</a>\r\n        </li>\r\n        <li class=\"separator\">\r\n            <a id=\"#cut\">{{'editor.cmenu-cut' | translate}}</a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#copy\">{{'editor.cmenu-copy' | translate}}</a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#paste\">{{'editor.cmenu-paste' | translate}}</a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#paste_in_place\">{{'editor.cmenu-paste-place' | translate}}</a>\r\n        </li>\r\n        <li class=\"separator\">\r\n            <a id=\"#delete\">{{'editor.cmenu-delete' | translate}}</a>\r\n        </li>\r\n        <li class=\"separator\">\r\n            <a id=\"#group\">{{'editor.cmenu-group' | translate}}\r\n                <span class=\"shortcut\">G</span>\r\n            </a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#ungroup\">{{'editor.cmenu-ungroup' | translate}}\r\n                <span class=\"shortcut\">G</span>\r\n            </a>\r\n        </li>\r\n        <li class=\"separator\">\r\n            <a id=\"#move_front\">{{'editor.cmenu-bring-front' | translate}}\r\n                <span class=\"shortcut\">SHFT+CTRL+]</span>\r\n            </a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#move_up\">{{'editor.cmenu-bring-forward' | translate}}\r\n                <span class=\"shortcut\">CTRL+]</span>\r\n            </a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#move_down\">{{'editor.cmenu-send-backward' | translate}}\r\n                <span class=\"shortcut\">CTRL+[</span>\r\n            </a>\r\n        </li>\r\n        <li>\r\n            <a id=\"#move_back\">{{'editor.cmenu-send-back' | translate}}\r\n                <span class=\"shortcut\">SHFT+CTRL+[</span>\r\n            </a>\r\n        </li>\r\n    </ul>\r\n    <!-- canvas context menu END -->\r\n\r\n    <!-- layers context menu -->\r\n    <ul id=\"cmenu_layers\" class=\"contextMenu\" style=\"display: none\">\r\n        <li>\r\n            <a href=\"#dupe\">{{'editor.cmenu-layer-duplicate' | translate}}</a>\r\n        </li>\r\n        <li>\r\n            <a href=\"#delete\">{{'editor.cmenu-layer-delete' | translate}}</a>\r\n        </li>\r\n        <li>\r\n            <a href=\"#merge_down\">{{'editor.cmenu-layer-marge-down' | translate}}</a>\r\n        </li>\r\n        <li>\r\n            <a href=\"#merge_all\">{{'editor.cmenu-layer-marge-all' | translate}}</a>\r\n        </li>\r\n    </ul>\r\n    <!-- layers context menu END -->\r\n</div>"
 
 /***/ }),
 
@@ -4608,12 +4602,13 @@ var EditorComponent = (function () {
         this.selectedElement = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["o" /* SelElement */]();
         this.panelsState = {
             enabled: false,
-            panelA: true,
-            panelB: true,
+            panelView: true,
+            panelGeneral: true,
             panelC: true,
             panelD: true,
             panelS: true
         };
+        this.shapesGrps = [];
         this.gaugesRef = [];
         mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
         mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
@@ -4692,9 +4687,12 @@ var EditorComponent = (function () {
             var toinit = mysvgeditor.initSvgEditor($, function (selected) {
                 _this.onSelectedElement(selected);
                 var ga = _this.getGaugeSettings(selected);
-            }, function (args) {
+            }, function (type, args) {
                 _this.onExtensionLoaded(args);
                 _this.clearSelection();
+                if (type === 'shapes') {
+                    _this.setShapes();
+                }
             }, function (type, color) {
                 if (type === 'fill') {
                     _this.colorFill = color;
@@ -4777,6 +4775,17 @@ var EditorComponent = (function () {
     };
     EditorComponent.prototype.saveHmi = function () {
         console.log('TO REMOVE!!!!!!!!!');
+    };
+    /**
+     * Take shapes from svg-editor to show in panel
+     */
+    EditorComponent.prototype.setShapes = function () {
+        var temp = this.winRef.nativeWindow.svgEditor.getShapes();
+        var grps = [];
+        Object.keys(temp).forEach(function (grpk) {
+            grps.push({ name: grpk, shapes: temp[grpk] });
+        }),
+            this.shapesGrps = grps;
     };
     /**
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
@@ -5412,9 +5421,7 @@ var EditorComponent = (function () {
             if (result) {
                 callback(result.settings);
                 _this.saveView(_this.currentView);
-                if (_this.gaugesManager.isToInitInEditor(result.settings)) {
-                    _this.gaugesManager.checkElementToInit(result.settings);
-                }
+                _this.gaugesManager.initInEditor(result.settings);
             }
             // } else {
             //   settings = JSON.parse(JSON.stringify(oldvalue));
@@ -5905,7 +5912,6 @@ var FuxaViewComponent = (function () {
         var svgele = this.getSvgElement(ga.id);
         if (svgele) {
             svgele.click(function (ev) {
-                console.log('click -');
                 var event = self.gaugesManager.getBindClick(ga);
                 if (event && event.length > 0 && event[0].action && event[0].actparam) {
                     var actindex = Object.keys(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["d" /* GaugeEventActionType */]).indexOf(event[0].action);
@@ -5988,7 +5994,6 @@ var FuxaViewComponent = (function () {
         }
     };
     FuxaViewComponent.prototype.openDialog = function (event, viewref) {
-        console.log('openDialog ' + viewref);
         var view = this.getView(viewref);
         if (!view) {
             return;
@@ -6003,7 +6008,6 @@ var FuxaViewComponent = (function () {
         }
     };
     FuxaViewComponent.prototype.onOpenCard = function (id, event, viewref) {
-        console.log('open card' + viewref);
         var view = this.getView(viewref);
         if (!view) {
             return;
@@ -6033,11 +6037,9 @@ var FuxaViewComponent = (function () {
     };
     FuxaViewComponent.prototype.onCloseCard = function (card) {
         this.cards.splice(this.cards.indexOf(card), 1);
-        console.log('closed' + card.id);
     };
     FuxaViewComponent.prototype.onCloseDialog = function () {
         delete this.dialog;
-        console.log('dialog closed' + this.dialog.id);
     };
     FuxaViewComponent.prototype.onSetValue = function (ga, paramValue) {
         if (ga.property && ga.property.variableId) {
@@ -6298,6 +6300,7 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6320,6 +6323,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var GaugeProgressComponent = (function (_super) {
     __extends(GaugeProgressComponent, _super);
     function GaugeProgressComponent() {
@@ -6333,6 +6337,9 @@ var GaugeProgressComponent = (function (_super) {
             res.push(pro.variableId);
         }
         return res;
+    };
+    GaugeProgressComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].MinMax;
     };
     GaugeProgressComponent.processValue = function (ga, svgele, sig) {
         // console.log('gaid value: ' + ga.id);
@@ -6482,6 +6489,7 @@ module.exports = ""
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GaugeSemaphoreComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6503,6 +6511,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
 var GaugeSemaphoreComponent = (function (_super) {
     __extends(GaugeSemaphoreComponent, _super);
     function GaugeSemaphoreComponent() {
@@ -6516,6 +6525,9 @@ var GaugeSemaphoreComponent = (function (_super) {
             res.push(pro.variableId);
         }
         return res;
+    };
+    GaugeSemaphoreComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Range;
     };
     GaugeSemaphoreComponent.processValue = function (ga, svgele, sig) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
@@ -6602,6 +6614,7 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6624,6 +6637,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HtmlButtonComponent = (function (_super) {
     __extends(HtmlButtonComponent, _super);
     function HtmlButtonComponent() {
@@ -6637,6 +6651,9 @@ var HtmlButtonComponent = (function (_super) {
             res.push(pro.variableId);
         }
         return res;
+    };
+    HtmlButtonComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
     };
     HtmlButtonComponent.initElement = function (gab) {
         var ele = document.getElementById(gab.id);
@@ -6744,7 +6761,8 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__ = __webpack_require__("../../../../../src/app/gui-helpers/ngx-dygraphs/ngx-dygraphs.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6768,6 +6786,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HtmlChartComponent = (function (_super) {
     __extends(HtmlChartComponent, _super);
     function HtmlChartComponent(resolver) {
@@ -6779,6 +6798,9 @@ var HtmlChartComponent = (function (_super) {
     HtmlChartComponent.getSignal = function (pro) {
         return pro.variableIds;
     };
+    HtmlChartComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Chart;
+    };
     HtmlChartComponent.processValue = function (ga, svgele, sig, gauge) {
         // console.log(sig);
         gauge.addValue(sig.id, sig.value);
@@ -6788,7 +6810,7 @@ var HtmlChartComponent = (function (_super) {
         if (ele) {
             var htmlChart = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixD);
             if (htmlChart) {
-                var factory = resolver.resolveComponentFactory(__WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]);
+                var factory = resolver.resolveComponentFactory(__WEBPACK_IMPORTED_MODULE_4__gui_helpers_ngx_dygraphs_ngx_dygraphs_component__["a" /* NgxDygraphsComponent */]);
                 var componentRef = viewContainerRef.createComponent(factory);
                 if (gab.property) {
                     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
@@ -6868,6 +6890,7 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6891,6 +6914,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HtmlInputComponent = (function (_super) {
     __extends(HtmlInputComponent, _super);
     function HtmlInputComponent() {
@@ -6904,6 +6928,9 @@ var HtmlInputComponent = (function (_super) {
             res.push(pro.variableId);
         }
         return res;
+    };
+    HtmlInputComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_4__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
     };
     HtmlInputComponent.getHtmlEvents = function (ga) {
         var ele = document.getElementById(ga.id);
@@ -7022,6 +7049,7 @@ module.exports = ""
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7045,6 +7073,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var HtmlSelectComponent = (function (_super) {
     __extends(HtmlSelectComponent, _super);
     function HtmlSelectComponent() {
@@ -7058,6 +7087,9 @@ var HtmlSelectComponent = (function (_super) {
             res.push(pro.variableId);
         }
         return res;
+    };
+    HtmlSelectComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_4__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Step;
     };
     HtmlSelectComponent.getHtmlEvents = function (ga) {
         var ele = document.getElementById(ga.id);
@@ -7188,6 +7220,7 @@ module.exports = ""
 /* unused harmony export ValueProperty */
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7209,6 +7242,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
+
 var ValueComponent = (function (_super) {
     __extends(ValueComponent, _super);
     function ValueComponent() {
@@ -7222,6 +7256,9 @@ var ValueComponent = (function (_super) {
             res.push(pro.variableId);
         }
         return res;
+    };
+    ValueComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].ValueAndUnit;
     };
     ValueComponent.processValue = function (ga, svgele, sig) {
         // console.log('gaid value: ' + ga.id);
@@ -8340,20 +8377,16 @@ var DialogGaugePermission = (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ngx_translate_core__ = __webpack_require__("../../../../@ngx-translate/core/@ngx-translate/core.es5.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__ = __webpack_require__("../../../../../src/app/_services/hmi.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__models_chart__ = __webpack_require__("../../../../../src/app/_models/chart.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__ = __webpack_require__("../../../../../src/app/gauges/switch/switch.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__ = __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__controls_value_value_component__ = __webpack_require__("../../../../../src/app/gauges/controls/value/value.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-input/html-input.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-button/html-button.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-select/html-select.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__ = __webpack_require__("../../../../../src/app/gauges/controls/html-chart/html-chart.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-progress/gauge-progress.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__controls_gauge_semaphore_gauge_semaphore_component__ = __webpack_require__("../../../../../src/app/gauges/controls/gauge-semaphore/gauge-semaphore.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__shapes_shapes_component__ = __webpack_require__("../../../../../src/app/gauges/shapes/shapes.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__shapes_proc_eng_proc_eng_component__ = __webpack_require__("../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8378,10 +8411,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
-
-
-
 var GaugesManager = (function () {
     function GaugesManager(hmiService, translateService, dialog) {
         var _this = this;
@@ -8391,14 +8420,19 @@ var GaugesManager = (function () {
         this.onchange = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         this.onevent = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
         // signalGaugeMap = new ViewSignalGaugeMap();      // map of all gauges (GaugeSettings) pro signals
+        // map of gauges that have a click/html event
         this.eventGauge = {};
+        // map of gauges with views
         this.mapGaugeView = {};
+        // map of all signals and binded gauges of current view
         this.memorySigGauges = {};
         this.mapChart = {};
-        this.gaugeWithProperty = [__WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag,
-            __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag,
-            __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag];
-        this.gaugeWithEvents = [__WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag];
+        // list of gauges tags to speed up the check
+        this.gaugesTags = [];
+        // list of gauges tags to check who as events
+        this.gaugeWithEvents = [__WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag,
+            __WEBPACK_IMPORTED_MODULE_12__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_13__shapes_shapes_component__["a" /* ShapesComponent */].TypeTag, __WEBPACK_IMPORTED_MODULE_14__shapes_proc_eng_proc_eng_component__["a" /* ProcEngComponent */].TypeTag];
+        // subscription to the change of variable value, then emit to the gauges of fuxa-view 
         this.hmiService.onVariableChanged.subscribe(function (sig) {
             try {
                 _this.onchange.emit(sig);
@@ -8406,6 +8440,7 @@ var GaugesManager = (function () {
             catch (err) {
             }
         });
+        // subscription to DAQ values, then emit to charts gauges of fuxa-view 
         this.hmiService.onDaqResult.subscribe(function (message) {
             try {
                 if (_this.mapChart[message.gid]) {
@@ -8419,64 +8454,23 @@ var GaugesManager = (function () {
             catch (err) {
             }
         });
+        // make the list of gauges tags to speed up the check
+        GaugesManager_1.Gauges.forEach(function (g) {
+            _this.gaugesTags.push(g.TypeTag);
+        });
     }
+    GaugesManager_1 = GaugesManager;
     GaugesManager.prototype.ngOnDestroy = function () {
         console.log('GaugesManager destroy');
     };
-    GaugesManager.prototype.randomRange = function (min, max) {
-        return (Math.random() * (max - min + 1)) + min;
-    };
     GaugesManager.prototype.createSettings = function (id, type) {
         var gs = null;
-        switch (type) {
-            case __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].LabelTag;
-                break;
-            case __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag:
-                gs = new __WEBPACK_IMPORTED_MODULE_6__models_hmi__["h" /* GaugeSettings */](id, type);
-                gs.label = __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].LabelTag;
-                break;
+        for (var i = 0; i < GaugesManager_1.Gauges.length; i++) {
+            if (GaugesManager_1.Gauges[i].TypeTag === type) {
+                gs = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["h" /* GaugeSettings */](id, type);
+                gs.label = GaugesManager_1.Gauges[i].LabelTag;
+                return gs;
+            }
         }
         return gs;
     };
@@ -8487,33 +8481,42 @@ var GaugesManager = (function () {
         return false;
     };
     GaugesManager.prototype.isGauge = function (type) {
-        return this.gaugeWithProperty.indexOf(type) > -1;
+        return this.gaugesTags.indexOf(type) > -1;
     };
-    GaugesManager.prototype.isToInitInEditor = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElement(ga);
+    /**
+     * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
+     * @param ga
+     */
+    GaugesManager.prototype.initInEditor = function (ga) {
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElement(ga);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElement(ga);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElement(ga);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].detectChange(ga);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+            __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].detectChange(ga);
         }
         return false;
     };
+    //! toremove
     GaugesManager.prototype.setSignalValue = function (sig) {
-        console.log('end set ' + sig.id + ' ' + sig.value);
         this.onchange.emit(sig);
     };
+    //! toremove
     GaugesManager.prototype.initGaugesMap = function () {
         this.eventGauge = {};
         this.mapGaugeView = {};
     };
+    /**
+     * called from fuxa-view, is used to emit message for a refresh of all signals values and the gauges of view
+     * @param domViewId
+     */
     GaugesManager.prototype.emitBindedSignals = function (domViewId) {
         this.hmiService.emitMappedSignalsGauge(domViewId);
     };
     /**
-     * bind dom view, gauge with signal (for animation) and event
+     * called from fuxa-view, bind dom view, gauge with signal (for animation) and event
      * @param gaugekey
      * @param gauge
      * @param domViewId
@@ -8565,8 +8568,8 @@ var GaugesManager = (function () {
         this.checkElementToInit(ga);
     };
     /**
-     * remove bind of dom view gauge
      * @param domViewId
+     * called from fuxa-view, remove bind of dom view gauge
      */
     GaugesManager.prototype.unbindGauge = function (domViewId) {
         var _this = this;
@@ -8584,16 +8587,18 @@ var GaugesManager = (function () {
             }
         });
     };
+    /**
+     * init element of fuxa-view,
+     * @param ga
+     */
     GaugesManager.prototype.checkElementToInit = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElement(ga);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElement(ga);
         }
         // } else if (ga.type === GaugeProgressComponent.TypeTag) {
         //   return GaugeProgressComponent.initElement(ga);
         // }
         return null;
-    };
-    GaugesManager.prototype.onGaugeClick = function (evt) {
     };
     /**
      * get all gauge settings binded to dom view with the signal
@@ -8605,78 +8610,62 @@ var GaugesManager = (function () {
         return gslist;
     };
     /**
-     * get all signals mapped in all dom views
+     * get all signals mapped in all dom views, used from LabComponent
      * @param fulltext a copy with item name and source
      */
     GaugesManager.prototype.getMappedGaugesSignals = function (fulltext) {
         return this.hmiService.getMappedVariables(fulltext);
     };
+    /**
+     * return all signals binded to the gauge
+     * @param ga
+     */
     GaugesManager.prototype.getBindSignals = function (ga) {
         if (ga.property) {
-            if (ga.type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].getSignals(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].getSignals(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].getSignals(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getSignals(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].getSignals(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getSignals(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getSignal(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getSignal(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getSignal(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getSignal(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-                return __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getSignal(ga.property);
-            }
-            else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-                var sigs = this.hmiService.getChartSignal(ga.property.id);
-                return sigs;
+            for (var i = 0; i < GaugesManager_1.Gauges.length; i++) {
+                if (GaugesManager_1.Gauges[i].TypeTag === ga.type) {
+                    if (ga.type === __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+                        var sigs = this.hmiService.getChartSignal(ga.property.id);
+                        return sigs;
+                    }
+                    else if (typeof GaugesManager_1.Gauges[i]['getSignals'] === 'function') {
+                        return GaugesManager_1.Gauges[i]['getSignals'](ga.property);
+                    }
+                    else {
+                        return null;
+                    }
+                }
             }
         }
         return null;
     };
+    /**
+     * return all events binded to the gauge with click event
+     * @param ga
+     */
     GaugesManager.prototype.getBindClick = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getEvents(ga.property, __WEBPACK_IMPORTED_MODULE_6__models_hmi__["e" /* GaugeEventType */].click);
+        for (var i = 0; i < GaugesManager_1.Gauges.length; i++) {
+            if (GaugesManager_1.Gauges[i].TypeTag === ga.type) {
+                if (typeof GaugesManager_1.Gauges[i]['getEvents'] === 'function') {
+                    return GaugesManager_1.Gauges[i]['getEvents'](ga.property, __WEBPACK_IMPORTED_MODULE_5__models_hmi__["e" /* GaugeEventType */].click);
+                }
+                else {
+                    return null;
+                }
+            }
         }
         return null;
     };
+    /**
+     * return all events binded to the html gauge ('key-enter' of input, 'change' of select)
+     * @param ga
+     */
     GaugesManager.prototype.getHtmlEvents = function (ga) {
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getHtmlEvents(ga);
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getHtmlEvents(ga);
         }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getHtmlEvents(ga);
+        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getHtmlEvents(ga);
         }
         return null;
     };
@@ -8688,50 +8677,30 @@ var GaugesManager = (function () {
      */
     GaugesManager.prototype.processValue = function (ga, svgele, sig) {
         var _this = this;
-        // console.log('gaid: ' + ga.id);
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].processValue(ga, svgele, sig);
-        }
-        else if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
-                Object.keys(this.memorySigGauges[sig.id]).forEach(function (k) {
-                    if (k === ga.id) {
-                        __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, _this.memorySigGauges[sig.id][k]);
+        for (var i = 0; i < GaugesManager_1.Gauges.length; i++) {
+            if (GaugesManager_1.Gauges[i].TypeTag === ga.type) {
+                if (ga.type === __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(function (k) {
+                            if (k === ga.id) {
+                                __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, _this.memorySigGauges[sig.id][k]);
+                            }
+                        });
                     }
-                });
+                }
+                else if (typeof GaugesManager_1.Gauges[i]['processValue'] === 'function') {
+                    return GaugesManager_1.Gauges[i]['processValue'](ga, svgele, sig);
+                }
+                else {
+                    return null;
+                }
             }
         }
     };
+    /**
+     * called from fuxa-view to emit and send signal value from a gauge event ('key-enter' of input, 'change' of select)
+     * @param event
+     */
     GaugesManager.prototype.putEvent = function (event) {
         if (event.ga.property && event.ga.property.variableId) {
             this.hmiService.putSignalValue(event.ga.property.variableId, event.value);
@@ -8739,97 +8708,89 @@ var GaugesManager = (function () {
         }
         this.onevent.emit(event);
     };
+    /**
+     * called from fuxa-view to emit and send signal value from a gauge event (click)
+     * @param sigid
+     * @param val
+     */
     GaugesManager.prototype.putSignalValue = function (sigid, val) {
         this.hmiService.putSignalValue(sigid, val);
     };
     GaugesManager.getEditDialogTypeToUse = function (type) {
-        if (type === __WEBPACK_IMPORTED_MODULE_5__switch_switch_component__["a" /* SwitchComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_9__proc_eng_valve_valve_component__["a" /* ValveComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_10__proc_eng_motor_motor_component__["a" /* MotorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_7__controls_value_value_component__["a" /* ValueComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].ValueAndUnit;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_8__proc_eng_compressor_compressor_component__["a" /* CompressorComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_11__proc_eng_exchanger_exchanger_component__["a" /* ExchangerComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Step;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].MinMax;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Range;
-        }
-        else if (type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_12__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Chart;
+        for (var i = 0; i < GaugesManager_1.Gauges.length; i++) {
+            if (GaugesManager_1.Gauges[i].TypeTag === type) {
+                if (typeof GaugesManager_1.Gauges[i]['getDialogType'] === 'function') {
+                    return GaugesManager_1.Gauges[i]['getDialogType']();
+                }
+                else {
+                    return null;
+                }
+            }
         }
     };
+    /**
+     * used from controls in editor to get default value of edit gauge property
+     */
     GaugesManager.getDefaultValue = function (type) {
-        if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-            return __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getDefaultValue();
+        if (type === __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+            return __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getDefaultValue();
         }
         return null;
     };
+    /**
+     * used from controls in editor, to set the colorpicker of selected control
+     */
     GaugesManager.checkGaugeColor = function (ele, eles, colors) {
         if (ele && eles && (eles.length <= 1 || !eles[1])) {
-            if (ele.type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getStrokeColor(eles[0]);
+            if (ele.type === __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_18__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_12__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_12__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_12__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].getStrokeColor(eles[0]);
                 return true;
             }
-            else if (ele.type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-                colors.fill = __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getFillColor(eles[0]);
-                colors.stroke = __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getStrokeColor(eles[0]);
+            else if (ele.type === __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+                colors.fill = __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getFillColor(eles[0]);
+                colors.stroke = __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].getStrokeColor(eles[0]);
                 return true;
             }
         }
         return false;
     };
-    GaugesManager.initElementColor = function (bkcolor, color, elems) {
+    /**
+     * used from controls in editor to change fill and stroke colors
+     * @param bkcolor
+     * @param color
+     * @param elems
+     */
+    GaugesManager.initElementColor = function (bkcolor, color, elements) {
+        var elems = elements.filter(function (el) { return el; });
         for (var i = 0; i < elems.length; i++) {
             var type = elems[i].getAttribute('type');
-            if (type === __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_17__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElementColor(bkcolor, color, elems[i]);
+            if (type === __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].initElementColor(bkcolor, color, elems[i]);
             }
-            else if (type === __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_14__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElementColor(bkcolor, color, elems[i]);
+            else if (type === __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElementColor(bkcolor, color, elems[i]);
             }
-            else if (type === __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_13__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].initElementColor(bkcolor, color, elems[i]);
+            else if (type === __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */].initElementColor(bkcolor, color, elems[i]);
             }
-            else if (type === __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
-                __WEBPACK_IMPORTED_MODULE_15__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElementColor(bkcolor, color, elems[i]);
+            else if (type === __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].TypeTag) {
+                __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */].initElementColor(bkcolor, color, elems[i]);
             }
         }
     };
@@ -8850,13 +8811,13 @@ var GaugesManager = (function () {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
         }
-        if (ga.type === __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
+        if (ga.type === __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag) {
             // prepare attribute
             var chartRange_1 = __WEBPACK_IMPORTED_MODULE_4__models_chart__["b" /* ChartRangeType */];
             Object.keys(chartRange_1).forEach(function (key) {
                 _this.translateService.get(chartRange_1[key]).subscribe(function (txt) { chartRange_1[key] = txt; });
             });
-            var gauge_1 = __WEBPACK_IMPORTED_MODULE_16__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
+            var gauge_1 = __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
             gauge_1.init();
             if (ga.property) {
                 var chart = this.hmiService.getChart(ga.property.id);
@@ -8886,6 +8847,9 @@ var GaugesManager = (function () {
     GaugesManager.prototype.clearMemory = function () {
         this.memorySigGauges = {};
     };
+    // list of gauges components
+    GaugesManager.Gauges = [__WEBPACK_IMPORTED_MODULE_6__controls_value_value_component__["a" /* ValueComponent */], __WEBPACK_IMPORTED_MODULE_7__controls_html_input_html_input_component__["a" /* HtmlInputComponent */], __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */],
+        __WEBPACK_IMPORTED_MODULE_9__controls_html_select_html_select_component__["a" /* HtmlSelectComponent */], __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */], __WEBPACK_IMPORTED_MODULE_11__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */], __WEBPACK_IMPORTED_MODULE_12__controls_gauge_semaphore_gauge_semaphore_component__["a" /* GaugeSemaphoreComponent */], __WEBPACK_IMPORTED_MODULE_13__shapes_shapes_component__["a" /* ShapesComponent */], __WEBPACK_IMPORTED_MODULE_14__shapes_proc_eng_proc_eng_component__["a" /* ProcEngComponent */]];
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
@@ -8894,20 +8858,21 @@ var GaugesManager = (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["R" /* Output */])(),
         __metadata("design:type", __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */])
     ], GaugesManager.prototype, "onevent", void 0);
-    GaugesManager = __decorate([
+    GaugesManager = GaugesManager_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["C" /* Injectable */])(),
         __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */],
             __WEBPACK_IMPORTED_MODULE_2__ngx_translate_core__["c" /* TranslateService */],
             __WEBPACK_IMPORTED_MODULE_1__angular_material__["i" /* MatDialog */]])
     ], GaugesManager);
     return GaugesManager;
+    var GaugesManager_1;
 }());
 
 
 
 /***/ }),
 
-/***/ "../../../../../src/app/gauges/proc-eng/compressor/compressor.component.css":
+/***/ "../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
@@ -8915,7 +8880,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "\r\n.div-form-field {\r\n    /* background-color: rgba(0,0,0,0.3);\r\n    border-radius: 2px;\r\n    margin: 3px 5px 3px 5px; */\r\n}\r\n.input-form-field {\r\n    width:100%;\r\n    /* padding-left: 4px;\r\n    padding-right: 4px; */\r\n}\r\n::ng-deep .input-form-field input {\r\n    margin-bottom: -5px !important;\r\n}", ""]);
+exports.push([module.i, "", ""]);
 
 // exports
 
@@ -8925,20 +8890,21 @@ module.exports = module.exports.toString();
 
 /***/ }),
 
-/***/ "../../../../../src/app/gauges/proc-eng/compressor/compressor.component.html":
+/***/ "../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"div-form-field\">\n  <mat-form-field class=\"input-form-field\">\n    <input matInput [(ngModel)]=\"data.settings.name\" placeholder=\"Name\" type=\"text\">\n  </mat-form-field>\n</div>\n<!-- <div style=\"display: block\">\n  <mat-form-field>\n    <mat-select placeholder=\"View (click)\" [(ngModel)]=\"data.settings.property.winmode.name\">\n      <mat-option *ngFor=\"let view of data.views\" [value]=\"data.view.name\">\n        {{ view.name }}\n      </mat-option>\n    </mat-select>\n  </mat-form-field>\n</div> -->\n<div style=\"display: block\">\n  <!-- <mat-form-field>\n    <input matInput [(ngModel)]=\"settings.property.onmin\" placeholder=\"On Min\" type=\"text\">\n  </mat-form-field> -->\n</div>\n<div style=\"display: block\">\n  <!-- <mat-form-field>\n    <input matInput [(ngModel)]=\"settings.property.onmax\" placeholder=\"On Max\" type=\"text\">\n  </mat-form-field> -->\n</div>\n"
+module.exports = ""
 
 /***/ }),
 
-/***/ "../../../../../src/app/gauges/proc-eng/compressor/compressor.component.ts":
+/***/ "../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CompressorComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProcEngComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8960,21 +8926,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-var CompressorComponent = (function (_super) {
-    __extends(CompressorComponent, _super);
-    function CompressorComponent() {
+
+var ProcEngComponent = (function (_super) {
+    __extends(ProcEngComponent, _super);
+    function ProcEngComponent() {
         return _super.call(this) || this;
     }
-    CompressorComponent.prototype.ngOnInit = function () {
-        if (!this.data) {
-            // this.settings.property = new CompressorProperty();
-        }
-        // let property = JSON.stringify(this.settings.property);
-        // this.settings.id = '';
+    ProcEngComponent_1 = ProcEngComponent;
+    ProcEngComponent.prototype.ngOnInit = function () {
     };
-    CompressorComponent.prototype.ngAfterViewInit = function () {
-    };
-    CompressorComponent.getSignals = function (pro) {
+    ProcEngComponent.getSignals = function (pro) {
         var res = [];
         if (pro.variableId) {
             res.push(pro.variableId);
@@ -8984,9 +8945,11 @@ var CompressorComponent = (function (_super) {
         }
         return res;
     };
-    CompressorComponent.processValue = function (ga, svgele, sig) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
-            var g = svgele.node.children[0];
+    ProcEngComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
+    };
+    ProcEngComponent.processValue = function (ga, svgele, sig) {
+        if (svgele.node) {
             var clr = '';
             var val = parseFloat(sig.value);
             if (Number.isNaN(val)) {
@@ -9002,35 +8965,34 @@ var CompressorComponent = (function (_super) {
                         clr = ga.property.ranges[idx].color;
                     }
                 }
-                g.setAttribute('fill', clr);
-            }
-            if (ga.property.alarmId === sig.id && ga.property.alarmColor && val > 0) {
-                g.setAttribute('fill', ga.property.alarmColor);
+                svgele.node.setAttribute('fill', clr);
             }
         }
     };
-    CompressorComponent.TypeTag = 'svg-ext-compressor';
-    CompressorComponent.LabelTag = 'Compressor';
+    ProcEngComponent.TypeId = 'proceng';
+    ProcEngComponent.TypeTag = 'svg-ext-' + ProcEngComponent_1.TypeId;
+    ProcEngComponent.LabelTag = 'Proc-Eng';
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
         __metadata("design:type", Object)
-    ], CompressorComponent.prototype, "data", void 0);
-    CompressorComponent = __decorate([
+    ], ProcEngComponent.prototype, "data", void 0);
+    ProcEngComponent = ProcEngComponent_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-            selector: 'gauge-compressor',
-            template: __webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/gauges/proc-eng/compressor/compressor.component.css")]
+            selector: 'gauge-proc-eng',
+            template: __webpack_require__("../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/gauges/shapes/proc-eng/proc-eng.component.css")]
         }),
         __metadata("design:paramtypes", [])
-    ], CompressorComponent);
-    return CompressorComponent;
+    ], ProcEngComponent);
+    return ProcEngComponent;
+    var ProcEngComponent_1;
 }(__WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */]));
 
 
 
 /***/ }),
 
-/***/ "../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.css":
+/***/ "../../../../../src/app/gauges/shapes/shapes.component.css":
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
@@ -9048,20 +9010,21 @@ module.exports = module.exports.toString();
 
 /***/ }),
 
-/***/ "../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.html":
+/***/ "../../../../../src/app/gauges/shapes/shapes.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "\n"
+module.exports = "<p>\n  shapes works!\n</p>\n"
 
 /***/ }),
 
-/***/ "../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.ts":
+/***/ "../../../../../src/app/gauges/shapes/shapes.component.ts":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExchangerComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ShapesComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9083,16 +9046,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-var ExchangerComponent = (function (_super) {
-    __extends(ExchangerComponent, _super);
-    function ExchangerComponent() {
+
+var ShapesComponent = (function (_super) {
+    __extends(ShapesComponent, _super);
+    function ShapesComponent() {
         return _super.call(this) || this;
     }
-    ExchangerComponent.prototype.ngOnInit = function () {
-        if (!this.data) {
-        }
+    ShapesComponent_1 = ShapesComponent;
+    ShapesComponent.prototype.ngOnInit = function () {
     };
-    ExchangerComponent.getSignals = function (pro) {
+    ShapesComponent.getSignals = function (pro) {
         var res = [];
         if (pro.variableId) {
             res.push(pro.variableId);
@@ -9102,284 +9065,43 @@ var ExchangerComponent = (function (_super) {
         }
         return res;
     };
-    ExchangerComponent.processValue = function (ga, svgele, sig) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-            for (var x = 0; x < svgele.node.children.length; x++) {
-                var g = svgele.node.children[x];
-                var clr = '';
-                var val = parseFloat(sig.value);
-                if (Number.isNaN(val)) {
-                    // maybe boolean
-                    val = Number(sig.value);
-                }
-                else {
-                    val = parseFloat(val.toFixed(5));
-                }
-                if (ga.property && ga.property.ranges) {
-                    for (var idx = 0; idx < ga.property.ranges.length; idx++) {
-                        if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
-                            clr = ga.property.ranges[idx].color;
-                        }
+    ShapesComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
+    };
+    ShapesComponent.processValue = function (ga, svgele, sig) {
+        if (svgele.node) {
+            var clr = '';
+            var val = parseFloat(sig.value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
+            else {
+                val = parseFloat(val.toFixed(5));
+            }
+            if (ga.property && ga.property.ranges) {
+                for (var idx = 0; idx < ga.property.ranges.length; idx++) {
+                    if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
+                        clr = ga.property.ranges[idx].color;
                     }
-                    g.setAttribute('fill', clr);
                 }
+                svgele.node.setAttribute('fill', clr);
             }
         }
     };
-    ExchangerComponent.TypeTag = 'svg-ext-exchanger';
-    ExchangerComponent.LabelTag = 'Exchanger';
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", Object)
-    ], ExchangerComponent.prototype, "data", void 0);
-    ExchangerComponent = __decorate([
+    ShapesComponent.TypeId = 'shapes';
+    ShapesComponent.TypeTag = 'svg-ext-' + ShapesComponent_1.TypeId; // used to identify shapes type, binded with the library svgeditor
+    ShapesComponent.LabelTag = 'Shapes';
+    ShapesComponent = ShapesComponent_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-            selector: 'gauge-exchanger',
-            template: __webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/gauges/proc-eng/exchanger/exchanger.component.css")]
+            selector: 'gauge-shapes',
+            template: __webpack_require__("../../../../../src/app/gauges/shapes/shapes.component.html"),
+            styles: [__webpack_require__("../../../../../src/app/gauges/shapes/shapes.component.css")]
         }),
         __metadata("design:paramtypes", [])
-    ], ExchangerComponent);
-    return ExchangerComponent;
-}(__WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */]));
-
-
-
-/***/ }),
-
-/***/ "../../../../../src/app/gauges/proc-eng/motor/motor.component.css":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "", ""]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
-
-/***/ }),
-
-/***/ "../../../../../src/app/gauges/proc-eng/motor/motor.component.html":
-/***/ (function(module, exports) {
-
-module.exports = ""
-
-/***/ }),
-
-/***/ "../../../../../src/app/gauges/proc-eng/motor/motor.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MotorComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-var MotorComponent = (function (_super) {
-    __extends(MotorComponent, _super);
-    function MotorComponent() {
-        return _super.call(this) || this;
-    }
-    MotorComponent.prototype.ngOnInit = function () {
-        if (!this.data) {
-        }
-    };
-    MotorComponent.getSignals = function (pro) {
-        var res = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        if (pro.alarmId) {
-            res.push(pro.alarmId);
-        }
-        return res;
-    };
-    MotorComponent.processValue = function (ga, svgele, sig) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-            for (var x = 0; x < svgele.node.children.length; x++) {
-                var g = svgele.node.children[x];
-                if (g.id.startsWith("c")) {
-                    var clr = '';
-                    var val = parseFloat(sig.value);
-                    if (Number.isNaN(val)) {
-                        // maybe boolean
-                        val = Number(sig.value);
-                    }
-                    else {
-                        val = parseFloat(val.toFixed(5));
-                    }
-                    if (ga.property && ga.property.ranges) {
-                        for (var idx = 0; idx < ga.property.ranges.length; idx++) {
-                            if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
-                                clr = ga.property.ranges[idx].color;
-                            }
-                        }
-                        g.setAttribute('fill', clr);
-                    }
-                }
-            }
-        }
-    };
-    MotorComponent.TypeTag = 'svg-ext-motor';
-    MotorComponent.LabelTag = 'Motor';
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", Object)
-    ], MotorComponent.prototype, "data", void 0);
-    MotorComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-            selector: 'gauge-motor',
-            template: __webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/gauges/proc-eng/motor/motor.component.css")]
-        }),
-        __metadata("design:paramtypes", [])
-    ], MotorComponent);
-    return MotorComponent;
-}(__WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */]));
-
-
-
-/***/ }),
-
-/***/ "../../../../../src/app/gauges/proc-eng/valve/valve.component.css":
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "", ""]);
-
-// exports
-
-
-/*** EXPORTS FROM exports-loader ***/
-module.exports = module.exports.toString();
-
-/***/ }),
-
-/***/ "../../../../../src/app/gauges/proc-eng/valve/valve.component.html":
-/***/ (function(module, exports) {
-
-module.exports = ""
-
-/***/ }),
-
-/***/ "../../../../../src/app/gauges/proc-eng/valve/valve.component.ts":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ValveComponent; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-var ValveComponent = (function (_super) {
-    __extends(ValveComponent, _super);
-    function ValveComponent() {
-        return _super.call(this) || this;
-    }
-    ValveComponent.prototype.ngOnInit = function () {
-        if (!this.data) {
-            // this.settings.property = new CompressorProperty();
-        }
-        // let property = JSON.stringify(this.settings.property);
-        // this.settings.id = '';
-    };
-    ValveComponent.getSignals = function (pro) {
-        var res = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        if (pro.alarmId) {
-            res.push(pro.alarmId);
-        }
-        return res;
-    };
-    ValveComponent.processValue = function (ga, svgele, sig) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-            for (var x = 0; x < svgele.node.children.length; x++) {
-                var g = svgele.node.children[x];
-                var clr = '';
-                var val = parseFloat(sig.value);
-                if (Number.isNaN(val)) {
-                    // maybe boolean
-                    val = Number(sig.value);
-                }
-                else {
-                    val = parseFloat(val.toFixed(5));
-                }
-                if (ga.property && ga.property.ranges) {
-                    for (var idx = 0; idx < ga.property.ranges.length; idx++) {
-                        if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
-                            clr = ga.property.ranges[idx].color;
-                        }
-                    }
-                    g.setAttribute('fill', clr);
-                }
-            }
-        }
-    };
-    ValveComponent.TypeTag = 'svg-ext-valve';
-    ValveComponent.LabelTag = 'Valve';
-    __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["F" /* Input */])(),
-        __metadata("design:type", Object)
-    ], ValveComponent.prototype, "data", void 0);
-    ValveComponent = __decorate([
-        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-            selector: 'gauge-valve',
-            template: __webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.html"),
-            styles: [__webpack_require__("../../../../../src/app/gauges/proc-eng/valve/valve.component.css")]
-        }),
-        __metadata("design:paramtypes", [])
-    ], ValveComponent);
-    return ValveComponent;
+    ], ShapesComponent);
+    return ShapesComponent;
+    var ShapesComponent_1;
 }(__WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__["a" /* GaugeBaseComponent */]));
 
 
@@ -9420,6 +9142,7 @@ module.exports = "<div style=\"display: block\">\r\n  <mat-form-field>\r\n    <i
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__models_hmi__ = __webpack_require__("../../../../../src/app/_models/hmi.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9439,6 +9162,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -9462,6 +9186,9 @@ var SwitchComponent = (function (_super) {
             res.push(pro.signalid);
         }
         return res;
+    };
+    SwitchComponent.getDialogType = function () {
+        return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
     };
     SwitchComponent.processValue = function (ga, svgele, sig) {
         // console.log('gaid: ' + ga.id);

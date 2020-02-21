@@ -119,7 +119,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		let svgele = this.getSvgElement(ga.id);
 		if (svgele) {
 			svgele.click(function (ev) {
-				console.log('click -');
 				let event = self.gaugesManager.getBindClick(ga);
 				if (event && event.length > 0 && event[0].action && event[0].actparam) {
 					let actindex = Object.keys(GaugeEventActionType).indexOf(event[0].action);
@@ -204,7 +203,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	}
 
 	openDialog(event, viewref: string) {
-		console.log('openDialog ' + viewref);
 		let view: View = this.getView(viewref);
 		if (!view) {
 			return;
@@ -221,7 +219,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	}
 
 	onOpenCard(id: string, event, viewref: string) {
-		console.log('open card' + viewref);
 		let view: View = this.getView(viewref);
 		if (!view) {
 			return;
@@ -251,12 +248,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	onCloseCard(card: CardModel) {
 		this.cards.splice(this.cards.indexOf(card), 1);
-		console.log('closed' + card.id);
 	}
 
 	onCloseDialog() {
 		delete this.dialog;
-		console.log('dialog closed' + this.dialog.id);
 	}
 
 	onSetValue(ga: GaugeSettings, paramValue) {

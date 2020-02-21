@@ -71,8 +71,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedElement: SelElement = new SelElement();
     panelsState = {
         enabled: false,
-        panelA: true,
-        panelB: true,
+        panelView: true,
+        panelGeneral: true,
         panelC: true,
         panelD: true,
         panelS: true
@@ -84,6 +84,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelEventOpenState: boolean;
     panelMarkerOpenState: boolean;
 
+    shapesGrps = [];
     private gaugesRef = [];
 
     private subscriptionSave: Subscription;
@@ -128,16 +129,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     ngAfterViewInit() {
         this.myInit();
-        this.setMode('select');
-        let hmi = this.projectService.getHmi();
-        if (hmi) {
-            this.loadHmi();
-        }
-        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-            this.loadHmi();
-        }, error => {
-            console.log('Error loadHMI');
-        });
+            this.setMode('select');
+            let hmi = this.projectService.getHmi();
+            if (hmi) {
+                this.loadHmi();
+            }
+            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+                this.loadHmi();
+            }, error => {
+                console.log('Error loadHMI');
+            });
         this.changeDetector.detectChanges();
     }
 
@@ -163,7 +164,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Init, first init the svg-editor component
      */
     private myInit() {
-        try {             
+        try {           
             // first init svg-editor component
             mypathseg.initPathSeg();
             mybrowser.initBrowser();
@@ -177,9 +178,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.onSelectedElement(selected);
                     let ga: GaugeSettings = this.getGaugeSettings(selected);
                 },
-                (args) => {
+                (type, args) => {                     
                     this.onExtensionLoaded(args);
                     this.clearSelection();
+                    if (type === 'shapes') {
+                        this.setShapes();
+                    }
                 },
                 (type, color) => {
                     if (type === 'fill') {
@@ -203,7 +207,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.onRemoveElement(eleremoved);
                 }
             );
-        
+
             this.winRef.nativeWindow.svgEditor.init();
             $(initContextmenu);
 
@@ -272,6 +276,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('TO REMOVE!!!!!!!!!');
     }
 
+    /**
+     * Take shapes from svg-editor to show in panel
+     */
+    private setShapes() {
+        let temp = this.winRef.nativeWindow.svgEditor.getShapes();
+        let grps = [];
+        Object.keys(temp).forEach(grpk => {
+            grps.push({name: grpk, shapes: temp[grpk]});
+        }),
+        this.shapesGrps = grps;
+    }
 
     /**
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
@@ -942,9 +957,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);
-                if (this.gaugesManager.isToInitInEditor(result.settings)) {
-                    this.gaugesManager.checkElementToInit(result.settings);
-                }
+                this.gaugesManager.initInEditor(result.settings);
             }
             // } else {
             //   settings = JSON.parse(JSON.stringify(oldvalue));
