@@ -15,6 +15,14 @@
     // 'attr': element attribute, depending of type
     var shapes = [
         {
+            name: 'rectangle', ico: 'assets/lib/svgeditor/shapes/img/shape-rectangle.svg', content: [
+                { id: '', type: 'rect', attr: { width: '40', height: '40' } }]
+        },           
+        {
+            name: 'circle', ico: 'assets/lib/svgeditor/shapes/img/shape-circle.svg', content: [
+                { id: '', type: 'ellipse', attr: { cx: '20', cy: '20', rx: '20.5', ry: '20.5' } }]
+        },        
+        {
             name: 'diamond', ico: 'assets/lib/svgeditor/shapes/img/shape-diamond.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 20 0 L 40 20 L 20 40 L 0 20 Z' } }]
         },
