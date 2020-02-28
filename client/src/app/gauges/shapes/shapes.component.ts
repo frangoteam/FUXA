@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable } from '../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';
+
+declare var SVG: any;
 
 @Component({
     selector: 'gauge-shapes',
@@ -29,6 +31,11 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
         if (pro.alarmId) {
             res.push(pro.alarmId);
         }
+        if (pro.actions && pro.actions.length) {
+            pro.actions.forEach(act => {
+                res.push(act.variableId);
+            });
+        }
         return res;
     }
 
@@ -39,21 +46,41 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
         if (svgele.node) {
             let clr = '';
-            let val = parseFloat(sig.value);
-            if (Number.isNaN(val)) {
+            let value = parseFloat(sig.value);
+            if (Number.isNaN(value)) {
                 // maybe boolean
-                val = Number(sig.value);
+                value = Number(sig.value);
             } else {
-                val = parseFloat(val.toFixed(5));
+                value = parseFloat(value.toFixed(5));
             }
-            if (ga.property && ga.property.ranges) {
-                for (let idx = 0; idx < ga.property.ranges.length; idx++) {
-                    if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
-                        clr = ga.property.ranges[idx].color;
+            if (ga.property) {
+                if (ga.property.variableId === sig.id && ga.property.ranges) {
+                    for (let idx = 0; idx < ga.property.ranges.length; idx++) {
+                        if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
+                            clr = ga.property.ranges[idx].color;
+                        }
                     }
+                    svgele.node.setAttribute('fill', clr);
                 }
-                svgele.node.setAttribute('fill', clr);
+                // check actions
+                if (ga.property.actions) {
+                    ga.property.actions.forEach(act => {
+                        if (act.variableId === sig.id) {
+                            ShapesComponent.processAction(act, svgele, value);
+                        }
+                    });
+                }
             }
+        }
+    }
+
+    static processAction(act: GaugeAction, svgele: any, value: any) {
+        console.log(svgele.node);
+        var element = SVG.adopt(svgele.node);
+        if (act.range.min <= value && act.range.max >= value) {
+            element.animate(3000).rotate(365).loop();
+        } else {
+            element.stop(true);
         }
     }
 }

@@ -5,6 +5,7 @@ import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.c
 
 import { FlexHeadComponent } from './flex-head/flex-head.component';
 import { FlexEventComponent } from './flex-event/flex-event.component';
+import { FlexActionComponent } from './flex-action/flex-action.component';
 import { GaugeProperty, View } from '../../_models/hmi';
 import { UserGroups } from '../../_models/user';
 
@@ -18,12 +19,15 @@ export class GaugePropertyComponent implements OnInit {
 	@Input() name: any;
 	@ViewChild('flexhead') flexHead: FlexHeadComponent;
 	@ViewChild('flexevent') flexEvent: FlexEventComponent;
+	@ViewChild('flexaction') flexAction: FlexActionComponent;
 
 	withAlarm = false;
 	slideView = true;
+	slideActionView = true;
 	property: GaugeProperty;
 	dialogType: GaugeDialogType = GaugeDialogType.RangeWithAlarm;
 	eventsSupported: boolean;
+	actionsSupported: boolean;
 	views: View[];
 	defaultValue: any;
 
@@ -34,6 +38,7 @@ export class GaugePropertyComponent implements OnInit {
 	ngOnInit() {
 		this.dialogType = this.data.dlgType;
 		this.eventsSupported = this.data.withEvents;
+		this.actionsSupported = this.data.withActions;
 		this.views = this.data.views;
 		this.property = JSON.parse(JSON.stringify(this.data.settings.property));
 		if (!this.property) {
@@ -74,17 +79,29 @@ export class GaugePropertyComponent implements OnInit {
 		if (this.flexEvent) {
 			this.data.settings.property.events = this.flexEvent.getEvents();
 		}
+		if (this.flexAction) {
+			this.data.settings.property.actions = this.flexAction.getActions();
+		}
 	}
 
 	onAddInput() {
 		this.flexHead.onAddInput();
 	}
+
 	onAddEvent() {
 		this.flexEvent.onAddEvent();
 	}
 
+	onAddAction() {
+		this.flexAction.onAddAction();
+	}
+
 	onRangeViewToggle() {
 		this.flexHead.onRangeViewToggle(this.slideView);
+	}
+
+	onActionRangeViewToggle() {
+		this.flexAction.onRangeViewToggle(this.slideActionView);
 	}
 
 	onAlarmToggle() {
@@ -112,19 +129,19 @@ export class GaugePropertyComponent implements OnInit {
 		return false;
 	}
 
-	onEditPermission() {		
+	onEditPermission() {
 		let permission = this.property.permission;
-        let dialogRef = this.dialog.open(DialogGaugePermission, {
-            minWidth: '350px',
-            data: { permission: permission },
-            position: { top: '90px' }
-        });
+		let dialogRef = this.dialog.open(DialogGaugePermission, {
+			minWidth: '350px',
+			data: { permission: permission },
+			position: { top: '90px' }
+		});
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.property.permission = result.permission; 
-            }
-        });
+		dialogRef.afterClosed().subscribe(result => {
+			if (result) {
+				this.property.permission = result.permission;
+			}
+		});
 	}
 }
 

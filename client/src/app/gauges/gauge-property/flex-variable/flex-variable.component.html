@@ -1,0 +1,20 @@
+<div style="display: block;">
+    <div class="my-form-field" style="width: 220px;">
+        <span>{{'gauges.property-head-device' | translate}}</span>
+        <mat-select [formControl]="deviceCtrl" (selectionChange)="onDeviceChange($event.source)">
+            <mat-select-search [formControl]="deviceFilterCtrl"></mat-select-search>
+            <mat-option *ngFor="let device of filteredDevice | async" [value]="device">
+                {{ device.name }}
+            </mat-option>
+        </mat-select>
+    </div>
+    <div class="my-form-field" style="width: 400px;float: right;margin-right: 10px;">
+        <span>{{'gauges.property-head-variable' | translate}}</span>
+        <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
+            <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
+            <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
+                {{ vari.name }}
+            </mat-option>
+        </mat-select>
+    </div>
+</div>

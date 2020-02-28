@@ -914,6 +914,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.gaugesManager.isWithEvents(type);
     }
 
+    isWithActions(type) {
+        return this.gaugesManager.isWithActions(type);
+    }
+
     /**
      * edit the gauge/chart settings property, the settings are composed from gauge id... and property
      * in property will be the result values saved
@@ -926,6 +930,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
         let eventsSupported = this.isWithEvents(settings.type);
+        let actionsSupported = this.isWithActions(settings.type);
         let defaultValue = GaugesManager.getDefaultValue(settings.type);
         // settings.property = JSON.parse(settings.property);
         let dialogRef: any;
@@ -947,7 +952,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 panelClass: 'dialog-property',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, default: defaultValue
+                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported , default: defaultValue
                 },
                 position: { top: '80px' }
             });

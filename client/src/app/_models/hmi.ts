@@ -91,12 +91,30 @@ export class GaugeProperty {
     permission: number;
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
+    actions: GaugeAction[] = [];
 }
 
 export class GaugeEvent {
     type: string;
     action: string;
     actparam: string;
+}
+
+export class GaugeAction {
+    variableId: string;
+    variableSrc: string;
+    variable: string;    
+    range: GaugeRangeProperty;
+    type: string;
+    param: string;
+}
+
+export class GaugeStatus {
+    variablesValue = {};
+}
+
+export enum GaugeActionType {
+    animation = 'Animation',
 }
 
 export enum GaugeEventType {

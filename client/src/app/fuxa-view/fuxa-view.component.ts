@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFac
 import { ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs/Subscription";
 
-import { Hmi, View, GaugeSettings, Event, GaugeEventActionType } from '../_models/hmi';
+import { Hmi, View, GaugeSettings, Event, GaugeEventActionType, GaugeStatus } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 
@@ -23,8 +23,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	@ViewChild('dataContainer') dataContainer: ElementRef;
 
-	public cards: CardModel[] = [];
-	public dialog: DialogModalModel;
+	cards: CardModel[] = [];
+	dialog: DialogModalModel;
+    mapGaugeStatus = {};
+
 
 	private subscriptionOnChange: Subscription;
 
@@ -61,9 +63,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		}
 	}
 
+	/**
+	 * load the svg content to show in browser, clear all binded to this view
+	 * @param view 
+	 */
 	public loadHmi(view: View) {
 		if (this.id) {
 			this.gaugesManager.unbindGauge(this.id);
+			this.mapGaugeStatus = {};
 		}
 		if (view) {
 			this.id = view.id;
@@ -76,6 +83,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		this.loadWatch(this.view);
 	}
 
+	/**
+	 * load all gauge settings, bind gauge with signals, bind gauge event
+	 * @param view 
+	 */
 	private loadWatch(view: View) {
 		if (view && view.items) {
 			// this.gaugesManager.initGaugesMap();
@@ -95,14 +106,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 				// console.log('lab sig ' + sig.id + ' ' + sig.value);
 				if (!isUndefined(sig.value)) {
 					try {
+						// take all gauges settings binded to the signal id in this view
 						let gas = this.gaugesManager.getGaugeSettings(this.id, sig.id);
 						if (gas) {
 							for (let i = 0; i < gas.length; i++) {
-								let ga = gas[i];
-								// console.log('gaid: ' + ga.id);
-								let svgeles = this.getSvgElements(ga.id);
-								for (let y = 0; y < svgeles.length; y++) {
-									this.gaugesManager.processValue(ga, svgeles[y], sig);
+								let gaugeSetting = gas[i];
+								let gaugeStatus = this.getGaugeStatus(gaugeSetting.id);
+								if (this.checkStatusVaue(gaugeStatus, sig)) {
+									let svgeles = this.getSvgElements(gaugeSetting.id);
+									for (let y = 0; y < svgeles.length; y++) {
+										this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig);
+									}
 								}
 							}
 						}
@@ -112,6 +126,33 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 				}
 			});
 		}
+	}
+
+	/**
+	 * return the mapped gauge status, if it doesn't exist add it
+	 * @param gaugeId 
+	 */
+	private getGaugeStatus(gaugeId: string) : GaugeStatus {
+		if (this.mapGaugeStatus[gaugeId]) {
+			return this.mapGaugeStatus[gaugeId];
+		} else {
+			this.mapGaugeStatus[gaugeId] = new GaugeStatus();
+			return this.mapGaugeStatus[gaugeId];
+		}
+	}
+
+	/**
+	 * check the change of variable value in gauge status 
+	 * @param gaugeStatus 
+	 * @param signal 
+	 */
+	private checkStatusVaue(gaugeStatus: GaugeStatus, signal: any) {
+		let result = true;
+		if (gaugeStatus.variablesValue[signal.id] === signal.value) {
+			result = false;
+		}
+		gaugeStatus.variablesValue[signal.id] = signal.value;
+		return result;
 	}
 
 	private onBindClick(ga: GaugeSettings) {

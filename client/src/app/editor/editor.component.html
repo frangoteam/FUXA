@@ -515,7 +515,6 @@
                     </mat-expansion-panel-header>
                     <div id="interaction_panel" class="rightbar_panel">
                         <gauge-base #gaugepanel *ngIf="selectedElement" [settings]=getGaugeSettings(selectedElement) (edit)="onGaugeEdit($event)"></gauge-base>
-                        <!-- (edit)="onGaugeEdit($event)" [withEvents]="isWithEvents(selectedElement)"></gauge-base> -->
                     </div>
                 </mat-expansion-panel>
             </div>

@@ -12,7 +12,6 @@ export class GaugeBaseComponent implements OnInit {
 
   @Input() data: any;
   @Input() settings: GaugeSettings;
-  @Input() withEvents: boolean;
   @Output() edit: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
@@ -22,11 +21,6 @@ export class GaugeBaseComponent implements OnInit {
 
   onEdit() {
     this.edit.emit(this.settings);
-  }
-
-
-  isWithEvents() {
-    return this.withEvents;
   }
 
   static pathToAbsolute(relativePath) {

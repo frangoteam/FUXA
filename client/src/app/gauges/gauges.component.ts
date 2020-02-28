@@ -44,9 +44,10 @@ export class GaugesManager {
     // list of gauges tags to speed up the check
     gaugesTags = [];
 
-    // list of gauges tags to check who as events
-    gaugeWithEvents = [HtmlButtonComponent.TypeTag,
-    GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag];
+    // list of gauges tags to check who as events like mouse click
+    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag];
+    // list of gauges tags to check who as events like mouse click
+    static GaugeWithActions = [ShapesComponent.TypeTag, ProcEngComponent.TypeTag];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent];
@@ -100,7 +101,14 @@ export class GaugesManager {
 
     isWithEvents(type) {
         if (type) {
-            return this.gaugeWithEvents.indexOf(type) > -1;
+            return GaugesManager.GaugeWithEvents.indexOf(type) > -1;
+        }
+        return false;
+    }
+
+    isWithActions(type) {
+        if (type) {
+            return GaugesManager.GaugeWithActions.indexOf(type) > -1;
         }
         return false;
     }
@@ -315,10 +323,12 @@ export class GaugesManager {
                             }
                         });
                     }
+                    break;
                 } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
-                    return GaugesManager.Gauges[i]['processValue'](ga, svgele, sig);
+                    GaugesManager.Gauges[i]['processValue'](ga, svgele, sig);
+                    break;
                 } else {
-                    return null;
+                    break;
                 }
             }
         }

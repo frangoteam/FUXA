@@ -1,5 +1,3 @@
-<!-- <h1 mat-dialog-title style="display:inline-block; cursor:move" mat-dialog-draggable>Property</h1> -->
-<!-- <div style="width: 100%;"> -->
 <div style="width: 100%;min-height: 400px;position: relative;padding-bottom: 40px">
 	<mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
 	<mat-tab-group style="width: 100%;">
@@ -43,23 +41,32 @@
 						<button mat-icon-button (click)="onAddEvent()">
 							<mat-icon>add_circle_outline</mat-icon>
 						</button>
-						<!-- <button mat-icon-button (click)="slideView = !slideView;onRangeViewToggle()" *ngIf="isRangeToShow()">
-              <mat-icon class="header-icon" *ngIf="slideView">toll</mat-icon>
-              <mat-icon class="header-icon" *ngIf="!slideView">input</mat-icon>
-            </button>
-            <button mat-icon-button (click)="withAlarm = !withAlarm;onAlarmToggle();" *ngIf="isAlarmToShow()">
-              <mat-icon class="header-icon" *ngIf="!withAlarm">notifications</mat-icon>
-              <mat-icon class="header-icon" *ngIf="withAlarm">notifications_off</mat-icon>
-            </button> -->
 					</div>
 				</div>
 				<div mat-dialog-content style="overflow: hidden; width:100%">
 					<flex-event [property]="property" [views]="views" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
 				</div>
 			</div>
-		</mat-tab>
+        </mat-tab>
+		<mat-tab label="{{'gauges.property-actions' | translate}}" *ngIf="actionsSupported">
+			<div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+				<div style="display: block;">
+					<div class="toolbox">
+						<button mat-icon-button (click)="onAddAction()">
+							<mat-icon>add_circle_outline</mat-icon>
+                        </button>
+						<!-- <button mat-icon-button (click)="slideActionView = !slideActionView; onActionRangeViewToggle()">
+							<mat-icon class="header-icon" *ngIf="slideActionView">toll</mat-icon>
+							<mat-icon class="header-icon" *ngIf="!slideActionView">input</mat-icon>
+						</button>-->
+					</div>
+				</div>
+				<div mat-dialog-content style="overflow: hidden; width:100%">
+					<flex-action [data]="data" [property]="property" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px"></flex-action>
+				</div>
+			</div>
+        </mat-tab>        
 	</mat-tab-group>
-	<!-- <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px; margin-top: 5px"> -->
 	<div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
 		<button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
 		<button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
