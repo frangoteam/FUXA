@@ -58,7 +58,6 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
     }
 
     onDrag(event: MouseEvent) {
-        console.log(event.offsetY + ' ' + event.layerY);
         if (!this.active) {
             return;
         }

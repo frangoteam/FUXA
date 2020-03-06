@@ -43,7 +43,6 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
-        // console.log('gaid value: ' + ga.id);
         if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
             let gap: GaugeRangeProperty = ga.property.ranges[0];
             let g = svgele.node.children[0];

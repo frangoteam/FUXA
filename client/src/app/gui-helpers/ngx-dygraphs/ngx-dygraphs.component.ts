@@ -218,7 +218,6 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public addValue(id: string, value) {
-        // console.log(value);
         if (this.mapData[id] && !isUndefined(value)) {
             let row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();

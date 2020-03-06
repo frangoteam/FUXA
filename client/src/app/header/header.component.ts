@@ -42,7 +42,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ngOnInit() {
         if (environment.type === 'winele') {
             this.winele = true;
-            console.log('env ' + environment.type);
         }
     }
 
@@ -82,7 +81,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     showHelp(data: HelpData) {
-        console.log('show help: ' + data.page);
         if (data.page === 'help') {
             this.tutorial.show = true;
         } else if (data.page === 'info') {
@@ -144,7 +142,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         let input = event.target;
         let reader = new FileReader();
         reader.onload = (data) => {
-            // console.log(reader.result);
             let prj = JSON.parse(reader.result.toString());
             this.projectService.setProject(prj, true);
         }

@@ -465,35 +465,34 @@ export class GaugesManager {
             for (let i = 0; i < sigsid.length; i++) {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
-        }
-        if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-            // prepare attribute
-            let chartRange = ChartRangeType;
-            Object.keys(chartRange).forEach(key => {
-                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
-            });
-            let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
-            gauge.init();
-            if (ga.property) {
-                let chart = this.hmiService.getChart(ga.property.id)
-                chart.lines.forEach(line => {
-                    let sigid = HmiService.toVariableId(line.device, line.id);
-                    let sigProperty = this.hmiService.getMappedVariable(sigid, true);
-                    if (sigProperty) {
-                        gauge.addLine(sigid, sigProperty.name, line.color);
-                    }
+            if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
+                // prepare attribute
+                let chartRange = ChartRangeType;
+                Object.keys(chartRange).forEach(key => {
+                    this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
                 });
-                gauge.setOptions({ title: chart.name });
+                let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
+                gauge.init();
+                if (ga.property) {
+                    let chart = this.hmiService.getChart(ga.property.id)
+                    chart.lines.forEach(line => {
+                        let sigid = HmiService.toVariableId(line.device, line.id);
+                        let sigProperty = this.hmiService.getMappedVariable(sigid, true);
+                        if (sigProperty) {
+                            gauge.addLine(sigid, sigProperty.name, line.color);
+                        }
+                    });
+                    gauge.setOptions({ title: chart.name });
+                }
+                this.mapChart[ga.id] = gauge;
+                gauge.resize();
+                gauge.onTimeRange.subscribe(data => {
+                    this.hmiService.queryDaqValues(data);
+                });
+                gauge.setRange(Object.keys(chartRange)[0]);
+                // gauge.onTimeRange = this.onTimeRange;
+                return gauge;
             }
-            this.mapChart[ga.id] = gauge;
-            gauge.resize();
-            gauge.onTimeRange.subscribe(data => {
-                console.log(ga.id + ' ' + data);
-                this.hmiService.queryDaqValues(data);
-            });
-            gauge.setRange(Object.keys(chartRange)[0]);
-            // gauge.onTimeRange = this.onTimeRange;
-            return gauge;
         }
     }
 

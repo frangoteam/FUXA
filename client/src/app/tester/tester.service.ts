@@ -9,7 +9,6 @@ export class TesterService {
     @Output() change: EventEmitter<boolean> = new EventEmitter();
   
     toggle(flag: boolean) {
-        console.log('toggle tester');
     //   this.isOpen = !this.isOpen;
       this.change.emit(flag);//this.isOpen);
     }

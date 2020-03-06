@@ -61,7 +61,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
               this.addNodes(values.node, values.result);
             }
           }
-          // console.log(values);
         });
         this.subscriptionNodeAttribute = this.hmiService.onDeviceNodeAttribute.subscribe(values => {
           if (this.data.device.name === values.device) {
@@ -74,7 +73,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
               this.treetable.setNodeProperty(values.node, this.attributeToString(values.node.attribute));
             }
           }
-          // console.log(values);
         });
       }
       this.queryNext(null);

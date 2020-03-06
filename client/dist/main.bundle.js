@@ -385,7 +385,6 @@ var DraggableDirective = (function () {
         this.dy = event.y - this.el.nativeElement.offsetTop;
     };
     DraggableDirective.prototype.onDrag = function (event) {
-        console.log(event.offsetY + ' ' + event.layerY);
         if (!this.active) {
             return;
         }
@@ -1668,7 +1667,6 @@ var HmiService = (function () {
      * @param sig
      */
     HmiService.prototype.setSignalValue = function (sig) {
-        // console.log('end set ' + sig.id + ' ' + sig.value);
         // update the signals array value 
         // notify the gui
         this.onVariableChanged.emit(sig);
@@ -1680,7 +1678,6 @@ var HmiService = (function () {
      * @param value
      */
     HmiService.prototype.putSignalValue = function (sigId, value) {
-        console.log('put ' + sigId + ' ' + value);
         if (this.variables[sigId]) {
             this.variables[sigId].value = value;
             if (this.socket) {
@@ -1712,11 +1709,9 @@ var HmiService = (function () {
                         closeButton: true,
                     });
                 }
-                // console.log('dev-st ' + message);
             });
             // device property
             this.socket.on('device-property', function (message) {
-                console.log('dev-property ' + message);
                 _this.onDeviceProperty.emit(message);
             });
             // devices values
@@ -2119,7 +2114,6 @@ var ProjectService = (function () {
      */
     ProjectService.prototype.save = function () {
         var _this = this;
-        console.log('-save-');
         if (this.serverSettings) {
             // check project change don't work some svg object change the order and this to check ...boooo
             this.setServerProject(this.projectData).subscribe(function (result) {
@@ -2466,7 +2460,6 @@ var ProjectService = (function () {
         else {
             try {
                 for (var p in x) {
-                    console.log(p);
                     if (!x.hasOwnProperty(p)) {
                         continue; // other properties were tested using x.constructor === y.constructor
                     }
@@ -3273,7 +3266,6 @@ var DeviceListComponent = (function () {
     };
     DeviceListComponent.prototype.addOpcTags = function (tag) {
         var _this = this;
-        // console.log('The Edit Tag open');
         var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_3__tag_property_tag_property_component__["a" /* TagPropertyComponent */], {
             minWidth: '1200px',
             minHeight: '900px',
@@ -3298,7 +3290,6 @@ var DeviceListComponent = (function () {
     };
     DeviceListComponent.prototype.editTag = function (tag, checkToAdd) {
         var _this = this;
-        // console.log('The Edit Tag open');
         var oldtag = tag.name;
         var temptag = JSON.parse(JSON.stringify(tag));
         var dialogRef = this.dialog.open(__WEBPACK_IMPORTED_MODULE_3__tag_property_tag_property_component__["a" /* TagPropertyComponent */], {
@@ -3311,7 +3302,6 @@ var DeviceListComponent = (function () {
         dialogRef.afterClosed().subscribe(function (result) {
             if (result) {
                 _this.dirty = true;
-                // console.log('The Edit Tag was closed');
                 // tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
                 tag.id = temptag.name;
                 tag.name = temptag.name;
@@ -3560,12 +3550,10 @@ var DeviceMapComponent = (function () {
         }
     };
     DeviceMapComponent.prototype.setDeviceStatus = function (event) {
-        console.log('device set: ' + event.id + ' ' + event.status);
         this.devicesStatus[event.id] = event.status;
     };
     DeviceMapComponent.prototype.editDevice = function (device, toremove) {
         var _this = this;
-        // console.log('The Edit Device open');
         var exist = Object.values(this.devices).filter(function (d) { return d.id !== device.id; }).map(function (d) { return d.name; });
         exist.push('server');
         var tempdevice = JSON.parse(JSON.stringify(device));
@@ -3584,7 +3572,6 @@ var DeviceMapComponent = (function () {
                     _this.projectService.removeDevice(device);
                 }
                 else {
-                    // console.log('The Edit Device was closed');
                     var olddevice = JSON.parse(JSON.stringify(device));
                     device.name = tempdevice.name;
                     device.type = tempdevice.type;
@@ -3732,7 +3719,6 @@ var DevicePropertyComponent = (function () {
                             _this.securityRadio = sec;
                         }
                     }
-                    console.log();
                 }
                 else if (res.error) {
                 }
@@ -3764,7 +3750,6 @@ var DevicePropertyComponent = (function () {
         this.data.security = this.getSecurity();
     };
     DevicePropertyComponent.prototype.onCheckOpcUaServer = function () {
-        console.log('checkOpcUa');
         this.propertyLoading = true;
         this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
     };
@@ -4091,7 +4076,6 @@ var TagPropertyComponent = (function () {
                             _this.addNodes(values.node, values.result);
                         }
                     }
-                    // console.log(values);
                 });
                 this.subscriptionNodeAttribute = this.hmiService.onDeviceNodeAttribute.subscribe(function (values) {
                     if (_this.data.device.name === values.device) {
@@ -4105,7 +4089,6 @@ var TagPropertyComponent = (function () {
                             _this.treetable.setNodeProperty(values.node, _this.attributeToString(values.node.attribute));
                         }
                     }
-                    // console.log(values);
                 });
             }
             this.queryNext(null);
@@ -4415,7 +4398,6 @@ var ChartConfigComponent = (function () {
         console.log('ed ' + tag);
     };
     ChartConfigComponent.prototype.removeChartLine = function (tag) {
-        console.log('rm ' + tag);
         var found = -1;
         for (var i = 0; i < this.selectedTags.length; i++) {
             if (tag.id === this.selectedTags[i].id) {
@@ -4656,8 +4638,8 @@ var EditorComponent = (function () {
             });
             this.gaugesManager.clearMemory();
         }
-        catch (e) {
-            console.log(e);
+        catch (err) {
+            console.log(err);
         }
     };
     /**
@@ -4742,8 +4724,8 @@ var EditorComponent = (function () {
             this.winRef.nativeWindow.svgEditor.init();
             $(initContextmenu);
         }
-        catch (Error) {
-            console.log(Error);
+        catch (err) {
+            console.log(err);
         }
         this.setFillColor(this.colorFill);
         this.setFillColor(this.colorStroke);
@@ -4780,7 +4762,6 @@ var EditorComponent = (function () {
      * Save the View to Server
      */
     EditorComponent.prototype.saveView = function (view) {
-        // console.log('ave current View');
         this.projectService.setView(view);
     };
     /**
@@ -4946,7 +4927,6 @@ var EditorComponent = (function () {
     EditorComponent.prototype.setMode = function (mode) {
         this.currentMode = mode;
         this.winRef.nativeWindow.svgEditor.clickToSetMode(mode);
-        // console.log('setmode: ' + mode);
     };
     /**
      * check with the current mode
@@ -4975,7 +4955,6 @@ var EditorComponent = (function () {
                 document.activeElement.blur();
         }
         catch (e) { }
-        // console.log('selected: ' + this.selectedElement);
         if (event) {
             for (var i = 0; i < event.length; i++) {
                 console.log('selected: ' + event[i].id + ' ' + event[i].type);
@@ -5022,7 +5001,6 @@ var EditorComponent = (function () {
             for (var i = 0; i < ele.length; i++) {
                 if (this.currentView.items[ele[i].id]) {
                     delete this.currentView.items[ele[i].id];
-                    // console.log('deleted :> ' + ele[i].id);
                 }
             }
         }
@@ -5060,7 +5038,6 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.onSetMarker = function (id, marker) {
         if (marker >= 0) {
-            // console.log('marker select ' + id + ' ' + marker);
             this.winRef.nativeWindow.svgEditor.setMarker(id, marker);
         }
     };
@@ -5326,7 +5303,6 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.onLayoutProperty = function () {
         var _this = this;
-        // console.log('The Edit Device open');
         var templayout = null;
         if (this.hmi.layout) {
             templayout = JSON.parse(JSON.stringify(this.hmi.layout));
@@ -5363,7 +5339,6 @@ var EditorComponent = (function () {
     EditorComponent.prototype.savePanelState = function () {
         if (this.panelsState.enabled) {
             localStorage.setItem("@frango.webeditor.panelsState", JSON.stringify(this.panelsState));
-            console.log('set panelsState');
         }
     };
     //#endregion
@@ -5384,7 +5359,6 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.onGaugeEdit = function (event) {
         var _this = this;
-        // console.log('edit gauge: ' + event); // [i].id + ' ' + event[i].type);
         var settings = this.gaugePanelComponent.settings;
         this.openEditGauge(settings, function (data) {
             _this.setGaugeSettings(data);
@@ -5413,7 +5387,6 @@ var EditorComponent = (function () {
      */
     EditorComponent.prototype.openEditGauge = function (settings, callback) {
         var _this = this;
-        // console.log('The Edit Gauge open');
         var tempsettings = JSON.parse(JSON.stringify(settings));
         var hmi = this.projectService.getHmi();
         var dlgType = __WEBPACK_IMPORTED_MODULE_10__gauges_gauges_component__["a" /* GaugesManager */].getEditDialogTypeToUse(settings.type);
@@ -5447,7 +5420,6 @@ var EditorComponent = (function () {
             });
         }
         dialogRef.afterClosed().subscribe(function (result) {
-            // console.log('The Edit Gauge was closed');
             if (result) {
                 callback(result.settings);
                 _this.saveView(_this.currentView);
@@ -5865,8 +5837,8 @@ var FuxaViewComponent = (function () {
     FuxaViewComponent.prototype.ngOnInit = function () {
         try {
         }
-        catch (e) {
-            console.log(e);
+        catch (err) {
+            console.log(err);
         }
     };
     FuxaViewComponent.prototype.ngAfterViewInit = function () {
@@ -5916,7 +5888,6 @@ var FuxaViewComponent = (function () {
         if (view && view.items) {
             // this.gaugesManager.initGaugesMap();
             for (var key in view.items) {
-                console.log(key);
                 var gauge = this.gaugesManager.initElementAdded(view.items[key], this.resolver, this.viewContainerRef, true);
                 this.gaugesManager.bindGauge(gauge, this.id, view.items[key], function (gatobindclick) {
                     _this.onBindClick(gatobindclick);
@@ -5926,7 +5897,6 @@ var FuxaViewComponent = (function () {
             }
             var self_1 = this;
             this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(function (sig) {
-                // console.log('lab sig ' + sig.id + ' ' + sig.value);
                 if (!Object(__WEBPACK_IMPORTED_MODULE_3_util__["isUndefined"])(sig.value)) {
                     try {
                         // take all gauges settings binded to the signal id in this view
@@ -6056,7 +6026,6 @@ var FuxaViewComponent = (function () {
         }
     };
     FuxaViewComponent.prototype.loadPage = function (event, viewref) {
-        console.log('loadPage ' + viewref);
         var view = this.getView(viewref);
         if (view) {
             this.loadHmi(view);
@@ -6112,7 +6081,6 @@ var FuxaViewComponent = (function () {
     };
     FuxaViewComponent.prototype.onSetValue = function (ga, paramValue) {
         if (ga.property && ga.property.variableId) {
-            console.log('onSetValue ' + ga.property.variableId);
             this.gaugesManager.putSignalValue(ga.property.variableId, paramValue);
         }
     };
@@ -6411,7 +6379,6 @@ var GaugeProgressComponent = (function (_super) {
         return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].MinMax;
     };
     GaugeProgressComponent.processValue = function (ga, svgele, sig) {
-        // console.log('gaid value: ' + ga.id);
         if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
             var gap = ga.property.ranges[0];
             var g = svgele.node.children[0];
@@ -6871,7 +6838,6 @@ var HtmlChartComponent = (function (_super) {
         return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Chart;
     };
     HtmlChartComponent.processValue = function (ga, svgele, sig, gauge) {
-        // console.log(sig);
         gauge.addValue(sig.id, sig.value);
     };
     HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, isview, chartRange) {
@@ -7330,7 +7296,6 @@ var ValueComponent = (function (_super) {
         return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].ValueAndUnit;
     };
     ValueComponent.processValue = function (ga, svgele, sig) {
-        // console.log('gaid value: ' + ga.id);
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             var g = svgele.node.children[0];
             var val = parseFloat(sig.value);
@@ -9262,35 +9227,34 @@ var GaugesManager = (function () {
             for (var i = 0; i < sigsid.length; i++) {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
-        }
-        if (ga.type.startsWith(__WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag)) {
-            // prepare attribute
-            var chartRange_1 = __WEBPACK_IMPORTED_MODULE_4__models_chart__["b" /* ChartRangeType */];
-            Object.keys(chartRange_1).forEach(function (key) {
-                _this.translateService.get(chartRange_1[key]).subscribe(function (txt) { chartRange_1[key] = txt; });
-            });
-            var gauge_1 = __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
-            gauge_1.init();
-            if (ga.property) {
-                var chart = this.hmiService.getChart(ga.property.id);
-                chart.lines.forEach(function (line) {
-                    var sigid = __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
-                    var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
-                    if (sigProperty) {
-                        gauge_1.addLine(sigid, sigProperty.name, line.color);
-                    }
+            if (ga.type.startsWith(__WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag)) {
+                // prepare attribute
+                var chartRange_1 = __WEBPACK_IMPORTED_MODULE_4__models_chart__["b" /* ChartRangeType */];
+                Object.keys(chartRange_1).forEach(function (key) {
+                    _this.translateService.get(chartRange_1[key]).subscribe(function (txt) { chartRange_1[key] = txt; });
                 });
-                gauge_1.setOptions({ title: chart.name });
+                var gauge_1 = __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
+                gauge_1.init();
+                if (ga.property) {
+                    var chart = this.hmiService.getChart(ga.property.id);
+                    chart.lines.forEach(function (line) {
+                        var sigid = __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
+                        var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
+                        if (sigProperty) {
+                            gauge_1.addLine(sigid, sigProperty.name, line.color);
+                        }
+                    });
+                    gauge_1.setOptions({ title: chart.name });
+                }
+                this.mapChart[ga.id] = gauge_1;
+                gauge_1.resize();
+                gauge_1.onTimeRange.subscribe(function (data) {
+                    _this.hmiService.queryDaqValues(data);
+                });
+                gauge_1.setRange(Object.keys(chartRange_1)[0]);
+                // gauge.onTimeRange = this.onTimeRange;
+                return gauge_1;
             }
-            this.mapChart[ga.id] = gauge_1;
-            gauge_1.resize();
-            gauge_1.onTimeRange.subscribe(function (data) {
-                console.log(ga.id + ' ' + data);
-                _this.hmiService.queryDaqValues(data);
-            });
-            gauge_1.setRange(Object.keys(chartRange_1)[0]);
-            // gauge.onTimeRange = this.onTimeRange;
-            return gauge_1;
         }
     };
     /**
@@ -9814,7 +9778,6 @@ var SwitchComponent = (function (_super) {
         return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
     };
     SwitchComponent.processValue = function (ga, svgele, sig) {
-        // console.log('gaid: ' + ga.id);
         if (svgele.node && svgele.node.children) {
             var toanimate = void 0;
             for (var i = 0; i < svgele.node.children.length; i++) {
@@ -10932,7 +10895,6 @@ var NgxDygraphsComponent = (function () {
         }
     };
     NgxDygraphsComponent.prototype.addValue = function (id, value) {
-        // console.log(value);
         if (this.mapData[id] && !Object(__WEBPACK_IMPORTED_MODULE_3_util__["isUndefined"])(value)) {
             var row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();
@@ -11356,7 +11318,6 @@ var HeaderComponent = (function () {
     HeaderComponent.prototype.ngOnInit = function () {
         if (__WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].type === 'winele') {
             this.winele = true;
-            console.log('env ' + __WEBPACK_IMPORTED_MODULE_3__environments_environment__["a" /* environment */].type);
         }
     };
     HeaderComponent.prototype.ngOnDestroy = function () {
@@ -11392,7 +11353,6 @@ var HeaderComponent = (function () {
         this.showHelp(data);
     };
     HeaderComponent.prototype.showHelp = function (data) {
-        console.log('show help: ' + data.page);
         if (data.page === 'help') {
             this.tutorial.show = true;
         }
@@ -11449,7 +11409,6 @@ var HeaderComponent = (function () {
         var input = event.target;
         var reader = new FileReader();
         reader.onload = function (data) {
-            // console.log(reader.result);
             var prj = JSON.parse(reader.result.toString());
             _this.projectService.setProject(prj, true);
         };
@@ -11694,8 +11653,8 @@ var HomeComponent = (function () {
             });
             this.changeDetector.detectChanges();
         }
-        catch (e) {
-            console.log(e);
+        catch (err) {
+            console.log(err);
         }
     };
     HomeComponent.prototype.ngOnDestroy = function () {
@@ -11725,12 +11684,11 @@ var HomeComponent = (function () {
         else {
             this.router.navigate([event]).then(function (data) {
                 console.log('Route ' + event + ' exists, redirection is done');
-            }).catch(function (e) {
+            }).catch(function (err) {
                 console.log('Route ' + event + '  not found, redirection stopped with no error raised');
                 // try iframe link
             });
         }
-        console.log(event);
     };
     HomeComponent.prototype.onLogin = function () {
         var _this = this;
@@ -12047,8 +12005,8 @@ var LabComponent = (function () {
             }
             this.changeDetector.detectChanges();
         }
-        catch (e) {
-            console.log(e);
+        catch (err) {
+            console.log(err);
         }
     };
     LabComponent.prototype.ngOnDestroy = function () {
@@ -12065,14 +12023,12 @@ var LabComponent = (function () {
         this.testerService.toggle(true);
     };
     LabComponent.prototype.loadHmi = function () {
-        console.log('lab load ' + this.projectService);
         this.hmi = this.projectService.getHmi();
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.currentView = this.hmi.views[0];
             this.labView = this.hmi.views[0];
             var oldsel = localStorage.getItem("@frango.webeditor.currentview");
             if (oldsel) {
-                console.log('lab hmi ' + this.currentView);
                 for (var i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {
                         this.currentView = this.hmi.views[i];
@@ -12498,7 +12454,6 @@ var TesterComponent = (function () {
         });
     };
     TesterComponent.prototype.ngOnDestroy = function () {
-        console.log('Tester destroy');
         this.stopDemo();
     };
     TesterComponent.prototype.setSignal = function (sig) {
@@ -12507,20 +12462,8 @@ var TesterComponent = (function () {
     };
     TesterComponent.prototype.setSignals = function (items) {
         this.items = items;
-        // let gauges: GaugeSettings[] = [];
-        // Object.entries(items).forEach(([key, value]) => {
-        //     console.log(key, value);
-        //     gauges.push(<GaugeSettings>value);
-        //   }
-        // );
-        // let vars = this.gaugesManager.getSignals(gauges);
-        // if (vars && vars.length > 0) {
-        //   this.items = vars;
-        // }
-        // console.log(this.items);
     };
     TesterComponent.prototype.setDemo = function (flag) {
-        console.log('set demo' + flag);
         if (flag) {
             // this.gaugesManager.startDemo();
         }
@@ -12552,19 +12495,6 @@ var TesterComponent = (function () {
         }
     };
     TesterComponent.prototype.demoValue = function () {
-        // this.demoSwitch = (this.demoSwitch) ? false : true;
-        // for (let i = 0; i < this.signals.length; i++) {
-        //   if (this.demoSwitch && i % 2) {
-        //     continue;
-        //   }
-        //   if (this.signals[i].type === 'analog') {
-        //     this.signals[i].value = Number(this.randomRange(-10, 100)).toFixed(2);
-        //   } else if (this.signals[i].type === 'digital') {
-        //     this.signals[i].value = (Math.random() > 0.5) ? '1' : '0'; // Number(this.randomRange(0, 0.99)).toFixed(0);
-        //   }
-        //   this.setSignalValue(this.signals[i]);
-        //   console.log('set sig ' + this.signals[i].name + ' ' + this.signals[i].value);
-        // }
     };
     TesterComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -12604,7 +12534,6 @@ var TesterService = (function () {
         this.change = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["x" /* EventEmitter */]();
     }
     TesterService.prototype.toggle = function (flag) {
-        console.log('toggle tester');
         //   this.isOpen = !this.isOpen;
         this.change.emit(flag); //this.isOpen);
     };

@@ -40,7 +40,6 @@ export class TesterComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    console.log('Tester destroy');
     this.stopDemo();
   }
 
@@ -51,21 +50,9 @@ export class TesterComponent implements OnInit {
 
   setSignals(items: any) {
     this.items = items;
-    // let gauges: GaugeSettings[] = [];
-    // Object.entries(items).forEach(([key, value]) => {
-    //     console.log(key, value);
-    //     gauges.push(<GaugeSettings>value);
-    //   }
-    // );
-    // let vars = this.gaugesManager.getSignals(gauges);
-    // if (vars && vars.length > 0) {
-    //   this.items = vars;
-    // }
-    // console.log(this.items);
   }
 
   setDemo(flag) {
-    console.log('set demo' + flag);
     if (flag) {
       // this.gaugesManager.startDemo();
     } else {
@@ -100,18 +87,5 @@ export class TesterComponent implements OnInit {
   }
 
   demoValue() {
-    // this.demoSwitch = (this.demoSwitch) ? false : true;
-    // for (let i = 0; i < this.signals.length; i++) {
-    //   if (this.demoSwitch && i % 2) {
-    //     continue;
-    //   }
-    //   if (this.signals[i].type === 'analog') {
-    //     this.signals[i].value = Number(this.randomRange(-10, 100)).toFixed(2);
-    //   } else if (this.signals[i].type === 'digital') {
-    //     this.signals[i].value = (Math.random() > 0.5) ? '1' : '0'; // Number(this.randomRange(0, 0.99)).toFixed(0);
-    //   }
-    //   this.setSignalValue(this.signals[i]);
-    //   console.log('set sig ' + this.signals[i].name + ' ' + this.signals[i].value);
-    // }
   }
 }

@@ -54,8 +54,8 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.changeDetector.detectChanges();
         }
-        catch (e) {
-            console.log(e);
+        catch (err) {
+            console.log(err);
         }
     }
 
@@ -74,14 +74,12 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadHmi() {
-        console.log('lab load ' + this.projectService);
         this.hmi = this.projectService.getHmi();
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.currentView = this.hmi.views[0];
             this.labView = this.hmi.views[0];
             let oldsel = localStorage.getItem("@frango.webeditor.currentview");
             if (oldsel) {
-                console.log('lab hmi ' + this.currentView);
                 for (let i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {
                         this.currentView = this.hmi.views[i];

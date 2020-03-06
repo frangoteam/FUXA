@@ -46,7 +46,6 @@ export class HmiService {
      * @param sig
      */
     setSignalValue(sig: Variable) {
-        // console.log('end set ' + sig.id + ' ' + sig.value);
         // update the signals array value 
 
         // notify the gui
@@ -60,7 +59,6 @@ export class HmiService {
      * @param value 
      */
     putSignalValue(sigId: string, value: string) {
-        console.log('put ' + sigId + ' ' + value);
         if (this.variables[sigId]) {
             this.variables[sigId].value = value;
             if (this.socket) {
@@ -95,11 +93,9 @@ export class HmiService {
                         // disableTimeOut: true
                     });
                 }
-                // console.log('dev-st ' + message);
             });
             // device property
             this.socket.on('device-property', (message) => {
-                console.log('dev-property ' + message);
                 this.onDeviceProperty.emit(message);
             });                
             // devices values

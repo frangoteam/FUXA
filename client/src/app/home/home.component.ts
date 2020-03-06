@@ -64,8 +64,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			this.changeDetector.detectChanges();
 		}
-		catch (e) {
-			console.log(e);
+		catch (err) {
+			console.log(err);
 		}
 	}
 
@@ -97,12 +97,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		} else {
 			this.router.navigate([event]).then(data => {
 				console.log('Route ' + event + ' exists, redirection is done');
-			}).catch(e => {
+			}).catch(err => {
 				console.log('Route ' + event + '  not found, redirection stopped with no error raised');
 				// try iframe link
 			});
 		}
-		console.log(event);
 	}
 
 	onLogin() {

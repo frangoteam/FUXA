@@ -119,8 +119,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
             this.gaugesManager.clearMemory();
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -211,8 +211,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.winRef.nativeWindow.svgEditor.init();
             $(initContextmenu);
 
-        } catch (Error) {
-            console.log(Error);
+        } catch (err) {
+            console.log(err);
         }
         this.setFillColor(this.colorFill);
         this.setFillColor(this.colorStroke);
@@ -250,7 +250,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Save the View to Server
      */
     private saveView(view: View) {
-        // console.log('ave current View');
         this.projectService.setView(view);
     }
 
@@ -427,7 +426,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     private setMode(mode: string) {
         this.currentMode = mode;
         this.winRef.nativeWindow.svgEditor.clickToSetMode(mode);
-        // console.log('setmode: ' + mode);
     }
 
     /**
@@ -457,7 +455,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             // to remove some strange effects
             if (document.activeElement !== document.body) (document.activeElement as HTMLElement).blur();
         } catch (e) { }
-        // console.log('selected: ' + this.selectedElement);
         if (event) {
             for (let i = 0; i < event.length; i++) {
                 console.log('selected: ' + event[i].id + ' ' + event[i].type);
@@ -509,7 +506,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             for (let i = 0; i < ele.length; i++) {
                 if (this.currentView.items[ele[i].id]) {
                     delete this.currentView.items[ele[i].id];
-                    // console.log('deleted :> ' + ele[i].id);
                 }
             }
         }
@@ -550,7 +546,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private onSetMarker(id, marker) {
         if (marker >= 0) {
-            // console.log('marker select ' + id + ' ' + marker);
             this.winRef.nativeWindow.svgEditor.setMarker(id, marker);
         }
     }
@@ -832,7 +827,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * edit the layout property of project views
      */
     onLayoutProperty() {
-        // console.log('The Edit Device open');
         let templayout = null;
         if (this.hmi.layout) {
             templayout = JSON.parse(JSON.stringify(this.hmi.layout));
@@ -872,7 +866,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     savePanelState() {
         if (this.panelsState.enabled) {
             localStorage.setItem("@frango.webeditor.panelsState", JSON.stringify(this.panelsState));
-            console.log('set panelsState');
         }
     }
     //#endregion
@@ -894,7 +887,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param event 
      */
     onGaugeEdit(event) {
-        // console.log('edit gauge: ' + event); // [i].id + ' ' + event[i].type);
         let settings = this.gaugePanelComponent.settings;
         this.openEditGauge(settings, data => {
             this.setGaugeSettings(data);
@@ -925,7 +917,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param callback 
      */
     openEditGauge(settings, callback) {
-        // console.log('The Edit Gauge open');
         let tempsettings = JSON.parse(JSON.stringify(settings));
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
@@ -958,7 +949,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
         dialogRef.afterClosed().subscribe(result => {
-            // console.log('The Edit Gauge was closed');
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);

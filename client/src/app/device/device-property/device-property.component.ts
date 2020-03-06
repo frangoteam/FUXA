@@ -73,7 +73,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 							this.securityRadio = sec;
 						}
 					}
-					console.log();
 				} else if (res.error) {
 
 				}
@@ -108,7 +107,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onCheckOpcUaServer() {
-		console.log('checkOpcUa');
 		this.propertyLoading = true;
 		this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
 	}

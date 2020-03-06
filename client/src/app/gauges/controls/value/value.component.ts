@@ -35,7 +35,6 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
-        // console.log('gaid value: ' + ga.id);
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             let g = svgele.node.children[0];
             let val = parseFloat(sig.value);

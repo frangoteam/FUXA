@@ -137,12 +137,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	setDeviceStatus(event) {
-		console.log('device set: ' + event.id + ' ' + event.status);
 		this.devicesStatus[event.id] = event.status;
 	}
 
 	editDevice(device: Device, toremove: boolean) {
-		// console.log('The Edit Device open');
 		let exist = Object.values(this.devices).filter((d: Device) => d.id !== device.id).map((d: Device) => { return d.name });
 		exist.push('server');
 		let tempdevice = JSON.parse(JSON.stringify(device));
@@ -161,7 +159,6 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 					this.removeDevice(device);
 					this.projectService.removeDevice(device);
 				} else {
-					// console.log('The Edit Device was closed');
 					let olddevice = JSON.parse(JSON.stringify(device));
 					device.name = tempdevice.name;
 					device.type = tempdevice.type;

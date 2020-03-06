@@ -167,7 +167,6 @@ export class ChartConfigComponent implements OnInit {
     }
 
     removeChartLine(tag) {
-        console.log('rm ' + tag);
         let found = -1;
         for (let i = 0; i < this.selectedTags.length; i++) {
             if (tag.id === this.selectedTags[i].id) {

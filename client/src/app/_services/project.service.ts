@@ -93,7 +93,6 @@ export class ProjectService {
      * Save Project to Server if enabled
      */
     private save(): boolean {
-        console.log('-save-');
         if (this.serverSettings) {
             // check project change don't work some svg object change the order and this to check ...boooo
             this.setServerProject(this.projectData).subscribe(result => {
@@ -466,7 +465,6 @@ export class ProjectService {
         } else {
             try {
                 for (const p in x) {
-                    console.log(p);
                     if (!x.hasOwnProperty(p)) {
                         continue; // other properties were tested using x.constructor === y.constructor
                     }

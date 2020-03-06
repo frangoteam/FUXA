@@ -39,8 +39,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	ngOnInit() {
 		try {
 		}
-		catch (e) {
-			console.log(e);
+		catch (err) {
+			console.log(err);
 		}
 	}
 
@@ -91,7 +91,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		if (view && view.items) {
 			// this.gaugesManager.initGaugesMap();
 			for (let key in view.items) {
-				console.log(key);
 				let gauge = this.gaugesManager.initElementAdded(view.items[key], this.resolver, this.viewContainerRef, true);
 				this.gaugesManager.bindGauge(gauge, this.id, view.items[key],
 					(gatobindclick) => {
@@ -103,7 +102,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 			}
 			let self = this;
 			this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(sig => {
-				// console.log('lab sig ' + sig.id + ' ' + sig.value);
 				if (!isUndefined(sig.value)) {
 					try {
 						// take all gauges settings binded to the signal id in this view
@@ -236,7 +234,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	}
 
 	private loadPage(event, viewref: string) {
-		console.log('loadPage ' + viewref);
 		let view: View = this.getView(viewref);
 		if (view) {
 			this.loadHmi(view);
@@ -297,7 +294,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	onSetValue(ga: GaugeSettings, paramValue) {
 		if (ga.property && ga.property.variableId) {
-			console.log('onSetValue ' + ga.property.variableId);
 			this.gaugesManager.putSignalValue(ga.property.variableId, paramValue);
 		}
 	}
