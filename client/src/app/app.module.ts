@@ -80,6 +80,7 @@ import { LoginComponent } from './login/login.component';
 import { DialogUserInfo } from './home/home.component';
 import { ShapesComponent } from './gauges/shapes/shapes.component';
 import { ProcEngComponent } from './gauges/shapes/proc-eng/proc-eng.component';
+import { ApeShapesComponent } from './gauges/shapes/ape-shapes/ape-shapes.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
@@ -121,6 +122,7 @@ export function createTranslateLoader(http: HttpClient) {
         ChartPropertyComponent,
         ShapesComponent,
         ProcEngComponent,
+        ApeShapesComponent,
         TesterComponent,
         TutorialComponent,
         FlexInputComponent,

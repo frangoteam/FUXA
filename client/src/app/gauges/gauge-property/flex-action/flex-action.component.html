@@ -14,17 +14,13 @@
         <!-- <div class="item-range input-slider" *ngIf="!slideView">
             <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
         </div> -->
-        <div class="my-form-field" style="width: 120px;">
+        <div class="my-form-field" style="width: 300px;">
             <span>{{'gauges.property-action-type' | translate}}</span>
             <mat-select [(value)]="item.type">
                 <mat-option *ngFor="let ev of actionType | enumToArray" [value]="ev.key">
                     {{ ev.value }}
                 </mat-option>
             </mat-select>
-        </div>
-        <div class="my-form-field" style="padding-left: 25px;">
-            <span>{{'gauges.property-action-param' | translate}}</span>
-            <input [(ngModel)]="item.param" style="width: 120px" type="text">
         </div>
         <div class="item-remove">
             <button mat-icon-button (click)="onRemoveAction(i)" class="_remove">

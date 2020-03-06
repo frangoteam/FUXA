@@ -8,7 +8,7 @@ import { ChartRangeType } from '../_models/chart';
 
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { SwitchComponent } from './switch/switch.component';
-import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType } from '../_models/hmi';
+import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -19,6 +19,7 @@ import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress
 import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaphore.component';
 import { ShapesComponent } from './shapes/shapes.component';
 import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
+import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
 
 import { Dictionary } from '../_helpers/dictionary';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
@@ -45,12 +46,12 @@ export class GaugesManager {
     gaugesTags = [];
 
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag];
+    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, ApeShapesComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithActions = [ShapesComponent.TypeTag, ProcEngComponent.TypeTag];
+    static GaugeWithActions = [ApeShapesComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent,
-        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent];
+        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent];
 
     constructor(private hmiService: HmiService,
         private translateService: TranslateService,
@@ -89,26 +90,46 @@ export class GaugesManager {
 
     createSettings(id: string, type: string) {
         let gs: GaugeSettings = null;
-        for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-            if (GaugesManager.Gauges[i].TypeTag === type) {
-                gs = new GaugeSettings(id, type);
-                gs.label = GaugesManager.Gauges[i].LabelTag;
-                return gs;
+        if (type) {
+            for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+                if (type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                    gs = new GaugeSettings(id, type);
+                    gs.label = GaugesManager.Gauges[i].LabelTag;
+                    return gs;
+                }
             }
         }
         return gs;
     }
 
+	createGaugeStatus(ga: GaugeSettings) : GaugeStatus {
+        let result = new GaugeStatus();
+        if (!ga.type.startsWith(HtmlChartComponent.TypeTag)) {
+            result.onlyChange = true;
+        }
+        return result;
+    }
+        
     isWithEvents(type) {
         if (type) {
-            return GaugesManager.GaugeWithEvents.indexOf(type) > -1;
+            for (let i = 0; i < GaugesManager.GaugeWithEvents.length; i++) {
+                if (type.startsWith(GaugesManager.GaugeWithEvents[i])) {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     isWithActions(type) {
         if (type) {
-            return GaugesManager.GaugeWithActions.indexOf(type) > -1;
+            for (let i = 0; i < GaugesManager.GaugeWithActions.length; i++) {
+                if (type.startsWith(GaugesManager.GaugeWithActions[i].TypeTag)) {
+                    if (typeof GaugesManager.GaugeWithActions[i]['getActions'] === 'function') {
+                        return GaugesManager.GaugeWithActions[i]['getActions']();
+                    }
+                }
+            }
         }
         return false;
     }
@@ -122,15 +143,16 @@ export class GaugesManager {
      * @param ga 
      */
     initInEditor(ga: GaugeSettings) {
-        if (ga.type === GaugeProgressComponent.TypeTag) {
+        if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
-        } else if (ga.type === HtmlButtonComponent.TypeTag) {
+        } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
             HtmlButtonComponent.initElement(ga);
-        } else if (ga.type === HtmlChartComponent.TypeTag) {
+        } else if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
             HtmlChartComponent.detectChange(ga);
         }
         return false;
     }
+
 
     //! toremove
     setSignalValue(sig: Variable) {
@@ -227,12 +249,9 @@ export class GaugesManager {
      * @param ga 
      */
     checkElementToInit(ga: GaugeSettings) {
-        if (ga.type === HtmlSelectComponent.TypeTag) {
+        if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
             return HtmlSelectComponent.initElement(ga);
         }
-        // } else if (ga.type === GaugeProgressComponent.TypeTag) {
-        //   return GaugeProgressComponent.initElement(ga);
-        // }
         return null;
     }
 
@@ -261,8 +280,8 @@ export class GaugesManager {
     getBindSignals(ga: GaugeSettings) {
         if (ga.property) {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-                if (GaugesManager.Gauges[i].TypeTag === ga.type) {
-                    if (ga.type === HtmlChartComponent.TypeTag) {
+                if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                    if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
                         let sigs = this.hmiService.getChartSignal(ga.property.id)
                         return sigs;
                     } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
@@ -276,13 +295,14 @@ export class GaugesManager {
         return null;
     }
 
+
     /**
      * return all events binded to the gauge with click event
      * @param ga 
      */
     getBindClick(ga: GaugeSettings) {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-            if (GaugesManager.Gauges[i].TypeTag === ga.type) {
+            if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (typeof GaugesManager.Gauges[i]['getEvents'] === 'function') {
                     return GaugesManager.Gauges[i]['getEvents'](ga.property, GaugeEventType.click);
                 } else {
@@ -298,9 +318,9 @@ export class GaugesManager {
      * @param ga
      */
     getHtmlEvents(ga: GaugeSettings): Event {
-        if (ga.type === HtmlInputComponent.TypeTag) {
+        if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
             return HtmlInputComponent.getHtmlEvents(ga);
-        } else if (ga.type === HtmlSelectComponent.TypeTag) {
+        } else if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
             return HtmlSelectComponent.getHtmlEvents(ga);
         }
         return null;
@@ -314,8 +334,8 @@ export class GaugesManager {
 	 */
     processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-            if (GaugesManager.Gauges[i].TypeTag === ga.type) {
-                if (ga.type === HtmlChartComponent.TypeTag) {
+            if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
                     if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id) {
@@ -357,7 +377,7 @@ export class GaugesManager {
 
     static getEditDialogTypeToUse(type: string): GaugeDialogType {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-            if (GaugesManager.Gauges[i].TypeTag === type) {
+            if (type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (typeof GaugesManager.Gauges[i]['getDialogType'] === 'function') {
                     return GaugesManager.Gauges[i]['getDialogType']();
                 } else {
@@ -367,11 +387,12 @@ export class GaugesManager {
         }
     }
 
+
     /**
      * used from controls in editor to get default value of edit gauge property
      */
     static getDefaultValue(type: string): any {
-        if (type === GaugeProgressComponent.TypeTag) {
+        if (type.startsWith(GaugeProgressComponent.TypeTag)) {
             return GaugeProgressComponent.getDefaultValue();
         }
         return null;
@@ -382,23 +403,23 @@ export class GaugesManager {
      */
     static checkGaugeColor(ele: any, eles: any, colors: any): boolean {
         if (ele && eles && (eles.length <= 1 || !eles[1])) {
-            if (ele.type === GaugeProgressComponent.TypeTag) {
+            if (ele.type.startsWith(GaugeProgressComponent.TypeTag)) {
                 colors.fill = GaugeProgressComponent.getFillColor(eles[0]);
                 colors.stroke = GaugeProgressComponent.getStrokeColor(eles[0]);
                 return true;
-            } else if (ele.type === GaugeSemaphoreComponent.TypeTag) {
+            } else if (ele.type.startsWith(GaugeSemaphoreComponent.TypeTag)) {
                 colors.fill = GaugeSemaphoreComponent.getFillColor(eles[0]);
                 colors.stroke = GaugeSemaphoreComponent.getStrokeColor(eles[0]);
                 return true;
-            } else if (ele.type === HtmlButtonComponent.TypeTag) {
+            } else if (ele.type.startsWith(HtmlButtonComponent.TypeTag)) {
                 colors.fill = HtmlButtonComponent.getFillColor(eles[0]);
                 colors.stroke = HtmlButtonComponent.getStrokeColor(eles[0]);
                 return true;
-            } else if (ele.type === HtmlInputComponent.TypeTag) {
+            } else if (ele.type.startsWith(HtmlInputComponent.TypeTag)) {
                 colors.fill = HtmlInputComponent.getFillColor(eles[0]);
                 colors.stroke = HtmlInputComponent.getStrokeColor(eles[0]);
                 return true;
-            } else if (ele.type === HtmlSelectComponent.TypeTag) {
+            } else if (ele.type.startsWith(HtmlSelectComponent.TypeTag)) {
                 colors.fill = HtmlSelectComponent.getFillColor(eles[0]);
                 colors.stroke = HtmlSelectComponent.getStrokeColor(eles[0]);
                 return true;
@@ -417,13 +438,13 @@ export class GaugesManager {
         var elems = elements.filter(function(el) { return el; });
         for (let i = 0; i < elems.length; i++) {
             let type = elems[i].getAttribute('type');
-            if (type === GaugeProgressComponent.TypeTag) {
+            if (type.startsWith(GaugeProgressComponent.TypeTag)) {
                 GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
-            } else if (type === HtmlButtonComponent.TypeTag) {
+            } else if (type.startsWith(HtmlButtonComponent.TypeTag)) {
                 HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
-            } else if (type === HtmlInputComponent.TypeTag) {
+            } else if (type.startsWith(HtmlInputComponent.TypeTag)) {
                 HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
-            } else if (type === HtmlSelectComponent.TypeTag) {
+            } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
                 HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
             }
         }
@@ -445,7 +466,7 @@ export class GaugesManager {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
         }
-        if (ga.type === HtmlChartComponent.TypeTag) {
+        if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
             // prepare attribute
             let chartRange = ChartRangeType;
             Object.keys(chartRange).forEach(key => {

@@ -111,7 +111,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 						if (gas) {
 							for (let i = 0; i < gas.length; i++) {
 								let gaugeSetting = gas[i];
-								let gaugeStatus = this.getGaugeStatus(gaugeSetting.id);
+								let gaugeStatus = this.getGaugeStatus(gaugeSetting);
 								if (this.checkStatusVaue(gaugeStatus, sig)) {
 									let svgeles = this.getSvgElements(gaugeSetting.id);
 									for (let y = 0; y < svgeles.length; y++) {
@@ -132,12 +132,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	 * return the mapped gauge status, if it doesn't exist add it
 	 * @param gaugeId 
 	 */
-	private getGaugeStatus(gaugeId: string) : GaugeStatus {
-		if (this.mapGaugeStatus[gaugeId]) {
-			return this.mapGaugeStatus[gaugeId];
+	private getGaugeStatus(ga: GaugeSettings) : GaugeStatus {
+		if (this.mapGaugeStatus[ga.id]) {
+			return this.mapGaugeStatus[ga.id];
 		} else {
-			this.mapGaugeStatus[gaugeId] = new GaugeStatus();
-			return this.mapGaugeStatus[gaugeId];
+			this.mapGaugeStatus[ga.id] = this.gaugesManager.createGaugeStatus(ga);
+			return this.mapGaugeStatus[ga.id];
 		}
 	}
 
@@ -148,7 +148,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	 */
 	private checkStatusVaue(gaugeStatus: GaugeStatus, signal: any) {
 		let result = true;
-		if (gaugeStatus.variablesValue[signal.id] === signal.value) {
+		if (gaugeStatus.onlyChange && gaugeStatus.variablesValue[signal.id] === signal.value) {
 			result = false;
 		}
 		gaugeStatus.variablesValue[signal.id] = signal.value;

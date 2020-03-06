@@ -41,20 +41,24 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
         if (svgele.node) {
             let clr = '';
-            let val = parseFloat(sig.value);
-            if (Number.isNaN(val)) {
+            let value = parseFloat(sig.value);
+            if (Number.isNaN(value)) {
                 // maybe boolean
-                val = Number(sig.value);
+                value = Number(sig.value);
             } else {
-                val = parseFloat(val.toFixed(5));
+                value = parseFloat(value.toFixed(5));
             }
-            if (ga.property && ga.property.ranges) {
-                for (let idx = 0; idx < ga.property.ranges.length; idx++) {
-                    if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
-                        clr = ga.property.ranges[idx].color;
+            if (ga.property) {
+                if (ga.property.variableId === sig.id && ga.property.ranges) {
+                    for (let idx = 0; idx < ga.property.ranges.length; idx++) {
+                        if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
+                            clr = ga.property.ranges[idx].color;
+                        }
+                    }
+                    if (clr) {
+                        svgele.node.setAttribute('fill', clr);
                     }
                 }
-                svgele.node.setAttribute('fill', clr);
             }
         }
     }

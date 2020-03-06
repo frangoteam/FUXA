@@ -60,27 +60,11 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
                             clr = ga.property.ranges[idx].color;
                         }
                     }
-                    svgele.node.setAttribute('fill', clr);
-                }
-                // check actions
-                if (ga.property.actions) {
-                    ga.property.actions.forEach(act => {
-                        if (act.variableId === sig.id) {
-                            ShapesComponent.processAction(act, svgele, value);
-                        }
-                    });
+                    if (clr) {
+                        svgele.node.setAttribute('fill', clr);
+                    }
                 }
             }
-        }
-    }
-
-    static processAction(act: GaugeAction, svgele: any, value: any) {
-        console.log(svgele.node);
-        var element = SVG.adopt(svgele.node);
-        if (act.range.min <= value && act.range.max >= value) {
-            element.animate(3000).rotate(365).loop();
-        } else {
-            element.stop(true);
         }
     }
 }

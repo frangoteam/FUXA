@@ -22,7 +22,7 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
     ngOnInit() {
     }
 
-    static getSignal(pro: any) {
+    static getSignals(pro: any) {
         let res: string[] = [];
         if (pro.variableId) {
             res.push(pro.variableId);

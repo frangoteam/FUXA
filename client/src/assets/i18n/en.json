@@ -231,6 +231,10 @@
     "editor.tools-alignbottom-title": "Align Bottom",
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
 
+    "shapes.action-stop": "Stop",
+    "shapes.action-clockwise": "Turn clockwise",
+    "shapes.action-anticlockwise": "Turn anticlockwise",
+
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",
     "editor.tools-zoomlevel-fitsection": "Fit to selection",

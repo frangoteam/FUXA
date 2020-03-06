@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionType } from '../../../_models/hmi';
+import { TranslateService } from '@ngx-translate/core';
+
+import { GaugeProperty, GaugeAction, GaugeRangeProperty } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-action',
@@ -14,18 +16,25 @@ export class FlexActionComponent implements OnInit {
 
     actions: GaugeAction[];
     actionType: any;
+    itemtype: any;
     slideView = true;
 
-    constructor() { }
+    constructor(private translateService: TranslateService) { }
 
     ngOnInit() {
-        this.actionType = GaugeActionType;    
         if (this.property) {
             this.actions = this.property.actions;
         }
         if (!this.actions || this.actions.length <= 0) {
             this.onAddAction();
         }
+        // this.itemtype = this.data.withActions.clockwise;
+        if (this.data.withActions) {
+			this.actionType = this.data.withActions;
+			Object.keys(this.actionType).forEach(key => {
+				this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt });
+			});
+		}
     }
 
     getActions() {

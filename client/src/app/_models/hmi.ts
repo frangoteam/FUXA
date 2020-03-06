@@ -105,16 +105,12 @@ export class GaugeAction {
     variableSrc: string;
     variable: string;    
     range: GaugeRangeProperty;
-    type: string;
-    param: string;
+    type: any;
 }
 
 export class GaugeStatus {
     variablesValue = {};
-}
-
-export enum GaugeActionType {
-    animation = 'Animation',
+    onlyChange = false;
 }
 
 export enum GaugeEventType {

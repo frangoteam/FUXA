@@ -2,7 +2,7 @@
 (function () {
     'use strict';
     var shapesGroupName = 'Anim';     // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
-    var typeId = 'shapes';              // used to identify shapes type, 'shapes' is binded with angular component 'ShapesComponent'
+    var typeId = 'ape';              // used to identify shapes type, 'shapes' is binded with angular component 'ApeShapesComponent'
     // if you make a new type you have to implement the angular component too 
 
     // add in this array your schapes data, the shape object has the following attributes:

@@ -1,4 +1,4 @@
-import { Component, Inject, ViewContainerRef, OnInit, AfterViewInit, ViewChild, Input } from '@angular/core';
+import { Component, Inject, ViewContainerRef, OnInit, ViewChild, Input } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
@@ -27,7 +27,7 @@ export class GaugePropertyComponent implements OnInit {
 	property: GaugeProperty;
 	dialogType: GaugeDialogType = GaugeDialogType.RangeWithAlarm;
 	eventsSupported: boolean;
-	actionsSupported: boolean;
+	actionsSupported: any;
 	views: View[];
 	defaultValue: any;
 

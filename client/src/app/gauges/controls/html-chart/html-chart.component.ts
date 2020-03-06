@@ -22,7 +22,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
 
     ngOnInit() { }
 
-    static getSignal(pro: any) {
+    static getSignals(pro: any) {
         return pro.variableIds;
     }
 

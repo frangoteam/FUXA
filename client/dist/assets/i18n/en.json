@@ -231,6 +231,10 @@
     "editor.tools-alignbottom-title": "Align Bottom",
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
 
+    "shapes.action-stop": "Stop",
+    "shapes.action-clockwise": "Turn clockwise",
+    "shapes.action-anticlockwise": "Turn anticlockwise",
+
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",
     "editor.tools-zoomlevel-fitsection": "Fit to selection",
@@ -294,6 +298,9 @@
     "gauges.property-input-value": "Value",
     "gauges.property-input-label": "Label",
     "gauges.property-input-unit": "Unit",
+    "gauges.property-actions": "Actions",
+    "gauges.property-action-type": "Type",
+    "gauges.property-action-param": "Action Id",
     
     "msg.device-remove": "Would you like to remove Device ",
     "msg.device-tag-remove": "Would you like to remove Tag ",
