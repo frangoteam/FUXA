@@ -46,7 +46,7 @@ export class GaugeBaseComponent implements OnInit {
 
   static getEvents(pro: GaugeProperty, type: GaugeEventType) {
     let res: GaugeEvent[] = [];
-    if (!pro.events) {
+    if (!pro || !pro.events) {
       return null;
     }
     let idxtype = Object.values(GaugeEventType).indexOf(type);

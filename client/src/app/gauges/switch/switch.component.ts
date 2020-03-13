@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, Input, AfterViewInit } from '@angular/core';
 import { GaugeBaseComponent } from '../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable } from '../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';
 
 declare var Raphael: any;
@@ -45,7 +45,7 @@ export class SwitchComponent extends GaugeBaseComponent implements AfterViewInit
 		return GaugeDialogType.OnlyValue;
 	}
 
-	static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+	static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
 		if (svgele.node && svgele.node.children) {
 			let toanimate: string;
 			for (let i = 0; i < svgele.node.children.length; i++) {

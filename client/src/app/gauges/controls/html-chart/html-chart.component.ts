@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings, Variable } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -30,7 +30,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.Chart;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gauge?: NgxDygraphsComponent) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, gauge?: NgxDygraphsComponent) {
         gauge.addValue(sig.id, sig.value);
     }
 

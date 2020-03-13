@@ -55,12 +55,24 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	ngOnDestroy() {
 		this.gaugesManager.unbindGauge(this.id);
+		this.clearGaugeStatus();
 		try {
 			if (this.subscriptionOnChange) {
 				this.subscriptionOnChange.unsubscribe();
 			}
 		} catch (e) {
 		}
+	}
+
+	private clearGaugeStatus() {
+		Object.values(this.mapGaugeStatus).forEach((gs: GaugeStatus) => {
+			try {
+				if (gs.actionRef && gs.actionRef.timer) {
+					clearTimeout(gs.actionRef.timer);
+				}
+			} catch (e) {
+			}
+		});
 	}
 
 	/**
@@ -113,7 +125,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 								if (this.checkStatusVaue(gaugeStatus, sig)) {
 									let svgeles = this.getSvgElements(gaugeSetting.id);
 									for (let y = 0; y < svgeles.length; y++) {
-										this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig);
+										this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig, gaugeStatus);
 									}
 								}
 							}

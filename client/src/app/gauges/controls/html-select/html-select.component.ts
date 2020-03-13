@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -51,7 +51,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
         return null;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         let select = Utils.searchTreeStartWith(svgele.node, this.prefix);
         if (select) {
             let val = parseFloat(sig.value);

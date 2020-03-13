@@ -111,6 +111,7 @@ export class GaugeAction {
 export class GaugeStatus {
     variablesValue = {};
     onlyChange = false;
+    actionRef: any;
 }
 
 export enum GaugeEventType {

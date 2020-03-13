@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, GaugeAction, Variable } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+import { Utils } from '../../../_helpers/utils';
 
 declare var SVG: any;
+declare var Raphael: any;
 
 @Component({
     selector: 'ape-shapes',
@@ -19,7 +21,8 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     static actionsType = {
         stop: 'shapes.action-stop',
         clockwise: 'shapes.action-clockwise',
-        anticlockwise: 'shapes.action-anticlockwise'
+        anticlockwise: 'shapes.action-anticlockwise',
+        downup: 'shapes.action-downup'
     }
 
     constructor() {
@@ -50,7 +53,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         return GaugeDialogType.RangeWithAlarm;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node) {
             let clr = '';
             let value = parseFloat(sig.value);
@@ -75,7 +78,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                 if (ga.property.actions) {
                     ga.property.actions.forEach(act => {
                         if (act.variableId === sig.id) {
-                            ApeShapesComponent.processAction(act, svgele, value);
+                            ApeShapesComponent.processAction(act, svgele, value, gaugeStatus);
                         }
                     });
                 }
@@ -83,19 +86,54 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
         var element = SVG.adopt(svgele.node);
         if (act.range.min <= value && act.range.max >= value) {
-            ApeShapesComponent.runAction(element, act.type);
+            ApeShapesComponent.runAction(element, act.type, gaugeStatus);
         }
     }
 
-    static runAction(element, type) {
+    static runAction(element, type, gaugeStatus: GaugeStatus) {
         element.stop(true);
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {
-            element.animate(3000).rotate(365).loop();
+            gaugeStatus.actionRef = { type: type, animr: element.animate(3000).rotate(365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.anticlockwise) {
-            element.animate(3000).rotate(-365).loop();
-        } 
+            gaugeStatus.actionRef = { type: type, animr: element.animate(3000).rotate(-365).loop() };
+        } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.downup) {
+            if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+                return;
+            }
+            let eletoanim = Utils.searchTreeStartWith(element.node, 'pm');
+            if (eletoanim) {
+                element = SVG.adopt(eletoanim);
+                let elebox = eletoanim.getBBox();
+				var movefrom = { x: elebox.x, y: elebox.y };
+                var moveto = { x: elebox.x, y: elebox.y  - 25 };
+                
+                let timeout = setInterval(() => {
+                    element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y);
+                }, 2000);
+                gaugeStatus.actionRef = { type: type, timer: timeout };
+            }
+        } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.stop) {
+            if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
+                clearTimeout(gaugeStatus.actionRef.timer);
+                gaugeStatus.actionRef = null;
+            }
+        }
+    }
+
+    static firstAnimation(element, moveto, movefrom) {
+        console.log('a');
+        // element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y).after(function () {
+        //     ApeShapesComponent.firstAnimation(element, moveto, movefrom);
+        // });
+        element.animate({duration: 1000, delay: 6000, wait: 6000 }).move(moveto.x, moveto.y).after(function () {
+            console.log('a');
+        // element.animate(1000).move(movefrom.x, movefrom.y);
+        }).loop();//ApeShapesComponent.secondAnimation(element, moveto, movefrom));
+    }
+    static secondAnimation(element, movefrom, moveto) {
+        // element.animate(1000).move(moveto.x, moveto.y).after(ApeShapesComponent.firstAnimation(element, moveto, movefrom));
     }
 }

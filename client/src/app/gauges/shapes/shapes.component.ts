@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../gauge-base/gauge-base.component'
-import { GaugeSettings, GaugeAction, Variable } from '../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';
 
 declare var SVG: any;
@@ -43,7 +43,7 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.RangeWithAlarm;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node) {
             let clr = '';
             let value = parseFloat(sig.value);

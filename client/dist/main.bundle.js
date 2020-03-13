@@ -3,7 +3,7 @@ webpackJsonp(["main"],{
 /***/ "../../../../../package.json":
 /***/ (function(module, exports) {
 
-module.exports = {"name":"fuxa","version":"1.0.1","keywords":[],"author":"frangoteam <4frango@gmail.com>","description":"Web-based Process Visualization (SCADA/HMI) software","repository":{"type":"git","url":"https://github.com/frangoteam/FUXA.git"},"scripts":{"ng":"ng","start":"ng serve --dev","start-ele":"ng serve --env=winele","start-demo":"ng serve --env=demo","build":"ng build","test":"ng test","lint":"ng lint","e2e":"ng e2e"},"dependencies":{"@angular/animations":"5.2.0","@angular/cdk":"^5.2.5","@angular/common":"5.2.0","@angular/compiler":"5.2.0","@angular/core":"5.2.0","@angular/forms":"5.2.0","@angular/http":"5.2.0","@angular/material":"^5.2.5","@angular/platform-browser":"5.2.0","@angular/platform-browser-dynamic":"5.2.0","@angular/router":"5.2.0","@codebyjordan/scrollbar":"^2.1.6","@ngx-translate/core":"^9.1.1","@ngx-translate/http-loader":"^2.0.1","bcryptjs":"^2.4.3","body-parser":"^1.18.2","core-js":"^2.4.1","express":"^4.16.4","file-saver":"^1.3.8","gulp-autoprefixer":"^5.0.0","gulp-concat":"^2.6.1","gulp-csso":"^3.0.1","gulp-htmlmin":"^4.0.0","gulp-minify":"^3.0.2","gulp-sass":"^4.0.1","gulp-sourcemaps":"^2.6.4","gulp-uglify":"^3.0.0","material-design-icons":"^3.0.1","ng5-slider":"^1.1.7","ngx-color-picker":"^7.4.0","ngx-drag-drop":"^1.1.0","ngx-toastr":"^8.10.2","rxjs":"^5.5.2","socket.io-client":"^2.2.0","zone.js":"^0.8.14"},"devDependencies":{"@angular-devkit/core":"^0.7.3","@angular/cli":"1.6.3","@angular/compiler-cli":"^5.0.0","@angular/language-service":"5.2.0","@types/jasmine":"~2.5.53","@types/jasminewd2":"~2.0.2","@types/node":"~6.0.60","codelyzer":"^4.0.2","gulp":"^4.0.0","jasmine-core":"~2.6.2","jasmine-spec-reporter":"~4.1.0","karma":"^4.0.1","karma-chrome-launcher":"~2.1.1","karma-cli":"~1.0.1","karma-coverage-istanbul-reporter":"^1.2.1","karma-jasmine":"~1.1.0","karma-jasmine-html-reporter":"^0.2.2","protractor":"^5.4.0","ts-node":"~3.2.0","tslint":"~5.7.0","typescript":"~2.4.2"}}
+module.exports = {"name":"fuxa","version":"1.0.4","keywords":[],"author":"frangoteam <4frango@gmail.com>","description":"Web-based Process Visualization (SCADA/HMI) software","repository":{"type":"git","url":"https://github.com/frangoteam/FUXA.git"},"scripts":{"ng":"ng","start":"ng serve --dev","start-ele":"ng serve --env=winele","start-demo":"ng serve --env=demo","build":"ng build","test":"ng test","lint":"ng lint","e2e":"ng e2e"},"dependencies":{"@angular/animations":"5.2.0","@angular/cdk":"^5.2.5","@angular/common":"5.2.0","@angular/compiler":"5.2.0","@angular/core":"5.2.0","@angular/forms":"5.2.0","@angular/http":"5.2.0","@angular/material":"^5.2.5","@angular/platform-browser":"5.2.0","@angular/platform-browser-dynamic":"5.2.0","@angular/router":"5.2.0","@codebyjordan/scrollbar":"^2.1.6","@ngx-translate/core":"^9.1.1","@ngx-translate/http-loader":"^2.0.1","bcryptjs":"^2.4.3","body-parser":"^1.18.2","core-js":"^2.4.1","express":"^4.16.4","file-saver":"^1.3.8","gulp-autoprefixer":"^5.0.0","gulp-concat":"^2.6.1","gulp-csso":"^3.0.1","gulp-htmlmin":"^4.0.0","gulp-minify":"^3.0.2","gulp-sass":"^4.0.1","gulp-sourcemaps":"^2.6.4","gulp-uglify":"^3.0.0","material-design-icons":"^3.0.1","ng5-slider":"^1.1.7","ngx-color-picker":"^7.4.0","ngx-drag-drop":"^1.1.0","ngx-toastr":"^8.10.2","rxjs":"^5.5.2","socket.io-client":"^2.2.0","zone.js":"^0.8.14"},"devDependencies":{"@angular-devkit/core":"^0.7.3","@angular/cli":"1.6.3","@angular/compiler-cli":"^5.0.0","@angular/language-service":"5.2.0","@types/jasmine":"~2.5.53","@types/jasminewd2":"~2.0.2","@types/node":"~6.0.60","codelyzer":"^4.0.2","gulp":"^4.0.0","jasmine-core":"~2.6.2","jasmine-spec-reporter":"~4.1.0","karma":"^4.0.1","karma-chrome-launcher":"~2.1.1","karma-cli":"~1.0.1","karma-coverage-istanbul-reporter":"^1.2.1","karma-jasmine":"~1.1.0","karma-jasmine-html-reporter":"^0.2.2","protractor":"^5.4.0","ts-node":"~3.2.0","tslint":"~5.7.0","typescript":"~2.4.2"}}
 
 /***/ }),
 
@@ -5851,6 +5851,7 @@ var FuxaViewComponent = (function () {
     };
     FuxaViewComponent.prototype.ngOnDestroy = function () {
         this.gaugesManager.unbindGauge(this.id);
+        this.clearGaugeStatus();
         try {
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
@@ -5858,6 +5859,17 @@ var FuxaViewComponent = (function () {
         }
         catch (e) {
         }
+    };
+    FuxaViewComponent.prototype.clearGaugeStatus = function () {
+        Object.values(this.mapGaugeStatus).forEach(function (gs) {
+            try {
+                if (gs.actionRef && gs.actionRef.timer) {
+                    clearTimeout(gs.actionRef.timer);
+                }
+            }
+            catch (e) {
+            }
+        });
     };
     /**
      * load the svg content to show in browser, clear all binded to this view
@@ -5908,7 +5920,7 @@ var FuxaViewComponent = (function () {
                                 if (_this.checkStatusVaue(gaugeStatus, sig)) {
                                     var svgeles = _this.getSvgElements(gaugeSetting.id);
                                     for (var y = 0; y < svgeles.length; y++) {
-                                        _this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig);
+                                        _this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig, gaugeStatus);
                                     }
                                 }
                             }
@@ -6378,7 +6390,7 @@ var GaugeProgressComponent = (function (_super) {
     GaugeProgressComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].MinMax;
     };
-    GaugeProgressComponent.processValue = function (ga, svgele, sig) {
+    GaugeProgressComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
             var gap = ga.property.ranges[0];
             var g = svgele.node.children[0];
@@ -6565,7 +6577,7 @@ var GaugeSemaphoreComponent = (function (_super) {
     GaugeSemaphoreComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Range;
     };
-    GaugeSemaphoreComponent.processValue = function (ga, svgele, sig) {
+    GaugeSemaphoreComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             var g = svgele.node.children[0];
             var clr = '';
@@ -6714,7 +6726,7 @@ var HtmlButtonComponent = (function (_super) {
             //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
         }
     };
-    HtmlButtonComponent.processValue = function (ga, svgele, sig) {
+    HtmlButtonComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         // if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
         //   let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
         //   if (input) {
@@ -6837,7 +6849,7 @@ var HtmlChartComponent = (function (_super) {
     HtmlChartComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Chart;
     };
-    HtmlChartComponent.processValue = function (ga, svgele, sig, gauge) {
+    HtmlChartComponent.processValue = function (ga, svgele, sig, gaugeStatus, gauge) {
         gauge.addValue(sig.id, sig.value);
     };
     HtmlChartComponent.initElement = function (gab, resolver, viewContainerRef, isview, chartRange) {
@@ -6981,7 +6993,7 @@ var HtmlInputComponent = (function (_super) {
         }
         return null;
     };
-    HtmlInputComponent.processValue = function (ga, svgele, sig) {
+    HtmlInputComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
             var input = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(svgele.node, this.prefix);
             if (input) {
@@ -7140,7 +7152,7 @@ var HtmlSelectComponent = (function (_super) {
         }
         return null;
     };
-    HtmlSelectComponent.processValue = function (ga, svgele, sig) {
+    HtmlSelectComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         var select = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(svgele.node, this.prefix);
         if (select) {
             var val = parseFloat(sig.value);
@@ -7295,7 +7307,7 @@ var ValueComponent = (function (_super) {
     ValueComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].ValueAndUnit;
     };
-    ValueComponent.processValue = function (ga, svgele, sig) {
+    ValueComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             var g = svgele.node.children[0];
             var val = parseFloat(sig.value);
@@ -7413,7 +7425,7 @@ var GaugeBaseComponent = (function () {
     };
     GaugeBaseComponent.getEvents = function (pro, type) {
         var res = [];
-        if (!pro.events) {
+        if (!pro || !pro.events) {
             return null;
         }
         var idxtype = Object.values(__WEBPACK_IMPORTED_MODULE_1__models_hmi__["f" /* GaugeEventType */]).indexOf(type);
@@ -9090,7 +9102,7 @@ var GaugesManager = (function () {
      * @param svgele
      * @param sig
      */
-    GaugesManager.prototype.processValue = function (ga, svgele, sig) {
+    GaugesManager.prototype.processValue = function (ga, svgele, sig, gaugeStatus) {
         var _this = this;
         for (var i = 0; i < GaugesManager_1.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager_1.Gauges[i].TypeTag)) {
@@ -9098,14 +9110,14 @@ var GaugesManager = (function () {
                     if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(function (k) {
                             if (k === ga.id) {
-                                __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, _this.memorySigGauges[sig.id][k]);
+                                __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].processValue(ga, svgele, sig, gaugeStatus, _this.memorySigGauges[sig.id][k]);
                             }
                         });
                     }
                     break;
                 }
                 else if (typeof GaugesManager_1.Gauges[i]['processValue'] === 'function') {
-                    GaugesManager_1.Gauges[i]['processValue'](ga, svgele, sig);
+                    GaugesManager_1.Gauges[i]['processValue'](ga, svgele, sig, gaugeStatus);
                     break;
                 }
                 else {
@@ -9227,34 +9239,34 @@ var GaugesManager = (function () {
             for (var i = 0; i < sigsid.length; i++) {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
-            if (ga.type.startsWith(__WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag)) {
-                // prepare attribute
-                var chartRange_1 = __WEBPACK_IMPORTED_MODULE_4__models_chart__["b" /* ChartRangeType */];
-                Object.keys(chartRange_1).forEach(function (key) {
-                    _this.translateService.get(chartRange_1[key]).subscribe(function (txt) { chartRange_1[key] = txt; });
+        }
+        if (ga.type.startsWith(__WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].TypeTag)) {
+            // prepare attribute
+            var chartRange_1 = __WEBPACK_IMPORTED_MODULE_4__models_chart__["b" /* ChartRangeType */];
+            Object.keys(chartRange_1).forEach(function (key) {
+                _this.translateService.get(chartRange_1[key]).subscribe(function (txt) { chartRange_1[key] = txt; });
+            });
+            var gauge_1 = __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
+            gauge_1.init();
+            if (ga.property) {
+                var chart = this.hmiService.getChart(ga.property.id);
+                chart.lines.forEach(function (line) {
+                    var sigid = __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
+                    var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
+                    if (sigProperty) {
+                        gauge_1.addLine(sigid, sigProperty.name, line.color);
+                    }
                 });
-                var gauge_1 = __WEBPACK_IMPORTED_MODULE_10__controls_html_chart_html_chart_component__["a" /* HtmlChartComponent */].initElement(ga, res, ref, isview, chartRange_1);
-                gauge_1.init();
-                if (ga.property) {
-                    var chart = this.hmiService.getChart(ga.property.id);
-                    chart.lines.forEach(function (line) {
-                        var sigid = __WEBPACK_IMPORTED_MODULE_3__services_hmi_service__["a" /* HmiService */].toVariableId(line.device, line.id);
-                        var sigProperty = _this.hmiService.getMappedVariable(sigid, true);
-                        if (sigProperty) {
-                            gauge_1.addLine(sigid, sigProperty.name, line.color);
-                        }
-                    });
-                    gauge_1.setOptions({ title: chart.name });
-                }
-                this.mapChart[ga.id] = gauge_1;
-                gauge_1.resize();
-                gauge_1.onTimeRange.subscribe(function (data) {
-                    _this.hmiService.queryDaqValues(data);
-                });
-                gauge_1.setRange(Object.keys(chartRange_1)[0]);
-                // gauge.onTimeRange = this.onTimeRange;
-                return gauge_1;
+                gauge_1.setOptions({ title: chart.name });
             }
+            this.mapChart[ga.id] = gauge_1;
+            gauge_1.resize();
+            gauge_1.onTimeRange.subscribe(function (data) {
+                _this.hmiService.queryDaqValues(data);
+            });
+            gauge_1.setRange(Object.keys(chartRange_1)[0]);
+            // gauge.onTimeRange = this.onTimeRange;
+            return gauge_1;
         }
     };
     /**
@@ -9325,6 +9337,7 @@ module.exports = "<p>\n  ape-shapes works!\n</p>\n"
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__gauge_base_gauge_base_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-base/gauge-base.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__ = __webpack_require__("../../../../../src/app/gauges/gauge-property/gauge-property.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__helpers_utils__ = __webpack_require__("../../../../../src/app/_helpers/utils.ts");
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9344,6 +9357,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -9374,7 +9388,7 @@ var ApeShapesComponent = (function (_super) {
     ApeShapesComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
     };
-    ApeShapesComponent.processValue = function (ga, svgele, sig) {
+    ApeShapesComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node) {
             var clr = '';
             var value_1 = parseFloat(sig.value);
@@ -9400,27 +9414,62 @@ var ApeShapesComponent = (function (_super) {
                 if (ga.property.actions) {
                     ga.property.actions.forEach(function (act) {
                         if (act.variableId === sig.id) {
-                            ApeShapesComponent_1.processAction(act, svgele, value_1);
+                            ApeShapesComponent_1.processAction(act, svgele, value_1, gaugeStatus);
                         }
                     });
                 }
             }
         }
     };
-    ApeShapesComponent.processAction = function (act, svgele, value) {
+    ApeShapesComponent.processAction = function (act, svgele, value, gaugeStatus) {
         var element = SVG.adopt(svgele.node);
         if (act.range.min <= value && act.range.max >= value) {
-            ApeShapesComponent_1.runAction(element, act.type);
+            ApeShapesComponent_1.runAction(element, act.type, gaugeStatus);
         }
     };
-    ApeShapesComponent.runAction = function (element, type) {
+    ApeShapesComponent.runAction = function (element, type, gaugeStatus) {
         element.stop(true);
         if (ApeShapesComponent_1.actionsType[type] === ApeShapesComponent_1.actionsType.clockwise) {
-            element.animate(3000).rotate(365).loop();
+            gaugeStatus.actionRef = { type: type, animr: element.animate(3000).rotate(365).loop() };
         }
         else if (ApeShapesComponent_1.actionsType[type] === ApeShapesComponent_1.actionsType.anticlockwise) {
-            element.animate(3000).rotate(-365).loop();
+            gaugeStatus.actionRef = { type: type, animr: element.animate(3000).rotate(-365).loop() };
         }
+        else if (ApeShapesComponent_1.actionsType[type] === ApeShapesComponent_1.actionsType.downup) {
+            if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+                return;
+            }
+            var eletoanim = __WEBPACK_IMPORTED_MODULE_3__helpers_utils__["b" /* Utils */].searchTreeStartWith(element.node, 'pm');
+            if (eletoanim) {
+                element = SVG.adopt(eletoanim);
+                var elebox = eletoanim.getBBox();
+                var movefrom = { x: elebox.x, y: elebox.y };
+                var moveto = { x: elebox.x, y: elebox.y - 25 };
+                var timeout = setInterval(function () {
+                    element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y);
+                }, 2000);
+                gaugeStatus.actionRef = { type: type, timer: timeout };
+            }
+        }
+        else if (ApeShapesComponent_1.actionsType[type] === ApeShapesComponent_1.actionsType.stop) {
+            if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
+                clearTimeout(gaugeStatus.actionRef.timer);
+                gaugeStatus.actionRef = null;
+            }
+        }
+    };
+    ApeShapesComponent.firstAnimation = function (element, moveto, movefrom) {
+        console.log('a');
+        // element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y).after(function () {
+        //     ApeShapesComponent.firstAnimation(element, moveto, movefrom);
+        // });
+        element.animate({ duration: 1000, delay: 6000, wait: 6000 }).move(moveto.x, moveto.y).after(function () {
+            console.log('a');
+            // element.animate(1000).move(movefrom.x, movefrom.y);
+        }).loop(); //ApeShapesComponent.secondAnimation(element, moveto, movefrom));
+    };
+    ApeShapesComponent.secondAnimation = function (element, movefrom, moveto) {
+        // element.animate(1000).move(moveto.x, moveto.y).after(ApeShapesComponent.firstAnimation(element, moveto, movefrom));
     };
     ApeShapesComponent.TypeId = 'ape';
     ApeShapesComponent.TypeTag = 'svg-ext-' + ApeShapesComponent_1.TypeId; // used to identify shapes type, binded with the library svgeditor
@@ -9428,7 +9477,8 @@ var ApeShapesComponent = (function (_super) {
     ApeShapesComponent.actionsType = {
         stop: 'shapes.action-stop',
         clockwise: 'shapes.action-clockwise',
-        anticlockwise: 'shapes.action-anticlockwise'
+        anticlockwise: 'shapes.action-anticlockwise',
+        downup: 'shapes.action-downup'
     };
     ApeShapesComponent = ApeShapesComponent_1 = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
@@ -9522,7 +9572,7 @@ var ProcEngComponent = (function (_super) {
     ProcEngComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
     };
-    ProcEngComponent.processValue = function (ga, svgele, sig) {
+    ProcEngComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node) {
             var clr = '';
             var value = parseFloat(sig.value);
@@ -9651,7 +9701,7 @@ var ShapesComponent = (function (_super) {
     ShapesComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_2__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].RangeWithAlarm;
     };
-    ShapesComponent.processValue = function (ga, svgele, sig) {
+    ShapesComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node) {
             var clr = '';
             var value = parseFloat(sig.value);
@@ -9777,7 +9827,7 @@ var SwitchComponent = (function (_super) {
     SwitchComponent.getDialogType = function () {
         return __WEBPACK_IMPORTED_MODULE_3__gauge_property_gauge_property_component__["b" /* GaugeDialogType */].OnlyValue;
     };
-    SwitchComponent.processValue = function (ga, svgele, sig) {
+    SwitchComponent.processValue = function (ga, svgele, sig, gaugeStatus) {
         if (svgele.node && svgele.node.children) {
             var toanimate = void 0;
             for (var i = 0; i < svgele.node.children.length; i++) {

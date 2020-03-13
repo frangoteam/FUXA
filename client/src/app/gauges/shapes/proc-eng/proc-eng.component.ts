@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, WindowLink } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, WindowLink } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 @Component({
@@ -38,7 +38,7 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.RangeWithAlarm;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node) {
             let clr = '';
             let value = parseFloat(sig.value);

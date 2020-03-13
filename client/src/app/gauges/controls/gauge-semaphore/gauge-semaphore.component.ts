@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 @Component({
@@ -34,7 +34,7 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
         return GaugeDialogType.Range;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             let g = svgele.node.children[0];
             let clr = '';

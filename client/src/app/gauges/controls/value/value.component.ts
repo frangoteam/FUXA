@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, Input, AfterViewInit } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 @Component({
@@ -34,7 +34,7 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.ValueAndUnit;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             let g = svgele.node.children[0];
             let val = parseFloat(sig.value);

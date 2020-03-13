@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -51,7 +51,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
         return null;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
             let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
             if (input) {

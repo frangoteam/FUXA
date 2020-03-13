@@ -332,20 +332,20 @@ export class GaugesManager {
 	 * @param svgele 
 	 * @param sig 
 	 */
-    processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
                     if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id) {
-                                HtmlChartComponent.processValue(ga, svgele, sig, this.memorySigGauges[sig.id][k]);
+                                HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.memorySigGauges[sig.id][k]);
                             }
                         });
                     }
                     break;
                 } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
-                    GaugesManager.Gauges[i]['processValue'](ga, svgele, sig);
+                    GaugesManager.Gauges[i]['processValue'](ga, svgele, sig, gaugeStatus);
                     break;
                 } else {
                     break;
@@ -465,34 +465,34 @@ export class GaugesManager {
             for (let i = 0; i < sigsid.length; i++) {
                 this.hmiService.addSignal(sigsid[i], ga);
             }
-            if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                // prepare attribute
-                let chartRange = ChartRangeType;
-                Object.keys(chartRange).forEach(key => {
-                    this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
+        }
+        if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
+            // prepare attribute
+            let chartRange = ChartRangeType;
+            Object.keys(chartRange).forEach(key => {
+                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
+            });
+            let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
+            gauge.init();
+            if (ga.property) {
+                let chart = this.hmiService.getChart(ga.property.id)
+                chart.lines.forEach(line => {
+                    let sigid = HmiService.toVariableId(line.device, line.id);
+                    let sigProperty = this.hmiService.getMappedVariable(sigid, true);
+                    if (sigProperty) {
+                        gauge.addLine(sigid, sigProperty.name, line.color);
+                    }
                 });
-                let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
-                gauge.init();
-                if (ga.property) {
-                    let chart = this.hmiService.getChart(ga.property.id)
-                    chart.lines.forEach(line => {
-                        let sigid = HmiService.toVariableId(line.device, line.id);
-                        let sigProperty = this.hmiService.getMappedVariable(sigid, true);
-                        if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line.color);
-                        }
-                    });
-                    gauge.setOptions({ title: chart.name });
-                }
-                this.mapChart[ga.id] = gauge;
-                gauge.resize();
-                gauge.onTimeRange.subscribe(data => {
-                    this.hmiService.queryDaqValues(data);
-                });
-                gauge.setRange(Object.keys(chartRange)[0]);
-                // gauge.onTimeRange = this.onTimeRange;
-                return gauge;
+                gauge.setOptions({ title: chart.name });
             }
+            this.mapChart[ga.id] = gauge;
+            gauge.resize();
+            gauge.onTimeRange.subscribe(data => {
+                this.hmiService.queryDaqValues(data);
+            });
+            gauge.setRange(Object.keys(chartRange)[0]);
+            // gauge.onTimeRange = this.onTimeRange;
+            return gauge;
         }
     }
 

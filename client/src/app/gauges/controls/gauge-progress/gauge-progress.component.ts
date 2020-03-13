@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeRangeProperty, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeRangeProperty, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -42,7 +42,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
         return GaugeDialogType.MinMax;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
             let gap: GaugeRangeProperty = ga.property.ranges[0];
             let g = svgele.node.children[0];
