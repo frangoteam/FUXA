@@ -40,6 +40,7 @@
     </div>
     <!-- <div class="mychart-graph" #chart [ngStyle]="(isEditor) ? 'mychart-hide' : 'mychart-show'"> -->
     <div class="mychart-graph" #chart [ngStyle]="{'visibility': (isEditor) ? 'hidden' : 'visible', 'display': (isEditor) ? 'none' : 'block'}">
+    <!-- <div class="mychart-graph" #chart style="display: block"> -->
     </div>
     <div *ngIf="!data?.length && !isEditor" class="nodata">
         {{noDataLabel}}

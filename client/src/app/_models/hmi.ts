@@ -92,6 +92,7 @@ export class GaugeProperty {
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
     actions: GaugeAction[] = [];
+    options: any;
 }
 
 export class GaugeEvent {

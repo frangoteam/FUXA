@@ -153,7 +153,8 @@ export enum GaugeDialogType {
 	ValueWithRef,
 	Step,
 	MinMax,
-	Chart
+	Chart,
+	Gauge
 }
 
 @Component({

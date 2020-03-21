@@ -15,6 +15,7 @@ import { HtmlInputComponent } from './controls/html-input/html-input.component';
 import { HtmlButtonComponent } from './controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './controls/html-select/html-select.component';
 import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
+import { HtmlBagComponent } from './controls/html-bag/html-bag.component';
 import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaphore.component';
 import { ShapesComponent } from './shapes/shapes.component';
@@ -23,6 +24,8 @@ import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
 
 import { Dictionary } from '../_helpers/dictionary';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
+import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
+import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { forEach } from '@angular/router/src/utils/collection';
 
 
@@ -42,6 +45,8 @@ export class GaugesManager {
     memorySigGauges = {};
 
     mapChart = {};
+    mapGauges = {};
+
     // list of gauges tags to speed up the check
     gaugesTags = [];
 
@@ -50,7 +55,7 @@ export class GaugesManager {
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent];
     // list of gauges components
-    static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent,
+    static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent];
 
     constructor(private hmiService: HmiService,
@@ -142,13 +147,15 @@ export class GaugesManager {
      * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
      * @param ga 
      */
-    initInEditor(ga: GaugeSettings) {
+    initInEditor(ga: GaugeSettings, res: any, ref: any,) {
         if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
             HtmlButtonComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
             HtmlChartComponent.detectChange(ga);
+        } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
+            this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
         }
         return false;
     }
@@ -255,6 +262,23 @@ export class GaugesManager {
         return null;
     }
 
+    checkElementToResize(ga: GaugeSettings, res: any, ref: any) {
+        if (this.mapGauges[ga.id]) {
+            for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+                if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                    if (typeof GaugesManager.Gauges[i]['resize'] === 'function') {
+                        let options;
+                        if (this.mapGauges[ga.id].options) {
+                            options = this.mapGauges[ga.id].options;
+                        }
+                        return GaugesManager.Gauges[i]['resize'](ga, res, ref, options);
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
 	/**
 	 * get all gauge settings binded to dom view with the signal
 	 * @param domViewId 
@@ -343,6 +367,13 @@ export class GaugesManager {
                             }
                         });
                     }
+                    break;
+                } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
+                    Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                        if (k === ga.id) {
+                            HtmlBagComponent.processValue(ga, svgele, sig, gaugeStatus, this.memorySigGauges[sig.id][k]);
+                        }
+                    });
                     break;
                 } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
                     GaugesManager.Gauges[i]['processValue'](ga, svgele, sig, gaugeStatus);
@@ -492,6 +523,11 @@ export class GaugesManager {
             });
             gauge.setRange(Object.keys(chartRange)[0]);
             // gauge.onTimeRange = this.onTimeRange;
+            this.mapGauges[ga.id] = gauge;
+            return gauge;
+        } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
+            let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
+            this.mapGauges[ga.id] = gauge;
             return gauge;
         }
     }

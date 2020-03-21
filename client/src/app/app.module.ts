@@ -13,6 +13,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { DndModule } from 'ngx-drag-drop';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { GestureConfig } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
@@ -73,6 +75,7 @@ import { HtmlInputComponent } from './gauges/controls/html-input/html-input.comp
 import { HtmlButtonComponent } from './gauges/controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.component';
 import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
+import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { UsersComponent, DialogUser } from './users/users.component';
@@ -81,6 +84,9 @@ import { DialogUserInfo } from './home/home.component';
 import { ShapesComponent } from './gauges/shapes/shapes.component';
 import { ProcEngComponent } from './gauges/shapes/proc-eng/proc-eng.component';
 import { ApeShapesComponent } from './gauges/shapes/ape-shapes/ape-shapes.component';
+
+import { NgxGaugeComponent } from './gui-helpers/ngx-gauge/ngx-gauge.component';
+import { BagPropertyComponent } from './gauges/bag-property/bag-property.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
@@ -115,11 +121,13 @@ export function createTranslateLoader(http: HttpClient) {
         HtmlButtonComponent,
         HtmlSelectComponent,
         HtmlChartComponent,
+        HtmlBagComponent,
         GaugeProgressComponent,
         GaugeSemaphoreComponent,
         GaugePropertyComponent,
         DialogGaugePermission,
         ChartPropertyComponent,
+        BagPropertyComponent,
         ShapesComponent,
         ProcEngComponent,
         ApeShapesComponent,
@@ -142,6 +150,7 @@ export function createTranslateLoader(http: HttpClient) {
         LazyForDirective,
         NgxDygraphsComponent,
         ChartConfigComponent,
+        NgxGaugeComponent,
         DialogListItem,
         UsersComponent,
         DialogUser,
@@ -186,7 +195,8 @@ export function createTranslateLoader(http: HttpClient) {
         Utils,
         Dictionary,
         ModalPositionCache,
-        Define
+        Define,
+        { provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig }
     ],
     entryComponents: [
         DialogDocProperty,
@@ -195,6 +205,8 @@ export function createTranslateLoader(http: HttpClient) {
         GaugePropertyComponent,
         DialogGaugePermission,
         ChartPropertyComponent,
+        NgxGaugeComponent,
+        BagPropertyComponent,
         DevicePropertyComponent,
         TagPropertyComponent,
         ConfirmDialogComponent,

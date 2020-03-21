@@ -23,6 +23,8 @@ import * as FileSaver from 'file-saver';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
+import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
+import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 
 declare var Gauge: any;
 
@@ -205,6 +207,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 (eleremoved) => {
                     this.onRemoveElement(eleremoved);
+                },
+                (eleresized) => {
+                    if (eleresized && eleresized.id) {
+                        let ga: GaugeSettings = this.getGaugeSettings(eleresized);
+                        this.gaugesManager.checkElementToResize(ga, this.resolver, this.viewContainerRef);
+                    }
                 }
             );
 
@@ -936,6 +944,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 position: { top: '80px' }
             });
+        } else if (dlgType === GaugeDialogType.Gauge) {
+            dialogRef = this.dialog.open(BagPropertyComponent, {
+                minWidth: '800px',
+                minHeight: '780px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()), dlgType: dlgType
+                },
+                position: { top: '30px' }
+            });
         } else {
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 minWidth: '700px',
@@ -952,7 +970,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);
-                this.gaugesManager.initInEditor(result.settings);
+                this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
             }
             // } else {
             //   settings = JSON.parse(JSON.stringify(oldvalue));

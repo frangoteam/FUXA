@@ -44,6 +44,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
                 if (gab.property) {
                     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 }
+                htmlChart.innerHTML = '';
                 let options = { interactionModel: {} };    // option to remove interaction in editor modus
                 if (isview) {
                     options = null;
@@ -58,6 +59,29 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
                 const loaderComponentElement = componentRef.location.nativeElement;
                 htmlChart.appendChild(loaderComponentElement);
                 componentRef.instance.resize(htmlChart.clientHeight - ((componentRef.instance.withToolbar) ? 34 : 0), htmlChart.clientWidth);
+                return componentRef.instance;
+            }
+        }
+    }
+
+    static resize(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
+        let ele = document.getElementById(gab.id);
+        if (ele) {
+            let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD);
+            if (htmlChart) {
+                const factory = resolver.resolveComponentFactory(NgxDygraphsComponent);
+                const componentRef = viewContainerRef.createComponent(factory);
+                htmlChart.innerHTML = '';
+                let options = { interactionModel: {} };    // option to remove interaction in editor modus
+                if (gab.property) {
+                    componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
+                }
+                componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
+                componentRef.instance.isEditor = true;
+                componentRef.changeDetectorRef.detectChanges();
+                const loaderComponentElement = componentRef.location.nativeElement;
+                htmlChart.appendChild(loaderComponentElement);
+                componentRef.instance.resize();
                 return componentRef.instance;
             }
         }

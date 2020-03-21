@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "keywords": [],
   "author": "frangoteam <4frango@gmail.com>",
   "description": "Web-based Process Visualization (SCADA/HMI) software",
@@ -46,6 +46,7 @@
     "gulp-sass": "^4.0.1",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
+    "hammerjs": "^2.0.8",
     "material-design-icons": "^3.0.1",
     "ng5-slider": "^1.1.7",
     "ngx-color-picker": "^7.4.0",
