@@ -58,7 +58,7 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
             if (this.gaugeType === GaugeType.Donut) {
                 this.optionsDonut = this.options;
             } else if (this.gaugeType === GaugeType.Zones) {
-                this.optionsGauge = this.options;
+                this.optionsZones = this.options;
             } else {
                 this.optionsGauge = this.options;
             }

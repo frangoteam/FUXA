@@ -213,6 +213,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                         let ga: GaugeSettings = this.getGaugeSettings(eleresized);
                         this.gaugesManager.checkElementToResize(ga, this.resolver, this.viewContainerRef);
                     }
+                },
+                (copiedpasted) => {
+                    if (copiedpasted && copiedpasted.copy && copiedpasted.past && copiedpasted.copy.length == copiedpasted.past.length) {
+                        for (let i = 0; i < copiedpasted.copy.length; i++) {
+                            let gasrc: GaugeSettings = this.getGaugeSettings(copiedpasted.copy[i]);
+                            let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
+                            gadest.property = JSON.parse(JSON.stringify(gasrc.property));
+                            this.checkGaugeAdded(gadest);
+                        }
+                    }
                 }
             );
 

@@ -4742,6 +4742,15 @@ var EditorComponent = (function () {
                     var ga = _this.getGaugeSettings(eleresized);
                     _this.gaugesManager.checkElementToResize(ga, _this.resolver, _this.viewContainerRef);
                 }
+            }, function (copiedpasted) {
+                if (copiedpasted && copiedpasted.copy && copiedpasted.past && copiedpasted.copy.length == copiedpasted.past.length) {
+                    for (var i = 0; i < copiedpasted.copy.length; i++) {
+                        var gasrc = _this.getGaugeSettings(copiedpasted.copy[i]);
+                        var gadest = _this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
+                        gadest.property = JSON.parse(JSON.stringify(gasrc.property));
+                        _this.checkGaugeAdded(gadest);
+                    }
+                }
             });
             this.winRef.nativeWindow.svgEditor.init();
             $(initContextmenu);
@@ -6282,7 +6291,7 @@ var BagPropertyComponent = (function () {
                 this.optionsDonut = this.options;
             }
             else if (this.gaugeType === __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Zones) {
-                this.optionsGauge = this.options;
+                this.optionsZones = this.options;
             }
             else {
                 this.optionsGauge = this.options;
@@ -11762,7 +11771,6 @@ var NgxGaugeComponent = (function () {
         var canvas = this.canvas.nativeElement;
         var w = canvas.parentNode.clientWidth;
         var h = canvas.parentNode.clientHeight - (canvas.parentNode.clientHeight / 4);
-        console.log('resize: ' + w + '/' + h);
         this.canvas.nativeElement.height = h;
         this.canvas.nativeElement.width = w;
         this.init(this.type);

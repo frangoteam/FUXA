@@ -28,3 +28,8 @@ $my-slide-toggle-warn: mat-palette($mat-red, 600);
 $my-slide-toggle-theme:  mat-light-theme($my-slide-toggle-primary, $my-slide-toggle-accent, $my-slide-toggle-warn);
 @include mat-slide-toggle-theme($my-slide-toggle-theme);
 
+$my-slider-primary: mat-palette($mat-blue, 700);
+$my-slider-accent: mat-palette($mat-green, 600);
+$my-slider-warn: mat-palette($mat-red, 600);
+$my-slider-theme:  mat-light-theme($my-slider-primary, $my-slider-primary, $my-slider-warn);
+@include mat-slider-theme($my-slider-theme);

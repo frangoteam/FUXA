@@ -47,7 +47,6 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         let canvas = this.canvas.nativeElement;
         let w = canvas.parentNode.clientWidth;
         let h = canvas.parentNode.clientHeight - (canvas.parentNode.clientHeight / 4);        
-        console.log('resize: ' + w + '/' + h);
         this.canvas.nativeElement.height = h;
         this.canvas.nativeElement.width = w;
         this.init(this.type);
