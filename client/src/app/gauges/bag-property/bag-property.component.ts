@@ -152,7 +152,6 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
         if (event) {
             let opt = new GaugeOptions();
             this.options.renderTicks = JSON.parse(JSON.stringify(opt.renderTicks));
-            this.options.staticFontSize = opt.staticFontSize;
         } else {
             this.options.renderTicks = {};
         }
@@ -171,14 +170,18 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
                     }                    
                 });
             }
-            if (labels.length) {
-                this.options.staticLabels = { labels: labels, font: this.options.staticFontSize + 'px sans-serif' };
-            }
+            this.options.staticLabels = { labels: labels, font: this.options.staticFontSize + 'px sans-serif', color: this.options.staticFontColor };
             this.onGaugeChange(this.gaugeType);
         } else if (opt === 'fontSize') {
             this.options.staticFontSize = value;
             if (this.options.staticLabels) {
                 this.options.staticLabels.font = this.options.staticFontSize + 'px sans-serif' ;
+                this.setGaugeOptions();
+            }
+        } else if (opt === 'labelsColor') {
+            this.options.staticFontColor = value;
+            if (this.options.staticLabels) {
+                this.options.staticLabels.color = this.options.staticFontColor;
                 this.setGaugeOptions();
             }
         }

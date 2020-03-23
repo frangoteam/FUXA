@@ -312,6 +312,7 @@
     "bag.property-divisions-color": "Divisions color",
     "bag.property-subdivisions-color": "SubDivisions color",
     "bag.property-divisionfont-size": "Divisions font size",
+    "bag.property-divisionfont-color": "Divisions font color",
     "bag.property-divisions-labels": "Divisions labels (ex. 10;20;...)",
     "bag.property-current-value": "Current value",
     "bag.property-min": "Min",

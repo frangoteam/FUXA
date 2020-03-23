@@ -45,10 +45,12 @@ export class GaugeOptions {
 
     staticLabelsText: string = '200;500;2100;2800';
     staticFontSize: number = 10;
+    staticFontColor: string = '#000000';
     staticLabels? = {
         font: '10px sans-serif',
         labels: [200, 500, 2100, 2800],
-        fractionDigits: 0
+        fractionDigits: 0,
+        color: '#000000'
     };
     staticZones? = [
          {strokeStyle: "#F03E3E", min: 0, max: 200},

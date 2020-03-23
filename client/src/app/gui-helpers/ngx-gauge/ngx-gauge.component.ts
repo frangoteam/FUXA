@@ -73,6 +73,9 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         this.gauge.minValue = options.minValue;
         this.gauge.maxValue = options.maxValue;
         this.gaugetext.nativeElement.style.fontSize = options.fontSize + 'px';
+        if (options.pointer && options.pointer.color) {
+            this.gaugetext.nativeElement.style.color = options.pointer.color;
+        }
         this.gaugetext.nativeElement.style.top = options.textFilePosition + '%';
         this.gauge.setOptions(options);
         this.gauge.ctx.clearRect(0, 0, this.gauge.ctx.canvas.width, this.gauge.ctx.canvas.height);
