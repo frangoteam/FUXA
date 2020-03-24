@@ -4,6 +4,8 @@ FUXA is a web-based Process Visualization (SCADA/HMI) software. With FUXA you ca
 
 ![fuxa editor](/screenshot/fuxa-editor.png) 
 
+![fuxa ani](/screenshot/fuxa-ani.gif)
+
 ## Features
 - S7 Protocol to communicate with Siemens CPU
 - A client for OPC UA connectivity
