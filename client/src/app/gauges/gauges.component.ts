@@ -433,7 +433,7 @@ export class GaugesManager {
      * used from controls in editor, to set the colorpicker of selected control
      */
     static checkGaugeColor(ele: any, eles: any, colors: any): boolean {
-        if (ele && eles && (eles.length <= 1 || !eles[1])) {
+        if (ele && ele.type && eles && (eles.length <= 1 || !eles[1]) && colors) {
             if (ele.type.startsWith(GaugeProgressComponent.TypeTag)) {
                 colors.fill = GaugeProgressComponent.getFillColor(eles[0]);
                 colors.stroke = GaugeProgressComponent.getStrokeColor(eles[0]);

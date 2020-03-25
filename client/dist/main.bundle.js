@@ -9786,7 +9786,7 @@ var GaugesManager = (function () {
      * used from controls in editor, to set the colorpicker of selected control
      */
     GaugesManager.checkGaugeColor = function (ele, eles, colors) {
-        if (ele && eles && (eles.length <= 1 || !eles[1])) {
+        if (ele && ele.type && eles && (eles.length <= 1 || !eles[1]) && colors) {
             if (ele.type.startsWith(__WEBPACK_IMPORTED_MODULE_12__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].TypeTag)) {
                 colors.fill = __WEBPACK_IMPORTED_MODULE_12__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getFillColor(eles[0]);
                 colors.stroke = __WEBPACK_IMPORTED_MODULE_12__controls_gauge_progress_gauge_progress_component__["a" /* GaugeProgressComponent */].getStrokeColor(eles[0]);
