@@ -487,7 +487,7 @@ function OpcUAclient(_data, _logger, _events) {
         var nodeId = _nodeId;
         return function (dataValue) {
             if (dataValue && dataValue.value) {
-                console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
+                // console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
                 if (data.tags[nodeId]) {
                     data.tags[nodeId].value = dataValue.value.value;
                     data.tags[nodeId].timestamp = dataValue.serverTimestamp.toString();

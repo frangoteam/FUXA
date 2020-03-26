@@ -7,6 +7,7 @@ import { AuthService } from '../_services/auth.service';
 import { ProjectService } from '../_services/project.service';
 
 const TOKEN_HEADER_KEY = 'x-access-token';
+const USER_HEADER_KEY = 'x-auth-user';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -19,6 +20,12 @@ export class AuthInterceptor implements HttpInterceptor {
         if (authService.getUserToken) {
             const token = authService.getUserToken();
             if (token != null) {
+                const user = authService.getUser();
+
+                if (user) {
+                    let locuser = {user: user.username, groups: user.groups};
+                    req = req.clone({ headers: req.headers.set(USER_HEADER_KEY, JSON.stringify(locuser)) });
+                }
                 req = req.clone({ headers: req.headers.set(TOKEN_HEADER_KEY, token) });
             }
         }

@@ -451,11 +451,15 @@ export class ProjectService {
     }
 
     isSecurityEnabled() {
-        if (environment.serverEnabled && this.serverSettings && this.serverSettings.secureEnabled) {
+        if (environment.serverEnabled) {
+            if (this.serverSettings && !this.serverSettings.secureEnabled) {
+                return false;
+            }
             return true;
         } else {
             return false;
         }
+
     }
 
     private _deepEquals(x, y) {

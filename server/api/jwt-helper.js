@@ -36,6 +36,12 @@ function verifyToken (req, res, next) {
             } else {
                 req.userId = decoded.id;
                 req.userGroups = decoded.groups;
+                if (req.headers['x-auth-user']) {
+                    let user = JSON.parse(req.headers['x-auth-user']);
+                    if (user && user.groups != req.userGroups) {
+                        res.status(403).json({ error: "unauthorized_error", message: "User Profile Corrupted!" });
+                    }
+                }
                 next();
             }
         });

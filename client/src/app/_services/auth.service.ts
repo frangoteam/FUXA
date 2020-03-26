@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { User } from '../_models/user';
+import { User, UserGroups } from '../_models/user';
 import { environment } from '../../environments/environment';
 import { EndPointApi } from '../_helpers/endpointapi';
 
@@ -55,6 +55,13 @@ export class AuthService {
 			return null;
 		}
 	}
+
+    isAdmin(): boolean {
+        if (this.currentUser && UserGroups.ADMINMASK.indexOf(this.currentUser.groups) !== -1) {
+            return true;
+        }
+        return false;
+    }
 
 	// to check by page refresh
 	private saveUserToken(user: UserProfile) {

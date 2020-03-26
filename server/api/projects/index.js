@@ -41,7 +41,9 @@ module.exports = {
                 }
             }).catch(function(err) {
                 if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
+                    if (err.code !== 'ERR_HTTP_HEADERS_SENT') {
+                        res.status(400).json({error:err.code, message: err.message});
+                    }
                 } else {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }

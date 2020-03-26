@@ -18,6 +18,7 @@ import { GestureConfig } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
+import { AuthGuard } from './auth.guard';
 
 import { HomeComponent } from './home/home.component';
 import { HeaderComponent, DialogInfo } from './header/header.component';
@@ -196,6 +197,7 @@ export function createTranslateLoader(http: HttpClient) {
         Dictionary,
         ModalPositionCache,
         Define,
+        AuthGuard,
         { provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig }
     ],
     entryComponents: [

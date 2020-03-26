@@ -5,6 +5,7 @@ export class User {
 }
 
 export class UserGroups {
+    static ADMINMASK = [-1, 255];
     static EXTENSION = 8;
     static Groups = [{id: 1, label: 'A'},
             {id: 2, label: 'B'},
