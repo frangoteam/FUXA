@@ -46,7 +46,7 @@ Then design your HMI pages with the SVG editor
 Now you can test by changing the values to PLC or manually with the testbench
 ![fuxa test](/screenshot/fuxa-test.gif)
 
-# To Debug (Full Stack)
+## To Debug (Full Stack)
 Install and start to serve the frontend
 ```
 cd ./client
@@ -59,7 +59,7 @@ Start the Server and Client (Browser) in Debug Mode
 In vscode: Debug ‘Server & Client’
 ```
 
-# To Build
+## To Build
 Build the frontend for production
 ```
 cd ./client
@@ -73,6 +73,9 @@ Tested with:
 
 ## Issues
 If you identify any errors, or have an idea for an improvement, please open an [issue](/../../issues).
+
+## Let us know!
+We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.
 
 ## Thank you!
 - [SVG-edit](https://github.com/SVG-Edit/svgedit)
