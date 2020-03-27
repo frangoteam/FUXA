@@ -42,7 +42,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
         if (ele && gab.property) {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                htmlButton.innerHTML = gab.name;
+                htmlButton.innerHTML = (gab.name) ? gab.name : ' ';
                 //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
             }
         }
@@ -50,7 +50,13 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
 
     static initElementColor(bkcolor, color, ele) {
         let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
-        if (htmlButton) {
+        if (htmlButton) {            
+            ele.setAttribute('fill', 'rgba(0, 0, 0, 0)');
+            ele.setAttribute('stroke', 'rgba(0, 0, 0, 0)');
+            for (let i = 0; i < ele.children.length; i++) {
+                ele.children[i].removeAttribute('fill');
+                ele.children[i].removeAttribute('stroke');
+            }
             if (bkcolor) {
                 htmlButton.style.backgroundColor = bkcolor;
             }

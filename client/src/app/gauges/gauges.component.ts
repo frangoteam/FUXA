@@ -529,6 +529,8 @@ export class GaugesManager {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
+        } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
+            HtmlButtonComponent.initElement(ga);
         }
     }
 

@@ -7342,7 +7342,7 @@ var HtmlButtonComponent = (function (_super) {
         if (ele && gab.property) {
             var htmlButton = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                htmlButton.innerHTML = gab.name;
+                htmlButton.innerHTML = (gab.name) ? gab.name : ' ';
                 //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
             }
         }
@@ -7350,6 +7350,12 @@ var HtmlButtonComponent = (function (_super) {
     HtmlButtonComponent.initElementColor = function (bkcolor, color, ele) {
         var htmlButton = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixB);
         if (htmlButton) {
+            ele.setAttribute('fill', 'rgba(0, 0, 0, 0)');
+            ele.setAttribute('stroke', 'rgba(0, 0, 0, 0)');
+            for (var i = 0; i < ele.children.length; i++) {
+                ele.children[i].removeAttribute('fill');
+                ele.children[i].removeAttribute('stroke');
+            }
             if (bkcolor) {
                 htmlButton.style.backgroundColor = bkcolor;
             }
@@ -9961,6 +9967,9 @@ var GaugesManager = (function () {
             var gauge = __WEBPACK_IMPORTED_MODULE_11__controls_html_bag_html_bag_component__["a" /* HtmlBagComponent */].initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
+        }
+        else if (ga.type.startsWith(__WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].TypeTag)) {
+            __WEBPACK_IMPORTED_MODULE_8__controls_html_button_html_button_component__["a" /* HtmlButtonComponent */].initElement(ga);
         }
     };
     /**
