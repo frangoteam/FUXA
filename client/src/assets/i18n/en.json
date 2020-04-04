@@ -234,6 +234,15 @@
     "shapes.action-stop": "Stop",
     "shapes.action-clockwise": "Turn clockwise",
     "shapes.action-anticlockwise": "Turn anticlockwise",
+    "shapes.action-downup": "Up and down",
+
+    "pipe.property-border-width": "Border width",
+    "pipe.property-border-color": "Border color",
+    "pipe.property-pipe-width": "Pipe width",
+    "pipe.property-pipe-color": "Pipe color",
+    "pipe.property-content-width": "Content width",
+    "pipe.property-content-color": "Content color",
+    "pipe.property-content-space": "Content dash",
 
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",

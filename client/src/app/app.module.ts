@@ -67,6 +67,7 @@ import { ValueComponent } from './gauges/controls/value/value.component';
 import { GaugePropertyComponent, DialogGaugePermission } from './gauges/gauge-property/gauge-property.component';
 import { ChartPropertyComponent } from './gauges/chart-property/chart-property.component';
 import { FlexInputComponent } from './gauges/gauge-property/flex-input/flex-input.component';
+import { FlexAuthComponent } from './gauges/gauge-property/flex-auth/flex-auth.component';
 import { FlexHeadComponent } from './gauges/gauge-property/flex-head/flex-head.component';
 import { FlexEventComponent } from './gauges/gauge-property/flex-event/flex-event.component';
 import { FlexActionComponent } from './gauges/gauge-property/flex-action/flex-action.component';
@@ -88,6 +89,8 @@ import { ApeShapesComponent } from './gauges/shapes/ape-shapes/ape-shapes.compon
 
 import { NgxGaugeComponent } from './gui-helpers/ngx-gauge/ngx-gauge.component';
 import { BagPropertyComponent } from './gauges/bag-property/bag-property.component';
+import { PipePropertyComponent } from './gauges/pipe/pipe-property/pipe-property.component';
+import { PipeComponent } from './gauges/pipe/pipe.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
@@ -129,12 +132,14 @@ export function createTranslateLoader(http: HttpClient) {
         DialogGaugePermission,
         ChartPropertyComponent,
         BagPropertyComponent,
+        PipePropertyComponent,
         ShapesComponent,
         ProcEngComponent,
         ApeShapesComponent,
         TesterComponent,
         TutorialComponent,
         FlexInputComponent,
+        FlexAuthComponent,
         FlexHeadComponent,
         FlexEventComponent,
         FlexActionComponent,
@@ -194,6 +199,7 @@ export function createTranslateLoader(http: HttpClient) {
         GaugesManager,
         WindowRef,
         Utils,
+        PipeComponent,
         Dictionary,
         ModalPositionCache,
         Define,
@@ -209,6 +215,7 @@ export function createTranslateLoader(http: HttpClient) {
         ChartPropertyComponent,
         NgxGaugeComponent,
         BagPropertyComponent,
+        PipePropertyComponent,
         DevicePropertyComponent,
         TagPropertyComponent,
         ConfirmDialogComponent,

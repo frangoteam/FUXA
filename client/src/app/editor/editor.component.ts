@@ -24,6 +24,7 @@ import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
+import { PipePropertyComponent } from '../gauges/pipe/pipe-property/pipe-property.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 
 declare var Gauge: any;
@@ -964,6 +965,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 position: { top: '30px' }
             });
+        } else if (dlgType === GaugeDialogType.Pipe) {
+            dialogRef = this.dialog.open(PipePropertyComponent, {
+                minWidth: '700px',
+                minHeight: '700px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    withEvents: eventsSupported, withActions: actionsSupported
+                },
+                position: { top: '80px' }
+            });
         } else {
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 minWidth: '700px',
@@ -980,11 +992,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);
-                this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
+                let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
+                if (dlgType === GaugeDialogType.Pipe && result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
+                    // by init a path we need to change the id
+                    result.settings.id = result_gauge.element.id;
+                    callback(result.settings);
+                    this.saveView(this.currentView);
+                }
             }
-            // } else {
-            //   settings = JSON.parse(JSON.stringify(oldvalue));
-            // }
         });
     }
     //#endregion

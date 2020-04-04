@@ -711,3 +711,6 @@ select#start_marker option[value="D"] { background:url('/assets/images/select-po
 .icon-bag {
   background: url('/assets/images/bag.svg') no-repeat center center;
 }
+.icon-pipe {
+  background: url('/assets/images/pipe.svg') no-repeat center center;
+}

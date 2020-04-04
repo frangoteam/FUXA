@@ -21,13 +21,14 @@ import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaph
 import { ShapesComponent } from './shapes/shapes.component';
 import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
 import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
+import { PipeComponent } from './pipe/pipe.component';
 
+import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { forEach } from '@angular/router/src/utils/collection';
-
 
 @Injectable()
 export class GaugesManager {
@@ -51,14 +52,17 @@ export class GaugesManager {
     gaugesTags = [];
 
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, ApeShapesComponent.TypeTag];
+    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, 
+        ApeShapesComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithActions = [ApeShapesComponent];
+    static GaugeWithActions = [ApeShapesComponent, PipeComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
-        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent];
+        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
+        PipeComponent];
 
     constructor(private hmiService: HmiService,
+        private winRef: WindowRef,
         private translateService: TranslateService,
         private dialog: MatDialog) {
         // subscription to the change of variable value, then emit to the gauges of fuxa-view 
@@ -156,6 +160,8 @@ export class GaugesManager {
             HtmlChartComponent.detectChange(ga);
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
+        } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
+            return this.mapGauges[ga.id] = PipeComponent.detectChange(ga, res, this.winRef);
         }
         return false;
     }
@@ -529,8 +535,6 @@ export class GaugesManager {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
-        } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
-            HtmlButtonComponent.initElement(ga);
         }
     }
 

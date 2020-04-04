@@ -62,7 +62,7 @@ export class FlexVariableComponent implements OnInit {
             this.deviceCtrl.setValue(seldevice);
             this.onDeviceChange(this.deviceCtrl);
             if (this.variableList) {
-                for (let i = 0; i < this.variable.length; i++) {
+                for (let i = 0; i < this.variableList.length; i++) {
                     if (this.variableList[i].id === this.variable) {
                         this.currentVariable = this.variableList[i];
                     }

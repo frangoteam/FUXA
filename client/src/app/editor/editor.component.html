@@ -129,7 +129,10 @@
                         </div>
                         <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('html_bag')}" (click)="setMode('html_bag')">
                             <span class="icon-tool icon-bag"></span>
-                        </div>                        
+                        </div>
+                        <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('pipe')}" (click)="setMode('pipe')">
+                            <span class="icon-tool icon-pipe"></span>
+                        </div>               
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
