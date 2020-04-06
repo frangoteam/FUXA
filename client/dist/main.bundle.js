@@ -8004,6 +8004,10 @@ var ValueComponent = (function (_super) {
             if (Number.isNaN(val)) {
                 // maybe boolean
                 val = Number(sig.value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = sig.value;
+                }
             }
             else {
                 val = parseFloat(val.toFixed(5));

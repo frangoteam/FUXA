@@ -37,10 +37,14 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
             let g = svgele.node.children[0];
-            let val = parseFloat(sig.value);
+            let val: any = parseFloat(sig.value);
             if (Number.isNaN(val)) {
                 // maybe boolean
                 val = Number(sig.value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = sig.value;
+                }
             } else {
                 val = parseFloat(val.toFixed(5));
             }

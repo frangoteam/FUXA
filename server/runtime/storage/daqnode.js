@@ -204,7 +204,7 @@ function DaqNode(_settings, _log, _id) {
                             });
                         }
                     }, reason => {
-                        if (reason.stack) {
+                        if (reason && reason.stack) {
                             logger.error('daqstorage.add-daq-values-_insertTagToMap (' + id + '): ' + reason.stack);
                         } else {
                             logger.error('daqstorage.add-daq-values-_insertTagToMap error (' + id + '): ' + reason);
@@ -241,12 +241,12 @@ function DaqNode(_settings, _log, _id) {
                                 _checkDataWorking(false);
                             }                            
                         }, reason => {
-                            if (reason.stack) {
+                            if (reason && reason.stack) {
                                 logger.error('daqstorage.add-daq-values-addDaqfnc (' + id + '): ' + reason.stack);
                             } else {
                                 logger.error('daqstorage.add-daq-values-addDaqfnc (' + id + '): ' + reason);
                             }
-                            _checkWorking(false);
+                            _checkDataWorking(false);
                         });
                     }
                 }
