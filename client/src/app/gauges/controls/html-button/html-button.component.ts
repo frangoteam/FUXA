@@ -42,7 +42,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
         if (ele && gab.property) {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                htmlButton.innerHTML = (gab.name) ? gab.name : ' ';
+                htmlButton.innerHTML = (gab.name) ? gab.name : '<span>&nbsp;</span>';
                 //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
             }
         }
