@@ -376,8 +376,8 @@ export class GaugesManager {
                     break;
                 } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
                     Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
-                        if (k === ga.id) {
-                            HtmlBagComponent.processValue(ga, svgele, sig, gaugeStatus, this.memorySigGauges[sig.id][k]);
+                        if (k === ga.id && this.mapGauges[k]) {
+                            HtmlBagComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);//this.memorySigGauges[sig.id][k]);
                         }
                     });
                     break;

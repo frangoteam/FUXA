@@ -2119,6 +2119,7 @@ var ProjectService = (function () {
                     this.setNewProject();
                 }
             }
+            this.notifyToLoadHmi();
             this.ready = true;
         }
     };
@@ -2145,6 +2146,7 @@ var ProjectService = (function () {
         }
         else {
             localStorage.setItem(this.prjresource, JSON.stringify(this.projectData));
+            this.load();
         }
         return true;
     };
@@ -5564,6 +5566,7 @@ var EditorComponent = (function () {
                 var result_gauge = _this.gaugesManager.initInEditor(result.settings, _this.resolver, _this.viewContainerRef);
                 if (dlgType === __WEBPACK_IMPORTED_MODULE_7__gauges_gauge_property_gauge_property_component__["b" /* GaugeDialogType */].Pipe && result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
                     // by init a path we need to change the id
+                    delete _this.currentView.items[result.settings.id];
                     result.settings.id = result_gauge.element.id;
                     callback(result.settings);
                     _this.saveView(_this.currentView);
@@ -6019,7 +6022,7 @@ var FuxaViewComponent = (function () {
     FuxaViewComponent.prototype.loadHmi = function (view) {
         if (this.id) {
             this.gaugesManager.unbindGauge(this.id);
-            this.mapGaugeStatus = {};
+            this.clearGaugeStatus();
         }
         if (view) {
             this.id = view.id;
@@ -7369,7 +7372,7 @@ var HtmlButtonComponent = (function (_super) {
         if (ele && gab.property) {
             var htmlButton = __WEBPACK_IMPORTED_MODULE_2__helpers_utils__["b" /* Utils */].searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                htmlButton.innerHTML = (gab.name) ? gab.name : ' ';
+                htmlButton.innerHTML = (gab.name) ? gab.name : '<span>&nbsp;</span>';
                 //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
             }
         }
@@ -9936,8 +9939,8 @@ var GaugesManager = (function () {
                 }
                 else if (ga.type.startsWith(__WEBPACK_IMPORTED_MODULE_11__controls_html_bag_html_bag_component__["a" /* HtmlBagComponent */].TypeTag)) {
                     Object.keys(this.memorySigGauges[sig.id]).forEach(function (k) {
-                        if (k === ga.id) {
-                            __WEBPACK_IMPORTED_MODULE_11__controls_html_bag_html_bag_component__["a" /* HtmlBagComponent */].processValue(ga, svgele, sig, gaugeStatus, _this.memorySigGauges[sig.id][k]);
+                        if (k === ga.id && _this.mapGauges[k]) {
+                            __WEBPACK_IMPORTED_MODULE_11__controls_html_bag_html_bag_component__["a" /* HtmlBagComponent */].processValue(ga, svgele, sig, gaugeStatus, _this.mapGauges[k]); //this.memorySigGauges[sig.id][k]);
                         }
                     });
                     break;

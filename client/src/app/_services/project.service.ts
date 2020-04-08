@@ -85,6 +85,7 @@ export class ProjectService {
                     this.setNewProject();
                 }
             }
+            this.notifyToLoadHmi();
             this.ready = true;
         }
     }
@@ -110,6 +111,7 @@ export class ProjectService {
             });
         } else {
             localStorage.setItem(this.prjresource, JSON.stringify(this.projectData));
+            this.load();
         }
         return true;
     }

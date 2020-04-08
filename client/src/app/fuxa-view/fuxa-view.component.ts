@@ -82,7 +82,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	public loadHmi(view: View) {
 		if (this.id) {
 			this.gaugesManager.unbindGauge(this.id);
-			this.mapGaugeStatus = {};
+			this.clearGaugeStatus();
 		}
 		if (view) {
 			this.id = view.id;
