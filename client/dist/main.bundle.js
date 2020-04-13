@@ -6014,6 +6014,7 @@ var FuxaViewComponent = (function () {
             catch (e) {
             }
         });
+        this.mapGaugeStatus = {};
     };
     /**
      * load the svg content to show in browser, clear all binded to this view

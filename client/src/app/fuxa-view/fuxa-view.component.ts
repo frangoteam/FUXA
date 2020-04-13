@@ -73,6 +73,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 			} catch (e) {
 			}
 		});
+		this.mapGaugeStatus = {};
 	}
 
 	/**
