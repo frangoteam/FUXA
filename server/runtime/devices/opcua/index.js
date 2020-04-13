@@ -657,7 +657,10 @@ function OpcUAclient(_data, _logger, _events) {
     var _toValue = function (type, value) {
         switch (type) {
             case opcua.DataType.Boolean:
-                return value;
+                if (value.toLowerCase() === 'true' || value === '1') {
+                    return true;
+                }
+                return false;
             case opcua.DataType.SByte:
             case opcua.DataType.Byte:
             case opcua.DataType.Int16:
