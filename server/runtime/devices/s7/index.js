@@ -16,7 +16,8 @@ function S7client(_data, _logger, _events) {
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last Device status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-    var varsItemsMap = {};              // Mapped Signale name with DbItem to find for set value
+    var dbItemsMap = {};                // DB Mapped Signale name with DbItem to find for set value
+    var mixItemsMap = {};               // E/I/A/Q/M Mapped Signale name to find for read in polling and set value
     var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
     var lastDaqInterval = 0;            // Help to check daqInterval
     var overloading = 0;                // Overloading counter to mange the break connection
@@ -43,7 +44,6 @@ function S7client(_data, _logger, _events) {
                                 resolve();
                             }
                             _checkWorking(false);
-                            // var pdusize = s7client.GetParam(s7client['PDURequest']);
                         });
                     } else {
                         reject();
@@ -95,11 +95,14 @@ function S7client(_data, _logger, _events) {
      */
     this.polling = function () {
         if (_checkWorking(true)) {
-            var readDBfnc = [];
+            var readVarsfnc = [];
             for (var dbnum in db) {
-                readDBfnc.push(_readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
+                readVarsfnc.push(_readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
             }
-            Promise.all(readDBfnc).then(result => {
+            if (Object.keys(mixItemsMap).length) {
+                readVarsfnc.push(_readVars(Object.values(mixItemsMap)));
+            }
+            Promise.all(readVarsfnc).then(result => {
                 _checkWorking(false);
                 if (result.length) {
                     let varsValueChanged = _updateVarsValue(result);
@@ -117,10 +120,10 @@ function S7client(_data, _logger, _events) {
                     // console.log('not');
                 }
             }, reason => {
-                if (reason.stack) {
-                    logger.error(data.name + ' _readDB error: ' + reason.stack);
+                if (reason && reason.stack) {
+                    logger.error(data.name + ' _readVars error: ' + reason.stack);
                 } else {
-                    logger.error(data.name + ' _readDB error: ' + reason);
+                    logger.error(data.name + ' _readVars error: ' + reason);
                 }
                 _checkWorking(false);
             });
@@ -134,28 +137,33 @@ function S7client(_data, _logger, _events) {
         data = JSON.parse(JSON.stringify(_data));
         db = {};
         varsValue = [];
-        varsItemsMap = {};
+        dbItemsMap = {};
+        mixItemsMap = {};
         var count = 0;
         for (var id in data.tags) {
-            var varDb = _getDBValue(data.tags[id]);
-            if (varDb) {
+            var varDb = _getTagItem(data.tags[id]);
+            if (varDb instanceof DbItem) {
                 if (!db[varDb.dbnum]) {
                     var grptag = new DbItems(varDb.dbnum);
                     db[varDb.dbnum] = grptag;
                 }
-                if (!db[varDb.dbnum].Items[varDb.start]) {
-                    db[varDb.dbnum].Items[varDb.start] = varDb;
+                if (!db[varDb.dbnum].Items[varDb.Start]) {
+                    db[varDb.dbnum].Items[varDb.Start] = varDb;
                 }
-                db[varDb.dbnum].Items[varDb.start].Tags.push(data.tags[id]);
-                if (db[varDb.dbnum].MaxSize < varDb.start + datatypes[varDb.type].S7WordLen) {
-                    db[varDb.dbnum].MaxSize = varDb.start + datatypes[varDb.type].S7WordLen;
+                db[varDb.dbnum].Items[varDb.Start].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
+                if (db[varDb.dbnum].MaxSize < varDb.Start + datatypes[varDb.type].S7WordLen) {
+                    db[varDb.dbnum].MaxSize = varDb.Start + datatypes[varDb.type].S7WordLen;
                 }
                 // check Bit to Map
                 if (varDb.bit >= 0) {
                     varDb.BitMap[varDb.bit] = id;
                 }
                 count++;
-                varsItemsMap[id] = db[varDb.dbnum].Items[varDb.start];
+                dbItemsMap[id] = db[varDb.dbnum].Items[varDb.Start];
+            } else if (varDb && !isNaN(varDb.Start)) {
+                varDb.id = id;
+                varDb.name = data.tags[id].name;
+                mixItemsMap[id] = varDb;
             }
         }
         logger.info(data.name + ': data loaded (' + count + ')');
@@ -179,9 +187,10 @@ function S7client(_data, _logger, _events) {
      * Return Tag property
      */
     this.getTagProperty = function (id) {
-        if (varsItemsMap[id]) {
-            let prop = { id: id, name: id, type: varsItemsMap[id].type };
-            return prop;
+        if (dbItemsMap[id]) {
+            return { id: id, name: id, type: dbItemsMap[id].type };
+        } else if (mixItemsMap[id]) {
+            return { id: id, name: id, type: mixItemsMap[id].type };
         } else {
             return null;
         }
@@ -192,16 +201,13 @@ function S7client(_data, _logger, _events) {
      * Read the current Tag object, write the value in object and send to SPS 
      */
     this.setValue = function (sigid, value) {
-        var varDb = _getDBValue(data.tags[sigid]);
-
-        if (varDb) { //varsItemsMap[sigid]) {
-            var dbitem = varsItemsMap[sigid];
-            varDb.value = value;
-            console.log(dbitem);
-            _writeVars([varDb]).then(result => {
+        var item = _getTagItem(data.tags[sigid]);
+        if (item) {
+            item.value = value;
+            _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(data.name + ' setValue : ' + sigid + '=' + value);
             }, reason => {
-                if (reason.stack) {
+                if (reason && reason.stack) {
                     logger.error(data.name + ' _writeDB error: ' + reason.stack);
                 } else {
                     logger.error(data.name + ' _writeDB error: ' + reason);
@@ -233,7 +239,7 @@ function S7client(_data, _logger, _events) {
      * Emit to clients
      */
     var _clearVarsValue = function () {
-        for (let id in varsValue) {
+        for (var id in varsValue) {
             varsValue[id].value = null;
         }
         for (var dbid in db) {
@@ -241,36 +247,47 @@ function S7client(_data, _logger, _events) {
                 db[dbid].Items[itemid].value = null;
             }
         }
+        for (var mi in mixItemsMap) {
+            mixItemsMap[mi].value = null;
+        }
         _emitValues(varsValue);
     }
 
     /**
      * Update the Tags values read
-     * @param {*} dbvalues 
+     * @param {*} vars 
      */
-    var _updateVarsValue = function (dbvalues) {
+    var _updateVarsValue = function (vars) {
         var someval = false;
         var changed = [];
         var result = [];
-        for (var dbid in dbvalues) {
-            let dbitems = dbvalues[dbid];
-            for (var itemid in dbitems) {
-                let dbitem = dbitems[itemid];
-                let type = dbitems[itemid].type;
-                let value = dbitems[itemid].value;
-                let tags = dbitems[itemid].Tags;
-                tags.forEach(tag => {
-                    if (type === 'BOOL') {
+        for (var vid in vars) {
+            let items = vars[vid];
+            for (var itemidx in items) {
+                if (items[itemidx] instanceof DbItem) {
+                    let type = items[itemidx].type;
+                    let value = items[itemidx].value;
+                    let tags = items[itemidx].Tags;
+                    tags.forEach(tag => {
+                        if (type === 'BOOL') {
+                            try {
+                                let pos = parseInt(tag.address.charAt(tag.address.length - 1));
+                                result[tag.name] = { id: tag.name, value: (_getBit(value, pos)) ? 1 : 0, type: type };
+                            } catch (err) { }
+                        } else {
+                            result[tag.name] = { id: tag.name, value: value, type: type };
+                        }
+                        someval = true;
+                    });
+                } else {
+                    if (items[itemidx].type === 'BOOL') {
                         try {
-                            let pos = parseInt(tag.address.charAt(tag.address.length - 1));
-                            result[tag.name] = { id: tag.name, value: (_getBit(value, pos)) ? 1 : 0, type: type };
+                            items[itemidx].value = (_getBit(items[itemidx].value, items[itemidx].bit)) ? 1 : 0;
                         } catch (err) { }
-                    } else {
-                        result[tag.name] = { id: tag.name, value: value, type: type };
                     }
+                    result[items[itemidx].name] = { id: items[itemidx].name, value: items[itemidx].value, type: items[itemidx].type };
                     someval = true;
-                });
-                // console.log(value);
+                }
             }
         }
         if (someval) {
@@ -284,21 +301,17 @@ function S7client(_data, _logger, _events) {
         }
         return null;
     }
-    
+
     //#region Bit Manipolation
     _getBit = function (number, bitPosition) {
-        // return (number & (1 << bitPosition)) === 0 ? 0 : 1;
         return ((number >> bitPosition) % 2 != 0)
     }
 
     _setBit = function (number, bitPosition) {
-        // return number | (1 << bitPosition);
         return number | 1 << bitPosition;
     }
 
     _clearBit = function (number, bitPosition) {
-        // const mask = ~(1 << bitPosition);
-        // return number & mask;
         return number & ~(1 << bitPosition);
     }
 
@@ -321,7 +334,6 @@ function S7client(_data, _logger, _events) {
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        // console.log('device-status ' + data.name + ' ' + status);
         events.emit('device-status:changed', { id: data.name, status: status });
     }
 
@@ -361,9 +373,9 @@ function S7client(_data, _logger, _events) {
             let end = 0;
             let offset = Number.MAX_SAFE_INTEGER;
             vars.forEach(v => {
-                if (v.start < offset) offset = v.start;
-                if (end < v.start + datatypes[v.type].bytes) {
-                    end = v.start + datatypes[v.type].bytes;
+                if (v.Start < offset) offset = v.Start;
+                if (end < v.Start + datatypes[v.type].bytes) {
+                    end = v.Start + datatypes[v.type].bytes;
                 }
             });
             s7client.DBRead(DBNr, offset, end - offset, (err, res) => {
@@ -373,15 +385,9 @@ function S7client(_data, _logger, _events) {
                     let value = null;
                     if (v.type === 'BOOL') {
                         // check the full byte and send all bit if there is a change 
-                        value = datatypes['BYTE'].parser(res, v.start - offset, -1);
-                        // for (let bitid in v.BitMap) {
-                        //     let value = datatypes[v.type].parser(res, v.start - offset, bitid);
-                        //     if (value !== _getBit(v.value, bitid)) {
-                        //         changed.push(v);
-                        //     }
-                        // }
+                        value = datatypes['BYTE'].parser(res, v.Start - offset, -1);
                     } else {
-                        value = datatypes[v.type].parser(res, v.start - offset, v.bit);
+                        value = datatypes[v.type].parser(res, v.Start - offset, v.bit);
                     }
                     if (value !== v.value) {
                         changed.push(v);
@@ -394,11 +400,44 @@ function S7client(_data, _logger, _events) {
         });
     }
 
-        /**
+    /**
+     * Read multiple Vars
+     * @param {*} vars 
+     */
+    var _readVars = function (vars) {
+        return new Promise((resolve, reject) => {
+            s7client.ReadMultiVars(vars, (err, res) => {
+                if (err) return this._getErr(err);
+                let changed = [];
+                let errs = [];
+
+                res = vars.map((v, i) => {
+                    let value = null;
+                    if (res[i].Result !== 0) 
+                        errs.push(s7client.ErrorText(res[i].Result));
+                    if (v.type === 'BOOL') {
+                        // check the full byte and send all bit if there is a change 
+                        value = datatypes['BYTE'].parser(res[i].Data);//, v.Start, -1);
+                    } else {
+                        value = datatypes[v.type].parser(res[i].Data);
+                    }
+                    if (value !== v.value) {
+                        changed.push(v);
+                    }
+                    v.value = value;
+                    return v;
+                });
+                if (errs.length) return reject(_getErr(errs));
+                resolve(changed);
+            });
+        });
+    }
+
+    /**
      * Write a DB and parse the result
      * @param {int} DBNr - The DB Number to read
      * @param {array} vars - Array of Var objects
-     * @param {int} vars[].start - Position of the first byte
+     * @param {int} vars[].Start - Position of the first byte
      * @param {int} [vars[].bit] - Position of the bit in the byte
      * @param {Datatype} vars[].type - Data type (BYTE, WORD, INT, etc), see {@link /s7client/?api=Datatypes|Datatypes}
      * @returns {Promise} - Resolves to the vars array with populate *value* property
@@ -409,9 +448,9 @@ function S7client(_data, _logger, _events) {
             let end = 0;
             let offset = Number.MAX_SAFE_INTEGER;
             let v = vars[0];
-            if (v.start < offset) offset = v.start;
-            if (end < v.start + datatypes[v.type].bytes) {
-                end = v.start + datatypes[v.type].bytes;
+            if (v.Start < offset) offset = v.Start;
+            if (end < v.Start + datatypes[v.type].bytes) {
+                end = v.Start + datatypes[v.type].bytes;
             }
             let buffer = datatypes[v.type].formatter(v.value)
             s7client.DBWrite(DBNr, offset, end - offset, buffer, (err, res) => {
@@ -424,7 +463,7 @@ function S7client(_data, _logger, _events) {
     /**
      * Write multiple Vars
      * @param {array} vars - Array of Var objects
-     * @param {int} vars[].start - Position of the first byte
+     * @param {int} vars[].Start - Position of the first byte
      * @param {int} [vars[].bit] - Position of the bit in the byte
      * @param {Datatype} vars[].type - Data type (BYTE, WORD, INT, etc), see {@link /s7client/?api=Datatypes|Datatypes}
      * @param {string} vars[].area - Area (pe, pa, mk, db, ct, tm)
@@ -433,15 +472,14 @@ function S7client(_data, _logger, _events) {
      * @returns {Promise} - Resolves to the vars array with populate *value* property
      */
     var _writeVars = function (vars) {
-        let toWrite = vars.map(v => ({
-            Area: s7client['S7AreaDB'],
-            WordLen: datatypes[v.type].S7WordLen,
-            DBNumber: v.dbnum,
-            Start: v.type === 'BOOL' ? v.start * 8 + v.bit : v.start,
-            Amount: 1,
-            Data: datatypes[v.type].formatter(parseFloat(v.value))
-        }));
-
+        var toWrite = vars.map(v => ({
+                Area: v.Area,
+                WordLen: datatypes[v.type].S7WordLen,
+                DBNumber: v.dbnum,
+                Start: v.type === 'BOOL' ? v.Start * 8 + v.bit : v.Start,
+                Amount: 1,
+                Data: datatypes[v.type].formatter(parseFloat(v.value))
+            }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
                 if (err) return this._getErr(err);
@@ -461,7 +499,7 @@ function S7client(_data, _logger, _events) {
      * Return the Tag object (DbItem) with value
      * DB X DBX 10.3 = Bool, DB X DBB 10 = Byte/Char, DB X DBW 10 = Int/Word, DB X DBD 10 = DInt/DWord, DB X DBD 10 = Real
      */
-    var _getDBValue = function (tag) {
+    var _getTagItem = function (tag) {
         try {
             var variable = tag.address.toUpperCase().split(' ').join('');
             if (variable) {
@@ -476,85 +514,78 @@ function S7client(_data, _logger, _events) {
                         var dbStart = variable.substring(startpos + 4);
                         var result = new DbItem(dbNum);
                         result.type = tag.type.toUpperCase();
+                        result.Area = s7client['S7AreaDB'];
                         if (dbType === 'DBB') {
-                            result.start = parseInt(dbStart);
-                            // result.Len = 1;
-                            if (result.start >= 0) {
+                            result.Start = parseInt(dbStart);
+                            if (result.Start >= 0) {
                                 return result;
                             }
                         } else if (dbType === 'DBW') {
-                            result.start = parseInt(dbStart);
-                            // result.Len = 2;
-                            if (result.start >= 0) {
+                            result.Start = parseInt(dbStart);
+                            if (result.Start >= 0) {
                                 return result;
                             }
                         } else if (dbType === 'DBD') {
-                            result.start = parseInt(dbStart);
-                            // result.Len = 4;
-                            if (result.start >= 0) {
+                            result.Start = parseInt(dbStart);
+                            if (result.Start >= 0) {
                                 return result;
                             }
                         } else if (dbType === 'DBX') {
                             var dbBool = dbStart.split('.');
                             if (dbBool.length >= 2) {
-                                result.start = parseInt(dbBool[0]);
+                                result.Start = parseInt(dbBool[0]);
                                 result.bit = parseInt(dbBool[1]);
-                                // result.Len = parseInt(dbBool[1]);
-                                if (result.start >= 0 && result.bit >= 0) {
+                                if (result.Start >= 0 && result.bit >= 0) {
                                     return result;
                                 }
                             }
                         }
                     }
+                } else {
+                    var type = tag.type.toUpperCase();
+                    var len = datatypes[type].S7WordLen;
+                    switch (prefix) {
+                        case 'EB':
+                        case 'IB':
+                        case 'EW':
+                        case 'IW':
+                        case 'ED':
+                        case 'ID':
+                            return { Area: s7client['S7AreaPE'], WordLen: len, Start: parseInt(variable.substring(2)), Amount: 1, type: type };
+                        case 'AB':
+                        case 'QB':
+                        case 'AW':
+                        case 'QW':        
+                        case 'AD':
+                        case 'QD':
+                            return { Area: s7client['S7AreaPA'], WordLen: len, Start: parseInt(variable.substring(2)), Amount: 1, type: type };
+                        case 'MB':
+                        case 'MW':
+                        case 'MD':
+                            return { Area: s7client['S7AreaMK'], WordLen: len, Start: parseInt(variable.substring(2)), Amount: 1, type: type };
+                        default:
+                            len = datatypes['BYTE'].S7WordLen;
+                            var start = parseInt(variable.substring(1, variable.indexOf('.')));
+                            var bit = parseInt(variable.substring(variable.indexOf('.') + 1));
+                            switch (prefix.substring(0, 1)) {
+                                case 'E':
+                                case 'I':
+                                    return { Area: s7client['S7AreaPE'], WordLen: len, Start: start, Amount: 1, type: type, bit: bit };
+                                case 'A':
+                                case 'Q':
+                                    return { Area: s7client['S7AreaPA'], WordLen: len, Start: start, Amount: 1, type: type, bit: bit };
+                                case 'M':
+                                    return { Area: s7client['S7AreaMK'], WordLen: len, Start: start, Amount: 1, type: type, bit: bit };
+                                case 'O':
+                                case 'T':
+                                case 'Z':
+                                case 'C':
+                                    return null;
+                                default:
+                                    return null;
+                            }
+                    }
                 }
-
-                //         case "EB":
-                //         case "IB":
-                //         case "AB":
-                //         case "QB":
-                //         case "MB":
-                //             uint bindex = uint.Parse(txt.Substring(2));
-                //             return DataSize.Byte;
-                //         case "EW":
-                //         case "IW":
-                //         case "AW":
-                //         case "QW":
-                //         case "MW":
-                //             uint windex = uint.Parse(txt.Substring(2));
-                //             return DataSize.Word;
-                //         case "ED":
-                //         case "ID":
-                //         case "AD":
-                //         case "QD":
-                //         case "MD":
-                //             uint dindex = uint.Parse(txt.Substring(2));
-                //             return DataSize.Real;
-                //         default:
-                //             switch (txt.Substring(0, 1)) {
-                //                 case "E":
-                //                 case "I":
-                //                 case "A":
-                //                 case "O":
-                //                 case "M":
-                //                 case "Q":
-                //                     break;
-                //                 case "T":
-                //                 case "Z":
-                //                 case "C":
-                //                     uint aindex = uint.Parse(txt.Substring(1));
-                //                     return DataSize.Diverse;
-                //                 default:
-                //                     return DataSize.Undef;
-                //             }
-
-                //             string txt2 = txt.Substring(1);
-                //             if (txt2.IndexOf(".") == -1) throw new Exception();
-
-                //             mByte = uint.Parse(txt2.Substring(0, txt2.IndexOf(".")));
-                //             mBit = uint.Parse(txt2.Substring(txt2.IndexOf(".") + 1));
-                //             if (mBit > 7) throw new Exception();
-                //             return DataSize.Bool;
-                //     }
             }
         } catch (err) {
 
@@ -584,7 +615,8 @@ module.exports = {
 function DbItem(dbnum) {
     this.dbnum = dbnum;
     this.type = '';
-    this.start = -1;
+    this.Area = -1;
+    this.Start = -1;
     this.bit = -1;
     this.Tags = [];
     this.BitMap = {};

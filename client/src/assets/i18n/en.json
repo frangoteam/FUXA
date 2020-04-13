@@ -281,7 +281,7 @@
     "device.tag-property-device": "Device",
     "device.tag-property-name": "Tagname",
     "device.tag-property-type": "Type",
-    "device.tag-property-address": "Address (ex. db5.dbb3   db4.dbx2.0)",
+    "device.tag-property-address": "Address (ex. db5.dbb3 db4.dbx2.0 MB7)",
     "device.tag-property-min": "Min",
     "device.tag-property-max": "Max",
     
