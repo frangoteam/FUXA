@@ -38,6 +38,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 		return (list.indexOf(route) > -1);
 	}
 
+    showDevNavigation() {
+        let route = this.location.path();
+        if (route.startsWith('/view')) {
+            return false;
+        }
+        return true;
+    }
+
 	onGoTo(goto) {
 		this.router.navigate([goto]);
 		this.fabmenu.toggle();
