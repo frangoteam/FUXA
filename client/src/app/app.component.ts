@@ -38,6 +38,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 		return (list.indexOf(route) > -1);
 	}
 
+	getClass() {
+		let route = this.location.path();
+		if (route.startsWith('/view')) {
+            return 'work-void';
+        }
+		return (this.isHidden()) ? 'work-home' : 'work-editor';
+	}
+
     showDevNavigation() {
         let route = this.location.path();
         if (route.startsWith('/view')) {

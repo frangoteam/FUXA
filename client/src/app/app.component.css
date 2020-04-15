@@ -5,6 +5,11 @@
     background-color:#FFFFFF
 }
 
+.work-void {
+    height: 100%;
+    width: 100%;
+}
+
 .work-editor {
     background-color:#FFFFFF;
     height: calc(100% - (46px));

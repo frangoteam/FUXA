@@ -66,9 +66,16 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.startView = this.hmi.views.find(x => x.name === this.viewName);
+            this.setBackground();
             if (this.startView && this.fuxaview) {
                 this.fuxaview.loadHmi(this.startView);
             }
         }
     }
+
+    private setBackground() {
+		if (this.startView && this.startView.profile) {
+			document.getElementById("main-container").style.backgroundColor = this.startView.profile.bkcolor;
+		}
+	}
 }

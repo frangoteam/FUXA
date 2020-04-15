@@ -6,7 +6,7 @@
 	<mat-sidenav #matsidenav *ngIf="showSidenav" class="sidenav" [mode]="showSidenav">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>
-	<mat-sidenav-content>
+	<mat-sidenav-content [style.background-color]="backgroudColor">
 		<div class="header">
 			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" (click)="(matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
 				<mat-icon aria-label="Menu">menu</mat-icon>

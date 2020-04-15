@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	homeLink = '';
 	showHomeLink = false;
 	securityEnabled = false;
+	backgroudColor = 'unset';
 
 	private subscriptionLoad: Subscription;
 
@@ -82,6 +83,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		const view = this.hmi.views.find(x => x.id === event);
 		if (view) {
 			this.homeView = view;
+			this.setBackground();
 			this.fuxaview.loadHmi(this.homeView);
 		}
 		this.showHomeLink = false;
@@ -160,6 +162,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			} else {
 				this.homeView = this.hmi.views[0];
 			}
+			this.setBackground();
 			// check sidenav
 			this.showSidenav = null;
 			if (this.hmi.layout) {
@@ -184,6 +187,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.isLoading = false;
 		this.securityEnabled = this.projectService.isSecurityEnabled();
 	}
+
+	private setBackground() {
+		if (this.homeView && this.homeView.profile) {
+			this.backgroudColor = this.homeView.profile.bkcolor;
+		}
+	}
+
 }
 
 @Component({

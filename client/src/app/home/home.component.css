@@ -12,8 +12,8 @@
     height: 46px !important;
     padding-left: 4px;
     padding-right: 10px;
+    background-color: rgba(255, 255, 255, 1);
 }
-
 
 .sidenav {
     padding: 0px 0px 0px 0px;

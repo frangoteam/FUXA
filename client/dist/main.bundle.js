@@ -2708,7 +2708,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "\r\n.container {\r\n    width: 100%;\r\n    height: 100% !important;\r\n    background-color:#FFFFFF\r\n}\r\n\r\n.work-editor {\r\n    background-color:#FFFFFF;\r\n    height: calc(100% - (46px));\r\n    min-width: 800px;\r\n}\r\n\r\n.work-home {\r\n    background-color:#FFFFFF;\r\n    height: 100%;\r\n    min-width: 800px;\r\n}\r\n\r\n.header {\r\n    /* height: 40px !important;     */\r\n}\r\n\r\n.footer {\r\n    height: 20px;\r\n    position:absolute;\r\n    bottom:0px;\r\n}\r\n\r\n.fab-button {\r\n    position: absolute;\r\n    bottom: 20px;\r\n    left: 10px;\r\n    color: rgba(255,255,255,1);\r\n    background-color: rgba(68,138,255, 0);\r\n    /* background-color: rgba(0,0,0,0.9); */\r\n}", ""]);
+exports.push([module.i, "\r\n.container {\r\n    width: 100%;\r\n    height: 100% !important;\r\n    background-color:#FFFFFF\r\n}\r\n\r\n.work-void {\r\n    height: 100%;\r\n    width: 100%;\r\n}\r\n\r\n.work-editor {\r\n    background-color:#FFFFFF;\r\n    height: calc(100% - (46px));\r\n    min-width: 800px;\r\n}\r\n\r\n.work-home {\r\n    background-color:#FFFFFF;\r\n    height: 100%;\r\n    min-width: 800px;\r\n}\r\n\r\n.header {\r\n    /* height: 40px !important;     */\r\n}\r\n\r\n.footer {\r\n    height: 20px;\r\n    position:absolute;\r\n    bottom:0px;\r\n}\r\n\r\n.fab-button {\r\n    position: absolute;\r\n    bottom: 20px;\r\n    left: 10px;\r\n    color: rgba(255,255,255,1);\r\n    background-color: rgba(68,138,255, 0);\r\n    /* background-color: rgba(0,0,0,0.9); */\r\n}", ""]);
 
 // exports
 
@@ -2721,7 +2721,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/app.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <app-header class=\"header\" [hidden]=\"isHidden()\"></app-header>\n  <div [ngClass]=\"(isHidden()) ? 'work-home' : 'work-editor'\">\n    <router-outlet></router-outlet>\n    <ngx-fab-button *ngIf=\"showDevNavigation()\" #fabmenu icon=\"menu\" iconOpen=\"menu\" class=\"fab-button\" color=\"rgba(68,138,255, 1)\">\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"editor\" (click)=\"onGoTo('editor')\" (touchend)=\"onGoTo('editor')\">editor</ngx-fab-item-button>\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"lab\" (click)=\"onGoTo('lab')\" (touchend)=\"onGoTo('lab')\">lab</ngx-fab-item-button>\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"home\" (click)=\"onGoTo('home')\" (touchend)=\"onGoTo('home')\">home</ngx-fab-item-button>\n    </ngx-fab-button>\n  </div>\n</div>"
+module.exports = "<div id=\"main-container\" class=\"container\">\n  <app-header class=\"header\" [hidden]=\"isHidden()\"></app-header>\n  <div [ngClass]=\"getClass()\">\n    <router-outlet></router-outlet>\n    <ngx-fab-button *ngIf=\"showDevNavigation()\" #fabmenu icon=\"menu\" iconOpen=\"menu\" class=\"fab-button\" color=\"rgba(68,138,255, 1)\">\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"editor\" (click)=\"onGoTo('editor')\" (touchend)=\"onGoTo('editor')\">editor</ngx-fab-item-button>\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"lab\" (click)=\"onGoTo('lab')\" (touchend)=\"onGoTo('lab')\">lab</ngx-fab-item-button>\n      <ngx-fab-item-button color=\"rgba(68,138,255, 1)\" content=\"home\" (click)=\"onGoTo('home')\" (touchend)=\"onGoTo('home')\">home</ngx-fab-item-button>\n    </ngx-fab-button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -2765,6 +2765,13 @@ var AppComponent = (function () {
     AppComponent.prototype.isHidden = function () {
         var list = ['/lab', '/home'], route = this.location.path();
         return (list.indexOf(route) > -1);
+    };
+    AppComponent.prototype.getClass = function () {
+        var route = this.location.path();
+        if (route.startsWith('/view')) {
+            return 'work-void';
+        }
+        return (this.isHidden()) ? 'work-home' : 'work-editor';
     };
     AppComponent.prototype.showDevNavigation = function () {
         var route = this.location.path();
@@ -13015,7 +13022,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, ".home-body {\r\n    display: table;\r\n    margin: 0 auto;\r\n}\r\n\r\n.header {\r\n    display: block;\r\n    z-index: 9999 !important;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n    /* min-height: 46px !important; */\r\n    /* max-height: 46px !important; */\r\n    height: 46px !important;\r\n    padding-left: 4px;\r\n    padding-right: 10px;\r\n}\r\n\r\n\r\n.sidenav {\r\n    padding: 0px 0px 0px 0px;\r\n    background-color: rgba(44, 44, 44, 1) !important;\r\n    color: rgba(255, 255, 255, 1) !important;\r\n    /* max-width: 100px; */\r\n    display: inline-block !important;\r\n    top:0px;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n}\r\n\r\n.sidenav-container {\r\n    width: 100%;\r\n    height: 100% !important;\r\n    background-color:#FFFFFF;\r\n}\r\n\r\n::ng-deep .mat-drawer-backdrop.mat-drawer-shown {\r\n    background-color: transparent;\r\n} \r\n\r\n::ng-deep #myuserinfo {\r\n    padding: unset !important;\r\n    box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.18);\r\n}\r\n\r\n", ""]);
+exports.push([module.i, ".home-body {\r\n    display: table;\r\n    margin: 0 auto;\r\n}\r\n\r\n.header {\r\n    display: block;\r\n    z-index: 9999 !important;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n    /* min-height: 46px !important; */\r\n    /* max-height: 46px !important; */\r\n    height: 46px !important;\r\n    padding-left: 4px;\r\n    padding-right: 10px;\r\n    background-color: rgba(255, 255, 255, 1);\r\n}\r\n\r\n.sidenav {\r\n    padding: 0px 0px 0px 0px;\r\n    background-color: rgba(44, 44, 44, 1) !important;\r\n    color: rgba(255, 255, 255, 1) !important;\r\n    /* max-width: 100px; */\r\n    display: inline-block !important;\r\n    top:0px;\r\n    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; \r\n}\r\n\r\n.sidenav-container {\r\n    width: 100%;\r\n    height: 100% !important;\r\n    background-color:#FFFFFF;\r\n}\r\n\r\n::ng-deep .mat-drawer-backdrop.mat-drawer-shown {\r\n    background-color: transparent;\r\n} \r\n\r\n::ng-deep #myuserinfo {\r\n    padding: unset !important;\r\n    box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.18);\r\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -13028,7 +13035,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n\t<mat-progress-bar mode=\"indeterminate\" color=\"warn\" style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n\t</mat-progress-bar>\r\n</div>\r\n<mat-sidenav-container class=\"sidenav-container\">\r\n\t<mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\r\n\t\t<app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\r\n\t</mat-sidenav>\r\n\t<mat-sidenav-content>\r\n\t\t<div class=\"header\">\r\n\t\t\t<button mat-icon-button *ngIf=\"showSidenav && showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\r\n\t\t\t\t<mat-icon aria-label=\"Menu\">menu</mat-icon>\r\n\t\t\t</button>\r\n\t\t\t<div *ngIf=\"securityEnabled\" style=\"float: right;\">\r\n\t\t\t\t<button mat-icon-button  (click)=\"onLogin()\">\r\n\t\t\t\t\t<mat-icon aria-label=\"Login\" [style.color]=\"isLoggedIn() ? 'rgb(59, 144, 255)' : 'black'\">account_circle</mat-icon>\r\n\t\t\t\t</button>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div style=\"padding-top: 5px;\">\r\n\t\t\t<app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n\t\t\t<!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\r\n\t\t\t<!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\r\n\t\t\t<div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\r\n\t\t\t\t<p>\r\n\t\t\t\t\t{{'msg.home-welcome' | translate}}.\r\n\t\t\t\t</p>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</mat-sidenav-content>\r\n\r\n</mat-sidenav-container>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n\t<mat-progress-bar mode=\"indeterminate\" color=\"warn\" style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n\t</mat-progress-bar>\r\n</div>\r\n<mat-sidenav-container class=\"sidenav-container\">\r\n\t<mat-sidenav #matsidenav *ngIf=\"showSidenav\" class=\"sidenav\" [mode]=\"showSidenav\">\r\n\t\t<app-sidenav #sidenav [sidenav]=\"matsidenav\" (goToPage)=\"onGoToPage($event)\" (goToLink)=\"onGoToLink($event)\"></app-sidenav>\r\n\t</mat-sidenav>\r\n\t<mat-sidenav-content [style.background-color]=\"backgroudColor\">\r\n\t\t<div class=\"header\">\r\n\t\t\t<button mat-icon-button *ngIf=\"showSidenav && showSidenav !== 'side'\" (click)=\"(matsidenav.opened) ? matsidenav.close() : matsidenav.open()\" class=\"sidenav-toogle\">\r\n\t\t\t\t<mat-icon aria-label=\"Menu\">menu</mat-icon>\r\n\t\t\t</button>\r\n\t\t\t<div *ngIf=\"securityEnabled\" style=\"float: right;\">\r\n\t\t\t\t<button mat-icon-button  (click)=\"onLogin()\">\r\n\t\t\t\t\t<mat-icon aria-label=\"Login\" [style.color]=\"isLoggedIn() ? 'rgb(59, 144, 255)' : 'black'\">account_circle</mat-icon>\r\n\t\t\t\t</button>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t\t<div style=\"padding-top: 5px;\">\r\n\t\t\t<app-fuxa-view *ngIf=\"showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n\t\t\t<!-- <app-fuxa-view [hidden]=\"!showHomeView\" #fuxaview class=\"home-body\" id=\"home\" [view]=\"homeView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view> -->\r\n\t\t\t<!-- <app-iframe [hidden]=\"isLoading && !showHomeLink\" #iframeview [link]=\"homeLink\" class=\"home-body\"></app-iframe> -->\r\n\t\t\t<div [style.visibility]=\"(showHomeView) ? 'hidden' : 'visible' \" class=\"home-body home-info\">\r\n\t\t\t\t<p>\r\n\t\t\t\t\t{{'msg.home-welcome' | translate}}.\r\n\t\t\t\t</p>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\t</mat-sidenav-content>\r\n\r\n</mat-sidenav-container>"
 
 /***/ }),
 
@@ -13091,6 +13098,7 @@ var HomeComponent = (function () {
         this.homeLink = '';
         this.showHomeLink = false;
         this.securityEnabled = false;
+        this.backgroudColor = 'unset';
     }
     HomeComponent.prototype.ngOnInit = function () {
     };
@@ -13125,6 +13133,7 @@ var HomeComponent = (function () {
         var view = this.hmi.views.find(function (x) { return x.id === event; });
         if (view) {
             this.homeView = view;
+            this.setBackground();
             this.fuxaview.loadHmi(this.homeView);
         }
         this.showHomeLink = false;
@@ -13200,6 +13209,7 @@ var HomeComponent = (function () {
             else {
                 this.homeView = this.hmi.views[0];
             }
+            this.setBackground();
             // check sidenav
             this.showSidenav = null;
             if (this.hmi.layout) {
@@ -13225,6 +13235,11 @@ var HomeComponent = (function () {
         }
         this.isLoading = false;
         this.securityEnabled = this.projectService.isSecurityEnabled();
+    };
+    HomeComponent.prototype.setBackground = function () {
+        if (this.homeView && this.homeView.profile) {
+            this.backgroudColor = this.homeView.profile.bkcolor;
+        }
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('sidenav'),
@@ -13401,7 +13416,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/lab/lab.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n    <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\r\n        style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n    </mat-progress-bar>\r\n</div>\r\n<div>\r\n  <app-fuxa-view *ngIf=\"labView\" class=\"lab-body\" id=\"lab\" [view]=\"currentView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n  <div *ngIf=\"!labView\">\r\n      Loading...\r\n  </div>\r\n  <template #messagecontainer>\r\n  </template>    \r\n  <button mat-mini-fab color=\"warn\" class=\"fab-btn\" (click)=\"onTest()\">Test</button>\r\n  <app-tester #tester></app-tester>\r\n</div>"
+module.exports = "<div *ngIf=\"isLoading\" style=\"position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;\">\r\n    <mat-progress-bar mode=\"indeterminate\" color=\"warn\"\r\n        style=\"position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;\">\r\n    </mat-progress-bar>\r\n</div>\r\n<div [style.background-color]=\"backgroudColor\" style=\"height: 100%\">\r\n  <app-fuxa-view *ngIf=\"labView\" class=\"lab-body\" id=\"lab\" [view]=\"currentView\" [hmi]=\"hmi\" [gaugesManager]=\"gaugesManager\"></app-fuxa-view>\r\n  <div *ngIf=\"!labView\">\r\n      Loading...\r\n  </div>\r\n  <template #messagecontainer>\r\n  </template>    \r\n  <button mat-mini-fab color=\"warn\" class=\"fab-btn\" (click)=\"onTest()\">Test</button>\r\n  <app-tester #tester></app-tester>\r\n</div>"
 
 /***/ }),
 
@@ -13441,6 +13456,7 @@ var LabComponent = (function () {
         this.currentView = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["s" /* View */]();
         this.hmi = new __WEBPACK_IMPORTED_MODULE_2__models_hmi__["l" /* Hmi */]();
         this.labView = null;
+        this.backgroudColor = 'unset';
     }
     LabComponent.prototype.ngOnInit = function () {
     };
@@ -13487,13 +13503,18 @@ var LabComponent = (function () {
                 for (var i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {
                         this.currentView = this.hmi.views[i];
+                        this.setBackground();
                         break;
                     }
                 }
             }
-            // this.dataContainer.nativeElement.innerHTML = this.currentView.svgcontent;
         }
         this.isLoading = false;
+    };
+    LabComponent.prototype.setBackground = function () {
+        if (this.currentView && this.currentView.profile) {
+            this.backgroudColor = this.currentView.profile.bkcolor;
+        }
     };
     __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["_12" /* ViewChild */])('messagecontainer', { read: __WEBPACK_IMPORTED_MODULE_0__angular_core__["_14" /* ViewContainerRef */] }),
@@ -14326,9 +14347,15 @@ var ViewComponent = (function () {
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.startView = this.hmi.views.find(function (x) { return x.name === _this.viewName; });
+            this.setBackground();
             if (this.startView && this.fuxaview) {
                 this.fuxaview.loadHmi(this.startView);
             }
+        }
+    };
+    ViewComponent.prototype.setBackground = function () {
+        if (this.startView && this.startView.profile) {
+            document.getElementById("main-container").style.backgroundColor = this.startView.profile.bkcolor;
         }
     };
     __decorate([

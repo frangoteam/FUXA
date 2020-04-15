@@ -27,6 +27,7 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
     svgMain: any;
     componentRef: any;
     labView: View = null;
+	backgroudColor = 'unset';
 
 	private subscriptionLoad: Subscription;
 
@@ -83,12 +84,18 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
                 for (let i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {
                         this.currentView = this.hmi.views[i];
+                        this.setBackground();
                         break;
                     }
                 }
             }
-            // this.dataContainer.nativeElement.innerHTML = this.currentView.svgcontent;
         }
         this.isLoading = false;
     }
+
+    private setBackground() {
+		if (this.currentView && this.currentView.profile) {
+			this.backgroudColor = this.currentView.profile.bkcolor;
+		}
+	}
 }
