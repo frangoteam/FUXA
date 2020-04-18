@@ -6398,30 +6398,33 @@ var BagPropertyComponent = (function () {
         this.optionsDonut = this.getDefaultOptions(__WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Donut);
         this.optionsZones = this.getDefaultOptions(__WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Zones);
         this.options = this.optionsGauge;
-    }
-    BagPropertyComponent.prototype.ngOnInit = function () {
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
             this.property = new __WEBPACK_IMPORTED_MODULE_5__models_hmi__["g" /* GaugeProperty */]();
         }
+    }
+    BagPropertyComponent.prototype.ngOnInit = function () {
     };
     BagPropertyComponent.prototype.ngAfterViewInit = function () {
-        this.gaugeType = __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Gauge;
-        if (this.property.options) {
-            this.options = this.property.options;
-            this.gaugeType = this.options.type;
-            if (this.gaugeType === __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Donut) {
-                this.optionsDonut = this.options;
+        var _this = this;
+        setTimeout(function () {
+            _this.gaugeType = __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Gauge;
+            if (_this.property.options) {
+                _this.options = _this.property.options;
+                _this.gaugeType = _this.options.type;
+                if (_this.gaugeType === __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Donut) {
+                    _this.optionsDonut = _this.options;
+                }
+                else if (_this.gaugeType === __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Zones) {
+                    _this.optionsZones = _this.options;
+                }
+                else {
+                    _this.optionsGauge = _this.options;
+                }
             }
-            else if (this.gaugeType === __WEBPACK_IMPORTED_MODULE_3__gui_helpers_ngx_gauge_gaugeOptions__["b" /* GaugeType */].Zones) {
-                this.optionsZones = this.options;
-            }
-            else {
-                this.optionsGauge = this.options;
-            }
-        }
-        this.onGaugeChange(this.gaugeType);
-        this.cdRef.detectChanges();
+            _this.onGaugeChange(_this.gaugeType);
+            _this.cdRef.detectChanges();
+        }, 500);
     };
     BagPropertyComponent.prototype.onNoClick = function () {
         this.dialogRef.close();
@@ -6614,6 +6617,7 @@ var BagPropertyComponent = (function () {
                 this.optcfg.renderTicks.subWidth *= 10;
             }
         }
+        this.optcfg.staticLabelsText = '';
         if (this.optcfg.staticLabels && this.optcfg.staticLabels.labels.length) {
             this.optcfg.staticLabels.labels.forEach(function (lb) {
                 if (_this.optcfg.staticLabelsText) {
@@ -12276,7 +12280,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "\r\n.container {\r\n    position: relative;\r\n    width: 100%; \r\n    height:100%;\r\n    padding: 20;\r\n}\r\n\r\n.canvas {\r\n    margin: 0;\r\n    position: absolute;\r\n    top: 50%;\r\n    left: 50%;\r\n    transform: translate(-50%, -50%);\r\n}", ""]);
 
 // exports
 
@@ -12289,7 +12293,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/gui-helpers/ngx-gauge/ngx-gauge.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div style=\"width: 100%; height:100%;\" (window:resize)=\"onResize($event)\">\n    <div #gaugetext style=\"text-align: center; font-size: 18px; font-weight: bold;color: black; font-family: 'Amaranth', sans-serif;position: relative; top: 5px; left: 0; right: 0;\"></div>\n    <canvas #gauge id=\"myGauge\" width=\"180\" height=\"50\" ></canvas>\n</div>"
+module.exports = "<div (window:resize)=\"onResize($event)\" class=\"container\">\n    <div #gaugetext style=\"text-align: center; font-size: 18px; font-weight: bold;color: black; font-family: 'Amaranth', sans-serif;position: absolute; top: 5px; left: 0; right: 0;\"></div>\n    <canvas #gauge id=\"myGauge\" width=\"180\" height=\"50\" class=\"canvas\"></canvas>\n</div>"
 
 /***/ }),
 
@@ -12320,7 +12324,10 @@ var NgxGaugeComponent = (function () {
         this.options = Object.assign(this.defOptions, this.options);
     };
     NgxGaugeComponent.prototype.ngAfterViewInit = function () {
-        this.onResize(null);
+        var _this = this;
+        setTimeout(function () {
+            _this.onResize(null);
+        }, 500);
     };
     NgxGaugeComponent.prototype.ngOnChanges = function (changes) {
         if (this.gauge) {
@@ -12334,7 +12341,9 @@ var NgxGaugeComponent = (function () {
     NgxGaugeComponent.prototype.onResize = function (event) {
         var canvas = this.canvas.nativeElement;
         var w = canvas.parentNode.clientWidth;
-        var h = canvas.parentNode.clientHeight - (canvas.parentNode.clientHeight / 4);
+        var h = canvas.parentNode.clientHeight; // - (canvas.parentNode.clientHeight / 4);
+        if (w < h)
+            h = w;
         this.canvas.nativeElement.height = h;
         this.canvas.nativeElement.width = w;
         this.init(this.type);

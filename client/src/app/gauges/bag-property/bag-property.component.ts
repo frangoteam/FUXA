@@ -41,30 +41,32 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
         this.optionsDonut = this.getDefaultOptions(GaugeType.Donut);
         this.optionsZones = this.getDefaultOptions(GaugeType.Zones);
         this.options = this.optionsGauge;
-    }
-
-    ngOnInit() {
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
 			this.property = new GaugeProperty();
-		}
+        }
+    }
+
+    ngOnInit() { 
     }
 
     ngAfterViewInit() {
-        this.gaugeType = GaugeType.Gauge;
-        if (this.property.options) {
-            this.options = this.property.options;
-            this.gaugeType = this.options.type;
-            if (this.gaugeType === GaugeType.Donut) {
-                this.optionsDonut = this.options;
-            } else if (this.gaugeType === GaugeType.Zones) {
-                this.optionsZones = this.options;
-            } else {
-                this.optionsGauge = this.options;
+        setTimeout(() => {
+            this.gaugeType = GaugeType.Gauge;
+            if (this.property.options) {
+                this.options = this.property.options;
+                this.gaugeType = this.options.type;
+                if (this.gaugeType === GaugeType.Donut) {
+                    this.optionsDonut = this.options;
+                } else if (this.gaugeType === GaugeType.Zones) {
+                    this.optionsZones = this.options;
+                } else {
+                    this.optionsGauge = this.options;
+                }
             }
-        }
-        this.onGaugeChange(this.gaugeType);
-        this.cdRef.detectChanges();
+            this.onGaugeChange(this.gaugeType);
+            this.cdRef.detectChanges();    
+        }, 500);
     }
 
     onNoClick(): void {
@@ -264,6 +266,7 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
                 this.optcfg.renderTicks.subWidth *= 10;
             }
         }
+        this.optcfg.staticLabelsText = '';
         if (this.optcfg.staticLabels && this.optcfg.staticLabels.labels.length) {
             this.optcfg.staticLabels.labels.forEach(lb => {
                 if (this.optcfg.staticLabelsText) {
