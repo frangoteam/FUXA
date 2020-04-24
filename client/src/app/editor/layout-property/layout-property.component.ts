@@ -39,6 +39,7 @@ export class LayoutPropertyComponent implements OnInit {
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
+        public dialogRef: MatDialogRef<LayoutPropertyComponent>,
         private translateService: TranslateService) {
         if (!data.layout) {
             data.layout = new LayoutSettings();
@@ -152,6 +153,10 @@ export class LayoutPropertyComponent implements OnInit {
         })
     }
 
+    onNoClick(): void {
+		this.dialogRef.close();
+    }
+    
     getViewName(vid: NaviItem) {
         if (vid.view) {
             const view = this.data.views.find(x=>x.id === vid.view);

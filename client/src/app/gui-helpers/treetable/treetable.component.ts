@@ -14,7 +14,7 @@ export class TreetableComponent implements OnInit {
   nodeType = NodeType;
 
   nodes = {};
-  private list: any[] = [];
+  list: any[] = [];
 
   containerProperty = { width: '100%', height: '100%' };
 

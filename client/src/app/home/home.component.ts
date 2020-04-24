@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 

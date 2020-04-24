@@ -3,7 +3,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService } from '../_services/project.service';
@@ -442,7 +442,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * set the mode to svg-editor (line,text,...)
      * @param mode mode to set
      */
-    private setMode(mode: string) {
+    setMode(mode: string) {
         this.currentMode = mode;
         this.winRef.nativeWindow.svgEditor.clickToSetMode(mode);
     }
@@ -451,7 +451,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * check with the current mode
      * @param mode mode to check
      */
-    private isModeActive(mode) {
+    isModeActive(mode) {
         return (this.currentMode === mode)
     }
 
@@ -501,7 +501,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * event from svg-editor: change fill color
      * @param event color code
      */
-    private onChangeFillColor(event) {
+    onChangeFillColor(event) {
         this.setFillColor(event);
         this.checkMySelectedToSetColor(this.colorFill, null, this.winRef.nativeWindow.svgEditor.getSelectedElements());
     }
@@ -563,7 +563,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param id marker id (start,mid,end)
      * @param marker marker type
      */
-    private onSetMarker(id, marker) {
+    onSetMarker(id, marker) {
         if (marker >= 0) {
             this.winRef.nativeWindow.svgEditor.setMarker(id, marker);
         }
@@ -573,21 +573,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * align the selected element
      * @param letter align type (left,center,right,top,middle,bottom)
      */
-    private onAlignSelected(letter: string) {
+    onAlignSelected(letter: string) {
         this.winRef.nativeWindow.svgEditor.alignSelectedElements(letter.charAt(0));
     }
 
     /**
      * select the zoom area function
      */
-    private onZoomSelect() {
+    onZoomSelect() {
         this.winRef.nativeWindow.svgEditor.clickZoom();
     }
 
     /**
      * show grid in canvas
      */
-    private onShowGrid() {
+    onShowGrid() {
         this.gridOn = this.gridOn = !this.gridOn;
         this.winRef.nativeWindow.svgEditor.clickExtension("view_grid");
         this.winRef.nativeWindow.svgEditor.enableGridSnapping(this.gridOn);
@@ -597,7 +597,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * add image to view
      * @param event selected file
      */
-    private onSetImage(event) {
+    onSetImage(event) {
         if (event.target.files) {
             this.imagefile = 'assets/images/' + event.target.files[0].name;
             let self = this;
@@ -894,7 +894,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * to check from DOM and to control open close interaction panel
      * @param ele selected gauge element
      */
-    private isInteractivtyEnabled(ele) {
+    isInteractivtyEnabled(ele) {
         if (ele && ele.type) {
             return this.gaugesManager.isGauge(ele.type);
         }

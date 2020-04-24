@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { FormControl } from '@angular/forms';
 import { take, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject, ReplaySubject } from 'rxjs';
 
 import { FlexInputComponent } from '../flex-input/flex-input.component';
 import { GaugeProperty } from '../../../_models/hmi';

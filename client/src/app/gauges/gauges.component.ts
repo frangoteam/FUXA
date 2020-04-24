@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Injectable, Inject, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';

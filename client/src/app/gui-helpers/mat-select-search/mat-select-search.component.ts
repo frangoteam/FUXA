@@ -6,7 +6,7 @@ import {
   } from '@angular/core';
   import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   import { MatOption, MatSelect } from '@angular/material';
-  import { Subject } from 'rxjs/Subject';
+  import { Subject } from 'rxjs';
   import { take, takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
   

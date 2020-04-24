@@ -8,7 +8,7 @@
                     <mat-list class="list" >
                         <mat-list-item class="list-item list-header">
                             <span>{{'chart.config-charts' | translate}}</span>
-                            <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart()">add</mat-icon>
+                            <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart(null)">add</mat-icon>
                         </mat-list-item>
                         <mat-list-item *ngFor="let chart of data.charts" matTooltip="{{chart.name}}" class="list-item" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
                             <span>{{chart.name}}</span>

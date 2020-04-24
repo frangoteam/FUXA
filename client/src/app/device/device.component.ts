@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 
 import { DeviceListComponent } from './device-list/device-list.component';
 import { DeviceMapComponent } from './device-map/device-map.component';

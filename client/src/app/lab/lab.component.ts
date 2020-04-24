@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 
 import { ProjectService } from '../_services/project.service';
 import { Hmi, View, GaugeSettings } from '../_models/hmi';
