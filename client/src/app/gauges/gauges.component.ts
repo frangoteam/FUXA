@@ -368,8 +368,8 @@ export class GaugesManager {
                 if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
                     if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
-                            if (k === ga.id) {
-                                HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.memorySigGauges[sig.id][k]);
+                            if (k === ga.id && this.mapGauges[k]) {
+                                HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);//this.memorySigGauges[sig.id][k]);
                             }
                         });
                     }

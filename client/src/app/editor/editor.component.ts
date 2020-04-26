@@ -791,8 +791,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            view.name = result.name;
-            this.saveView(view);
+            if (result && result.name) {
+                view.name = result.name;
+                this.saveView(view);
+            }
         });
     }
 
