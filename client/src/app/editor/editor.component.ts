@@ -386,17 +386,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (svgcontent.length <= 0) {
                 svgcontent = '<svg id="' + view.name + '" width="' + view.profile.width + '" height="' + view.profile.height +
-                    '" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><g><title>Layer 1</title></g></svg>';
-                // svgcontent = '<svg id="' + view.name + '" width="' + view.profile.width + '" height="' + view.profile.height +
-                //     '" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><g><title>Layer 1</title>' +
-                //     '<g transform="translate(267,179) scale(0.005) translate(-267,-179)" strokeWidth=\"2\" strokecolor=\"#000000\" fill=\"none\" type=\"svg-ext-switch\" id=\"svg_6\">' +
-                //     '<path d="M1.07052,290.14898L1.0583,290.13018" id="svg_1" stroke-width="2" stroke="#000000" fill="none"/>' +
-                //     '<path d="M1.0707,290.12L1.0707,290.12677" id="svg_2" stroke-width="2" stroke="#000000" fill="none"/>' +
-                //     '<circle stroke_width="none" r="0.00165" cy="290.12825" cx="1.07065" id="svg_3" stroke-width="2" stroke="#000000" fill="none"/>' +
-                //     '<path d="M1.0707,290.15724L1.0707,290.15046" id="svg_4" stroke-width="2" stroke="#000000" fill="none"/>' +
-                //     '<circle transform="scale(1,-1)" r="0.00165" cy="-4777.94978" cx="17.44126" id="svg_5" stroke-width="2" stroke="#000000" fill="none"/>' +
-                //     '</g>' +
-                //     '</g></svg>';
+                    '" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">' +
+                    '<filter id="blur-filter" x="-3" y="-3" width="200" height="200"><feGaussianBlur in="SourceGraphic" stdDeviation="3" /></filter>' +
+                    '<g><title>Layer 1</title></g></svg>';
             }
             if (this.winRef.nativeWindow.svgEditor) {
                 this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
