@@ -7,8 +7,8 @@ import {
   MatButtonModule, MatFormFieldModule, MatInputModule, MatSelect,
   MatSelectModule
 } from '@angular/material';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Subject } from 'rxjs/Subject';
+import { ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 
 import { MatSelectSearchComponent } from './mat-select-search.component';

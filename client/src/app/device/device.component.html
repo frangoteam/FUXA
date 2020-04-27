@@ -1,6 +1,6 @@
 <div class="header-panel">
 </div>
 <diV class="work-panel">
-    <app-device-list [hidden]="showMode === 'map'" #devicelist (save)="saveDevices()" (goto)="gotoMap($event)"></app-device-list>
-    <app-device-map [hidden]="showMode === 'tags'" #devicemap (save)="saveDevices()" (goto)="gotoList($event)"></app-device-map>
+    <app-device-list [hidden]="showMode === 'map'" #devicelist (goto)="gotoMap()"></app-device-list>
+    <app-device-map [hidden]="showMode === 'tags'" #devicemap (goto)="gotoList($event)"></app-device-map>
 </diV>

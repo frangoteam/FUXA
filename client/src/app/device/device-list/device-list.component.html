@@ -3,7 +3,7 @@
         <button mat-icon-button title="Device Map" (click)="onGoBack()" style="margin-right:10px;margin-left:-10px;">
             <mat-icon aria-label="Show devices map">arrow_back</mat-icon>
         </button>
-        <div class="my-form-field" style="">
+        <div class="my-form-field" style="padding-right: 10px;">
             <span>{{'device.list-device' | translate}}</span>
             <mat-select [(value)]="deviceSelected" style="width: 300px"
                 (selectionChange)="onDeviceChange($event.source)">
@@ -12,7 +12,7 @@
                 </mat-option>
             </mat-select>
         </div>
-        <div class="my-form-field" style="">
+        <div class="my-form-field" style="padding-right: 10px;">
             <span>{{'device.list-filter' | translate}}</span>
             <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
         </div>

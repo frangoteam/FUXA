@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 
 import { Device, TagType, Tag, DeviceType } from './../../_models/device';
 import { TreetableComponent, Node } from '../../gui-helpers/treetable/treetable.component';
@@ -33,6 +33,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any) {
     if (this.data.device.type === DeviceType.OPCUA) {
       this.withtree = true;
+      this.config.height = '630px';
     } else {
       this.config.height = '0px';
       Object.keys(this.data.device.tags).forEach((key) => {

@@ -6,6 +6,7 @@ import { FlexHeadComponent } from '../../gauge-property/flex-head/flex-head.comp
 import { FlexAuthComponent } from '../../gauge-property/flex-auth/flex-auth.component';
 import { FlexEventComponent } from '../../gauge-property/flex-event/flex-event.component';
 import { FlexActionComponent } from '../../gauge-property/flex-action/flex-action.component';
+import { Utils } from '../../../_helpers/utils';
 import { PipeOptions } from '../pipe.component';
 
 declare var SVG: any;
@@ -26,6 +27,7 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
     name: string;
 	eventsSupported: boolean;
     actionsSupported: any;
+    defaultColor = Utils.defaultColor;
     pipepath = { bk: null, fg: null, hp: null };
     
     constructor(public dialogRef: MatDialogRef<PipePropertyComponent>,

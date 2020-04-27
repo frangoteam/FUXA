@@ -14,7 +14,7 @@
       <span style="font-size:12px;color:darkgray">{{'dlg.docproperty-background' | translate}}</span>
       <input style="width:100%;height:24px;border:1px solid rgba(0,0,0,0.2);margin-top: 4px;" readonly [(colorPicker)]="data.bkcolor"
         class="color-stroke" title="Change stroke color" [style.background]="data.bkcolor" [cpPresetColors]="defaultColor"
-        [cpAlphaChannel]="'always'" [cpPosition]="'top'" [value]="data.bkcolor" [cpCancelButton]="true"
+        [cpAlphaChannel]="'disabled'" [cpPosition]="'top'" [value]="data.bkcolor" [cpCancelButton]="true"
         [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true"
         [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
     </div>

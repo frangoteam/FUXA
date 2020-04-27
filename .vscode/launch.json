@@ -25,11 +25,11 @@
       ]
     },
     {
+      "name": "Client Chrome localhost",
       "type": "chrome",
       "request": "launch",
-      "name": "Client Chrome localhost",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}"
+      "url": "http://localhost:4200/#",
+      "webRoot": "${workspaceFolder}/client/src"
     }
   ]
 }

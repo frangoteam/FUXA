@@ -130,7 +130,7 @@ export class DeviceListComponent implements OnInit {
     addOpcTags(tag: Tag) {
         let dialogRef = this.dialog.open(TagPropertyComponent, {
             minWidth: '1200px',
-            minHeight: '900px',
+            minHeight: '750px',
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: tag, devices: this.devices },
             position: { top: '80px' }

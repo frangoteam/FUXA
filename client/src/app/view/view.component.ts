@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Subscription } from "rxjs/Subscription";
+import { Subscription } from "rxjs";
 import { ActivatedRoute } from '@angular/router';
 
 import { ProjectService } from '../_services/project.service';
@@ -26,7 +26,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(private projectService: ProjectService,
         private route: ActivatedRoute,
         private changeDetector: ChangeDetectorRef,
-        private gaugesManager: GaugesManager) { }
+        public gaugesManager: GaugesManager) { }
 
     ngOnInit() {
         this.viewName = this.route.snapshot.queryParamMap.get('name');

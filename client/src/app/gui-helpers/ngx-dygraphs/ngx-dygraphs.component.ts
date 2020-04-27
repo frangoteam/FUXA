@@ -221,7 +221,13 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
         if (this.mapData[id] && !isUndefined(value)) {
             let row = Array(this.options.labels.length).fill(null);
             row[0] = new Date();
-            row[this.mapData[id]] = parseFloat(value);
+            let val: any = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+            }
+            row[this.mapData[id]] = val;
+
             this.data.push(row);
             // check to remove old value
             if (this.data.length > 1000) {
