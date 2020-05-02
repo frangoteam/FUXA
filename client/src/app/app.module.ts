@@ -25,7 +25,7 @@ import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogDocProperty, DialogDocName } from './editor/editor.component';
+import { EditorComponent, DialogDocProperty, DialogDocName, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { ChartConfigComponent, DialogListItem } from './editor/chart-config/chart-config.component';
 import { LabComponent } from './lab/lab.component';
@@ -118,6 +118,7 @@ export function createTranslateLoader(http: HttpClient) {
       FuxaViewComponent,
       DialogDocProperty,
       DialogDocName,
+      DialogLinkProperty,
       ConfirmDialogComponent,
       DialogInfo,
       GaugeBaseComponent,
@@ -211,6 +212,7 @@ export function createTranslateLoader(http: HttpClient) {
     entryComponents: [
         DialogDocProperty,
         DialogDocName,
+        DialogLinkProperty,
         DialogInfo,
         GaugePropertyComponent,
         DialogGaugePermission,

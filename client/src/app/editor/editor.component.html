@@ -506,7 +506,21 @@
                                 <select id="end_marker" #emarker class="style-stroke" title="{{'editor.marker-end-title' | translate}}" (click)="onSetMarker('end_marker', emarker.selectedIndex);" onfocus="this.selectedIndex=-1;this.blur();">
                                 </select>
                             </div>
-
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+                <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelHyperlinkOpenState = true" (closed)="panelHyperlinkOpenState = false" hideToggle="true" expanded="true">
+                    <mat-expansion-panel-header class="svg-workarea-leftbar-h">
+                        <mat-panel-title>
+                            <mat-icon aria-label="Select" *ngIf="panelHyperlinkOpenState">expand_less</mat-icon>
+                            <mat-icon aria-label="Select" *ngIf="!panelHyperlinkOpenState">expand_more</mat-icon>
+                            <span>{{'editor.hyperlink' | translate}}</span> <!-- HYPELINK -->
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div id="a_panel" class="rightbar_panel">
+                        <div class="svg-property" style="display:table">
+                            <span>{{'editor.hyperlink-url' | translate}}</span>
+                            <input id="link_url" type="text"/>
                         </div>
                     </div>
                 </mat-expansion-panel>
@@ -552,16 +566,6 @@
                 <!-- Draw top tool bar -->
                 <div id="tools_top" class="tools_panel">
                     <div id="editor_panel">
-                        <!-- <button mat-button title="Save Project" [matMenuTriggerFor]="prjview" class="main-btn">
-              <mat-icon aria-label="Save Project">save</mat-icon>
-            </button> -->
-                        <!-- <mat-menu #prjview="matMenu" class="leftbar-item-menu" yPosition="below" [overlapTrigger]="false"> -->
-                        <!-- <button mat-menu-item (click)="onSaveProject()">Save</button> -->
-                        <!-- <button mat-menu-item (click)="onSaveProjectAs()">Save as...</button> -->
-                        <!-- <button mat-menu-item (click)="onOpenProject();$event.stopPropagation()">Open Project</button> -->
-                        <!-- <button mat-menu-item (click)="onImportVariable();$event.stopPropagation()">Import Variable</button> -->
-                        <!-- <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)" accept=".wvc"/> -->
-                        <!-- </mat-menu> -->
                         <div class="main-btn-sep"></div>
                         <button mat-button title="{{'editor.tools-launch-title' | translate}}" class="main-btn" (click)="onStartCurrent()">
                             <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
@@ -583,7 +587,6 @@
                             </button>
                         </div>
 
-                        <!-- <div class="push_button" title="Save Project" (click)="saveProject()"></div> -->
                         <!-- <div class="tool_sep"></div> -->
                         <!-- <div class="push_button" id="tool_source" title="Edit Source [U]"></div> -->
                         <!-- <div class="tool_button" id="tool_wireframe" title="Wireframe Mode [F]"></div> -->
@@ -606,6 +609,9 @@
                         </button>
                         <button mat-button id="tool_topath" title="{{'editor.tools-topath-title' | translate}}" class="main-btn">
                             <mat-icon>linear_scale</mat-icon>
+                        </button>
+                        <button mat-button id="tool_make_link" title="{{'editor.tools-hyperlink-title' | translate}}" class="main-btn" (click)="onMakeHyperlink()">
+                            <mat-icon>link</mat-icon>
                         </button>
                     </div>
                     <div id="multiselected_panel">

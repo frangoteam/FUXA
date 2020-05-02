@@ -43,6 +43,9 @@
     "dlg.docname-title": "Rename",
     "dlg.docname-name": "Name:",
 
+    "dlg.linkproperty-title": "Make Hyperlink",
+    "dlg.linkproperty-url": "Hyperlink URL:",
+
     "dlg.login-title": "Sign in...",
     "dlg.logout-btn": "Sign out",
 
@@ -210,6 +213,9 @@
     "editor.marker-end": "end",
     "editor.marker-end-title": "Select end marker type",
 
+    "editor.hyperlink": "Hyperlink",
+    "editor.hyperlink-url": "url",
+
     "editor.tools-launch-title": "Launch Current View",
     "editor.tools-zoom-title": "Zoom Tool [Ctrl+Up/Down]",
     "editor.tools-grid-title": "Show Hide Grid",
@@ -230,6 +236,7 @@
     "editor.tools-alignmiddle-title": "Align Middle",
     "editor.tools-alignbottom-title": "Align Bottom",
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
+    "editor.tools-hyperlink-title": "Make Hyperlink",
 
     "shapes.action-stop": "Stop",
     "shapes.action-clockwise": "Turn clockwise",

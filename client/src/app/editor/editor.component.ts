@@ -86,6 +86,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelFillOpenState: boolean;
     panelEventOpenState: boolean;
     panelMarkerOpenState: boolean;
+    panelHyperlinkOpenState: boolean;
 
     shapesGrps = [];
     private gaugesRef = [];
@@ -676,6 +677,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setGaugeSettings(ga);
         }
     }
+
+    /**
+     * dialog to define hyperlink
+     */
+    onMakeHyperlink() {
+        let dialogRef = this.dialog.open(DialogLinkProperty, {
+            minWidth: '300px',
+            data: { url: 'https://' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && result.url) {
+                this.winRef.nativeWindow.svgEditor.makeHyperlink(result.url);
+            }
+        });
+    }
     //#endregion
 
     //#region Toolbar Top Events
@@ -801,11 +818,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            view.profile.width = parseInt(result.width);
-            view.profile.height = parseInt(result.height);
-            view.profile.bkcolor = result.bkcolor;
-            this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
-            this.onSelectView(view);
+            if (result && result.width && result.height) {
+                view.profile.width = parseInt(result.width);
+                view.profile.height = parseInt(result.height);
+                view.profile.bkcolor = result.bkcolor;
+                this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
+                this.onSelectView(view);
+            }
         });
     }
 
@@ -1060,6 +1079,20 @@ export class DialogDocName {
 
     isValid(name): boolean {
         return (this.data.exist.find((n) => n === name)) ? false : true;
+    }
+}
+
+@Component({
+    selector: 'dialog-link-property',
+    templateUrl: 'linkproperty.dialog.html',
+})
+export class DialogLinkProperty {
+    constructor(
+        public dialogRef: MatDialogRef<DialogLinkProperty>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+    onNoClick(): void {
+        this.dialogRef.close();
     }
 }
 
