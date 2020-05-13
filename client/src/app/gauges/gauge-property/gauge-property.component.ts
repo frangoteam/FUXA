@@ -155,7 +155,8 @@ export enum GaugeDialogType {
 	MinMax,
 	Chart,
 	Gauge,
-	Pipe
+	Pipe,
+	Slider
 }
 
 @Component({

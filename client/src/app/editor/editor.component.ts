@@ -20,12 +20,9 @@ import { Utils } from '../_helpers/utils';
 import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 import * as FileSaver from 'file-saver';
-import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
-import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
-import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
 import { PipePropertyComponent } from '../gauges/pipe/pipe-property/pipe-property.component';
-import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
+import { SliderPropertyComponent } from '../gauges/slider/slider-property/slider-property.component';
 
 declare var Gauge: any;
 
@@ -665,7 +662,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * check and set the special gauge like ngx-dygraphs if added
+     * check and set the special gauge like ngx-dygraphs, ngx-gauge, ... if added
      * @param ga 
      */
     checkGaugeAdded(ga: GaugeSettings) {
@@ -980,6 +977,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else if (dlgType === GaugeDialogType.Pipe) {
             dialogRef = this.dialog.open(PipePropertyComponent, {
+                minWidth: '700px',
+                minHeight: '700px',
+                panelClass: 'dialog-property',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    withEvents: eventsSupported, withActions: actionsSupported
+                },
+                position: { top: '80px' }
+            });
+        } else if (dlgType === GaugeDialogType.Slider) {
+            dialogRef = this.dialog.open(SliderPropertyComponent, {
                 minWidth: '700px',
                 minHeight: '700px',
                 panelClass: 'dialog-property',

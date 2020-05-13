@@ -22,6 +22,7 @@ import { ShapesComponent } from './shapes/shapes.component';
 import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
 import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
 import { PipeComponent } from './pipe/pipe.component';
+import { SliderComponent } from './slider/slider.component';
 
 import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';
@@ -29,6 +30,7 @@ import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.c
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { forEach } from '@angular/router/src/utils/collection';
+import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 
 @Injectable()
 export class GaugesManager {
@@ -59,7 +61,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent];
+        PipeComponent, SliderComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -162,6 +164,8 @@ export class GaugesManager {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
             return this.mapGauges[ga.id] = PipeComponent.detectChange(ga, res, this.winRef);
+        } else if (ga.type.startsWith(SliderComponent.TypeTag)) {
+            return this.mapGauges[ga.id] = SliderComponent.detectChange(ga, res, ref);
         }
         return false;
     }
@@ -233,6 +237,7 @@ export class GaugesManager {
             this.eventGauge[htmlEvents.dom.id] = ga;
             bindhtmlevent(htmlEvents);
         }
+        this.bindGaugeEventToSignal(ga);
         this.checkElementToInit(ga);
     }
 
@@ -269,7 +274,7 @@ export class GaugesManager {
     }
 
     checkElementToResize(ga: GaugeSettings, res: any, ref: any) {
-        if (this.mapGauges[ga.id]) {
+        if (ga && this.mapGauges[ga.id]) {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
                 if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                     if (typeof GaugesManager.Gauges[i]['resize'] === 'function') {
@@ -356,6 +361,15 @@ export class GaugesManager {
         return null;
     }
 
+    bindGaugeEventToSignal(ga: GaugeSettings) {
+        if (ga.type.startsWith(SliderComponent.TypeTag)) {
+            let self = this;
+            SliderComponent.bindEvents(ga, this.mapGauges[ga.id], (event) => {
+                self.putEvent(event);
+            });
+        }
+    }
+
 	/**
 	 * manage to which gauge to forward the process function
 	 * @param ga 
@@ -369,7 +383,7 @@ export class GaugesManager {
                     if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id && this.mapGauges[k]) {
-                                HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);//this.memorySigGauges[sig.id][k]);
+                                HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
                             }
                         });
                     }
@@ -377,7 +391,14 @@ export class GaugesManager {
                 } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
                     Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                         if (k === ga.id && this.mapGauges[k]) {
-                            HtmlBagComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);//this.memorySigGauges[sig.id][k]);
+                            HtmlBagComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                        }
+                    });
+                    break;
+                } else if (ga.type.startsWith(SliderComponent.TypeTag)) {
+                    Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                        if (k === ga.id && this.mapGauges[k]) {
+                            SliderComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
                         }
                     });
                     break;
@@ -488,7 +509,7 @@ export class GaugesManager {
     }
 
 	/**
-	 * initialize the gauge element found in svg, 
+	 * initialize the gauge element found in svg, like ngx-dygraph, ngx-gauge
 	 * in svg is only a 'div' that have to be dynamic build and render from angular
 	 * @param ga gauge settings
 	 * @param res reference to factory
@@ -496,6 +517,9 @@ export class GaugesManager {
 	 * @param isview in view or editor, in editor have to disable mouse activity
 	 */
     initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
+        if (!ga) {
+            return null;
+        }
         // add variable
         let sigsid: string[] = this.getBindSignals(ga);
         if (sigsid) {
@@ -533,6 +557,10 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge;
+        } else if (ga.type.startsWith(SliderComponent.TypeTag)) {
+            let gauge: NgxNouisliderComponent = SliderComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
         }

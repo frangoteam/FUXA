@@ -89,9 +89,12 @@ import { ProcEngComponent } from './gauges/shapes/proc-eng/proc-eng.component';
 import { ApeShapesComponent } from './gauges/shapes/ape-shapes/ape-shapes.component';
 
 import { NgxGaugeComponent } from './gui-helpers/ngx-gauge/ngx-gauge.component';
+import { NgxNouisliderComponent } from './gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { BagPropertyComponent } from './gauges/bag-property/bag-property.component';
 import { PipePropertyComponent } from './gauges/pipe/pipe-property/pipe-property.component';
 import { PipeComponent } from './gauges/pipe/pipe.component';
+import { SliderComponent } from './gauges/slider/slider.component';
+import { SliderPropertyComponent } from './gauges/slider/slider-property/slider-property.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
@@ -135,6 +138,7 @@ export function createTranslateLoader(http: HttpClient) {
       ChartPropertyComponent,
       BagPropertyComponent,
       PipePropertyComponent,
+      SliderPropertyComponent,
       ShapesComponent,
       ProcEngComponent,
       ApeShapesComponent,
@@ -159,6 +163,7 @@ export function createTranslateLoader(http: HttpClient) {
       NgxDygraphsComponent,
       ChartConfigComponent,
       NgxGaugeComponent,
+      NgxNouisliderComponent,
       DialogListItem,
       UsersComponent,
       DialogUser,
@@ -203,6 +208,7 @@ export function createTranslateLoader(http: HttpClient) {
         WindowRef,
         Utils,
         PipeComponent,
+        SliderComponent,
         Dictionary,
         ModalPositionCache,
         Define,
@@ -218,8 +224,10 @@ export function createTranslateLoader(http: HttpClient) {
         DialogGaugePermission,
         ChartPropertyComponent,
         NgxGaugeComponent,
+        NgxNouisliderComponent,
         BagPropertyComponent,
         PipePropertyComponent,
+        SliderPropertyComponent,
         DevicePropertyComponent,
         TagPropertyComponent,
         ConfirmDialogComponent,

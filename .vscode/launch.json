@@ -29,7 +29,7 @@
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:4200/#",
-      "webRoot": "${workspaceFolder}/client/src"
+      "webRoot": "${workspaceFolder}/src"
     }
   ]
 }

@@ -96,13 +96,13 @@
                         </div>
                     </div>
                 </mat-expansion-panel>
-
+                <!-- CONTROLS  -->
                 <mat-expansion-panel class="svg-workarea-leftbar-p" (opened)="panelsState.panelD=true;savePanelState()" (closed)="panelsState.panelD=false;savePanelState()" hideToggle="true" [expanded]="panelsState.panelD">
                     <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                         <mat-panel-title>
                             <mat-icon aria-label="Select" *ngIf="panelsState.panelD">expand_less</mat-icon>
                             <mat-icon aria-label="Select" *ngIf="!panelsState.panelD">expand_more</mat-icon>
-                            <span>{{'editor.controls' | translate}}</span> <!-- CONTROLS  -->
+                            <span>{{'editor.controls' | translate}}</span>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
                     <div id="__tools_left" class="leftbar-panel">
@@ -132,7 +132,10 @@
                         </div>
                         <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('pipe')}" (click)="setMode('pipe')">
                             <span class="icon-tool icon-pipe"></span>
-                        </div>               
+                        </div>
+                        <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('html_slider')}" (click)="setMode('html_slider')">
+                            <span class="icon-tool icon-slider"></span>
+                        </div>
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
