@@ -36,7 +36,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
                 <button mat-icon-button (click)="onEditRow(element)" class="remove"
-                    *ngIf="deviceSelected.type === deviceType.SiemensS7">
+                    *ngIf="isToEdit(deviceSelected.type)">
                     <mat-icon>edit</mat-icon>
                 </button>
                 <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
@@ -53,7 +53,7 @@
         <!-- Address Column -->
         <ng-container matColumnDef="address">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{getAddress(element)}} </mat-cell>
         </ng-container>
 
         <!-- Device Column -->

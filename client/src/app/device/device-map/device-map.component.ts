@@ -168,6 +168,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 						device.property.port = parseInt(tempdevice.property.port);
 						device.property.slot = parseInt(tempdevice.property.slot);
 						device.property.rack = parseInt(tempdevice.property.rack);
+						device.property.baudrate = tempdevice.property.baudrate;
+						device.property.databits = tempdevice.property.databits;
+						device.property.stopbits = tempdevice.property.stopbits;
+						device.property.parity = tempdevice.property.parity;
 					}
 					this.projectService.setDevice(device, olddevice, result.security);
 				}

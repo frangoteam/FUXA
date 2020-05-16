@@ -13,6 +13,7 @@ export class Tag {
     name: string;
     value: string;
     type: string;
+    memaddress: string;
     address: string;
     min: string;
     max: string;
@@ -24,6 +25,10 @@ export class DeviceNetProperty {
     port: string;
     slot: string;
     rack: string;
+    baudrate: string;
+    databits: string;
+    stopbits: string;
+    parity: string;
 }
 
 export class DeviceSecurity {
@@ -35,7 +40,9 @@ export class DeviceSecurity {
 export enum DeviceType {
     FuxaServer = 'FuxaServer',
     SiemensS7 = 'SiemensS7',
-    OPCUA = 'OPCUA'
+    OPCUA = 'OPCUA',
+    ModbusRTU = 'ModbusRTU',
+    ModbusTCP = 'ModbusTCP'
 }
 
 export enum TagType {
@@ -46,6 +53,17 @@ export enum TagType {
     DInt = 'DInt',
     DWord = 'DWord',
     Real = 'Real'
+}
+
+export enum ModbusTagType {
+    Bool = 'Bool',
+    Int16 = 'Int16',
+    UInt16 = 'UInt16',
+    Int32 = 'Int32',
+    UInt32 = 'UInt32',
+    Float32 = 'Float32',
+    Float64 = 'Float64',
+    String = 'String'
 }
 
 export enum MessageSecurityMode {
