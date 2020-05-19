@@ -25,6 +25,7 @@ export class DeviceNetProperty {
     port: string;
     slot: string;
     rack: string;
+    slaveid: string;
     baudrate: string;
     databits: string;
     stopbits: string;

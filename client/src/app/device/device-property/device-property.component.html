@@ -80,9 +80,15 @@
                     </div>
                 </div>
                 <div *ngIf="isModbusRtu(data.device.type)">
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                        <span>{{'device.property-serialport' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 300px" type="ip" (click)="onAddressChanged()">
+                    <div style="display: block;margin-bottom: 10px;">
+                        <div class="my-form-field" style="display: inline-block;padding-right: 10px;">
+                            <span>{{'device.property-serialport' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.address" style="width: 220px" type="ip" (click)="onAddressChanged()">
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;">
+                            <span>{{'device.property-slave-id' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 63px" type="text">
+                        </div>
                     </div>
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
                         <span>{{'device.property-baudrate' | translate}}</span>
@@ -118,9 +124,13 @@
                     </div>
                 </div>
                 <div *ngIf="isModbusTcp(data.device.type)">
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
                         <span>{{'device.property-address-port' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 300px" type="ip" (click)="onAddressChanged()">
+                        <input [(ngModel)]="data.device.property.address" style="width: 220px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field" style="display: inline-block;">
+                        <span>{{'device.property-slave-id' | translate}}</span>
+                        <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 63px" type="text">
                     </div>
                 </div>
             </div>
