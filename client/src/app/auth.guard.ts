@@ -4,6 +4,9 @@ import { AuthService } from './_services/auth.service';
 import { ProjectService } from './_services/project.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { of } from 'rxjs/observable/of';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -11,21 +14,22 @@ export class AuthGuard implements CanActivate {
         private translateService: TranslateService,
         private toastr: ToastrService,
         private projectService: ProjectService, 
-        private router: Router) { }
+        private router: Router) { 
+        }
 
-    canActivate(
-        next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot): boolean {
+    canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         if (!this.projectService.isSecurityEnabled()) {
-            return true;
+            return of(true);
         }
         if (this.authService.isAdmin()) {
-            return true;
+            return of(true);
         }
-
-        // this.router.navigate(['/home']);
-        this.notifySaveError();
-        return false;
+        return this.projectService.checkServer().pipe(map((response: any) => {
+            if (response && !response.secureEnabled) {
+                return true;
+            }
+            return false;
+        }));
     }
 
     private notifySaveError() {
