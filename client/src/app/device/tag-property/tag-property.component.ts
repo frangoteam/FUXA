@@ -181,6 +181,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 	isModbus() {
 		return (this.data.device.type === DeviceType.ModbusRTU || this.data.device.type === DeviceType.ModbusTCP) ? true : false;
     }
+
+    isOpcua() {
+		return (this.data.device.type === DeviceType.OPCUA) ? true : false;
+    }
     
     checkMemAddress(memaddress) {
         if (memaddress === '000000' || memaddress === '100000') {
@@ -190,8 +194,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     isValidate() {
         if (this.error) {
-            return false
-        } else if (!this.data.tag.name) {
+            return false;
+        } else if (this.isOpcua()) {
+            return true;
+        } else if (this.data.tag && !this.data.tag.name) {
             return false;
         } else if (this.isModbus() && (!this.data.tag.address || parseInt(this.data.tag.address) <= 0)) {
             return false;
