@@ -26,6 +26,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	propertyLoading: boolean;
 	securityMode: any = [];
 	security = new DeviceSecurity();
+	baudrateType = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 128000, 256000, 921600 ];
+	databitsType = [7, 8];
+	stopbitsType = [1, 1.5, 2];
+	parityType = ['None', 'Odd', 'Even'];
 	private subscriptionDeviceProperty: Subscription;
 
 	constructor(
@@ -87,6 +91,18 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 				console.log('get Device Security err: ' + err);
 			});
 		}
+		if (!this.data.device.property.baudrate) {
+			this.data.device.property.baudrate = 9600;
+		}
+		if (!this.data.device.property.databits) {
+			this.data.device.property.databits = 8;
+		}
+		if (!this.data.device.property.stopbits) {
+			this.data.device.property.stopbits = 1;
+		}
+		if (!this.data.device.property.parity) {
+			this.data.device.property.parity = 'None';
+		}
 	}
 
 	ngOnDestroy() {
@@ -123,6 +139,14 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		return (type === DeviceType.SiemensS7) ? true : false;
 	}
 
+	isModbusRtu(type) {
+		return (type === DeviceType.ModbusRTU) ? true : false;
+	}
+
+	isModbusTcp(type) {
+		return (type === DeviceType.ModbusTCP) ? true : false;
+	}
+	
 	isOpcUa(type) {
 		return (type === DeviceType.OPCUA) ? true : false;
 	}

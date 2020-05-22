@@ -5,6 +5,7 @@
 'use strict';
 var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
+var MODBUSclient = require('./modbus');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -24,6 +25,8 @@ function Device(data, logger, _events) {
         comm = S7client.create(data, logger, events);
     } else if (data.type === DeviceEnum.OPCUA) {
         comm = OpcUAclient.create(data, logger, events);
+    } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
+        comm = MODBUSclient.create(data, logger, events);        
     }
 
     /**
@@ -94,6 +97,11 @@ function Device(data, logger, _events) {
      */
     this.connect = function () {
         var self = this;
+        if (data.type === DeviceEnum.ModbusRTU) {
+            comm.init(MODBUSclient.ModbusTypes.RTU);
+        } else if (data.type === DeviceEnum.ModbusTCP) {
+            comm.init(MODBUSclient.ModbusTypes.TCP);
+        }
         return comm.connect().then(function () {
             devicePolling = setInterval(function () {
                 self.polling();
@@ -231,7 +239,9 @@ module.exports = {
  */
 var DeviceEnum = {
     S7: 'SiemensS7',
-    OPCUA: 'OPCUA'
+    OPCUA: 'OPCUA',
+    ModbusRTU: 'ModbusRTU',
+    ModbusTCP: 'ModbusTCP'
 }
 
 /**

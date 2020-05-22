@@ -123,6 +123,39 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
+	getDevicePropertyToShow(device) {
+		let result = '';
+		if (device.property) {
+			if (device.type === DeviceType.OPCUA) {
+				result = 'OPC-UA'
+			} else if (device.type === DeviceType.SiemensS7) {
+				result = 'Port: ';
+				if (device.property.port) {
+					result += device.property.port;
+				}
+				result +=' / Rack: ';
+				if (device.property.rack) {
+					result += device.property.rack;
+				}
+				result += ' / Slot: ';
+				if (device.property.slot) {
+					result += device.property.slot;
+				}
+			} else if (device.type === DeviceType.ModbusTCP) {
+				result = 'Modbus-TCP  ' + 'Slave ID: ';
+				if (device.property.slaveid) {
+					result += device.property.slaveid;
+				}
+			} else if (device.type === DeviceType.ModbusRTU) {
+				result = 'Modbus-RTU  ' + 'Slave ID: ';
+				if (device.property.slaveid) {
+					result += device.property.slaveid;
+				}
+			}
+		}
+		return result;
+	}
+
 	getDeviceStatusColor(device) {
 		let st = this.devicesStatus[device.name];
 		if (this.devicesStatus[device.name]) {
@@ -168,6 +201,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 						device.property.port = parseInt(tempdevice.property.port);
 						device.property.slot = parseInt(tempdevice.property.slot);
 						device.property.rack = parseInt(tempdevice.property.rack);
+						device.property.slaveid = tempdevice.property.slaveid;
+						device.property.baudrate = tempdevice.property.baudrate;
+						device.property.databits = tempdevice.property.databits;
+						device.property.stopbits = tempdevice.property.stopbits;
+						device.property.parity = tempdevice.property.parity;
 					}
 					this.projectService.setDevice(device, olddevice, result.security);
 				}

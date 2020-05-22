@@ -151,6 +151,17 @@ export class DeviceListComponent implements OnInit {
         });
     }
 
+    getAddress(tag: Tag) {
+        if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
+            return  parseInt(tag.address) + parseInt(tag.memaddress);
+        }
+        return tag.address;
+    }
+
+    isToEdit(type) {
+        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU);
+    }
+
     editTag(tag: Tag, checkToAdd: boolean) {
         let oldtag = tag.name;
         let temptag = JSON.parse(JSON.stringify(tag));
@@ -169,6 +180,7 @@ export class DeviceListComponent implements OnInit {
                 tag.name = temptag.name;
                 tag.type = temptag.type;
                 tag.address = temptag.address;
+                tag.memaddress = temptag.memaddress;
                 tag.min = temptag.min;
                 tag.max = temptag.max;
                 if (checkToAdd) {
