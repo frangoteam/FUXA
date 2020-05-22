@@ -20,7 +20,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     existing: string[] = [];
     withtree: boolean = false;
     config = { width: '100%', height: '600px' };
-    memAddress = {'Coil Status (Read/Write 000001-065536)': '000001', 'Digital Inputs (Read 100001-165536)': '200001', 'Input Registers (Read  300001-365536)': '300001', 'Holding Registers (Read/Write  400001-465535)': '400001'};
+    memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
     private subscriptionBrowse: Subscription;
     private subscriptionNodeAttribute: Subscription;
 
@@ -183,7 +183,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     }
     
     checkMemAddress(memaddress) {
-        if (memaddress === '000001' || memaddress === '200001') {
+        if (memaddress === '000000' || memaddress === '100000') {
             this.data.tag.type = ModbusTagType.Bool;
         }
     }
@@ -192,6 +192,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         if (this.error) {
             return false
         } else if (!this.data.tag.name) {
+            return false;
+        } else if (this.isModbus() && (!this.data.tag.address || parseInt(this.data.tag.address) <= 0)) {
             return false;
         }
         return true;

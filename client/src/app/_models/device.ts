@@ -63,8 +63,8 @@ export enum ModbusTagType {
     Int32 = 'Int32',
     UInt32 = 'UInt32',
     Float32 = 'Float32',
-    Float64 = 'Float64',
-    String = 'String'
+    Float64 = 'Float64'
+    // String = 'String'
 }
 
 export enum MessageSecurityMode {

@@ -5,7 +5,7 @@
 'use strict';
 var ModbusRTU = require("modbus-serial");
 const datatypes = require('./datatypes');
-
+const TOKEN_LIMIT = 1000;
 function MODBUSclient(_data, _logger, _events) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
@@ -112,7 +112,8 @@ function MODBUSclient(_data, _logger, _events) {
         if (_checkWorking(true)) {
             var readVarsfnc = [];
             for (var memaddr in memory) {
-                readVarsfnc.push(_readMemory(parseInt(memaddr), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
+                var tokenizedAddress = parseAddress(memaddr);
+                readVarsfnc.push(_readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
             }
             _checkWorking(false);
         //     if (Object.keys(mixItemsMap).length) {
@@ -157,9 +158,9 @@ function MODBUSclient(_data, _logger, _events) {
         // mixItemsMap = {};
         var count = 0;
         for (var id in data.tags) {
-            var memaddr = data.tags[id].memaddress;
-            var offset = parseInt(data.tags[id].address);
-            // var offsetInt = parseInt(offset);
+            var offset = parseInt(data.tags[id].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
+            var token = Math.trunc(offset / TOKEN_LIMIT);
+            var memaddr = formatAddress(data.tags[id].memaddress, token);
             if (!memory[memaddr]) {
                 memory[memaddr] = new MemoryItems();
             }
@@ -167,12 +168,12 @@ function MODBUSclient(_data, _logger, _events) {
                 memory[memaddr].Items[offset] = new MemoryItem(data.tags[id].type, offset);
             }
             memory[memaddr].Items[offset].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
-            var len = datatypes[data.tags[id].type].WordLen;
             if (offset < memory[memaddr].Start) {
                 memory[memaddr].Start = offset;
             }
-            if (memory[memaddr].MaxSize < offset + datatypes[data.tags[id].type].WordLen) {
-                memory[memaddr].MaxSize = offset + datatypes[data.tags[id].type].WordLen;
+            var len = offset + datatypes[data.tags[id].type].WordLen - memory[memaddr].Start;
+            if (memory[memaddr].MaxSize < len) {
+                memory[memaddr].MaxSize = len;
             }
             memItemsMap[id] = memory[memaddr].Items[offset];
         }
@@ -209,22 +210,20 @@ function MODBUSclient(_data, _logger, _events) {
      * Read the current Tag object, write the value in object and send to SPS 
      */
     this.setValue = function (sigid, value) {
-        var memaddr = data.tags[sigid].memaddress;
-        var offset = parseInt(data.tags[sigid].address);
-        // .writeCoil(address, state)
-        // .writeRegister (address, value)
-        // if (item) {
-        //     item.value = value;
-        //     _writeVars([item], (item instanceof DbItem)).then(result => {
-        //         logger.info(data.name + ' setValue : ' + sigid + '=' + value);
-        //     }, reason => {
-        //         if (reason && reason.stack) {
-        //             logger.error(data.name + ' _writeDB error: ' + reason.stack);
-        //         } else {
-        //             logger.error(data.name + ' _writeDB error: ' + reason);
-        //         }
-        //     });
-        // }
+        if (data.tags[sigid]) {
+            var memaddr = data.tags[sigid].memaddress;
+            var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
+            var val = datatypes[data.tags[sigid].type].formatter(value);
+            _writeMemory(parseInt(memaddr), offset, val).then(result => {
+                logger.info('setValue : ' + sigid + '=' + val);
+            }, reason => {
+                if (reason && reason.stack) {
+                    logger.error(data.name + ' _writeDB error: ' + reason.stack);
+                } else {
+                    logger.error(data.name + ' _writeDB error: ' + reason);
+                }
+            });
+        }
     }
 
     /**
@@ -272,7 +271,7 @@ function MODBUSclient(_data, _logger, _events) {
     }
 
     /**
-     * Read a Memory and parse the result
+     * Read a Memory from modbus and parse the result
      * @param {int} memoryAddress - The memory address to read
      * @param {int} start - Position of the first variable
      * @param {int} size - Length of the variables to read (the last address)
@@ -282,21 +281,68 @@ function MODBUSclient(_data, _logger, _events) {
     var _readMemory = function (memoryAddress, start, size, vars) {
         return new Promise((resolve, reject) => {
             if (vars.length === 0) return resolve([]);
-
-            // vars.forEach(v => {
-            //     if (v.offset < offset) offset = v.Start;
-            //     if (end < v.Start + datatypes[v.type].bytes) {
-            //         end = v.Start + datatypes[v.type].bytes;
-            //     }
-            // });
             // define read function
-            if (memoryAddress === 1) {                      // Coil Status (Read/Write 000001-065536)
+            if (memoryAddress === 0) {                      // Coil Status (Read/Write 000001-065536)
                 client.readCoils(start, size).then( res => {
+                    let changed = [];
+                    if (res.data) {
+                        vars.map(v => {
+                            let value = datatypes[v.type].parser(res.buffer[v.offset - start]);
+                            if (value !== v.value) {
+                                changed.push(v);
+                            }
+                            v.value = value;
+                        });
+                    }
+                    resolve(changed);
+                }, reason => {
+                    reject(reason);
+                });
+            } else if (memoryAddress === 100000) {          // Digital Inputs (Read 100001-165536)
+                client.readDiscreteInputs(start, size).then( res => {
+                    let changed = [];
+                    if (res.data) {
+                        vars.map(v => {
+                            let value = datatypes[v.type].parser(res.buffer[v.offset - start]);
+                            if (value !== v.value) {
+                                changed.push(v);
+                            }
+                            v.value = value;
+                        });
+                    }
+                    resolve(changed);
+                }, reason => {
+                    reject(reason);
+                });
+            } else if (memoryAddress === 300000) {          // Input Registers (Read  300001-365536)
+                client.readInputRegisters(start, size).then( res => {
+                    let changed = [];
+                    if (res.data) {
+                        vars.map(v => {
+                            try {
+                                let buffer = Buffer.from(res.buffer.slice(v.offset - start, datatypes[v.type].bytes))
+                                let value = datatypes[v.type].parser(buffer);
+                                if (value !== v.value) {
+                                    changed.push(v);
+                                }
+                                v.value = value;    
+                            } catch (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                    resolve(changed);
+                }, reason => {
+                    reject(reason);
+                });
+            } else if (memoryAddress === 400000) {          // Holding Registers (Read/Write  400001-465535)
+                client.readHoldingRegisters(start, size).then( res => {
                     console.log(res);
                     let changed = [];
                     if (res.data) {
                         vars.map(v => {
-                            let value = datatypes[v.type].parser(res.data[v.offset]);
+                            let buffer = Buffer.from(res.buffer.slice(v.offset - start, datatypes[v.type].bytes))
+                            let value = datatypes[v.type].parser(buffer);
                             if (value !== v.value) {
                                 changed.push(v);
                             }
@@ -308,43 +354,41 @@ function MODBUSclient(_data, _logger, _events) {
                     console.log(reason);
                     reject(reason);
                 });
-            } else if (memoryAddress === 200001) {          // Digital Inputs (Read 100001-165536)
-                fncToRead = client.readDiscreteInputs;
-            } else if (memoryAddress === 300001) {          // Input Registers (Read  300001-365536)
-                fncToRead = client.readInputRegisters;
-            } else if (memoryAddress === 400001) {          // Holding Registers (Read/Write  400001-465535)
-                fncToRead = client.readHoldingRegisters;
             } else {
                 reject();
             }
-            // fncToRead(start, size).then( res => {
-            //     console.log(res);
-            //     resolve(res);
-            // }, reason => {
-            //     console.log(reason);
-            //     reject(reason);
-            // });
+        });
+    }
 
-            // console.log);, (err, res) => {
-                // if (err) return _getErr(err);
-                // let changed = [];
-                // console.log(res);
-                // vars.map(v => {
-                //     let value = null;
-                //     if (v.type === 'BOOL') {
-                //         // check the full byte and send all bit if there is a change 
-                //         value = datatypes['BYTE'].parser(res, v.Start - offset, -1);
-                //     } else {
-                //         value = datatypes[v.type].parser(res, v.Start - offset, v.bit);
-                //     }
-                //     if (value !== v.value) {
-                //         changed.push(v);
-                //     }
-                //     v.value = value;
-                //     return v;
-                // });
-                // resolve(changed);
-            // });
+    /**
+     * Write value to modbus
+     * @param {*} memoryAddress 
+     * @param {*} start 
+     * @param {*} value 
+     */
+    var _writeMemory = function (memoryAddress, start, value) {
+        return new Promise((resolve, reject) => {
+            if (memoryAddress === 0) {                      // Coil Status (Read/Write 000001-065536)
+                client.writeCoil(start, value).then(res => {
+                    resolve();
+                }, reason => {
+                    console.log(reason);
+                    reject(reason);
+                });
+            } else if (memoryAddress === 100000) {          // Digital Inputs (Read 100001-165536)
+                reject();
+            } else if (memoryAddress === 300000) {          // Input Registers (Read  300001-365536)
+                reject();
+            } else if (memoryAddress === 400000) {          // Holding Registers (Read/Write  400001-465535)
+                client.writeRegisters(start, value).then(res => {
+                    resolve();
+                }, reason => {
+                    console.log(reason);
+                    reject(reason);
+                });
+            } else {
+                reject();
+            }
         });
     }
 
@@ -357,9 +401,7 @@ function MODBUSclient(_data, _logger, _events) {
             varsValue[id].value = null;
         }
         for (var id in memItemsMap) {
-            for (var itemid in memItemsMap[dbid].Items) {
-                memItemsMap[id].Items[itemid].value = null;
-            }
+            memItemsMap[id].value = null;
         }
         _emitValues(varsValue);
     }
@@ -436,7 +478,10 @@ function MODBUSclient(_data, _logger, _events) {
         working = check;
         overloading = 0;
         return true;
-    }    
+    }
+
+    const formatAddress = function(address, token) { return token + '-' + address; }
+    const parseAddress = function(address) { return { token:  address.split('-')[0], address: address.split('-')[1] }; }
 }
 
 const ModbusTypes = { RTU: 0, TCP: 1 };
