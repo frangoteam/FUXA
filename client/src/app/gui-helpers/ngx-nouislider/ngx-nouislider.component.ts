@@ -75,7 +75,7 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
             this.uiSlider.destroy();
         }
         this.uiSlider = noUiSlider.create(this.slider.nativeElement, {
-            start: [50],
+            start: [this.options.range.min + Math.abs(this.options.range.max - this.options.range.min) / 2],
             connect: [true, false],
             orientation: this.options.orientation,
             direction: this.options.direction,
@@ -111,7 +111,7 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
         }
 
 		let self = this;
-        this.uiSlider.on('update', function (values, handle) {
+        this.uiSlider.on('slide', function (values, handle) {
             if (self.onUpdate) {
                 self.onUpdate(values[handle]);
             }
@@ -124,6 +124,10 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
 
     bindUpdate(calback: any) {
         this.onUpdate = calback;
+    }
+
+    currentValue() {
+        return parseFloat(this.uiSlider.get());
     }
 
 }

@@ -111,7 +111,8 @@ export class GaugeAction {
 
 export class GaugeStatus {
     variablesValue = {};
-    onlyChange = false;
+    onlyChange = false;         // to process value only by change 
+    takeValue = false;          // to process value by check change with gauge value
     actionRef: any;
 }
 

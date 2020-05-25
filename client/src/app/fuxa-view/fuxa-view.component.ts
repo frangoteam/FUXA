@@ -123,7 +123,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 							for (let i = 0; i < gas.length; i++) {
 								let gaugeSetting = gas[i];
 								let gaugeStatus = this.getGaugeStatus(gaugeSetting);
-								if (this.checkStatusVaue(gaugeStatus, sig)) {
+                                if (this.checkStatusVaue(gaugeSetting.id, gaugeStatus, sig)) {
 									let svgeles = this.getSvgElements(gaugeSetting.id);
 									for (let y = 0; y < svgeles.length; y++) {
 										this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig, gaugeStatus);
@@ -157,11 +157,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	 * @param gaugeStatus 
 	 * @param signal 
 	 */
-	private checkStatusVaue(gaugeStatus: GaugeStatus, signal: any) {
+	private checkStatusVaue(gaugeId: string, gaugeStatus: GaugeStatus, signal: any) {
 		let result = true;
-		if (gaugeStatus.onlyChange && gaugeStatus.variablesValue[signal.id] === signal.value) {
-			result = false;
-		}
+		if (gaugeStatus.onlyChange) {
+            if (gaugeStatus.takeValue) {
+                let value = this.gaugesManager.getGaugeValue(gaugeId);
+                gaugeStatus.variablesValue[signal.id] = value;
+            }
+            if (gaugeStatus.variablesValue[signal.id] === signal.value) {
+                result = false;
+            }
+        }
 		gaugeStatus.variablesValue[signal.id] = signal.value;
 		return result;
 	}

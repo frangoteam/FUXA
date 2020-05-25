@@ -118,6 +118,9 @@ export class GaugesManager {
         if (!ga.type.startsWith(HtmlChartComponent.TypeTag)) {
             result.onlyChange = true;
         }
+        if (ga.type.startsWith(SliderComponent.TypeTag)) {
+            result.takeValue = true;
+        }
         return result;
     }
         
@@ -287,6 +290,12 @@ export class GaugesManager {
                     return;
                 }
             }
+        }
+    }
+
+    getGaugeValue(gaugeId: string) {
+        if (this.mapGauges[gaugeId] && this.mapGauges[gaugeId].currentValue) {
+            return this.mapGauges[gaugeId].currentValue();
         }
     }
 
