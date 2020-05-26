@@ -45,7 +45,7 @@ const Datatypes = {
     /**
      * Float64
      */
-    Float64: _gen(8, 'readDoubleBE', 4),
+    Float64: _gen(8, 'DoubleBE', 4),
     /**
      * String
      */
