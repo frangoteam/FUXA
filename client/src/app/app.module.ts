@@ -15,6 +15,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { GestureConfig } from '@angular/material';
+import { AngularDraggableModule } from 'angular2-draggable';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
@@ -181,6 +182,7 @@ export function createTranslateLoader(http: HttpClient) {
       BrowserAnimationsModule,
       ColorPickerModule,
       Ng5SliderModule,
+      AngularDraggableModule,
       MatSelectSearchModule,
        ToastrModule.forRoot({
            timeOut: 3000,

@@ -99,6 +99,7 @@ export class GaugeEvent {
     type: string;
     action: string;
     actparam: string;
+    actoptions = {};
 }
 
 export class GaugeAction {
@@ -125,6 +126,7 @@ export enum GaugeEventActionType {
     onwindow = 'Open Window',
     ondialog = 'Open Dialog',
     onSetValue = 'Set Value',
+    oniframe = 'Open iframe'
 }
 
 export class GaugeRangeProperty {

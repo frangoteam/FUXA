@@ -27,6 +27,42 @@
     float: right;
 }
 
+.fab-iframe {
+    position: absolute;
+    width: 800px;
+    height: 600px;
+    background-color:black;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+    /* box-shadow: 0px 2px 6px -1px #888888; */
+}
+
+.iframe-header {
+    display: block;
+    height: 22px;
+    width: 100%;
+    color: white;
+    background-color: black;
+    font-size: 12px;
+    text-align: center;
+    line-height: 22px;
+}
+
+.iframe-header i {
+    float: right;
+    color: white;
+}
+
+.iframe-class {
+    display: block;
+    height: 100%;
+    transform-origin: 0 0;
+    /* transform-origin:left top; */
+}
+
+.ng-draggable {
+    cursor: move;
+}
+
 .dialog-modal {
     /* display: none; */
     position: fixed; /* Stay in place */

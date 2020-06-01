@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFactoryResolver, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs";
 
@@ -24,6 +24,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	@ViewChild('dataContainer') dataContainer: ElementRef;
 
 	cards: CardModel[] = [];
+	iframes: CardModel[] = [];
 	dialog: DialogModalModel;
     mapGaugeStatus = {};
 
@@ -188,6 +189,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 						self.openDialog(ev, event[0].actparam);
 					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.onSetValue) === actindex) {
 						self.onSetValue(ga, event[0].actparam);
+					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.oniframe) === actindex) {
+						self.openIframe(ga.id, ev, event[0].actparam, event[0].actoptions);
 					}
 					// self.createComponent(event[0].name, ev.x, ev.y);
 				}
@@ -303,6 +306,52 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		}
 	}
 
+	openIframe(id: string, event: any, link: string, options: any) {
+		// check existing iframe
+		let iframe = null;
+		this.iframes.forEach(f => {
+			if (f.id === id) {
+				iframe = f;
+			}
+		});
+		if (iframe) {
+			return;
+		}
+		iframe = new CardModel(id);
+		iframe.x = event.clientX;
+		iframe.y = event.clientY;
+		iframe.width = 600;
+		iframe.height = 400;
+		iframe.scale = 1;
+		if (!isNaN(parseInt(options.width))) {
+			iframe.width = parseInt(options.width);
+		}
+		if (!isNaN(parseInt(options.height))) {
+			iframe.height = parseInt(options.height);
+		}
+		if (!isNaN(parseFloat(options.scale))) {
+			iframe.scale = parseFloat(options.scale);
+		}
+
+		iframe.link = link;
+		iframe.name = link;
+		this.iframes.push(iframe);
+		this.onIframeResizing(iframe, { size: { width: iframe.width, height: iframe.height } });
+	}
+
+	onIframeResizing(iframe: CardModel, event) {
+        iframe.width = event.size.width;
+        iframe.height = event.size.height;
+	}
+	
+	onCloseIframe(iframe: CardModel) {
+		this.iframes.forEach(f => {
+			if (f.id === iframe.id) {
+                this.iframes.splice(this.cards.indexOf(f), 1);
+			}
+		});
+	}
+
 	onCloseCard(card: CardModel) {
 		this.cards.splice(this.cards.indexOf(card), 1);
 	}
@@ -325,8 +374,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 export class CardModel {
 	public id: string;
 	public name: string;
+	public link: string;
 	public x: number;
 	public y: number;
+    public scale: number;
+    public scaleX: number;
+	public scaleY: number;
 	public width: number;
 	public height: number;
 	public view: View;

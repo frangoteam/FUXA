@@ -23,6 +23,12 @@ export class FlexEventComponent implements OnInit {
         this.actionType = GaugeEventActionType;
         if (this.property) {
             this.events = this.property.events;
+            // compatibility with <= 1.0.4
+            this.events.forEach(element => {
+                if (!element.actoptions) {
+                    element.actoptions = {};
+                }
+            });
         }
         if (!this.events || this.events.length <= 0) {
             this.onAddEvent();
@@ -53,12 +59,19 @@ export class FlexEventComponent implements OnInit {
     withDestination(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetValue);
-        return (a >= 0 && a != b) ? true : false;
+        let c = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
+        return (a >= 0 && a != b && a != c) ? true : false;
     }
 
     withSetValue(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetValue);
+        return (a === b) ? true : false;
+    }
+
+    withAddress(action) {
+        let a = Object.keys(this.actionType).indexOf(action);
+        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
         return (a === b) ? true : false;
     }
 

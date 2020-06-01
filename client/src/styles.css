@@ -1,6 +1,7 @@
 @import '~material-design-icons/iconfont/material-icons.css';
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import '~ngx-toastr/toastr.css';
+@import '~angular2-draggable/css/resizable.min.css';
 
 @font-face {
     font-family: 'myicons';

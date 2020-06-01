@@ -1,7 +1,6 @@
 <div #dataContainer class="view-container">
 </div>
-<div class="fab-card" draggable [draggableHeight]="22" *ngFor="let card of cards; let i = index" [style.top]="card.y +'px'"
-    [style.left]="card.x + 'px'" [style.width]="card.width +'px'" [style.height]="getCardHeight(card.height) + 'px'">
+<div class="fab-card" draggable [draggableHeight]="22" *ngFor="let card of cards; let i = index" [style.top]="card.y +'px'" [style.left]="card.x + 'px'" [style.width]="card.width +'px'" [style.height]="getCardHeight(card.height) + 'px'">
     <a (click)="onCloseCard(card);" class="card-close">
         <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
     </a>
@@ -12,6 +11,15 @@
         <a (click)="onCloseDialog();" class="dialog-modal-close">
             <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
         </a>
-        <app-fuxa-view [view]="dialog.view" [hmi]="hmi" [gaugesManager]="gaugesManager" ></app-fuxa-view>
+        <app-fuxa-view [view]="dialog.view" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
     </div>
+</div>
+<div ngDraggable ngResizable [handle]="iframeHandle" class="fab-iframe" *ngFor="let iframe of iframes; let i = index" [style.left]="iframe.x + 'px'" [style.top]="iframe.y + 'px'" (rzResizing)="onIframeResizing(iframe, $event)" [style.width]="iframe.width + 'px'" [style.height]="(iframe.height + 22) + 'px'">
+    <div #iframeHandle class="iframe-header">
+        <span>{{iframe.name}}</span>
+        <a (click)="onCloseIframe(iframe);">
+            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+        </a>
+    </div>
+    <app-iframe [style.zoom]="1 / iframe.scale" [style.transform]="'scale(' + iframe.scale + ')'" [style.width]="iframe.width + 'px'" [style.height]="iframe.height + 'px'" [link]="iframe.link" class="iframe-class"></app-iframe>
 </div>
