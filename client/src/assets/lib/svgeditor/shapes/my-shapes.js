@@ -128,7 +128,8 @@
         },
         {
             name: 'cylinder', ico: 'assets/lib/svgeditor/shapes/img/shape-cylinder.svg', content: [
-                { id: '', type: 'path', attr: { d: 'M 0 16 C 0 32 60 32 60 16 M 0 16 C 0 -5.33 60 -5.33 60 16 L 60 64 C 60 85.33 0 85.33 0 64 Z' } }]
+                { id: '', type: 'path', attr: { d: 'M 0 16 C 0 -5.33 60 -5.33 60 16 L 60 64 C 60 85.33 0 85.33 0 64 Z' } },
+                { id: '', type: 'path', attr: { d: 'M 0 16 C 0 32 60 32 60 16' } }]
         },
         {
             name: 'cone', ico: 'assets/lib/svgeditor/shapes/img/shape-cone.svg', content: [
