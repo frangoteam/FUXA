@@ -143,7 +143,6 @@ app.use("/editor", express.static(settings.httpStatic));
 app.use("/device", express.static(settings.httpStatic));
 app.use("/users", express.static(settings.httpStatic));
 app.use("/view", express.static(settings.httpStatic));
-// app.use(express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', { stream: accessLogStream }));

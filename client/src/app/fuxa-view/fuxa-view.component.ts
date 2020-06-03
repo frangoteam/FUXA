@@ -192,7 +192,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.oniframe) === actindex) {
 						self.openIframe(ga.id, ev, event[0].actparam, event[0].actoptions);
 					}
-					// self.createComponent(event[0].name, ev.x, ev.y);
 				}
 			});
 		}
