@@ -164,16 +164,23 @@ function MODBUSclient(_data, _logger, _events) {
             if (!memory[memaddr]) {
                 memory[memaddr] = new MemoryItems();
             }
-            if (!memory[memaddr].Items[offset]) {                
+            if (!memory[memaddr].Items[offset]) {
                 memory[memaddr].Items[offset] = new MemoryItem(data.tags[id].type, offset);
             }
             memory[memaddr].Items[offset].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
             if (offset < memory[memaddr].Start) {
-                memory[memaddr].Start = offset;
-            }
-            var len = offset + datatypes[data.tags[id].type].WordLen - memory[memaddr].Start;
-            if (memory[memaddr].MaxSize < len) {
-                memory[memaddr].MaxSize = len;
+                if (memory[memaddr].Start != 65536) {
+                    memory[memaddr].MaxSize += memory[memaddr].Start - offset;
+                    memory[memaddr].Start = offset;
+                } else {
+                    memory[memaddr].MaxSize = datatypes[data.tags[id].type].WordLen;
+                    memory[memaddr].Start = offset;
+                }
+            } else {
+                var len = offset + datatypes[data.tags[id].type].WordLen - memory[memaddr].Start;
+                if (memory[memaddr].MaxSize < len) {
+                    memory[memaddr].MaxSize = len;
+                }
             }
             memItemsMap[id] = memory[memaddr].Items[offset];
         }
@@ -287,7 +294,9 @@ function MODBUSclient(_data, _logger, _events) {
                     let changed = [];
                     if (res.data) {
                         vars.map(v => {
-                            let value = datatypes[v.type].parser(res.buffer[v.offset - start]);
+                            let bitoffset = Math.trunc((v.offset - start) / 8);
+                            let bit = (v.offset - start) % 8;
+                            let value = datatypes[v.type].parser(res.buffer, bitoffset, bit);
                             if (value !== v.value) {
                                 changed.push(v);
                             }
@@ -303,7 +312,9 @@ function MODBUSclient(_data, _logger, _events) {
                     let changed = [];
                     if (res.data) {
                         vars.map(v => {
-                            let value = datatypes[v.type].parser(res.buffer[v.offset - start]);
+                            let bitoffset = Math.trunc((v.offset - start) / 8);
+                            let bit = (v.offset - start) % 8;
+                            let value = datatypes[v.type].parser(res.buffer, bitoffset, bit);
                             if (value !== v.value) {
                                 changed.push(v);
                             }
@@ -320,7 +331,8 @@ function MODBUSclient(_data, _logger, _events) {
                     if (res.data) {
                         vars.map(v => {
                             try {
-                                let buffer = Buffer.from(res.buffer.slice(v.offset - start, datatypes[v.type].bytes))
+                                let byteoffset = (v.offset - start) * 2;
+                                let buffer = Buffer.from(res.buffer.slice(byteoffset, byteoffset + datatypes[v.type].bytes))
                                 let value = datatypes[v.type].parser(buffer);
                                 if (value !== v.value) {
                                     changed.push(v);
@@ -341,7 +353,8 @@ function MODBUSclient(_data, _logger, _events) {
                     let changed = [];
                     if (res.data) {
                         vars.map(v => {
-                            let buffer = Buffer.from(res.buffer.slice(v.offset - start, datatypes[v.type].bytes))
+                            let byteoffset = (v.offset - start) * 2;
+                            let buffer = Buffer.from(res.buffer.slice(byteoffset, byteoffset + datatypes[v.type].bytes))
                             let value = datatypes[v.type].parser(buffer);
                             if (value !== v.value) {
                                 changed.push(v);
