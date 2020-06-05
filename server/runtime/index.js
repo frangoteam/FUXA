@@ -209,6 +209,8 @@ function update(cmd, data) {
         try {
             if (cmd === project.ProjectDataCmdType.SetDevice) {
                 devices.updateDevice(data);
+            } else if (cmd === project.ProjectDataCmdType.DelDevice) {
+                devices.removeDevice(data);
             }
             resolve(true);
         } catch (err) {

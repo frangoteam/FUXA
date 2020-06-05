@@ -238,6 +238,8 @@
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
 
+    "shapes.action-hide": "Hide",
+    "shapes.action-show": "Show",
     "shapes.action-stop": "Stop",
     "shapes.action-clockwise": "Turn clockwise",
     "shapes.action-anticlockwise": "Turn anticlockwise",

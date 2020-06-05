@@ -95,6 +95,23 @@ function updateDevice(device) {
 }
 
 /**
+ * Remove the device, stop it if active and remove from actieDevices list
+ * @param {*} device 
+ */
+function removeDevice(device) {
+    if (!activeDevices[device.name]) {
+        delete activeDevices[device.name];
+    } else {
+        activeDevices[device.name].stop().then(function () {
+            delete activeDevices[device.name];
+        }).catch(function (err) {
+            delete activeDevices[device.name];
+            runtime.logger.error('devices.remove-device by stop ' + device.name + ': ' + err);
+        });
+    }
+}
+
+/**
  * Load the device from project and add or remove of active device for the management 
  */
 function load() {
@@ -232,6 +249,7 @@ var devices = module.exports = {
     loadDevice: loadDevice,
     update: update,
     updateDevice: updateDevice,
+    removeDevice: removeDevice,
     getDevicesStatus: getDevicesStatus,
     getDevicesValues: getDevicesValues,
     setDeviceValue: setDeviceValue,
