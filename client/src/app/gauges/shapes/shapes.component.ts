@@ -16,6 +16,11 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
     static TypeTag = 'svg-ext-' + ShapesComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'Shapes';
 
+    static actionsType = {
+        hide: 'shapes.action-hide',
+        show: 'shapes.action-show',
+    }
+
     constructor() {
         super();
     }
@@ -37,6 +42,10 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
             });
         }
         return res;
+    }
+
+    static getActions() {
+        return this.actionsType;
     }
 
     static getDialogType(): GaugeDialogType {
@@ -64,7 +73,30 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
                         svgele.node.setAttribute('fill', clr);
                     }
                 }
+                // check actions
+                if (ga.property.actions) {
+                    ga.property.actions.forEach(act => {
+                        if (act.variableId === sig.id) {
+                            ShapesComponent.processAction(act, svgele, value, gaugeStatus);
+                        }
+                    });
+                }                
             }
+        }
+    }
+
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+        var element = SVG.adopt(svgele.node);
+        if (act.range.min <= value && act.range.max >= value) {
+            ShapesComponent.runAction(element, act.type, gaugeStatus);
+        }
+    }
+
+    static runAction(element, type, gaugeStatus: GaugeStatus) {
+        if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.hide) {
+            gaugeStatus.actionRef = { type: type, animr: element.hide() };
+        } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.show) {
+            gaugeStatus.actionRef = { type: type, animr: element.show() };
         }
     }
 }

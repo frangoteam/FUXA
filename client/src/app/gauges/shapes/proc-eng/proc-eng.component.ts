@@ -1,7 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeStatus, WindowLink } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, WindowLink } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+
+declare var SVG: any;
 
 @Component({
     selector: 'gauge-proc-eng',
@@ -15,6 +17,11 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
     static TypeId = 'proceng';
     static TypeTag = 'svg-ext-' + ProcEngComponent.TypeId;
     static LabelTag = 'Proc-Eng';
+
+    static actionsType = {
+        hide: 'shapes.action-hide',
+        show: 'shapes.action-show',
+    }
 
     constructor() {
         super();
@@ -31,7 +38,16 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
         if (pro.alarmId) {
             res.push(pro.alarmId);
         }
+        if (pro.actions && pro.actions.length) {
+            pro.actions.forEach(act => {
+                res.push(act.variableId);
+            });
+        }
         return res;
+    }
+
+    static getActions() {
+        return this.actionsType;
     }
 
     static getDialogType(): GaugeDialogType {
@@ -59,7 +75,30 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
                         svgele.node.setAttribute('fill', clr);
                     }
                 }
+                // check actions
+                if (ga.property.actions) {
+                    ga.property.actions.forEach(act => {
+                        if (act.variableId === sig.id) {
+                            ProcEngComponent.processAction(act, svgele, value, gaugeStatus);
+                        }
+                    });
+                }   
             }
+        }
+    }
+
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+        var element = SVG.adopt(svgele.node);
+        if (act.range.min <= value && act.range.max >= value) {
+            ProcEngComponent.runAction(element, act.type, gaugeStatus);
+        }
+    }
+
+    static runAction(element, type, gaugeStatus: GaugeStatus) {
+        if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.hide) {
+            gaugeStatus.actionRef = { type: type, animr: element.hide() };
+        } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.show) {
+            gaugeStatus.actionRef = { type: type, animr: element.show() };
         }
     }
 }

@@ -57,7 +57,7 @@ export class GaugesManager {
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, 
         ApeShapesComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithActions = [ApeShapesComponent, PipeComponent];
+    static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
