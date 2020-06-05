@@ -58,9 +58,10 @@ export class FlexEventComponent implements OnInit {
 
     withDestination(action) {
         let a = Object.keys(this.actionType).indexOf(action);
-        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetValue);
-        let c = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
-        return (a >= 0 && a != b && a != c) ? true : false;
+        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onpage);
+        let c = Object.values(this.actionType).indexOf(GaugeEventActionType.onwindow);
+        let d = Object.values(this.actionType).indexOf(GaugeEventActionType.ondialog);
+        return (a === b || a === c || a === d) ? true : false;
     }
 
     withSetValue(action) {
@@ -70,6 +71,13 @@ export class FlexEventComponent implements OnInit {
     }
 
     withAddress(action) {
+        let a = Object.keys(this.actionType).indexOf(action);
+        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
+        let c = Object.values(this.actionType).indexOf(GaugeEventActionType.oncard);
+        return (a === b || a === c) ? true : false;
+    }
+
+    withScale(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
         return (a === b) ? true : false;

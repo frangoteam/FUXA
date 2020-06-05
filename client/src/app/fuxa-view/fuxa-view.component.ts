@@ -191,6 +191,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 						self.onSetValue(ga, event[0].actparam);
 					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.oniframe) === actindex) {
 						self.openIframe(ga.id, ev, event[0].actparam, event[0].actoptions);
+					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.oncard) === actindex) {
+						self.openWindow(ga.id, ev, event[0].actparam, event[0].actoptions);
 					}
 				}
 			});
@@ -349,6 +351,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 this.iframes.splice(this.cards.indexOf(f), 1);
 			}
 		});
+	}
+
+	openWindow(id: string, event: any, link: string, options: any) {
+		let width = 600;
+		let height = 400;
+		if (!isNaN(parseInt(options.width))) {
+			width = parseInt(options.width);
+		}
+		if (!isNaN(parseInt(options.height))) {
+			height = parseInt(options.height);
+		}
+		window.open(link, '_blank', 'height=' + height + ',width=' + width + ',left=' + event.clientX + ',top='+ event.clientY);
 	}
 
 	onCloseCard(card: CardModel) {
