@@ -214,12 +214,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (copiedpasted) => {
-                    if (copiedpasted && copiedpasted.copy && copiedpasted.past && copiedpasted.copy.length == copiedpasted.past.length) {
-                        for (let i = 0; i < copiedpasted.copy.length; i++) {
-                            let gasrc: GaugeSettings = this.getGaugeSettings(copiedpasted.copy[i]);
-                            let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
-                            gadest.property = JSON.parse(JSON.stringify(gasrc.property));
-                            this.checkGaugeAdded(gadest);
+                    if (copiedpasted && copiedpasted.copy && copiedpasted.past) {
+                        copiedpasted.copy = copiedpasted.copy.filter(function(e) {return e });
+                        if (copiedpasted.copy.length == copiedpasted.past.length) {
+                            for (let i = 0; i < copiedpasted.copy.length; i++) {
+                                let srctype = copiedpasted.copy[i].getAttribute("type");
+                                let srcid = copiedpasted.copy[i].getAttribute("id");
+                                if (srcid && srctype) {
+                                    let gasrc: GaugeSettings = this.getGaugeSettings({ id: srcid, type: srctype});
+                                    let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
+                                    gadest.property = JSON.parse(JSON.stringify(gasrc.property));
+                                    this.setGaugeSettings(gadest);
+                                    this.checkGaugeAdded(gadest);    
+                                }
+                            }
                         }
                     }
                 }
