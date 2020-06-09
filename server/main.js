@@ -72,7 +72,12 @@ if (!fs.existsSync(settings.logDir)) {
 }
 
 logger.init(settings.logDir);
-logger.info("FUXA V." + FUXA.version());
+const version = FUXA.version();
+if (version.indexOf('beta') > 0) {
+    logger.warn("FUXA V." + version);
+} else {
+    logger.info("FUXA V." + version);
+}
 
 // Check storage Database dir
 if (!settings.dbDir) {
