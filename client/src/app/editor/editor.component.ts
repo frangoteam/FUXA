@@ -221,7 +221,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                                 let srctype = copiedpasted.copy[i].getAttribute("type");
                                 let srcid = copiedpasted.copy[i].getAttribute("id");
                                 if (srcid && srctype) {
-                                    let gasrc: GaugeSettings = this.getGaugeSettings({ id: srcid, type: srctype});
+                                    let gasrc: GaugeSettings = this.searchGaugeSettings({ id: srcid, type: srctype});
                                     let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
                                     gadest.property = JSON.parse(JSON.stringify(gasrc.property));
                                     this.setGaugeSettings(gadest);
@@ -320,6 +320,27 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (ele && this.currentView) {
             if (this.currentView.items[ele.id]) {
                 return this.currentView.items[ele.id];
+            }
+            return this.gaugesManager.createSettings(ele.id, ele.type);
+        }
+        return null;
+    }
+
+    /**
+     * search gauge settings on all views items, if not exist create void settings from GaugesManager
+     * @param ele gauge element
+     */
+    private searchGaugeSettings(ele) {
+        if (ele) {
+            if (this.currentView) {
+                if (this.currentView.items[ele.id]) {
+                    return this.currentView.items[ele.id];
+                }
+            }
+            for (var i = 0; i < this.hmi.views.length; i++) {
+                if (this.hmi.views[i].items[ele.id]) {
+                    return this.hmi.views[i].items[ele.id];
+                }
             }
             return this.gaugesManager.createSettings(ele.id, ele.type);
         }
@@ -751,6 +772,37 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 v.profile.bkcolor = '#ffffffff';
             }
             v.id = 'v_' + Utils.getShortGUID();
+            this.hmi.views.push(v);
+            this.onSelectView(v);
+            this.saveView(this.currentView);
+        }
+    }
+
+    onCloneView(view: View) {
+        if (view) {
+            let nn = "View_";
+            let idx = 1;
+            for (idx = 1; idx < this.hmi.views.length + 2; idx++) {
+                let found = false;
+                for (var i = 0; i < this.hmi.views.length; i++) {
+                    if (this.hmi.views[i].name === nn + idx) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                    break;
+            }
+            let strv = JSON.stringify(view);
+            // change all gauge ids
+            for (let key in view.items) {
+                let idprefix = key.substring(0, key.indexOf('_'));
+                let newid = idprefix + '_' + Utils.getShortGUID();
+                strv = strv.replace(key, newid);
+            }
+            let v:View = JSON.parse(strv);
+            v.id = 'v_' + Utils.getShortGUID();
+            v.name = nn + idx;
             this.hmi.views.push(v);
             this.onSelectView(v);
             this.saveView(this.currentView);
