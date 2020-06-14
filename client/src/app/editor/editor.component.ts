@@ -793,13 +793,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!found)
                     break;
             }
-            let strv = JSON.stringify(view);
+            let torename = { content: JSON.stringify(view), id: '' };
             // change all gauge ids
+            let idrenamed = [];
             for (let key in view.items) {
-                let idprefix = key.substring(0, key.indexOf('_'));
-                let newid = idprefix + '_' + Utils.getShortGUID();
-                strv = strv.replace(key, newid);
+                torename.id = key;
+                let newid = this.winRef.nativeWindow.svgEditor.renameSvgExtensionId(torename);
+                idrenamed.push(newid);
             }
+            let strv = this.winRef.nativeWindow.svgEditor.renameAllSvgExtensionId(torename.content, idrenamed);
             let v:View = JSON.parse(strv);
             v.id = 'v_' + Utils.getShortGUID();
             v.name = nn + idx;

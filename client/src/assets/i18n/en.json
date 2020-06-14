@@ -101,6 +101,7 @@
     "editor.view-delete": "Delete",
     "editor.view-rename": "Rename",
     "editor.view-property": "Property",
+    "editor.view-clone": "Clone",
     "editor.general": "General",
     "editor.shape": "Shape",
     "editor.processeng": "Proc. Eng.",

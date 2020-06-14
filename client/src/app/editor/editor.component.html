@@ -31,6 +31,7 @@
                                 <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
                                 <button mat-menu-item (click)="onRenameView(item)">{{'editor.view-rename' | translate}}</button>
                                 <button mat-menu-item (click)="onPropertyView(item)">{{'editor.view-property' | translate}}</button>
+                                <!-- <button mat-menu-item (click)="onCloneView(item)">{{'editor.view-clone' | translate}}</button> -->
                             </mat-menu>
                         </div>
                     </div>
@@ -645,6 +646,14 @@
                         </button>
                         <button mat-button id="tool_alignbottom" title="{{'editor.tools-alignbottom-title' | translate}}" class="main-btn">
                             <mat-icon>vertical_align_bottom</mat-icon>
+                        </button>
+                    </div>
+                    <div id="threemoreselected_panel">
+                        <button mat-button id="tool_dividevertical" title="{{'editor.tools-dividevertical-title' | translate}}" class="main-btn">
+                            <mat-icon>format_line_spacing</mat-icon>
+                        </button>
+                        <button mat-button id="tool_dividehorizontal" title="{{'editor.tools-dividehorizontal-title' | translate}}" class="main-btn">
+                            <mat-icon style="transform-origin: center center;transform: rotate(90deg);">format_line_spacing</mat-icon>
                         </button>
                     </div>
                     <div id="g_panel">
