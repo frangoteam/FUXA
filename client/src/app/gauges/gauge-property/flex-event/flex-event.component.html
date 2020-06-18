@@ -1,4 +1,9 @@
 <div *ngFor="let item of events; index as i" class="item">
+    <div class="item-remove">
+        <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">
+            <mat-icon>clear</mat-icon>
+        </button>
+    </div>
     <div style="display: inline-block;">
         <div class="my-form-field" style="width: 140px;">
             <span>{{'gauges.property-event-type' | translate}}</span>
@@ -17,20 +22,35 @@
             </mat-select>
         </div>
     </div>
-    <div class="my-form-field" style="width: 240px;padding-left: 20px" *ngIf="withDestination(item.action)">
+    <div class="my-form-field" style="width: 260px;padding-left: 20px" *ngIf="withDestination(item.action)">
         <span>{{'gauges.property-event-destination' | translate}}</span>
         <mat-select [(value)]="item.actparam">
             <mat-option *ngFor="let v of views; index as i" [(value)]="v.id">{{v.name}}</mat-option>
         </mat-select>
     </div>
-    <div class="my-form-field" style="padding-left: 20px;" *ngIf="withSetValue(item.action)">
-        <span>{{'gauges.property-event-value' | translate}}</span>
-        <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 240px">
+    <div style="display: inline-block" *ngIf="withSetInput(item.action)">
+        <div class="my-form-field" style="width: 260px;padding-left: 20px;">
+            <span>{{'gauges.property-event-input' | translate}}</span>
+            <mat-select [(value)]="item.actparam">
+                <mat-option *ngFor="let v of inputs; index as i" [(value)]="v.id">{{v.name}}</mat-option>
+            </mat-select>
+        </div>
+    </div>
+    <div style="display: inline-block" *ngIf="withSetValue(item.action)">
+        <div class="my-form-field" style="padding-left: 20px;">
+            <span>{{'gauges.property-event-value' | translate}}</span>
+            <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 260px">
+        </div>
+    </div>
+    <div style="display: block; padding-bottom: 10px; padding-top: 5px;padding-left: 25px;" *ngIf="withSetValue(item.action) || withSetInput(item.action)">
+        <flex-variable style="display: block" [data]="data" (onchange)="setVariable(i, $event)" [variableSrc]="item.actoptions.variableSrc" [variableId]="item.actoptions.variableId"
+            [variable]="item.actoptions.variable">
+        </flex-variable>
     </div>
     <div style="display: inline-block" *ngIf="withAddress(item.action)">
         <div class="my-form-field" style="padding-left: 20px;">
             <span>{{'gauges.property-event-address' | translate}}</span>
-            <input [(ngModel)]="item.actparam" type="text" style="width: 240px">
+            <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
         </div>
         <div style="display: table; padding-left: 20px; padding-bottom: 10px; padding-top: 5px;" *ngIf="withAddress(item.action)">
             <div class="my-form-field">
@@ -46,10 +66,5 @@
                 <input numberOnly [(ngModel)]="item.actoptions.scale" type="text" style="width: 60px">
             </div>            
         </div>
-    </div>
-    <div class="item-remove">
-        <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">
-            <mat-icon>clear</mat-icon>
-        </button>
     </div>
 </div>

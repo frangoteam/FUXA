@@ -43,8 +43,8 @@
 						</button>
 					</div>
 				</div>
-				<div mat-dialog-content style="overflow: hidden; width:100%">
-					<flex-event [property]="property" [views]="views" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
+				<div mat-dialog-content style="overflow: hidden; width:100%;">
+					<flex-event [property]="property" [views]="views" [data]="data" [inputs]="inputs" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
 				</div>
 			</div>
         </mat-tab>

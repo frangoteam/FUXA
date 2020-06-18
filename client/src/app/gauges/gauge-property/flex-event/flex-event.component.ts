@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { GaugeProperty, GaugeEvent, GaugeEventType, GaugeEventActionType, View } from '../../../_models/hmi';
+import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeEventActionType, View } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-event',
@@ -11,12 +11,15 @@ export class FlexEventComponent implements OnInit {
 
     @Input() property: GaugeProperty;
     @Input() views: View[];
+    @Input() inputs: GaugeSettings[];
+    @Input() data: any;
 
     events: GaugeEvent[];
     eventType: any;
     actionType: any;
 
-    constructor() { }
+    constructor() {
+    }
 
     ngOnInit() {
         this.eventType = GaugeEventType;
@@ -70,6 +73,12 @@ export class FlexEventComponent implements OnInit {
         return (a === b) ? true : false;
     }
 
+    withSetInput(action) {
+        let a = Object.keys(this.actionType).indexOf(action);
+        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetInput);
+        return (a === b) ? true : false;
+    }
+
     withAddress(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
@@ -83,6 +92,12 @@ export class FlexEventComponent implements OnInit {
         return (a === b) ? true : false;
     }
 
+    setVariable(index, event) {
+        this.events[index].actoptions['variableSrc'] = event.variableSrc;
+        this.events[index].actoptions['variableId'] = event.variableId;
+        this.events[index].actoptions['variable'] = event.variable;
+    }
+    
     private addEvent(ge: GaugeEvent) {
         if (!this.events) {
             this.events = [];

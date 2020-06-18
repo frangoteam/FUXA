@@ -53,6 +53,8 @@ export class GaugesManager {
     // list of gauges tags to speed up the check
     gaugesTags = [];
 
+    // list of gauges with input 
+    static GaugeWithInput = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, 
         ApeShapesComponent.TypeTag];

@@ -2,9 +2,10 @@ import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFac
 import { ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs";
 
-import { Hmi, View, GaugeSettings, Event, GaugeEventActionType, GaugeStatus } from '../_models/hmi';
+import { Hmi, View, GaugeSettings, Event, GaugeEventActionType, GaugeStatus, GaugeEvent } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
+import { Utils } from '../_helpers/utils';
 
 declare var SVG: any;
 
@@ -179,21 +180,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		if (svgele) {
 			svgele.click(function (ev) {
 				let event = self.gaugesManager.getBindClick(ga);
-				if (event && event.length > 0 && event[0].action && event[0].actparam) {
-					let actindex = Object.keys(GaugeEventActionType).indexOf(event[0].action);
-					if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.onpage) === actindex) {
-						self.loadPage(ev, event[0].actparam);
-					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.onwindow) === actindex) {
-						self.onOpenCard(ga.id, ev, event[0].actparam);
-					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.ondialog) === actindex) {
-						self.openDialog(ev, event[0].actparam);
-					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.onSetValue) === actindex) {
-						self.onSetValue(ga, event[0].actparam);
-					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.oniframe) === actindex) {
-						self.openIframe(ga.id, ev, event[0].actparam, event[0].actoptions);
-					} else if (Object.values(GaugeEventActionType).indexOf(GaugeEventActionType.oncard) === actindex) {
-						self.openWindow(ga.id, ev, event[0].actparam, event[0].actoptions);
-					}
+				if (event && event.length > 0) {
+                    for (let i = 0; i < event.length; i++) {
+						let actindex = Object.keys(GaugeEventActionType).indexOf(event[i].action);
+						let eventTypes = Object.values(GaugeEventActionType);
+                        if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
+                            self.loadPage(ev, event[i].actparam);
+                        } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
+                            self.onOpenCard(ga.id, ev, event[i].actparam);
+                        } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
+                            self.openDialog(ev, event[i].actparam);
+                        } else if (eventTypes.indexOf(GaugeEventActionType.onSetValue) === actindex) {
+							self.onSetValue(ga, event[i]);
+						} else if (eventTypes.indexOf(GaugeEventActionType.onSetInput) === actindex) {
+                            self.onSetInput(ga, event[i]);
+                        } else if (eventTypes.indexOf(GaugeEventActionType.oniframe) === actindex) {
+                            self.openIframe(ga.id, ev, event[i].actparam, event[i].actoptions);
+                        } else if (eventTypes.indexOf(GaugeEventActionType.oncard) === actindex) {
+                            self.openWindow(ga.id, ev, event[i].actparam, event[i].actoptions);
+                        }
+                    }
 				}
 			});
 		}
@@ -373,10 +379,34 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		delete this.dialog;
 	}
 
-	onSetValue(ga: GaugeSettings, paramValue) {
-		if (ga.property && ga.property.variableId) {
-			this.gaugesManager.putSignalValue(ga.property.variableId, paramValue);
-		}
+    onSetValue(ga: GaugeSettings, event: GaugeEvent) {
+        if (event.actparam) {
+            if (event.actoptions && event.actoptions['variableId']) {
+                this.gaugesManager.putSignalValue(event.actoptions['variableId'], event.actparam);
+            } else if (ga.property && ga.property.variableId) {
+                this.gaugesManager.putSignalValue(ga.property.variableId, event.actparam);
+            }
+        }
+	}
+
+	onSetInput(ga: GaugeSettings, event: GaugeEvent) {
+        if (event.actparam) {
+			let ele = document.getElementById(event.actparam);
+			if (ele) {
+				let input = null;
+				for (let i = 0; i < GaugesManager.GaugeWithInput.length; i++) {
+					input = Utils.searchTreeStartWith(ele, GaugesManager.GaugeWithInput[i]);
+					if (input){ break; }
+				}
+				if (input && !isNaN(input.value)) {
+					if (event.actoptions && event.actoptions['variableId']) {
+						this.gaugesManager.putSignalValue(event.actoptions['variableId'], input.value);
+					} else if (ga.property && ga.property.variableId) {
+						this.gaugesManager.putSignalValue(ga.property.variableId, input.value);
+					}
+				}
+			}
+        }
 	}
 
 	getCardHeight(height) {

@@ -125,9 +125,10 @@ export enum GaugeEventActionType {
     onpage = 'Open Page',
     onwindow = 'Open Card',
     ondialog = 'Open Dialog',
-    onSetValue = 'Set Value',
     oniframe = 'Open iframe',
-    oncard = 'Open Window'      // wrong name exchange with 'onwindow'
+    oncard = 'Open Window',     // wrong name exchange with 'onwindow'
+    onSetValue = 'Set Value',
+    onSetInput = 'Set Input',
 }
 
 export class GaugeRangeProperty {

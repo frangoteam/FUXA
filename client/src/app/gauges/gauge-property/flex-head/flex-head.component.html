@@ -9,7 +9,7 @@
         </mat-option>
       </mat-select>
     </div>
-    <div class="my-form-field" style="width: 400px;float: right;margin-right: 10px;">
+    <div class="my-form-field" style="display:inline-block;width: 400px; padding-left: 20px;">
       <span>{{'gauges.property-head-variable' | translate}}</span>
       <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
         <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>

@@ -1061,12 +1061,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else {
             dialogRef = this.dialog.open(GaugePropertyComponent, {
-                minWidth: '700px',
+                minWidth: '740px',
                 minHeight: '700px',
                 panelClass: 'dialog-property',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue
+                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue,
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_')))
                 },
                 position: { top: '80px' }
             });
