@@ -82,21 +82,6 @@
                         </div>
                     </div>
                 </mat-expansion-panel>
-                <!-- SHAPES -->
-                <mat-expansion-panel *ngFor="let shGrp of shapesGrps" class="svg-workarea-leftbar-p" (opened)="panelsState[shGrp.name]=true;savePanelState()" (closed)="panelsState[shGrp.name]=false;savePanelState()" hideToggle="true" [expanded]="panelsState[shGrp.name]">
-                    <mat-expansion-panel-header class="svg-workarea-leftbar-h">
-                        <mat-panel-title>
-                            <mat-icon aria-label="Select" *ngIf="panelsState[shGrp.name]">expand_less</mat-icon>
-                            <mat-icon aria-label="Select" *ngIf="!panelsState[shGrp.name]">expand_more</mat-icon>
-                            <span>{{shGrp.name}}</span>
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <div id="__tools_left" class="leftbar-panel">
-                        <div *ngFor="let shape of shGrp.shapes" style="margin-left: 3px;margin-right: 3px;" class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive(shape.name)}" (click)="setMode(shape.name)">
-                            <span class="icon-tool" [style.backgroundImage]="'url(' + shape.ico + ')'"> </span>
-                        </div>
-                    </div>
-                </mat-expansion-panel>
                 <!-- CONTROLS  -->
                 <mat-expansion-panel class="svg-workarea-leftbar-p" (opened)="panelsState.panelD=true;savePanelState()" (closed)="panelsState.panelD=false;savePanelState()" hideToggle="true" [expanded]="panelsState.panelD">
                     <mat-expansion-panel-header class="svg-workarea-leftbar-h">
@@ -136,6 +121,21 @@
                         </div>
                         <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('html_slider')}" (click)="setMode('html_slider')">
                             <span class="icon-tool icon-slider"></span>
+                        </div>
+                    </div>
+                </mat-expansion-panel>                
+                <!-- SHAPES -->
+                <mat-expansion-panel *ngFor="let shGrp of shapesGrps" class="svg-workarea-leftbar-p" (opened)="panelsState[shGrp.name]=true;savePanelState()" (closed)="panelsState[shGrp.name]=false;savePanelState()" hideToggle="true" [expanded]="panelsState[shGrp.name]">
+                    <mat-expansion-panel-header class="svg-workarea-leftbar-h">
+                        <mat-panel-title>
+                            <mat-icon aria-label="Select" *ngIf="panelsState[shGrp.name]">expand_less</mat-icon>
+                            <mat-icon aria-label="Select" *ngIf="!panelsState[shGrp.name]">expand_more</mat-icon>
+                            <span>{{shGrp.name}}</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div id="__tools_left" class="leftbar-panel">
+                        <div *ngFor="let shape of shGrp.shapes" style="margin-left: 3px;margin-right: 3px;" class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive(shape.name)}" (click)="setMode(shape.name)">
+                            <span class="icon-tool" [style.backgroundImage]="'url(' + shape.ico + ')'"> </span>
                         </div>
                     </div>
                 </mat-expansion-panel>
