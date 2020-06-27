@@ -58,6 +58,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // users: User[] = [];
     // @ViewChild('fillcolor') fillcolor: ElementRef;
     @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
+    @ViewChild('viewFileImportInput') viewFileImportInput: any;
 
     isLoading = true;
     defaultColor = Utils.defaultColor;
@@ -495,7 +496,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (e) { }
         if (event) {
             for (let i = 0; i < event.length; i++) {
-                console.log('selected: ' + event[i].id + ' ' + event[i].type);
+                // console.log('selected: ' + event[i].id + ' ' + event[i].type);
             }
             if (event.length <= 1) {
                 this.selectedElement = event[0];
@@ -778,6 +779,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    /**
+     * Clone the View, copy and change all ids
+     * @param view 
+     */
     onCloneView(view: View) {
         if (view) {
             let nn = "View_";
@@ -937,6 +942,60 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+    /**
+     * Export view in a file json format MyView.fuxav
+     * @param view 
+     */
+    onExportView(view: View) {
+        let filename = 'MyView.fuxav';
+        let date = new Date();
+        let content = JSON.stringify(view);
+        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, filename);
+    }
+
+    /**
+     * Import view from file (exported in json format MyView.fuxav)
+     */
+    onImportView() {
+        let ele = document.getElementById('viewFileUpload') as HTMLElement;
+        ele.click();
+    }
+
+        /**
+     * open Project event file loaded 
+     * @param event file resource
+     */
+    onViewFileChangeListener(event) {
+        let text = [];
+        let files = event.srcElement.files;
+        let input = event.target;
+        let reader = new FileReader();
+        reader.onload = (data) => {
+            let view = JSON.parse(reader.result.toString());
+            if (view) {
+                let idx = 1;
+                let startname = view.name;
+                let existView = null;
+                while(existView = this.hmi.views.find((v) => v.name === view.name)) {
+                    view.name = startname + '_' + idx++;
+                }
+                view.id = 'v_' + Utils.getShortGUID();
+                this.hmi.views.push(view);
+                this.onSelectView(view);
+                this.saveView(this.currentView);
+            }
+            // this.projectService.setProject(prj, true);
+        }
+
+        reader.onerror = function () {
+            let msg = 'Unable to read ' + input.files[0];
+            // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
+            alert(msg);
+        };
+        reader.readAsText(input.files[0]);
+        this.viewFileImportInput.nativeElement.value = null;
+    }
     //#endregion
 
     //#region Panels State

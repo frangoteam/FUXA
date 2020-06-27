@@ -19,6 +19,8 @@
                         </mat-panel-title>
                         <mat-icon aria-label="Set" title="{{'editor.layout-settings' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onLayoutProperty();$event.stopPropagation()">settings</mat-icon>
                         <mat-icon aria-label="Add" title="Add View" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddView();$event.stopPropagation()">add</mat-icon>
+                        <mat-icon aria-label="Import" title="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onImportView($event);$event.stopPropagation()">system_update_alt</mat-icon>
+                        <input type="file" #viewFileImportInput style="display: none" id="viewFileUpload" (click)="$event.stopPropagation()" (change)="onViewFileChangeListener($event)" accept=".fuxav" />
                     </mat-expansion-panel-header>
                     <div class="leftbar-panel view-panel">
                         <div *ngIf="hmi.views && hmi.views.length <= 0">
@@ -31,7 +33,8 @@
                                 <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
                                 <button mat-menu-item (click)="onRenameView(item)">{{'editor.view-rename' | translate}}</button>
                                 <button mat-menu-item (click)="onPropertyView(item)">{{'editor.view-property' | translate}}</button>
-                                <!-- <button mat-menu-item (click)="onCloneView(item)">{{'editor.view-clone' | translate}}</button> -->
+                                <button mat-menu-item (click)="onCloneView(item)">{{'editor.view-clone' | translate}}</button>
+                                <button mat-menu-item (click)="onExportView(item)">{{'editor.view-export' | translate}}</button>
                             </mat-menu>
                         </div>
                     </div>

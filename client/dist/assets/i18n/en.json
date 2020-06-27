@@ -102,6 +102,8 @@
     "editor.view-rename": "Rename",
     "editor.view-property": "Property",
     "editor.view-clone": "Clone",
+    "editor.view-export": "Export",
+    "editor.view-import": "Import View",
     "editor.general": "General",
     "editor.shape": "Shape",
     "editor.processeng": "Proc. Eng.",
