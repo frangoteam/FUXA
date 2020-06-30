@@ -129,6 +129,7 @@ export enum GaugeEventActionType {
     oncard = 'Open Window',     // wrong name exchange with 'onwindow'
     onSetValue = 'Set Value',
     onSetInput = 'Set from Input',
+    onclose = 'Close',
 }
 
 export class GaugeRangeProperty {

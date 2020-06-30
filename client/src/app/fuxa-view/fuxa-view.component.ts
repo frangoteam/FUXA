@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFactoryResolver, Output, EventEmitter } from '@angular/core';
 import { ViewChild, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs";
 
@@ -21,6 +21,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	@Input() hmi: Hmi;
 	@Input() gaugesManager: GaugesManager;        // gauges.component
 	@Input() parentcards: CardModel[];
+	@Output() onclose = new EventEmitter();
 
 	@ViewChild('dataContainer') dataContainer: ElementRef;
 
@@ -174,6 +175,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		return result;
 	}
 
+	/**
+	 * bind the gauge svg element with click event
+	 * @param ga 
+	 */
 	private onBindClick(ga: GaugeSettings) {
 		let self = this;
 		let svgele = this.getSvgElement(ga.id);
@@ -198,20 +203,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                             self.openIframe(ga.id, ev, event[i].actparam, event[i].actoptions);
                         } else if (eventTypes.indexOf(GaugeEventActionType.oncard) === actindex) {
                             self.openWindow(ga.id, ev, event[i].actparam, event[i].actoptions);
-                        }
+                        } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
+                            self.onClose(ev);
+						}
                     }
 				}
 			});
 		}
 	}
 
+	/**
+	 * bind the html input control with key-enter event and select control with change event
+	 * @param htmlevent 
+	 */
 	private onBindHtmlEvent(htmlevent: Event) {
 		let self = this;
 		// let htmlevent = this.getHtmlElement(ga.id);
 		if (htmlevent.type === 'key-enter') {
 			htmlevent.dom.onkeypress = function (ev) {
 				if (ev.keyCode === 13) {
-					console.log('click sig ' + htmlevent.dom.id + ' ' + htmlevent.dom.value);
+					console.log('enter sig ' + htmlevent.dom.id + ' ' + htmlevent.dom.value);
 					htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
 					htmlevent.id = htmlevent.dom.id;
 					htmlevent.value = htmlevent.dom.value;
@@ -379,6 +390,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		delete this.dialog;
 	}
 
+	private onClose($event) {
+		if (this.onclose) {
+			this.onclose.emit($event);
+		}
+		// if (this.dialog && this.dialog.view && this.dialog.view.name === viewref) {
+		// 	this.onCloseDialog();
+		// } else if (this.cards.find((c) => c.name === viewref)) {
+		// 	this.onCloseCard(this.cards.find((c) => c.name === viewref));
+		// }
+	}
+	
     onSetValue(ga: GaugeSettings, event: GaugeEvent) {
         if (event.actparam) {
             if (event.actoptions && event.actoptions['variableId']) {
