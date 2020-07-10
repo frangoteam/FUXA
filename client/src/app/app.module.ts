@@ -29,6 +29,7 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { ChartConfigComponent, DialogListItem } from './editor/chart-config/chart-config.component';
+import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
@@ -163,6 +164,7 @@ export function createTranslateLoader(http: HttpClient) {
       LazyForDirective,
       NgxDygraphsComponent,
       ChartConfigComponent,
+      TextListComponent,
       NgxGaugeComponent,
       NgxNouisliderComponent,
       DialogListItem,
@@ -170,7 +172,8 @@ export function createTranslateLoader(http: HttpClient) {
       DialogUser,
       LoginComponent,
       DialogUserInfo,
-      ViewComponent
+      ViewComponent,
+      DialogItemText
    ],
    imports: [
       BrowserModule,
@@ -237,10 +240,12 @@ export function createTranslateLoader(http: HttpClient) {
         DialogMenuItem,
         NgxDygraphsComponent,
         ChartConfigComponent,
+        TextListComponent,
         DialogListItem,
         DialogUser,
         LoginComponent,
-        DialogUserInfo
+        DialogUserInfo,
+        DialogItemText
     ],
     bootstrap: [AppComponent]
 })

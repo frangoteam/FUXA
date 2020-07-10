@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
+import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
@@ -289,7 +290,7 @@ export class ProjectService {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = { query: 'security', name: name, value: value };
         return this.http.post<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
-    } 
+    }
     //#endregion
 
     //#region Hmi, Layout resource json struct
@@ -342,6 +343,60 @@ export class ProjectService {
                 this.notifySaveError(err);
             });
         }
+    }
+    //#endregion
+
+    //#region Texts resource
+    /**
+     * get texts resource
+     */
+    getTexts() {
+        return (this.projectData) ? (this.projectData.texts) ? this.projectData.texts : [] : null;
+    }
+
+    /**
+     * save the text to project
+     * @param text
+     */
+    setText(text: Text, old: Text) {
+        if (!this.projectData.texts) {
+            this.projectData.texts = [];
+        }
+        let exist = this.projectData.texts.find(tx => tx.name === text.name);
+        if (exist) {
+            exist.group = text.group;
+            exist.value = text.value;
+        } else {
+            this.projectData.texts.push(text);
+        }
+        this.setServerProjectData(ProjectDataCmdType.SetText, text).subscribe(result => {
+            if (old && old.name && old.name !== text.name) {
+                this.removeText(old);
+            }
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });                
+    }
+
+    /**
+     * remove the text from project
+     * @param text 
+     */
+    removeText(text: Text) {
+        if (this.projectData.texts) {
+            for (let i = 0; i < this.projectData.texts.length; i++) {
+                if (this.projectData.texts[i].name === text.name) {
+                    this.projectData.texts.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        this.setServerProjectData(ProjectDataCmdType.DelText, text).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });           
     }
     //#endregion
 
@@ -554,6 +609,7 @@ export class ProjectData {
     hmi: Hmi = new Hmi();
     devices = {};
     charts: Chart[] = [];
+    texts: Text[] = [];
 }
 
 export enum ProjectDataCmdType {
@@ -563,6 +619,8 @@ export enum ProjectDataCmdType {
     DelView = 'del-view',
     HmiLayout = 'layout',
     Charts = 'charts',
+    SetText = 'set-text',
+    DelText = 'del-text',
 }
 
 export class ServerSettings {

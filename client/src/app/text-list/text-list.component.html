@@ -1,0 +1,69 @@
+<div class="header-panel">
+    {{'texts.list-title' | translate}}
+</div>
+<div class="work-panel">
+    <!-- <div class="filter">
+        <div class="my-form-field" style="padding-right: 10px;">
+            <span>{{'texts.list-filter-group' | translate}}</span>
+            <mat-select [(value)]="groupSelected" style="width: 300px" (selectionChange)="onGroupChange($event.source)">
+                <mat-option *ngFor="let group of groups" [value]="group">
+                    {{ group }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field" style="padding-right: 10px;">
+            <span>{{'texts.list-filter' | translate}}</span>
+            <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
+        </div>
+    </div> -->
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+            <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                <button mat-icon-button (click)="onAddText()" class="remove">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+                <button mat-icon-button (click)="onEditText(element)" class="remove">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'texts.list-id' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+
+        <!-- Group Column -->
+        <ng-container matColumnDef="group">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'texts.list-group' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.group}} </mat-cell>
+        </ng-container>
+
+        <!-- Device Column -->
+        <ng-container matColumnDef="value">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'texts.list-value' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
+        </ng-container>
+
+        <!-- Button remove Column -->
+        <ng-container matColumnDef="remove">
+            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="$event.stopPropagation();onRemoveText(element)" class="remove">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+    </mat-table>
+</div>
+<button mat-fab color="primary" (click)="onAddText()"
+    style="position: absolute; right: 20px; bottom: 30px; z-index: 9999;">
+    <mat-icon class="">add</mat-icon>
+</button>

@@ -1,6 +1,7 @@
 <div class="header-panel">
+    {{'users.list-title' | translate}}
 </div>
-<diV class="work-panel">
+<div class="work-panel">
 	<mat-table #table [dataSource]="dataSource" matSort>
 		<!-- Edit Column -->
 		<ng-container matColumnDef="select">
@@ -41,7 +42,7 @@
 		<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 		<mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
 	</mat-table>
-</diV>
+</div>
 
 <button mat-fab color="primary" (click)="onAddUser()"
     style="position: absolute; right: 20px; bottom: 30px; z-index: 9999;">

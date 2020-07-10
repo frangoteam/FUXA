@@ -44,6 +44,8 @@ function _bind() {
         sql += "CREATE TABLE if not exists views (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists devices (name TEXT PRIMARY KEY, value TEXT, connection TEXT, cntid TEXT, cntpwd TEXT);";
         sql += "CREATE TABLE if not exists devicesSecurity (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists texts (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists alarms (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error('prjstorage.failed-to-bind: ' + err);
@@ -172,6 +174,8 @@ function clearAll() {
         sql += "DELETE FROM views;";
         sql += "DELETE FROM devices;";
         sql += "DELETE FROM devicesSecurity;";
+        sql += "DELETE FROM texts;";
+        sql += "DELETE FROM alarms;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error('prjstorage.failed-to-clear: ' + err);
@@ -190,7 +194,8 @@ const TableType = {
     GENERAL: 'general',
     DEVICES: 'devices',
     VIEWS: 'views',
-    DEVICESSECURITY: 'devicesSecurity'
+    DEVICESSECURITY: 'devicesSecurity',
+    TEXTS: 'texts'
 }
 
 module.exports = {

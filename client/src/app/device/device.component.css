@@ -8,6 +8,8 @@
     color: rgba(255,255,255,1);
     height: 40px;
     width: 100%;
+    text-align: center;
+    line-height: 40px;
 }
 
 .device-btn {

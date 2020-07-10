@@ -17,7 +17,6 @@
                             <mat-icon aria-label="Select" *ngIf="!panelsState.panelView">expand_more</mat-icon>
                             <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->
                         </mat-panel-title>
-                        <mat-icon aria-label="Set" title="{{'editor.layout-settings' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onLayoutProperty();$event.stopPropagation()">settings</mat-icon>
                         <mat-icon aria-label="Add" title="Add View" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddView();$event.stopPropagation()">add</mat-icon>
                         <mat-icon aria-label="Import" title="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onImportView($event);$event.stopPropagation()">system_update_alt</mat-icon>
                         <input type="file" #viewFileImportInput style="display: none" id="viewFileUpload" (click)="$event.stopPropagation()" (change)="onViewFileChangeListener($event)" accept=".fuxav" />

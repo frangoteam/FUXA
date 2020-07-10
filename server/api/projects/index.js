@@ -95,7 +95,7 @@ module.exports = {
                         res.end();
                     });
                 }).catch(function(err) {
-                    if (err.code) {
+                    if (err && err.code) {
                         res.status(400).json({error:err.code, message: err.message});
                     } else {
                         res.status(400).json({error:"unexpected_error", message:err.toString()});

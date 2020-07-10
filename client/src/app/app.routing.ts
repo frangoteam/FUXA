@@ -8,6 +8,7 @@ import { DeviceComponent } from './device/device.component';
 import { LabComponent } from './lab/lab.component';
 import { UsersComponent } from './users/users.component';
 import { ViewComponent } from './view/view.component';
+import { TextListComponent } from './text-list/text-list.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -16,6 +17,7 @@ const appRoutes: Routes = [
     { path: 'lab', component: LabComponent, canActivate: [AuthGuard] },
     { path: 'device', component: DeviceComponent, canActivate: [AuthGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
+    { path: 'text', component: TextListComponent, canActivate: [AuthGuard] },
     { path: 'view', component: ViewComponent },
 
     // otherwise redirect to home

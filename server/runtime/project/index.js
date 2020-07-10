@@ -54,7 +54,7 @@ function init(_settings, log) {
  */
 function load() {
     return new Promise(function (resolve, reject) {
-        data = { devices: {}, hmi: { views: [] } };
+        data = { devices: {}, hmi: { views: [] }, texts: [] };
         // load general data
         prjstorage.getSection(prjstorage.TableType.GENERAL).then(grows => {
             for (var ig = 0; ig < grows.length; ig++) {
@@ -78,7 +78,14 @@ function load() {
                             data.devices[drows[id].name] = JSON.parse(drows[id].value);
                         }
                     }
-                    resolve();
+                    // load texts
+                    getTexts().then(texts => {
+                        data.texts = texts;
+                        resolve();
+                    }).catch(function (err) {
+                        logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.TEXTS + ': ' + err);
+                        reject(err);
+                    });
                 }).catch(function (err) {
                     logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.DEVICES + ': ' + err);
                     reject(err);
@@ -129,6 +136,18 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setCharts(value);
+            } else if (cmd === ProjectDataCmdType.SetText) {
+                section.table = prjstorage.TableType.TEXTS;
+                section.name = value.name;
+                setText(value);
+            } else if (cmd === ProjectDataCmdType.DelText) {
+                section.table = prjstorage.TableType.TEXTS;
+                section.name = value.name;
+                toremove = removeText(value);
+            }
+            else {
+                logger.error('prjstorage.failed-to-setdata ' + section.table);
+                reject('prjstorage.failed-to-setdata: Command not found!');    
             }
             if (toremove) {
                 prjstorage.deleteSection(section).then(result => {
@@ -146,7 +165,7 @@ function setProjectData(cmd, value) {
                 });
             }
         } catch (err) {
-            reject();
+            reject(err);
         }
     });
 }
@@ -218,6 +237,44 @@ function setCharts(charts) {
 }
 
 /**
+ * Set or add if not exist (check with taxt.name) the Text in Project
+ * @param {*} text 
+ */
+function setText(text) {
+    if (!data.texts) {
+        data.texts = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.texts.length; i++) {
+        if (data.texts[i].name === text.name) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.texts[pos] = text;
+    } else {
+        data.texts.push(text);
+    }
+}
+
+/**
+ * Remove the Text from Project
+ * @param {*} text 
+ */
+function removeText(text) {
+    if (data.texts) {
+        var pos = -1;
+        for (var i = 0; i < data.texts.length; i++) {
+            if (data.texts[i].name === text.name) {
+                data.texts.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the project data in accordance with autorization
  */
 function getProject(userId, userGroups) {
@@ -267,6 +324,14 @@ function setProject(prjcontent) {
                     } else if (key === 'server') {
                         // server
                         scs.push({ table: prjstorage.TableType.DEVICES, name: key, value: prjcontent[key] });
+                    } else if (key === 'texts') {
+                        // texts
+                        var texts = prjcontent[key];
+                        if (texts && texts.length) {
+                            for (var i = 0; i < texts.length; i++) {
+                                scs.push({ table: prjstorage.TableType.TEXTS, name: texts[i].name, value: texts[i] });
+                            }
+                        }
                     } else {
                         // charts, version
                         scs.push({ table: prjstorage.TableType.GENERAL, name: key, value: prjcontent[key] });
@@ -314,6 +379,28 @@ function getDeviceProperty(query) {
         } else {
             reject();
         }
+    });
+}
+
+/**
+ * Get the texts 
+ */
+function getTexts() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.TEXTS).then(drows => {
+            if (drows.length > 0) {
+                var texts = []
+                for (var id = 0; id < drows.length; id++) {
+                    texts.push(JSON.parse(drows[id].value));
+                }
+                resolve(texts);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error('project.prjstorage.failed-to-get-texts ' + prjstorage.TableType.TEXTS + ': ' + err);
+            reject(err);
+        });
     });
 }
 
@@ -400,11 +487,15 @@ const ProjectDataCmdType = {
     DelView: 'del-view',
     HmiLayout: 'layout',
     Charts: 'charts',
+    SetText: 'set-text',
+    SetText: 'set-text',
+    DelText: 'del-text',
 }
 
 module.exports = {
     init: init,
     load: load,
+    getTexts: getTexts,
     getDevices: getDevices,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,

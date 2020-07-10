@@ -9,7 +9,7 @@
     height: 40px;
     width: 100%;
     text-align: center;
-    line-height: 40px;;
+    line-height: 40px;
 }
 
 .work-panel {
@@ -20,8 +20,24 @@
     bottom: 0px;
 }
 
+.filter {
+    display: inline-block;
+    min-height: 60px;
+    padding: 8px 24px 0;
+}
+
+.filter .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.table {
+    height: 705px;
+}
+
 .mat-table {
     overflow: auto;
+    min-width: 1560px;
     /* margin: 5px; */
     /* max-height: 500px; */
 }
@@ -34,7 +50,7 @@
     top: 0;
     position: sticky;
     z-index: 1;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(76,76,76,1);
     color: white;
 }
 .mat-header-cell {
@@ -47,19 +63,29 @@
     flex: 0 0 100px;
 }
 
-.mat-column-username {
-    flex: 0 0 400px;
+.mat-column-id {
+    flex: 0 0 300px;
 }
 
 
-.mat-column-groups {
-    flex: 0 0 860px;
+.mat-column-group {
+    flex: 0 0 200px;
+}
+
+.mat-column-value {
+    flex: 0 0 800px;
 }
 
 .mat-column-remove {
-    flex: 0 0 160px;
+    flex: 0 0 60px;
 }
 
 .selectidthClass{
     flex: 0 0 50px;
  }
+
+.message-error {
+    display: inline-block;
+    /* background-color: red;; */
+    color:red;
+}

@@ -6,10 +6,12 @@
     "header.saveas-project": "Save Project As...",
     "header.open-project": "Open Project",
     "header.edit-project": "Edit Project",
-    "header.edit-views": "Edit Views",
-    "header.edit-devices": "Edit Devices",
+    "header.edit-views": "Views editor",
+    "header.edit-devices": "Devices settings",
     "header.edit-charts": "Charts settings",
+    "header.edit-layout": "Layout settings",
     "header.edit-users": "Users settings",
+    "header.edit-texts": "Texts settings",
     "header.help": "FUXA Help",
     "header.help-tutorial": "Tutorial",
     "header.help-info": "About",
@@ -296,6 +298,7 @@
     "editor.tools-strokecolor-title": "Change stroke color",
     "editor.tools-palettecolor-title": "Click to change fill color, shift-click to change stroke color",
 
+    "device.list-title": "Devices",
     "device.list-device": "Device",
     "device.list-filter": "Filter",
     "device.list-name": "Name",
@@ -337,6 +340,7 @@
     "device.tag-property-max": "Max",
     "device.tag-property-address-offset": "Address offset (1-65536)",
     
+    "users.list-title": "Users",
     "users.list-name": "Username",
     "users.list-groups": "Groups",
 
@@ -399,6 +403,21 @@
     "bag.property-zones": "Zones",
     "bag.property-color": "Color",
 
+    "texts.list-title": "Texts",
+    "texts.list-filter": "Filter",
+    "texts.list-filter-group": "Group",
+    "texts.list-id": "ID",
+    "texts.list-group": "Group",
+    "texts.list-value": "Text",
+
+    "dlg.textproperty-title": "Text",
+    "dlg.textproperty-id": "ID",
+    "dlg.textproperty-group": "Group",
+    "dlg.textproperty-value": "Text",
+
+    "msg.text-remove": "Would you like to remove Text ",
+    "msg.textproperty-error-exist": "Text-ID exist!",
+    "msg.textproperty-missing-value": "Some values are missing!",
     "msg.device-remove": "Would you like to remove Device ",
     "msg.device-tag-remove": "Would you like to remove Tag ",
     "msg.device-tag-exist": "Tagname exist!",
