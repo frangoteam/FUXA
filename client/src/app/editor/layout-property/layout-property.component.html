@@ -50,16 +50,12 @@
                     </div>
                 </div>
                 <div class="sidenav-menu" style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
-                    <mat-list dndDropzone [dndHorizontal]="layout.dndHorizontal" dndEffectAllowed="copyMove" (dndDrop)="onDrop($event, draggableListLeft)"
-                        class="dndList" style="padding-top: 10px; background-color: rgba(244,245,247, 1)">
+                    <mat-list dndDropzone [dndHorizontal]="layout.dndHorizontal" dndEffectAllowed="copyMove" (dndDrop)="onDrop($event, draggableListLeft)" class="dndList" style="padding-top: 10px; background-color: rgba(244,245,247, 1)">
 
                         <mat-list-item dndPlaceholderRef class="dndPlaceholder">
                         </mat-list-item>
 
-                        <mat-list-item *ngFor="let item of draggableListLeft; let i = index" [dndDraggable]="item"
-                            [dndEffectAllowed]="'move'" (dndStart)="onDragStart($event)" (dndMoved)="onDragged(item, draggableListLeft, 'move')"
-                            (dndCanceled)="onDragged(item, draggableListLeft, 'none')" (dndEnd)="onDragEnd($event)"
-                            [ngClass]="'menu-item-' + data.layout.navigation.type">
+                        <mat-list-item *ngFor="let item of draggableListLeft; let i = index" [dndDraggable]="item" [dndEffectAllowed]="'move'" (dndStart)="onDragStart($event)" (dndMoved)="onDragged(item, draggableListLeft, 'move')" (dndCanceled)="onDragged(item, draggableListLeft, 'none')" (dndEnd)="onDragEnd($event)" [ngClass]="'menu-item-' + data.layout.navigation.type">
                             <button type="button" mat-button class="sidenav-btn" [ngSwitch]="data.layout.navigation.type" style="cursor: move;">
                                 <!-- <mat-icon *ngIf="mode.value === navMode.icon || mode.value === navMode.block">{{item.icon}}</mat-icon> -->
                                 <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
@@ -121,18 +117,59 @@
             </div> -->
         </mat-tab>
         <mat-tab label="{{'dlg.layout-header' | translate}}">
-            <!-- <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
-                        <div style="display: block;">
-                            <div class="toolbox">
-                                <button mat-icon-button (click)="onAddEvent()">
-                                    <mat-icon>add_circle_outline</mat-icon>
-                                </button>
-                            </div>
+            <div style="overflow-y: hidden; overflow-x: hidden; margin-top: 10px; min-height: 500px;">
+                <div class="header-layout">
+                    <div class="header-menu">
+                        <button mat-icon-button>
+                            <mat-icon aria-label="Menu">menu</mat-icon>
+                        </button>
+                    </div>
+                    <div class="header-title">
+                        {{data.layout.header.title}}
+                    </div>
+                    <div style="float: right; line-height: 46px;">
+                        <button mat-icon-button class="header-login">
+                            <mat-icon aria-label="Login">account_circle</mat-icon>
+                        </button>
+                    </div>
+                    <div class="header-button">
+                        <button mat-icon-button class="alarm-layout">
+                            <mat-icon aria-label="Alarms">notifications_none</mat-icon>
+                        </button>
+                        <button mat-icon-button class="info-layout">
+                            <mat-icon aria-label="Info">error_outline</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="header-config">
+                    <div class="config">
+                        <div class="my-form-field" style="padding-left: 20px;">
+                            <span>{{'dlg.layout-lbl-title' | translate}}</span>
+                            <input [(ngModel)]="data.layout.header.title" type="text" style="width: 260px">
                         </div>
-                        <div mat-dialog-content style="overflow: hidden; width:100%">
-                            <flex-event [property]="property" [views]="views" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
+                    </div>
+                    <div class="config">
+                        <div class="my-form-field">
+                            <span>{{'dlg.layout-lbl-alarms' | translate}}</span>
+                            <mat-select [(value)]="data.layout.header.alarms" style="width: 260px">
+                                <mat-option *ngFor="let mode of notifyMode | enumToArray" [value]="mode.key">
+                                    {{ mode.value }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                         </div>
-                    </div> -->
+                        <div class="my-form-field" style="margin-top: 20px;">
+                            <span>{{'dlg.layout-lbl-infos' | translate}}</span>
+                            <mat-select [(value)]="data.layout.header.infos" style="width: 260px">
+                                <mat-option *ngFor="let mode of notifyMode | enumToArray" [value]="mode.key">
+                                    {{ mode.value }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon aria-label="Info">error_outline</mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </mat-tab>
     </mat-tab-group>
     <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">

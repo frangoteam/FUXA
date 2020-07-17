@@ -14,6 +14,55 @@
     padding-right: 10px;
     background-color: rgba(255, 255, 255, 1);
 }
+.header-title {
+    display: inline-block;
+    margin-left: 20px;
+    min-width: 200px;
+    text-align: right;
+    line-height: 46px
+}
+.header-button {  
+    float: right;
+    width: 30%;
+    line-height: 46px;
+    text-align: right;
+    margin-right: 10px;
+    padding-right: 50px;
+    border-right-width: 1px;
+    border-right-style: solid;
+}
+.header-button mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height:28px;
+}
+.button-counter {
+    display: inline-block;
+    position: absolute;
+    bottom: 7px;
+    right: 1px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.alarm-layout {
+    position: relative;
+    right: 45px;    
+    display: inline-block;
+    width: 40px;
+}
+
+.info-layout {
+    position: relative;
+    right: 20px;
+    display: inline-block;
+    width: 40px;
+}
 
 .sidenav {
     padding: 0px 0px 0px 0px;

@@ -12,7 +12,7 @@ import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, NaviModeType } from '../_models/hmi';
+import { Hmi, View, NaviModeType, NotificationModeType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 
 
@@ -37,6 +37,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	showHomeLink = false;
 	securityEnabled = false;
 	backgroudColor = 'unset';
+	title = '';	
+	alarms = { show: false, count: 0, mode: '' };
+	infos = { show: false, count: 0, mode: '' };
+	headerButtonMode = NotificationModeType;
 
 	private subscriptionLoad: Subscription;
 
@@ -178,6 +182,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 					this.sidenav.setLayout(this.hmi.layout);
 				}
+				if (this.hmi.layout.header) {
+					this.title = this.hmi.layout.header.title;
+					if (this.hmi.layout.header.alarms) {
+						this.alarms.mode = this.hmi.layout.header.alarms;
+					}
+					if (this.hmi.layout.header.infos) {
+						this.infos.mode = this.hmi.layout.header.infos;
+					}
+					this.checkHeaderButton();
+				}
 			}
 			this.showHomeView = (this.homeView) ? true : false;
 		}
@@ -191,6 +205,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	private setBackground() {
 		if (this.homeView && this.homeView.profile) {
 			this.backgroudColor = this.homeView.profile.bkcolor;
+		}
+	}
+
+	private checkHeaderButton() {
+		let fix = <NotificationModeType>Object.keys(NotificationModeType)[Object.values(NotificationModeType).indexOf(NotificationModeType.fix)];
+		let float = <NotificationModeType>Object.keys(NotificationModeType)[Object.values(NotificationModeType).indexOf(NotificationModeType.float)];
+		if (this.alarms.mode === fix || (this.alarms.mode === float && this.alarms.count > 0)) {
+			this.alarms.show = true;
+		}
+		if (this.infos.mode === fix || (this.infos.mode === float && this.infos.count > 0)) {
+			this.infos.show = true;
 		}
 	}
 

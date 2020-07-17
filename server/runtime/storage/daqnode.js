@@ -279,7 +279,7 @@ function DaqNode(_settings, _log, _id) {
             if (daqTagsMap[tagid]) {
                 var result = [];
                 // search in current db
-                _getTagValues(db_daqdata, daqTagsMap[tagid].mapid, fromts, tots).then(function (rows) {
+                    _getTagValues(db_daqdata, daqTagsMap[tagid].mapid, fromts, tots).then(function (rows) {
                     // search in archive
                     var archivefiles = _getArchiveFiles(fromts, tots);
                     var dbfncs = [];

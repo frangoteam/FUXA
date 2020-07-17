@@ -1,0 +1,12 @@
+
+.alarm-sample {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.message-error {
+    display: inline-block;
+    /* background-color: red;; */
+    color:red;
+}

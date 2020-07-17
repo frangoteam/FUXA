@@ -59,7 +59,15 @@ export class NaviItem {
 }
 
 export class HeaderSettings {
+    title: string;
+    alarms: NotificationModeType;
+    infos: NotificationModeType;
+}
 
+export enum NotificationModeType {
+    hide = 'item.notifymode-hide',
+    fix = 'item.notifymode-fix',
+    float = 'item.notifymode-float',
 }
 
 export class DocProfile {

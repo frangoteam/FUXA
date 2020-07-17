@@ -11,10 +11,27 @@
 			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" (click)="(matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
 				<mat-icon aria-label="Menu">menu</mat-icon>
 			</button>
-			<div *ngIf="securityEnabled" style="float: right;">
-				<button mat-icon-button  (click)="onLogin()">
+			<div class="header-title">
+				{{title}}
+			</div>
+			<div *ngIf="securityEnabled" style="float: right; line-height: 46px;">
+				<button mat-icon-button (click)="onLogin()">
 					<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : 'black'">account_circle</mat-icon>
 				</button>
+			</div>
+			<div class="header-button">
+				<div class="alarm-layout" style="min-width: 40px;">
+					<button mat-icon-button *ngIf="alarms.show">
+						<mat-icon aria-label="Alarms">notifications_none</mat-icon>
+						<div class="button-counter alarm-color" [style.opacity]="alarms.count?'':'0'">{{alarmsCount}}</div>
+					</button>
+				</div>
+				<div class="info-layout" style="min-width: 40px;">
+					<button mat-icon-button *ngIf="infos.show">
+						<mat-icon aria-label="Info">error_outline</mat-icon>
+						<div class="button-counter info-color" [style.opacity]="infos.count?'':'0'">{{infosCount}}</div>
+					</button>
+				</div>
 			</div>
 		</div>
 		<div style="padding-top: 5px;">

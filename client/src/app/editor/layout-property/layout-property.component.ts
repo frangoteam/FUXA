@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 
@@ -36,6 +36,7 @@ export class LayoutPropertyComponent implements OnInit {
     sideMode: string;
     navMode: any;
     navType: any;
+    notifyMode: any;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -56,12 +57,16 @@ export class LayoutPropertyComponent implements OnInit {
     ngOnInit() {
         this.navMode = NaviModeType;
         this.navType = NaviItemType;
+        this.notifyMode = NotificationModeType;
 
         Object.keys(this.navMode).forEach(key => {
             this.translateService.get(this.navMode[key]).subscribe((txt: string) => {this.navMode[key] = txt});
         });
         Object.keys(this.navType).forEach(key => {
             this.translateService.get(this.navType[key]).subscribe((txt: string) => {this.navType[key] = txt});
+        });
+        Object.keys(this.notifyMode).forEach(key => {
+            this.translateService.get(this.notifyMode[key]).subscribe((txt: string) => {this.notifyMode[key] = txt});
         });
     }
 

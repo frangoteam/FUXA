@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
+import { Alarm } from '../_models/alarm';
 import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
@@ -346,6 +347,64 @@ export class ProjectService {
     }
     //#endregion
 
+    //#region Alarms resource
+    /**
+     * get alarms resource
+     */
+    getAlarms() {
+        return (this.projectData) ? (this.projectData.alarms) ? this.projectData.alarms : [] : null;
+    }
+
+    /**
+     * save the alarm to project
+     * @param text
+     */
+    setAlarm(alarm: Alarm, old: Alarm) {
+        if (!this.projectData.alarms) {
+            this.projectData.alarms = [];
+        }
+        let exist = this.projectData.alarms.find(tx => tx.name === alarm.name);
+        if (exist) {
+            exist.property = alarm.property;
+            exist.highhigh = alarm.highhigh;
+            exist.high = alarm.high;
+            exist.low = alarm.low;
+            exist.info = alarm.info;
+            exist.value = alarm.value;
+        } else {
+            this.projectData.alarms.push(alarm);
+        }
+        this.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm).subscribe(result => {
+            if (old && old.name && old.name !== alarm.name) {
+                this.removeAlarm(old);
+            }
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });                
+    }
+
+    /**
+     * remove the text from project
+     * @param text 
+     */
+    removeAlarm(alarm: Alarm) {
+        if (this.projectData.alarms) {
+            for (let i = 0; i < this.projectData.alarms.length; i++) {
+                if (this.projectData.alarms[i].name === alarm.name) {
+                    this.projectData.alarms.splice(i, 1);
+                    break;
+                }
+            }
+        }
+        this.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });           
+    }
+    //#endregion
+
     //#region Texts resource
     /**
      * get texts resource
@@ -609,6 +668,7 @@ export class ProjectData {
     hmi: Hmi = new Hmi();
     devices = {};
     charts: Chart[] = [];
+    alarms: Alarm[] = [];
     texts: Text[] = [];
 }
 
@@ -621,6 +681,8 @@ export enum ProjectDataCmdType {
     Charts = 'charts',
     SetText = 'set-text',
     DelText = 'del-text',
+    SetAlarm = 'set-alarm',
+    DelAlarm = 'del-alarm',
 }
 
 export class ServerSettings {

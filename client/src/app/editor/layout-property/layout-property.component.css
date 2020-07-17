@@ -25,4 +25,69 @@
     display: block;
     font-size: 12px;
     white-space: nowrap;
-  }
+}
+
+.header-layout {
+    display: block;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; 
+    /* min-height: 46px !important; */
+    /* max-height: 46px !important; */
+    height: 46px !important;
+    padding-left: 4px;
+    padding-right: 10px;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.header-menu {
+    display: inline-block;
+}
+
+.header-title {
+    display: inline-block;
+    margin-left: 20px;
+    min-width: 200px;
+    text-align: right;
+    line-height: 46px
+}
+
+.header-login {
+    float: right;
+}
+
+.header-button {  
+    float: right;
+    width: 240px;
+    line-height: 46px;
+    text-align: right;
+    margin-right: 10px;
+    padding-right: 50px;
+    border-right-width: 1px;
+    border-right-style: solid;
+}
+.header-button mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height:28px;
+}
+.alarm-layout {
+    margin-right: 20px;
+}
+
+.info-layout {
+}
+
+.header-config {
+    display: flex;
+    padding-top: 30px;
+    margin-left: 80px;
+}
+
+.config {
+    display: inline-block;
+    width: 50%;
+}
+
+.my-form-field mat-icon {
+    padding-left: 10px;
+    vertical-align: middle;
+}

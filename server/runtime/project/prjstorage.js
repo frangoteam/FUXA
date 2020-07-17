@@ -195,7 +195,8 @@ const TableType = {
     DEVICES: 'devices',
     VIEWS: 'views',
     DEVICESSECURITY: 'devicesSecurity',
-    TEXTS: 'texts'
+    TEXTS: 'texts',
+    ALARMS: 'alarms'
 }
 
 module.exports = {

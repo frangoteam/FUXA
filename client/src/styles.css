@@ -480,3 +480,13 @@ mat-toolbar, mat-toolbar-row {
 .cpCancelButtonClass:hover {
   background-color: #F0F0F0;
 }
+
+.alarm-color {
+  background-color: #E00012;
+  color: #FFFFFF;
+}
+
+.info-color {
+  background-color: #007ACC;
+  color: #FFFFFF;
+}
