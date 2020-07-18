@@ -16,8 +16,8 @@ export class AlarmProperty {
 export class AlarmSubProperty {
     enabled: boolean;
     checkdelay: number;
-    limit: number;
-    deadband: number;
+    min: number;
+    max: number;
     timedelay: number;
     text: string;
     group: string;
