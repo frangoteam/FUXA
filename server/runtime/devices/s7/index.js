@@ -21,6 +21,7 @@ function S7client(_data, _logger, _events) {
     var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
     var lastDaqInterval = 0;            // Help to check daqInterval
     var overloading = 0;                // Overloading counter to mange the break connection
+    var lastTimestampValue;             // Last Timestamp of asked values
 
     /**
      * Connect to PLC
@@ -106,6 +107,7 @@ function S7client(_data, _logger, _events) {
                 _checkWorking(false);
                 if (result.length) {
                     let varsValueChanged = _updateVarsValue(result);
+                    lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq) {
                         var current = new Date().getTime();
@@ -174,6 +176,16 @@ function S7client(_data, _logger, _events) {
      */
     this.getValues = function () {
         return varsValue;
+    }
+
+    /**
+     * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
+     */
+    this.getValue = function (id) {
+        if (varsValue[id]) {
+            return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
+        }
+        return null;
     }
 
     /**

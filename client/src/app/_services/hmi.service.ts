@@ -6,6 +6,7 @@ import * as io from 'socket.io-client';
 import { environment } from '../../environments/environment';
 import { Device } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
+import { AlarmEvent } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
@@ -21,6 +22,7 @@ export class HmiService {
     @Output() onDeviceNodeAttribute: EventEmitter<any> = new EventEmitter();
     @Output() onDaqResult: EventEmitter<DaqResult> = new EventEmitter();
     @Output() onDeviceProperty: EventEmitter<any> = new EventEmitter();
+    @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
 
     public version = "1.00";
     public static separator = '^~^';
@@ -29,6 +31,7 @@ export class HmiService {
     viewSignalGaugeMap = new ViewSignalGaugeMap();
     devices = {};
     variables = {};
+    alarms = { highhigh: 0, high: 0, low: 0, info: 0};
     private socket;
     private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
 
@@ -121,8 +124,13 @@ export class HmiService {
             this.socket.on('daq-result', (message) => {
                 this.onDaqResult.emit(message);
             });
+            // alarms status
+            this.socket.on('alarms-status', (alarmsstatus) => {
+                this.onAlarmsStatus.emit(alarmsstatus);
+            });
 
             this.askDeviceValues();
+            this.askAlarmsStatus();
         }
     }
 
@@ -151,6 +159,15 @@ export class HmiService {
     public askDeviceValues() {
         if (this.socket) {
             this.socket.emit('device-values', 'get');
+        }
+    }
+
+    /**
+     * Ask alarms status to backend
+     */
+    public askAlarmsStatus() {
+        if (this.socket) {
+            this.socket.emit('alarms-status', 'get');
         }
     }
 
@@ -299,7 +316,7 @@ export class HmiService {
     }    
     //#endregion
 
-    //#region Chart Function
+    //#region Chart functions
     getChart(id: string) {
         return this.projectService.getChart(id);
     }
@@ -313,6 +330,16 @@ export class HmiService {
             });
             return varsId;
         }
+    }
+    //#endregion
+
+    //#region Current Alarms functions
+    getAlarmsValues() {
+        return this.projectService.getAlarmsValues();
+    }
+
+    setAlarmAck(alarmName: string) {
+        return this.projectService.setAlarmAck(alarmName);
     }
 
     //#endregion

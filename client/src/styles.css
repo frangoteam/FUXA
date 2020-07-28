@@ -187,8 +187,7 @@ app-root {
 
 /* Menu */
 .sidenav-toogle {
-  position: absolute;
-  top: 5px;
+  top: 0px;
   left: 10px;
 }
 

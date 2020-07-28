@@ -175,6 +175,20 @@ function getDevicesValues() {
     return adev;
 }
 
+
+/**
+ * Get the Device Tag value with Timestamp
+ * @param {*} deviceid 
+ * @param {*} sigid 
+ * @param {*} value 
+ */
+function getDeviceValue(deviceid, sigid) {
+    if (activeDevices[deviceid]) {
+        return activeDevices[deviceid].getValue(sigid);
+    }
+    return null;
+}
+
 /**
  * Return if manager is working (started or stopped)
  */
@@ -252,6 +266,7 @@ var devices = module.exports = {
     removeDevice: removeDevice,
     getDevicesStatus: getDevicesStatus,
     getDevicesValues: getDevicesValues,
+    getDeviceValue: getDeviceValue,
     setDeviceValue: setDeviceValue,
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,

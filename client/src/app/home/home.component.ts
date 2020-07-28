@@ -14,18 +14,20 @@ import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Hmi, View, NaviModeType, NotificationModeType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
-
+import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 
 @Component({
 	selector: 'app-home',
 	templateUrl: './home.component.html',
-	styleUrls: ['./home.component.css']
+	styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	@ViewChild('sidenav') sidenav: SidenavComponent;
 	@ViewChild('matsidenav') matsidenav: MatSidenav;
 	@ViewChild('fuxaview') fuxaview: FuxaViewComponent;
+	@ViewChild('alarmsview') alarmsview: AlarmViewComponent;
+
 	// @ViewChild('iframeview') iframeview: IframeComponent;
 
 	isLoading = true;
@@ -41,8 +43,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	alarms = { show: false, count: 0, mode: '' };
 	infos = { show: false, count: 0, mode: '' };
 	headerButtonMode = NotificationModeType;
+	alarmsPanelOpen = false;
 
 	private subscriptionLoad: Subscription;
+	private subscriptionAlarmsStatus: Subscription;
 
 	constructor(private projectService: ProjectService,
 		private changeDetector: ChangeDetectorRef,
@@ -67,6 +71,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			}, error => {
 				console.log('Error loadHMI');
 			});
+			this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
+				this.setAlarmsStatus(event);
+            });
+            this.hmiService.askAlarmsStatus();
 			this.changeDetector.detectChanges();
 		}
 		catch (err) {
@@ -78,6 +86,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		try {
 			if (this.subscriptionLoad) {
 				this.subscriptionLoad.unsubscribe();
+			}
+			if (this.subscriptionAlarmsStatus) {
+				this.subscriptionAlarmsStatus.unsubscribe();
 			}
 		} catch (e) {
 		}
@@ -148,6 +159,26 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		return (this.authService.getUser()) ? true : false;
 	}
 
+	onAlarmsShowMode(mode: string) {
+		let ele = document.getElementById("alarms-panel");
+		if (mode === 'expand') {
+			ele.classList.add("is-full-active");
+			// ele.classList.remove('is-active');			
+			this.alarmsPanelOpen = true;
+			this.alarmsview.startAskAlarmsValues();
+		} else if (mode === 'collapse') {
+			ele.classList.add('is-active');
+			ele.classList.remove('is-full-active');
+			this.alarmsPanelOpen = true;
+			this.alarmsview.startAskAlarmsValues();
+		} else {
+			// ele.classList.toggle("is-active");
+			ele.classList.remove('is-active');
+			ele.classList.remove('is-full-active');
+			this.alarmsPanelOpen = false;
+		}
+	}
+
 	private goTo(destination: string) {
 		this.router.navigate([destination]);//, this.ID]);
 	}
@@ -213,9 +244,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		let float = <NotificationModeType>Object.keys(NotificationModeType)[Object.values(NotificationModeType).indexOf(NotificationModeType.float)];
 		if (this.alarms.mode === fix || (this.alarms.mode === float && this.alarms.count > 0)) {
 			this.alarms.show = true;
-		}
+        }
+        else {
+            this.alarms.show = false;
+        }
 		if (this.infos.mode === fix || (this.infos.mode === float && this.infos.count > 0)) {
 			this.infos.show = true;
+		} else {
+            this.infos.show = false;
+        }
+	}
+
+	private setAlarmsStatus(status: any) {
+		if (status) {
+			this.alarms.count = status.highhigh + status.high + status.low;
+            this.infos.count = status.info;
+            this.checkHeaderButton();
 		}
 	}
 

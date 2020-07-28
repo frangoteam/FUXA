@@ -29,6 +29,7 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { ChartConfigComponent, DialogListItem } from './editor/chart-config/chart-config.component';
+import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
@@ -167,6 +168,7 @@ export function createTranslateLoader(http: HttpClient) {
       NgxDygraphsComponent,
       ChartConfigComponent,
       AlarmListComponent,
+      AlarmViewComponent,
       AlarmPropertyComponent,
       TextListComponent,
       NgxGaugeComponent,
@@ -245,6 +247,7 @@ export function createTranslateLoader(http: HttpClient) {
         NgxDygraphsComponent,
         ChartConfigComponent,
         AlarmListComponent,
+        AlarmViewComponent,
         AlarmPropertyComponent,
         TextListComponent,
         DialogListItem,

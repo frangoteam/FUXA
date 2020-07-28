@@ -441,7 +441,6 @@ function DaqNode(_settings, _log, _id) {
                         result.push(path.join(archive, file));
                     }
                 }
-                console.log(file);
             });
             result.sort();
         }

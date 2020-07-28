@@ -9,6 +9,7 @@ var authJwt = require('./jwt-helper');
 var prjApi = require("./projects");
 var authApi = require("./auth");
 var usersApi = require("./users");
+var alarmsApi = require("./alarms");
 
 var apiApp;
 var server;
@@ -30,6 +31,8 @@ function init(_server, _runtime) {
             apiApp.use(prjApi.app());
             usersApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(usersApi.app());
+            alarmsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(alarmsApi.app());
             authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
             apiApp.use(authApi.app());
 

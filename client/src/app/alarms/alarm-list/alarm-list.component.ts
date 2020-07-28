@@ -72,11 +72,14 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (toAdd < 0) {
-					this.projectService.removeAlarm(result);
+                    this.projectService.removeAlarm(result).subscribe(result => {
+                        this.loadAlarms();
+                    });
 				} else {
-                    this.projectService.setAlarm(result, alarm);
+                    this.projectService.setAlarm(result, alarm).subscribe(result => {
+                        this.loadAlarms();
+                    });
                 }
-                this.loadAlarms();
             }
         });
     }

@@ -21,6 +21,8 @@ export class AlarmPropertyComponent implements OnInit {
     errorExist = false;
     errorMissingValue = false;
     existnames = [];
+    existtexts = [];
+    existgroups = [];
 
     constructor(
         public dialogRef: MatDialogRef<AlarmPropertyComponent>,
@@ -66,6 +68,17 @@ export class AlarmPropertyComponent implements OnInit {
         });
         if (data.alarms) {
             this.existnames = data.alarms.filter(a => a.name !== data.alarm.name);
+            data.alarms.forEach(item => {
+                if (item.highhigh.text && this.existtexts.indexOf(item.highhigh.text) === -1) this.existtexts.push(item.highhigh.text);
+                if (item.high.text && this.existtexts.indexOf(item.high.text) === -1) this.existtexts.push(item.high.text);
+                if (item.low.text && this.existtexts.indexOf(item.low.text) === -1) this.existtexts.push(item.low.text);
+                if (item.info.text && this.existtexts.indexOf(item.info.text) === -1) this.existtexts.push(item.info.text);
+
+                if (item.highhigh.group && this.existgroups.indexOf(item.highhigh.group) === -1) this.existgroups.push(item.highhigh.group);
+                if (item.high.group && this.existgroups.indexOf(item.high.group) === -1) this.existgroups.push(item.high.group);
+                if (item.low.group && this.existgroups.indexOf(item.low.group) === -1) this.existgroups.push(item.low.group);
+                if (item.info.group && this.existgroups.indexOf(item.info.group) === -1) this.existgroups.push(item.info.group);
+            });
         }
     }
 

@@ -24,6 +24,7 @@ function OpcUAclient(_data, _logger, _events) {
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var getProperty = null;             // Function to ask property (security)
+    var lastTimestampValue;             // Last Timestamp of asked values
 
     /**
      * Connect the client to OPC UA server
@@ -308,6 +309,7 @@ function OpcUAclient(_data, _logger, _events) {
             });
         } else if (the_session && client) {
             var varsValueChanged = _clearVarsChanged();
+            lastTimestampValue = new Date().getTime();
             _emitValues(varsValue);
 
             if (this.addDaq) {
@@ -337,6 +339,16 @@ function OpcUAclient(_data, _logger, _events) {
      */
     this.getValues = function () {
         return data.tags;
+    }
+
+    /**
+     * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
+     */
+    this.getValue = function (id) {
+        if (varsValue[id]) {
+            return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
+        }
+        return null;
     }
 
     /**

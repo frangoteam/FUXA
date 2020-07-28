@@ -131,6 +131,13 @@ function Device(data, logger, _events) {
     }
 
     /**
+     * Call Device to get Tag value with Timestamp
+     */
+    this.getValue = function (id, value) {
+        return comm.getValue(id);
+    }
+
+    /**
      * Call Device to return current status
      */
     this.getStatus = function () {

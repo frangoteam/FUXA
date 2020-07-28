@@ -31,3 +31,14 @@ export enum AlarmAckMode {
     ackactive = 'alarm.ack-active',
     ackpassive = 'alarm.ack-passive',
 }
+export class AlarmEvent {
+    ontime: string;
+    offtime: string;
+    acktime: string;
+    name: string;
+    type: string;
+    text: string;
+    group: string;
+    status: string;
+    toack: boolean;
+}

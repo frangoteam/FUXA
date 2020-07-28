@@ -64,7 +64,7 @@ module.exports = {
                 runtime.logger.error("api post project: Unauthorized");
             } else {
                 runtime.project.setProject(req.body).then(function(data) {
-                    runtime.restart().then(function(result) {
+                    runtime.restart(true).then(function(result) {
                         res.end();
                     });
                 }).catch(function(err) {
