@@ -61,14 +61,16 @@
 .mat-row {
     min-height: 35px;
 }
-.mat-column-time {
+.mat-column-ontime {
     flex: 0 0 160px;
 }
 
 .mat-column-text {
     flex: 0 0 400px;
 }
-
+.mat-column-type {
+    flex: 0 0 120px;
+}
 .mat-column-group {
     flex: 0 0 250px;
 }

@@ -50,15 +50,15 @@ export class AlarmPropertyComponent implements OnInit {
         }
         if (!this.data.alarm.low) {
             this.data.alarm.low = new AlarmSubProperty();
-            this.data.alarm.low.bkcolor = "#FAFBFC";
+            this.data.alarm.low.bkcolor = "#EFF0F1";
             this.data.alarm.low.color = "#000";
             this.data.alarm.low.enabled = true;
             this.data.alarm.low.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
         }
         if (!this.data.alarm.info) {
             this.data.alarm.info = new AlarmSubProperty();
-            this.data.alarm.info.bkcolor = "#22A7F2";
-            this.data.alarm.info.color = "#FFF";
+            this.data.alarm.info.bkcolor = "#FFFFFF";
+            this.data.alarm.info.color = "#000";
             this.data.alarm.info.enabled = true;
             this.data.alarm.info.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)];
         }

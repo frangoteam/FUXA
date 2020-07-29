@@ -426,9 +426,12 @@ function Alarm(name, type, subprop, tagprop) {
 
     this.isToAck = function () {
         if (this.subproperty.ackmode === AlarmAckModeEnum.float) {
-            return false;
+            return -1;
         }
-        return true;
+        if (this.subproperty.ackmode === AlarmAckModeEnum.ackpassive && this.status === AlarmStatusEnum.ON) {
+            return 0;
+        }
+        return 1;
     }
 }
 

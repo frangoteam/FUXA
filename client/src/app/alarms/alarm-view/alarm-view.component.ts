@@ -15,12 +15,13 @@ import { Alarm, AlarmSubProperty } from '../../_models/alarm';
 })
 export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['time', 'text', 'group', 'status', 'ack'];
+    displayedColumns = ['ontime', 'text', 'type', 'group', 'status', 'ack'];
     dataSource = new MatTableDataSource([]);
     showheader = false;
     currentShowMode = 'collapse';
     alarmsPolling: any;
     statusText = AlarmStatus;
+    priorityText = AlarmPriority;
 
     @Input() fullview = true;
     @Output() showMode:EventEmitter<string> = new EventEmitter();
@@ -38,6 +39,9 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
         Object.keys(this.statusText).forEach(key => {
             this.translateService.get(this.statusText[key]).subscribe((txt: string) => { this.statusText[key] = txt });
         });
+        Object.keys(this.priorityText).forEach(key => {
+            this.translateService.get(this.priorityText[key]).subscribe((txt: string) => { this.priorityText[key] = txt });
+        });
     }
 
     ngAfterViewInit() {
@@ -45,17 +49,14 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        console.log('alarm-view-destroy');
         this.stopAskAlarmsValues();
     }
 
     startAskAlarmsValues() {
-        console.log('startAskAlarmsValues');
         this.startPolling();
     }
 
     stopAskAlarmsValues() {
-        console.log('stopAskAlarmsValues');
         this.stopPolling();
     }
 
@@ -87,12 +88,19 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     updateAlarmsList(alr: any[]) {
-        console.log(alr);
+        alr.forEach(alr => {
+            alr.status = this.getStatus(alr.status);
+            alr.type = this.getPriority(alr.type);
+        })
         this.dataSource.data = alr;
     }
 
     getStatus(status: string) {
         return this.statusText[status];
+    }
+
+    getPriority(type: string) {
+        return this.priorityText[type];
     }
 
     onAckAlarm(alarm: any) {
@@ -105,7 +113,6 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onShowMode(mode: string) {
         this.currentShowMode = mode;
         this.showMode.emit(this.currentShowMode);
-        console.log('alarm-view-' + this.currentShowMode);
     }
 
     onClose() {
@@ -119,4 +126,11 @@ export enum AlarmStatus {
     N = 'alarm.status-active',
     NF = 'alarm.status-passive',
     NA = 'alarm.status-active-ack',
+}
+
+export enum AlarmPriority {
+    highhigh = 'alarm.property-highhigh',
+    high = 'alarm.property-high',
+    low = 'alarm.property-low',
+    info = 'alarm.property-info'
 }

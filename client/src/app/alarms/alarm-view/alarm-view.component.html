@@ -3,13 +3,17 @@
 </div>
 <div class="work-panel" [ngStyle]="{'top': fullview ? '40px' : '0px'}">
     <mat-table #table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="time">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-time' | translate}} </mat-header-cell>
+        <ng-container matColumnDef="ontime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.ontime | date: 'yyyy.MM.dd HH:mm:ss'}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="text">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-text' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.text}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="type">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-type' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.type}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="group">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-group' | translate}} </mat-header-cell>
@@ -17,7 +21,7 @@
         </ng-container>
         <ng-container matColumnDef="status">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-status' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{getStatus(element.status)}} </mat-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.status}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="ack">
             <mat-header-cell *matHeaderCellDef>
@@ -34,7 +38,7 @@
                 </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color">
-                <button mat-icon-button (click)="onAckAlarm(element)" *ngIf="element.toack" [disabled]="" class="remove">
+                <button mat-icon-button (click)="onAckAlarm(element)" *ngIf="element.toack >= 0" [disabled]="element.toack == 0" class="remove">
                     <mat-icon>check_circle_outline</mat-icon>
                 </button>
             </mat-cell>
