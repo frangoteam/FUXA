@@ -21,6 +21,8 @@ export class AlarmPropertyComponent implements OnInit {
     errorExist = false;
     errorMissingValue = false;
     existnames = [];
+    existtexts = [];
+    existgroups = [];
 
     constructor(
         public dialogRef: MatDialogRef<AlarmPropertyComponent>,
@@ -48,15 +50,15 @@ export class AlarmPropertyComponent implements OnInit {
         }
         if (!this.data.alarm.low) {
             this.data.alarm.low = new AlarmSubProperty();
-            this.data.alarm.low.bkcolor = "#FAFBFC";
+            this.data.alarm.low.bkcolor = "#EFF0F1";
             this.data.alarm.low.color = "#000";
             this.data.alarm.low.enabled = true;
             this.data.alarm.low.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
         }
         if (!this.data.alarm.info) {
             this.data.alarm.info = new AlarmSubProperty();
-            this.data.alarm.info.bkcolor = "#22A7F2";
-            this.data.alarm.info.color = "#FFF";
+            this.data.alarm.info.bkcolor = "#FFFFFF";
+            this.data.alarm.info.color = "#000";
             this.data.alarm.info.enabled = true;
             this.data.alarm.info.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)];
         }
@@ -66,6 +68,17 @@ export class AlarmPropertyComponent implements OnInit {
         });
         if (data.alarms) {
             this.existnames = data.alarms.filter(a => a.name !== data.alarm.name);
+            data.alarms.forEach(item => {
+                if (item.highhigh.text && this.existtexts.indexOf(item.highhigh.text) === -1) this.existtexts.push(item.highhigh.text);
+                if (item.high.text && this.existtexts.indexOf(item.high.text) === -1) this.existtexts.push(item.high.text);
+                if (item.low.text && this.existtexts.indexOf(item.low.text) === -1) this.existtexts.push(item.low.text);
+                if (item.info.text && this.existtexts.indexOf(item.info.text) === -1) this.existtexts.push(item.info.text);
+
+                if (item.highhigh.group && this.existgroups.indexOf(item.highhigh.group) === -1) this.existgroups.push(item.highhigh.group);
+                if (item.high.group && this.existgroups.indexOf(item.high.group) === -1) this.existgroups.push(item.high.group);
+                if (item.low.group && this.existgroups.indexOf(item.low.group) === -1) this.existgroups.push(item.low.group);
+                if (item.info.group && this.existgroups.indexOf(item.info.group) === -1) this.existgroups.push(item.info.group);
+            });
         }
     }
 

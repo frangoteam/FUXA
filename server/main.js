@@ -135,7 +135,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
     try {
         var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        logger.info("Client: " + ip, false);
+        // logger.info("Client: " + ip, false);
     } catch (err) {
 
     }

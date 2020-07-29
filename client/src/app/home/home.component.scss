@@ -89,3 +89,22 @@
     box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.18);
 }
 
+#alarms-panel {
+    background: white;
+    height: 300px;
+    transition: bottom 300ms;
+    width: 100%;
+    position: fixed; 
+    bottom: -300px;
+}
+
+#alarms-panel.is-active {
+    bottom: 0px;
+    transition: bottom 300ms;
+}
+
+#alarms-panel.is-full-active {
+    top: 46px;
+    height: 100%;
+    transition:  top 300ms;
+}

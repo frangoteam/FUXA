@@ -13,6 +13,12 @@
                 <flex-head [data]="data" [property]="property" #flexhead></flex-head>
             </div>
         </div>
+        <mat-autocomplete #textAuto="matAutocomplete">
+            <mat-option *ngFor="let option of existtexts" [value]="option">{{option}}</mat-option>
+        </mat-autocomplete>
+        <mat-autocomplete #groupAuto="matAutocomplete">
+            <mat-option *ngFor="let option of existgroups" [value]="option">{{option}}</mat-option>
+        </mat-autocomplete>
         <mat-tab-group style="width: 100%;min-height: 300px;">
             <mat-tab label="{{'alarm.property-highhigh' | translate}}">
                 <div style="overflow: hidden; padding-top: 25px;">
@@ -51,11 +57,17 @@
                     <div style="display: block;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-text' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.highhigh.text" style="width: 400px" type="text">
+                            <input [(ngModel)]="data.alarm.highhigh.text" [matAutocomplete]="textAuto" style="width: 400px" type="text">
+                            <!-- <mat-autocomplete #highhighAuto="matAutocomplete">
+                                <mat-option *ngFor="let option of existtexts" [value]="option">{{option}}</mat-option>
+                            </mat-autocomplete>       -->
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.highhigh.group" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.highhigh.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
+                            <!-- <mat-autocomplete #highhighAuto="matAutocomplete">
+                                <mat-option *ngFor="let option of existgroups" [value]="option">{{option}}</mat-option>
+                            </mat-autocomplete>     -->
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.highhigh.bkcolor" [style.color]="data.alarm.highhigh.color">
@@ -105,11 +117,11 @@
                     <div style="display: block;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-text' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.high.text" style="width: 400px" type="text">
+                            <input [(ngModel)]="data.alarm.high.text" [matAutocomplete]="textAuto" style="width: 400px" type="text">                    
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.high.group" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.high.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.high.bkcolor" [style.color]="data.alarm.high.color">
@@ -159,11 +171,11 @@
                     <div style="display: block;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-text' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.low.text" style="width: 400px" type="text">
+                            <input [(ngModel)]="data.alarm.low.text" [matAutocomplete]="textAuto" style="width: 400px" type="text">
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.low.group" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.low.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.low.bkcolor" [style.color]="data.alarm.low.color">
@@ -213,11 +225,11 @@
                     <div style="display: block;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-text' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.info.text" style="width: 400px" type="text">
+                            <input [(ngModel)]="data.alarm.info.text" [matAutocomplete]="textAuto" style="width: 400px" type="text">
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.info.group" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.info.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.info.bkcolor" [style.color]="data.alarm.info.color">

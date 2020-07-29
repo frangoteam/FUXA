@@ -1,0 +1,94 @@
+.header-panel {
+    /* z-index: 9999 !important; */
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(33,33,33,1);
+    /* background-color: rgba(33,33,33,0.92); */
+    color: rgba(255,255,255,1);
+    height: 40px;
+    width: 100%;
+    text-align: center;
+    line-height: 40px;
+}
+
+.work-panel {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+.filter {
+    display: inline-block;
+    min-height: 60px;
+    padding: 8px 24px 0;
+}
+
+.filter .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.table {
+    height: 705px;
+}
+
+.mat-table {
+    overflow: auto;
+    min-width: 1560px;
+    /* margin: 5px; */
+    /* max-height: 500px; */
+}
+  
+.mat-header-cell.mat-sort-header-sorted {
+    color: black;
+}
+
+.mat-header-row {
+    top: 0;
+    position: relative;
+    z-index: 1;
+    background-color: rgba(76,76,76,1);
+    color: white;
+    min-height: 35px;
+}
+.mat-header-cell {
+    color: white;
+    font-size: 14px;
+}
+.mat-row {
+    min-height: 35px;
+}
+.mat-column-ontime {
+    flex: 0 0 160px;
+}
+
+.mat-column-text {
+    flex: 0 0 400px;
+}
+.mat-column-type {
+    flex: 0 0 120px;
+}
+.mat-column-group {
+    flex: 0 0 250px;
+}
+
+.mat-column-status {
+    flex: 0 0 200px;
+}
+
+.mat-column-ack {
+    flex: 0 0 60px;
+}
+
+.header-tools {
+    position: fixed;
+    right: 30px;
+}
+
+.header-tools div {
+    display: inline-block;
+    padding-left: 10px;
+}

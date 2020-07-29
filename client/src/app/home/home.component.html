@@ -21,15 +21,15 @@
 			</div>
 			<div class="header-button">
 				<div class="alarm-layout" style="min-width: 40px;">
-					<button mat-icon-button *ngIf="alarms.show">
+					<button mat-icon-button *ngIf="alarms.show" (click)="onAlarmsShowMode('collapse')">
 						<mat-icon aria-label="Alarms">notifications_none</mat-icon>
-						<div class="button-counter alarm-color" [style.opacity]="alarms.count?'':'0'">{{alarmsCount}}</div>
+						<div class="button-counter alarm-color" [style.opacity]="alarms.count?'':'0'">{{alarms.count}}</div>
 					</button>
 				</div>
 				<div class="info-layout" style="min-width: 40px;">
-					<button mat-icon-button *ngIf="infos.show">
+					<button mat-icon-button *ngIf="infos.show" (click)="onAlarmsShowMode('collapse')">
 						<mat-icon aria-label="Info">error_outline</mat-icon>
-						<div class="button-counter info-color" [style.opacity]="infos.count?'':'0'">{{infosCount}}</div>
+						<div class="button-counter info-color" [style.opacity]="infos.count?'':'0'">{{infos.count}}</div>
 					</button>
 				</div>
 			</div>
@@ -42,6 +42,9 @@
 				<p>
 					{{'msg.home-welcome' | translate}}.
 				</p>
+			</div>
+			<div id="alarms-panel">
+				<app-alarm-view #alarmsview [fullview]="false" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
 			</div>
 		</div>
 	</mat-sidenav-content>

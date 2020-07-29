@@ -581,6 +581,7 @@ module.exports = {
     init: init,
     load: load,
     getDevices: getDevices,
+    getAlarms: getAlarms,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,
