@@ -27,6 +27,7 @@
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
     "dlg.layout-lbl-sview": "Start View:",
+    "dlg.layout-show-dev": "Show button",
     "dlg.layout-navigation": "Navigation (Side Menu)",
     "dlg.layout-lbl-smode": "Side Mode:",
     "dlg.layout-lbl-type": "Type:",
