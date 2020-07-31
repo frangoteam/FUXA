@@ -22,6 +22,7 @@ export class LayoutSettings {
     start: string = '';
     navigation: NavigationSettings = new NavigationSettings();
     header: HeaderSettings = new HeaderSettings();
+    showdev: boolean = true;
 }
 
 export class NavigationSettings {

@@ -11,6 +11,15 @@
                     </mat-option>
                 </mat-select>
             </div>
+            <div class="my-form-field" style="display: inline-block;margin-bottom: 25px;margin-left: 180px;">
+                <ngx-fab-button #fabmenu icon="menu" iconOpen="menu" color="rgba(68,138,255, 1)" 
+                                    style="color: rgba(255,255,255,1);background-color: rgba(68,138,255, 0);">
+                </ngx-fab-button>
+            </div>
+            <div class="my-form-field" style="display: inline-block;margin-bottom: 25px;margin-left: 60px;">
+                <span>{{'dlg.layout-show-dev' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="data.layout.showdev"></mat-slide-toggle>
+            </div>
 
             <!-- <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
                 <div style="display: block;">

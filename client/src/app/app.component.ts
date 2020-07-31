@@ -1,7 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from "rxjs";
+
+import { ProjectService } from './_services/project.service';
 
 @Component({
 	selector: 'app-root',
@@ -9,13 +12,16 @@ import { TranslateService } from '@ngx-translate/core';
 	styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	title = 'app';
 	location: Location;
+	showdev = false;
 
 	@ViewChild('fabmenu') fabmenu: any;
+	private subscriptionLoad: Subscription;
 
 	constructor(private router: Router,
+		private projectService: ProjectService,
 		private fuxaLanguage: TranslateService,
 		location: Location) {
 		this.location = location;
@@ -30,6 +36,38 @@ export class AppComponent implements OnInit, AfterViewInit {
 	}
 
 	ngAfterViewInit() {
+		try {
+			let hmi = this.projectService.getHmi();
+			if (hmi) {
+				this.checkSettings();
+			}
+			this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+				this.checkSettings();
+			}, error => {
+				console.log('Error loadHMI');
+			});
+		}
+		catch (err) {
+			console.log(err);
+		}
+	}
+
+	ngOnDestroy() {
+		try {
+			if (this.subscriptionLoad) {
+				this.subscriptionLoad.unsubscribe();
+			}
+		} catch (e) {
+		}
+	}
+
+	checkSettings() {
+		let hmi = this.projectService.getHmi();
+		if (hmi && hmi.layout && hmi.layout.showdev === false) {
+			this.showdev = false;
+		} else {
+			this.showdev = true;
+		}
 	}
 
 	isHidden() {
@@ -51,7 +89,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (route.startsWith('/view')) {
             return false;
         }
-        return true;
+        return this.showdev;
     }
 
 	onGoTo(goto) {

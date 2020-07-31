@@ -86,6 +86,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (hmi.layout) {
             templayout = JSON.parse(JSON.stringify(hmi.layout));
         }
+        if (templayout && templayout.showdev !== false) {
+			templayout.showdev = true;
+		}
         let dialogRef = this.dialog.open(LayoutPropertyComponent, {
             // minWidth: '700px',
             // minHeight: '700px',
