@@ -60,7 +60,7 @@
                         </div>
                         <div>
                             <input [(colorPicker)]="tag.color" class="color-line" title="{{'chart.config-line-color' | translate}}" 
-                            [style.background]="tag.color" [cpAlphaChannel]="'disabled'" [cpPosition]="'top'"
+                            [style.background]="tag.color" [cpAlphaChannel]="'always'" [cpPosition]="'top'"
                             [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
                             [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
                         </div>

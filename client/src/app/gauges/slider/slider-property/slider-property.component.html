@@ -38,15 +38,15 @@
                     <div class="field-row" style="margin-top: 10px;">
                         <div class="my-form-field slider-field color-field">
                             <span>{{'slider.property-slider-color' | translate}}</span>
-                            <input [(colorPicker)]="options.shape.connectColor" [style.background]="options.shape.connectColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.shape.connectColor" [style.background]="options.shape.connectColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                             <span>{{'slider.property-slider-background' | translate}}</span>
-                            <input [(colorPicker)]="options.shape.baseColor" [style.background]="options.shape.baseColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.shape.baseColor" [style.background]="options.shape.baseColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                             <span>{{'slider.property-slider-handle' | translate}}</span>
-                            <input [(colorPicker)]="options.shape.handleColor" [style.background]="options.shape.handleColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.shape.handleColor" [style.background]="options.shape.handleColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                     </div>
                     <div class="field-row" style="margin-top: 10px;">                      
@@ -71,7 +71,7 @@
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                                 <span>{{'slider.property-marker-color' | translate}}</span>
-                                <input [(colorPicker)]="options.marker.color" [style.background]="options.marker.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 50px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                                <input [(colorPicker)]="options.marker.color" [style.background]="options.marker.color" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 50px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
                             </div>
                         </div>
                     </div>
@@ -122,11 +122,11 @@
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 17px">
                             <span>{{'slider.property-tooltip-color' | translate}}</span>
-                            <input [(colorPicker)]="options.tooltip.color" [style.background]="options.tooltip.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.tooltip.color" [style.background]="options.tooltip.color" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                             <span>{{'slider.property-tooltip-background' | translate}}</span>
-                            <input [(colorPicker)]="options.tooltip.background" [style.background]="options.tooltip.background" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.tooltip.background" [style.background]="options.tooltip.background" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                     </div>
                     <div class="field-row" style="margin-top: 10px;">

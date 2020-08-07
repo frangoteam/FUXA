@@ -19,7 +19,7 @@
         <input [(colorPicker)]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
             [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
             [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 8px 0 0 0;"
-            [cpPosition]="'left'"/>
+            [cpPosition]="'left'" [cpAlphaChannel]="'always'"/>
         <!-- <mat-select class="panel-color" style="padding: 8px 0 0 0;" disableOptionCentering panelClass="panel-color-class"
           [(value)]="selected" (change)="item.color = selected" [style.background-color]="item.color">
           <mat-option class="option-color" value="green" style="background-color:limegreen"></mat-option>
@@ -54,7 +54,7 @@
           <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
           [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
           [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 8px 0 0 0;"
-          [cpPosition]="'left'"/>          
+          [cpPosition]="'left'" [cpAlphaChannel]="'always'"/>          
         </div>
         <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 30px" [(ngModel)]="withLabel">Range</mat-checkbox> -->
         <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 20px" [(ngModel)]="withValue">Value</mat-checkbox> -->
