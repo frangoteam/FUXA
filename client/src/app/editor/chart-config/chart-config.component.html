@@ -10,12 +10,12 @@
                             <span>{{'chart.config-charts' | translate}}</span>
                             <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart(null)">add</mat-icon>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let chart of data.charts" matTooltip="{{chart.name}}" class="list-item" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
+                        <mat-list-item *ngFor="let chart of data.charts" matTooltip="{{chart.name}}" class="list-item list-item-text" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
                             <span>{{chart.name}}</span>
                             <mat-icon [matMenuTriggerFor]="configMenu" style="position: absolute; right: 10px;cursor:pointer;color:gray;">more_vert</mat-icon>
                             <mat-menu #configMenu [overlapTrigger]="false" style="color:#000000">
-                                <button mat-menu-item (click)="editChart(chart)" style="color:#000000;font-size: 14px;">edit chart</button>
-                                <button mat-menu-item (click)="deleteChart(chart)" style="color:#000000;font-size: 14px;">delete chart</button>
+                                <button mat-menu-item (click)="editChart(chart)" style="color:#000000;font-size: 14px;">{{'chart.config-rename' | translate}}</button>
+                                <button mat-menu-item (click)="deleteChart(chart)" style="color:#000000;font-size: 14px;">{{'chart.config-delete' | translate}}</button>
                             </mat-menu>
                         </mat-list-item>
                     </mat-list>
@@ -25,7 +25,7 @@
                         <mat-list-item class="list-item list-header">
                             <span>{{'chart.config-devices' | translate}}</span>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let device of data.devices;" matTooltip="{{device.name}}" class="list-item" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
+                        <mat-list-item *ngFor="let device of data.devices;" matTooltip="{{device.name}}" class="list-item list-item-text" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
                             <span>{{device.name}}</span>
                         </mat-list-item>
                     </mat-list>
@@ -36,7 +36,7 @@
                             <span>{{'chart.config-tags' | translate}}</span>
                         </mat-list-item>
                         <mat-selection-list #selTags [(ngModel)]="selectedTags" [disabled]="(selectedChart.id)?false:true" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
-                            <mat-list-option *ngFor="let tag of selectedDevice.tags" matTooltip="{{tag.name}}" [selected]="tag.selected" [value]="tag" class="list-item" checkboxPosition="before">
+                            <mat-list-option *ngFor="let tag of selectedDevice.tags" matTooltip="{{tag.name}}" [selected]="tag.selected" [value]="tag" class="list-item list-item-text" checkboxPosition="before">
                                 {{tag.name}}
                             </mat-list-option>
                         </mat-selection-list>
@@ -52,10 +52,10 @@
                 <div style="height: calc(100% - 36px); overflow-y: auto">
                     <mat-list-item *ngFor="let tag of selectedChart.lines" class="list-item" (click)="editChartLine(tag)">
                         <mat-icon (click)="$event.stopPropagation();removeChartLine(tag)" style="color:gray;font-size: 20px">delete</mat-icon>
-                        <div style="width: 50%;max-width: 50%">
+                        <div class="list-item-text" style="width: 50%;max-width: 50%;">
                             <span>{{getDeviceTagName(tag)}}</span>
                         </div>
-                        <div style="width: 30%;max-width: 30%">
+                        <div class="list-item-text" style="width: 40%;max-width: 40%;">
                             <span>{{tag.device}}</span>
                         </div>
                         <div>
@@ -70,10 +70,8 @@
         </div>
     </div>
 
-    <!-- <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px"> -->
-  <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
-    <button mat-raised-button (click)="onNoClick()">CANCEL</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data"
-            cdkFocusInitial>OK</button>
+    <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

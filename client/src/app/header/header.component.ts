@@ -66,7 +66,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
         let devices = this.projectService.getDevices();
         let dialogRef = this.dialog.open(ChartConfigComponent, {
-            minWidth: '900px',
+            minWidth: '1200px',
+            position: { top: '60px' },
             data: { charts: chartscopy, devices: devices }
         });
 

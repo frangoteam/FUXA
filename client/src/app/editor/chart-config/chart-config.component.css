@@ -1,22 +1,14 @@
 
 .panelTop {
     display: block;
-    /* position: relative;
-    top: 20px; */
-    /* margin-top: 10px; */
     width: 100%;
     height: 580px;
-    /* border: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
 .panelBottom {
-    /* position: relative; */
-    /* bottom: 10px; */
     display: block;
     width: 100%;
     height: 160px;
-    /* margin-top: 2px; */
-    /* border: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
 .list {
@@ -26,31 +18,25 @@
     padding-top: 0px !important;
 }
 
-.list span  {
+.list > span  {
     padding-left: 10px;
-    white-space: nowrap;
-    /* padding-right: 10px; */
 }
 
 .list mat-list-option  {
     padding-left: 10px;
-    /* padding-right: 10px; */
 }
 
 .chart-list {
-    /* margin-right: 2px; */
     overflow-y: auto;
 }
 
 .list-item {
-    width: 100%;
     display: block;
     font-size: 14px;
     height: 26px !important;
-    white-space: nowrap;
     cursor: pointer;
-    text-overflow: ellipsis;
     overflow: hidden;
+    padding-left: 10px;
 }
 
 .list-item mat-icon {
@@ -62,6 +48,13 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+.list-item-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 
 .list-item-selected {
   background-color: rgba(0, 0, 0, 0.1);
@@ -76,13 +69,11 @@
 .device-list {
     margin-right: 2px;
     overflow-y: auto;
-    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
 .tag-list {
     margin-right: 2px;
     overflow-y: auto;
-    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
 .color-line {
@@ -93,13 +84,3 @@
     opacity: 1;
     background-color: #f1f3f4;
   }
-
-/* ::ng-deep .mat-dialog-container {
-    display: inline-table !important;
-    padding: 0px 10px 10px 10px;
-} */
-
-/* ::ng-deep .mat-list-item-content {
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-} */

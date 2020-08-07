@@ -97,6 +97,10 @@
     "chart.config-tags": "Tags",
     "chart.config-lines": "Chart-Line",
     "chart.config-line-color": "Change line color",
+    "chart.config-name-title": "Chart",
+    "chart.config-name": "Name",
+    "chart.config-rename": "Rename",
+    "chart.config-delete": "Delete",
     
     "chart.property-chart": "Chart to show",
     "chart.property-chart-type": "Show mode",
@@ -467,7 +471,7 @@
     "msg.textproperty-missing-value": "Some values are missing!",
     "msg.device-remove": "Would you like to remove Device ",
     "msg.device-tag-remove": "Would you like to remove Tag ",
-    "msg.device-tag-exist": "Tagname exist!",
+    "msg.device-tag-exist": "Tag name exist!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.project-load-error": "Unable to read '{{value}}'",

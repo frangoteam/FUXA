@@ -33,11 +33,6 @@ export class ChartConfigComponent implements OnInit {
         }
 
     ngOnInit() {
-        // this.data = {
-        //     charts: [{ id: 'My chart A', name: 'My chart A', lines: [{ device: 'a', id: 'ab', name: 'aB' }] },
-        //              { id: 'My chart B', name: 'My chart B', lines: []}],
-        //     devices: [{ id: 'a', name: 'Device A', tags: [{ id: 'aa', name: 'aA' }, { id: 'ab', name: 'aB' }, { id: 'ac', name: 'aC' }]},
-        //         { id: 'b', name: 'Device B', tags: [{ id: 'ba', name: 'bA' }, { id: 'bb', name: 'bB' }, { id: 'bc', name: 'bC' }, { id: 'bd', name: 'bD' }]}] };
     }
 
     onNoClick(): void {
@@ -50,9 +45,8 @@ export class ChartConfigComponent implements OnInit {
 
     editChart(chart) {
         let dialogRef = this.dialog.open(DialogListItem, {
-            // minWidth: '700px',
-            // minHeight: '700px',
-            panelClass: 'dialog-property',
+            // panelClass: 'dialog-property',
+            minWidth: '250px',
             data: { name: (chart) ? chart.name : '' },
             position: { top: '80px' }
         });
