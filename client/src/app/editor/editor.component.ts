@@ -22,6 +22,12 @@ import * as FileSaver from 'file-saver';
 import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
 import { PipePropertyComponent } from '../gauges/pipe/pipe-property/pipe-property.component';
 import { SliderPropertyComponent } from '../gauges/slider/slider-property/slider-property.component';
+import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
+import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
+import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
+import { ValueComponent } from '../gauges/controls/value/value.component';
+import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
+import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 
 declare var Gauge: any;
 
@@ -850,6 +856,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let exist = this.hmi.views.filter((v) => v.id !== view.id).map((v) => { return v.name });
         let dialogRef = this.dialog.open(DialogDocName, {
             minWidth: '250px',
+            position: { top: '60px' },
             data: { name: view.name, exist: exist }
         });
 
@@ -868,6 +875,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onPropertyView(view) {
         let dialogRef = this.dialog.open(DialogDocProperty, {
             minWidth: '250px',
+            position: { top: '60px' },
             data: { name: view.name, width: view.profile.width, height: view.profile.height, bkcolor: view.profile.bkcolor }
         });
 
@@ -1046,7 +1054,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             dialogRef = this.dialog.open(ChartPropertyComponent, {
                 minWidth: '700px',
                 minHeight: '700px',
-                panelClass: 'dialog-property',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts()
@@ -1057,7 +1064,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             dialogRef = this.dialog.open(BagPropertyComponent, {
                 minWidth: '800px',
                 minHeight: '780px',
-                panelClass: 'dialog-property',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()), dlgType: dlgType
                 },
@@ -1067,7 +1073,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             dialogRef = this.dialog.open(PipePropertyComponent, {
                 minWidth: '700px',
                 minHeight: '700px',
-                panelClass: 'dialog-property',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported
@@ -1076,22 +1081,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else if (dlgType === GaugeDialogType.Slider) {
             dialogRef = this.dialog.open(SliderPropertyComponent, {
-                minWidth: '700px',
-                minHeight: '700px',
-                panelClass: 'dialog-property',
+                minWidth: '740px',
+                minHeight: '790px',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported
                 },
-                position: { top: '80px' }
+                position: { top: '60px' }
             });
         } else {
+            let title = this.getGaugeTitle(settings.type);
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 minWidth: '740px',
                 minHeight: '700px',
-                panelClass: 'dialog-property',
                 data: {
-                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()), title: title,
                     views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue,
                     inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_')))
                 },
@@ -1113,6 +1117,27 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
     }
+
+    private getGaugeTitle(type) {
+        let msg = '';
+        if (type.startsWith(HtmlInputComponent.TypeTag)) {
+            this.translateService.get('editor.controls-input-settings').subscribe((txt: string) => { msg = txt });
+        } else if (type.startsWith(ValueComponent.TypeTag)) {
+            this.translateService.get('editor.controls-output-settings').subscribe((txt: string) => { msg = txt });
+        } else if (type.startsWith(HtmlButtonComponent.TypeTag)) {
+            this.translateService.get('editor.controls-button-settings').subscribe((txt: string) => { msg = txt });
+        } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
+            this.translateService.get('editor.controls-select-settings').subscribe((txt: string) => { msg = txt });
+        } else if (type.startsWith(GaugeProgressComponent.TypeTag)) {
+            this.translateService.get('editor.controls-progress-settings').subscribe((txt: string) => { msg = txt });
+        } else if (type.startsWith(GaugeSemaphoreComponent.TypeTag)) {
+            this.translateService.get('editor.controls-semaphore-settings').subscribe((txt: string) => { msg = txt });
+        } else {
+            this.translateService.get('editor.controls-shape-settings').subscribe((txt: string) => { msg = txt });
+        }
+        return msg;
+    }
+
     //#endregion
 
     isWithShadow() {
