@@ -102,4 +102,6 @@ export class Define {
     'sentiment_very_satisfied', 'share', 'thumb_down_alt', 'thumb_up_alt', 'whatshot', 
     // Toggle
     'check_box', 'check_box_outline_blank', 'indeterminate_check_box', 'radio_button_checked', 'radio_button_unchecked', 'star', 'star_border', 'star_half'];
+
+    static fonts = ['Sans-serif', 'Roboto-Thin', 'Roboto-Light', 'Roboto-Regular', 'Roboto-Medium', 'Roboto-Bold']; 
 }

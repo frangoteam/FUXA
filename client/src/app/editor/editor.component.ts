@@ -17,6 +17,7 @@ import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
 import { Utils } from '../_helpers/utils';
 import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-dialog.component';
+import { Define } from '../_helpers/define';
 
 import * as FileSaver from 'file-saver';
 import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
@@ -65,6 +66,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
     @ViewChild('viewFileImportInput') viewFileImportInput: any;
 
+    fonts = Define.fonts;
     isLoading = true;
     defaultColor = Utils.defaultColor;
     colorFill: string = '#FFFFFF'

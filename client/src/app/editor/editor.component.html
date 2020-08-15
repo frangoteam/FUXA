@@ -299,11 +299,7 @@
                                 <div class="svg-property">
                                     <span>{{'editor.transform-fontfamily' | translate}}</span>
                                     <select class="font-family" id="font_family" #fontfamily (change)="onFontFamilyChange(fontfamily.value)">
-                                        <option style="font-family:serif">{{'editor.transform-font-serif' | translate}}</option>
-                                        <option style="font-family:sans-serif">{{'editor.transform-font-sansserif' | translate}}</option>
-                                        <option style="font-family:cursive">{{'editor.transform-font-cursive' | translate}}</option>
-                                        <option style="font-family:fantasy">{{'editor.transform-font-fantasy' | translate}}</option>
-                                        <option style="font-family:monospace">{{'editor.transform-font-monospace' | translate}}</option>
+                                        <option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">{{font}}</option>
                                     </select>
                                 </div>
 

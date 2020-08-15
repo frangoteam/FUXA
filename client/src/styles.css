@@ -12,7 +12,53 @@
       url('./assets/fonts/icomoon.svg?22kwk4#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
-  }
+}
+@font-face {
+  font-family: 'Roboto-Thin';
+  src:  local('Roboto Thin'), local('Roboto-Thin'),
+        url('./assets/fonts/roboto-thin/roboto-thin-webfont.woff') format('woff'),
+        url('./assets/fonts/roboto-thin/roboto-thin-webfont.woff2') format('woff2'),
+        url('./assets/fonts/roboto-thin/roboto-thin-webfont.ttf') format('truetype'),
+        url('./assets/fonts/roboto-thin/roboto-thin-webfont.svg') format('svg');
+}
+
+@font-face {
+  font-family: 'Roboto-Light';
+  src:  local('Roboto Light'), local('Roboto-Light'),
+        url('./assets/fonts/roboto-light/roboto-light-webfont.woff') format('woff'),
+        url('./assets/fonts/roboto-light/roboto-light-webfont.woff2') format('woff2'),
+        url('./assets/fonts/roboto-light/roboto-light-webfont.ttf') format('truetype'),
+        url('./assets/fonts/roboto-light/roboto-light-webfont.svg') format('svg');
+}
+
+@font-face {
+  font-family: 'Roboto-Regular';
+  src:  local('Roboto Regular'), local('Roboto-Regular'),
+        url('./assets/fonts/roboto-regular/roboto-regular-webfont.woff') format('woff'),
+        url('./assets/fonts/roboto-regular/roboto-regular-webfont.woff2') format('woff2'),
+        url('./assets/fonts/roboto-regular/roboto-regular-webfont.ttf') format('truetype'),
+        url('./assets/fonts/roboto-regular/roboto-regular-webfont.svg') format('svg');
+}
+
+@font-face {
+  font-family: 'Roboto-Medium';
+  src:  local('Roboto Medium'), local('Roboto-Medium'),
+        url('./assets/fonts/roboto-medium/roboto-medium-webfont.woff') format('woff'),
+        url('./assets/fonts/roboto-medium/roboto-medium-webfont.woff2') format('woff2'),
+        url('./assets/fonts/roboto-medium/roboto-medium-webfont.ttf') format('truetype'),
+        url('./assets/fonts/roboto-medium/roboto-medium-webfont.svg') format('svg');
+}
+
+@font-face {
+  font-family: 'Roboto-Bold';
+  src:  local('Roboto Bold'), local('Roboto-Bold'),
+        url('./assets/fonts/roboto-bold/roboto-bold-webfont.woff') format('woff'),
+        url('./assets/fonts/roboto-bold/roboto-bold-webfont.woff2') format('woff2'),
+        url('./assets/fonts/roboto-bold/roboto-bold-webfont.ttf') format('truetype'),
+        url('./assets/fonts/roboto-bold/roboto-bold-webfont.svg') format('svg');
+}
+
+
    
 /* System and General */
 html {
@@ -20,16 +66,14 @@ html {
     position: relative;
     /*min-height: 100%;*/
     background-color:#FFFFFF;
-    font-family: 'Roboto', "Helvetica Neue", sans-serif;
-    /* font-family: 'Open Sans', sans-serif; */
+    font-family: 'Roboto-Regular', "Helvetica Neue", sans-serif;
     font-weight: 300;
 }
 
 body {
     height: 100%;
     margin: 0px;
-    font-family: 'Roboto', "Helvetica Neue", sans-serif;
-    /* font-family: 'Open Sans', sans-serif; */
+    font-family: 'Roboto-Regular', "Helvetica Neue", sans-serif;
     font-weight: 300;
 }
 
