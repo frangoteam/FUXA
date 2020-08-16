@@ -403,6 +403,7 @@
     "gauges.property-input-value": "Value",
     "gauges.property-input-label": "Label",
     "gauges.property-input-unit": "Unit",
+    "gauges.property-format-digits": "Format digits",
     "gauges.property-actions": "Actions",
     "gauges.property-action-type": "Type",
     "gauges.property-action-param": "Action Id",

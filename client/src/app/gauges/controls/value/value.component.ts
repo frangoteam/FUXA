@@ -49,9 +49,13 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
                 val = parseFloat(val.toFixed(5));
             }
             let unit = GaugeBaseComponent.getUnit(ga.property);
+            let digit = GaugeBaseComponent.getDigits(ga.property);
+            if (digit) {
+                val = parseFloat(val).toFixed(digit);
+            }
             g.textContent = val;
             if (unit) {
-                g.textContent += unit;
+                g.textContent += ' ' + unit;
             }
         }
     }
