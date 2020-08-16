@@ -574,6 +574,8 @@ export class GaugesManager {
             let gauge: NgxNouisliderComponent = SliderComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
+        } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
+            HtmlInputComponent.initElement(ga, isview);
         }
     }
 
