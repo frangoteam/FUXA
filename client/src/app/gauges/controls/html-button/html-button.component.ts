@@ -81,9 +81,15 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
 
     static getFillColor(ele) {
         if (ele.children && ele.children[0]) {
-            let htmlButton = Utils.searchTreeStartWith(ele, this.prefixRect);
+            let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                return htmlButton.getAttribute('fill');
+                let result = htmlButton.style['background-color'];
+                if (!result) {
+                    result = htmlButton.getAttribute('fill');
+                }
+                if (result) {
+                    return result;
+                }
             }
         }
         return ele.getAttribute('fill');
@@ -91,9 +97,15 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
 
     static getStrokeColor(ele) {
         if (ele.children && ele.children[0]) {
-            let htmlButton = Utils.searchTreeStartWith(ele, this.prefixRect);
+            let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                return htmlButton.getAttribute('stroke');
+                let result = htmlButton.style['color'];
+                if (!result) {
+                    result = htmlButton.getAttribute('stroke');
+                }
+                if (result) {
+                    return result;
+                }
             }
         }
         return ele.getAttribute('stroke');

@@ -18,7 +18,7 @@
                 <span>{{'gauges.property-input-color' | translate}}</span>
                 <input [(colorPicker)]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                     [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                    class="panel-color" style="padding: 8px 0 0 0;" [cpPosition]="'left'" [cpAlphaChannel]="'always'" />line
+                    class="panel-color" style="padding: 8px 0 0 0;" [cpPosition]="'left'" [cpAlphaChannel]="'always'" />
             </div>
             <div class="item-remove">
                 <button mat-icon-button (click)="onRemoveInput(i)" class="remove">

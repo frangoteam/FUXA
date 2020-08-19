@@ -273,7 +273,7 @@ export class GaugesManager {
      */
     checkElementToInit(ga: GaugeSettings) {
         if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
-            return HtmlSelectComponent.initElement(ga);
+            return HtmlSelectComponent.initElement(ga, true);
         }
         return null;
     }
@@ -576,6 +576,8 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
             HtmlInputComponent.initElement(ga, isview);
+        } else if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
+            HtmlSelectComponent.initElement(ga, isview);
         }
     }
 
