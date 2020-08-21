@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeRangeProperty, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeRangeProperty, GaugeStatus, WindowLink, Event, GaugeProperty } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -52,7 +52,10 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
             let yBase = parseFloat(rectBase.getAttribute('y'));
             let rect = Utils.searchTreeStartWith(svgele.node, this.prefixB);
             if (rectBase && rect) {
-                let vtoy = (heightBase / (gap.max - gap.min)) * val;
+                if (val > gap.max) val = gap.max;
+                if (val < gap.min) val = gap.min;
+                let k = (heightBase - 0) / (gap.max - gap.min);
+                let vtoy = k * (val - gap.min);
                 rect.setAttribute('y', yBase + heightBase - vtoy);
                 rect.setAttribute('height', vtoy);
                 if (gap.style[1]) {
@@ -63,38 +66,49 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
                             htmlValue.innerHTML += ' ' + gap.text;
                         }
                         htmlValue.style.top = (heightBase - vtoy - 7).toString() + 'px';
-                        // htmlValue.style.top = 'calc(100% - ' + (heightBase - vtoy).toString() + 'px)';
                     }
                 }
             }
         }
     }
 
-    static initElement(ga: GaugeSettings) {
+    static initElement(ga: GaugeSettings, isview: boolean = false) {
         let ele = document.getElementById(ga.id);
-        if (ele && ga.property && ga.property.ranges.length > 0) {
-            let gap: GaugeRangeProperty = ga.property.ranges[0];
-            // label min
-            let htmlLabel = Utils.searchTreeStartWith(ele, this.prefixMin);
-            if (htmlLabel) {
-                htmlLabel.innerHTML = gap.min.toString();
-                htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
+        if (ele) {
+            if (!ga.property) {
+                ga.property = new GaugeProperty();
+                let ip: GaugeRangeProperty = new GaugeRangeProperty();
+                ip.type = this.getDialogType();
+                ip.min = 0;
+                ip.max = 100;
+                ip.style = [true, true];
+                ip.color = '#1565c0';
+                ga.property.ranges = [ip];
             }
-            // label max
-            htmlLabel = Utils.searchTreeStartWith(ele, this.prefixMax);
-            if (htmlLabel) {
-                htmlLabel.innerHTML = gap.max.toString();
-                htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
-            }
-            // value
-            let htmlValue = Utils.searchTreeStartWith(ele, this.prefixValue);
-            if (htmlValue) {
-                htmlValue.style.display = (gap.style[1]) ? 'block' : 'none';
-            }
-            // bar color
-            let rect = Utils.searchTreeStartWith(ele, this.prefixB);
-            if (rect) {
-                rect.setAttribute('fill', gap.color);
+            if (ga.property.ranges.length > 0) {
+                let gap: GaugeRangeProperty = ga.property.ranges[0];
+                // label min
+                let htmlLabel = Utils.searchTreeStartWith(ele, this.prefixMin);
+                if (htmlLabel) {
+                    htmlLabel.innerHTML = gap.min.toString();
+                    htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
+                }
+                // label max
+                htmlLabel = Utils.searchTreeStartWith(ele, this.prefixMax);
+                if (htmlLabel) {
+                    htmlLabel.innerHTML = gap.max.toString();
+                    htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
+                }
+                // value
+                let htmlValue = Utils.searchTreeStartWith(ele, this.prefixValue);
+                if (htmlValue) {
+                    htmlValue.style.display = (gap.style[1]) ? 'block' : 'none';
+                }
+                // bar color
+                let rect = Utils.searchTreeStartWith(ele, this.prefixB);
+                if (rect) {
+                    rect.setAttribute('fill', gap.color);
+                }
             }
         }
     }

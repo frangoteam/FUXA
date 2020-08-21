@@ -578,6 +578,9 @@ export class GaugesManager {
             HtmlInputComponent.initElement(ga, isview);
         } else if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
             HtmlSelectComponent.initElement(ga, isview);
+        } else if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
+            GaugeProgressComponent.initElement(ga);
+            return true;
         }
     }
 

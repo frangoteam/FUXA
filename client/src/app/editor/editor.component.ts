@@ -691,13 +691,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * check and set the special gauge like ngx-dygraphs, ngx-gauge, ... if added
+     * if return true then the GaugeSettings is changed have to set again 
      * @param ga 
      */
     checkGaugeAdded(ga: GaugeSettings) {
         let gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
         if (gauge) {
-            if (this.gaugesRef.indexOf(ga.id) === -1) {
-                this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
+            if (gauge !== true) {
+                if (this.gaugesRef.indexOf(ga.id) === -1) {
+                    this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
+                }    
             }
             this.setGaugeSettings(ga);
         }
