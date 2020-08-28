@@ -337,9 +337,12 @@ app-root {
 }
 
 .dygraph-legend {
-  background: transparent !important;
+  background: transparent;
   width: fit-content !important;
   left: 100px !important;
+  padding: 3px;
+  border-radius: 2px;
+  z-index: 99999;
 }
 
 .sidenav-btn {

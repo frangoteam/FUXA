@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, AfterContentChecked } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,6 +36,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
+    }
+
+    ngAfterContentChecked() {
 		try {
 			let hmi = this.projectService.getHmi();
 			if (hmi) {

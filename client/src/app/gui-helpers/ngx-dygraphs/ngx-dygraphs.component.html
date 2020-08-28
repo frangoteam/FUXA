@@ -1,19 +1,7 @@
-<!-- <div class="ng-dygraphs">
-    <div *ngIf="loadingInProgress" class="loader-holder">
-        <div class="loader"></div>
-    </div>
-    <div class="ng-dygraphs-chart-container">
-        <div [ngClass]="{'hide': !data?.length}" #chart [style.width.px]="chartWidth" [style.height.px]="chartHeight">
-        </div>
-        <div *ngIf="!data?.length" class="nodata" [style.width.px]="chartWidth" [style.height.px]="chartHeight">
-            {{noDataLabel}}
-        </div>
-    </div>
-</div> -->
-<div class="mychart-panel">
-    <div class="mychar-toolbar" *ngIf="withToolbar">
-        <div class="mychar-toolbar-space" *ngIf="isEditor">Toolbar</div>
-        <div style="display: block; float:right; padding-right: 5px;" class="my-form-field" *ngIf="!isEditor">
+<div class="mychart-panel" #chartPanel>
+    <div class="mychar-toolbar" *ngIf="withToolbar && !isEditor">
+        <!-- <div class="mychar-toolbar-space" *ngIf="isEditor">Toolbar</div> -->
+        <div style="display: block; padding-right: 5px;text-align: center;" class="my-form-field" *ngIf="!isEditor">
             <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-select toolbar-cmp" (selectionChange)="onRangeChanged($event.source.value)">
                 <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key">
                   {{ ev.value }}
@@ -28,23 +16,21 @@
             </button>
         </div>
     </div>
-    <div class="mychart-edit" *ngIf="isEditor">
-        <div id="grido"></div>
-        <div id="gridv"></div>
-        <div id="bord"></div>
+    <div class="mychart-edit" *ngIf="isEditor" #tempchart>
+        <div id="grido" #tempgrido></div>
+        <div id="gridv" #tempgridv></div>
+        <div id="bord" #tempbord></div>
         <span id="c">1.0</span>
         <span id="b">0.5</span>
         <span id="a">0</span>      
         <span id="x1">12:30</span>
         <span id="x2">18.30</span>  
     </div>
-    <!-- <div class="mychart-graph" #chart [ngStyle]="(isEditor) ? 'mychart-hide' : 'mychart-show'"> -->
     <div class="mychart-graph" #chart [ngStyle]="{'visibility': (isEditor) ? 'hidden' : 'visible', 'display': (isEditor) ? 'none' : 'block'}">
-    <!-- <div class="mychart-graph" #chart style="display: block"> -->
     </div>
-    <div *ngIf="!data?.length && !isEditor" class="nodata">
+    <!-- <div *ngIf="!data?.length && !isEditor" class="nodata">
         {{noDataLabel}}
-    </div>
+    </div> -->
     <div *ngIf="loadingInProgress" class="loader-holder">
         <div class="loader"></div>
     </div>

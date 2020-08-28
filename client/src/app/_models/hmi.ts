@@ -150,6 +150,12 @@ export class GaugeRangeProperty {
     style: any;
 }
 
+export class GaugeChartProperty {
+    id: string;
+    type: string;
+    options: any;
+}
+
 export class Variable {
     id: string;
     name: string;

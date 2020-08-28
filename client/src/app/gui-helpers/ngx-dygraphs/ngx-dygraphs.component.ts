@@ -23,7 +23,12 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() public data: any;
     @Input() public noDataLabel: string;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
+    @ViewChild('tempchart') public tempchart: ElementRef;
+    @ViewChild('tempbord') public tempbord: ElementRef;
+    @ViewChild('tempgridv') public tempgridv: ElementRef;
+    @ViewChild('tempgrido') public tempgrido: ElementRef;
     @ViewChild('chart') public chart: ElementRef;
+    @ViewChild('chartPanel') public chartPanel: ElementRef;
 
     public loadingInProgress: boolean;
     public withToolbar = false;
@@ -37,7 +42,7 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     mapData = {};
 
     public dygraph: any;
-    public defOptions = {
+    public defOptions: DygraphOptions = {
         // width: "auto",
         // height: "auto",
         labels: ['Date', 'Temperature'],
@@ -59,26 +64,61 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     public ngOnInit() {
+        this.defOptions = Object.assign(this.defOptions, this.options);
         this.options = Object.assign(this.defOptions, this.options);
+        this.defOptions = JSON.parse(JSON.stringify(this.options));
+        delete this.options['fontFamily'];
+        delete this.options['legendFontSize'];
+        delete this.options['colorBackground'];
+        delete this.options['legendBackground'];
         this.noDataLabel = this.noDataLabel || 'NO DATA AVAILABLE';
-        // this.chartWidth = (this.options && this.options.width) || 380;
-        // this.chartHeight = (this.options && this.options.height) || 240;
     }
 
     ngAfterViewInit() {
         this.data = this.sampleData;
-        if (this.isEditor) {
-            return;
-        }
         this.dygraph = new Dygraph(this.chart.nativeElement, this.data, this.options);
         this.loadingInProgress = false;
         this.dygraph.ready(graph => {
             let sc: SimpleChanges = {};
             this.ngOnChanges(sc);
-            // test to change css legend
-            let cols: any = document.getElementsByClassName('dygraph-legend');
-            for (let i = 0; i < cols.length; i++) {
-              cols[i].style.fontSize = '12px';
+            // set chart layout
+            if (!this.isEditor) {
+                if (this.defOptions['fontFamily']) {
+                    this.chart.nativeElement.style.fontFamily = this.defOptions['fontFamily'];
+                }
+                let  ele = this.chart.nativeElement.getElementsByClassName('dygraph-legend');
+                if (ele && ele.length) {
+                    if (this.defOptions['legendFontSize'] >= 0) {
+                        ele[0].style.fontSize = this.defOptions['legendFontSize'] + 'px';
+                    }
+                    if (this.defOptions['legendBackground']) {
+                        ele[0].style.backgroundColor = this.defOptions['legendBackground'];
+                    }
+                }
+            }
+            if (this.isEditor && this.tempchart && this.tempchart.nativeElement) {
+                if (this.defOptions['fontFamily']) {
+                    this.tempchart.nativeElement.style.fontFamily = this.defOptions['fontFamily'];
+                }
+                if (this.defOptions['axisLabelFontSize']) {
+                    this.tempchart.nativeElement.style.fontSize = this.defOptions['axisLabelFontSize'] + 'px';
+                }
+                if (this.defOptions['colorBackground']) {
+                    this.tempchart.nativeElement.style.backgroundColor = this.defOptions['colorBackground'];
+                }
+                if (this.defOptions['axisLabelColor']) {
+                    this.tempbord.nativeElement.style.borderColor  = this.defOptions['axisLabelColor'];
+                }
+                if (this.defOptions['gridLineColor']) {
+                    this.tempgridv.nativeElement.style.borderColor  = this.defOptions['gridLineColor'];
+                    this.tempgrido.nativeElement.style.borderColor  = this.defOptions['gridLineColor'];
+                }
+            }
+            if (this.defOptions['colorBackground']) {
+                this.chartPanel.nativeElement.style.backgroundColor = this.defOptions['colorBackground'];
+            }
+            if (this.defOptions['axisLabelColor']) {
+                this.chartPanel.nativeElement.style.color = this.defOptions['axisLabelColor'];
             }
         });
         if (this.withToolbar && !this.isEditor) {
@@ -252,29 +292,4 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
             this.dygraph.updateOptions({ file: this.data });
         }
     }
-
-    //   private watchRangeSelector(graph) {
-    //     const observer = new MutationObserver(function(mutations) {
-    //       // called on style changes of range selector handles
-    //       if (mutations.length === 2) {
-    //         // both range selector handles have style changed -> assume move
-    //         // Zoom to the same zoom to trigger zoomCallback
-    //         const zoomCallback = graph.getFunctionOption("zoomCallback");
-    //         const [minX, maxX] = graph.xAxisRange();
-    //         zoomCallback.call(graph, minX, maxX, graph.yAxisRanges());
-    //       }
-    //     });
-    //     Array.from(
-    //       document.getElementsByClassName("dygraph-rangesel-zoomhandle")
-    //     ).forEach(
-    //       // work on range selector handles
-    //       function(element, idx, arr) {
-    //         // watch for style changes
-    //         observer.observe(element, {
-    //           attributes: true,
-    //           attributeFilter: ["style"]
-    //         });
-    //       }
-    //     );
-    //   }
 }

@@ -164,7 +164,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
             HtmlButtonComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-            HtmlChartComponent.detectChange(ga);
+            HtmlChartComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
@@ -546,7 +546,7 @@ export class GaugesManager {
             });
             let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
             gauge.init();
-            if (ga.property) {
+            if (ga.property && ga.property.id) {
                 let chart = this.hmiService.getChart(ga.property.id)
                 chart.lines.forEach(line => {
                     let sigid = HmiService.toVariableId(line.device, line.id);

@@ -1,0 +1,36 @@
+.mychart-graph {
+    display: block;
+    margin: 0 auto;
+    margin-top: 30px;
+    overflow: hidden;
+}
+
+.toolbox {
+    padding-top: 25px;
+    display: block;
+    overflow: hidden;
+}
+
+.field-row {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.slider-field span {
+    padding-left: 2px;
+    text-overflow: clip;
+    max-width: 125px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+::ng-deep .slider-field mat-slider {
+    background-color: #f1f3f4;
+    height: 30px;
+    width: 100px;
+}
+
+.color-field input {
+    padding: 0 !important;
+    height: 29px;
+}

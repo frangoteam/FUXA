@@ -24,6 +24,13 @@ export enum ChartRangeType {
     last1w = 'chart.rangetype-last1w'
 }
 
+export enum ChartLegendMode {
+    always = 'chart.legend-always',
+    // follow = 'chart.legend-follow',
+    // onmouseover = 'chart.legend-onmouseover',
+    never = 'chart.legend-never'
+}
+
 export class ChartRangeConverter {
     static ChartRangeToHours (crt: ChartRangeType) {
         let types = Object.keys(ChartRangeType);

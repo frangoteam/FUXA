@@ -15,7 +15,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
     static TypeTag = "svg-ext-html_chart";
     static LabelTag = "HtmlChart";
     static prefixD = "D-HXC_";
-
+    
     constructor(private resolver: ComponentFactoryResolver) {
         super();
     }
@@ -45,9 +45,12 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
                     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 }
                 htmlChart.innerHTML = '';
-                let options = { interactionModel: {} };    // option to remove interaction in editor modus
-                if (isview) {
-                    options = null;
+                let options = {};
+                if (!isview) {
+                    options = { interactionModel: {} };    // option to remove interaction in editor modus
+                }
+                if (gab.property && gab.property.options) {
+                    options = Object.assign(options, gab.property.options);
                 }
                 componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
                 componentRef.instance.isEditor = !isview;
@@ -75,6 +78,9 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
                 let options = { interactionModel: {} };    // option to remove interaction in editor modus
                 if (gab.property) {
                     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
+                    if (gab.property.options) {
+                        options = Object.assign(options, gab.property.options);
+                    }
                 }
                 componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
                 componentRef.instance.isEditor = true;
@@ -87,11 +93,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
         }
     }
 
-    static detectChange(gab: GaugeSettings) {
-        let ele = document.getElementById(gab.id);
-        if (ele) {
-            let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD) as HTMLElement;
-            let txt = htmlChart.namespaceURI;
-        }
+    static detectChange(gab: GaugeSettings, res: any, ref: any) {
+        // return HtmlChartComponent.initElement(gab, res, ref, false, null);
     }
 }

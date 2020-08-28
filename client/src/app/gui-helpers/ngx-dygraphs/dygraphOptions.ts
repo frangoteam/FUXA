@@ -94,4 +94,19 @@ export interface DygraphOptions {
      * the yLabelWidth option.
      */
     ylabel?: string;
+
+    connectSeparatedPoints?: boolean;
+    labelsSeparateLines?: boolean;
+    titleHeight?: number;
+    axisLabelFontSize?: number;
+    axisLabelWidth?: number;
+    labelsDivWidth?: number;
+    axisLineColor?: string;
+    axisLabelColor?: string;
+    gridLineColor?: string;
+
+    fontFamily?: string;
+    legendFontSize?: number;
+    colorBackground?: string;
+    legendBackground?: string;
 }
