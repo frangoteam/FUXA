@@ -11,7 +11,7 @@ declare const wNumb: any;
 export class NgxNouisliderComponent implements OnInit, AfterViewInit {
 
     @Input() public id: string;
-    // @Input() public value: any;
+    @ViewChild('panel') public panel: ElementRef;
     @ViewChild('slider') public slider: ElementRef;
     @Input() public options: NgxNouisliderOptions;
 
@@ -45,6 +45,9 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
             JSON.stringify(this.options.pips) !== JSON.stringify(options.pips) || JSON.stringify(this.options.marker) !== JSON.stringify(options.marker) ||
             JSON.stringify(this.options.tooltip) !== JSON.stringify(options.tooltip)) {
             toInit = true;
+        }
+        if (options.fontFamily) {
+            this.panel.nativeElement.style.fontFamily = options.fontFamily;
         }
         this.options = options;
         if (toInit) {
@@ -135,6 +138,7 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
 export class NgxNouisliderOptions {
     orientation = 'vertical';//'horizontal';
     direction = 'ltr';
+    fontFamily = 'Sans-serif';
     shape = { baseColor: '#dcdcdc', connectColor: '#49b2ff', handleColor: '#018ef5' };
     marker = { color: '#000', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
     range = { min: 0, max: 100 };

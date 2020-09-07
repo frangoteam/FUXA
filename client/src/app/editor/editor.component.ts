@@ -348,10 +348,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * add the gauge settings to the current view items list
-     * @param ele 
+     * @param ga GaugeSettings 
      */
-    private setGaugeSettings(ele) {
-        this.currentView.items[ele.id] = ele;
+    private setGaugeSettings(ga) {
+        this.currentView.items[ga.id] = ga;
     }
 
     /**
@@ -394,6 +394,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 // this.setFillColor(this.colorFill);
                 // console.log('f:' + this.colorFill + ' s:' + this.colorStroke);
+            }
+        }
+    }
+
+    /**
+     * return the fill color of svg element 'g'
+     * @param eleId 
+     */
+    private getFillColor(eleId) {
+        if (eleId) {
+            let ele = document.getElementById(eleId);
+            if (ele) {
+                return ele.getAttribute('fill');
             }
         }
     }
@@ -683,10 +696,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     checkMySelectedToSetColor(bkcolor, color, elems) {
         GaugesManager.initElementColor(bkcolor, color, elems);
-        // for (let i = 0; i < elems.length; i++) {
-        //     HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
-        //     GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
-        // }
     }
 
     /**

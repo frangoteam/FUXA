@@ -1,4 +1,4 @@
-<div (window:resize)="onResize($event)" class="container">
+<div (window:resize)="onResize($event)" class="container" #panel>
     <div #gaugetext style="text-align: center; font-size: 18px; font-weight: bold;color: black; font-family: 'Amaranth', sans-serif;position: absolute; top: 5px; left: 0; right: 0;"></div>
     <canvas #gauge id="myGauge" width="180" height="50" class="canvas"></canvas>
 </div>

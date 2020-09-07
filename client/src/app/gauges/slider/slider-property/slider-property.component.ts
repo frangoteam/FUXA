@@ -9,6 +9,7 @@ import { GaugeProperty } from '../../../_models/hmi';
 import { FlexHeadComponent } from '../../gauge-property/flex-head/flex-head.component';
 import { FlexAuthComponent } from '../../gauge-property/flex-auth/flex-auth.component';
 import { NgxNouisliderComponent, NgxNouisliderOptions } from '../../../gui-helpers/ngx-nouislider/ngx-nouislider.component';
+import { Define } from '../../../_helpers/define';
 
 @Component({
     selector: 'app-slider-property',
@@ -23,6 +24,7 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
     property: GaugeProperty;
     options = new NgxNouisliderOptions();
     defaultColor = Utils.defaultColor;
+    fonts = Define.fonts;
     name: string;
     layoutHorizontal = { width: 400, height: 80, top: 180, left: 0 };
     layoutVertical = { width: 80, height: 400, top: 20, left: 150 };
@@ -65,7 +67,7 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
                 this.staticScala += ';';
             }
             this.staticScala += k.toString();
-        });
+        });  
     }
 
     ngAfterViewInit() {

@@ -83,6 +83,12 @@ export class SliderComponent {
         }
     }
 
+    static initElementColor(bkcolor, color, ele) {
+        if (ele) {
+            ele.setAttribute('fill', bkcolor);
+        }
+    }
+
     static resize(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
         let ele = document.getElementById(gab.id);
         if (ele) {
@@ -101,6 +107,12 @@ export class SliderComponent {
                 }
                 return componentRef.instance;
             }
+        }
+    }
+
+    static getFillColor(ele) {
+        if (ele) {
+            return ele.getAttribute('fill');
         }
     }
 

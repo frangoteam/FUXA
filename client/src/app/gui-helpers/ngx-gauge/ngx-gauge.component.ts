@@ -15,6 +15,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() public id: string;
     @Input() public options: GaugeOptions;
     @Input() public value: any;
+    @ViewChild('panel') public panel: ElementRef;
     @ViewChild('gauge') public canvas: ElementRef;
     @ViewChild('gaugetext') public gaugetext: ElementRef;
 
@@ -72,17 +73,23 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
 
     setOptions(options: GaugeOptions) {
         this.options = options;
+        // if (options.backgroundColor) {
+        //     this.panel.nativeElement.style.backgroundColor = options.backgroundColor;
+        // }
         this.gauge.animationSpeed = options.animationSpeed;
         this.gauge.minValue = options.minValue;
         this.gauge.maxValue = options.maxValue;
         this.gaugetext.nativeElement.style.fontSize = options.fontSize + 'px';
+        if (options.fontFamily) {
+            this.gaugetext.nativeElement.style.fontFamily = options.fontFamily;
+        }
         if (options.pointer && options.pointer.color) {
             this.gaugetext.nativeElement.style.color = options.pointer.color;
         }
         this.gaugetext.nativeElement.style.top = options.textFilePosition + '%';
         this.gauge.setOptions(options);
         this.gauge.ctx.clearRect(0, 0, this.gauge.ctx.canvas.width, this.gauge.ctx.canvas.height);
-        this.gauge.render();        
+        this.gauge.render();
     }
 
     getOptions() {

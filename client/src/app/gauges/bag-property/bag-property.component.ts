@@ -8,6 +8,7 @@ import { GaugeSettings } from '../../_models/hmi';
 import { GaugeProperty } from '../../_models/hmi';
 import { DialogGaugePermission } from '../gauge-property/gauge-property.component';
 import { FlexHeadComponent } from '../gauge-property/flex-head/flex-head.component';
+import { Define } from '../../_helpers/define';
 
 @Component({
     selector: 'bag-property',
@@ -32,6 +33,7 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
     optionsZones = new GaugeOptions();
     optcfg: any = new GaugeOptions();
     defaultColor = Utils.defaultColor;
+    fonts = Define.fonts;
 
     constructor(private cdRef: ChangeDetectorRef,
                 public dialog: MatDialog,
@@ -172,12 +174,14 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
                     }                    
                 });
             }
-            this.options.staticLabels = { labels: labels, font: this.options.staticFontSize + 'px sans-serif', color: this.options.staticFontColor };
+            this.options.staticLabels = { labels: labels, font: this.options.staticFontSize + 'px Sans-serif', color: this.options.staticFontColor };
+            this.checkFontFamily();
             this.onGaugeChange(this.gaugeType);
         } else if (opt === 'fontSize') {
             this.options.staticFontSize = value;
             if (this.options.staticLabels) {
-                this.options.staticLabels.font = this.options.staticFontSize + 'px sans-serif' ;
+                this.options.staticLabels.font = this.options.staticFontSize + 'px Sans-serif' ;
+                this.checkFontFamily();
                 this.setGaugeOptions();
             }
         } else if (opt === 'labelsColor') {
@@ -186,6 +190,10 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
                 this.options.staticLabels.color = this.options.staticFontColor;
                 this.setGaugeOptions();
             }
+        } else if (opt === 'fontFamily') {
+            this.options.fontFamily = value;
+            this.checkFontFamily();
+            this.setGaugeOptions();
         }
     }
 
@@ -215,6 +223,12 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
     onChangeStaticZones() {
         this.options.staticZones = this.optcfg.staticZones;
         this.setGaugeOptions();
+    }
+
+    private checkFontFamily() {
+        if (this.options.staticLabels && this.options.fontFamily) {
+            this.options.staticLabels.font = this.options.staticFontSize + 'px ' + this.options.fontFamily;
+        }
     }
 
     private initGauge() {

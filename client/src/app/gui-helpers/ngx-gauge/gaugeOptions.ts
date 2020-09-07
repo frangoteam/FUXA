@@ -23,11 +23,12 @@ export class GaugeOptions {
     lineWidth: number = 0.3;
     radiusScale: number = 0.6;
     fontSize: number = 18;
+    fontFamily: 'Sans-serif';
     textFilePosition: number = 20;
     limitMax: boolean = false;
     limitMin: boolean = false;
     highDpiSupport: boolean = true;
-
+    backgroundColor: string = 'rgba(255, 255, 255, 0)';
     shadowColor?: string = '#d5d5d5';
     
     fractionDigits: number = 0;

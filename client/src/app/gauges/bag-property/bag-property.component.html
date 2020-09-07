@@ -19,7 +19,7 @@
             <flex-head [data]="data" [property]="property" #flexhead></flex-head>
         </div>
     </div>
-    <div style="width: 760px; height: 620px; position: relative">
+    <div style="width: 760px; height: 660px; position: relative">
         <div style="display: block; height: 360px;">
             <div class="gauge">
                 <div class="gauge-select">
@@ -172,7 +172,7 @@
                     </div>
                     <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                         <span>{{'bag.property-pointer-color' | translate}}</span>
-                        <input [(colorPicker)]="optcfg.pointer.color" [cpDisabled]="gaugeType===gaugeTypeEnum.Donut" [cpAlphaChannel]="'always'" [style.background]="optcfg.pointer.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 128px" [cpPosition]="'top'" (colorPickerChange)="onChangeOptionsPointer('color', $event)" />
+                        <input [(colorPicker)]="optcfg.pointer.color" [cpAlphaChannel]="'always'" [style.background]="optcfg.pointer.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 128px" [cpPosition]="'top'" (colorPickerChange)="onChangeOptionsPointer('color', $event)" />
                     </div>
                 </div>
                 <div class="field-row slider-field">
@@ -188,6 +188,20 @@
                         <span>{{'bag.property-background' | translate}}</span>
                         <input [(colorPicker)]="optcfg.strokeColor" [style.background]="optcfg.strokeColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 128px" [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('strokeColor', $event)" />
                     </div>
+                </div>
+                <div class="field-row slider-field">
+                    <div class="my-form-field" style="padding-left: 12px;width:160px">
+                        <span>{{'bag.property-font' | translate}}</span>
+                        <mat-select [(value)]="options.fontFamily" (selectionChange)="onChangeOptionsLabels('fontFamily',  $event.value)">
+                            <mat-option  *ngFor="let font of fonts" [style.fontFamily]="font"  [value]="font">
+                                {{font}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <!-- <div class="my-form-field slider-field color-field" style="padding-left: 12px">
+                        <span>{{'bag.property-background' | translate}}</span>
+                        <input [(colorPicker)]="optcfg.backgroundColor" [style.background]="optcfg.backgroundColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 128px" [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('backgroundColor', $event)" />
+                    </div> -->
                 </div>
             </div>
             <div class="toolbox-right" *ngIf="gaugeType==gaugeTypeEnum.Zones">
