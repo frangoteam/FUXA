@@ -68,8 +68,16 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
     static initElement(ga: GaugeSettings, isview: boolean = false) {
         let ele = document.getElementById(ga.id);
         if (ele) {
-            let select = Utils.searchTreeStartWith(ele, this.prefix);
+            let select = Utils.searchTreeStartWith(ele, this.prefix);            
             if (select) {
+                if (ga.property) {
+                    if (ga.property.readonly) {
+                        select.disabled = true;
+                        select.style['appearance'] = "none";
+                    } else {
+                        select.style['appearance'] = "";
+                    }
+                }
                 select.innerHTML = "";
                 if (!isview) {
                     let option = document.createElement("option", );

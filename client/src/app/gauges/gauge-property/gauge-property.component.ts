@@ -46,8 +46,8 @@ export class GaugePropertyComponent implements OnInit {
 		this.property = JSON.parse(JSON.stringify(this.data.settings.property));
 		if (!this.property) {
 			this.property = new GaugeProperty();
-        }
-        
+		}
+       
         // // check for button and to add the old binded signal to a event
         // if (this.data.settings.id.startsWith('HXB_') && this.property && this.property.variableId) {
         //     let eventwithsetvalue = this.property.events.find(ev => GaugeEventType[ev.type] === GaugeEventType.click &&
@@ -100,6 +100,11 @@ export class GaugePropertyComponent implements OnInit {
 		if (this.flexAction) {
 			this.data.settings.property.actions = this.flexAction.getActions();
 		}
+		if (this.property.readonly) {
+			this.property.readonly = true;
+		} else {
+			delete this.property.readonly;
+		}
 	}
 
 	onAddInput() {
@@ -142,6 +147,13 @@ export class GaugePropertyComponent implements OnInit {
 
 	isAlarmToShow() {
 		if (this.dialogType === GaugeDialogType.RangeWithAlarm) {
+			return true;
+		}
+		return false;
+	}
+
+	isReadonlyToShow() {
+		if (this.dialogType === GaugeDialogType.Step) {
 			return true;
 		}
 		return false;

@@ -402,6 +402,7 @@
     "gauges.property-title": "Property",
     "gauges.property-name": "Name",
     "gauges.property-permission": "Authorization",
+    "gauges.property-readonly": "Readonly",
     "gauges.property-event-type": "Type",
     "gauges.property-event-action": "Action",
     "gauges.property-event-destination": "Destination",

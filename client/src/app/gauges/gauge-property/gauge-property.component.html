@@ -16,6 +16,10 @@
 							<mat-icon class="header-icon" style="line-height: 30px;" *ngIf="property && property.permission">lock</mat-icon>
 						</div>
 					</div>
+					<div class="my-form-field" style="padding-left: 100px" *ngIf="isReadonlyToShow()">
+						<span>{{'gauges.property-readonly' | translate}}</span>
+						<mat-slide-toggle color="primary" [(ngModel)]="property.readonly"></mat-slide-toggle>
+					</div>
 					<div class="toolbox" *ngIf="isToolboxToShow()">
 						<button mat-icon-button (click)="onAddInput()">
 							<mat-icon>add_circle_outline</mat-icon>
