@@ -74,9 +74,15 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
                     if (ga.property.readonly) {
                         select.disabled = true;
                         select.style['appearance'] = "none";
+                        select.style['border-width'] = "0px";
                     } else {
-                        select.style['appearance'] = "";
+                        select.style['appearance'] = "menulist";
                     }
+                    let align = select.style['text-align'];
+                    if (align) {
+                        select.style['text-align-last'] = align;
+                    }
+                        
                 }
                 select.innerHTML = "";
                 if (!isview) {

@@ -109,7 +109,7 @@ function MODBUSclient(_data, _logger, _events) {
      * Read values in polling mode 
      * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
      */
-    this.polling = function () {
+    this.polling = async function () {
         if (_checkWorking(true)) {
             var readVarsfnc = [];
             // for (var memaddr in memory) {
@@ -117,7 +117,11 @@ function MODBUSclient(_data, _logger, _events) {
             //     readVarsfnc.push(_readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
             // }
             for (var memaddr in mixItemsMap) {
-                readVarsfnc.push(_readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
+                try {
+                    readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
+                    readVarsfnc.push(await delay(100));
+                } catch (error) {
+                }
             }
             _checkWorking(false);
             Promise.all(readVarsfnc).then(result => {
@@ -139,8 +143,12 @@ function MODBUSclient(_data, _logger, _events) {
         //             // console.log('then error');
                 }
             }, reason => {
-                if (reason && reason.stack) {
-                    logger.error(data.name + ' _readVars error: ' + reason.stack);
+                if (reason) {
+                    if (reason.stack) {
+                        logger.error(data.name + ' _readVars error: ' + reason.stack);
+                    } else if (reason.message) {
+                        logger.error(data.name + ' _readVars error: ' + reason.message);
+                    }
                 } else {
                     logger.error(data.name + ' _readVars error: ' + reason);
                 }
@@ -556,6 +564,7 @@ function MODBUSclient(_data, _logger, _events) {
         }
         return result;
     }
+    const delay = ms => { return new Promise(resolve => setTimeout(resolve, ms)) };
 }
 
 const ModbusTypes = { RTU: 0, TCP: 1 };
