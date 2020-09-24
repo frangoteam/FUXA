@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 
@@ -37,6 +37,7 @@ export class LayoutPropertyComponent implements OnInit {
     navMode: any;
     navType: any;
     notifyMode: any;
+    zoomMode: any;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
@@ -58,6 +59,7 @@ export class LayoutPropertyComponent implements OnInit {
         this.navMode = NaviModeType;
         this.navType = NaviItemType;
         this.notifyMode = NotificationModeType;
+        this.zoomMode = ZoomModeType;
 
         Object.keys(this.navMode).forEach(key => {
             this.translateService.get(this.navMode[key]).subscribe((txt: string) => {this.navMode[key] = txt});
@@ -67,6 +69,9 @@ export class LayoutPropertyComponent implements OnInit {
         });
         Object.keys(this.notifyMode).forEach(key => {
             this.translateService.get(this.notifyMode[key]).subscribe((txt: string) => {this.notifyMode[key] = txt});
+        });
+        Object.keys(this.zoomMode).forEach(key => {
+            this.translateService.get(this.zoomMode[key]).subscribe((txt: string) => {this.zoomMode[key] = txt});
         });
     }
 

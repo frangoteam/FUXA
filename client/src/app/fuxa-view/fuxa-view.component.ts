@@ -19,6 +19,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	@Input() id: string;
 	@Input() view: View;
 	@Input() hmi: Hmi;
+	@Input() child: boolean = false;;
 	@Input() gaugesManager: GaugesManager;        // gauges.component
 	@Input() parentcards: CardModel[];
 	@Output() onclose = new EventEmitter();
@@ -28,9 +29,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	cards: CardModel[] = [];
 	iframes: CardModel[] = [];
 	dialog: DialogModalModel;
-    mapGaugeStatus = {};
-
-
+	mapGaugeStatus = {};
+	
+	
 	private subscriptionOnChange: Subscription;
 
 	constructor(private el: ElementRef,
@@ -92,7 +93,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 			this.id = view.id;
 			this.view = view;
 			this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');;
-			if (view.profile.bkcolor) {
+			if (view.profile.bkcolor && this.child) {
 				this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
 			}
 		}

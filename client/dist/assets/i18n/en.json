@@ -27,6 +27,7 @@
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
     "dlg.layout-lbl-sview": "Start View:",
+    "dlg.layout-lbl-zoom": "Zoom:",
     "dlg.layout-show-dev": "Show button",
     "dlg.layout-navigation": "Navigation (Side Menu)",
     "dlg.layout-lbl-smode": "Side Mode:",
@@ -90,6 +91,9 @@
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",
     "item.notifymode-float": "Push",
+
+    "item.zoommode-disabled": "Disabled",
+    "item.zoommode-enabled": "Enabled",
 
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",

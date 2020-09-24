@@ -53,6 +53,7 @@
     "ngx-color-picker": "^7.4.0",
     "ngx-drag-drop": "^1.1.0",
     "ngx-toastr": "^8.10.2",
+    "panzoom": "^9.2.5",
     "rxjs": "6.0.0",
     "socket.io-client": "^2.2.0",
     "zone.js": "^0.8.26"

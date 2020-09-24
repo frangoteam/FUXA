@@ -23,6 +23,7 @@ export class LayoutSettings {
     navigation: NavigationSettings = new NavigationSettings();
     header: HeaderSettings = new HeaderSettings();
     showdev: boolean = true;
+    zoom: ZoomModeType;
 }
 
 export class NavigationSettings {
@@ -69,6 +70,11 @@ export enum NotificationModeType {
     hide = 'item.notifymode-hide',
     fix = 'item.notifymode-fix',
     float = 'item.notifymode-float',
+}
+
+export enum ZoomModeType {
+    disabled = 'item.zoommode-disabled',
+    enabled = 'item.zoommode-enabled',
 }
 
 export class DocProfile {

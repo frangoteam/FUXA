@@ -12,9 +12,12 @@ import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, NaviModeType, NotificationModeType } from '../_models/hmi';
+import { Hmi, View, NaviModeType, NotificationModeType, ZoomModeType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
+
+import panzoom from 'panzoom';
+// declare var panzoom: any;
 
 @Component({
 	selector: 'app-home',
@@ -75,7 +78,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.setAlarmsStatus(event);
             });
             this.hmiService.askAlarmsStatus();
-			this.changeDetector.detectChanges();
+            this.changeDetector.detectChanges();        
 		}
 		catch (err) {
 			console.log(err);
@@ -222,6 +225,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 						this.infos.mode = this.hmi.layout.header.infos;
 					}
 					this.checkHeaderButton();
+				}
+				if (this.hmi.layout.zoom && ZoomModeType[this.hmi.layout.zoom] === ZoomModeType.enabled) {
+					setTimeout(() => {
+						let element: HTMLElement = document.querySelector('#home');
+						if (element && panzoom) {
+							panzoom(element, {
+								bounds: true,
+								boundsPadding: 0.05,
+							});		
+						}	
+					}, 1000);
 				}
 			}
 			this.showHomeView = (this.homeView) ? true : false;

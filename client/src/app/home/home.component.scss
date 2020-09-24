@@ -3,6 +3,23 @@
     margin: 0 auto;
 }
 
+.home-container {
+    // padding-top: 5px;
+    position: absolute;
+	left: 0px;
+	top: 48px;
+	bottom: 0px;
+	right: 0px;
+	// border: 5px solid black;
+	overflow: hidden;
+
+	// -webkit-user-select: none;
+	// -moz-user-select: none;
+	// -ms-user-select: none;
+	// -o-user-select: none;
+	// user-select: none;
+}
+
 .header {
     display: block;
     z-index: 9999 !important;
@@ -14,6 +31,7 @@
     padding-right: 10px;
     background-color: rgba(255, 255, 255, 1);
 }
+
 .header-title {
     display: inline-block;
     margin-left: 20px;

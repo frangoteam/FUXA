@@ -72,8 +72,8 @@
     width: 100%; /* Full width */
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    /*background-color: rgb(0,0,0); /* Fallback color */
+    /*background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
   
   /* Modal Content/Box */
@@ -83,6 +83,7 @@
     /* padding: 20px; */
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
+    box-shadow: 0 0 12px #000000 !important;
 }
 
 .dialog-modal-close {
