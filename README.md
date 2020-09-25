@@ -38,7 +38,7 @@ npm start
 Open up a browser (better Chrome) and navigate to http://localhost:1881
 
 ## Usage
-Look the guide in ![wiki](https://github.com/frangoteam/FUXA/wiki) pages
+Look the guide in [wiki](https://github.com/frangoteam/FUXA/wiki) pages
 
 ## To Debug (Full Stack)
 Install and start to serve the frontend
