@@ -2,3 +2,11 @@
     display: table;
     margin: 0 auto;
 }
+
+.view-container {
+    position: absolute;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+}

@@ -1,11 +1,13 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs";
 import { ActivatedRoute } from '@angular/router';
 
 import { ProjectService } from '../_services/project.service';
-import { Hmi, View } from '../_models/hmi';
+import { Hmi, View, ZoomModeType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
+
+import panzoom from 'panzoom';
 
 @Component({
   selector: 'app-view',
@@ -15,6 +17,7 @@ import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
+	@ViewChild('container') container: ElementRef;
 
     startView: View = new View();
     hmi: Hmi = new Hmi();
@@ -69,6 +72,18 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setBackground();
             if (this.startView && this.fuxaview) {
                 this.fuxaview.loadHmi(this.startView);
+            }
+            if (this.hmi.layout && this.hmi.layout.zoom && ZoomModeType[this.hmi.layout.zoom] === ZoomModeType.enabled) {
+                setTimeout(() => {
+                    let element: HTMLElement = document.querySelector('#view');
+                    if (element && panzoom) {
+                        panzoom(element, {
+                            bounds: true,
+                            boundsPadding: 0.05,
+                        });		
+                        this.container.nativeElement.style.overflow = 'hidden';
+                    }
+                }, 1000);
             }
         }
     }

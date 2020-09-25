@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from "rxjs";
 import { MatSidenav } from '@angular/material';
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('matsidenav') matsidenav: MatSidenav;
 	@ViewChild('fuxaview') fuxaview: FuxaViewComponent;
 	@ViewChild('alarmsview') alarmsview: AlarmViewComponent;
+	@ViewChild('container') container: ElementRef;
 
 	// @ViewChild('iframeview') iframeview: IframeComponent;
 
@@ -234,7 +235,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 								bounds: true,
 								boundsPadding: 0.05,
 							});		
-						}	
+						}
+                		this.container.nativeElement.style.overflow = 'hidden';
 					}, 1000);
 				}
 			}
