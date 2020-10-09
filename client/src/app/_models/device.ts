@@ -11,6 +11,7 @@ export class Device {
 export class Tag {
     id: string;
     name: string;
+    label: string;
     value: string;
     type: string;
     memaddress: string;
@@ -42,6 +43,7 @@ export enum DeviceType {
     FuxaServer = 'FuxaServer',
     SiemensS7 = 'SiemensS7',
     OPCUA = 'OPCUA',
+    BACnet = 'BACnet',
     ModbusRTU = 'ModbusRTU',
     ModbusTCP = 'ModbusTCP'
 }
@@ -95,4 +97,16 @@ export enum SecurityPolicy {
     Basic256Rsa15 = 'Basic256Rsa15',
     /** see http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha25 */
     Basic256Sha256 = 'Basic256Sha256'
+}
+
+export enum BACnetObjectType {
+    ANALOG_INPUT = 'Analog Input',              // 0
+    ANALOG_OUTPUT = 'Analog Output',            // 1
+    ANALOG_VALUE = 'Analog Value',              // 2
+    BINARY_INPUT = 'Binary Input',              // 3
+    BINARY_OUTPUT = 'Binary Output',            // 4
+    BINARY_VALUE = 'Binary Value',              // 5
+    CALENDAR = '',                              // 6
+    COMMAND = '',                               // 7
+    DEVICE = ''                                 // 8
 }

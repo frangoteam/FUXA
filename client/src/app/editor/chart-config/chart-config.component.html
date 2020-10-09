@@ -36,8 +36,8 @@
                             <span>{{'chart.config-tags' | translate}}</span>
                         </mat-list-item>
                         <mat-selection-list #selTags [(ngModel)]="selectedTags" [disabled]="(selectedChart.id)?false:true" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
-                            <mat-list-option *ngFor="let tag of selectedDevice.tags" matTooltip="{{tag.name}}" [selected]="tag.selected" [value]="tag" class="list-item list-item-text" checkboxPosition="before">
-                                {{tag.name}}
+                            <mat-list-option *ngFor="let tag of selectedDevice.tags" matTooltip="{{getTagLabel(tag)}}" [selected]="tag.selected" [value]="tag" class="list-item list-item-text" checkboxPosition="before">
+                                {{getTagLabel(tag)}}
                             </mat-list-option>
                         </mat-selection-list>
                     </mat-list>

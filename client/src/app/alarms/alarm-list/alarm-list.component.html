@@ -39,7 +39,7 @@
         <!-- Device Column -->
         <ng-container matColumnDef="device">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-device' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.property.variableSrc}} {{element.property.variable}}</mat-cell>
+            <mat-cell *matCellDef="let element"> {{getVariableLabel(element.property)}}</mat-cell>
         </ng-container>
         <!-- HighHigh Column -->
         <ng-container matColumnDef="highhigh">

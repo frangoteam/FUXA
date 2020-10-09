@@ -186,13 +186,21 @@ export class ChartConfigComponent implements OnInit {
         }
     }
 
+    getTagLabel(tag) {
+        if (tag.label) {
+            return tag.label;
+        } else {
+            return tag.name;
+        }
+    }
+
     getDeviceTagName(tag) {
         let devices = this.data.devices.filter(x => x.name === tag.device);
         if (devices && devices.length > 0) {
             let tags = devices[0].tags;
             for (let i = 0; i < tags.length; i++) {
                 if (tag.id === tags[i].id) {
-                    return tags[i].name;
+                    return this.getTagLabel(tags[i]);
                 }
             }
         }

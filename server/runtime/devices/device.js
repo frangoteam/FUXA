@@ -6,6 +6,7 @@
 var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
+var BACNETclient = require('./bacnet');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -16,7 +17,7 @@ function Device(data, logger, _events) {
     var property = { id: data.id, name: data.name };        // Device property (name, id)
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
     var events = _events;                                   // Events to commit change to runtime
-    var comm;                                               // Interface to OPCUA/S7 Device
+    var comm;                                               // Interface to OPCUA/S7/.. Device
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
@@ -27,6 +28,8 @@ function Device(data, logger, _events) {
         comm = OpcUAclient.create(data, logger, events);
     } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
         comm = MODBUSclient.create(data, logger, events);        
+    } else if (data.type === DeviceEnum.BACnet) {
+        comm = BACNETclient.create(data, logger, events);        
     }
 
     /**
@@ -162,6 +165,12 @@ function Device(data, logger, _events) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            } else if (data.type === DeviceEnum.BACnet) {
+                comm.browse(path).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
             } else {
                 reject('Browse not supported!');
             }
@@ -225,6 +234,12 @@ function getSupportedProperty(endpoint, type) {
             }).catch(function (err) {
                 reject(err);
             });
+        // } else if (type === DeviceEnum.BACnet) {
+        //     BACNETclient.getEndPoints(endpoint).then(function (result) {
+        //         resolve(result);
+        //     }).catch(function (err) {
+        //         reject(err);
+        //     });
         } else {
             reject('getSupportedProperty not supported!');
         }
@@ -248,7 +263,8 @@ var DeviceEnum = {
     S7: 'SiemensS7',
     OPCUA: 'OPCUA',
     ModbusRTU: 'ModbusRTU',
-    ModbusTCP: 'ModbusTCP'
+    ModbusTCP: 'ModbusTCP',
+    BACnet: 'BACnet'
 }
 
 /**

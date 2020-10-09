@@ -30,7 +30,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	databitsType = [7, 8];
 	stopbitsType = [1, 1.5, 2];
 	parityType = ['None', 'Odd', 'Even'];
+	hostInterfaces = [];
 	private subscriptionDeviceProperty: Subscription;
+	private subscriptionHostInterfaces: Subscription;
 
 	constructor(
 		private hmiService: HmiService,
@@ -80,7 +82,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 				} else if (res.error) {
 
 				}
+			} else if (res.type === DeviceType.BACnet) {
 			}
+			 
 			this.propertyLoading = false;
 		});		
 		// check security
@@ -103,12 +107,21 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		if (!this.data.device.property.parity) {
 			this.data.device.property.parity = 'None';
 		}
+		this.subscriptionHostInterfaces = this.hmiService.onHostInterfaces.subscribe(res => {
+			if (res.result) {
+				this.hostInterfaces = res;
+			}
+		});
+		// this.hmiService.askHostInterface();
 	}
 
 	ngOnDestroy() {
 		try {
 			if (this.subscriptionDeviceProperty) {
 				this.subscriptionDeviceProperty.unsubscribe();
+			}
+			if (this.subscriptionHostInterfaces) {
+				this.subscriptionHostInterfaces.unsubscribe();
 			}
 		} catch (e) {
 		}
@@ -126,6 +139,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		this.propertyLoading = true;
 		this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
 	}
+
+	// onCheckBACnetDevice() {
+	// 	this.propertyLoading = true;
+	// 	this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
+	// }
 
 	onPropertyExpand(status) {
 		this.propertyExpanded = status;
@@ -149,6 +167,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	
 	isOpcUa(type) {
 		return (type === DeviceType.OPCUA) ? true : false;
+	}
+
+	isBACnet(type) {
+		return (type === DeviceType.BACnet) ? true : false;
 	}
 
 	isValid(device): boolean {
