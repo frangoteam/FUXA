@@ -1,5 +1,5 @@
 /**
- * OPC UA Client Driver
+ * BACnet Client Driver
  */
 
 'use strict';
@@ -29,7 +29,6 @@ function BACNETclient(_data, _logger, _events) {
      * Connect the client to BACnet device
      */
     this.connect = function () {
-        console.log('connect in');
         return new Promise(function (resolve, reject) {
             if (data.property && data.property.address) {
                 try {
@@ -72,11 +71,11 @@ function BACNETclient(_data, _logger, _events) {
      * Disconnect the BACnet client
      */
     this.disconnect = function () {
-        console.log('disconnect in');
         return new Promise(function (resolve, reject) {
             try {
                 if (client && connected) {
                     client.close();
+                    client = null;
                 }
                 resolve(true);
             } catch (err) {
@@ -97,7 +96,6 @@ function BACNETclient(_data, _logger, _events) {
      * Browse Devices Objects, read the objects of gived device
      */
     this.browse = function (node) {
-        console.log('browse in');
         return new Promise(function (resolve, reject) {
             if (!node) {
                 _askName(Object.values(devices)).then(res => {
@@ -137,7 +135,6 @@ function BACNETclient(_data, _logger, _events) {
      * Save DAQ value
      */
     this.polling = function () {
-        console.log('polling in');
         if (_checkWorking(true)) {
             var readObjects = [];
             for (var tagId in data.tags) {
@@ -147,17 +144,22 @@ function BACNETclient(_data, _logger, _events) {
             try {
                 client.readPropertyMultiple(ipAddress, readObjects, (err, value) => {
                     if (err) {        
-                        logger.error(data.name + ' readPropertyMultiple error: ' + reason);
+                        logger.error(data.name + ' readPropertyMultiple error: ' + err);
                     } else {
                         const tmp = {};
                         if (!(value && value.values && value.values[0] && value.values[0].values)) {
                             logger.error(data.name + ' readPropertyMultiple error: unknow');
-                        } else {
+                        } else if (value.values && value.values.length) {
                             let result = [];
+                            let errors = [];
                             value.values.forEach(data => { 
                                 if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIds.PROP_PRESENT_VALUE) {
                                     let id = _formatId(data.objectId.type, data.objectId.instance);
-                                    result.push({ id: id, value: data.values[0].value[0].value, type:  data.objectId.type });    
+                                    if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_ERROR) {
+                                        errors.push({ id: id, value: data.values[0].value.value, type:  data.objectId.type });    
+                                    } else {
+                                        result.push({ id: id, value: data.values[0].value[0].value, type:  data.objectId.type });    
+                                    }
                                 }
                             });
                             if (result.length) {
@@ -197,7 +199,6 @@ function BACNETclient(_data, _logger, _events) {
      * Return Objects (Tags) values array { id: <name>, value: <value>, type: <type> }
      */
     this.getValues = function () {
-        console.log('getValues in');
         return data.tags;
     }
 
@@ -222,7 +223,6 @@ function BACNETclient(_data, _logger, _events) {
      * Return Objects (Tag) property
      */
     this.getTagProperty = function (id) {
-        console.log('getTagProperty in');
         if (data.tags[id]) {
             let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
             return prop;
@@ -271,7 +271,6 @@ function BACNETclient(_data, _logger, _events) {
      * @param {*} callback 
      */
     var _connect = function(endpointUrl) {
-        console.log('_connect in');
         return new Promise(function (resolve, reject) {
             ipAddress = endpointUrl;
             if (endpointUrl.indexOf(':') !== -1) {
@@ -334,7 +333,6 @@ function BACNETclient(_data, _logger, _events) {
                         if (device) {
                             device.name = results[index].value;
                             device.class = _getObjectClass(device.type);
-                            console.log('dev name: ', device.name);
                         }
                     }
                 }
@@ -362,7 +360,7 @@ function BACNETclient(_data, _logger, _events) {
         return new Promise(function (resolve, reject) {
             client.readProperty(ipAddress, {type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: instance}, bacnet.enum.PropertyIds.PROP_OBJECT_LIST, (err, value) => {
                 if (err) {
-                    console.log('readProperty-readProperty-error: ' + err);
+                    logger.error(data.name + ' _readObjectList error: ' + err);
                 } else if (value && value.values && value.values.length) {
                     var objects = [];
                     var readfnc = [];
@@ -374,7 +372,7 @@ function BACNETclient(_data, _logger, _events) {
                             try {
                                 readfnc.push(_readProperty({ type: object.type, instance: object.instance}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME));
                             } catch (error) {
-                                console.log('error: ', error);
+                                logger.error(data.name + ' _readObjectList error: ' + error);
                             }
                         }
                     }
@@ -386,7 +384,6 @@ function BACNETclient(_data, _logger, _events) {
                                     object.id = _formatId(object.type, object.instance);
                                     object.name = results[index].value;
                                     object.class = _getObjectClass(object.type);
-                                    console.log('object name: ', object.name);
                                 }
                             }
                         }
@@ -429,19 +426,25 @@ function BACNETclient(_data, _logger, _events) {
 
     var _writeProperty = function(bacobj, value) {
         return new Promise(function (resolve, reject) {
-            var tvalue = {type: bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_BOOLEAN, value: value};
+            var tvalue = {type: bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_NULL, value: value};
             bacobj.type = parseInt(bacobj.type);
             bacobj.instance = parseInt(bacobj.instance);
             if (bacobj.type === bacnet.enum.ObjectTypes.OBJECT_ANALOG_INPUT || 
                 bacobj.type === bacnet.enum.ObjectTypes.OBJECT_ANALOG_OUTPUT || 
                 bacobj.type === bacnet.enum.ObjectTypes.OBJECT_ANALOG_VALUE) {
-                    tvalue.type = bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_REAL;
-                    tvalue.value = parseFloat(value);
-                }
+                tvalue.type = bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_REAL;
+                tvalue.value = parseFloat(value);
+            } else if (bacobj.type === bacnet.enum.ObjectTypes.OBJECT_BINARY_INPUT || 
+                bacobj.type === bacnet.enum.ObjectTypes.OBJECT_BINARY_OUTPUT || 
+                bacobj.type === bacnet.enum.ObjectTypes.OBJECT_BINARY_VALUE) {
+                tvalue.type = bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_ENUMERATED;
+                tvalue.value = parseInt(value);
+            }
+
             client.writeProperty(ipAddress, bacobj, bacnet.enum.PropertyIds.PROP_PRESENT_VALUE, [tvalue], { priority: 16 }, (err, result) => {
                 if (err) {
                     reject(err);
-                    console.log('error: ', err);
+                    console.log('value: ', err);
                 } else {
                     resolve();
                     console.log('value: ', result);
@@ -613,14 +616,4 @@ module.exports = {
     create: function (data, logger, events) {
         return new BACNETclient(data, logger, events);
     }
-}
-
-function OpcNode(name) {
-    this.name = name;
-    this.id = '';
-    this.class = '';
-    this.type = '';
-    this.value = '';
-    this.timestamp = '';
-    this.attribute;
 }

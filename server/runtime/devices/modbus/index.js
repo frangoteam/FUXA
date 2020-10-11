@@ -393,7 +393,6 @@ function MODBUSclient(_data, _logger, _events) {
                 });
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {          // Holding Registers (Read/Write  400001-465535)
                 client.readHoldingRegisters(start, size).then( res => {
-                    console.log(res);
                     let changed = [];
                     if (res.data) {
                         vars.map(v => {
