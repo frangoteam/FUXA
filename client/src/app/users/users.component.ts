@@ -134,7 +134,9 @@ export class DialogUser {
 	}
 
 	onOkClick(): void {
-		this.data.user.groups = UserGroups.GroupsToValue(this.seloptions.selected);
+		if (this.seloptions) {
+			this.data.user.groups = UserGroups.GroupsToValue(this.seloptions.selected);
+		}
 		this.dialogRef.close(this.data.user);
 	}
 
