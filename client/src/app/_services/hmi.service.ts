@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import * as io from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
-import { Device } from '../_models/device';
+import { Device, Tag } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
 import { AlarmEvent } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
@@ -22,6 +22,7 @@ export class HmiService {
     @Output() onDeviceNodeAttribute: EventEmitter<any> = new EventEmitter();
     @Output() onDaqResult: EventEmitter<DaqResult> = new EventEmitter();
     @Output() onDeviceProperty: EventEmitter<any> = new EventEmitter();
+    @Output() onHostInterfaces: EventEmitter<any> = new EventEmitter();
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
 
     public version = "1.00";
@@ -100,7 +101,7 @@ export class HmiService {
             // device property
             this.socket.on('device-property', (message) => {
                 this.onDeviceProperty.emit(message);
-            });                
+            });  
             // devices values
             this.socket.on('device-values', (message) => {
                 for (let idx = 0; idx < message.values.length; idx++) {
@@ -128,6 +129,9 @@ export class HmiService {
             this.socket.on('alarms-status', (alarmsstatus) => {
                 this.onAlarmsStatus.emit(alarmsstatus);
             });
+            this.socket.on('host-interfaces', (message) => {
+                this.onHostInterfaces.emit(message);
+            });               
 
             this.askDeviceValues();
             this.askAlarmsStatus();
@@ -151,6 +155,14 @@ export class HmiService {
             let msg = { endpoint: endpoint, type: type };
             this.socket.emit('device-property', msg);
         }
+    }
+    /**
+     * Ask host interface available
+     */
+    public askHostInterface() {
+        if (this.socket) {
+            this.socket.emit('host-interfaces', 'get');
+        } 
     }
 
     /**
@@ -279,11 +291,11 @@ export class HmiService {
                 let toadd = this.variables[sigid];
                 if (fulltext) {
                     toadd = Object.assign({}, this.variables[sigid]);
-                    let device = this.projectService.getDeviceFromId(toadd.source);
+                    let device = this.projectService.getDeviceFromSource(toadd.source);
                     if (device) {
                         toadd['source'] = device.name;
                         if (device.tags[toadd.name]) {
-                            toadd['name'] = device.tags[toadd.name].name;
+                            toadd['name'] = this.getTagLabel(device.tags[toadd.name]);
                         }                    
                     }
                 }
@@ -303,17 +315,26 @@ export class HmiService {
             let result = this.variables[sigid];
             if (fulltext) {
                 result = Object.assign({}, this.variables[sigid]);
-                let device = this.projectService.getDeviceFromId(result.source);
+                let device = this.projectService.getDeviceFromSource(result.source);
                 if (device) {
                     result['source'] = device.name;
                     if (device.tags[result.name]) {
-                        result['name'] = device.tags[result.name].name;
+                        result['name'] = this.getTagLabel(device.tags[result.name]);
                     }                    
                 }
             }
             return result;
         }
-    }    
+    }
+
+    private getTagLabel(tag: Tag) {
+        if (tag.label) {
+            return tag.label;
+        } else {
+            return tag.name;
+        }
+    }
+
     //#endregion
 
     //#region Chart functions

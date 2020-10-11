@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from "rxjs";
 
-import { Device, TagType, Tag, DeviceType, ModbusTagType } from './../../_models/device';
+import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType } from './../../_models/device';
 import { TreetableComponent, Node } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,7 +33,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.data.device.type === DeviceType.OPCUA) {
+        if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet) {
             this.withtree = true;
             this.config.height = '630px';
         } else {
@@ -56,7 +56,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.withtree) {
-            if (this.data.device.type === DeviceType.OPCUA) {
+            if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet) {
                 this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(values => {
                     if (this.data.device.name === values.device) {
                         if (values.error) {
@@ -120,21 +120,32 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     }
 
     addNodes(parent: Node, nodes: any) {
-        nodes.forEach((n) => {
-            let node = new Node(n.id, n.name);
-            node.class = n.class;
-            node.property = this.getProperty(n);
-            let enabled = true;
-            if (this.data.device.tags[n.id] && node.class === 'Variable') {
-                // node allready selected
-                enabled = false;
-            }
-            this.treetable.addNode(node, parent, enabled);
-            if (node.class === 'Variable') {
-                this.hmiService.askNodeAttributes(this.data.device.name, n);
-            }
-        });
-        this.treetable.update();
+        if (nodes) {
+            nodes.forEach((n) => {
+                let node = new Node(n.id, n.name);
+                node.class = n.class;
+                node.property = this.getProperty(n);
+                if (this.data.device.type === DeviceType.BACnet) {
+                    node.type = n.type;
+                    var typetext = Object.values(BACnetObjectType)[n.type];
+                    if (typetext) {
+                        node.property = typetext;
+                    }
+                    // node.property = Object.keys(BACnetObjectType)[Object.values(BACnetObjectType).indexOf(n.type)] + '   ' + node.property;
+                    // Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)]
+                }
+                let enabled = true;
+                if (this.data.device.tags[n.id] && node.class === 'Variable') {
+                    // node allready selected
+                    enabled = false;
+                }
+                this.treetable.addNode(node, parent, enabled);
+                if (node.class === 'Variable' && this.data.device.type !== DeviceType.BACnet) {
+                    this.hmiService.askNodeAttributes(this.data.device.name, n);
+                }
+            });
+            this.treetable.update();
+        }
     }
 
     getProperty(n: any) {
@@ -158,6 +169,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     queryNext(node: Node) {
         let n = (node) ? { id: node.id } : null;
+        if (this.data.device.type === DeviceType.BACnet && node) {
+            n['parent'] = (node.parent) ? node.parent.id : null;
+        }
         this.hmiService.askDeviceBrowse(this.data.device.name, n);
     }
 

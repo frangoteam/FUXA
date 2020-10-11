@@ -13,7 +13,7 @@
         <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
             <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
             <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
-                {{ vari.name }}
+                {{ getVariableLabel(vari) }}
             </mat-option>
         </mat-select>
     </div>

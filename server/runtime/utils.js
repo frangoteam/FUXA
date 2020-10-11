@@ -1,3 +1,5 @@
+const os = require('os');
+const ip = require('ip');
 
 'use strict';
 var utils = module.exports = {
@@ -31,5 +33,32 @@ var utils = module.exports = {
             }
         }
         return result;
+    },
+
+    /**
+    * Return available interface to use
+    */
+    getHostInterfaces: function() {
+        return new Promise(function (resolve, reject) {
+            try {
+                let nics = [];
+                const osNics = os.networkInterfaces();
+                nics.push({ name: 'Default' });
+                Object.keys(osNics).forEach((ifname) => {
+                    osNics[ifname].forEach((iface) => {
+                        if (iface.interal === true) return;
+                        if (iface.family !== 'IPv4') return;
+                        nics.push({
+                            name: ifname,
+                            address: iface.address,
+                            broadcast: ip.subnet(iface.address, iface.netmask).broadcastAddress
+                        });
+                    });
+                });
+                resolve(nics);
+            } catch (err) {
+                reject('gethostinterfaces-error: ' + err);
+            }
+        });
     }
 }

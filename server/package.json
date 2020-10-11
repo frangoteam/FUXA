@@ -17,6 +17,7 @@
     "@types/socket.io": "^2.1.2",
     "app-root-path": "^2.1.0",
     "async": "^2.6.2",
+    "bacstack": "0.0.1-beta.13",
     "bcrypt": "^5.0.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",

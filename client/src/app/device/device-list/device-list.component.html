@@ -47,7 +47,7 @@
         <!-- Name Column -->
         <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{getTagLabel(element)}} </mat-cell>
         </ng-container>
 
         <!-- Address Column -->

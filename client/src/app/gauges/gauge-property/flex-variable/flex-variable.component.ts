@@ -68,7 +68,15 @@ export class FlexVariableComponent implements OnInit {
                     }
                 }
             }
-        }    
+        }
+    }
+
+    getVariableLabel(vari) {
+        if (vari.label) {
+            return vari.label;
+        } else {
+            return vari.name;
+        }
     }
 
     onDeviceChange(event) {
@@ -98,7 +106,7 @@ export class FlexVariableComponent implements OnInit {
     }
 
     onChanged() {
-        this.onchange.emit({variableSrc: this.variableSrc, variableId: this.variableId, variable: this.variable});
+        this.onchange.emit({ variableSrc: this.variableSrc, variableId: this.variableId, variable: this.variable });
     }
 
     private loadDevices() {

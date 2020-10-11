@@ -91,6 +91,10 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
         return "";
     }
 
+    getVariableLabel(varProp) {
+        return varProp.variableSrc + ' ' + varProp.variable;
+    }
+
     private loadAlarms() {
         this.dataSource.data = this.projectService.getAlarms(); 
 	}

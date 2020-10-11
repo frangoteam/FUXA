@@ -178,6 +178,7 @@ function getDevicesValues() {
 
 /**
  * Get the Device Tag value with Timestamp
+ * used from Alarms
  * @param {*} deviceid 
  * @param {*} sigid 
  * @param {*} value 

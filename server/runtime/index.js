@@ -9,6 +9,7 @@ var project = require("./project");
 var users = require("./users");
 var events = require("./events");
 var alarms = require("./alarms");
+var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
 
 var apiDevice;
@@ -186,6 +187,28 @@ function init(_io, _api, _settings, log) {
                 updateAlarmsStatus();
             }
         });
+        // client ask host interfaces
+        socket.on('host-interfaces', (message) => {
+            try {
+                if (message === 'get') {
+                    message = {};
+                    utils.getHostInterfaces().then(result => {
+                        message.result = result;
+                        io.emit("host-interfaces", message);
+                    }).catch(function (err) {
+                        logger.error('socket.on.host-interfaces: ' + err);
+                        message.error = err;
+                        io.emit("host-interfaces", message);
+                    });
+                } else {
+                    logger.error('socket.on.host-interfaces: wrong message');
+                    message.error = 'wrong message';
+                    io.emit("host-interfaces", message);
+                }
+            } catch (err) {
+                logger.error('socket.on.host-interfaces: ' + err);
+            }
+        });        
     });
 }
 

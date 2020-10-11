@@ -119,7 +119,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     onAddTag() {
-        if (this.deviceSelected.type === DeviceType.OPCUA) {
+        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet) {
             this.addOpcTags(null);
         } else {
             let tag = new Tag();
@@ -142,6 +142,9 @@ export class DeviceListComponent implements OnInit {
                     let tag: Tag = new Tag();
                     tag.id = n.id;
                     tag.name = n.id;
+                    if (this.deviceSelected.type === DeviceType.BACnet) {
+                        tag.label = n.text;
+                    }
                     tag.type = n.type;
                     tag.address = n.id;
                     this.checkToAdd(tag, result.device);
@@ -149,6 +152,14 @@ export class DeviceListComponent implements OnInit {
                 this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
+    }
+
+    getTagLabel(tag: Tag) {
+        if (this.deviceSelected.type === DeviceType.BACnet) {
+            return tag.label;
+        } else {
+            return tag.name;
+        }
     }
 
     getAddress(tag: Tag) {

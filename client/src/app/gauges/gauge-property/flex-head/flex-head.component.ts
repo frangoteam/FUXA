@@ -124,6 +124,14 @@ export class FlexHeadComponent implements OnInit {
     return this.property;
   }
 
+  getVariableLabel(vari) {
+    if (vari.label) {
+      return vari.label;
+    } else {
+      return vari.name;
+    }
+  }
+
   onDeviceChange(event) {
     if (event.value) {
       if (this.property.variableSrc !== event.value.name) {

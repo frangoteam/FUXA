@@ -563,6 +563,10 @@ export class ProjectService {
         return result;
     }
 
+    getDeviceFromSource(source: string): any {
+        return this.projectData.devices[source];
+    }
+
     setDevices(devices: any, nosave?: boolean): boolean {
         this.projectData.devices = devices;
         if (nosave) {
