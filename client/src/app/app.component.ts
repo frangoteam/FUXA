@@ -74,7 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	isHidden() {
-		let list = ['/lab', '/home'],
+		let list = ['', '/lab', '/home'],
 			route = this.location.path();
 		return (list.indexOf(route) > -1);
 	}
