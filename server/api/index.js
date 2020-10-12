@@ -41,9 +41,11 @@ function init(_server, _runtime) {
              */
             apiApp.get("/api/settings", function (req, res) {
                 if (runtime.settings) {
+                    let tosend = JSON.parse(JSON.stringify(runtime.settings));
+                    delete tosend.secretCode;
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");                    
-                    res.json(runtime.settings);
+                    res.json(tosend);
                 } else {
                     res.status(404).end();
                     runtime.logger.error("api get settings: Value Not Found!");
