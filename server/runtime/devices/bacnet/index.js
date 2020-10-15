@@ -46,6 +46,8 @@ function BACNETclient(_data, _logger, _events) {
                             _clearVarsValue();
                             reject();
                             _checkWorking(false);
+                            client.close();
+                            client = null;
                         });
                     } else {
                         reject();
@@ -135,52 +137,56 @@ function BACNETclient(_data, _logger, _events) {
      * Save DAQ value
      */
     this.polling = function () {
-        if (_checkWorking(true)) {
+        if (_checkWorking(true) ) {
             var readObjects = [];
             for (var tagId in data.tags) {
                 let obj = _extractId(tagId);
                 readObjects.push({objectId: {type: obj.type, instance: obj.instance}, properties: [{id: bacnet.enum.PropertyIds.PROP_PRESENT_VALUE}]});
             }
-            try {
-                client.readPropertyMultiple(ipAddress, readObjects, (err, value) => {
-                    if (err) {        
-                        logger.error(data.name + ' readPropertyMultiple error: ' + err);
-                    } else {
-                        const tmp = {};
-                        if (!(value && value.values && value.values[0] && value.values[0].values)) {
-                            logger.error(data.name + ' readPropertyMultiple error: unknow');
-                        } else if (value.values && value.values.length) {
-                            let result = [];
-                            let errors = [];
-                            value.values.forEach(data => { 
-                                if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIds.PROP_PRESENT_VALUE) {
-                                    let id = _formatId(data.objectId.type, data.objectId.instance);
-                                    if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_ERROR) {
-                                        errors.push({ id: id, value: data.values[0].value.value, type:  data.objectId.type });    
-                                    } else {
-                                        result.push({ id: id, value: data.values[0].value[0].value, type:  data.objectId.type });    
+            if (readObjects.length) {
+                try {
+                    client.readPropertyMultiple(ipAddress, readObjects, (err, value) => {
+                        if (err) {        
+                            logger.error(data.name + ' readPropertyMultiple error: ' + err);
+                        } else {
+                            const tmp = {};
+                            if (!(value && value.values && value.values[0] && value.values[0].values)) {
+                                logger.error(data.name + ' readPropertyMultiple error: unknow');
+                            } else if (value.values && value.values.length) {
+                                let result = [];
+                                let errors = [];
+                                value.values.forEach(data => { 
+                                    if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIds.PROP_PRESENT_VALUE) {
+                                        let id = _formatId(data.objectId.type, data.objectId.instance);
+                                        if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTags.BACNET_APPLICATION_TAG_ERROR) {
+                                            errors.push({ id: id, value: data.values[0].value.value, type:  data.objectId.type });    
+                                        } else {
+                                            result.push({ id: id, value: data.values[0].value[0].value, type:  data.objectId.type });    
+                                        }
                                     }
-                                }
-                            });
-                            if (result.length) {
-                                let varsValueChanged = _updateVarsValue(result);
-                                lastTimestampValue = new Date().getTime();
-                                _emitValues(Object.values(varsValue));
-                                if (this.addDaq) {
-                                    var current = new Date().getTime();
-                                    if (current - daqInterval > lastDaqInterval) {
-                                        this.addDaq(varsValue);
-                                        lastDaqInterval = current;
-                                    } else if (varsValueChanged) {
-                                        this.addDaq(varsValueChanged);
+                                });
+                                if (result.length) {
+                                    let varsValueChanged = _updateVarsValue(result);
+                                    lastTimestampValue = new Date().getTime();
+                                    _emitValues(Object.values(varsValue));
+                                    if (this.addDaq) {
+                                        var current = new Date().getTime();
+                                        if (current - daqInterval > lastDaqInterval) {
+                                            this.addDaq(varsValue);
+                                            lastDaqInterval = current;
+                                        } else if (varsValueChanged) {
+                                            this.addDaq(varsValueChanged);
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
+                        _checkWorking(false);
+                    });
+                } catch {
                     _checkWorking(false);
-                });
-            } catch {
+                }
+            } else {
                 _checkWorking(false);
             }
         }
@@ -299,7 +305,7 @@ function BACNETclient(_data, _logger, _events) {
                         }
                         device = {...device, id: device.deviceId, name: 'Device ' + device.deviceId + ' (' + ipAddress + ':' + port + ')' };
                         devices[device.id] = device;
-                        resolve();   
+                        resolve();
                     }
                 });
                 client.whoIs();
@@ -319,36 +325,40 @@ function BACNETclient(_data, _logger, _events) {
     var _askName = function (devs) {
         return new Promise(function (resolve, reject) {
             var readfnc = [];
-            for (var index in devs) {
-                var device = devs[index];
-                try {
-                    readfnc.push(_readProperty({ type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: device.deviceId}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME));
-                } catch (error) {
+            if (devs.length) {
+                for (var index in devs) {
+                    var device = devs[index];
+                    try {
+                        readfnc.push(_readProperty({ type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: device.deviceId}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME));
+                    } catch (error) {
+                    }
                 }
-            }
-            Promise.all(readfnc).then(results => {
-                if (results) {
-                    for (var index in results) {
-                        var device = _getDevice(results[index].instance);
-                        if (device) {
-                            device.name = results[index].value;
-                            device.class = _getObjectClass(device.type);
+                Promise.all(readfnc).then(results => {
+                    if (results) {
+                        for (var index in results) {
+                            var device = _getDevice(results[index].instance);
+                            if (device) {
+                                device.name = results[index].value;
+                                device.class = _getObjectClass(device.type);
+                            }
                         }
                     }
-                }
-                resolve();          
-            }, reason => {
-                if (reason) {
-                    if (reason.stack) {
-                        logger.error(data.name + ' _askName error: ' + reason.stack);
-                    } else if (reason.message) {
-                        logger.error(data.name + ' _askName error: ' + reason.message);
+                    resolve();          
+                }, reason => {
+                    if (reason) {
+                        if (reason.stack) {
+                            logger.error(data.name + ' _askName error: ' + reason.stack);
+                        } else if (reason.message) {
+                            logger.error(data.name + ' _askName error: ' + reason.message);
+                        }
+                    } else {
+                        logger.error(data.name + ' _askName error: ' + reason);
                     }
-                } else {
-                    logger.error(data.name + ' _askName error: ' + reason);
-                }
+                    reject();
+                });
+            } else {
                 reject();
-            });
+            }
         });
     }
 
