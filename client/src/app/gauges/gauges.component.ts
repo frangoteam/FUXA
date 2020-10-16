@@ -519,6 +519,34 @@ export class GaugesManager {
         }
     }
 
+    
+    /**
+     * Return the default prefix of gauge name
+     * @param type 
+     */
+    static getPrefixGaugeName(type: string) {
+        if (type.startsWith(GaugeProgressComponent.TypeTag)) {
+            return 'progress_';
+        } else if (type.startsWith(HtmlButtonComponent.TypeTag)) {
+            return 'button_';
+        } else if (type.startsWith(HtmlInputComponent.TypeTag)) {
+            return 'input_';
+        } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
+            return 'select_';
+        } else if (type.startsWith(GaugeSemaphoreComponent.TypeTag)) {
+            return 'led_';
+        } else if (type.startsWith(SliderComponent.TypeTag)) {
+            return 'slider_';
+        } else if (type.startsWith(PipeComponent.TypeTag)) {
+            return 'pipe_';
+        } else if (type.startsWith(HtmlChartComponent.TypeTag)) {
+            return 'chart_';
+        } else if (type.startsWith(HtmlBagComponent.TypeTag)) {
+            return 'gauge_';
+        }
+        return 'shape_';
+    }
+
 	/**
 	 * initialize the gauge element found in svg, like ngx-dygraph, ngx-gauge
 	 * in svg is only a 'div' that have to be dynamic build and render from angular

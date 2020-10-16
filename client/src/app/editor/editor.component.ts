@@ -1062,6 +1062,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let eventsSupported = this.isWithEvents(settings.type);
         let actionsSupported = this.isWithActions(settings.type);
         let defaultValue = GaugesManager.getDefaultValue(settings.type);
+        let names = Object.values(this.currentView.items).map(gs => gs.name);
+        // set default name
+        if (!tempsettings.name) {
+            tempsettings.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(settings.type), names);
+        }
         // settings.property = JSON.parse(settings.property);
         let dialogRef: any;
         if (dlgType === GaugeDialogType.Chart) {
@@ -1070,7 +1075,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 minHeight: '700px',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts()
+                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts(),
+                    names: names
                 },
                 position: { top: '80px' }
             });
@@ -1079,7 +1085,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 minWidth: '800px',
                 minHeight: '780px',
                 data: {
-                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()), dlgType: dlgType
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()), dlgType: dlgType,
+                    names: names
                 },
                 position: { top: '30px' }
             });
@@ -1089,7 +1096,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 minHeight: '700px',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    withEvents: eventsSupported, withActions: actionsSupported
+                    withEvents: eventsSupported, withActions: actionsSupported,
+                    names: names
                 },
                 position: { top: '80px' }
             });
@@ -1099,7 +1107,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 minHeight: '790px',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    withEvents: eventsSupported, withActions: actionsSupported
+                    withEvents: eventsSupported, withActions: actionsSupported,
+                    names: names
                 },
                 position: { top: '60px' }
             });
@@ -1111,7 +1120,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()), title: title,
                     views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue,
-                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_')))
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
+                    names: names
                 },
                 position: { top: '80px' }
             });

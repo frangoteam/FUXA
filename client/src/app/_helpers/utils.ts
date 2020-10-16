@@ -63,6 +63,16 @@ export class Utils {
         }
         return uuid;
     };
+
+    static getNextName(prefix: string, inuse: string[]) {
+        let index = 1;
+        let result = prefix + index;
+        while(inuse.indexOf(result) >= 0) {
+            index++;
+            result = prefix + index;
+        }
+        return result;
+    }
 }
 
 @Pipe({
