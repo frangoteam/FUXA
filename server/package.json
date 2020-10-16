@@ -18,7 +18,7 @@
     "app-root-path": "^2.1.0",
     "async": "^2.6.2",
     "bacstack": "0.0.1-beta.13",
-    "bcrypt": "^5.0.0",
+    "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "express": "4.16.4",

@@ -17,9 +17,8 @@ export class LoginComponent implements OnInit {
 	showPassword = false;
 	submitLoading = false;
 	messageError: string;
-	loginForm: FormGroup;
-	username: FormControl;
-	password: FormControl;
+	username: FormControl = new FormControl();
+	password: FormControl = new FormControl();
 	errorEnabled = false;
 
 	constructor(private authService: AuthService,
@@ -29,12 +28,6 @@ export class LoginComponent implements OnInit {
 		@Inject(MAT_DIALOG_DATA) private data: any) { }
 
 	ngOnInit() {
-		this.username = new FormControl('', [Validators.required]);
-		this.password = new FormControl('', [Validators.required]);
-		this.loginForm = new FormGroup({
-			username: this.username,
-			password: this.password
-		});
 	}
 
 	onNoClick(): void {
@@ -44,23 +37,26 @@ export class LoginComponent implements OnInit {
 	onOkClick(): void {
 		this.errorEnabled = true;
 		this.messageError = '';
-		if (this.loginForm.valid) {
-			this.signIn();
+		this.signIn();
+	}
+
+	isValidate() {
+		if (this.username.value && this.password.value) {
+			return true;
 		}
+		return false;
 	}
 
 	signIn() {
-		if (this.loginForm.valid) {
-			this.submitLoading = true;
-			this.authService.signIn(this.loginForm.value.username, this.loginForm.value.password).subscribe(result => {
-				// 		this.router.navigate([this.returnUrl]);
-				this.submitLoading = false;
-				this.dialogRef.close(this.data.user);
-				this.projectService.reload();
-			}, error => {
-				this.submitLoading = false;
-				this.translateService.get('msg.signin-failed').subscribe((txt: string) => this.messageError = txt);
-			});
-		}
+		this.submitLoading = true;
+		this.authService.signIn(this.username.value, this.password.value).subscribe(result => {
+			// 		this.router.navigate([this.returnUrl]);
+			this.submitLoading = false;
+			this.dialogRef.close(this.data.user);
+			this.projectService.reload();
+		}, error => {
+			this.submitLoading = false;
+			this.translateService.get('msg.signin-failed').subscribe((txt: string) => this.messageError = txt);
+		});
 	}
 }
