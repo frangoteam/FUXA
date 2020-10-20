@@ -7,9 +7,7 @@ FUXA is a web-based Process Visualization (SCADA/HMI) software. With FUXA you ca
 ![fuxa ani](/screenshot/fuxa-ani.gif)
 
 ## Features
-- Modbus RTU/TCP communication protocols
-- S7 Protocol to communicate with Siemens CPU
-- A client for OPC UA connectivity
+- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
 - Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
 
@@ -57,7 +55,7 @@ In vscode: Debug ‘Server & Client’
 Build the frontend for production
 ```
 cd ./client
-ng build --env=prod
+ng build --prod
 ```
 
 ## Test
@@ -78,6 +76,7 @@ We’d be really happy if you send us your own shapes in order to collect a libr
 - [node-snap7](https://github.com/mathiask88/node-snap7)
 - [node-opcua](https://github.com/node-opcua/node-opcua)
 - [node-modbus-serial](https://github.com/yaacov/node-modbus-serial)
+- [node-bacstack](https://github.com/fh1ch/node-bacstack)
 
 ## License
 MIT.
