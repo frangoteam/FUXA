@@ -249,7 +249,7 @@ function AlarmsManager(_runtime) {
                         }
                     });
                 }
-                console.log('alarms.load-property! found: ' + alarmsFound);
+                // console.log('alarms.load-property! found: ' + alarmsFound);
                 resolve();
             }).catch(function (err) {
                 reject(err);
