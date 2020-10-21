@@ -237,8 +237,8 @@ app-root {
 
 .sidenav-menu {
   padding: 0px 0px 0px 0px;
-  background-color: rgba(244,245,247, 1) !important;
-  color: rgba(0, 0, 0, 1) !important;
+  background-color: rgba(244,245,247, 1);
+  color: rgba(0, 0, 0, 1);
   /* max-width: 100px; */
   display: inline-block !important;
 }
@@ -358,7 +358,7 @@ app-root {
   /* min-height: 85px; */
   /* margin-top: 5px; */
   /* margin-bottom: 5px; */
-  color: rgba(0, 0, 0, 1) !important;
+  /* color: rgba(0, 0, 0, 1) !important; */
 }
 
 .sidenav-btn span{
@@ -368,7 +368,7 @@ app-root {
   font-weight: normal !important;
   font-size: 14px;
   text-align: center;
-  color: rgba(0, 0, 0, 1) !important;
+  /* color: rgba(0, 0, 0, 1) !important; */
 }
 
 

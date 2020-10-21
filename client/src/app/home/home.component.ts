@@ -12,7 +12,7 @@ import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, NaviModeType, NotificationModeType, ZoomModeType } from '../_models/hmi';
+import { Hmi, View, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 
@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	infos = { show: false, count: 0, mode: '' };
 	headerButtonMode = NotificationModeType;
 	alarmsPanelOpen = false;
+	layoutHeader = new HeaderSettings();
 
 	private subscriptionLoad: Subscription;
 	private subscriptionAlarmsStatus: Subscription;
@@ -226,6 +227,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 						this.infos.mode = this.hmi.layout.header.infos;
 					}
 					this.checkHeaderButton();
+					this.layoutHeader = this.hmi.layout.header;
 				}
 				if (this.hmi.layout.zoom && ZoomModeType[this.hmi.layout.zoom] === ZoomModeType.enabled) {
 					setTimeout(() => {

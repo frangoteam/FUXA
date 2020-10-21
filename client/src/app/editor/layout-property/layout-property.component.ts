@@ -8,6 +8,7 @@ import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.c
 import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
+import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-layout-property',
@@ -19,6 +20,8 @@ export class LayoutPropertyComponent implements OnInit {
     draggableListLeft = [];
     layout: any;
     horizontalLayoutActive: boolean = false;
+    defaultColor = Utils.defaultColor;
+
     private currentDraggableEvent: DragEvent;
     private readonly verticalLayout = {
         container: "row",

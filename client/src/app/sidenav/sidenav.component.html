@@ -1,4 +1,5 @@
-<div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type">
+<div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type"
+                        [style.background-color]="layoutNavigation.bkcolor" [style.color]="layoutNavigation.fgcolor">
     <mat-list >
         <mat-list-item style="height: 35px; font-weight: bold; padding-left: 10px;padding-bottom: 10px;margin-bottom: 10px">
             {{'sidenav.title' | translate}}
