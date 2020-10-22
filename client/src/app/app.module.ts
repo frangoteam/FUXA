@@ -10,7 +10,6 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 import { Ng5SliderModule } from 'ng5-slider';
 import { ToastrModule } from 'ngx-toastr';
-import { DndModule } from 'ngx-drag-drop';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
@@ -198,7 +197,6 @@ export function createTranslateLoader(http: HttpClient) {
            positionClass: "toast-bottom-right",
            preventDuplicates: false
        }),
-        DndModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,

@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,27 +12,13 @@ import { Utils } from '../../_helpers/utils';
 @Component({
     selector: 'app-layout-property',
     templateUrl: './layout-property.component.html',
-    styleUrls: ['./layout-property.component.css']
+    styleUrls: ['./layout-property.component.scss']
 })
 export class LayoutPropertyComponent implements OnInit {
 
     draggableListLeft = [];
     layout: any;
-    horizontalLayoutActive: boolean = false;
     defaultColor = Utils.defaultColor;
-
-    private currentDraggableEvent: DragEvent;
-    private readonly verticalLayout = {
-        container: "row",
-        list: "column",
-        dndHorizontal: false
-    };
-    private readonly horizontalLayout = {
-        container: "row",
-        list: "row",
-        dndHorizontal: true
-    };
-
 
     startView: string;
     sideMode: string;
@@ -55,7 +40,6 @@ export class LayoutPropertyComponent implements OnInit {
             data.layout.navigation.items = [];
         }
         this.draggableListLeft = data.layout.navigation.items;
-        this.setHorizontalLayout(this.horizontalLayoutActive);
     }
 
     ngOnInit() {
@@ -123,34 +107,11 @@ export class LayoutPropertyComponent implements OnInit {
         this.draggableListLeft.splice(index, 1);
     }
 
-    onDragStart(event: DragEvent) {
-
-        this.currentDraggableEvent = event;
-    }
-
-    setHorizontalLayout(horizontalLayoutActive: boolean) {
-        this.layout = (horizontalLayoutActive) ? this.horizontalLayout : this.verticalLayout;
-    }
-
-    onDragged(item: any, list: any[], effect: DropEffect) {
-        if (effect === "move") {
-            const index = list.indexOf(item);
-            list.splice(index, 1);
-        }
-    }
-
-    onDragEnd(event: DragEvent) {
-
-        this.currentDraggableEvent = event;
-    }
-
-    onDrop(event: DndDropEvent, list?: any[]) {
-        if (list && (event.dropEffect === "copy" || event.dropEffect === "move")) {
-            let index = event.index;
-            if (typeof index === "undefined") {
-                index = list.length;
-            }
-            list.splice(index, 0, event.data);
+    onMoveMenuItem(index, direction) {
+        if (direction === 'top' && index > 0) {
+            this.draggableListLeft.splice(index - 1, 0, this.draggableListLeft.splice(index, 1)[0]);
+        } else if (direction === 'bottom' && index < this.draggableListLeft.length) {
+            this.draggableListLeft.splice(index + 1, 0, this.draggableListLeft.splice(index, 1)[0]);
         }
     }
 
