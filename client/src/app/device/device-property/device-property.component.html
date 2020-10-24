@@ -24,7 +24,7 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;margin-left: 20px;" *ngIf="!isFuxaServer">
+            <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;margin-left: 20px; text-align: center;width: 80px;" *ngIf="!isFuxaServer">
                 <span>{{'device.property-enable' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
             </div>
@@ -151,6 +151,10 @@
                             </mat-option>
                         </mat-select>
                     </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
+                        <span>{{'device.property-tockenized' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                    </div>
                 </div>
                 <div *ngIf="isModbusTcp(data.device.type)">
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
@@ -160,6 +164,10 @@
                     <div class="my-form-field" style="display: inline-block;">
                         <span>{{'device.property-slave-id' | translate}}</span>
                         <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 63px" type="text">
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
+                        <span>{{'device.property-tockenized' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
                     </div>
                 </div>
             </div>

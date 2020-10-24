@@ -62,6 +62,7 @@ function MODBUSclient(_data, _logger, _events) {
                         });
                     } else {
                         reject();
+                        _emitStatus('connect-error');
                     }
                 } catch (err) {
                     logger.error(data.name + ': try to connect error! ' + err);
@@ -112,15 +113,19 @@ function MODBUSclient(_data, _logger, _events) {
     this.polling = async function () {
         if (_checkWorking(true)) {
             var readVarsfnc = [];
-            // for (var memaddr in memory) {
-            //     var tokenizedAddress = parseAddress(memaddr);
-            //     readVarsfnc.push(_readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
-            // }
-            for (var memaddr in mixItemsMap) {
-                try {
-                    readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
+            if (!data.property.options) {
+                for (var memaddr in memory) {
+                    var tokenizedAddress = parseAddress(memaddr);
+                    readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
                     readVarsfnc.push(await delay(100));
-                } catch (error) {
+                }
+            } else {
+                for (var memaddr in mixItemsMap) {
+                    try {
+                        readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
+                        readVarsfnc.push(await delay(100));
+                    } catch (error) {
+                    }
                 }
             }
             _checkWorking(false);
@@ -142,6 +147,9 @@ function MODBUSclient(_data, _logger, _events) {
                 } else {
         //             // console.log('then error');
                 }
+                if (lastStatus !== 'connect-ok') {
+                    _emitStatus('connect-ok');                    
+                }
             }, reason => {
                 if (reason) {
                     if (reason.stack) {
@@ -154,6 +162,8 @@ function MODBUSclient(_data, _logger, _events) {
                 }
                 _checkWorking(false);
             });
+        } else {
+            _emitStatus('connect-busy');
         }
     }
 
@@ -301,7 +311,7 @@ function MODBUSclient(_data, _logger, _events) {
     var _connect = function(callback) {
         try {
             if (type === ModbusTypes.RTU) {
-                client.connectRTU(data.property.address, {
+                client.connectRTUBuffered(data.property.address, {
                     baudRate: parseInt(data.property.baudrate),
                     dataBits: parseInt(data.property.databits),
                     stopBits: parseFloat(data.property.stopbits),

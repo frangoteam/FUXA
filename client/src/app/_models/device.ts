@@ -31,6 +31,7 @@ export class DeviceNetProperty {
     databits: string;
     stopbits: string;
     parity: string;
+    options: string;
 }
 
 export class DeviceSecurity {
