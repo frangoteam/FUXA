@@ -121,6 +121,9 @@ function S7client(_data, _logger, _events) {
                 } else {
                     // console.log('not');
                 }
+                if (lastStatus !== 'connect-ok') {
+                    _emitStatus('connect-ok');                    
+                }
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(data.name + ' _readVars error: ' + reason.stack);
@@ -129,6 +132,8 @@ function S7client(_data, _logger, _events) {
                 }
                 _checkWorking(false);
             });
+        } else {
+            _emitStatus('connect-busy');
         }
     }
 

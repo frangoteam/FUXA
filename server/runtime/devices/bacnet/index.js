@@ -180,6 +180,9 @@ function BACNETclient(_data, _logger, _events) {
                                     }
                                 }
                             }
+                            if (lastStatus !== 'connect-ok') {
+                                _emitStatus('connect-ok');                    
+                            }
                         }
                         _checkWorking(false);
                     });
@@ -189,7 +192,10 @@ function BACNETclient(_data, _logger, _events) {
             } else {
                 _checkWorking(false);
             }
+        } else {
+            _emitStatus('connect-busy');                    
         }
+
     }
 
     /**

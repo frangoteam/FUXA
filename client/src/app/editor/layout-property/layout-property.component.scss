@@ -8,16 +8,6 @@
     /* color: rgba(255,255,255,0.8); */
     cursor:pointer;
 }
-.layout-menu-item-edit {
-    /* bottom: 0px; */
-    /* right: 2px; */
-}
-
-.layout-menu-item-delete {
-    /* top: 2px; */
-    /* right: 2px; */
-    /* font-size: 17px; */
-}
 
 .layout-menu-item-link {
     /* min-width: 150px; */
@@ -91,3 +81,8 @@
     padding-left: 10px;
     vertical-align: middle;
 }
+  
+.dndList {
+    transition: all 600ms ease;
+}
+

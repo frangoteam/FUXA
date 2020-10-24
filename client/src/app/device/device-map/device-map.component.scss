@@ -6,8 +6,8 @@ $card-center: calc((#{$card-width} - #{$line-size}) / 2);
 $main-pos-left: calc((100% - #{$card-width}) / 2);
 $main-pos-top: calc((100% - #{$card-height}) / 4);
 $main-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height});
-$main-color: #4C5358;
-$device-color: rgb(70, 74, 77);
+$main-color: rgb(79, 86, 93);
+$device-color: rgb(79, 86, 93);
 $line-color:   #3C3C3C;
 $device-pos-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + (#{$line-height} * 2));
 $device-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + #{$line-height});
@@ -77,12 +77,17 @@ $device-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + #{$lin
     font-size: 17px;
     padding-bottom: 7px;
     padding-top: 0px;
+    min-height: 20px;
 }
 
 .device-pro {
     display: block;
     font-size: 12px;
     padding-top: 0px;
+    min-height: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .device-pro-line {
@@ -109,8 +114,10 @@ $device-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + #{$lin
 }
 
 .device-list {
-    bottom: 0px;
-    right: 26px;
+    // bottom: 0px;
+    right: 28px;
+    font-size: 22px;
+    bottom: 2px;
 }
 
 .device-status {

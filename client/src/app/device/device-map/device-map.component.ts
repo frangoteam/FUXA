@@ -161,9 +161,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.devicesStatus[device.name]) {
 			if (st === 'connect-ok') {
 				return '#00b050';
-			} else if (st === 'connect-error') {
+			} else if (st === 'connect-error' || st === 'connect-failed') {
 				return '#ff2d2d';
-			} else if (st === 'connect-off') {
+			} else if (st === 'connect-off' || st === 'connect-busy') {
 				return '#ffc000';
 			}
 		}
@@ -206,6 +206,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 						device.property.databits = tempdevice.property.databits;
 						device.property.stopbits = tempdevice.property.stopbits;
 						device.property.parity = tempdevice.property.parity;
+						device.property.options = tempdevice.property.options;
 					}
 					this.projectService.setDevice(device, olddevice, result.security);
 				}
