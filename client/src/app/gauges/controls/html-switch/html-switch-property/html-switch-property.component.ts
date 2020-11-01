@@ -8,6 +8,7 @@ import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.c
 import { HtmlSwitchComponent } from '../html-switch.component';
 import { NgxSwitchComponent, SwitchOptions } from '../../../../gui-helpers/ngx-switch/ngx-switch.component';
 import { Define } from '../../../../_helpers/define';
+import { Utils } from '../../../../_helpers/utils';
 
 @Component({
     selector: 'app-html-switch-property',
@@ -26,6 +27,7 @@ export class HtmlSwitchPropertyComponent implements AfterContentInit {
     switchWidth = 80;
     switchHeight = 40;
     fonts = Define.fonts;
+    defaultColor = Utils.defaultColor;
 
     constructor(public dialogRef: MatDialogRef<HtmlSwitchPropertyComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {

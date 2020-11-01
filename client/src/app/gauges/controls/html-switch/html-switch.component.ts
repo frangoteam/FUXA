@@ -8,14 +8,13 @@ import { NgxSwitchComponent } from '../../../gui-helpers/ngx-switch/ngx-switch.c
 import { Utils } from '../../../_helpers/utils';
 
 @Injectable()
-export class HtmlSwitchComponent extends GaugeBaseComponent {
+export class HtmlSwitchComponent {
 
     static TypeTag = 'svg-ext-html_switch';
     static LabelTag = 'HtmlSwitch';
     static prefix = 'T-HXT_';
 
     constructor() {
-        super();
     }
 
     static getSignals(pro: any) {
