@@ -29,6 +29,7 @@ import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.
 import { ValueComponent } from '../gauges/controls/value/value.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
+import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 declare var Gauge: any;
 
@@ -1050,8 +1051,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * edit the gauge/chart settings property, the settings are composed from gauge id... and property
+     * edit the gauges/chart settings property, the settings are composed from gauge id... and property
      * in property will be the result values saved
+     * 
      * @param settings 
      * @param callback 
      */
@@ -1105,6 +1107,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             dialogRef = this.dialog.open(SliderPropertyComponent, {
                 minWidth: '740px',
                 minHeight: '790px',
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    withEvents: eventsSupported, withActions: actionsSupported,
+                    names: names
+                },
+                position: { top: '60px' }
+            });
+        } else if (dlgType === GaugeDialogType.Switch) {
+            dialogRef = this.dialog.open(HtmlSwitchPropertyComponent, {
+                minWidth: '700px',
+                minHeight: '590px',
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported,

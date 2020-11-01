@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SwitchComponent } from './switch.component';
+import { NgxSwitchComponent } from './ngx-switch.component';
 
-describe('SwitchComponent', () => {
-  let component: SwitchComponent;
-  let fixture: ComponentFixture<SwitchComponent>;
+describe('NgxSwitchComponent', () => {
+  let component: NgxSwitchComponent;
+  let fixture: ComponentFixture<NgxSwitchComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SwitchComponent ]
+      declarations: [ NgxSwitchComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SwitchComponent);
+    fixture = TestBed.createComponent(NgxSwitchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
