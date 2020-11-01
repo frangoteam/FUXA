@@ -7,7 +7,6 @@ import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
-import { SwitchComponent } from './switch/switch.component';
 import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
@@ -16,6 +15,7 @@ import { HtmlButtonComponent } from './controls/html-button/html-button.componen
 import { HtmlSelectComponent } from './controls/html-select/html-select.component';
 import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
 import { HtmlBagComponent } from './controls/html-bag/html-bag.component';
+import { HtmlSwitchComponent } from './controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaphore.component';
 import { ShapesComponent } from './shapes/shapes.component';
@@ -54,7 +54,7 @@ export class GaugesManager {
     gaugesTags = [];
 
     // list of gauges with input 
-    static GaugeWithInput = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix];
+    static GaugeWithInput = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, 
         ApeShapesComponent.TypeTag];
@@ -63,7 +63,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -171,6 +171,8 @@ export class GaugesManager {
             return this.mapGauges[ga.id] = PipeComponent.detectChange(ga, res, this.winRef);
         } else if (ga.type.startsWith(SliderComponent.TypeTag)) {
             return this.mapGauges[ga.id] = SliderComponent.detectChange(ga, res, ref);
+        } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
+            return this.mapGauges[ga.id] = HtmlSwitchComponent.detectChange(ga, res, ref);
         }
         return false;
     }
@@ -378,6 +380,11 @@ export class GaugesManager {
             SliderComponent.bindEvents(ga, this.mapGauges[ga.id], (event) => {
                 self.putEvent(event);
             });
+        } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
+            let self = this;
+            HtmlSwitchComponent.bindEvents(ga, this.mapGauges[ga.id], (event) => {
+                self.putEvent(event);
+            });
         }
     }
 
@@ -410,6 +417,13 @@ export class GaugesManager {
                     Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                         if (k === ga.id && this.mapGauges[k]) {
                             SliderComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                        }
+                    });
+                    break;
+                } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
+                    Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                        if (k === ga.id && this.mapGauges[k]) {
+                            HtmlSwitchComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
                         }
                     });
                     break;
@@ -543,6 +557,8 @@ export class GaugesManager {
             return 'chart_';
         } else if (type.startsWith(HtmlBagComponent.TypeTag)) {
             return 'gauge_';
+        } else if (type.startsWith(HtmlSwitchComponent.TypeTag)) {
+            return 'switch_';
         }
         return 'shape_';
     }
@@ -609,6 +625,10 @@ export class GaugesManager {
         } else if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
             return true;
+        } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
+            let gauge = HtmlSwitchComponent.initElement(ga, res, ref, isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge;
         }
     }
 

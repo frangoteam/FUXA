@@ -57,6 +57,7 @@ import { TreetableComponent } from './gui-helpers/treetable/treetable.component'
 import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dialog.component';
 import { NgxDygraphsComponent } from './gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { SelOptionsComponent } from './gui-helpers/sel-options/sel-options.component';
+import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -66,7 +67,6 @@ import { LazyForDirective } from './_directives/lazyFor.directive';
 
 import { GaugesManager } from './gauges/gauges.component';
 import { GaugeBaseComponent } from './gauges/gauge-base/gauge-base.component';
-import { SwitchComponent } from './gauges/switch/switch.component';
 import { ValueComponent } from './gauges/controls/value/value.component';
 
 import { GaugePropertyComponent, DialogGaugePermission } from './gauges/gauge-property/gauge-property.component';
@@ -83,6 +83,7 @@ import { HtmlButtonComponent } from './gauges/controls/html-button/html-button.c
 import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.component';
 import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
+import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { UsersComponent, DialogUser } from './users/users.component';
@@ -99,6 +100,7 @@ import { PipePropertyComponent } from './gauges/pipe/pipe-property/pipe-property
 import { PipeComponent } from './gauges/pipe/pipe.component';
 import { SliderComponent } from './gauges/slider/slider.component';
 import { SliderPropertyComponent } from './gauges/slider/slider-property/slider-property.component';
+import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
@@ -129,7 +131,6 @@ export function createTranslateLoader(http: HttpClient) {
       ConfirmDialogComponent,
       DialogInfo,
       GaugeBaseComponent,
-      SwitchComponent,
       HtmlInputComponent,
       HtmlButtonComponent,
       HtmlSelectComponent,
@@ -143,6 +144,7 @@ export function createTranslateLoader(http: HttpClient) {
       BagPropertyComponent,
       PipePropertyComponent,
       SliderPropertyComponent,
+      HtmlSwitchPropertyComponent,
       ShapesComponent,
       ProcEngComponent,
       ApeShapesComponent,
@@ -165,6 +167,7 @@ export function createTranslateLoader(http: HttpClient) {
       SelOptionsComponent,
       LazyForDirective,
       NgxDygraphsComponent,
+      NgxSwitchComponent,
       ChartConfigComponent,
       AlarmListComponent,
       AlarmViewComponent,
@@ -216,6 +219,7 @@ export function createTranslateLoader(http: HttpClient) {
         GaugesManager,
         WindowRef,
         Utils,
+        HtmlSwitchComponent,
         PipeComponent,
         SliderComponent,
         Dictionary,
@@ -237,12 +241,14 @@ export function createTranslateLoader(http: HttpClient) {
         BagPropertyComponent,
         PipePropertyComponent,
         SliderPropertyComponent,
+        HtmlSwitchPropertyComponent,
         DevicePropertyComponent,
         TagPropertyComponent,
         ConfirmDialogComponent,
         LayoutPropertyComponent,
         DialogMenuItem,
         NgxDygraphsComponent,
+        NgxSwitchComponent,
         ChartConfigComponent,
         AlarmListComponent,
         AlarmViewComponent,

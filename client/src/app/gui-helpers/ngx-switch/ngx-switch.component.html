@@ -1,0 +1,8 @@
+<label class="md-switch" [style.borderRadius]="options.radius + 'px'">
+    <div class="toggle-button" #toggler>
+        <input type="checkbox" (change)="onClick()" #switcher>
+        <div class="inner-circle" #slider style="text-align: center;line-height: inherit;" [style.fontSize]="options.fontSize + 'px'" [style.fontFamily]="options.fontFamily">
+        </div>
+    </div>
+</label>
+

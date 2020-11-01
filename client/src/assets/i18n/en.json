@@ -168,6 +168,7 @@
     "editor.controls-slider": "Slider",
     "editor.controls-slider-settings": "Slider settings",
     "editor.controls-shape-settings": "Shape settings",
+    "editor.controls-html-switch-settings": "Switch settings",
 
     "editor.layout-settings": "Layout settings",
 
@@ -350,6 +351,20 @@
     "slider.property-slider-color": "Connect color",
     "slider.property-slider-background": "Base color",
     "slider.property-slider-handle": "Pointer color",
+
+    "html-switch.property-off-value": "Off Value",
+    "html-switch.property-on-value": "On Value",
+    "html-switch.property-on-background": "On Background",
+    "html-switch.property-off-background": "Off Background",
+    "html-switch.property-off-text": "Off Text",
+    "html-switch.property-on-text": "On Text",
+    "html-switch.property-on-slider-color": "On Slider color",
+    "html-switch.property-off-slider-color": "Off Slider color",
+    "html-switch.property-radius": "Radius corner",
+    "html-switch.property-off-text-color": "Off Text color",
+    "html-switch.property-on-text-color": "On Text color",
+    "html-switch.property-font-size": "Font size",
+    "html-switch.property-font": "Font",
 
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",
