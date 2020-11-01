@@ -24,7 +24,7 @@ export class NgxSwitchComponent implements AfterViewInit {
     onClick() {
         this.onRefresh();
         if (this.onUpdate) {
-            this.onUpdate((this.checked) ? this.options.onValue : this.options.offValue);
+            this.onUpdate((this.checked) ? this.options.onValue.toString() : this.options.offValue.toString());
         }
     }
 
