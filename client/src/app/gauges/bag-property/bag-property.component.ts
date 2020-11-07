@@ -84,9 +84,8 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
     onEditPermission() {
 		let permission = this.property.permission;
 		let dialogRef = this.dialog.open(DialogGaugePermission, {
-			minWidth: '350px',
-			data: { permission: permission },
-			position: { top: '90px' }
+			position: { top: '60px' },
+			data: { permission: permission }
 		});
 
 		dialogRef.afterClosed().subscribe(result => {

@@ -16,7 +16,7 @@
 			</div>
 			<div *ngIf="securityEnabled" style="float: right; line-height: 46px;">
 				<button mat-icon-button (click)="onLogin()">
-					<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : 'black'">account_circle</mat-icon>
+					<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
 				</button>
 			</div>
 			<div class="header-button">

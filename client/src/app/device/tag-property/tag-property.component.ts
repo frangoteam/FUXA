@@ -35,7 +35,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         this.tagType = TagType;
         if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet) {
             this.withtree = true;
-            this.config.height = '630px';
+            this.config.height = '640px';
+            this.config.width = '1000px';
         } else {
             if (this.isModbus()) {
                 this.tagType = ModbusTagType;

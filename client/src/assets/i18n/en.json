@@ -546,7 +546,7 @@
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.project-load-error": "Unable to read '{{value}}'",
     "msg.project": "You want to save the Project change?",
-    "msg.view-remove": "Would you like to remove View '{{value}}'",
+    "msg.view-remove": "Would you like to remove View '{{value}}'?",
     "msg.device-connection-error": "Device '{{value}}' connection error!",
     "msg.server-connection-error": "Server connection failed!",
     "msg.users-save-error": "User save failed!",

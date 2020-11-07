@@ -61,9 +61,8 @@ export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
     editText(text: Text, toAdd: number) {
 		let mtext: Text = JSON.parse(JSON.stringify(text));
         let dialogRef = this.dialog.open(DialogItemText, {
-            minWidth: '600px',
-            data: { text: mtext, editmode: toAdd, texts: this.dataSource.data },
-            position: { top: '80px' }
+            position: { top: '60px' },
+            data: { text: mtext, editmode: toAdd, texts: this.dataSource.data }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

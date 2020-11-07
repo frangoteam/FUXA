@@ -64,7 +64,6 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
     editAlarm(alarm: Alarm, toAdd: number) {
 		let malarm: Text = JSON.parse(JSON.stringify(alarm));
         let dialogRef = this.dialog.open(AlarmPropertyComponent, {
-            minWidth: '700px',
             data: { alarm: malarm, editmode: toAdd, alarms: this.dataSource.data,
                 devices: Object.values(this.projectService.getDevices()) },
             position: { top: '80px' }

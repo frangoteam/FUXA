@@ -45,10 +45,8 @@ export class ChartConfigComponent implements OnInit {
 
     editChart(chart) {
         let dialogRef = this.dialog.open(DialogListItem, {
-            // panelClass: 'dialog-property',
-            minWidth: '250px',
-            data: { name: (chart) ? chart.name : '' },
-            position: { top: '80px' }
+            position: { top: '60px' },
+            data: { name: (chart) ? chart.name : '' }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name && result.name.length > 0) {

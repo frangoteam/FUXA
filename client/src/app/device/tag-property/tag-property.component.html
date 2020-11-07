@@ -1,4 +1,4 @@
-<div style="width: 100%;position: relative;padding-bottom: 40px">
+<div style="position: relative;" class="dialog-mdsd-v">
     <div>
         <h1 *ngIf="!withtree" mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
             {{'device.tag-property-title' | translate}}
@@ -8,7 +8,7 @@
         </h1>
         <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
     </div>
-    <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 5px;" *ngIf="!withtree">
+    <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden;" *ngIf="!withtree">
         <div style="display: block;">
             <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                 <span>{{'device.tag-property-device' | translate}}</span>
@@ -80,11 +80,11 @@
         </div>
     </div>
 
-    <div style="overflow-y: auto; overflow-x: hidden; padding-top: 5px;" [hidden]="!withtree">
+    <div style="overflow-y: auto; overflow-x: hidden;" [hidden]="!withtree">
         <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
     </div>
 
-    <div mat-dialog-actions style="display: inline-block; position: absolute; bottom: 10px; right: 10px">
+    <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button [disabled]="!isValidate()" color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

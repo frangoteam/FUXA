@@ -131,7 +131,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (cuser) {
 			let dialogRef = this.dialog.open(DialogUserInfo, {
 				id: 'myuserinfo',
-				minWidth: '250px',
+				// minWidth: '250px',
 				position: { top: '50px', right: '15px' },
 				backdropClass: 'user-info',
 				data: cuser
@@ -144,7 +144,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 		} else {
 			let dialogRef = this.dialog.open(LoginComponent, {
-				minWidth: '250px',
+				// minWidth: '250px',
 				data: {}
 			});
 			dialogRef.afterClosed().subscribe(result => {

@@ -1,13 +1,13 @@
 <div>
-    <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>{{'dlg.linkproperty-title' | translate}}</h1>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.linkproperty-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px">
             <span>{{'dlg.linkproperty-url' | translate}}</span>
-            <input [(ngModel)]="data.url" type="text" style="width: 100%">
+            <input [(ngModel)]="data.url" type="text" style="width: 300px">
         </div>
     </div>
-    <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+    <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

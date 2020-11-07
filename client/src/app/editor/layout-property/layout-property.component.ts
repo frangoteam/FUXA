@@ -70,9 +70,8 @@ export class LayoutPropertyComponent implements OnInit {
         let views = JSON.parse(JSON.stringify(this.data.views));
         views.unshift({id: '', name: ''});
         let dialogRef = this.dialog.open(DialogMenuItem, {
-            minWidth: '350px',
-            data: { item: eitem, views: views, permission: eitem.permission },
-            position: { top: '90px' }
+            position: { top: '60px' },
+            data: { item: eitem, views: views, permission: eitem.permission }
         });
 
         dialogRef.afterClosed().subscribe(result => {
