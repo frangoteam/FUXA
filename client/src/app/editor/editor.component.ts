@@ -11,7 +11,7 @@ import { Hmi, View, GaugeSettings, SelElement, LayoutSettings } from '../_models
 import { WindowRef } from '../_helpers/windowref';
 import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
-import { ChartPropertyComponent } from '../gauges/chart-property/chart-property.component';
+import { ChartPropertyComponent } from '../gauges/controls/html-chart/chart-property/chart-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
@@ -20,9 +20,9 @@ import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-di
 import { Define } from '../_helpers/define';
 
 import * as FileSaver from 'file-saver';
-import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
-import { PipePropertyComponent } from '../gauges/pipe/pipe-property/pipe-property.component';
-import { SliderPropertyComponent } from '../gauges/slider/slider-property/slider-property.component';
+import { BagPropertyComponent } from '../gauges/controls/html-bag/bag-property/bag-property.component';
+import { PipePropertyComponent } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
+import { SliderPropertyComponent } from '../gauges/controls/slider/slider-property/slider-property.component';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';

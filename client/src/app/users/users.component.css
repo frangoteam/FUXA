@@ -20,6 +20,18 @@
     bottom: 0px;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    min-width: 300px;
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    left:0px;
+    right:0px;
+    background-color: white;
+}
+
 .mat-table {
     overflow: auto;
     min-width: 1560px;
@@ -33,7 +45,7 @@
     top: 0;
     position: sticky;
     z-index: 1;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgb(58, 58, 58);
     color: white;
 }
 .mat-header-cell {

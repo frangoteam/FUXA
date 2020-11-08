@@ -1,10 +1,10 @@
 import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../_models/hmi';
-import { Utils } from '../../_helpers/utils';
-import { GaugeDialogType } from '../gauge-property/gauge-property.component';
+import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { Utils } from '../../../_helpers/utils';
+import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
-import { NgxNouisliderComponent } from '../../gui-helpers/ngx-nouislider/ngx-nouislider.component';
+import { NgxNouisliderComponent } from '../../../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 
 @Injectable()
 export class SliderComponent {

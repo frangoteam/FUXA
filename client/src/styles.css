@@ -584,19 +584,19 @@ mat-toolbar, mat-toolbar-row {
   background-color: #2196F3;
 }
 
-@media screen and (max-height: 940px) {
+@media screen and (max-height: 920px) {
   .dialog-mdsd-v {
-      height: 700px !important;
-      overflow-y: scroll;
-      overflow-x: hidden;
-    }
-    .dialog-mdsd-vh {
-      height: 700px !important;
-      max-width: 960px !important;
-      width: 960px !important;
-      overflow-y: scroll;
-      overflow-x: auto;
-    }
+    height: 700px !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .dialog-mdsd-vh {
+    height: 700px !important;
+    max-width: 960px !important;
+    width: 960px !important;
+    overflow-y: scroll;
+    overflow-x: auto;
+  }
 }
 
 

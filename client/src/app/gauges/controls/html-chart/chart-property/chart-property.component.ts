@@ -7,11 +7,11 @@ import { Subject } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeChartProperty } from '../../_models/hmi';
-import { Chart, ChartViewType, ChartLegendMode } from '../../_models/chart';
-import { DygraphOptions } from './../../gui-helpers/ngx-dygraphs/dygraphOptions';
-import { Define } from '../../_helpers/define';
-import { Utils } from '../../_helpers/utils';
+import { GaugeChartProperty } from '../../../../_models/hmi';
+import { Chart, ChartViewType, ChartLegendMode } from '../../../../_models/chart';
+import { DygraphOptions } from '../../../../gui-helpers/ngx-dygraphs/dygraphOptions';
+import { Define } from '../../../../_helpers/define';
+import { Utils } from '../../../../_helpers/utils';
 
 declare const Dygraph: any;
 

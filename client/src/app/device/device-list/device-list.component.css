@@ -34,7 +34,8 @@
     top: 0;
     position: sticky;
     z-index: 1;
-    background-color: rgba(0,0,0,0.7);
+    /* background-color: rgba(0,0,0,0.7); */
+    background-color: rgb(58, 58, 58);
     color: white;
 }
 .mat-header-cell {

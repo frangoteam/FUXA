@@ -16,65 +16,67 @@
           <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
       </div>
   </div> -->
-    <mat-table #table [dataSource]="dataSource" matSort>
-        <!-- Checkbox Column -->
-        <ng-container matColumnDef="select">
-            <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onAddAlarm()" class="remove">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onEditAlarm(element)" class="remove">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+    <div class="container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <!-- Checkbox Column -->
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onAddAlarm()" class="remove">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onEditAlarm(element)" class="remove">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-name' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-        </ng-container>
-        <!-- Device Column -->
-        <ng-container matColumnDef="device">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-device' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getVariableLabel(element.property)}}</mat-cell>
-        </ng-container>
-        <!-- HighHigh Column -->
-        <ng-container matColumnDef="highhigh">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-highhigh' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getSubProperty(element.highhigh)}} </mat-cell>
-        </ng-container>
-        <!-- High Column -->
-        <ng-container matColumnDef="high">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-high' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getSubProperty(element.high)}} </mat-cell>
-        </ng-container>
-        <!-- Low Column -->
-        <ng-container matColumnDef="low">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-low' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getSubProperty(element.low)}} </mat-cell>
-        </ng-container>
-        <!-- Info Column -->
-        <ng-container matColumnDef="info">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-info' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getSubProperty(element.info)}} </mat-cell>
-        </ng-container>
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-name' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+            <!-- Device Column -->
+            <ng-container matColumnDef="device">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-device' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getVariableLabel(element.property)}}</mat-cell>
+            </ng-container>
+            <!-- HighHigh Column -->
+            <ng-container matColumnDef="highhigh">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-highhigh' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getSubProperty(element.highhigh)}} </mat-cell>
+            </ng-container>
+            <!-- High Column -->
+            <ng-container matColumnDef="high">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-high' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getSubProperty(element.high)}} </mat-cell>
+            </ng-container>
+            <!-- Low Column -->
+            <ng-container matColumnDef="low">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-low' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getSubProperty(element.low)}} </mat-cell>
+            </ng-container>
+            <!-- Info Column -->
+            <ng-container matColumnDef="info">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-info' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getSubProperty(element.info)}} </mat-cell>
+            </ng-container>
 
-        <!-- Button remove Column -->
-        <ng-container matColumnDef="remove">
-            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <button mat-icon-button (click)="$event.stopPropagation();onRemoveAlarm(element)" class="remove">
-                    <mat-icon>clear</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+            <!-- Button remove Column -->
+            <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveAlarm(element)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
-    </mat-table>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+        </mat-table>
+    </div>
 </div>
 <button mat-fab color="primary" (click)="onAddAlarm()" class="fab-add">
     <mat-icon class="">add</mat-icon>

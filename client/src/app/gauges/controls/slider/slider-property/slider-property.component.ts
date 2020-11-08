@@ -4,12 +4,12 @@ import { ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Utils } from '../../../_helpers/utils';
-import { GaugeProperty } from '../../../_models/hmi';
-import { FlexHeadComponent } from '../../gauge-property/flex-head/flex-head.component';
-import { FlexAuthComponent } from '../../gauge-property/flex-auth/flex-auth.component';
-import { NgxNouisliderComponent, NgxNouisliderOptions } from '../../../gui-helpers/ngx-nouislider/ngx-nouislider.component';
-import { Define } from '../../../_helpers/define';
+import { Utils } from '../../../../_helpers/utils';
+import { GaugeProperty } from '../../../../_models/hmi';
+import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
+import { FlexAuthComponent } from '../../../gauge-property/flex-auth/flex-auth.component';
+import { NgxNouisliderComponent, NgxNouisliderOptions } from '../../../../gui-helpers/ngx-nouislider/ngx-nouislider.component';
+import { Define } from '../../../../_helpers/define';
 
 @Component({
     selector: 'app-slider-property',
