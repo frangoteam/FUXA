@@ -1,0 +1,115 @@
+<div style="width:700px;position: relative;margin-bottom: 40px">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-pipe-settings' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <mat-tab-group style="width: 100%;height: 560px;">
+        <mat-tab label="{{'pipe.property-props' | translate}}">
+            <div style="max-height: 495px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+                <div style="display: block;">
+                    <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
+                </div>
+                <div mat-dialog-content style="overflow: hidden; width:100%;padding-top: 20px;">
+                    <div id="pipe" style="width: 200px; height: 240px;margin-left: 20px;"></div>
+                    <!-- <flex-head [data]="data" [property]="property" #flexhead></flex-head> -->
+                    <div class="toolbox-right">
+                        <div class="field-row">
+                            <div class="my-form-field slider-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-border-width' | translate}}</span>
+                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.borderWidth"
+                                    (input)="onChangeValue('borderWidth', $event.value)">
+                                </mat-slider>
+                            </div>
+                            <div class="my-form-field slider-field color-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-border-color' | translate}}</span>
+                                <input [(colorPicker)]="options.border" [style.background]="options.border" [cpAlphaChannel]="'always'" class="input-color"
+                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                                    [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('border', $event)" />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="my-form-field slider-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-pipe-width' | translate}}</span>
+                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.pipeWidth"
+                                    (input)="onChangeValue('pipeWidth', $event.value)">
+                                </mat-slider>
+                            </div>
+                            <div class="my-form-field slider-field color-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-pipe-color' | translate}}</span>
+                                <input [(colorPicker)]="options.pipe" [style.background]="options.pipe" [cpAlphaChannel]="'always'" class="input-color"
+                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                                    [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('pipe', $event)" />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="my-form-field slider-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-content-width' | translate}}</span>
+                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.contentWidth"
+                                    (input)="onChangeValue('contentWidth', $event.value)">
+                                </mat-slider>
+                            </div>
+                            <div class="my-form-field slider-field color-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-content-color' | translate}}</span>
+                                <input [(colorPicker)]="options.content" [style.background]="options.content" [cpAlphaChannel]="'always'" class="input-color"
+                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                                    [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('content', $event)" />
+                            </div>
+                        </div>
+                        <div class="field-row">
+                            <div class="my-form-field slider-field" style="padding-left: 12px">
+                                <span>{{'pipe.property-content-space' | translate}}</span>
+                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.contentSpace"
+                                    (input)="onChangeValue('contentSpace', $event.value)">
+                                </mat-slider>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{'gauges.property-events' | translate}}" *ngIf="eventsSupported">
+            <div style="max-height: 495px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+                <div style="display: block;">
+                    <div class="toolbox">
+                        <button mat-icon-button (click)="onAddEvent()">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div mat-dialog-content style="overflow: hidden; width:100%">
+                    <flex-event [property]="property" [views]="views" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{'gauges.property-actions' | translate}}" *ngIf="actionsSupported">
+            <div style="max-height: 495px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+                <div style="display: block;">
+                    <div class="toolbox">
+                        <button mat-icon-button (click)="onAddAction()">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div mat-dialog-content style="overflow: hidden; width:100%">
+                    <flex-action [data]="data" [property]="property" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px"></flex-action>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+    <!-- 
+    <div style="display: block; width: 660px;padding-top: 30px">
+        <div style="display: block;">
+            <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
+        </div>
+        <div mat-dialog-content style="overflow: hidden; width:100%">
+            <flex-head [data]="data" [property]="property" #flexhead></flex-head>
+        </div>
+    </div> -->
+    <!-- <div style="width: 760px; height: 620px; position: relative"> -->
+    <!-- </div> -->
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

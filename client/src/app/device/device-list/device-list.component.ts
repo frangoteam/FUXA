@@ -129,11 +129,11 @@ export class DeviceListComponent implements OnInit {
 
     addOpcTags(tag: Tag) {
         let dialogRef = this.dialog.open(TagPropertyComponent, {
-            minWidth: '1200px',
-            minHeight: '750px',
+            // width: '1000px',
+            // height: '750px',
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: tag, devices: this.devices },
-            position: { top: '80px' }
+            position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -177,11 +177,9 @@ export class DeviceListComponent implements OnInit {
         let oldtag = tag.name;
         let temptag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
-            // minWidth: '700px',
-            // minHeight: '700px',
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: temptag, devices: this.devices },
-            position: { top: '80px' }
+            position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

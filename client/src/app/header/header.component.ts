@@ -66,7 +66,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
         let devices = this.projectService.getDevices();
         let dialogRef = this.dialog.open(ChartConfigComponent, {
-            minWidth: '1200px',
             position: { top: '60px' },
             data: { charts: chartscopy, devices: devices }
         });
@@ -91,11 +90,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 			templayout.showdev = true;
 		}
         let dialogRef = this.dialog.open(LayoutPropertyComponent, {
-            // minWidth: '700px',
-            // minHeight: '700px',
-            panelClass: 'dialog-property',
-            data: { layout: templayout, views: hmi.views },
-            position: { top: '80px' }
+            position: { top: '60px' },
+            data: { layout: templayout, views: hmi.views }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
@@ -122,7 +118,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     showInfo() {
         let dialogRef = this.dialog.open(DialogInfo, {
-            minWidth: '250px',
             data: { name: 'Info', version: environment.version }
         });
 

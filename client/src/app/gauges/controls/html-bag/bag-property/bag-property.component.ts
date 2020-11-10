@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit, AfterViewInit, OnChanges, SimpleChanges, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Utils } from '../../_helpers/utils';
+import { Utils } from '../../../../_helpers/utils';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { GaugeOptions, GaugeType, } from '../../gui-helpers/ngx-gauge/gaugeOptions';
-import { NgxGaugeComponent } from '../../gui-helpers/ngx-gauge/ngx-gauge.component';
-import { GaugeSettings } from '../../_models/hmi';
-import { GaugeProperty } from '../../_models/hmi';
-import { DialogGaugePermission } from '../gauge-property/gauge-property.component';
-import { FlexHeadComponent } from '../gauge-property/flex-head/flex-head.component';
-import { Define } from '../../_helpers/define';
+import { GaugeOptions, GaugeType, } from '../../../../gui-helpers/ngx-gauge/gaugeOptions';
+import { NgxGaugeComponent } from '../../../../gui-helpers/ngx-gauge/ngx-gauge.component';
+import { GaugeSettings } from '../../../../_models/hmi';
+import { GaugeProperty } from '../../../../_models/hmi';
+import { DialogGaugePermission } from '../../../gauge-property/gauge-property.component';
+import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
+import { Define } from '../../../../_helpers/define';
 
 @Component({
     selector: 'bag-property',
@@ -84,9 +84,8 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
     onEditPermission() {
 		let permission = this.property.permission;
 		let dialogRef = this.dialog.open(DialogGaugePermission, {
-			minWidth: '350px',
-			data: { permission: permission },
-			position: { top: '90px' }
+			position: { top: '60px' },
+			data: { permission: permission }
 		});
 
 		dialogRef.afterClosed().subscribe(result => {

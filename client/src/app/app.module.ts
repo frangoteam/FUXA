@@ -70,7 +70,7 @@ import { GaugeBaseComponent } from './gauges/gauge-base/gauge-base.component';
 import { ValueComponent } from './gauges/controls/value/value.component';
 
 import { GaugePropertyComponent, DialogGaugePermission } from './gauges/gauge-property/gauge-property.component';
-import { ChartPropertyComponent } from './gauges/chart-property/chart-property.component';
+import { ChartPropertyComponent } from './gauges/controls/html-chart/chart-property/chart-property.component';
 import { FlexInputComponent } from './gauges/gauge-property/flex-input/flex-input.component';
 import { FlexAuthComponent } from './gauges/gauge-property/flex-auth/flex-auth.component';
 import { FlexHeadComponent } from './gauges/gauge-property/flex-head/flex-head.component';
@@ -95,11 +95,11 @@ import { ApeShapesComponent } from './gauges/shapes/ape-shapes/ape-shapes.compon
 
 import { NgxGaugeComponent } from './gui-helpers/ngx-gauge/ngx-gauge.component';
 import { NgxNouisliderComponent } from './gui-helpers/ngx-nouislider/ngx-nouislider.component';
-import { BagPropertyComponent } from './gauges/bag-property/bag-property.component';
-import { PipePropertyComponent } from './gauges/pipe/pipe-property/pipe-property.component';
-import { PipeComponent } from './gauges/pipe/pipe.component';
-import { SliderComponent } from './gauges/slider/slider.component';
-import { SliderPropertyComponent } from './gauges/slider/slider-property/slider-property.component';
+import { BagPropertyComponent } from './gauges/controls/html-bag/bag-property/bag-property.component';
+import { PipePropertyComponent } from './gauges/controls/pipe/pipe-property/pipe-property.component';
+import { PipeComponent } from './gauges/controls/pipe/pipe.component';
+import { SliderComponent } from './gauges/controls/slider/slider.component';
+import { SliderPropertyComponent } from './gauges/controls/slider/slider-property/slider-property.component';
 import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';

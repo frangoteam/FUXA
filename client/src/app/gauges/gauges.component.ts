@@ -21,8 +21,8 @@ import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaph
 import { ShapesComponent } from './shapes/shapes.component';
 import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
 import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
-import { PipeComponent } from './pipe/pipe.component';
-import { SliderComponent } from './slider/slider.component';
+import { PipeComponent } from './controls/pipe/pipe.component';
+import { SliderComponent } from './controls/slider/slider.component';
 
 import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';

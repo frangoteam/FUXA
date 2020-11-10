@@ -1,5 +1,5 @@
-<div>
-    <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>
+<div style="width: 1150px;" class="dialog-mdsd-vh">
+    <h1 mat-dialog-title style="display:inline-block;cursor: move" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div style="display: inline-block; width: 100%">
         <div class="panelTop">
@@ -59,8 +59,8 @@
                             <span>{{tag.device}}</span>
                         </div>
                         <div>
-                            <input [(colorPicker)]="tag.color" class="color-line" title="{{'chart.config-line-color' | translate}}" 
-                            [style.background]="tag.color" [cpAlphaChannel]="'always'" [cpPosition]="'top'"
+                            <input [(colorPicker)]="tag.color" class="color-line input-color" title="{{'chart.config-line-color' | translate}}"
+                            [style.background]="tag.color" [cpAlphaChannel]="'always'" [cpPosition]="'top'" style="height:20px !important"
                             [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
                             [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
                         </div>
@@ -70,7 +70,7 @@
         </div>
     </div>
 
-    <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+    <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

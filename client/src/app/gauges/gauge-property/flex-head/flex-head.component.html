@@ -44,7 +44,7 @@
         <span>{{'gauges.property-head-color' | translate}}</span>
         <input [(colorPicker)]="property.alarmColor" [style.background]="property.alarmColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
             [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
-            [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color" style="padding: 10px 0 0 0;"
+            [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color input-color" style="padding: 10px 0 0 0;height:20px !important;"
             [cpPosition]="'left'" [cpAlphaChannel]="'always'"/>        
         <!-- <mat-select class="panel-color" style="padding: 10px 0 0 0;" disableOptionCentering panelClass="panel-color-class" [(value)]="property.alarmColor"
           [style.background-color]="property.alarmColor" (selectionChange)="onAlarmColorChange($event.source)">

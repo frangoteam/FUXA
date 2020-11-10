@@ -23,8 +23,7 @@
 
 .mat-table {
     overflow: auto;
-    /* margin: 5px; */
-    /* max-height: 500px; */
+    min-width: 1560px;
 }
   
 .mat-header-cell.mat-sort-header-sorted {
@@ -35,7 +34,8 @@
     top: 0;
     position: sticky;
     z-index: 1;
-    background-color: rgba(0,0,0,0.7);
+    /* background-color: rgba(0,0,0,0.7); */
+    background-color: rgb(58, 58, 58);
     color: white;
 }
 .mat-header-cell {

@@ -1,5 +1,5 @@
-<div style="width: 100%;height: 730px;position: relative;">
-    <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>{{'editor.controls-slider-settings' | translate}}</h1>
+<div style="width: 790px;height: 730px;position: relative;" class="dialog-mdsd-v">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-slider-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'slider.property-props' | translate}}">
@@ -12,10 +12,9 @@
                 </div>
             </div>
             <div style="width: 100%; height: 515px; position: relative;">
-                <div style="position: absolute;" [style.width]="sliderLayout.width + 'px'" [style.height]="sliderLayout.height + 'px'" [style.top]="sliderLayout.top + 'px'" [style.left]="sliderLayout.left + 'px'">
-                    <!-- <div [style.width]="sliderLayout.width + 'px'" [style.height]="sliderLayout.height + 'px'"> -->
+                <div style="position: absolute;" [style.width]="sliderLayout.width + 'px'" [style.height]="sliderLayout.height + 'px'" [style.top]="sliderLayout.top + 'px'"
+                    [style.left]="sliderLayout.left + 'px'">
                     <ngx-nouislider #slider></ngx-nouislider>
-                    <!-- </div> -->
                 </div>
                 <div style="width: 280px;height: 100%;float: right;">
                     <div class="field-row" style="margin-top: 20px;">
@@ -45,40 +44,46 @@
                                 </mat-option>
                             </mat-select>
                         </div>
-                        <!-- <div class="my-form-field slider-field color-field" style="padding-left: 17px">
-                            <span>{{'slider.property-background' | translate}}</span>
-                            <input [(colorPicker)]="options.backgroundColor" [style.background]="options.backgroundColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                                [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                                [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('backgroundColor', $event)" />
-                        </div> -->
                     </div>
                     <div class="field-row" style="margin-top: 20px;">
                         <div class="my-form-field slider-field color-field">
                             <span>{{'slider.property-slider-color' | translate}}</span>
-                            <input [(colorPicker)]="options.shape.connectColor" [style.background]="options.shape.connectColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.shape.connectColor" [style.background]="options.shape.connectColor" [cpAlphaChannel]="'always'" class="input-color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 78px"
+                                [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                             <span>{{'slider.property-slider-background' | translate}}</span>
-                            <input [(colorPicker)]="options.shape.baseColor" [style.background]="options.shape.baseColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.shape.baseColor" [style.background]="options.shape.baseColor" [cpAlphaChannel]="'always'" class="input-color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 78px"
+                                [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                             <span>{{'slider.property-slider-handle' | translate}}</span>
-                            <input [(colorPicker)]="options.shape.handleColor" [style.background]="options.shape.handleColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.shape.handleColor" [style.background]="options.shape.handleColor" [cpAlphaChannel]="'always'" class="input-color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 78px"
+                                [cpPosition]="'left'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                     </div>
-                    <div class="field-row">                      
+                    <div class="field-row">
                         <div class="my-form-field slider-field">
                             <span>{{'slider.property-min' | translate}}</span>
-                            <input numberOnly [(ngModel)]="options.range.min" (change)="onChangeOptions('min', options.range.min)" style="width: 50px;text-align: center;display:inline-block;" type="text">
+                            <input numberOnly [(ngModel)]="options.range.min" (change)="onChangeOptions('min', options.range.min)"
+                                style="width: 50px;text-align: center;display:inline-block;" type="text">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'slider.property-max' | translate}}</span>
-                            <input numberOnly [(ngModel)]="options.range.max" (change)="onChangeOptions('max', options.range.max)" style="width: 50px;text-align: center;display:inline-block;" type="text">
+                            <input numberOnly [(ngModel)]="options.range.max" (change)="onChangeOptions('max', options.range.max)"
+                                style="width: 50px;text-align: center;display:inline-block;" type="text">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'slider.property-step' | translate}}</span>
-                            <input numberOnly [(ngModel)]="options.step" (change)="onChangeOptions('step', options.step)" style="width: 50px;text-align: center;display:inline-block;" type="text">
-                        </div>                        
+                            <input numberOnly [(ngModel)]="options.step" (change)="onChangeOptions('step', options.step)"
+                                style="width: 50px;text-align: center;display:inline-block;" type="text">
+                        </div>
                     </div>
                     <div class="field-row" style="margin-top: 20px;">
                         <div class="my-form-field slider-field">
@@ -88,14 +93,18 @@
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                                 <span>{{'slider.property-marker-color' | translate}}</span>
-                                <input [(colorPicker)]="options.marker.color" [style.background]="options.marker.color" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                                <input [(colorPicker)]="options.marker.color" [style.background]="options.marker.color" [cpAlphaChannel]="'always'" class="input-color"
+                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 78px"
+                                    [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
                             </div>
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field">
                             <span>{{'slider.property-font-size' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="50" [min]="6" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.fontSize" (change)="setSliderOptions()">
+                            <mat-slider style="display:inline-block;" [max]="50" [min]="6" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.fontSize"
+                                (change)="setSliderOptions()">
                             </mat-slider>
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 10px">
@@ -114,17 +123,20 @@
                     <div class="field-row">
                         <div class="my-form-field slider-field">
                             <span>{{'slider.property-subdivisions' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="50" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.pips.density" (change)="setSliderOptions()">
+                            <mat-slider style="display:inline-block;" [max]="50" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.pips.density"
+                                (change)="setSliderOptions()">
                             </mat-slider>
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 10px">
                             <span>{{'slider.property-subdivisions-height' | translate}}</span>
-                            <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.subHeight" (change)="setSliderOptions()">
+                            <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.subHeight"
+                                (change)="setSliderOptions()">
                             </mat-slider>
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 10px">
                             <span>{{'slider.property-subdivisions-width' | translate}}</span>
-                            <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.subWidth" (change)="setSliderOptions()">
+                            <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.subWidth"
+                                (change)="setSliderOptions()">
                             </mat-slider>
                         </div>
                     </div>
@@ -139,22 +151,30 @@
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 17px">
                             <span>{{'slider.property-tooltip-color' | translate}}</span>
-                            <input [(colorPicker)]="options.tooltip.color" [style.background]="options.tooltip.color" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.tooltip.color" [style.background]="options.tooltip.color" [cpAlphaChannel]="'always'" class="input-color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 78px"
+                                [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 10px">
                             <span>{{'slider.property-tooltip-background' | translate}}</span>
-                            <input [(colorPicker)]="options.tooltip.background" [style.background]="options.tooltip.background" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 80px" [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
+                            <input [(colorPicker)]="options.tooltip.background" [style.background]="options.tooltip.background" [cpAlphaChannel]="'always'" class="input-color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 78px"
+                                [cpPosition]="'top'" (colorPickerChange)="setSliderOptions()" />
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field">
                             <span>{{'slider.property-tooltip-font-size' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="50" [min]="6" [step]="1" [thumbLabel]="true" [(ngModel)]="options.tooltip.fontSize" (change)="setSliderOptions()">
+                            <mat-slider style="display:inline-block;" [max]="50" [min]="6" [step]="1" [thumbLabel]="true" [(ngModel)]="options.tooltip.fontSize"
+                                (change)="setSliderOptions()">
                             </mat-slider>
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 10px">
                             <span>{{'slider.property-tooltip-decimals' | translate}}</span>
-                            <mat-slider style="display:inline-block;min-width: 60px;" [max]="3" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.tooltip.decimals" (change)="setSliderOptions()">
+                            <mat-slider style="display:inline-block;min-width: 60px;" [max]="3" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.tooltip.decimals"
+                                (change)="setSliderOptions()">
                             </mat-slider>
                         </div>
                     </div>
@@ -162,7 +182,7 @@
             </div>
         </mat-tab>
     </mat-tab-group>
-	<div mat-dialog-actions style="float:right; padding-bottom: 20px;">
+    <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

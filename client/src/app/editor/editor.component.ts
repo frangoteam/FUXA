@@ -11,7 +11,7 @@ import { Hmi, View, GaugeSettings, SelElement, LayoutSettings } from '../_models
 import { WindowRef } from '../_helpers/windowref';
 import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
-import { ChartPropertyComponent } from '../gauges/chart-property/chart-property.component';
+import { ChartPropertyComponent } from '../gauges/controls/html-chart/chart-property/chart-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
@@ -20,9 +20,9 @@ import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-di
 import { Define } from '../_helpers/define';
 
 import * as FileSaver from 'file-saver';
-import { BagPropertyComponent } from '../gauges/bag-property/bag-property.component';
-import { PipePropertyComponent } from '../gauges/pipe/pipe-property/pipe-property.component';
-import { SliderPropertyComponent } from '../gauges/slider/slider-property/slider-property.component';
+import { BagPropertyComponent } from '../gauges/controls/html-bag/bag-property/bag-property.component';
+import { PipePropertyComponent } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
+import { SliderPropertyComponent } from '../gauges/controls/slider/slider-property/slider-property.component';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
@@ -721,8 +721,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onMakeHyperlink() {
         let dialogRef = this.dialog.open(DialogLinkProperty, {
-            minWidth: '300px',
-            data: { url: 'https://' }
+            data: { url: 'https://' },
+			position: { top: '60px' }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -835,9 +835,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let msg = '';
         this.translateService.get('msg.view-remove', { value: view.name }).subscribe((txt: string) => { msg = txt });
         let dialogRef = this.dialog.open(ConfirmDialogComponent, {
-            minWidth: '350px',
             data: { msg: msg },
-            position: { top: '80px' }
+            position: { top: '60px' }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -870,7 +869,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onRenameView(view) {
         let exist = this.hmi.views.filter((v) => v.id !== view.id).map((v) => { return v.name });
         let dialogRef = this.dialog.open(DialogDocName, {
-            minWidth: '250px',
             position: { top: '60px' },
             data: { name: view.name, exist: exist }
         });
@@ -889,7 +887,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onPropertyView(view) {
         let dialogRef = this.dialog.open(DialogDocProperty, {
-            minWidth: '250px',
             position: { top: '60px' },
             data: { name: view.name, width: view.profile.width, height: view.profile.height, bkcolor: view.profile.bkcolor }
         });
@@ -1073,70 +1070,58 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let dialogRef: any;
         if (dlgType === GaugeDialogType.Chart) {
             dialogRef = this.dialog.open(ChartPropertyComponent, {
-                minWidth: '700px',
-                minHeight: '700px',
+                position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts(),
                     names: names
-                },
-                position: { top: '80px' }
+                }
             });
         } else if (dlgType === GaugeDialogType.Gauge) {
             dialogRef = this.dialog.open(BagPropertyComponent, {
-                minWidth: '800px',
-                minHeight: '780px',
+                position: { top: '30px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()), dlgType: dlgType,
                     names: names
-                },
-                position: { top: '30px' }
+                }
             });
         } else if (dlgType === GaugeDialogType.Pipe) {
             dialogRef = this.dialog.open(PipePropertyComponent, {
-                minWidth: '700px',
-                minHeight: '700px',
+                position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported,
                     names: names
-                },
-                position: { top: '80px' }
+                }
             });
         } else if (dlgType === GaugeDialogType.Slider) {
             dialogRef = this.dialog.open(SliderPropertyComponent, {
-                minWidth: '740px',
-                minHeight: '790px',
+                position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported,
                     names: names
-                },
-                position: { top: '60px' }
+                }
             });
         } else if (dlgType === GaugeDialogType.Switch) {
             dialogRef = this.dialog.open(HtmlSwitchPropertyComponent, {
-                minWidth: '700px',
-                minHeight: '590px',
+                position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported,
                     names: names
-                },
-                position: { top: '60px' }
+                }
             });
         } else {
             let title = this.getGaugeTitle(settings.type);
             dialogRef = this.dialog.open(GaugePropertyComponent, {
-                minWidth: '740px',
-                minHeight: '700px',
+                position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()), title: title,
                     views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue,
                     inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
                     names: names
-                },
-                position: { top: '80px' }
+                }
             });
         }
         dialogRef.afterClosed().subscribe(result => {

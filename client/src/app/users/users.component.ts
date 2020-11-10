@@ -74,11 +74,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 		let muser: User = JSON.parse(JSON.stringify(user));
 		muser.password = '';
 		let dialogRef = this.dialog.open(DialogUser, {
-			// minWidth: '700px',
-			// minHeight: '700px',
-			// panelClass: 'dialog-property',
-			data: { user: muser, editmode: toAdd, users: this.users.map((u: User) => { return u.username }) },
-			position: { top: '80px' }
+			position: { top: '60px' },
+			data: { user: muser, editmode: toAdd, users: this.users.map((u: User) => { return u.username }) }
 		});
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {

@@ -1,5 +1,5 @@
-<div style="width: 100%;height: 100%;position: relative;">
-    <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>{{'editor.controls-html-switch-settings' | translate}}</h1>
+<div style="width: 650px;position: relative;">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-html-switch-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'gauges.property-props' | translate}}">
@@ -23,16 +23,18 @@
                 <div class="field-row" style="padding-top: 10px;">
                     <div class="my-form-field color-field">
                         <span>{{'html-switch.property-off-background' | translate}}</span>
-                        <input [(colorPicker)]="options.offBackground" [style.background]="options.offBackground" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                            [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                            [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 100px" [cpPosition]="'bottom'" (colorPickerChange)="updateOptions()"/>
+                        <input [(colorPicker)]="options.offBackground" [style.background]="options.offBackground" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpPosition]="'right'" (colorPickerChange)="updateOptions()" />
                     </div>
                     <div class="my-form-field color-field" style="padding-left: 12px">
                         <span>{{'html-switch.property-off-slider-color' | translate}}</span>
-                        <input [(colorPicker)]="options.offSliderColor" [style.background]="options.offSliderColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                            [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                            [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 100px" [cpPosition]="'bottom'" (colorPickerChange)="updateOptions()"/>
-                    </div>                    
+                        <input [(colorPicker)]="options.offSliderColor" [style.background]="options.offSliderColor" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpPosition]="'right'" (colorPickerChange)="updateOptions()" />
+                    </div>
                     <div class="my-form-field slider-field" style="padding-left: 50px; top: -1px;">
                         <span>{{'html-switch.property-radius' | translate}}</span>
                         <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.radius" (input)="updateOptions()">
@@ -40,23 +42,26 @@
                     </div>
                     <div class="my-form-field color-field" style="float: right;padding-left: 12px;">
                         <span>{{'html-switch.property-on-background' | translate}}</span>
-                        <input [(colorPicker)]="options.onBackground" [style.background]="options.onBackground" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                            [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                            [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 100px" [cpPosition]="'bottom'" (colorPickerChange)="updateOptions()"/>
+                        <input [(colorPicker)]="options.onBackground" [style.background]="options.onBackground" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpPosition]="'left'" (colorPickerChange)="updateOptions()" />
                     </div>
                     <div class="my-form-field color-field" style="float: right;">
                         <span>{{'html-switch.property-on-slider-color' | translate}}</span>
-                        <input [(colorPicker)]="options.onSliderColor" [style.background]="options.onSliderColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                            [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                            [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 100px" [cpPosition]="'bottom'" (colorPickerChange)="updateOptions()"/>
-                    </div>                                        
+                        <input [(colorPicker)]="options.onSliderColor" [style.background]="options.onSliderColor" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpPosition]="'left'" (colorPickerChange)="updateOptions()" />
+                    </div>
                 </div>
                 <div class="field-row">
                     <div class="my-form-field color-field">
                         <span>{{'html-switch.property-off-text-color' | translate}}</span>
-                        <input [(colorPicker)]="options.offTextColor" [style.background]="options.offTextColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                            [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                            [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 100px" [cpPosition]="'bottom'" (colorPickerChange)="updateOptions()"/>
+                        <input [(colorPicker)]="options.offTextColor" [style.background]="options.offTextColor" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpPosition]="'top'" (colorPickerChange)="updateOptions()" />
                     </div>
                     <div class="my-form-field" style="padding-left: 12px;">
                         <span>{{'html-switch.property-off-text' | translate}}</span>
@@ -77,9 +82,10 @@
                     </div>
                     <div class="my-form-field color-field" style="float: right;padding-left: 12px">
                         <span>{{'html-switch.property-on-text-color' | translate}}</span>
-                        <input [(colorPicker)]="options.onTextColor" [style.background]="options.onTextColor" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor"
-                            [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                            [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 100px" [cpPosition]="'bottom'" (colorPickerChange)="updateOptions()"/>
+                        <input [(colorPicker)]="options.onTextColor" [style.background]="options.onTextColor" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpPosition]="'top'" (colorPickerChange)="updateOptions()" />
                     </div>
                     <div class="my-form-field" style="float: right;padding-left: 12px;">
                         <span>{{'html-switch.property-on-text' | translate}}</span>
@@ -87,12 +93,13 @@
                     </div>
                 </div>
                 <div class="field-row" style="position: absolute;height:210px;width:650px;margin-top: 16px;max-width: 650px; max-height: 210px;overflow: hidden;">
-                    <ngx-switch #switcher style="position: absolute;left: 50%;top: 50%;transform: translateX(-50%) translateY(-50%);" [style.width]="switchWidth + 'px'" [style.height]="switchHeight + 'px'"></ngx-switch>
+                    <ngx-switch #switcher style="position: absolute;left: 50%;top: 50%;transform: translateX(-50%) translateY(-50%);" [style.width]="switchWidth + 'px'"
+                        [style.height]="switchHeight + 'px'"></ngx-switch>
                 </div>
             </div>
         </mat-tab>
     </mat-tab-group>
-    <div mat-dialog-actions style="float:right; padding-bottom: 20px;">
+    <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

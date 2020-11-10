@@ -24,9 +24,8 @@ export class FlexAuthComponent implements OnInit {
     onEditPermission() {
         let permission = this.permission;
         let dialogRef = this.dialog.open(DialogGaugePermission, {
-            minWidth: '350px',
-            data: { permission: permission },
-            position: { top: '90px' }
+            position: { top: '60px' },
+            data: { permission: permission }
         });
 
         dialogRef.afterClosed().subscribe(result => {

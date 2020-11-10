@@ -1,3 +1,6 @@
+/**
+ * Shape extension
+ */
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, WindowLink } from '../../../_models/hmi';

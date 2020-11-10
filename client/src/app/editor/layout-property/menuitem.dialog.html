@@ -1,5 +1,6 @@
 <div>
-    <h1 mat-dialog-title style="display:inline-block" mat-dialog-draggable>{{'dlg.menuitem-title' | translate}}</h1>
+    <h1 mat-dialog-title style="display:inline-block;cursor: move;" mat-dialog-draggable>{{'dlg.menuitem-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>Icon</span>
@@ -14,7 +15,7 @@
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.menuitem-text' | translate}}</span>
-            <input [(ngModel)]="data.item.text" type="text" style="width:100%">
+            <input [(ngModel)]="data.item.text" type="text" style="width: 300px">
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.menuitem-view' | translate}}</span>
@@ -26,14 +27,14 @@
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.menuitem-link' | translate}}</span>
-            <input [(ngModel)]="data.item.link" type="text" style="width:100%" [readonly]="data.item.view">
+            <input [(ngModel)]="data.item.link" type="text" style="width: 300px" [readonly]="data.item.view">
         </div>    
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.useraccess-groups' | translate}}</span>
             <sel-options #seloptions [selected]="selectedGroups" [options]="groups"></sel-options>
         </div>   
     </div>
-    <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+    <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

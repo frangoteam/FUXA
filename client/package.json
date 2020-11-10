@@ -50,7 +50,7 @@
     "hammerjs": "^2.0.8",
     "material-design-icons": "^3.0.1",
     "ng5-slider": "^1.1.7",
-    "ngx-color-picker": "^7.4.0",
+    "ngx-color-picker": "^10.1.0",
     "ngx-toastr": "^8.10.2",
     "panzoom": "^9.2.5",
     "rxjs": "6.0.0",

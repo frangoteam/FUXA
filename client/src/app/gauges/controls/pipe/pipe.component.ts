@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus } from '../../_models/hmi';
-import { GaugeDialogType } from '../gauge-property/gauge-property.component';
-import { Utils } from '../../_helpers/utils';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus } from '../../../_models/hmi';
+import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+import { Utils } from '../../../_helpers/utils';
 
 declare var SVG: any;
 declare var Raphael: any;

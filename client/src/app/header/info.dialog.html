@@ -1,9 +1,8 @@
-<div>
+<div style="width:280px">
   <div mat-dialog-title style="display:inline-block">
       <div class="logo" style="display: inline-block"></div>
       <div style="font-size: 18px;display: inline-block;vertical-align: super;padding-left: 5px;">{{'dlg.info-title' | translate}}</div>
   </div>
-  <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
   <div mat-dialog-content style="margin-bottom: 10px;">
     <div style="display: block">
         {{'header.info-version' | translate}} {{data.version}}
@@ -12,7 +11,7 @@
         developed by <span><b>frango</b>team</span>
       </div>
   </div>
-  <div mat-dialog-actions style="float:right; margin-bottom:0px;padding-bottom:0px">
+  <div mat-dialog-actions class="dialog-action">
     <button mat-raised-button [mat-dialog-close]="data">{{'dlg.ok' | translate}}</button>
   </div>
 </div>
