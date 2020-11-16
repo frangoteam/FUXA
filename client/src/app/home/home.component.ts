@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('alarmsview') alarmsview: AlarmViewComponent;
 	@ViewChild('container') container: ElementRef;
 
-	// @ViewChild('iframeview') iframeview: IframeComponent;
+	@ViewChild('iframeview') iframeview: IframeComponent;
 
 	isLoading = true;
 	homeView: View = new View();
@@ -80,7 +80,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.setAlarmsStatus(event);
             });
             this.hmiService.askAlarmsStatus();
-            this.changeDetector.detectChanges();        
+            this.changeDetector.detectChanges();
 		}
 		catch (err) {
 			console.log(err);
@@ -101,20 +101,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	onGoToPage(event: string) {
 		const view = this.hmi.views.find(x => x.id === event);
+        this.showHomeView = (this.homeView) ? true : false;
+        this.showHomeLink = false;
+        this.changeDetector.detectChanges();
 		if (view) {
 			this.homeView = view;
 			this.setBackground();
 			this.fuxaview.loadHmi(this.homeView);
 		}
-		this.showHomeLink = false;
-		this.showHomeView = (this.homeView) ? true : false;
 	}
 
 	onGoToLink(event: string) {
 		if (event.indexOf('://') >= 0) {
-			// this.showHomeView = false;
-			// this.showHomeLink = true;
-			// this.iframeview.loadLink(event);
+			this.showHomeView = false;
+            this.showHomeLink = true;
+            this.changeDetector.detectChanges();
+			this.iframeview.loadLink(event);
 
 		} else {
 			this.router.navigate([event]).then(data => {
