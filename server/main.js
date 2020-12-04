@@ -8,6 +8,8 @@ const socketIO = require('socket.io');
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
+const utils = require('./runtime/utils');
+var events = require("./runtime/events");
 
 const FUXA = require("./fuxa.js");
 
@@ -16,6 +18,8 @@ const app = express();
 
 var server;
 var settingsFile;
+
+var startTime = new Date();
 
 // Define work directory in AppData
 var workDir = path.resolve(__dirname, "_appdata");
@@ -43,6 +47,7 @@ try {
     var settings = require(settingsFile);
     settings.workDir = workDir;
     settings.appDir = __dirname;
+    settings.packageDir = path.resolve(__dirname, "_pkg");
     settings.settingsFile = settingsFile;
     settings.environment = process.env.NODE_ENV || 'prod';
     // check new settings from default and merge if not defined
@@ -86,6 +91,10 @@ if (!settings.dbDir) {
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
 }
+// Check package folder
+if (!fs.existsSync(settings.packageDir)) {
+    fs.mkdirSync(settings.packageDir);
+}
 
 // Server settings
 if (settings.https) {
@@ -106,9 +115,15 @@ if (settings.uiPort === undefined) {
 }
 settings.uiHost = settings.uiHost || "localhost"; //"0.0.0.0";
 
-// Init application
+// Wait ending initialization 
+events.once('init-runtime-ok', function () {
+    logger.info('FUXA init in  ' + utils.endTime(startTime) + 'ms.');
+    startFuxa();
+});
+
+// Init FUXA
 try {
-    FUXA.init(server, io, settings, logger);
+    FUXA.init(server, io, settings, logger, events);
 } catch(err) {
     if (err.code == "unsupported_version") {
         logger.error("Unsupported version of node.js:", process.version);
@@ -194,37 +209,45 @@ function getListenPath() {
     return listenPath;
 }
 
-FUXA.start().then(function () {
-    if (settings.httpStatic) {
-        server.on('error', function (err) {
-            if (err.errno === "EADDRINUSE") {
-                logger.error("server.port-in-use");
-                logger.error("server.unable-to-listen ", { listenpath: getListenPath() });
-            } else {
-                if (err.stack) {
-                    logger.error(err.stack);
+// Start FUXA
+function startFuxa() {
+    FUXA.start().then(function () {
+        if (settings.httpStatic) {
+            server.on('error', function (err) {
+                if (err.errno === "EADDRINUSE") {
+                    logger.error("server.port-in-use");
+                    logger.error("server.unable-to-listen ", { listenpath: getListenPath() });
                 } else {
-                    logger.error("server.error " + err);
+                    if (err.stack) {
+                        logger.error(err.stack);
+                    } else {
+                        logger.error("server.error " + err);
+                    }
                 }
-            }
-            process.exit(1);
-        });
-        server.listen(settings.uiPort, settings.uiHost, function () {
-            settings.serverPort = server.address().port;
-            process.title = 'FUXA';
-            logger.info("server.now-running " + getListenPath());
-        });
-    } else {
-        logger.info("server.headless-mode");
-    }
-}).catch(function (err) {
-    logger.error("server.failed-to-start");
-    if (err.stack) {
-        logger.error(err.stack);
-    } else {
-        logger.error(err);
-    }
-});
+                process.exit(1);
+            });
+            server.listen(settings.uiPort, settings.uiHost, function () {
+                settings.serverPort = server.address().port;
+                process.title = 'FUXA';
+                logger.info("server.now-running " + getListenPath());
+            });
+        } else {
+            logger.info("server.headless-mode");
+        }
+    }).catch(function (err) {
+        logger.error("server.failed-to-start");
+        if (err.stack) {
+            logger.error(err.stack);
+        } else {
+            logger.error(err);
+        }
+    });
+}
+
+// Don't wait any more
+setTimeout(() => {
+    events.emit('init-runtime-ok');
+}, 30000);
 
 process.on('uncaughtException', function (err) {
     if (err.stack) {

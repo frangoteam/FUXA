@@ -78,8 +78,7 @@ function update() {
  */
 function updateDevice(device) {
     if (!activeDevices[device.name]) {
-        devices.loadDevice(device);
-        if (device.enabled) {
+        if (devices.loadDevice(device) && device.enabled) {
             activeDevices[device.name].start();
         }
     } else {
@@ -143,14 +142,21 @@ function loadDevice(device) {
         activeDevices[device.name].load(device);
     } else {
         // device create
-        runtime.logger.info(device.name + ': device created');
-        activeDevices[device.name] = Device.create(device, runtime.logger, runtime.events);
-        activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);
+        let tdev = Device.create(device, runtime.logger, runtime.events);
+        if (temp && temp.start) {
+            runtime.logger.info(device.name + ': device created');
+            activeDevices[device.name] = tdev;
+            activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);
+        } else {
+            runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
+            return false;
+        }
     }
     if (runtime.settings.daqEnabled) {
         var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.name, activeDevices[device.name].getTagProperty);
         activeDevices[device.name].bindSaveDaqValue(fncToSaveDaqValue);
     }
+    return true;
 }
 
 /**

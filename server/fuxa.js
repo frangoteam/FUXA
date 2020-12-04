@@ -18,10 +18,10 @@ function getVersion() {
 }
 
 module.exports = {
-    init: function (httpServer, io, _settings, log) {
+    init: function (httpServer, io, _settings, log, events) {
         settings = _settings;
         logger = log;
-        runtime.init(io, api, settings, logger);
+        runtime.init(io, api, settings, logger, events);
         api.init(httpServer, runtime);
     },
     start: function () {

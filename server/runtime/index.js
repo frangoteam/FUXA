@@ -9,6 +9,7 @@ var project = require("./project");
 var users = require("./users");
 var events = require("./events");
 var alarms = require("./alarms");
+var plugins = require("./plugins");
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
 
@@ -18,26 +19,45 @@ var logger;
 var io;
 var alarmsMgr;
 
-function init(_io, _api, _settings, log) {
+function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
     settings = _settings;
-    logger = log;
+    logger = _log;
     if (_api) {
         apiDevice = _api;
     }
+    // check runtime init dependency and send to main if ready
+    var checkInit = function () {
+        if (!events.listenerCount('init-plugins-ok') && !events.listenerCount('init-users-ok') && !events.listenerCount('init-project-ok')) {
+            eventsMain.emit('init-runtime-ok');
+        }
+    } 
+    events.once('init-plugins-ok', checkInit);
+    events.once('init-users-ok', checkInit);
+    events.once('init-project-ok', checkInit);
+  
+    
+    daqstorage.init(settings, logger);
 
-    if (!daqstorage.init(settings, logger)) {
-        logger.error("daqstorage.failed-to-init");
-    }
+    // plugins.init(settings, logger);
+    plugins.init(settings, logger).then(result => {
+        logger.info("runtime init plugins successful!");
+        events.emit('init-plugins-ok');
+    }).catch(function (err) {
+        logger.error("runtime.failed-to-init plugins");
+    });
+
 
     users.init(settings, logger).then(result => {
         logger.info("runtime init users successful!");
+        events.emit('init-users-ok');
     }).catch(function (err) {
         logger.error("runtime.failed-to-init users");
     });
 
     project.init(settings, logger).then(result => {
         logger.info("runtime init project successful!");
+        events.emit('init-project-ok');
     }).catch(function (err) {
         logger.error("runtime.failed-to-init project");
     });
@@ -354,6 +374,7 @@ var runtime = module.exports = {
     init: init,
     project: project,
     users: users,
+    plugins: plugins,
     start: start,
     stop: stop,
     update: update,

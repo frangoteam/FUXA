@@ -3,9 +3,16 @@
  */
 
 'use strict';
-var ModbusRTU = require("modbus-serial");
+var ModbusRTU;
+try {
+    ModbusRTU = require("modbus-serial");
+} catch { }
+if (!ModbusRTU) {
+    ModbusRTU = require("../../../_pkg/modbus-serial");
+}
 const datatypes = require('./datatypes');
 const TOKEN_LIMIT = 1000;
+
 function MODBUSclient(_data, _logger, _events) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }

@@ -33,6 +33,8 @@
     <mat-icon aria-label="HELP">help_outline</mat-icon>
   </button>
   <mat-menu #helpmenu="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
+    <button mat-menu-item (click)="onPlugins()">{{'header.edit-plugins' | translate}}</button>
+    <mat-divider class="menu-separator"></mat-divider>
     <button mat-menu-item (click)="onShowHelp('help')">{{'header.help-tutorial' | translate}}</button>
     <mat-divider class="menu-separator"></mat-divider>
     <button mat-menu-item (click)="onShowHelp('info')">{{'header.help-info' | translate}}</button>

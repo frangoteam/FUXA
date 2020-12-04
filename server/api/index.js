@@ -10,6 +10,7 @@ var prjApi = require("./projects");
 var authApi = require("./auth");
 var usersApi = require("./users");
 var alarmsApi = require("./alarms");
+var pluginsApi = require("./plugins");
 
 var apiApp;
 var server;
@@ -35,6 +36,8 @@ function init(_server, _runtime) {
             apiApp.use(alarmsApi.app());
             authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
             apiApp.use(authApi.app());
+            pluginsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(pluginsApi.app());
 
             /**
              * GET Server setting data

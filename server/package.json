@@ -24,10 +24,11 @@
     "express": "4.16.4",
     "fs-extra": "^7.0.1",
     "jsonwebtoken": "^8.5.1",
-    "modbus-serial": "^8.0.1",
+    "live-plugin-manager": "^0.15.1",
     "morgan": "^1.9.1",
     "node-opcua": "^0.7.2",
     "node-snap7": "^1.0.1",
+    "npm": "^6.14.9",
     "socket.io": "^2.2.0",
     "sqlite3": "^4.0.9",
     "winston": "^3.2.1"

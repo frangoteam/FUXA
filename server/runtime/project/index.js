@@ -6,12 +6,13 @@
 
 const fs = require('fs');
 const path = require('path');
+const async = require('async');
 
 var events = require('../events');
 var utils = require('../utils');
 const prjstorage = require('./prjstorage');
 
-const version = '1.00';
+const version = '1.02';
 var settings;                   // Application settings
 var logger;                     // Application logger
 
@@ -54,7 +55,7 @@ function init(_settings, log) {
  */
 function load() {
     return new Promise(function (resolve, reject) {
-        data = { devices: {}, hmi: { views: [] }, texts: [], alarms: [] };
+        data = { devices: {}, hmi: { views: [] }, texts: [], alarms: [], plugins: [] };
         // load general data
         prjstorage.getSection(prjstorage.TableType.GENERAL).then(grows => {
             for (var ig = 0; ig < grows.length; ig++) {
@@ -78,20 +79,34 @@ function load() {
                             data.devices[drows[id].name] = JSON.parse(drows[id].value);
                         }
                     }
-                    // load texts
-                    getTexts().then(texts => {
-                        data.texts = texts;
-                        // load alarms
-                        getAlarms().then(alarms => {
-                            data.alarms = alarms;
-                            resolve();
-                        }).catch(function (err) {
-                            logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.ALARMS + ': ' + err);
+                    async.series([
+                        // step 1 get texts
+                        function (callback) {
+                            getTexts().then(texts => {
+                                data.texts = texts;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.TEXTS + ': ' + err);
+                                callback(err);
+                            });
+                        },
+                        // step 2 get alarms
+                        function (callback) {
+                            getAlarms().then(alarms => {
+                                data.alarms = alarms;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.ALARMS + ': ' + err);
+                                callback(err);
+                            }); 
+                        }
+                    ],
+                    function (err) {
+                        if (err) {
                             reject(err);
-                        });
-                    }).catch(function (err) {
-                        logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.TEXTS + ': ' + err);
-                        reject(err);
+                        } else {
+                            resolve();
+                        }
                     });
                 }).catch(function (err) {
                     logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.DEVICES + ': ' + err);
@@ -159,6 +174,14 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.ALARMS;
                 section.name = value.name;
                 toremove = removeAlarm(value);
+            } else if (cmd === ProjectDataCmdType.SetPlugin) {
+                section.table = prjstorage.TableType.PLUGINS;
+                section.name = value.name;
+                setPlugin(value);
+            } else if (cmd === ProjectDataCmdType.DelPlugin) {
+                section.table = prjstorage.TableType.PLUGINS;
+                section.name = value.name;
+                toremove = removePlugin(value);
             }
             else {
                 logger.error('prjstorage.failed-to-setdata ' + section.table);
@@ -328,6 +351,44 @@ function removeAlarm(alarm) {
 }
 
 /**
+ * Set or add if not exist (check with plugin.name) the Plugin in Project
+ * @param {*} plugin
+ */
+function setPlugin(plugin) {
+    if (!data.plugins) {
+        data.plugins = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.plugins.length; i++) {
+        if (data.plugins[i].name === plugin.name) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.plugins[pos] = plugin;
+    } else {
+        data.plugins.push(plugin);
+    }
+}
+
+/**
+ * Remove the Plugin from Project
+ * @param {*} plugin 
+ */
+function removePlugin(plugin) {
+    if (data.plugins) {
+        var pos = -1;
+        for (var i = 0; i < data.plugins.length; i++) {
+            if (data.plugins[i].name === plugin.name) {
+                data.plugins.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the project data in accordance with autorization
  */
 function getProject(userId, userGroups) {
@@ -391,6 +452,14 @@ function setProject(prjcontent) {
                         if (alarms && alarms.length) {
                             for (var i = 0; i < alarms.length; i++) {
                                 scs.push({ table: prjstorage.TableType.ALARMS, name: alarms[i].name, value: alarms[i] });
+                            }
+                        }                        
+                    } else if (key === 'plugins') {
+                        // plugins
+                        var getPlugins = prjcontent[key];
+                        if (plugins && plugins.length) {
+                            for (var i = 0; i < plugins.length; i++) {
+                                scs.push({ table: prjstorage.TableType.PLUGINS, name: plugins[i].name, value: plugins[i] });
                             }
                         }                        
                     } else {
@@ -488,6 +557,28 @@ function getAlarms() {
 }
 
 /**
+ * Get the plugins
+ */
+function getPlugins() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.PLUGINS).then(drows => {
+            if (drows.length > 0) {
+                var plugins = []
+                for (var id = 0; id < drows.length; id++) {
+                    plugins.push(JSON.parse(drows[id].value));
+                }
+                resolve(plugins);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error('project.prjstorage.failed-to-get-plugins ' + prjstorage.TableType.PLUGINS + ': ' + err);
+            reject(err);
+        });
+    });
+}
+
+/**
  * Set the device property
  */
 function setDeviceProperty(query) {
@@ -574,7 +665,9 @@ const ProjectDataCmdType = {
     SetText: 'set-text',
     DelText: 'del-text',
     SetAlarm: 'set-alarm',
-    DelAlarm: 'del-alarm',    
+    DelAlarm: 'del-alarm',
+    SetPlugin: 'set-plugin',
+    DelPlugin: 'del-plugin',
 }
 
 module.exports = {
@@ -582,6 +675,7 @@ module.exports = {
     load: load,
     getDevices: getDevices,
     getAlarms: getAlarms,
+    getPlugins: getPlugins,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,

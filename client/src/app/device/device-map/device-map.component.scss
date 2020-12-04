@@ -65,12 +65,12 @@ $device-line-top: calc(((100% - #{$card-height}) / 4) + #{$card-height} + #{$lin
     background-color: $line-color;
 }
 
-.main-device mat-icon {
-    font-size: 0px;
-}
-.main-device:hover mat-icon {
-    font-size: 17px;
-}
+// .main-device mat-icon {
+//     font-size: 0px;
+// }
+// .main-device:hover mat-icon {
+//     font-size: 17px;
+// }
 
 .device-header {
     display: block;

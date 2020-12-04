@@ -15,9 +15,7 @@ var daqnodes = {};              // list of daqnode
 function init(_settings, _log) {
     settings = _settings;
     logger = _log;
-
     logger.info("daqstorage: init successful!");  
-    return true;
 }
 
 function reset() {

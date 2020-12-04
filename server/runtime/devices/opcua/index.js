@@ -186,7 +186,7 @@ function OpcUAclient(_data, _logger, _events) {
                     if (!err) {
                         let opcNodes = [];
                         browseResult.references.forEach(function (reference) {
-                            console.log(reference.browseName.toString());
+                            // console.log(reference.browseName.toString());
                             let node = new OpcNode(reference.browseName.toString());
                             if (reference.displayName) {
                                 node.name = reference.displayName.text;

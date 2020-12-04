@@ -1,5 +1,5 @@
 /**
- * 'api/users': Users API to GET/POST users data
+ * 'api/alarms': Alarms API to GET/POST alarms data
  */
 
 var express = require("express");

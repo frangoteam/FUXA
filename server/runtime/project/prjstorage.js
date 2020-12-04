@@ -46,6 +46,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists devicesSecurity (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists texts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists alarms (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists plugins (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error('prjstorage.failed-to-bind: ' + err);
@@ -63,7 +64,7 @@ function _bind() {
 function setDefault() {
     return new Promise(function (resolve, reject) {
         var scs = [];
-        scs.push({ table: TableType.GENERAL, name: 'version', value: '1.01' });
+        scs.push({ table: TableType.GENERAL, name: 'version', value: '1.02' });
         scs.push({ table: TableType.DEVICES, name: 'server', value: { 'id': '0', 'name': 'FUXA Server', 'type': 'FuxaServer', 'property': {} } });
         setSections(scs).then(() => {
             resolve();
@@ -176,6 +177,7 @@ function clearAll() {
         sql += "DELETE FROM devicesSecurity;";
         sql += "DELETE FROM texts;";
         sql += "DELETE FROM alarms;";
+        sql += "DELETE FROM plugins;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error('prjstorage.failed-to-clear: ' + err);
@@ -196,7 +198,8 @@ const TableType = {
     VIEWS: 'views',
     DEVICESSECURITY: 'devicesSecurity',
     TEXTS: 'texts',
-    ALARMS: 'alarms'
+    ALARMS: 'alarms',
+    PLUGINS: 'plugins'
 }
 
 module.exports = {

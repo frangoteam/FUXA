@@ -3,10 +3,10 @@
  */
 
 'use strict';
-var S7client = require('./s7');
-var OpcUAclient = require('./opcua');
-var MODBUSclient = require('./modbus');
-var BACNETclient = require('./bacnet');
+var S7client = null; //require('./s7');
+var OpcUAclient = null; //require('./opcua');
+var MODBUSclient = null; //require('./modbus');
+var BACNETclient = null; //require('./bacnet');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -23,12 +23,24 @@ function Device(data, logger, _events) {
     var devicePolling = null;                               // TimerInterval to polling read device value
 
     if (data.type === DeviceEnum.S7) {
+        if (!S7client) {
+            return null;
+        }
         comm = S7client.create(data, logger, events);
     } else if (data.type === DeviceEnum.OPCUA) {
+        if (!OpcUAclient) {
+            return null;
+        }
         comm = OpcUAclient.create(data, logger, events);
     } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
+        if (!MODBUSclient) {
+            return null;
+        }
         comm = MODBUSclient.create(data, logger, events);        
     } else if (data.type === DeviceEnum.BACnet) {
+        if (!BACNETclient) {
+            return null;
+        }
         comm = BACNETclient.create(data, logger, events);        
     }
 
@@ -246,6 +258,22 @@ function getSupportedProperty(endpoint, type) {
     });
 }
 
+/**
+ * Load the plugin library
+ * @param {*} type 
+ */
+function loadPlugin(type, module) {
+    if (type === DeviceEnum.S7) {
+        S7client = require(module);
+    } else if (type === DeviceEnum.OPCUA) {
+        OpcUAclient = require(module);
+    } else if (DeviceEnum.ModbusTCP.startsWith(type)) {
+        MODBUSclient = require(module);
+    } else if (type === DeviceEnum.BACnet) {
+        BACNETclient = require(module);
+    }
+}
+
 module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
@@ -253,7 +281,8 @@ module.exports = {
     create: function (data, logger, events) {
         return new Device(data, logger, events);
     },
-    getSupportedProperty: getSupportedProperty
+    getSupportedProperty: getSupportedProperty,
+    loadPlugin: loadPlugin
 }
 
 /**
