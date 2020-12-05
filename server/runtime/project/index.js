@@ -30,20 +30,20 @@ function init(_settings, log) {
     // Init Project database
     return new Promise(function (resolve, reject) {
         prjstorage.init(settings, logger).then(result => {
-            logger.info('project.prjstorage-init-successful!');
+            logger.info('project.prjstorage-init-successful!', true);
             if (result) {
                 resolve();
             } else {
                 prjstorage.setDefault().then(result => {
-                    logger.info('project.prjstorage-seDefault-successful!');
+                    logger.info('project.prjstorage-set-default-successful!', true);
                     resolve();
                 }).catch(function (err) {
-                    logger.error('project.prjstorage.failed-seDefault: ' + err);
+                    logger.error(`project.prjstorage-set-default failed! ${err}`);
                     resolve();
                 });
             }
         }).catch(function (err) {
-            logger.error('project.prjstorage.failed-to-init: ' + err);
+            logger.error(`project.prjstorage-failed-to-init! ${err}`);
             reject(err);
         });
     });
@@ -86,7 +86,7 @@ function load() {
                                 data.texts = texts;
                                 callback();
                             }).catch(function (err) {
-                                logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.TEXTS + ': ' + err);
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.TEXTS}' ${err}`);
                                 callback(err);
                             });
                         },
@@ -96,7 +96,7 @@ function load() {
                                 data.alarms = alarms;
                                 callback();
                             }).catch(function (err) {
-                                logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.ALARMS + ': ' + err);
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.ALARMS}' ${err}`);
                                 callback(err);
                             }); 
                         }
@@ -109,15 +109,15 @@ function load() {
                         }
                     });
                 }).catch(function (err) {
-                    logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.DEVICES + ': ' + err);
+                    logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.DEVICES}' ${err}`);
                     reject(err);
                 });
             }).catch(function (err) {
-                logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.VIEWS + ': ' + err);
+                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.VIEWS}' ${err}`);
                 reject(err);
             });
         }).catch(function (err) {
-            logger.error('project.prjstorage.failed-to-load ' + prjstorage.TableType.GENERAL + ': ' + err);
+            logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.GENERAL}' ${err}`);
             reject(err);
         });
     });
@@ -184,21 +184,21 @@ function setProjectData(cmd, value) {
                 toremove = removePlugin(value);
             }
             else {
-                logger.error('prjstorage.failed-to-setdata ' + section.table);
+                logger.error(`prjstorage.setdata failed! '${section.table}'`);
                 reject('prjstorage.failed-to-setdata: Command not found!');    
             }
             if (toremove) {
                 prjstorage.deleteSection(section).then(result => {
                     resolve(true);
                 }).catch(function (err) {
-                    logger.error('prjstorage.failed-to-deletedata ' + section.table);
+                    logger.error(`prjstorage.deletedata failed! '${section.table}'`);
                     reject(err);
                 });
             } else {
                 prjstorage.setSection(section).then(result => {
                     resolve(true);
                 }).catch(function (err) {
-                    logger.error('prjstorage.failed-to-setdata ' + section.table);
+                    logger.error(`prjstorage.setdata failed! '${section.table}'`);
                     reject(err);
                 });
             }
@@ -468,13 +468,13 @@ function setProject(prjcontent) {
                     }
                 });
                 prjstorage.setSections(scs).then(() => {
-                    logger.info('project.prjstorage.set-project successfull!');
+                    logger.info(`project.prjstorage.set-project successfull!`, true);
                     resolve(true);
                 }).catch(function (err) {
                     reject(err);
                 });
             }).catch(function (err) {
-                logger.error('project.prjstorage.failed-to-clear: ' + err);
+                logger.error(`project.prjstorage.clear failed! '${err}'`);
                 reject(err);
             });
         } catch (err) {
@@ -503,7 +503,7 @@ function getDeviceProperty(query) {
                     resolve();
                 }
             }).catch(function (err) {
-                logger.error('project.prjstorage.failed-to-getdevice-property ' + prjstorage.TableType.DEVICESSECURITY + ': ' + err);
+                logger.error(`project.prjstorage.getdevice-property failed! '${prjstorage.TableType.DEVICESSECURITY} ${err}'`);
                 reject(err);
             });
         } else {
@@ -528,7 +528,7 @@ function getTexts() {
                 resolve();
             }
         }).catch(function (err) {
-            logger.error('project.prjstorage.failed-to-get-texts ' + prjstorage.TableType.TEXTS + ': ' + err);
+            logger.error(`project.prjstorage.get-texts failed! '${prjstorage.TableType.TEXTS} ${err}'`);
             reject(err);
         });
     });
@@ -550,7 +550,7 @@ function getAlarms() {
                 resolve();
             }
         }).catch(function (err) {
-            logger.error('project.prjstorage.failed-to-get-alarms ' + prjstorage.TableType.ALARMS + ': ' + err);
+            logger.error(`project.prjstorage.get-alarms failed! '${prjstorage.TableType.ALARMS} ${err}'`);
             reject(err);
         });
     });
@@ -572,7 +572,7 @@ function getPlugins() {
                 resolve();
             }
         }).catch(function (err) {
-            logger.error('project.prjstorage.failed-to-get-plugins ' + prjstorage.TableType.PLUGINS + ': ' + err);
+            logger.error(`project.prjstorage.get-plugins failed! '${prjstorage.TableType.PLUGINS} ${err}'`);
             reject(err);
         });
     });
@@ -587,7 +587,7 @@ function setDeviceProperty(query) {
             prjstorage.setSection({ table: prjstorage.TableType.DEVICESSECURITY, name: query.name, value: query.value }).then(() => {
                 resolve();
             }).catch(function (err) {
-                logger.error('project.prjstorage.failed-to-setdevice-property ' + prjstorage.TableType.DEVICESSECURITY + ': ' + err);
+                logger.error(`project.prjstorage.setdevice-property failed! '${prjstorage.TableType.DEVICESSECURITY} ${err}'`);
                 reject(err);
             });
         } else {

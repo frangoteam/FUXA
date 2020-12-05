@@ -11,7 +11,7 @@ const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
 var events = require("./runtime/events");
 
-const FUXA = require("./fuxa.js");
+const FUXA = require('./fuxa.js');
 
 const express = require('express');
 const app = express();
@@ -22,23 +22,23 @@ var settingsFile;
 var startTime = new Date();
 
 // Define work directory in AppData
-var workDir = path.resolve(__dirname, "_appdata");
+var workDir = path.resolve(__dirname, '_appdata');
 if (!fs.existsSync(workDir)) {
     fs.mkdirSync(workDir);
 }
 
 // Read app settings 
-var userSettingsFile = path.join(workDir, "settings.js");
+var userSettingsFile = path.join(workDir, 'settings.js');
 if (fs.existsSync(userSettingsFile)) {
     // _appdata/settings.js exists
     settingsFile = userSettingsFile;
 } else {
     // Not exist, copy from code resource
-    var defaultSettings = path.join(__dirname, "settings.default.js");
+    var defaultSettings = path.join(__dirname, 'settings.default.js');
     var settingsStat = fs.statSync(defaultSettings);
     fs.copyFileSync(defaultSettings, userSettingsFile, (err) => {
         if (err) return logger.error(err);
-        logger.debug("settings.js default created successful!")
+        logger.debug('settings.js default created successful!');
     });
     settingsFile = userSettingsFile;
 }
@@ -47,17 +47,17 @@ try {
     var settings = require(settingsFile);
     settings.workDir = workDir;
     settings.appDir = __dirname;
-    settings.packageDir = path.resolve(__dirname, "_pkg");
+    settings.packageDir = path.resolve(__dirname, '_pkg');
     settings.settingsFile = settingsFile;
     settings.environment = process.env.NODE_ENV || 'prod';
     // check new settings from default and merge if not defined
-    var defSettings = require(path.join(__dirname, "settings.default.js"));
+    var defSettings = require(path.join(__dirname, 'settings.default.js'));
     if (defSettings.version !== settings.version) {
         logger.warn("Settings aren't up to date! Please check 'settings.json'.");
         // settings = Object.assign(defSettings, settings);
     }
 } catch (err) {
-    logger.error("Error loading settings file: " + settingsFile)
+    logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
         if (err.toString().indexOf(settingsFile) === -1) {
             logger.error(err.toString());
@@ -70,7 +70,7 @@ try {
 
 // Check logger
 if (!settings.logDir) {
-    settings.logDir = path.resolve(__dirname, "_logs"); 
+    settings.logDir = path.resolve(__dirname, '_logs'); 
 }
 if (!fs.existsSync(settings.logDir)) {
     fs.mkdirSync(settings.logDir);
@@ -79,14 +79,14 @@ if (!fs.existsSync(settings.logDir)) {
 logger.init(settings.logDir);
 const version = FUXA.version();
 if (version.indexOf('beta') > 0) {
-    logger.warn("FUXA V." + version);
+    logger.warn('FUXA V.' + version);
 } else {
-    logger.info("FUXA V." + version);
+    logger.info('FUXA V.' + version);
 }
 
 // Check storage Database dir
 if (!settings.dbDir) {
-    settings.dbDir = path.resolve(__dirname, "_db");
+    settings.dbDir = path.resolve(__dirname, '_db');
 }
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
@@ -107,13 +107,13 @@ server.setMaxListeners(0);
 const io = socketIO(server);
 
 // Check settings value
-var www = path.resolve(__dirname, "../client/dist");
+var www = path.resolve(__dirname, '../client/dist');
 settings.httpStatic = settings.httpStatic || www;
 
 if (settings.uiPort === undefined) {
     settings.uiPort = 1880;
 }
-settings.uiHost = settings.uiHost || "localhost"; //"0.0.0.0";
+settings.uiHost = settings.uiHost || 'localhost'; //"0.0.0.0";
 
 // Wait ending initialization 
 events.once('init-runtime-ok', function () {
@@ -125,13 +125,13 @@ events.once('init-runtime-ok', function () {
 try {
     FUXA.init(server, io, settings, logger, events);
 } catch(err) {
-    if (err.code == "unsupported_version") {
-        logger.error("Unsupported version of node.js:", process.version);
-        logger.error("FUXA requires node.js v6 or later");
-    } else if (err.code == "not_built") {
-        logger.error("FUXA has not been built. See README.md for details");
+    if (err.code == 'unsupported_version') {
+        logger.error('Unsupported version of node.js:', process.version);
+        logger.error('FUXA requires node.js v6 or later');
+    } else if (err.code == 'not_built') {
+        logger.error('FUXA has not been built. See README.md for details');
     } else {
-        logger.error("Failed to start server:");
+        logger.error('Failed to start server:');
         if (err.stack) {
             logger.error(err.stack);
         } else {
@@ -156,13 +156,13 @@ var allowCrossDomain = function(req, res, next) {
     }
 }
 app.use(allowCrossDomain);
-app.use("/", express.static(settings.httpStatic));
-app.use("/home", express.static(settings.httpStatic));
-app.use("/lab", express.static(settings.httpStatic));
-app.use("/editor", express.static(settings.httpStatic));
-app.use("/device", express.static(settings.httpStatic));
-app.use("/users", express.static(settings.httpStatic));
-app.use("/view", express.static(settings.httpStatic));
+app.use('/', express.static(settings.httpStatic));
+app.use('/home', express.static(settings.httpStatic));
+app.use('/lab', express.static(settings.httpStatic));
+app.use('/editor', express.static(settings.httpStatic));
+app.use('/device', express.static(settings.httpStatic));
+app.use('/users', express.static(settings.httpStatic));
+app.use('/view', express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', { stream: accessLogStream }));
@@ -191,7 +191,7 @@ app.use(morgan('dev', {
 
 // set api to listen
 if (settings.disableServer !== false) {
-    app.use("/", FUXA.httpApi);
+    app.use('/', FUXA.httpApi);
 }
 
 function getListenPath() {
@@ -204,7 +204,7 @@ function getListenPath() {
         (settings.uiHost == '::' ? 'localhost' : (settings.uiHost == '0.0.0.0' ? '127.0.0.1' : settings.uiHost)) +
         ':' + port;
     if (settings.httpStatic) {
-        listenPath += "/";
+        listenPath += '/';
     }
     return listenPath;
 }
@@ -214,14 +214,14 @@ function startFuxa() {
     FUXA.start().then(function () {
         if (settings.httpStatic) {
             server.on('error', function (err) {
-                if (err.errno === "EADDRINUSE") {
-                    logger.error("server.port-in-use");
-                    logger.error("server.unable-to-listen ", { listenpath: getListenPath() });
+                if (err.errno === 'EADDRINUSE') {
+                    logger.error('server.port-in-use');
+                    logger.error('server.unable-to-listen ', { listenpath: getListenPath() });
                 } else {
                     if (err.stack) {
                         logger.error(err.stack);
                     } else {
-                        logger.error("server.error " + err);
+                        logger.error('server.error ' + err);
                     }
                 }
                 process.exit(1);
@@ -229,13 +229,13 @@ function startFuxa() {
             server.listen(settings.uiPort, settings.uiHost, function () {
                 settings.serverPort = server.address().port;
                 process.title = 'FUXA';
-                logger.info("server.now-running " + getListenPath());
+                logger.info('WebServer is running ' + getListenPath());
             });
         } else {
-            logger.info("server.headless-mode");
+            logger.info('server.headless-mode');
         }
     }).catch(function (err) {
-        logger.error("server.failed-to-start");
+        logger.error('server.failed-to-start');
         if (err.stack) {
             logger.error(err.stack);
         } else {
@@ -262,6 +262,6 @@ process.on('SIGINT', function () {
     FUXA.stop().then(function() {
         process.exit();
     });
-    logger.info("FUXA END");// + FUXA.getVersion());
+    logger.info('FUXA end!');
     process.exit();
 });

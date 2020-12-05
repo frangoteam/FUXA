@@ -50,7 +50,7 @@ function Device(data, logger, _events) {
     this.start = function () {
         currentCmd = DeviceCmdEnum.START;
         if (status === DeviceStatusEnum.INIT) {
-            logger.info(property.name + ': ' + currentCmd);
+            logger.info(`${property.name} start`);
             var self = this;
             this.checkStatus();
             deviceCheckStatus = setInterval(function () {
@@ -65,7 +65,7 @@ function Device(data, logger, _events) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
-            logger.info(property.name + ': ' + currentCmd);
+            logger.info(`${property.name} stop`);
             if (devicePolling) {
                 clearInterval(devicePolling);
                 devicePolling = null;

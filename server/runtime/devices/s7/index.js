@@ -37,15 +37,15 @@ function S7client(_data, _logger, _events) {
             if (data.property && data.property.rack >= 0 && data.property.slot >= 0) {
                 try {
                     if (!s7client.Connected() && _checkWorking(true)) {
-                        logger.info(data.name + ': try to connect ' + data.property.address);
+                        logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         s7client.ConnectTo(data.property.address, data.property.rack, data.property.slot, function (err) {
                             if (err) {
-                                logger.error(data.name + ': connect failed! ' + err);
+                                logger.error(`'${data.name}' connect failed! ${err}`);
                                 _emitStatus('connect-error');
                                 _clearVarsValue();
                                 reject();
                             } else {
-                                logger.info(data.name + ': connected!');
+                                logger.info(`'${data.name}' connected!`, true);
                                 _emitStatus('connect-ok');
                                 resolve();
                             }
@@ -55,14 +55,14 @@ function S7client(_data, _logger, _events) {
                         reject();
                     }
                 } catch (err) {
-                    logger.error(data.name + ': try to connect error! ' + err);
+                    logger.error(`'${data.name}' try to connect error! ${err}`);
                     _checkWorking(false);
                     _emitStatus('connect-error');
                     _clearVarsValue();
                     reject();
                 }
             } else {
-                logger.error(data.name + ': missing connection data!');
+                logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
                 _clearVarsValue();
                 reject();
@@ -84,9 +84,9 @@ function S7client(_data, _logger, _events) {
             } else {
                 var result = s7client.Disconnect();
                 if (result) {
-                    logger.info(data.name + ': disconnected!');
+                    logger.info(`'${data.name}' disconnected!`, true);
                 } else {
-                    logger.error(data.name + ' try to disconnect failed!');
+                    logger.error(`'${data.name}' try to disconnect failed!`);
                 }
                 _emitStatus('connect-off');
                 _clearVarsValue();
@@ -131,9 +131,9 @@ function S7client(_data, _logger, _events) {
                 }
             }, reason => {
                 if (reason && reason.stack) {
-                    logger.error(data.name + ' _readVars error: ' + reason.stack);
+                    logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
                 } else {
-                    logger.error(data.name + ' _readVars error: ' + reason);
+                    logger.error(`'${data.name}' _readVars error! ${reason}`);
                 }
                 _checkWorking(false);
             });
@@ -178,7 +178,7 @@ function S7client(_data, _logger, _events) {
                 mixItemsMap[id] = varDb;
             }
         }
-        logger.info(data.name + ': data loaded (' + count + ')');
+        logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
     /**
@@ -227,12 +227,12 @@ function S7client(_data, _logger, _events) {
         if (item) {
             item.value = value;
             _writeVars([item], (item instanceof DbItem)).then(result => {
-                logger.info(data.name + ' setValue : ' + sigid + '=' + value);
+                logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true);
             }, reason => {
                 if (reason && reason.stack) {
-                    logger.error(data.name + ' _writeDB error: ' + reason.stack);
+                    logger.error(`'${data.name}' _writeVars error! ${reason.stack}`);
                 } else {
-                    logger.error(data.name + ' _writeDB error: ' + reason);
+                    logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
             });
         }
@@ -366,7 +366,7 @@ function S7client(_data, _logger, _events) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.error(data.name + ' working (polling/connecting) overload! ' + overloading);
+            logger.error(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 s7client.Disconnect();

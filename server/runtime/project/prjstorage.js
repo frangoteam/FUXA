@@ -34,10 +34,10 @@ function _bind() {
         var dbfileExist = fs.existsSync(dbfile);
         db_prj = new sqlite3.Database(dbfile, function (err) {
             if (err) {
-                logger.error('prjstorage.failed-to-bind: ' + err);
+                logger.error(`prjstorage.bind failed! ${err}`);
                 reject();
             }
-            logger.info('prjstorage.connected-to ' + dbfile + ' database.');
+            logger.info(`prjstorage.connected-to ${dbfile} database`, true);
         });
         // prepare query
         var sql = "CREATE TABLE if not exists general (name TEXT PRIMARY KEY, value TEXT);";
@@ -49,7 +49,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists plugins (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
-                logger.error('prjstorage.failed-to-bind: ' + err);
+                logger.error(`prjstorage.bind failed! ${err}`);
                 reject();
             } else {
                 resolve(dbfileExist);
@@ -88,7 +88,7 @@ function setSections(sections) {
         }
         db_prj.exec(sql, function (err) {
             if (err) {
-                logger.error('prjstorage.failed-to-set: ' + err);
+                logger.error(`prjstorage.set failed! ${err}`);
                 reject();
             } else {
                 resolve();
@@ -107,7 +107,7 @@ function setSection(section) {
         var sql = "INSERT OR REPLACE INTO " + section.table + " (name, value) VALUES('" + section.name + "','"+ JSON.stringify(section.value) + "');";
         db_prj.exec(sql, function (err) {
             if (err) {
-                logger.error('prjstorage.failed-to-set: ' + err);
+                logger.error(`prjstorage.set failed! ${err}`);
                 reject();
             } else {
                 resolve();
@@ -180,7 +180,7 @@ function clearAll() {
         sql += "DELETE FROM plugins;";
         db_prj.exec(sql, function (err) {
             if (err) {
-                logger.error('prjstorage.failed-to-clear: ' + err);
+                logger.error(`prjstorage.clear failed! ${err}`);
                 reject();
             } else {
                 resolve(true);

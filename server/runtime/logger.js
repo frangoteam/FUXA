@@ -60,7 +60,9 @@ var log = module.exports = {
     },
     info: function (str, flag) {
         //	debug color: Default (White / Black)
-        console.log(new Date().toISOString() + ' [INF] ' + "\t" + processInput(str));
+        // if (initialized && (null == flag || false === flag)) {
+            console.log(new Date().toISOString() + ' [INF] ' + "\t" + processInput(str));
+        // }
         if (initialized && (null == flag || true === flag)) {
             filelogger.info(str);
         }

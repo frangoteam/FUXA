@@ -2,8 +2,8 @@
 
 var path = require('path');
 
-var runtime = require("./runtime");
-var api = require("./api");
+var runtime = require('./runtime');
+var api = require('./api');
 
 var logger;
 var version;
@@ -12,7 +12,7 @@ var api;
 
 function getVersion() {
     if (!version) {
-        version = require(path.join(__dirname, "package.json")).version;
+        version = require(path.join(__dirname, 'package.json')).version;
     }
     return version;
 }
@@ -26,7 +26,7 @@ module.exports = {
     },
     start: function () {
         return runtime.start().then(function () {
-            logger.info("FUXA started!");
+            logger.info('FUXA started!');
         });
     },
     stop: function () {

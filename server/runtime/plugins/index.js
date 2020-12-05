@@ -57,10 +57,10 @@ function init(_settings, log) {
         Object.values(plugins).forEach(async (pg) => {
             if (pg.current) {
                 await addPlugin(pg).then(result => {
-                    logger.info('plugin-installed: ' + pg.name + ' ' + pg.current);
+                    logger.info(`plugin-installed ${pg.name} ${pg.current}`, true);
                     events.emit(pg.name);
                 }).catch(function (err) {
-                    logger.error('plugins.addPlugin error: ' + err);
+                    logger.error(`plugins.add-plugin error! ${err}`);
                 });
                 // addfnc.push(addPlugin(pg));
             }
@@ -134,7 +134,6 @@ async function addPlugin(plugin) {
     if (plugin) {
         try {
             if (plugin.pkg) {
-                console.log('plugin: ' + plugin.name);
                 await manager.installFromNpm(plugin.name, plugin.version).then(async function (data) {
                     await device.loadPlugin(plugin.type, plugin.module);
                 }).catch(function (err) {
@@ -177,7 +176,7 @@ function _checkPluginsSupported() {
         pg.current = '';
     });
     // check in node_modules
-    module = path.resolve(__dirname, "../../node_modules");
+    module = path.resolve(__dirname, '../../node_modules');
     var dirs = fs.readdirSync(module);
     var data = {};
     dirs.forEach(function (dir) {

@@ -37,7 +37,7 @@ function _bind() {
                 logger.error('alarmsstorage.failed-to-bind: ' + err);
                 reject();
             }
-            logger.info('alarmsstorage.connected-to ' + dbfile + ' database.');
+            logger.info('alarmsstorage.connected-to ' + dbfile + ' database.', true);
         });
         // prepare query
         var sql = "CREATE TABLE if not exists alarms (nametype TEXT PRIMARY KEY, type TEXT, status TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER);";

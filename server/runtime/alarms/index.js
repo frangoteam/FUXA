@@ -38,7 +38,7 @@ function AlarmsManager(_runtime) {
      */
     this.stop = function () {
         return new Promise(function (resolve, reject) {
-            logger.info('alarms.stop-checkstatus!');
+            logger.info('alarms.stop-checkstatus!', true);
             if (alarmsCheckStatus) {
                 clearInterval(alarmsCheckStatus);
                 alarmsCheckStatus = null;
@@ -203,7 +203,7 @@ function AlarmsManager(_runtime) {
     var _init = function () {
         return new Promise(function (resolve, reject) {
             alarmstorage.init(settings, logger).then(result => {
-                logger.info('alarms.alarmstorage-init-successful!');
+                logger.info('alarms.alarmstorage-init-successful!', true);
                 resolve();
             }).catch(function (err) {
                 logger.error('project.prjstorage.failed-to-init: ' + err);
@@ -249,7 +249,6 @@ function AlarmsManager(_runtime) {
                         }
                     });
                 }
-                // console.log('alarms.load-property! found: ' + alarmsFound);
                 resolve();
             }).catch(function (err) {
                 reject(err);
