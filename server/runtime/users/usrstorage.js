@@ -38,7 +38,7 @@ function _bind() {
                 logger.error(`usrstorage.bind failed! ${err}`);
                 reject();
             }
-            logger.info(`usrstorage.connected ${dbfile} database`);
+            logger.info(`usrstorage.connected ${dbfile} database`, true);
         });
         // prepare query
         var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, password TEXT, groups INTEGER);";
