@@ -25,6 +25,7 @@
     "jsonwebtoken": "^8.5.1",
     "live-plugin-manager": "^0.15.1",
     "morgan": "^1.9.1",
+    "ip": "^1.1.5",
     "node-opcua": "^0.7.2",
     "socket.io": "^2.2.0",
     "sqlite3": "^5.0.0",
