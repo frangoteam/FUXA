@@ -3,7 +3,13 @@
  */
 
 'use strict';
-const bacnet = require('bacstack');
+var bacnet;
+try {
+    bacnet = require('bacnet');
+} catch { }
+if (!bacnet) {
+    bacnet = require('../../../_pkg/bacnet');
+}
 
 function BACNETclient(_data, _logger, _events) {
 

@@ -5,10 +5,10 @@
 'use strict';
 var ModbusRTU;
 try {
-    ModbusRTU = require("modbus-serial");
+    ModbusRTU = require('modbus-serial');
 } catch { }
 if (!ModbusRTU) {
-    ModbusRTU = require("../../../_pkg/modbus-serial");
+    ModbusRTU = require('../../../_pkg/modbus-serial');
 }
 const datatypes = require('./datatypes');
 const TOKEN_LIMIT = 1000;

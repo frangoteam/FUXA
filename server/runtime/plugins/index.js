@@ -3,11 +3,11 @@
 */
 
 'use strict';
-var npm = require('npm');
 var fs = require('fs');
 const path = require('path');
 var device = require('../devices/device');
 const PluginManager = require('live-plugin-manager');
+var events = require("../events");
 
 var settings;                   // Application settings
 var logger;                     // Application logger
@@ -35,22 +35,36 @@ function init(_settings, log) {
 
     // Init Plugins
     return new Promise(function (resolve, reject) {
-        var plg = _checkPluginsSupported();
-        plugins = plg;
-        // var addfnc = [];
-        Object.values(plugins).forEach( async (pg) => {
+        plugins = _checkPluginsSupported();
+        // define the event listener to check if ready
+        var checkInstalled = function () {
+            var waiting = 0;
+            Object.values(plugins).forEach((pg) => {
+                if (pg.current && events.listenerCount(pg.name)) {
+                    waiting++;
+                }
+            });
+            if (!waiting) {
+                resolve();
+            }
+        } 
+        Object.values(plugins).forEach(async (pg) => {
             if (pg.current) {
-                addPlugin(pg).then(result => {
+                events.once(pg.name, checkInstalled);
+            }
+        });
+        // add plugins
+        Object.values(plugins).forEach(async (pg) => {
+            if (pg.current) {
+                await addPlugin(pg).then(result => {
                     logger.info('plugin-installed: ' + pg.name + ' ' + pg.current);
+                    events.emit(pg.name);
                 }).catch(function (err) {
                     logger.error('plugins.addPlugin error: ' + err);
                 });
                 // addfnc.push(addPlugin(pg));
             }
         });
-        setTimeout(() => {
-            resolve();
-        }, 14000);
 
         // var plgs = Object.values(plugins);
         // for (var i in plgs) {
@@ -134,52 +148,6 @@ async function addPlugin(plugin) {
     }
 }
 
-function _addPlugin(plugin) {
-    return new Promise(function (resolve, reject) {
-        if (plugin) {
-            try {
-                if (plugin.pkg) {
-                    manager.installFromNpm(plugin.name, plugin.version).then(function (data) {
-                        device.loadPlugin(plugin.type, plugin.module);
-                        resolve();
-                    }).catch(function (err) {
-                        reject(err);
-                    });
-                } else {
-                    device.loadPlugin(plugin.type, plugin.module);
-                    resolve();
-                }
-                // npm.load({ prefix: settings.appDir }, function (err) {
-                //     // handle errors
-
-                //     // install module ffi
-                //     npm.commands.install([plugin], function (er, data) {
-                //         // log errors or data
-                //         if (err) {
-                //             reject(err);
-                //         } else {
-                //             resolve();
-                //             let plug = Object.values(plugins).find(p => plugin.startsWith(p.type));
-                //             if (plug) {
-                //                 device.loadPlugin(plug.type);
-                //             }
-                //         }
-                //     });
-
-                //     npm.on('out', function (message) {
-                //         // log installation progress
-                //         console.log(message);
-                //     });
-                // });
-            } catch (err) {
-                reject(err);
-            }
-        } else {
-            reject();
-        }
-    });
-}
-
 /**
  * Remove plugin, uninstall
  */
@@ -192,45 +160,12 @@ function removePlugin(plugin) {
                 }).catch(function (err) {
                     reject(err);
                 });
-                // npm.load({ prefix: settings.appDir }, function (err) {
-                //     // handle errors
-
-                //     // install module ffi
-                //     npm.commands.uninstall([plugin], function (er, data) {
-                //         // log errors or data
-                //         if (err) {
-                //             reject(err);
-                //         } else {
-                //             resolve();
-                //         }
-                //         let plug = Object.values(plugins).find(p => plugin.startsWith(p.type));
-                //         if (plug) {
-                //             // device.loadPlugin(plug.type);
-                //         }
-                //     });
-
-                //     npm.on('out', function (message) {
-                //         // log installation progress
-                //         console.log(message);
-                //     });
-                // });
             } catch (err) {
                 reject(err);
             }
         } else {
             reject();
         }
-
-        // _checkPluginsSupported().then(plg => {
-        //     if (Object.values(plg).length > 0) {
-        //         resolve(Object.values(plg));
-        //     } else {
-        //         resolve();
-        //     }
-        // }).catch(function (err) {
-        //     logger.error('plugins.failed-to-removeplugin: ' + err);
-        //     reject(err);
-        // });
     });
 }
 

@@ -2,9 +2,14 @@
  * 's7': snap7 wrapper to communicate with Siemens PLC (S7) 
  */
 
-var snap7 = require('node-snap7');
+var snap7;
+try {
+    snap7 = require('node-snap7');
+} catch { }
+if (!snap7) {
+    snap7 = require('../../../_pkg/node-snap7');
+}
 const datatypes = require('./datatypes');
-
 
 function S7client(_data, _logger, _events) {
 

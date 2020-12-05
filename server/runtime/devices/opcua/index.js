@@ -1,8 +1,10 @@
 /**
  * OPC UA Client Driver
  */
+var opcua;
+try { opcua = require('node-opcua'); } catch { }
+try { if (!opcua) opcua = require('../../../_pkg/node-opcua'); } catch { }
 
-const opcua = require('node-opcua');
 const async = require('async');
 
 function OpcUAclient(_data, _logger, _events) {

@@ -143,7 +143,7 @@ function loadDevice(device) {
     } else {
         // device create
         let tdev = Device.create(device, runtime.logger, runtime.events);
-        if (temp && temp.start) {
+        if (tdev && tdev.start) {
             runtime.logger.info(device.name + ': device created');
             activeDevices[device.name] = tdev;
             activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);

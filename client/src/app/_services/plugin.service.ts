@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -11,6 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable()
 export class PluginService {
 
+    @Output() onPluginsChanged: EventEmitter<any> = new EventEmitter();
+v
     private endPointConfig: string = EndPointApi.getURL();
 
     constructor(private http: HttpClient,
@@ -29,6 +31,7 @@ export class PluginService {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 this.http.post<any>(this.endPointConfig + '/api/plugins', { headers: header, params: plugin }).subscribe(result => {
                     observer.next();
+                    this.onPluginsChanged.emit();
                 }, err => {
                     console.log(err);
                     observer.error(err);
@@ -45,6 +48,7 @@ export class PluginService {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 this.http.delete<any>(this.endPointConfig + '/api/plugins', { headers: header, params: {param:  plugin.name} }).subscribe(result => {
                     observer.next();
+                    this.onPluginsChanged.emit();
                 }, err => {
                     console.log(err);
                     observer.error(err);

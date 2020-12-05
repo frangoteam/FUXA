@@ -17,7 +17,6 @@
     "@types/socket.io": "^2.1.2",
     "app-root-path": "^2.1.0",
     "async": "^2.6.2",
-    "bacstack": "0.0.1-beta.13",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
@@ -27,10 +26,8 @@
     "live-plugin-manager": "^0.15.1",
     "morgan": "^1.9.1",
     "node-opcua": "^0.7.2",
-    "node-snap7": "^1.0.1",
-    "npm": "^6.14.9",
     "socket.io": "^2.2.0",
-    "sqlite3": "^4.0.9",
+    "sqlite3": "^5.0.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {}
