@@ -177,8 +177,8 @@ function AlarmsManager(_runtime) {
                     groupalarms.forEach(alr => {
                         if (alr.check(time, tag.ts, Number(tag.value))) {
                             // changed
-                            console.log('ALR: ' + alr.getId() + ' s:' + alr.status + ' on:' + _formatDateTime(alr.ontime) + ' off:' + _formatDateTime(alr.offtime) + 
-                                        ' ack:' + _formatDateTime(alr.acktime) + ' ' + alr.toremove);
+                            // console.log('ALR: ' + alr.getId() + ' s:' + alr.status + ' on:' + _formatDateTime(alr.ontime) + ' off:' + _formatDateTime(alr.offtime) + 
+                            //             ' ack:' + _formatDateTime(alr.acktime) + ' ' + alr.toremove);
                             changed.push(alr);
                         }
                     });
