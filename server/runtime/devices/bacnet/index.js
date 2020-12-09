@@ -4,12 +4,6 @@
 
 'use strict';
 var bacnet;
-try {
-    bacnet = require('bacnet');
-} catch { }
-if (!bacnet) {
-    bacnet = require('../../../_pkg/bacnet');
-}
 
 function BACNETclient(_data, _logger, _events) {
 
@@ -635,7 +629,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { bacnet = require('bacstack'); } catch { }
+        if (!bacnet && manager) { try { bacnet = manager.require('bacstack'); } catch { } }
+        if (!bacnet) return null;
         return new BACNETclient(data, logger, events);
     }
 }

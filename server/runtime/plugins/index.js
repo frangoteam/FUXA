@@ -18,8 +18,8 @@ var manager;
  */
 var plugins = {};
 plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '0.7.2');
-plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.1');
-plugins['bacstack'] = new Plugin('bacstack', './bacnet', 'BACnet', '0.0.1-beta.13');
+plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.1', true);
+plugins['bacstack'] = new Plugin('bacstack', './bacnet', 'BACnet', '0.0.1-beta.13', true);
 plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.1');
 plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
 
@@ -31,7 +31,7 @@ plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
 function init(_settings, log) {
     settings = _settings;
     logger = log;
-    manager = new PluginManager.PluginManager({ cwd: settings.packageDir, pluginsPath: settings.packageDir });
+    manager = new PluginManager.PluginManager({ pluginsPath: settings.packageDir });
 
     // Init Plugins
     return new Promise(function (resolve, reject) {
@@ -47,12 +47,17 @@ function init(_settings, log) {
             if (!waiting) {
                 resolve();
             }
-        } 
+        }
+        var towait = false;
         Object.values(plugins).forEach(async (pg) => {
             if (pg.current) {
+                towait = true;
                 events.once(pg.name, checkInstalled);
             }
         });
+        if (!towait) {
+            resolve();
+        }
         // add plugins
         Object.values(plugins).forEach(async (pg) => {
             if (pg.current) {
@@ -226,14 +231,17 @@ module.exports = {
     getPlugin: getPlugin,
     getPlugins: getPlugins,
     addPlugin: addPlugin,
-    removePlugin: removePlugin
+    removePlugin: removePlugin,
+
+    get manager() { return manager },
 };
 
-function Plugin(name, module, type, version) {
+function Plugin(name, module, type, version, dinamic) {
     this.name = name;
     this.module = module;
     this.type = type;
     this.version = version;
     this.current = '';
     this.pkg = false;
+    this.dinamic = false || dinamic;
 }

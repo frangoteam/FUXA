@@ -16,13 +16,15 @@
                 <span style="width:200px">{{plugin.status}}</span>
                 <div style="width:40px">
 					<mat-spinner *ngIf="plugin.working" diameter="20"></mat-spinner>
-				</div>
-                <button mat-icon-button [disabled]="plugin.current.length > 0">
-                    <mat-icon (click)="install(plugin)">add_circle_outline</mat-icon>
-                </button>
-                <button mat-icon-button [disabled]="!plugin.pkg || !plugin.current.length">
-                    <mat-icon (click)="remove(plugin)">remove_circle_outline</mat-icon>
-                </button>
+                </div>
+                <div *ngIf="plugin.dinamic">
+                    <button mat-icon-button [disabled]="plugin.current.length > 0" (click)="install(plugin)">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <button mat-icon-button [disabled]="!plugin.pkg || !plugin.current.length" (click)="remove(plugin)">
+                        <mat-icon>remove_circle_outline</mat-icon>
+                    </button>
+                </div>
             </mat-list-item>
         </mat-list>
     </div>

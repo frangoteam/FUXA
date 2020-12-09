@@ -4,12 +4,6 @@
 
 'use strict';
 var ModbusRTU;
-try {
-    ModbusRTU = require('modbus-serial');
-} catch { }
-if (!ModbusRTU) {
-    ModbusRTU = require('../../../_pkg/modbus-serial');
-}
 const datatypes = require('./datatypes');
 const TOKEN_LIMIT = 1000;
 
@@ -590,7 +584,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { ModbusRTU = require('modbus-serial'); } catch { }
+        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
+        if (!ModbusRTU) return null;
         return new MODBUSclient(data, logger, events);
     },
     ModbusTypes: ModbusTypes

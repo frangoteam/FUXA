@@ -3,13 +3,7 @@
  */
 
 var snap7;
-try {
-    snap7 = require('node-snap7');
-} catch { }
-if (!snap7) {
-    snap7 = require('../../../_pkg/node-snap7');
-}
-const datatypes = require('./datatypes');
+var datatypes;
 
 function S7client(_data, _logger, _events) {
 
@@ -127,7 +121,7 @@ function S7client(_data, _logger, _events) {
                     // console.log('not');
                 }
                 if (lastStatus !== 'connect-ok') {
-                    _emitStatus('connect-ok');                    
+                    _emitStatus('connect-ok');
                 }
             }, reason => {
                 if (reason && reason.stack) {
@@ -193,7 +187,7 @@ function S7client(_data, _logger, _events) {
      */
     this.getValue = function (id) {
         if (varsValue[id]) {
-            return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
+            return { id: id, value: varsValue[id].value, ts: lastTimestampValue };
         }
         return null;
     }
@@ -435,7 +429,7 @@ function S7client(_data, _logger, _events) {
 
                 res = vars.map((v, i) => {
                     let value = null;
-                    if (res[i].Result !== 0) 
+                    if (res[i].Result !== 0)
                         errs.push(s7client.ErrorText(res[i].Result));
                     if (v.type === 'BOOL') {
                         // check the full byte and send all bit if there is a change 
@@ -495,13 +489,13 @@ function S7client(_data, _logger, _events) {
      */
     var _writeVars = function (vars) {
         var toWrite = vars.map(v => ({
-                Area: v.Area,
-                WordLen: datatypes[v.type].S7WordLen,
-                DBNumber: v.dbnum,
-                Start: v.type === 'BOOL' ? v.Start * 8 + v.bit : v.Start,
-                Amount: 1,
-                Data: datatypes[v.type].formatter(parseFloat(v.value))
-            }));
+            Area: v.Area,
+            WordLen: datatypes[v.type].S7WordLen,
+            DBNumber: v.dbnum,
+            Start: v.type === 'BOOL' ? v.Start * 8 + v.bit : v.Start,
+            Amount: 1,
+            Data: datatypes[v.type].formatter(parseFloat(v.value))
+        }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
                 if (err) return this._getErr(err);
@@ -577,7 +571,7 @@ function S7client(_data, _logger, _events) {
                         case 'AB':
                         case 'QB':
                         case 'AW':
-                        case 'QW':        
+                        case 'QW':
                         case 'AD':
                         case 'QD':
                             return { Area: s7client['S7AreaPA'], WordLen: len, Start: parseInt(variable.substring(2)), Amount: 1, type: type };
@@ -629,7 +623,11 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { snap7 = require('node-snap7'); } catch { }
+        if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
+        if (snap7) datatypes = require('./datatypes');
+        else return null;
         return new S7client(data, logger, events);
     }
 }

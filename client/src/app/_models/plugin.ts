@@ -5,6 +5,7 @@ export class Plugin {
     current: string;
     status: string;
     pkg: boolean;
+    dinamic: boolean;
 }
 
 export enum PluginType {

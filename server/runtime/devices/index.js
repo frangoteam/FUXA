@@ -140,7 +140,7 @@ function loadDevice(device) {
         activeDevices[device.name].load(device);
     } else {
         // device create
-        let tdev = Device.create(device, runtime.logger, runtime.events);
+        let tdev = Device.create(device, runtime);
         if (tdev && tdev.start) {
             runtime.logger.info(`'${device.name}' created`);
             activeDevices[device.name] = tdev;

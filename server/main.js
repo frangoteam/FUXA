@@ -247,7 +247,7 @@ function startFuxa() {
 // Don't wait any more
 setTimeout(() => {
     events.emit('init-runtime-ok');
-}, 30000);
+}, 60000);
 
 process.on('uncaughtException', function (err) {
     if (err.stack) {

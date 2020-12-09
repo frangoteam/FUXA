@@ -3,20 +3,22 @@
  */
 
 'use strict';
-var S7client = null; //require('./s7');
-var OpcUAclient = null; //require('./opcua');
-var MODBUSclient = null; //require('./modbus');
-var BACNETclient = null; //require('./bacnet');
+var S7client = require('./s7');
+var OpcUAclient = require('./opcua');
+var MODBUSclient = require('./modbus');
+var BACNETclient = require('./bacnet');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_DAQ_MIN_INTERVAL = 60000;            // with DAQ enabled, interval to save DAQ value anyway !!bigger as DEVICE_POLLING_INTERVAL
 
-function Device(data, logger, _events) {
+function Device(data, runtime) {
     var property = { id: data.id, name: data.name };        // Device property (name, id)
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
-    var events = _events;                                   // Events to commit change to runtime
+    var logger = runtime.logger;                            // Logger
+    var events = runtime.events;                            // Events to commit change to runtime
+    var manager = runtime.plugins.manager;                          // Plugins manager
     var comm;                                               // Interface to OPCUA/S7/.. Device
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
@@ -26,24 +28,26 @@ function Device(data, logger, _events) {
         if (!S7client) {
             return null;
         }
-        comm = S7client.create(data, logger, events);
+        comm = S7client.create(data, logger, events, manager);
     } else if (data.type === DeviceEnum.OPCUA) {
         if (!OpcUAclient) {
             return null;
         }
-        comm = OpcUAclient.create(data, logger, events);
+        comm = OpcUAclient.create(data, logger, events, manager);
     } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
         if (!MODBUSclient) {
             return null;
         }
-        comm = MODBUSclient.create(data, logger, events);        
+        comm = MODBUSclient.create(data, logger, events, manager);        
     } else if (data.type === DeviceEnum.BACnet) {
         if (!BACNETclient) {
             return null;
         }
-        comm = BACNETclient.create(data, logger, events);        
+        comm = BACNETclient.create(data, logger, events, manager);        
     }
-
+    if (!comm) {
+        return null;
+    }
     /**
      * Start StateMachine, init and start TimerInterval to check Device status
      */
@@ -278,8 +282,8 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
-        return new Device(data, logger, events);
+    create: function (data, runtime) {
+        return new Device(data, runtime);
     },
     getSupportedProperty: getSupportedProperty,
     loadPlugin: loadPlugin

@@ -2,8 +2,6 @@
  * OPC UA Client Driver
  */
 var opcua;
-try { opcua = require('node-opcua'); } catch { }
-try { if (!opcua) opcua = require('../../../_pkg/node-opcua'); } catch { }
 
 const async = require('async');
 
@@ -729,7 +727,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { opcua = require('node-opcua'); } catch { }
+        if (!opcua && manager) { try { opcua = manager.require('node-opcua'); } catch { } }
+        if (!opcua) return null;
         return new OpcUAclient(data, logger, events);
     },
     getEndPoints: getEndPoints
