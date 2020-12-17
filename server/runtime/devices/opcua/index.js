@@ -17,7 +17,7 @@ function OpcUAclient(_data, _logger, _events) {
     var the_session;
     var the_subscription = null;
     var options = { connectionStrategy: { maxRetry: 1 }, keepSessionAlive: true };  // Connections options
-    var client = new opcua.OPCUAClient(options);
+    var client = opcua.OPCUAClient.create(options);
     const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === 'DataType' || x === 'AccessLevel' || x === 'UserAccessLevel');//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
@@ -59,7 +59,7 @@ function OpcUAclient(_data, _logger, _events) {
                                             opts['securityPolicy'] = property.mode.securityPolicy;
                                         }
                                     }
-                                    client = new opcua.OPCUAClient(opts);  
+                                    client = opcua.OPCUAClient.create(opts);  
                                 }
                                 callback();
                             }).catch(function (err) {
@@ -80,7 +80,7 @@ function OpcUAclient(_data, _logger, _events) {
                                 logger.info(`'${data.name}' connection`, true);
                             }
                             callback(err);
-                        })
+                        });
                     },
                     // step 3 create session
                     function (callback) {
@@ -472,17 +472,21 @@ function OpcUAclient(_data, _logger, _events) {
      * samplingInterval = 1000 msec.
      * @param {*} callback 
      */
-    var _startMonitor = function (callback) {
+    var _startMonitor = async function (callback) {
 
         if (the_session && the_subscription) {
             for (var id in data.tags) {
-                var nodeId = id;
-                var monitoredItem = the_subscription.monitor(
-                    { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
-                    { samplingInterval: 1000, discardOldest: true, queueSize: 1 },
-                    opcua.read_service.TimestampsToReturn.Both,
-                );
-                monitoredItem.on('changed', _monitorcallback(nodeId));
+                try {
+                    var nodeId = id;
+                    var monitoredItem = await the_subscription.monitor(
+                        { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
+                        { samplingInterval: 1000, discardOldest: true, queueSize: 1 },
+                        opcua.TimestampsToReturn.Both
+                    );
+                    monitoredItem.on('changed', _monitorcallback(nodeId));
+                } catch (ex) {
+                    logger.error(`'${nodeId}' _startMonitor`);
+                }
             }
             callback(true);
         } else {
