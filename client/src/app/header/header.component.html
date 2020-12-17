@@ -13,7 +13,7 @@
     <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)" accept=".fuxap" />
   </mat-menu>
   <button mat-button title="{{'header.edit-project' | translate}}" [matMenuTriggerFor]="prjedit" #prjedittrigger="matMenuTrigger" class="main-btn" (click)="prjviewtrigger.closeMenu()">
-    <mat-icon aria-label="Edit Views">widgets</mat-icon>
+    <mat-icon aria-label="Edit Views" style="font-size: 28px;">menu</mat-icon>
   </button>
   <mat-menu #prjedit="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">
     <button mat-menu-item (click)="goTo('/editor')">{{'header.edit-views' | translate}}</button>
@@ -25,6 +25,8 @@
     <mat-divider class="menu-separator"></mat-divider>
     <button mat-menu-item (click)="onChartConfig()">{{'header.edit-charts' | translate}}</button>
     <button mat-menu-item (click)="onLayoutConfig()">{{'header.edit-layout' | translate}}</button>
+    <mat-divider class="menu-separator"></mat-divider>
+    <button mat-menu-item (click)="onPlugins()">{{'header.edit-plugins' | translate}}</button>
   </mat-menu>
 
 </div>

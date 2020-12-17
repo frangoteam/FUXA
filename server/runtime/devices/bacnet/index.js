@@ -3,7 +3,7 @@
  */
 
 'use strict';
-const bacnet = require('bacstack');
+var bacnet;
 
 function BACNETclient(_data, _logger, _events) {
 
@@ -33,15 +33,15 @@ function BACNETclient(_data, _logger, _events) {
             if (data.property && data.property.address) {
                 try {
                     if (_checkWorking(true)) {
-                        logger.info(data.name + ': try to connect ' + data.property.address);
+                        logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         _connect(data.property.address).then( res => {
-                            logger.info(data.name + ': connected!');
+                            logger.info(`'${data.name}' connected!`, true);
                             _emitStatus('connect-ok');
                             connected = true;
                             resolve();
                             _checkWorking(false);
                         }, reason => {
-                            logger.error(data.name + ': connect failed! ' + reason);
+                            logger.error(`'${data.name}' connect failed! ${reason}`);
                             _emitStatus('connect-error');
                             _clearVarsValue();
                             reject();
@@ -53,7 +53,7 @@ function BACNETclient(_data, _logger, _events) {
                         reject();
                     }
                 } catch (err) {
-                    logger.error(data.name + ': try to connect error! ' + err);
+                    logger.error(`'${data.name}' try to connect error! ${err}`);
                     _emitStatus('connect-error');
                     _clearVarsValue();
                     reject();
@@ -61,7 +61,7 @@ function BACNETclient(_data, _logger, _events) {
                 }
 
             } else {
-                logger.error(data.name + ': missing connection data!');
+                    logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
                 _clearVarsValue();
                 reject();
@@ -82,7 +82,7 @@ function BACNETclient(_data, _logger, _events) {
                 resolve(true);
             } catch (err) {
                 if (err) {
-                    logger.error(data.name + ': disconnect failure, ' + err);
+                    logger.error(`'${data.name}' disconnect failure! ${err}`);
                 }
                 reject();
             }
@@ -119,7 +119,7 @@ function BACNETclient(_data, _logger, _events) {
                         }
                     } catch (err) {
                         if (err) {
-                            logger.error(data.name + ': browse failure, ' + err);
+                            logger.error(`'${data.name}' browse failure! ${err}`);
                         }
                         reject();
                         _checkWorking(false);
@@ -147,11 +147,11 @@ function BACNETclient(_data, _logger, _events) {
                 try {
                     client.readPropertyMultiple(ipAddress, readObjects, (err, value) => {
                         if (err) {        
-                            logger.error(data.name + ' readPropertyMultiple error: ' + err);
+                            logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
                         } else {
                             const tmp = {};
                             if (!(value && value.values && value.values[0] && value.values[0].values)) {
-                                logger.error(data.name + ' readPropertyMultiple error: unknow');
+                                logger.error(`'${data.name}' readPropertyMultiple error! unknow`);
                             } else if (value.values && value.values.length) {
                                 let result = [];
                                 let errors = [];
@@ -204,7 +204,7 @@ function BACNETclient(_data, _logger, _events) {
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
         var count = Object.keys(data.tags).length;
-        logger.info(data.name + ': data loaded (' + count + ')');
+        logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
     /**
@@ -250,12 +250,12 @@ function BACNETclient(_data, _logger, _events) {
         if (data.tags[sigid]) {
             var obj = _extractId(data.tags[sigid].address);
             _writeProperty(obj, value).then(result => {
-                logger.info('setValue : ' + sigid + '=' + result);
+                logger.info(`'${data.name}' setValue(${sigid}, ${result})`, true);
             }, reason => {
                 if (reason && reason.stack) {
-                    logger.error(data.name + ' _writeProperty error: ' + reason.stack);
+                    logger.error(`'${data.name}' _writeProperty error! ${reason.stack}`);
                 } else {
-                    logger.error(data.name + ' _writeProperty error: ' + reason);
+                    logger.error(`'${data.name}' _writeProperty error! ${reason}`);
                 }
             });
         }
@@ -353,12 +353,12 @@ function BACNETclient(_data, _logger, _events) {
                 }, reason => {
                     if (reason) {
                         if (reason.stack) {
-                            logger.error(data.name + ' _askName error: ' + reason.stack);
+                            logger.error(`'${data.name}' _askName error! ${reason.stack}`);
                         } else if (reason.message) {
-                            logger.error(data.name + ' _askName error: ' + reason.message);
+                            logger.error(`'${data.name}' _askName error! ${reason.message}`);
                         }
                     } else {
-                        logger.error(data.name + ' _askName error: ' + reason);
+                        logger.error(`'${data.name}' _askName error! ${reason}`);
                     }
                     reject();
                 });
@@ -376,7 +376,7 @@ function BACNETclient(_data, _logger, _events) {
         return new Promise(function (resolve, reject) {
             client.readProperty(ipAddress, {type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: instance}, bacnet.enum.PropertyIds.PROP_OBJECT_LIST, (err, value) => {
                 if (err) {
-                    logger.error(data.name + ' _readObjectList error: ' + err);
+                    logger.error(`'${data.name}' _readObjectList error! ${err}`);
                 } else if (value && value.values && value.values.length) {
                     var objects = [];
                     var readfnc = [];
@@ -388,7 +388,7 @@ function BACNETclient(_data, _logger, _events) {
                             try {
                                 readfnc.push(_readProperty({ type: object.type, instance: object.instance}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME));
                             } catch (error) {
-                                logger.error(data.name + ' _readObjectList error: ' + error);
+                                logger.error(`'${data.name}' _readObjectList error! ${error}`);
                             }
                         }
                     }
@@ -407,12 +407,12 @@ function BACNETclient(_data, _logger, _events) {
                     }, reason => {
                         if (reason) {
                             if (reason.stack) {
-                                logger.error(data.name + ' _readObjectList error: ' + reason.stack);
+                                logger.error(`'${data.name}' _readObjectList error! ${reason.stack}`);
                             } else if (reason.message) {
-                                logger.error(data.name + ' _readObjectList error: ' + reason.message);
+                                logger.error(`'${data.name}' _readObjectList error! ${reason.message}`);
                             }
                         } else {
-                            logger.error(data.name + ' _readObjectList error: ' + reason);
+                            logger.error(`'${data.name}' _readObjectList error! ${reason}`);
                         }
                         reject(reason);
                     });
@@ -463,7 +463,7 @@ function BACNETclient(_data, _logger, _events) {
                     console.log('value: ', err);
                 } else {
                     resolve();
-                    console.log('value: ', result);
+                    // console.log('value: ', result);
                 }
             });
         });
@@ -600,7 +600,7 @@ function BACNETclient(_data, _logger, _events) {
      */
     var _checkWorking = function (check) {
         if (check && working) {
-            logger.error(data.name + ' working (connection || polling) overload!');
+            logger.error(`'${data.name}' working (connection || polling) overload!`);
             return false;
         }
         working = check;
@@ -629,7 +629,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { bacnet = require('bacstack'); } catch { }
+        if (!bacnet && manager) { try { bacnet = manager.require('bacstack'); } catch { } }
+        if (!bacnet) return null;
         return new BACNETclient(data, logger, events);
     }
 }

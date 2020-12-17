@@ -2,14 +2,15 @@
  * 'api/project': API server initialization and general GET/POST
  */
 
-var express = require("express");
-var bodyParser = require("body-parser");
+var express = require('express');
+var bodyParser = require('body-parser');
 var authJwt = require('./jwt-helper');
 
-var prjApi = require("./projects");
-var authApi = require("./auth");
-var usersApi = require("./users");
-var alarmsApi = require("./alarms");
+var prjApi = require('./projects');
+var authApi = require('./auth');
+var usersApi = require('./users');
+var alarmsApi = require('./alarms');
+var pluginsApi = require('./plugins');
 
 var apiApp;
 var server;
@@ -35,11 +36,13 @@ function init(_server, _runtime) {
             apiApp.use(alarmsApi.app());
             authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
             apiApp.use(authApi.app());
+            pluginsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(pluginsApi.app());
 
             /**
              * GET Server setting data
              */
-            apiApp.get("/api/settings", function (req, res) {
+            apiApp.get('/api/settings', function (req, res) {
                 if (runtime.settings) {
                     let tosend = JSON.parse(JSON.stringify(runtime.settings));
                     delete tosend.secretCode;
@@ -48,10 +51,10 @@ function init(_server, _runtime) {
                     res.json(tosend);
                 } else {
                     res.status(404).end();
-                    runtime.logger.error("api get settings: Value Not Found!");
+                    runtime.logger.error('api get settings: Value Not Found!');
                 }
             });
-            runtime.logger.info("api: init successful!");
+            runtime.logger.info('api: init successful!', true);
         } else {
         }
         resolve();

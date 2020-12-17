@@ -38,7 +38,7 @@ function AlarmsManager(_runtime) {
      */
     this.stop = function () {
         return new Promise(function (resolve, reject) {
-            logger.info('alarms.stop-checkstatus!');
+            logger.info('alarms.stop-checkstatus!', true);
             if (alarmsCheckStatus) {
                 clearInterval(alarmsCheckStatus);
                 alarmsCheckStatus = null;
@@ -177,8 +177,8 @@ function AlarmsManager(_runtime) {
                     groupalarms.forEach(alr => {
                         if (alr.check(time, tag.ts, Number(tag.value))) {
                             // changed
-                            console.log('ALR: ' + alr.getId() + ' s:' + alr.status + ' on:' + _formatDateTime(alr.ontime) + ' off:' + _formatDateTime(alr.offtime) + 
-                                        ' ack:' + _formatDateTime(alr.acktime) + ' ' + alr.toremove);
+                            // console.log('ALR: ' + alr.getId() + ' s:' + alr.status + ' on:' + _formatDateTime(alr.ontime) + ' off:' + _formatDateTime(alr.offtime) + 
+                            //             ' ack:' + _formatDateTime(alr.acktime) + ' ' + alr.toremove);
                             changed.push(alr);
                         }
                     });
@@ -203,7 +203,7 @@ function AlarmsManager(_runtime) {
     var _init = function () {
         return new Promise(function (resolve, reject) {
             alarmstorage.init(settings, logger).then(result => {
-                logger.info('alarms.alarmstorage-init-successful!');
+                logger.info('alarms.alarmstorage-init-successful!', true);
                 resolve();
             }).catch(function (err) {
                 logger.error('project.prjstorage.failed-to-init: ' + err);
@@ -249,7 +249,6 @@ function AlarmsManager(_runtime) {
                         }
                     });
                 }
-                // console.log('alarms.load-property! found: ' + alarmsFound);
                 resolve();
             }).catch(function (err) {
                 reject(err);

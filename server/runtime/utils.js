@@ -60,5 +60,10 @@ var utils = module.exports = {
                 reject('gethostinterfaces-error: ' + err);
             }
         });
+    },
+
+    endTime: function (startTime) {
+        var endTime = new Date();
+        return endTime - startTime;
     }
 }

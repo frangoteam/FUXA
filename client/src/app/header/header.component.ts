@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 
 import { ChartConfigComponent } from '../editor/chart-config/chart-config.component';
 import { LayoutPropertyComponent } from '../editor/layout-property/layout-property.component';
+import { PluginsComponent } from '../editor/plugins/plugins.component';
 
 import { ProjectService } from '../_services/project.service';
 import { HelpData } from '../_models/hmi';
@@ -62,6 +63,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.sidenav.close();
     }
 
+    /**
+     * edit the chart configuration
+     */
     onChartConfig() {
         let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
         let devices = this.projectService.getDevices();
@@ -98,6 +102,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 hmi.layout = JSON.parse(JSON.stringify(result.layout));
                 this.projectService.setLayout(hmi.layout);
             }
+        });
+    }
+
+    /**
+     * edit the plugins to install or remove
+     */
+    onPlugins() {
+        let dialogRef = this.dialog.open(PluginsComponent, {
+            position: { top: '60px' },
+        });
+        dialogRef.afterClosed().subscribe(result => {
         });
     }
 

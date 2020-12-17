@@ -1,10 +1,13 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Subscription } from "rxjs";
 import { MatDialog } from '@angular/material';
 
 import { DevicePropertyComponent } from './../device-property/device-property.component';
 import { ProjectService } from '../../_services/project.service';
+import { PluginService } from '../../_services/plugin.service';
 import { Device, DeviceType, DeviceNetProperty } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
+import { Plugin } from '../../_models/plugin';
 
 @Component({
 	selector: 'app-device-map',
@@ -14,24 +17,37 @@ import { Utils } from '../../_helpers/utils';
 export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	@Output() goto: EventEmitter<Device> = new EventEmitter();
+	private subscriptionPluginsChange: Subscription;
 
 	server: Device;
 	devices = {};
+    plugins = [];
 
 	devicesStatus = {};
 	dirty: boolean = false;
 
 	constructor(private dialog: MatDialog,
+        private pluginService: PluginService,
 		private projectService: ProjectService) { }
 
 	ngOnInit() {
 		this.loadCurrentProject();
+		this.loadAvailableType();
+		this.subscriptionPluginsChange = this.pluginService.onPluginsChanged.subscribe(event => {
+			this.loadAvailableType();
+		});
 	}
 
 	ngAfterViewInit() {
 	}
 
 	ngOnDestroy() {
+		try {
+			if (this.subscriptionPluginsChange) {
+				this.subscriptionPluginsChange.unsubscribe();
+			}
+		} catch (e) {
+		}
 	}
 
 	onEditDevice(device: Device) {
@@ -47,6 +63,19 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (prj && prj.devices) {
 			this.devices = prj.devices;
 		}
+	}
+
+	loadAvailableType() {
+		// define available device type (plugins)
+		this.plugins = [];
+		this.pluginService.getPlugins().subscribe(plugins => {
+			Object.values(plugins).forEach((pg) => {
+				if (pg.current.length) {
+					this.plugins.push(pg.type);
+				}
+			});
+        }, error => {
+        });
 	}
 
 	addDevice() {
@@ -179,7 +208,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		let tempdevice = JSON.parse(JSON.stringify(device));
 		let dialogRef = this.dialog.open(DevicePropertyComponent, {
 			panelClass: 'dialog-property',
-			data: { device: tempdevice, remove: toremove, exist: exist },
+			data: { device: tempdevice, remove: toremove, exist: exist, availableType: this.plugins },
 			position: { top: '60px' }
 		});
 

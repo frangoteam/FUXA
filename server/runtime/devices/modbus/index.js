@@ -3,9 +3,10 @@
  */
 
 'use strict';
-var ModbusRTU = require("modbus-serial");
+var ModbusRTU;
 const datatypes = require('./datatypes');
 const TOKEN_LIMIT = 1000;
+
 function MODBUSclient(_data, _logger, _events) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
@@ -40,10 +41,10 @@ function MODBUSclient(_data, _logger, _events) {
                     (type === ModbusTypes.RTU && data.property.baudrate && data.property.databits && data.property.stopbits && data.property.parity))) {
                 try {
                     if (!client.isOpen  && _checkWorking(true)) {
-                        logger.info(data.name + ': try to connect ' + data.property.address);
+                        logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         _connect(function (err) {
                             if (err) {
-                                logger.error(data.name + ': connect failed! ' + err);
+                                logger.error(`'${data.name}' connect failed! ${err}`);
                                 _emitStatus('connect-error');
                                 _clearVarsValue();
                                 reject();
@@ -54,7 +55,7 @@ function MODBUSclient(_data, _logger, _events) {
                                 }
                                 // set a timout for requests default is null (no timeout)
                                 client.setTimeout(2000);
-                                logger.info(data.name + ': connected!');
+                                logger.info(`'${data.name}' connected!`, true);
                                 _emitStatus('connect-ok');
                                 resolve();
                             }
@@ -65,14 +66,14 @@ function MODBUSclient(_data, _logger, _events) {
                         _emitStatus('connect-error');
                     }
                 } catch (err) {
-                    logger.error(data.name + ': try to connect error! ' + err);
+                    logger.error(`'${data.name}' try to connect error! ${err}`);
                     _checkWorking(false);
                     _emitStatus('connect-error');
                     _clearVarsValue();
                     reject();
                 }
             } else {
-                logger.error(data.name + ': missing connection data!');
+                logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
                 _clearVarsValue();
                 reject();
@@ -94,9 +95,9 @@ function MODBUSclient(_data, _logger, _events) {
             } else {
                 client.close(function (result) {
                     if (result) {
-                        logger.error(data.name + ' try to disconnect failed!');
+                        logger.error(`'${data.name}' try to disconnect failed!`);
                     } else {
-                        logger.info(data.name + ': disconnected!');
+                        logger.info(`'${data.name}' disconnected!`, true);
                     }
                     _emitStatus('connect-off');
                     _clearVarsValue();
@@ -153,12 +154,12 @@ function MODBUSclient(_data, _logger, _events) {
             }, reason => {
                 if (reason) {
                     if (reason.stack) {
-                        logger.error(data.name + ' _readVars error: ' + reason.stack);
+                        logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
                     } else if (reason.message) {
-                        logger.error(data.name + ' _readVars error: ' + reason.message);
+                        logger.error(`'${data.name}' _readVars error! ${reason.message}`);
                     }
                 } else {
-                    logger.error(data.name + ' _readVars error: ' + reason);
+                    logger.error(`'${data.name}' _readVars error! ${reason}`);
                 }
                 _checkWorking(false);
             });
@@ -228,7 +229,7 @@ function MODBUSclient(_data, _logger, _events) {
             }
             lastkey = adr + stepsMap[key];
         });
-        logger.info(data.name + ': data loaded (' + count + ')');
+        logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
     /**
@@ -276,12 +277,12 @@ function MODBUSclient(_data, _logger, _events) {
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
             var val = datatypes[data.tags[sigid].type].formatter(value);
             _writeMemory(parseInt(memaddr), offset, val).then(result => {
-                logger.info('setValue : ' + sigid + '=' + val);
+                logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
             }, reason => {
                 if (reason && reason.stack) {
-                    logger.error(data.name + ' _writeDB error: ' + reason.stack);
+                    logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
                 } else {
-                    logger.error(data.name + ' _writeDB error: ' + reason);
+                    logger.error(`'${data.name}' _writeMemory error! ${reason}`);
                 }
             });
         }
@@ -533,7 +534,7 @@ function MODBUSclient(_data, _logger, _events) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.error(data.name + ' working (polling/connecting) overload! ' + overloading);
+            logger.error(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 client.close();
@@ -583,7 +584,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { ModbusRTU = require('modbus-serial'); } catch { }
+        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
+        if (!ModbusRTU) return null;
         return new MODBUSclient(data, logger, events);
     },
     ModbusTypes: ModbusTypes

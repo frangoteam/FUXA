@@ -24,11 +24,9 @@ function start() {
     wokingStatus = 'starting';
     devices.load();
     return new Promise(function (resolve, reject) {
-        runtime.logger.info('devices.start-all (' + Object.keys(activeDevices).length + ')');
-        // var deviceStartfnc = [];
+        // runtime.logger.info('devices.start-all (' + Object.keys(activeDevices).length + ')', true);
         for (var id in activeDevices) {
             activeDevices[id].start();
-            // deviceStartfnc.push(activeDevices[id].start);
         }
         resolve();
         wokingStatus = null;
@@ -41,7 +39,7 @@ function start() {
 function stop() {
     wokingStatus = 'stopping';
     return new Promise(function (resolve, reject) {
-        runtime.logger.info('devices.stop-all (' + Object.keys(activeDevices).length + ')');
+        // runtime.logger.info('devices.stop-all (' + Object.keys(activeDevices).length + ')');
         var deviceStopfnc = [];
         for (var id in activeDevices) {
             deviceStopfnc.push(activeDevices[id].stop());
@@ -78,8 +76,7 @@ function update() {
  */
 function updateDevice(device) {
     if (!activeDevices[device.name]) {
-        devices.loadDevice(device);
-        if (device.enabled) {
+        if (devices.loadDevice(device) && device.enabled) {
             activeDevices[device.name].start();
         }
     } else {
@@ -127,7 +124,7 @@ function load() {
     // log remove device not used
     for (var id in activeDevices) {
         if (Object.keys(tempdevices).indexOf(id) < 0) {
-            runtime.logger.info('devices.load-removed: ' + id);
+            runtime.logger.info(`devices.load-removed: '${id}'`, true);
         }
     }
 }
@@ -139,18 +136,25 @@ function load() {
 function loadDevice(device) {
     if (activeDevices[device.name]) {
         // device exist
-        runtime.logger.info(device.name + ': device exist');
+        runtime.logger.info(`'${device.name}' exist`, true);
         activeDevices[device.name].load(device);
     } else {
         // device create
-        runtime.logger.info(device.name + ': device created');
-        activeDevices[device.name] = Device.create(device, runtime.logger, runtime.events);
-        activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);
+        let tdev = Device.create(device, runtime);
+        if (tdev && tdev.start) {
+            runtime.logger.info(`'${device.name}' created`);
+            activeDevices[device.name] = tdev;
+            activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);
+        } else {
+            runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
+            return false;
+        }
     }
     if (runtime.settings.daqEnabled) {
         var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.name, activeDevices[device.name].getTagProperty);
         activeDevices[device.name].bindSaveDaqValue(fncToSaveDaqValue);
     }
+    return true;
 }
 
 /**

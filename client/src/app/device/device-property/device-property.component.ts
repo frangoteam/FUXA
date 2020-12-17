@@ -46,7 +46,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		this.isFuxaServer = (this.data.device.type && this.data.device.type === DeviceType.FuxaServer) ? true : false;
 		for (let key in DeviceType) {
 			if (!this.isFuxaServer && key !== DeviceType.FuxaServer) {
-				this.deviceType[key] = DeviceType[key];
+				for (let idx = 0; idx < this.data.availableType.length; idx++) {
+					if (key.startsWith(this.data.availableType[idx])) {
+						this.deviceType[key] = DeviceType[key];
+					}
+				}
 			}
 		}
 

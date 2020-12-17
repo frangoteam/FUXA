@@ -15,9 +15,7 @@ var daqnodes = {};              // list of daqnode
 function init(_settings, _log) {
     settings = _settings;
     logger = _log;
-
-    logger.info("daqstorage: init successful!");  
-    return true;
+    logger.info("daqstorage: init successful!", true);
 }
 
 function reset() {
@@ -25,7 +23,7 @@ function reset() {
         daqnodes[id].close();
     }
     daqnodes = {};
-    logger.info("daqstorage reset!");
+    logger.info("daqstorage reset!", true);
 }
 
 function addDaqNode(id, fncgetprop) {

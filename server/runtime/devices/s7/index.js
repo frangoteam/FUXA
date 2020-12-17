@@ -2,9 +2,8 @@
  * 's7': snap7 wrapper to communicate with Siemens PLC (S7) 
  */
 
-var snap7 = require('node-snap7');
-const datatypes = require('./datatypes');
-
+var snap7;
+var datatypes;
 
 function S7client(_data, _logger, _events) {
 
@@ -32,15 +31,15 @@ function S7client(_data, _logger, _events) {
             if (data.property && data.property.rack >= 0 && data.property.slot >= 0) {
                 try {
                     if (!s7client.Connected() && _checkWorking(true)) {
-                        logger.info(data.name + ': try to connect ' + data.property.address);
+                        logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         s7client.ConnectTo(data.property.address, data.property.rack, data.property.slot, function (err) {
                             if (err) {
-                                logger.error(data.name + ': connect failed! ' + err);
+                                logger.error(`'${data.name}' connect failed! ${err}`);
                                 _emitStatus('connect-error');
                                 _clearVarsValue();
                                 reject();
                             } else {
-                                logger.info(data.name + ': connected!');
+                                logger.info(`'${data.name}' connected!`, true);
                                 _emitStatus('connect-ok');
                                 resolve();
                             }
@@ -50,14 +49,14 @@ function S7client(_data, _logger, _events) {
                         reject();
                     }
                 } catch (err) {
-                    logger.error(data.name + ': try to connect error! ' + err);
+                    logger.error(`'${data.name}' try to connect error! ${err}`);
                     _checkWorking(false);
                     _emitStatus('connect-error');
                     _clearVarsValue();
                     reject();
                 }
             } else {
-                logger.error(data.name + ': missing connection data!');
+                logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
                 _clearVarsValue();
                 reject();
@@ -79,9 +78,9 @@ function S7client(_data, _logger, _events) {
             } else {
                 var result = s7client.Disconnect();
                 if (result) {
-                    logger.info(data.name + ': disconnected!');
+                    logger.info(`'${data.name}' disconnected!`, true);
                 } else {
-                    logger.error(data.name + ' try to disconnect failed!');
+                    logger.error(`'${data.name}' try to disconnect failed!`);
                 }
                 _emitStatus('connect-off');
                 _clearVarsValue();
@@ -122,13 +121,13 @@ function S7client(_data, _logger, _events) {
                     // console.log('not');
                 }
                 if (lastStatus !== 'connect-ok') {
-                    _emitStatus('connect-ok');                    
+                    _emitStatus('connect-ok');
                 }
             }, reason => {
                 if (reason && reason.stack) {
-                    logger.error(data.name + ' _readVars error: ' + reason.stack);
+                    logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
                 } else {
-                    logger.error(data.name + ' _readVars error: ' + reason);
+                    logger.error(`'${data.name}' _readVars error! ${reason}`);
                 }
                 _checkWorking(false);
             });
@@ -173,7 +172,7 @@ function S7client(_data, _logger, _events) {
                 mixItemsMap[id] = varDb;
             }
         }
-        logger.info(data.name + ': data loaded (' + count + ')');
+        logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
     /**
@@ -188,7 +187,7 @@ function S7client(_data, _logger, _events) {
      */
     this.getValue = function (id) {
         if (varsValue[id]) {
-            return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
+            return { id: id, value: varsValue[id].value, ts: lastTimestampValue };
         }
         return null;
     }
@@ -222,12 +221,12 @@ function S7client(_data, _logger, _events) {
         if (item) {
             item.value = value;
             _writeVars([item], (item instanceof DbItem)).then(result => {
-                logger.info(data.name + ' setValue : ' + sigid + '=' + value);
+                logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true);
             }, reason => {
                 if (reason && reason.stack) {
-                    logger.error(data.name + ' _writeDB error: ' + reason.stack);
+                    logger.error(`'${data.name}' _writeVars error! ${reason.stack}`);
                 } else {
-                    logger.error(data.name + ' _writeDB error: ' + reason);
+                    logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
             });
         }
@@ -361,7 +360,7 @@ function S7client(_data, _logger, _events) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.error(data.name + ' working (polling/connecting) overload! ' + overloading);
+            logger.error(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 s7client.Disconnect();
@@ -430,7 +429,7 @@ function S7client(_data, _logger, _events) {
 
                 res = vars.map((v, i) => {
                     let value = null;
-                    if (res[i].Result !== 0) 
+                    if (res[i].Result !== 0)
                         errs.push(s7client.ErrorText(res[i].Result));
                     if (v.type === 'BOOL') {
                         // check the full byte and send all bit if there is a change 
@@ -490,13 +489,13 @@ function S7client(_data, _logger, _events) {
      */
     var _writeVars = function (vars) {
         var toWrite = vars.map(v => ({
-                Area: v.Area,
-                WordLen: datatypes[v.type].S7WordLen,
-                DBNumber: v.dbnum,
-                Start: v.type === 'BOOL' ? v.Start * 8 + v.bit : v.Start,
-                Amount: 1,
-                Data: datatypes[v.type].formatter(parseFloat(v.value))
-            }));
+            Area: v.Area,
+            WordLen: datatypes[v.type].S7WordLen,
+            DBNumber: v.dbnum,
+            Start: v.type === 'BOOL' ? v.Start * 8 + v.bit : v.Start,
+            Amount: 1,
+            Data: datatypes[v.type].formatter(parseFloat(v.value))
+        }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
                 if (err) return this._getErr(err);
@@ -572,7 +571,7 @@ function S7client(_data, _logger, _events) {
                         case 'AB':
                         case 'QB':
                         case 'AW':
-                        case 'QW':        
+                        case 'QW':
                         case 'AD':
                         case 'QD':
                             return { Area: s7client['S7AreaPA'], WordLen: len, Start: parseInt(variable.substring(2)), Amount: 1, type: type };
@@ -624,7 +623,11 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { snap7 = require('node-snap7'); } catch { }
+        if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
+        if (snap7) datatypes = require('./datatypes');
+        else return null;
         return new S7client(data, logger, events);
     }
 }

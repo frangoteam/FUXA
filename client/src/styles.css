@@ -401,12 +401,24 @@ app-root {
     background-color: #f1f3f4;
     /* background-color: rgba(68,138,255,0.01) */
 }
-  
+
+.my-form-field input:focus {
+  padding: 4px 1px 5px 2px;
+  border: 2px solid #ccc;
+  background-color: white;
+}
+
 .my-form-field mat-select {
     padding: 6px 3px 7px 4px;
     background-color: #f1f3f4;
     /* background-color: rgba(0,0,0,0.01) */
 }
+/* 
+.my-form-field mat-select:focus {
+  padding: 4px 1px 5px 2px;
+  border: 2px solid #ccc;
+  background-color: white;
+} */
 
 /* pointer */
 .mycursor-pointer {

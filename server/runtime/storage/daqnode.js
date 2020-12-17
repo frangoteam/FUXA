@@ -58,29 +58,29 @@ function DaqNode(_settings, _log, _id) {
 
     // bind database daqdata
     _bindDaqData(db_daqdata_file).then(result => {
-        logger.info('daqstorage.connected-to-data ' + db_daqmap_file + ' database.');
+        logger.info(`daqstorage.connected-to-data '${db_daqdata_file}' database`, true);
         db_daqdata = result;
     }).catch(function (err) {
         if (err) {
-            logger.error(err);
+            logger.error(`daqstorage.connected-to-data failed! '${id}' ${err}`);
         }
     });
 
     // bind database daqmap
     _bindDaqMap(db_daqmap_file).then(result => {
-        logger.info('daqstorage.connected-to-map ' + db_daqmap_file + ' database.');
+        logger.info(`daqstorage.connected-to-map '${db_daqmap_file}' database`, true);
         db_daqmap = result;
         _loadMap().then(result => {
-            logger.info('daqstorage.init-successful! (' + id + ')');
+            logger.info(`daqstorage.load-map successful! '${id}'`, true);
             initready = true;
         }).catch(function (err) {
             if (err) {
-                logger.error('daqstorage.load-map (' + id + '): ' + err);
+                logger.error(`daqstorage.load-map failed! '${id}' ${err}`);
             }
         });
     }).catch(function (err) {
         if (err) {
-            logger.error('daqstorage.bind-map (' + id + '): ' + err);
+            logger.error(`daqstorage.bind-map failed! '${id}' ${err}`);
         }
     });
 
@@ -94,7 +94,7 @@ function DaqNode(_settings, _log, _id) {
         if (db_daqdata) {
             db_daqdata.close();
         }
-        logger.info('daqstorage.closed-successful! (' + id + ')');
+        logger.info(`daqstorage.closed successful! '${id}'`, true);
     }
 
     /**
@@ -120,12 +120,12 @@ function DaqNode(_settings, _log, _id) {
                         _getTagMap(prop.id, prop.name, prop.type).then(function (result) {
                             _addTagMap(result.mapid, prop.id, prop.name);
                         }).catch(function (err) {
-                            logger.error('daqstorage.add-daq-value-_getTagMap (' + id + '): ' + err);
+                            logger.error(`daqstorage.add-daq-value _getTagMap failed! '${id}' ${err}`);
                         });
                         _checkMapWorking(false);
                     }).catch(function (err) {
                         _checkMapWorking(false);
-                        logger.error('daqstorage.add-daq-value-_insertTagToMap (' + id + '): ' + err);
+                        logger.error(`daqstorage.add-daq-value _insertTagToMap failed! '${id}' ${err}`);
                     });
                 }
             } else {
@@ -142,14 +142,14 @@ function DaqNode(_settings, _log, _id) {
                                     db_daqdata_file = path.join(settings.dbDir, db_daqdata_prefix + id + '_' + suffix + '.db');
                                     db_daqdata = null;
                                     _bindDaqData(db_daqdata_file).then(result => {
-                                        logger.info('daqstorage.connected-to-data ' + db_daqmap_file + ' database.');
+                                        logger.info(`daqstorage.add-daq-value _bindDaqData '${id}' database`, true);
                                         daqNextToken += (settings.daqTimeToken) ? db_daqtoken * settings.daqTimeToken : db_daqtoken;
                                         db_daqdata = result;
                                         _archiveDBfile(oldfile, lastts);
                                         _checkDataWorking(false);
                                     }).catch(function (err) {
                                         _checkDataWorking(false);
-                                        logger.error('daqstorage.add-daq-value-_bindDaqData (' + id + '): ' + err);
+                                        logger.error(`daqstorage.add-daq-value _bindDaqData failed! '${id}' ${err}`);
                                     });
                                 });
                             } else {
@@ -161,12 +161,12 @@ function DaqNode(_settings, _log, _id) {
                     } else {
                         // some things was wrong by tokenize...try to bind the db_daqdata 
                         _bindDaqData(db_daqdata_file).then(result => {
-                            logger.info('daqstorage.connected-to-data ' + db_daqmap_file + ' database.');
+                            logger.info(`daqstorage.add-daq-value _bindDaqData '${db_daqmap_file}' database`, true);
                             db_daqdata = result;
                             _checkDataWorking(false);
                         }).catch(function (err) {
                             _checkDataWorking(false);
-                            logger.error('daqstorage.add-daq-value-_bindDaqData (' + id + '): ' + err);
+                            logger.error(`daqstorage.add-daq-value _bindDaqData failed! '${id}' ${err}`);
                         });
                     }
                 }
@@ -195,19 +195,19 @@ function DaqNode(_settings, _log, _id) {
                 // check function to insert in map            
                 if (addMapfnc.length > 0) {
                     Promise.all(addMapfnc).then(result => {
-                        logger.info('daqstorage.add-daq-values-_insertTagToMap successfull (' + id + '): ' + result);
+                        logger.info(`daqstorage.add-daq-values _insertTagToMap '${id}' ${result}`, true);
                         for (var idx = 0; idx < result.length; idx++) {
                             _getTagMap(result[idx]).then(function (result) {
                                 _addTagMap(result.mapid, result.id, result.name);
                             }).catch(function (err) {
-                                logger.error('daqstorage.add-daq-values-_getTagMap (' + id + '): ' + err);
+                                logger.error(`daqstorage.add-daq-value _getTagMap failed! '${id}' ${err}`);
                             });
                         }
                     }, reason => {
                         if (reason && reason.stack) {
-                            logger.error('daqstorage.add-daq-values-_insertTagToMap (' + id + '): ' + reason.stack);
+                            logger.error(`daqstorage.add-daq-value _insertTagToMap failed! '${id}' ${reason.stack}`);
                         } else {
-                            logger.error('daqstorage.add-daq-values-_insertTagToMap error (' + id + '): ' + reason);
+                            logger.error(`daqstorage.add-daq-value _insertTagToMap failed! '${id}' ${reason}`);
                         }
                         _checkWorking(false);
                     });
@@ -216,7 +216,6 @@ function DaqNode(_settings, _log, _id) {
                 if (addDaqfnc.length > 0) {
                     if (_checkDataWorking(true)) {
                         Promise.all(addDaqfnc).then(result => {
-                            // logger.info('addDaqValues _insertTagValue successfull: ' + result);
                             // check db tokenizer after inserted
                             var lastts = 0 || result[0];
                             if (daqNextToken && daqNextToken < lastts) {
@@ -227,14 +226,14 @@ function DaqNode(_settings, _log, _id) {
                                     db_daqdata_file = path.join(settings.dbDir, db_daqdata_prefix + id + '_' + suffix + '.db');
                                     db_daqdata = null;
                                     _bindDaqData(db_daqdata_file).then(result => {
-                                        logger.info('daqstorage.add-daq-values ' + db_daqmap_file + ' database.');
+                                        logger.info(`daqstorage.add-daq-values '${db_daqmap_file}' database`, true);
                                         daqNextToken += (settings.daqTimeToken) ? db_daqtoken * settings.daqTimeToken : db_daqtoken;
                                         db_daqdata = result;
                                         _archiveDBfile(oldfile, lastts);
                                         _checkDataWorking(false);
                                     }).catch(function (err) {
                                         _checkDataWorking(false);
-                                        logger.error('daqstorage.add-daq-values-_bindDaqData (' + id + '): ' + err);
+                                        logger.error(`daqstorage.add-daq-values _bindDaqData failed! '${id}' ${err}`);
                                     });
                                 });
                             } else {
@@ -242,9 +241,9 @@ function DaqNode(_settings, _log, _id) {
                             }                            
                         }, reason => {
                             if (reason && reason.stack) {
-                                logger.error('daqstorage.add-daq-values-addDaqfnc (' + id + '): ' + reason.stack);
+                                logger.error(`daqstorage.add-daq-values addDaqfnc failed! '${id}' ${reason.stack}`);
                             } else {
-                                logger.error('daqstorage.add-daq-values-addDaqfnc (' + id + '): ' + reason);
+                                logger.error(`daqstorage.add-daq-values addDaqfnc failed! '${id}' ${reason}`);
                             }
                             _checkDataWorking(false);
                         });
@@ -253,12 +252,12 @@ function DaqNode(_settings, _log, _id) {
             } else {
                 // some things was wrong by tokenize...try to bind the db_daqdata 
                 _bindDaqData(db_daqdata_file).then(result => {
-                    logger.info('daqstorage.add-daq-values ' + db_daqmap_file + ' database.');
+                    logger.info(`daqstorage.add-daq-values '${db_daqmap_file}' database`, true);
                     db_daqdata = result;
                     _checkDataWorking(false);
                 }).catch(function (err) {
                     _checkDataWorking(false);
-                    logger.error('daqstorage.add-daq-values-_bindDaqData (' + id + '): ' + err);
+                    logger.error(`daqstorage.add-daq-values _bindDaqData failed! '${id}' ${err}`);
                 });
             }
         }
@@ -294,14 +293,14 @@ function DaqNode(_settings, _log, _id) {
                         resolve(result);
                     }, reason => {
                         if (reason.stack) {
-                            logger.error('daqstorage.get-daq-value (' + id + '): ' + reason.stack);
+                            logger.error(`daqstorage.get-daq-value failed! '${id}' ${reason.stack}`);
                         } else {
-                            logger.error('daqstorage.get-gaq-value (' + id + '): ' + reason);
+                            logger.error(`daqstorage.get-daq-value failed! '${id}' ${reason}`);
                         }
                         reject(reason);
                     });
                 }).catch(function (err) {
-                    logger.error('daqstorage.get-daq-value-_getTagValues (' + id + '): ' + err);
+                    logger.error(`daqstorage.get-daq-value _getTagValues failed! '${id}' ${err}`);
                     reject(err);
                 });
             } else {
@@ -316,7 +315,7 @@ function DaqNode(_settings, _log, _id) {
      */
     var _checkMapWorking = function (check) {
         if (check && mapworking) {
-            logger.error('daqstorage.mapping-overload! (' + id + ')');
+            logger.error(`daqstorage.mapping-overload! '${id}'`);
             return false;
         }
         mapworking = check;
@@ -329,7 +328,7 @@ function DaqNode(_settings, _log, _id) {
      */
     var _checkDataWorking = function (check) {
         if (check && dataworking) {
-            logger.error('daqstorage.data-overload! (' + id + ')');
+            logger.error(`daqstorage.data-overload! '${id}'`);
             return false;
         }
         dataworking = check;
@@ -345,15 +344,15 @@ function DaqNode(_settings, _log, _id) {
             try {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
-                        logger.error('daqstorage.bind-daq-map (' + id + ')' + err);
+                        logger.error(`daqstorage.bind-daq-map error! '${id}' ${err}`);
                         reject();
                     }
-                    logger.info('daqstorage.bind-daq-map ' + dbfile + ' database.');
+                    logger.info(`daqstorage.bind-daq-map '${dbfile}' database`, true);
                 });
                 db.serialize(function () {
                     db.run("CREATE TABLE if not exists data (mapid INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT, name TEXT, type TEXT)", function (err) {
                         if (err) {
-                            logger.error('daqstorage.bind-daq-map-to-create-table (' + id + '):' + err);
+                            logger.error(`daqstorage.bind-daq-map-to-create-table error! '${id}' ${err}`);
                             reject();
                         } else {
                             resolve(db);
@@ -375,15 +374,15 @@ function DaqNode(_settings, _log, _id) {
             try {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
-                        logger.error('daqstorage.bind-daq-data (' + id + ')' + err);
+                        logger.error(`daqstorage.bind-daq-data error! '${id}' ${err}`);
                         reject();
                     }
-                    logger.info('daqstorage.bind-daq-data ' + dbfile + ' database.');
+                    logger.info(`daqstorage.bind-daq-data '${dbfile}' database`, true);
                 });
                 db.serialize(function () {
                     db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
                         if (err) {
-                            logger.error('daqstorage.bind-daq-data-to-create-table (' + id + '):' + err);
+                            logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
                             reject();
                         } else {
                             resolve(db);
@@ -403,26 +402,26 @@ function DaqNode(_settings, _log, _id) {
      */
     function _checkToArchiveDBfile(dbfile) {
         _bindDaqData(dbfile).then(result => {
-            logger.info('daqstorage.check-to-archive-db-file ' + dbfile);
+            logger.info(`daqstorage.check-to-archive-db-file '${dbfile}'`, true);
             _getLastTagValue(result).then(lastrow => {
                 result.close(function () {
                     // rename and move to archive
                     if (lastrow) {
                         var filearchived = _archiveDBfile(dbfile, lastrow.dt);
-                        logger.info('daqstorage.check-to-archive-db-file ' + filearchived);
+                        logger.info(`daqstorage.check-to-archive-db-file '${filearchived}'`, true);
                     } else {
                         // delete void db
                         try {
                             fs.unlinkSync(dbfile);
-                            logger.info('daqstorage.check-to-archive-db-file ' + dbfile + ' database deleted!.');
+                            logger.info(`daqstorage.check-to-archive-db-file '${dbfile}' database deleted!`, true);
                         } catch (e) { }
                     }
                 });
             }).catch(function (err) {
-                logger.error('checkToArchiveDBfile: error ' + err);
+                logger.error(`daqstorage.check-to-archive-db-file error! '${id}' ${err}`);
             });
         }).catch(function (err) {
-            logger.error('_checkToArchiveDBfile: error ' + err);
+            logger.error(`daqstorage.check-to-archive-db-file error! '${id}' ${err}`);
         });
     }
 

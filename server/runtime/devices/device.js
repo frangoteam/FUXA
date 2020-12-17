@@ -13,32 +13,48 @@ var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_DAQ_MIN_INTERVAL = 60000;            // with DAQ enabled, interval to save DAQ value anyway !!bigger as DEVICE_POLLING_INTERVAL
 
-function Device(data, logger, _events) {
+function Device(data, runtime) {
     var property = { id: data.id, name: data.name };        // Device property (name, id)
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
-    var events = _events;                                   // Events to commit change to runtime
+    var logger = runtime.logger;                            // Logger
+    var events = runtime.events;                            // Events to commit change to runtime
+    var manager = runtime.plugins.manager;                          // Plugins manager
     var comm;                                               // Interface to OPCUA/S7/.. Device
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
 
     if (data.type === DeviceEnum.S7) {
-        comm = S7client.create(data, logger, events);
+        if (!S7client) {
+            return null;
+        }
+        comm = S7client.create(data, logger, events, manager);
     } else if (data.type === DeviceEnum.OPCUA) {
-        comm = OpcUAclient.create(data, logger, events);
+        if (!OpcUAclient) {
+            return null;
+        }
+        comm = OpcUAclient.create(data, logger, events, manager);
     } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
-        comm = MODBUSclient.create(data, logger, events);        
+        if (!MODBUSclient) {
+            return null;
+        }
+        comm = MODBUSclient.create(data, logger, events, manager);        
     } else if (data.type === DeviceEnum.BACnet) {
-        comm = BACNETclient.create(data, logger, events);        
+        if (!BACNETclient) {
+            return null;
+        }
+        comm = BACNETclient.create(data, logger, events, manager);        
     }
-
+    if (!comm) {
+        return null;
+    }
     /**
      * Start StateMachine, init and start TimerInterval to check Device status
      */
     this.start = function () {
         currentCmd = DeviceCmdEnum.START;
         if (status === DeviceStatusEnum.INIT) {
-            logger.info(property.name + ': ' + currentCmd);
+            logger.info(`'${property.name}' start`);
             var self = this;
             this.checkStatus();
             deviceCheckStatus = setInterval(function () {
@@ -53,7 +69,7 @@ function Device(data, logger, _events) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
-            logger.info(property.name + ': ' + currentCmd);
+            logger.info(`${property.name} stop`);
             if (devicePolling) {
                 clearInterval(devicePolling);
                 devicePolling = null;
@@ -246,14 +262,31 @@ function getSupportedProperty(endpoint, type) {
     });
 }
 
+/**
+ * Load the plugin library
+ * @param {*} type 
+ */
+function loadPlugin(type, module) {
+    if (type === DeviceEnum.S7) {
+        S7client = require(module);
+    } else if (type === DeviceEnum.OPCUA) {
+        OpcUAclient = require(module);
+    } else if (DeviceEnum.ModbusTCP.startsWith(type)) {
+        MODBUSclient = require(module);
+    } else if (type === DeviceEnum.BACnet) {
+        BACNETclient = require(module);
+    }
+}
+
 module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
-        return new Device(data, logger, events);
+    create: function (data, runtime) {
+        return new Device(data, runtime);
     },
-    getSupportedProperty: getSupportedProperty
+    getSupportedProperty: getSupportedProperty,
+    loadPlugin: loadPlugin
 }
 
 /**

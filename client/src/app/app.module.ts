@@ -27,6 +27,7 @@ import { ViewComponent } from './view/view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
+import { PluginsComponent } from './editor/plugins/plugins.component';
 import { ChartConfigComponent, DialogListItem } from './editor/chart-config/chart-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
@@ -43,6 +44,7 @@ import { TesterComponent } from './tester/tester.component';
 import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
 import { UserService } from './_services/user.service';
+import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
 import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
@@ -121,6 +123,7 @@ export function createTranslateLoader(http: HttpClient) {
       TagPropertyComponent,
       DevicePropertyComponent,
       LayoutPropertyComponent,
+      PluginsComponent,
       DialogMenuItem,
       DeviceListComponent,
       DeviceMapComponent,
@@ -212,6 +215,7 @@ export function createTranslateLoader(http: HttpClient) {
         HmiService,
         ProjectService,
         UserService,
+        PluginService,
         TesterService,
         customHttpProvider,
         httpInterceptorProviders,
@@ -246,6 +250,7 @@ export function createTranslateLoader(http: HttpClient) {
         TagPropertyComponent,
         ConfirmDialogComponent,
         LayoutPropertyComponent,
+        PluginsComponent,
         DialogMenuItem,
         NgxDygraphsComponent,
         NgxSwitchComponent,

@@ -35,16 +35,16 @@ function _bind() {
         var dbfileExist = fs.existsSync(dbfile);
         db_usr = new sqlite3.Database(dbfile, function (err) {
             if (err) {
-                logger.error('usrstorage.failed-to-bind: ' + err);
+                logger.error(`usrstorage.bind failed! ${err}`);
                 reject();
             }
-            logger.info('usrstorage.connected-to ' + dbfile + ' database.');
+            logger.info(`usrstorage.connected ${dbfile} database`, true);
         });
         // prepare query
         var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, password TEXT, groups INTEGER);";
         db_usr.exec(sql, function (err) {
             if (err) {
-                logger.error('usrstorage.failed-to-bind: ' + err);
+                logger.error(`usrstorage.bind failed! ${err}`);
                 reject();
             } else {
                 resolve(dbfileExist);
@@ -63,7 +63,7 @@ function setDefault() {
         sql += "INSERT OR REPLACE INTO users (username, password, groups) VALUES('admin','"+ bcrypt.hashSync('123456', 10) + "','-1');";
         db_usr.exec(sql, function (err) {
             if (err) {
-                logger.error('usrstorage.failed-to-set: ' + err);
+                logger.error(`usrstorage.set failed! ${err}`);
                 reject();
             } else {
                 resolve();
@@ -116,7 +116,7 @@ function setUser(usr, pwd, groups) {
             }
             db_usr.exec(sql, function (err) {
                 if (err) {
-                    logger.error('usrstorage.failed-to-set: ' + err);
+                    logger.error(`usrstorage.set failed! ${err}`);
                     reject();
                 } else {
                     resolve();
@@ -137,7 +137,7 @@ function removeUser(usr) {
         var sql = "DELETE FROM users WHERE username = '" + usr + "'";
         db_usr.exec(sql, function (err) {
             if (err) {
-                logger.error('usrstorage.failed-to-remove: ' + err);
+                logger.error(`usrstorage.remove failed! ${err}`);
                 reject();
             } else {
                 resolve();

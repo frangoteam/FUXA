@@ -704,6 +704,7 @@ export class ProjectData {
     charts: Chart[] = [];
     alarms: Alarm[] = [];
     texts: Text[] = [];
+    plugin: Plugin[] = [];
 }
 
 export enum ProjectDataCmdType {

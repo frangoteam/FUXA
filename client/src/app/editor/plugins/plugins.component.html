@@ -1,0 +1,34 @@
+<div style="position: relative;">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.plugins-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;color:gray;cursor:pointer;">clear</mat-icon>
+    <div mat-dialog-content>
+        <mat-list class="list" >
+            <mat-list-item class="list-header">
+                <span style="width:320px">{{'dlg.plugins-name' | translate}}</span>
+                <span style="width:160px">{{'dlg.plugins-version' | translate}}</span>
+                <span style="width:160px">{{'dlg.plugins-current' | translate}}</span>
+            </mat-list-item>
+            <mat-list-item *ngFor="let plugin of plugins" class="list-item list-item-text">
+                <span style="font-weight: 700;">{{plugin.type}}</span>
+                <span>{{plugin.name}}</span>
+                <span>{{plugin.version}}</span>
+                <span>{{plugin.current}}</span>
+                <span style="width:200px">{{plugin.status}}</span>
+                <div style="width:40px">
+					<mat-spinner *ngIf="plugin.working" diameter="20"></mat-spinner>
+                </div>
+                <div *ngIf="plugin.dinamic">
+                    <button mat-icon-button [disabled]="plugin.current.length > 0" (click)="install(plugin)">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <button mat-icon-button [disabled]="!plugin.pkg || !plugin.current.length" (click)="remove(plugin)">
+                        <mat-icon>remove_circle_outline</mat-icon>
+                    </button>
+                </div>
+            </mat-list-item>
+        </mat-list>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button [mat-dialog-close]="">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

@@ -1,8 +1,8 @@
 /**
  * OPC UA Client Driver
  */
+var opcua;
 
-const opcua = require('node-opcua');
 const async = require('async');
 
 function OpcUAclient(_data, _logger, _events) {
@@ -75,9 +75,9 @@ function OpcUAclient(_data, _logger, _events) {
                         client.connect(endpoint, function (err) {
                             if (err) {
                                 _clearVarsValue();
-                                logger.error(err);
+                                logger.error(`'${data.name}' connect failure! ${err}`);
                             } else {
-                                logger.info(data.name + ': connection step 1');
+                                logger.info(`'${data.name}' connection`, true);
                             }
                             callback(err);
                         })
@@ -92,17 +92,17 @@ function OpcUAclient(_data, _logger, _events) {
                         client.createSession(userIdentityInfo, function (err, session) {
                             if (err) {
                                 _clearVarsValue();
-                                logger.error(err);
+                                logger.error(`'${data.name}' createSession failure! ${err}`);
                             } else {
                                 the_session = session;
                                 the_session.on('session_closed', () => {
-                                    logger.info(data.name + ': Warning => Session closed');
+                                    logger.warn(`'${data.name}' Warning => Session closed`);
                                 });
                                 the_session.on('keepalive', () => {
-                                    logger.info(data.name + ': session keepalive');
+                                    logger.info(`'${data.name}' session keepalive`, true);
                                 });
                                 the_session.on('keepalive_failure', () => {
-                                    logger.error(data.name + ': session keepalive failure');
+                                    logger.error(`'${data.name}' session keepalive failure!`);
                                 });
                                 _createSubscription();
                             }
@@ -111,14 +111,14 @@ function OpcUAclient(_data, _logger, _events) {
                     }],
                     function (err) {
                         if (err) {
-                            logger.error(data.name + ': try to connect error! ' + err);
+                            logger.error(`'${data.name}' try to connect error! ${err}`);
                             _emitStatus('connect-error');
                             _clearVarsValue();
                             connected = false;
                             reject();
                             client.disconnect(function () { });
                         } else {
-                            logger.info(data.name + ': connected!');
+                            logger.info(`'${data.name}' connected!`, true);
                             _emitStatus('connect-ok');
                             connected = true;
                             resolve();
@@ -137,7 +137,7 @@ function OpcUAclient(_data, _logger, _events) {
         return new Promise(function (resolve, reject) {
             _disconnect(function (err) {
                 if (err) {
-                    logger.error(data.name + ': disconnect failure, ' + err);
+                    logger.error(`'${data.name}' disconnect failure! ${err}`);
                 }
                 connected = false;
                 monitored = false;
@@ -186,7 +186,7 @@ function OpcUAclient(_data, _logger, _events) {
                     if (!err) {
                         let opcNodes = [];
                         browseResult.references.forEach(function (reference) {
-                            console.log(reference.browseName.toString());
+                            // console.log(reference.browseName.toString());
                             let node = new OpcNode(reference.browseName.toString());
                             if (reference.displayName) {
                                 node.name = reference.displayName.text;
@@ -331,7 +331,7 @@ function OpcUAclient(_data, _logger, _events) {
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
         var count = Object.keys(data.tags).length;
-        logger.info(data.name + ': data loaded (' + count + ')');
+        logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
     /**
@@ -393,7 +393,7 @@ function OpcUAclient(_data, _logger, _events) {
 
             the_session.write(nodesToWrite, function (err, statusCodes) {
                 if (err) {
-                    logger.error(data.name + ' setValue error: ' + err);
+                    logger.error(`'${data.name}' setValue error! ${err}`);
                 }
             });
 
@@ -458,11 +458,11 @@ function OpcUAclient(_data, _logger, _events) {
                 parameters,
                 (err, subscription) => {
                     if (err) {
-                        logger.error(data.name + ': Cannot create subscription ' + err.message);
+                        logger.error(`'${data.name}' can't create subscription! ${err.message}`);
                         return;
                     }
                     the_subscription = subscription;
-                    logger.info(data.name + ': subscription created!');
+                    logger.info(`'${data.name}' subscription created!`, true);
                 });
         }
     }
@@ -540,7 +540,7 @@ function OpcUAclient(_data, _logger, _events) {
      */
     var _checkWorking = function (check) {
         if (check && working) {
-            logger.error(data.name + ' working (connection || polling) overload!');
+            logger.error(`'${data.name}' working (connection || polling) overload!`);
             return false;
         }
         working = check;
@@ -727,7 +727,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
+    create: function (data, logger, events, manager) {
+        try { opcua = require('node-opcua'); } catch { }
+        if (!opcua && manager) { try { opcua = manager.require('node-opcua'); } catch { } }
+        if (!opcua) return null;
         return new OpcUAclient(data, logger, events);
     },
     getEndPoints: getEndPoints

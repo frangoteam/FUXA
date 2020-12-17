@@ -4,11 +4,12 @@
  */
 
 var Promise = require('bluebird');
-var devices = require("./devices");
-var project = require("./project");
-var users = require("./users");
-var events = require("./events");
-var alarms = require("./alarms");
+var devices = require('./devices');
+var project = require('./project');
+var users = require('./users');
+var events = require('./events');
+var alarms = require('./alarms');
+var plugins = require('./plugins');
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
 
@@ -18,44 +19,57 @@ var logger;
 var io;
 var alarmsMgr;
 
-function init(_io, _api, _settings, log) {
+function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
     settings = _settings;
-    logger = log;
+    logger = _log;
     if (_api) {
         apiDevice = _api;
     }
+    // check runtime init dependency and send to main if ready
+    var checkInit = function () {
+        if (!events.listenerCount('init-plugins-ok') && !events.listenerCount('init-users-ok') && !events.listenerCount('init-project-ok')) {
+            eventsMain.emit('init-runtime-ok');
+        }
+    } 
+    events.once('init-plugins-ok', checkInit);
+    events.once('init-users-ok', checkInit);
+    events.once('init-project-ok', checkInit);
+  
+    
+    daqstorage.init(settings, logger);
 
-    if (!daqstorage.init(settings, logger)) {
-        logger.error("daqstorage.failed-to-init");
-    }
+    plugins.init(settings, logger).then(result => {
+        logger.info('runtime init plugins successful!', true);
+        events.emit('init-plugins-ok');
+    }).catch(function (err) {
+        logger.error('runtime.failed-to-init plugins');
+    });
+
 
     users.init(settings, logger).then(result => {
-        logger.info("runtime init users successful!");
+        logger.info('runtime init users successful!', true);
+        events.emit('init-users-ok');
     }).catch(function (err) {
-        logger.error("runtime.failed-to-init users");
+        logger.error('runtime.failed-to-init users');
     });
 
     project.init(settings, logger).then(result => {
-        logger.info("runtime init project successful!");
+        logger.info('runtime init project successful!', true);
+        events.emit('init-project-ok');
     }).catch(function (err) {
-        logger.error("runtime.failed-to-init project");
+        logger.error('runtime.failed-to-init project');
     });
     alarmsMgr = alarms.create(runtime);
-    // alarmsMgr.init().then(result => {
-    //     logger.info("runtime init alarms successful!");
-    // }).catch(function (err) {
-    //     logger.error("runtime.failed-to-init alarms");
-    // });
     devices.init(runtime);
 
-    events.on("project-device:change", updateDevice);
-    events.on("device-value:changed", updateDeviceValues);      // event from devices (S7/OPCUA/...)
-    events.on("device-status:changed", updateDeviceStatus);     // event from devices (S7/OPCUA/...)
-    events.on("alarms-status:changed", updateAlarmsStatus);     // event from alarmsMgr
+    events.on('project-device:change', updateDevice);
+    events.on('device-value:changed', updateDeviceValues);
+    events.on('device-status:changed', updateDeviceStatus);
+    events.on('alarms-status:changed', updateAlarmsStatus);
 
     io.on('connection', (socket) => {
-        logger.info('io client connected');
+        logger.info('socket.io client connected');
 
         // client ask device status
         socket.on('device-status', (message) => {
@@ -74,16 +88,16 @@ function init(_io, _api, _settings, log) {
                 if (message && message.endpoint && message.type) {
                     devices.getSupportedProperty(message.endpoint, message.type).then(result => {
                         message.result = result;
-                        io.emit("device-property", message);
+                        io.emit('device-property', message);
                     }).catch(function (err) {
                         logger.error('socket.on.device-property: ' + err);
                         message.error = err;
-                        io.emit("device-property", message);
+                        io.emit('device-property', message);
                     });
                 } else {
                     logger.error('socket.on.device-property: wrong message');
                     message.error = 'wrong message';
-                    io.emit("device-property", message);
+                    io.emit('device-property', message);
                 }
             } catch (err) {
                 logger.error('socket.on.device-values: ' + err);
@@ -111,11 +125,11 @@ function init(_io, _api, _settings, log) {
                     if (message.device) {
                         devices.browseDevice(message.device, message.node).then(result => {
                             message.result = result;
-                            io.emit("device-browse", message);
+                            io.emit('device-browse', message);
                         }).catch(function (err) {
                             logger.error('socket.on.device-browse: ' + err);
                             message.error = err;
-                            io.emit("device-browse", message);
+                            io.emit('device-browse', message);
                         });
                     }
                 }
@@ -129,12 +143,11 @@ function init(_io, _api, _settings, log) {
                 if (message) {
                     if (message.device) {
                         devices.readNodeAttribute(message.device, message.node).then(result => {
-                            // message.result = result;
-                            io.emit("device-node-attribute", message);
+                            io.emit('device-node-attribute', message);
                         }).catch(function (err) {
                             logger.error('socket.on.read-node-attribute: ' + err);
                             message.error = err;
-                            io.emit("device-node-attribute", message);
+                            io.emit('device-node-attribute', message);
                         });
                     }
                 }
@@ -194,16 +207,16 @@ function init(_io, _api, _settings, log) {
                     message = {};
                     utils.getHostInterfaces().then(result => {
                         message.result = result;
-                        io.emit("host-interfaces", message);
+                        io.emit('host-interfaces', message);
                     }).catch(function (err) {
                         logger.error('socket.on.host-interfaces: ' + err);
                         message.error = err;
-                        io.emit("host-interfaces", message);
+                        io.emit('host-interfaces', message);
                     });
                 } else {
                     logger.error('socket.on.host-interfaces: wrong message');
                     message.error = 'wrong message';
-                    io.emit("host-interfaces", message);
+                    io.emit('host-interfaces', message);
                 }
             } catch (err) {
                 logger.error('socket.on.host-interfaces: ' + err);
@@ -218,7 +231,6 @@ function start() {
         project.load().then(result => {
             // start to comunicate with devices
             devices.start().then(function () {
-                // devices.woking = null;
                 resolve(true);
             }).catch(function (err) {
                 logger.error('runtime.failed-to-start-devices: ' + err);
@@ -283,9 +295,9 @@ function restart(clear) {
                 if (clear) {
                     alarmsMgr.clear();
                 }
-                logger.info('runtime.update-project: stopped!');
+                logger.info('runtime.update-project: stopped!', true);
                 start().then(function () {
-                    logger.info('runtime.update-project: start!');
+                    logger.info('runtime.update-project: restart!');
                     resolve(true);
                 }).catch(function (err) {
                     logger.error('runtime.update-project-start: ' + err);
@@ -329,7 +341,6 @@ function updateDeviceValues(event) {
  * @param {*} event 
  */
 function updateDeviceStatus(event) {
-    // console.log('emit updateDeviceStatus: ' + event);
     try {
         io.emit('device-status', event);
     } catch (err) {
@@ -354,6 +365,7 @@ var runtime = module.exports = {
     init: init,
     project: project,
     users: users,
+    plugins: plugins,
     start: start,
     stop: stop,
     update: update,
