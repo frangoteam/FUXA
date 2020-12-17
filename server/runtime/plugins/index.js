@@ -8,6 +8,7 @@ const path = require('path');
 var device = require('../devices/device');
 const PluginManager = require('live-plugin-manager');
 var events = require("../events");
+const isPi = require('detect-rpi');
 
 var settings;                   // Application settings
 var logger;                     // Application logger
@@ -21,7 +22,7 @@ plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '0.7.2');
 plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.1', true);
 plugins['bacstack'] = new Plugin('bacstack', './bacnet', 'BACnet', '0.0.1-beta.13', true);
 plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.1');
-// plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
+plugins['onoff'] = new Plugin('onoff', './onboard/raspy', 'RaspberryGPIO', '6.0.1', true);
 
 /**
  * Init plugin resource
@@ -32,6 +33,11 @@ function init(_settings, log) {
     settings = _settings;
     logger = log;
     manager = new PluginManager.PluginManager({ pluginsPath: settings.packageDir });
+
+    // unsupported hardware
+    if (!isPi()) {
+        delete plugins['onoff'];
+    }
 
     // Init Plugins
     return new Promise(function (resolve, reject) {

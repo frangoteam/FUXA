@@ -46,7 +46,8 @@ export enum DeviceType {
     OPCUA = 'OPCUA',
     BACnet = 'BACnet',
     ModbusRTU = 'ModbusRTU',
-    ModbusTCP = 'ModbusTCP'
+    ModbusTCP = 'ModbusTCP',
+    RaspberryGPIO = 'RaspberryGPIO'
 }
 
 export enum TagType {
@@ -57,6 +58,16 @@ export enum TagType {
     DInt = 'DInt',
     DWord = 'DWord',
     Real = 'Real'
+}
+
+export enum RaspberryTagType {
+    GpioIn = 'IN',
+    GpioOut = 'OUT',
+    // Int = 'Int',
+    // Word = 'Word',
+    // DInt = 'DInt',
+    // DWord = 'DWord',
+    // Real = 'Real'
 }
 
 export enum ModbusTagType {

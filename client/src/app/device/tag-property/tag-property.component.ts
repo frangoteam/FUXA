@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from "rxjs";
 
-import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType } from './../../_models/device';
+import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, RaspberryTagType } from './../../_models/device';
 import { TreetableComponent, Node } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,6 +37,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.withtree = true;
             this.config.height = '640px';
             this.config.width = '1000px';
+        } else if (this.data.device.type === DeviceType.RaspberryGPIO) {
+            this.tagType = RaspberryTagType;
         } else {
             if (this.isModbus()) {
                 this.tagType = ModbusTagType;
@@ -200,6 +202,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isOpcua() {
 		return (this.data.device.type === DeviceType.OPCUA) ? true : false;
     }
+    
+    isRaspberry() {
+		return (this.data.device.type === DeviceType.RaspberryGPIO) ? true : false;
+	}
     
     checkMemAddress(memaddress) {
         if (memaddress === '000000' || memaddress === '100000') {

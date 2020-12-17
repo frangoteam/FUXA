@@ -20,6 +20,7 @@
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
+    "detect-rpi": "^1.4.0",
     "express": "4.16.4",
     "fs-extra": "^7.0.1",
     "ip": "^1.1.5",

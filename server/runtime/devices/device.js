@@ -7,6 +7,7 @@ var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
+var RASPYclient = require('./onboard/raspy.js');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -19,11 +20,12 @@ function Device(data, runtime) {
     var logger = runtime.logger;                            // Logger
     var events = runtime.events;                            // Events to commit change to runtime
     var manager = runtime.plugins.manager;                          // Plugins manager
-    var comm;                                               // Interface to OPCUA/S7/.. Device
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
-
+    var comm;                                               // Interface to OPCUA/S7/.. Device
+                                                            // required: connect, disconnect, isConnected, polling, init, load, getValue, 
+                                                            // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
     if (data.type === DeviceEnum.S7) {
         if (!S7client) {
             return null;
@@ -44,6 +46,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = BACNETclient.create(data, logger, events, manager);        
+    } else if (data.type === DeviceEnum.RaspberryGPIO) {
+        if (!RASPYclient) {
+            return null;
+        }
+        comm = RASPYclient.create(data, logger, events, manager);        
     }
     if (!comm) {
         return null;
@@ -275,6 +282,8 @@ function loadPlugin(type, module) {
         MODBUSclient = require(module);
     } else if (type === DeviceEnum.BACnet) {
         BACNETclient = require(module);
+    } else if (type === DeviceEnum.RaspberryGPIO) {
+        RASPYclient = require(module);
     }
 }
 
@@ -297,7 +306,8 @@ var DeviceEnum = {
     OPCUA: 'OPCUA',
     ModbusRTU: 'ModbusRTU',
     ModbusTCP: 'ModbusTCP',
-    BACnet: 'BACnet'
+    BACnet: 'BACnet',
+    RaspberryGPIO: 'RaspberryGPIO',
 }
 
 /**
