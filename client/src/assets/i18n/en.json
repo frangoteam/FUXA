@@ -415,6 +415,7 @@
     "device.browsetag-property-title": "Browse Tags in Server",
     "device.tag-property-device": "Device",
     "device.tag-property-name": "Tagname",
+    "device.tag-property-register": "Register",
     "device.tag-property-type": "Type",
     "device.tag-property-address": "Address (ex. db5.dbb3 db4.dbx2.0 MB7)",
     "device.tag-property-pin": "GPIO number",

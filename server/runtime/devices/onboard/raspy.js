@@ -158,7 +158,7 @@ function RASPYclient(_data, _logger, _events) {
      * Read the current Tag object, write the value in object and send to SPS 
      */
     this.setValue = function (sigid, value) {
-        digitals[sigid].res.writeSync(value);
+        digitals[sigid].res.writeSync(parseInt(value));
         digitals[sigid].value = value;
         digitals[sigid].changed = true;
     }
@@ -259,7 +259,7 @@ module.exports = {
     create: function (data, logger, events, manager) {
         try { Gpio = require('onoff').Gpio; } catch { }
         if (!Gpio && manager) { try { Gpio = manager.require('onoff').Gpio; } catch { } }
-        else return null;
+        if (!Gpio) return null;
         return new RASPYclient(data, logger, events);
     }
 }

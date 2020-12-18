@@ -8,6 +8,7 @@ var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var RASPYclient = require('./onboard/raspy.js');
+const isPi = require('detect-rpi');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -47,7 +48,7 @@ function Device(data, runtime) {
         }
         comm = BACNETclient.create(data, logger, events, manager);        
     } else if (data.type === DeviceEnum.RaspberryGPIO) {
-        if (!RASPYclient) {
+        if (!RASPYclient || !isPi()) {
             return null;
         }
         comm = RASPYclient.create(data, logger, events, manager);        

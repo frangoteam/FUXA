@@ -1,4 +1,4 @@
-<div style="position: relative;" class="dialog-mdsd-v">
+<div style="position: relative;">
     <div>
         <h1 *ngIf="!withtree" mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
             {{'device.tag-property-title' | translate}}
@@ -46,7 +46,7 @@
             </div>
             <div *ngIf="isModbus()">
                 <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                    <span>{{'device.tag-property-type' | translate}}</span>
+                    <span>{{'device.tag-property-register' | translate}}</span>
                     <mat-select [(value)]="data.tag.memaddress" style="width: 350px" #memaddress (selectionChange)="checkMemAddress(data.tag.memaddress)">
                         <mat-option *ngFor="let type of memAddress | enumToArray" [value]="type.value">
                             {{ type.key }}
