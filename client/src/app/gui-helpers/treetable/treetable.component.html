@@ -18,7 +18,7 @@
 				{{node.property}}
 			</div>
 			<div class="item-check">
-				<mat-checkbox [(ngModel)]="node.checked" [disabled]="!node.enabled" (change)="changeStatus(node,$event)" *ngIf="node.class === nodeType.Variable"></mat-checkbox>
+				<mat-checkbox [(ngModel)]="node.checked" [disabled]="!node.enabled" (change)="changeStatus(node,$event)" *ngIf="node.class == nodeType.Variable"></mat-checkbox>
 			</div>
 		</div>
 	</div>
