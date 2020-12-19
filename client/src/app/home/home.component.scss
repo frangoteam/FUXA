@@ -4,20 +4,20 @@
 }
 
 .home-container {
-    // padding-top: 5px;
     position: absolute;
 	left: 0px;
 	top: 48px;
 	bottom: 0px;
-	right: 0px;
-	// border: 5px solid black;
-	// overflow: hidden;
-
+    right: 0px;
+    overflow: auto;
 	// -webkit-user-select: none;
 	// -moz-user-select: none;
 	// -ms-user-select: none;
 	// -o-user-select: none;
 	// user-select: none;
+}
+.home-info {
+    text-align: center;
 }
 
 .header {
@@ -114,6 +114,7 @@
     width: 100%;
     position: fixed; 
     bottom: -300px;
+    overflow: auto;
 }
 
 #alarms-panel.is-active {
