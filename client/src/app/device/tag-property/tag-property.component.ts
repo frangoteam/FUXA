@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from "rxjs";
 
 import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, RaspberryTagType } from './../../_models/device';
-import { TreetableComponent, Node } from '../../gui-helpers/treetable/treetable.component';
+import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { t } from '@angular/core/src/render3';
@@ -138,12 +138,12 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     // Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)]
                 }
                 let enabled = true;
-                if (this.data.device.tags[n.id] && node.class === 'Variable') {
+                if (this.data.device.tags[n.id] && node.class ===  NodeType.Variable) {
                     // node allready selected
                     enabled = false;
                 }
                 this.treetable.addNode(node, parent, enabled);
-                if (node.class === 'Variable' && this.data.device.type !== DeviceType.BACnet) {
+                if (node.class ===  NodeType.Variable && this.data.device.type !== DeviceType.BACnet) {
                     this.hmiService.askNodeAttributes(this.data.device.name, n);
                 }
             });

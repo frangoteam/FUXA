@@ -139,7 +139,13 @@ export class Node {
 
 
 export enum NodeType {
-  Object = 'Object',
-  Variable = 'Variable',
-  Methode = 'Methode'
+  Unspecified = 0,
+  Object = 1,   // 'Object',
+  Variable = 2, // 'Variable',
+  Methode = 4,  // 'Methode'
+  ObjectType = 8,
+  VariableType = 16,
+  ReferenceType = 32,
+  DataType = 64,
+  View = 128
 }
