@@ -22,7 +22,7 @@ plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '0.7.2');
 plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.1', true);
 plugins['bacstack'] = new Plugin('bacstack', './bacnet', 'BACnet', '0.0.1-beta.13', true);
 plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.1');
-plugins['onoff'] = new Plugin('onoff', './onboard/raspy', 'RaspberryGPIO', '6.0.1', true);
+plugins['onoff'] = new Plugin('onoff', './onboard/raspy', 'RaspberryGPIO', '6.0.1');
 
 /**
  * Init plugin resource

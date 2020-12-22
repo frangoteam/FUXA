@@ -32,9 +32,8 @@ function RASPYclient(_data, _logger, _events) {
                     if (io.in) {
                         io.res.watch((err, value) => {
                             if (err) {
-                              throw err;
+                                logger.error(`'${data.name}' watch error! ${err}`);
                             }
-                            logger.trace(`'${io.id}' ${value}`);
                             io.value = value;
                             io.changed = true;
                         });
@@ -64,7 +63,7 @@ function RASPYclient(_data, _logger, _events) {
             connected = false;
             Object.values(digitals).forEach(io => {
                 try {
-                io.res.unexport();
+                    io.res.unexport();
                 } catch { }
             });
             resolve(true);
@@ -107,11 +106,9 @@ function RASPYclient(_data, _logger, _events) {
         var count = 0;
         for (var id in data.tags) {
             if (data.tags[id].type === 'GpioOut') {
-                // digitals[id] = new GPIOItem(id, null, false, data.tags[id].type);
                 digitals[id] = new GPIOItem(id, new Gpio(data.tags[id].address, 'out'), false, data.tags[id].type);
             } else if (data.tags[id].type === 'GpioIn') {
-                // digitals[id] = new GPIOItem(id, null, true, data.tags[id].type);
-                digitals[id] = new GPIOItem(id, new Gpio(data.tags[id].address, 'in', 'rising', {debounceTimeout: 10}), true, data.tags[id].type);
+                digitals[id] = new GPIOItem(id, new Gpio(data.tags[id].address, 'in', 'both', {debounceTimeout: 10}), true, data.tags[id].type);
             }
         }
         logger.info(`'${data.name}' data loaded (${count})`, true);
