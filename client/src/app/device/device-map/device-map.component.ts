@@ -223,6 +223,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 					device.name = tempdevice.name;
 					device.type = tempdevice.type;
 					device.enabled = tempdevice.enabled;
+					device.polling = tempdevice.polling;
 					if (device.property && tempdevice.property) {
 						device.property.address = tempdevice.property.address;
 						device.property.port = parseInt(tempdevice.property.port);

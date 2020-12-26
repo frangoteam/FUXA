@@ -18,12 +18,14 @@ function Device(data, runtime) {
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
     var logger = runtime.logger;                            // Logger
     var events = runtime.events;                            // Events to commit change to runtime
-    var manager = runtime.plugins.manager;                          // Plugins manager
-    var comm;                                               // Interface to OPCUA/S7/.. Device
+    var manager = runtime.plugins.manager;                  // Plugins manager
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
-
+    var pollingInterval = DEVICE_POLLING_INTERVAL;
+    var comm;                                               // Interface to OPCUA/S7/.. Device
+                                                            // required: connect, disconnect, isConnected, polling, init, load, getValue, 
+                                                            // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
     if (data.type === DeviceEnum.S7) {
         if (!S7client) {
             return null;
@@ -124,7 +126,7 @@ function Device(data, runtime) {
         return comm.connect().then(function () {
             devicePolling = setInterval(function () {
                 self.polling();
-            }, DEVICE_POLLING_INTERVAL);
+            }, pollingInterval);
         });
     }
 
@@ -139,6 +141,7 @@ function Device(data, runtime) {
      * Call Device to load Tags propperty in local for polling read values
      */
     this.load = function (data) {
+        pollingInterval = data.polling || DEVICE_POLLING_INTERVAL;
         return comm.load(data);
     }
 

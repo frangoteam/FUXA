@@ -5,6 +5,7 @@ export class Device {
     enabled: boolean;
     property: any;
     type: DeviceType;
+    polling: number;
     tags: any;
 }
 
