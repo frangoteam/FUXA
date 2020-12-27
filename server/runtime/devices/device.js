@@ -71,7 +71,7 @@ function Device(data, runtime) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
-            logger.info(`${property.name} stop`);
+            logger.info(`'${property.name}' stop`);
             if (devicePolling) {
                 clearInterval(devicePolling);
                 devicePolling = null;

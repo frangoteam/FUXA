@@ -21,7 +21,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
 	private subscriptionDeviceChange: Subscription;
 	private subscriptionVariableChange: Subscription;
     private subscriptionSave: Subscription;
-
+	private askStatusTimer;
 	showMode: string = 'map';
 
 	constructor(private projectService: ProjectService,
@@ -43,6 +43,9 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.projectService.saveAs();
 			}
 		});
+		this.askStatusTimer = setInterval(() => {
+			this.hmiService.askDeviceStatus();
+		}, 10000);
 		this.hmiService.askDeviceStatus();
 	}
 
@@ -64,9 +67,13 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
 			}
             if (this.subscriptionSave) {
                 this.subscriptionSave.unsubscribe();
-            }			
+			}
 		} catch (e) {
 		}
+		try {
+			clearInterval(this.askStatusTimer);
+			this.askStatusTimer = null;
+		} catch { }
 	}
 
 	show(mode: string) {
