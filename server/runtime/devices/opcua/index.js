@@ -31,6 +31,7 @@ function OpcUAclient(_data, _logger, _events) {
      * Open Session, Create Subscription, Emit connection status, Clear the memory Tags value
      */
     this.connect = function () {
+        var self = this;
         return new Promise(function (resolve, reject) {
             if (!_checkWorking(true)) {
                 reject();
@@ -81,6 +82,13 @@ function OpcUAclient(_data, _logger, _events) {
                             }
                             callback(err);
                         });
+                        client.on("connection_lost", () => {
+                            logger.error(`'${data.name}' connection lost!`);
+                            self.disconnect().then(function () { });
+                        });
+                        client.on("backoff", (retry, delay) => {
+                            logger.error(`'${data.name}' retry to connect! ${retry}`);
+                        });                        
                     },
                     // step 3 create session
                     function (callback) {
@@ -103,6 +111,9 @@ function OpcUAclient(_data, _logger, _events) {
                                 });
                                 the_session.on('keepalive_failure', () => {
                                     logger.error(`'${data.name}' session keepalive failure!`);
+                                });
+                                the_session.on("terminated", function() {
+                                    console.log("terminated");
                                 });
                                 _createSubscription();
                             }
@@ -301,27 +312,36 @@ function OpcUAclient(_data, _logger, _events) {
      * Save DAQ value
      */
     this.polling = function () {
-        if (!monitored) {
-            _startMonitor(function (ok) {
-                if (ok) {
-                    monitored = true;
-                }
-            });
-        } else if (the_session && client) {
-            var varsValueChanged = _clearVarsChanged();
-            lastTimestampValue = new Date().getTime();
-            _emitValues(varsValue);
+        if (_checkWorking(true)) {
+            if (!monitored) {
+                _startMonitor(function (ok) {
+                    if (ok && connected) {
+                        monitored = true;
+                    }
+                });
+                _checkWorking(false);
+            } else if (the_session && client) {
+                try {
+                    var varsValueChanged = _clearVarsChanged();
+                    lastTimestampValue = new Date().getTime();
+                    _emitValues(varsValue);
 
-            if (this.addDaq) {
-                var current = new Date().getTime();
-                if (current - daqInterval > lastDaqInterval) {
-                    this.addDaq(data.tags);
-                    lastDaqInterval = current;
-                } else if (Object.keys(varsValueChanged).length) {
-                    this.addDaq(varsValueChanged);
+                    if (this.addDaq) {
+                        var current = new Date().getTime();
+                        if (current - daqInterval > lastDaqInterval) {
+                            this.addDaq(data.tags);
+                            lastDaqInterval = current;
+                        } else if (Object.keys(varsValueChanged).length) {
+                            this.addDaq(varsValueChanged);
+                        }
+                    }
+                } catch (err) {
+                    logger.error(`'${data.name}' polling error: ${err}`);
                 }
+                _checkWorking(false);
+            } else {
+                _checkWorking(false);
             }
-
         }
     }
 
@@ -473,7 +493,6 @@ function OpcUAclient(_data, _logger, _events) {
      * @param {*} callback 
      */
     var _startMonitor = async function (callback) {
-
         if (the_session && the_subscription) {
             for (var id in data.tags) {
                 try {

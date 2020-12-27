@@ -186,8 +186,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	getDeviceStatusColor(device) {
-		let st = this.devicesStatus[device.name];
 		if (this.devicesStatus[device.name]) {
+			let milli = new Date().getTime();
+			if (this.devicesStatus[device.name].last + 15000 < milli) {
+				this.devicesStatus[device.name].status = 'connect-error';
+				this.devicesStatus[device.name].last = new Date().getTime();
+			}
+			let st = this.devicesStatus[device.name].status;
 			if (st === 'connect-ok') {
 				return '#00b050';
 			} else if (st === 'connect-error' || st === 'connect-failed') {
@@ -199,7 +204,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	setDeviceStatus(event) {
-		this.devicesStatus[event.id] = event.status;
+		this.devicesStatus[event.id] = { status: event.status, last: new Date().getTime() };
 	}
 
 	editDevice(device: Device, toremove: boolean) {
@@ -223,6 +228,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 					device.name = tempdevice.name;
 					device.type = tempdevice.type;
 					device.enabled = tempdevice.enabled;
+					device.polling = tempdevice.polling;
 					if (device.property && tempdevice.property) {
 						device.property.address = tempdevice.property.address;
 						device.property.port = parseInt(tempdevice.property.port);
