@@ -35,11 +35,12 @@ if (fs.existsSync(userSettingsFile)) {
 } else {
     // Not exist, copy from code resource
     var defaultSettings = path.join(__dirname, 'settings.default.js');
-    var settingsStat = fs.statSync(defaultSettings);
-    fs.copyFileSync(defaultSettings, userSettingsFile, (err) => {
-        if (err) return logger.error(err);
+    try {
+        fs.copyFileSync(defaultSettings, userSettingsFile, fs.constants.COPYFILE_EXCL);
         logger.debug('settings.js default created successful!');
-    });
+    } catch (err) {
+        logger.error(err);
+    }
     settingsFile = userSettingsFile;
 }
 try {
