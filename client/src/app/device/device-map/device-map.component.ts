@@ -19,6 +19,16 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Output() goto: EventEmitter<Device> = new EventEmitter();
 	private subscriptionPluginsChange: Subscription;
 
+	lineSize = 6;
+	lineHeight = 60;
+	deviceBorder = 5;
+	deviceWidth = 160;
+	deviceHeight = 90;
+	deviceLine = 60;
+	mainWidth = 160;
+	mainHeight = 90;
+	mainBorder = 5;
+
 	server: Device;
 	devices = {};
     plugins = [];
@@ -95,42 +105,82 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		delete this.devices[device.name];
 	}
 
-	getDevicePosition(index: number) {
+	private getWindowWidth() {
+		if (window.innerWidth < (Object.values(this.devices).length + 2) * this.deviceWidth) {
+			return (Object.values(this.devices).length + 2) * this.deviceWidth;
+		} else {
+			return window.innerWidth;
+		}
+	}
+
+	private getHorizontalCenter() {
+		return this.getWindowWidth() / 2;
+	}
+
+	private getVerticalCenter() {
+		return window.innerHeight / 3;
+	}
+
+	getMainLeftPosition() {
+		return this.getHorizontalCenter() - this.mainWidth / 2;
+	}
+
+	getMainTopPosition() {
+		return this.getVerticalCenter() - this.mainHeight / 2;
+	}
+
+	getMainLineLeftPosition() {
+		return this.getHorizontalCenter() - 1 + this.lineSize / 2;
+	}
+
+	getMainLineTopPosition() {
+		return this.getVerticalCenter() + this.mainBorder + this.mainHeight / 2;
+	}
+
+	getDeviceLeftPosition(index: number) {
 		if (this.devices && Object.values(this.devices).length) {
-			let offset = 160; // scss.$card-width
 			let pos = index + 1;
 			let centerd = Object.keys(this.devices).length + 1;
-			let result = ((window.innerWidth - offset) / centerd) * pos;
+			let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
 			return result;
 		}
 		return 0;
 	}
 
-	getDeviceLinePosition(index: number) {
+	getDeviceTopPosition(index: number) {
+		return this.getVerticalCenter() + (this.mainHeight / 2) + (this.deviceLine * 2);
+	}
+
+	getDeviceLineLeftPosition(index: number) {
 		if (this.devices && Object.values(this.devices).length) {
-			let offset = 160; // scss.$card-width
 			let pos = index + 1;
 			let centerd = Object.keys(this.devices).length + 1;
-			let result = ((window.innerWidth - offset) / centerd) * pos;
-			result += (160 - 6) / 2; // card center: scss.$card-width - $line-size
+			let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
+			result += this.deviceBorder + this.deviceWidth / 2 - this.lineSize / 2;
 			return result;
 		}
 		return 0;
+	}
+
+	getDeviceLineTopPosition(index: number) {
+		return this.getDeviceTopPosition(index) - this.lineHeight;
 	}
 
 	getDeviceConnectionLeftPosition(index: number) {
-		let offset = 160; // scss.$card-width
 		let centerd = Object.keys(this.devices).length + 1;
-		let result = ((window.innerWidth - offset) / centerd) * 1;
-		result += (160 - 6) / 2; // card center: scss.$card-width - $line-size
+		let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * 1;
+		result += this.deviceBorder + (this.deviceWidth - this.lineSize) / 2;
 		return result;
 	}
 
+	getDeviceConnectionTopPosition(index: number) {
+		return this.getDeviceLineTopPosition(index);
+	}
+
 	getDeviceConnectionWidth(index: number) {
-		let offset = 160; // scss.$card-width
 		let pos = index;
 		let centerd = Object.keys(this.devices).length + 1;
-		let result = (((window.innerWidth - offset) / centerd) * pos) - (((window.innerWidth - offset) / centerd) * 1);
+		let result = (((this.getWindowWidth() - this.deviceWidth) / centerd) * pos) - (((this.getWindowWidth() - this.deviceWidth) / centerd) * 1);
 		return result;
 	}
 

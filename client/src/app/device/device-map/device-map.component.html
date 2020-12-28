@@ -1,14 +1,20 @@
-<div class="main-line"></div>
-<div *ngFor="let device of devicesValue(); index as i" class="device-line" [style.left]="getDeviceLinePosition(i) + 'px'"></div>
-<div class="connection-line" [style.left]="getDeviceConnectionLeftPosition(devicesValue().length) + 'px'" [style.width]="getDeviceConnectionWidth(devicesValue().length) + 'px'"></div>
+<div class="main-line" [style.left.px]="getMainLineLeftPosition()" [style.top.px]="getMainLineTopPosition()" 
+  [style.width.px]="lineSize" [style.height.px]="lineHeight"></div>
+<div *ngFor="let device of devicesValue(); index as i" class="device-line" [style.left.px]="getDeviceLineLeftPosition(i)" [style.top.px]="getDeviceLineTopPosition(i)"
+  [style.width.px]="lineSize" [style.height.px]="lineHeight"></div>
+<div class="connection-line" [style.left.px]="getDeviceConnectionLeftPosition(devicesValue().length)" [style.top.px]="getDeviceConnectionTopPosition(devicesValue().length)"
+  [style.width.px]="getDeviceConnectionWidth(devicesValue().length)" [style.height.px]="lineSize"></div>
 <div class="container">
-  <div class="main-device" *ngIf="server && server.property">
+  <div class="main-device" *ngIf="server && server.property" [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()"
+    [style.width.px]="mainWidth" [style.height.px]="mainHeight" [style.borderWidth.px]="mainBorder">
     <span class="device-header" style="padding-top: 10px;">{{ server.name }}</span>
     <span class="device-pro">{{ server.property.address }}</span>
     <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon>
     <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit">edit</mat-icon>
   </div>
-  <div *ngFor="let device of devicesValue(); index as i" class="node-device" [style.color]="(device.enabled) ? '#FFFFFF' : '#C5C5C5'" [style.left]="getDevicePosition(i) + 'px'">
+  <div *ngFor="let device of devicesValue(); index as i" class="node-device" [style.color]="(device.enabled) ? '#FFFFFF' : '#C5C5C5'" 
+    [style.left.px]="getDeviceLeftPosition(i)" [style.top.px]="getDeviceTopPosition(i)"
+    [style.width.px]="deviceWidth" [style.height.px]="deviceHeight" [style.borderWidth.px]="deviceBorder">
     <span class="device-header">{{ device.name }}</span>
     <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
     <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
