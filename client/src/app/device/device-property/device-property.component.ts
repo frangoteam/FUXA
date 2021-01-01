@@ -33,9 +33,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	databitsType = [7, 8];
 	stopbitsType = [1, 1.5, 2];
 	parityType = ['None', 'Odd', 'Even'];
+	methodType = ['GET', 'POST'];
 	hostInterfaces = [];
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
+	private subscriptionDeviceWebApiRequest: Subscription;
 
 	constructor(
 		private hmiService: HmiService,
@@ -119,6 +121,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 				this.hostInterfaces = res;
 			}
 		});
+		this.subscriptionDeviceWebApiRequest = this.hmiService.onDeviceWebApiRequest.subscribe(res => {
+			console.log(res);
+		});
+
 		// this.hmiService.askHostInterface();
 	}
 
@@ -129,6 +135,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 			if (this.subscriptionHostInterfaces) {
 				this.subscriptionHostInterfaces.unsubscribe();
+			}
+			if (this.subscriptionDeviceWebApiRequest) {
+				this.subscriptionDeviceWebApiRequest.unsubscribe();
 			}
 		} catch (e) {
 		}
@@ -147,6 +156,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
 	}
 
+	onCheckWebApi() {
+		this.propertyLoading = true;
+		this.hmiService.askWebApiProperty(this.data.device.property);
+	}
+
 	// onCheckBACnetDevice() {
 	// 	this.propertyLoading = true;
 	// 	this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
@@ -158,26 +172,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	onAddressChanged() {
 		this.propertyLoading = false;
-	}
-
-	isSiemensS7(type) {
-		return (type === DeviceType.SiemensS7) ? true : false;
-	}
-
-	isModbusRtu(type) {
-		return (type === DeviceType.ModbusRTU) ? true : false;
-	}
-
-	isModbusTcp(type) {
-		return (type === DeviceType.ModbusTCP) ? true : false;
-	}
-	
-	isOpcUa(type) {
-		return (type === DeviceType.OPCUA) ? true : false;
-	}
-
-	isBACnet(type) {
-		return (type === DeviceType.BACnet) ? true : false;
 	}
 
 	isValid(device): boolean {

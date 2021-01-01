@@ -33,6 +33,7 @@ export class DeviceNetProperty {
     stopbits: string;
     parity: string;
     options: string;
+    method: string;
 }
 
 export class DeviceSecurity {
@@ -47,7 +48,8 @@ export enum DeviceType {
     OPCUA = 'OPCUA',
     BACnet = 'BACnet',
     ModbusRTU = 'ModbusRTU',
-    ModbusTCP = 'ModbusTCP'
+    ModbusTCP = 'ModbusTCP',
+    WebAPI = 'WebAPI'
 }
 
 export enum TagType {

@@ -24,6 +24,7 @@ export class HmiService {
     @Output() onDeviceProperty: EventEmitter<any> = new EventEmitter();
     @Output() onHostInterfaces: EventEmitter<any> = new EventEmitter();
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
+    @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
 
     public version = "1.00";
     public static separator = '^~^';
@@ -132,6 +133,9 @@ export class HmiService {
             this.socket.on('host-interfaces', (message) => {
                 this.onHostInterfaces.emit(message);
             });               
+            this.socket.on('device-webapi-request', (message) => {
+                this.onDeviceWebApiRequest.emit(message);
+            });
 
             this.askDeviceValues();
             this.askAlarmsStatus();
@@ -156,6 +160,17 @@ export class HmiService {
             this.socket.emit('device-property', msg);
         }
     }
+
+    /**
+     * Ask device webapi result to test
+     */
+    public askWebApiProperty(property) {
+        if (this.socket) {
+            let msg = { property: property };
+            this.socket.emit('device-webapi-request', msg);
+        }
+    }
+
     /**
      * Ask host interface available
      */

@@ -1,7 +1,7 @@
-$main-color: rgb(79, 86, 93);
+$main-color: rgb(12, 101, 189);
 $device-color: rgb(79, 86, 93);
 $line-color:   #3C3C3C;
-
+$flow-color: rgb(218, 218, 218);
 
 .main-device {
     position: absolute;
@@ -15,14 +15,30 @@ $line-color:   #3C3C3C;
 .node-device {
     position: absolute;
     background-color: $device-color;
-    color: white;
     text-align: center;
     padding-top: 17px;
     border-style: solid;
     border-color: $line-color;
+    mat-icon {
+        color: white;
+    }
 }
-
+.node-flow {
+    position: absolute;
+    background-color: $flow-color;
+    text-align: center;
+    padding-top: 17px;
+    border-style: solid;
+    border-color: $line-color;
+    mat-icon {
+        color: black;
+    }
+}
 .main-line {
+    position: absolute;
+    background-color: $line-color;
+}
+.main-line-flow {
     position: absolute;
     background-color: $line-color;
 }
@@ -74,7 +90,6 @@ $line-color:   #3C3C3C;
 .device-icon {
     position: absolute;
     font-size: 17px;
-    color: rgba(255,255,255,0.8);
     cursor:pointer;
 }
 .device-edit {
@@ -91,7 +106,7 @@ $line-color:   #3C3C3C;
 .device-list {
     // bottom: 0px;
     right: 28px;
-    font-size: 22px;
+    font-size: 24px;
     bottom: 2px;
 }
 
