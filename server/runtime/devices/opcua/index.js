@@ -719,31 +719,43 @@ function OpcUAclient(_data, _logger, _events) {
  */
 function getEndPoints(endpointUrl) {
     return new Promise(function (resolve, reject) {
-        let opts = { connectionStrategy: { maxRetry: 1 } };
-        let client = new opcua.OPCUAClient(opts);
-        try {
-            client.connect(endpointUrl, function (err) {
-                if (err) {
-                    reject('getendpoints-connect-error: ' + err.message);
-                } else {
-                    const endpoints = client.getEndpoints().then(endpoints => {
-                        const reducedEndpoints = endpoints.map(endpoint => ({ 
-                            endpointUrl: endpoint.endpointUrl, 
-                            securityMode: endpoint.securityMode.toString(), 
-                            securityPolicy: endpoint.securityPolicyUri.toString(),
-                        }));
-                        resolve( reducedEndpoints);
-                        client.disconnect();
-                    }, reason => {
-                        reject('getendpoints-error: ' + reason);
-                        client.disconnect();
-                    });
-                }
-            });
-        } catch (err) {
-            reject('getendpoints-error: ' + err);
-         }
+        if (loadOpcUALib()) { 
+            let opts = { connectionStrategy: { maxRetry: 1 } };
+            let client = opcua.OPCUAClient.create(opts);  
+            try {
+                client.connect(endpointUrl, function (err) {
+                    if (err) {
+                        reject('getendpoints-connect-error: ' + err.message);
+                    } else {
+                        const endpoints = client.getEndpoints().then(endpoints => {
+                            const reducedEndpoints = endpoints.map(endpoint => ({ 
+                                endpointUrl: endpoint.endpointUrl, 
+                                securityMode: endpoint.securityMode.toString(), 
+                                securityPolicy: endpoint.securityPolicyUri.toString(),
+                            }));
+                            resolve( reducedEndpoints);
+                            client.disconnect();
+                        }, reason => {
+                            reject('getendpoints-error: ' + reason);
+                            client.disconnect();
+                        });
+                    }
+                });
+            } catch (err) {
+                reject('getendpoints-error: ' + err);
+            }
+        } else {
+            reject('getendpoints-error: node-opcua not found!');
+        }
     });
+}
+
+function loadOpcUALib() {
+    if (!opcua) {
+        try { opcua = require('node-opcua'); } catch { }
+        if (!opcua && manager) { try { opcua = manager.require('node-opcua'); } catch { } }
+    }
+    return (opcua) ? true : false;
 }
 
 module.exports = {
@@ -751,9 +763,7 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager) {
-        try { opcua = require('node-opcua'); } catch { }
-        if (!opcua && manager) { try { opcua = manager.require('node-opcua'); } catch { } }
-        if (!opcua) return null;
+        if (!loadOpcUALib()) return null;
         return new OpcUAclient(data, logger, events);
     },
     getEndPoints: getEndPoints
