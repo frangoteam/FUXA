@@ -403,6 +403,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 						device.property.stopbits = tempdevice.property.stopbits;
 						device.property.parity = tempdevice.property.parity;
 						device.property.options = tempdevice.property.options;
+						device.property.method = tempdevice.property.method;
+						device.property.format = tempdevice.property.format;
 					}
 					this.projectService.setDevice(device, olddevice, result.security);
 				}

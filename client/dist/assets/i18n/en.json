@@ -407,6 +407,7 @@
     "device.property-stopbits": "Stop Bits",
     "device.property-parity": "Parity",
     "device.property-method": "Method",
+    "device.property-parser": "Parser",
     "device.property-url": "URL",
     "device.property-webapi-result": "Result of request",
     "device.not-webapi-result": "Configure WebAPI result",

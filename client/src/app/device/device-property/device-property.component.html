@@ -181,12 +181,20 @@
                     <div *ngSwitchCase="deviceType.WebAPI">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'device.property-method' | translate}}</span>
-                            <mat-select [(value)]="data.device.property.method" style="width: 350px">
+                            <mat-select [(value)]="data.device.property.method" style="width: 160px">
                                 <mat-option *ngFor="let value of methodType" [value]="value">
                                     {{ value }}
                                 </mat-option>
                             </mat-select>
                         </div>
+                        <div class="my-form-field" style="margin-bottom: 10px; float: right;">
+                            <span>{{'device.property-format' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.format" style="width: 168px">
+                                <mat-option *ngFor="let value of parserType" [value]="value">
+                                    {{ value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>                        
                         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                             <span>{{'device.property-url' | translate}}</span>
                             <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">

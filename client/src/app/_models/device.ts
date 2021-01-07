@@ -34,6 +34,7 @@ export class DeviceNetProperty {
     parity: string;
     options: string;
     method: string;
+    format: string;
 }
 
 export class DeviceSecurity {

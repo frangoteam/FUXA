@@ -225,8 +225,8 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device webapi request and return result
         socket.on('device-webapi-request', (message) => {
             try {
-                if (message && message.endpoint && message.type) {
-                    devices.getSupportedProperty(message.endpoint, message.type).then(result => {
+                if (message && message.property) {
+                    devices.getRequestResult(message.property).then(result => {
                         message.result = result;
                         io.emit('device-webapi-request', message);
                     }).catch(function (err) {

@@ -34,6 +34,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	stopbitsType = [1, 1.5, 2];
 	parityType = ['None', 'Odd', 'Even'];
 	methodType = ['GET', 'POST'];
+	parserType = ['CSV', 'JSON'];
 	hostInterfaces = [];
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;

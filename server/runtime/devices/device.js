@@ -7,6 +7,7 @@ var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
+var HTTPclient = require('./http');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -253,14 +254,26 @@ function getSupportedProperty(endpoint, type) {
             }).catch(function (err) {
                 reject(err);
             });
-        // } else if (type === DeviceEnum.BACnet) {
-        //     BACNETclient.getEndPoints(endpoint).then(function (result) {
-        //         resolve(result);
-        //     }).catch(function (err) {
-        //         reject(err);
-        //     });
         } else {
             reject('getSupportedProperty not supported!');
+        }
+    });
+}
+
+/**
+ * Return the result of request
+ * @param {*} property 
+ */
+function getRequestResult(property) {
+    return new Promise(function (resolve, reject) {
+        if (HTTPclient) {
+            HTTPclient.getRequestResult(property).then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else {
+            reject('getRequestResult not supported!');
         }
     });
 }
@@ -289,6 +302,7 @@ module.exports = {
         return new Device(data, runtime);
     },
     getSupportedProperty: getSupportedProperty,
+    getRequestResult: getRequestResult,
     loadPlugin: loadPlugin
 }
 
@@ -300,7 +314,8 @@ var DeviceEnum = {
     OPCUA: 'OPCUA',
     ModbusRTU: 'ModbusRTU',
     ModbusTCP: 'ModbusTCP',
-    BACnet: 'BACnet'
+    BACnet: 'BACnet',
+    WebAPI: 'WebAPI'
 }
 
 /**

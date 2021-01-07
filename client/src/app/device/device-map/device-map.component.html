@@ -1,6 +1,6 @@
 <div class="main-line-flow" [style.left.px]="getMainLineLeftPosition()" [style.top.px]="getMainLineTopPosition('flow')" [style.width.px]="lineFlowSize"
     [style.height.px]="getMainLineHeight('flow')"></div>
-<div *ngFor="let flow of devicesValue('flow'); index as i" class="device-line" [style.left.px]="getDeviceLineLeftPosition(i, 'flow')"
+<div *ngFor="let flow of devicesValue('flow'); index as i" class="flow-line" [style.left.px]="getDeviceLineLeftPosition(i, 'flow')"
     [style.top.px]="getDeviceLineTopPosition('flow')" [style.width.px]="lineFlowSize" [style.height.px]="flowLineHeight"></div>
 <div class="connection-line" [style.left.px]="getDeviceConnectionLeftPosition('flow')" [style.top.px]="getDeviceConnectionTopPosition('flow')"
     [style.width.px]="getDeviceConnectionWidth('flow')" [style.height.px]="lineFlowSize"></div>
