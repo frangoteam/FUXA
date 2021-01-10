@@ -84,6 +84,8 @@ function updateDevice(device) {
             devices.loadDevice(device);
             if (device.enabled) {
                 activeDevices[device.name].start();
+            } else {
+                delete activeDevices[device.name];
             }
         }).catch(function (err) {
             runtime.logger.error('devices.update-device ' + device.name + ': ' + err);

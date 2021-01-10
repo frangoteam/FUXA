@@ -75,11 +75,11 @@ export enum MessageSecurityMode {
     /** The MessageSecurityMode is invalid */
     INVALID,
     /** No security is applied. */
-    NONE = 'NONE',
+    NONE = '1', //'NONE',
     /** All messages are signed but not encrypted. */
-    SIGN = 'SIGN',
+    SIGN = '2', //'SIGN',
     /** All messages are signed and encrypted. */
-    SIGNANDENCRYPT = 'SIGNANDENCRYPT'
+    SIGNANDENCRYPT = '3'    //'SIGNANDENCRYPT'
 }
 
 export enum SecurityPolicy {
@@ -98,7 +98,11 @@ export enum SecurityPolicy {
     /** see http://opcfoundation.org/UA/SecurityPolicy#Basic256Rsa15 */
     Basic256Rsa15 = 'Basic256Rsa15',
     /** see http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha25 */
-    Basic256Sha256 = 'Basic256Sha256'
+    Basic256Sha256 = 'Basic256Sha256',
+    /** see 'http://opcfoundation.org/UA/SecurityPolicy#Aes256_Sha256_RsaPss' */
+    Aes256_Sha256_RsaPss = 'Aes256_Sha256_RsaPss',
+    /** see ''http://opcfoundation.org/UA/SecurityPolicy#Aes128_Sha256_RsaOaep'' */
+    Aes128_Sha256_RsaOaep = 'Aes128_Sha256_RsaOaep'
 }
 
 export enum BACnetObjectType {
