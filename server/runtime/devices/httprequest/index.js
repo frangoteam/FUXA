@@ -2,7 +2,7 @@
  * 'http': webapi wrapper to manage REST API request
  */
 'use strict';
-var https = require('https');
+const axios = require('axios');
 function HTTPclient(_data, _logger, _events) {
 }
 
@@ -23,17 +23,12 @@ function getRequestResult(property) {
     return new Promise(function (resolve, reject) {
         try {
             if (property.method === 'GET') {
-                https.get(property.address, res => {
-                    let data = ""
-                    res.on("data", d => {
-                        data += d;
-                    });
-                    res.on("end", () => {
-                        resolve(parseData(data, property));
-                    });
-                    res.on('error', error => {
-                        reject(error);
-                    });
+                axios.get(property.address).then(res => {
+                    // console.log(res.data.id);
+                    // console.log(res.data.title);
+                    resolve(parseData(res.data, property));
+                }).catch(err => {
+                    reject(err);
                 });
             } else {
                 reject('getrequestresult-error: method is missing!');

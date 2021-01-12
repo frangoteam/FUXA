@@ -7,7 +7,7 @@ var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
-var HTTPclient = require('./http');
+var HTTPclient = require('./httprequest');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
