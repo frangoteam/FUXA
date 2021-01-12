@@ -233,7 +233,7 @@ function OpcUAclient(_data, _logger, _events) {
      */
     var _browseNext = function (contipoint) {
         var opcNodes = [];
-        var browseNextRequest = new opcua.browse_service.BrowseNextRequest({
+        var browseNextRequest = new opcua.BrowseNextRequest({
             continuationPoints: [contipoint]
         });
         return new Promise(function (resolve, reject) {
