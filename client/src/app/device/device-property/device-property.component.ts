@@ -70,20 +70,24 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 						let mode = this.securityModeToString(sec.securityMode);
 						if (sec.securityPolicy.indexOf(secPol.None) !== -1) {
 							this.securityMode.push({value: sec, text: SecurityPolicy.None.toString() + ' - ' + mode});
-						} else if (sec.securityPolicy.indexOf(secPol.Basic128) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic128.toString() + ' - ' + mode});
 						} else if (sec.securityPolicy.indexOf(secPol.Basic128Rsa15) !== -1) {
 							this.securityMode.push({value: sec, text: SecurityPolicy.Basic128Rsa15.toString() + ' - ' + mode});
+						} else if (sec.securityPolicy.indexOf(secPol.Basic128) !== -1) {
+							this.securityMode.push({value: sec, text: SecurityPolicy.Basic128.toString() + ' - ' + mode});
+						} else if (sec.securityPolicy.indexOf(secPol.Basic192Rsa15) !== -1) {							
+							this.securityMode.push({value: sec, text: SecurityPolicy.Basic192Rsa15.toString() + ' - ' + mode});
 						} else if (sec.securityPolicy.indexOf(secPol.Basic192) !== -1) {
 							this.securityMode.push({value: sec, text: SecurityPolicy.Basic192.toString() + ' - ' + mode});
-						} else if (sec.securityPolicy.indexOf(secPol.Basic192Rsa15) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic192Rsa15.toString() + ' - ' + mode});
-						} else if (sec.securityPolicy.indexOf(secPol.Basic256) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256.toString() + ' - ' + mode});
 						} else if (sec.securityPolicy.indexOf(secPol.Basic256Rsa15) !== -1) {
 							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256Rsa15.toString() + ' - ' + mode});
 						} else if (sec.securityPolicy.indexOf(secPol.Basic256Sha256) !== -1) {
 							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256Sha256.toString() + ' - ' + mode});
+						} else if (sec.securityPolicy.indexOf(secPol.Basic256) !== -1) {
+							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256.toString() + ' - ' + mode});
+						} else if (sec.securityPolicy.indexOf(secPol.Aes128_Sha256_RsaOaep) !== -1) {
+							this.securityMode.push({value: sec, text: SecurityPolicy.Aes128_Sha256_RsaOaep.toString() + ' - ' + mode});
+						} else if (sec.securityPolicy.indexOf(secPol.Aes256_Sha256_RsaPss) !== -1) {
+							this.securityMode.push({value: sec, text: SecurityPolicy.Aes256_Sha256_RsaPss.toString() + ' - ' + mode});
 						}
 						if (this.isSecurityMode(sec)) {
 							this.securityRadio = sec;

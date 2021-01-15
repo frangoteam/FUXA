@@ -1,7 +1,4 @@
 ﻿<div *ngIf="isLoading" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;">
-    <!-- <mat-spinner mode="indeterminate" color="rgba(48,89,175,1)" diameter="50" 
-            style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
-    </mat-spinner> -->
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
@@ -69,9 +66,6 @@
                         <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('path')}" (click)="setMode('path')">
                             <span class="icon-path"></span>
                         </div>
-                        <!-- <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('path')}" (click)="setMode('path')">
-              <span class="icon-path"></span>
-            </div> -->
                         <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('text')}" (click)="setMode('text')">
                             <span class="icon-text"></span>
                         </div>
@@ -318,15 +312,7 @@
                                             <option value="middle">{{'editor.transform-center' | translate}}</option>
                                             <option value="end">{{'editor.transform-right' | translate}}</option>
                                         </select>
-                                        <!-- <div class="tool_button" id="tool_bold" title="Bold Text [B]">
-                      <span>B</span>
-                    </div> -->
                                     </div>
-                                    <!-- <div class="svg-property">
-                    <div class="tool_button" id="tool_italic" title="Italic Text [I]">
-                      <span>i</span>
-                    </div>
-                  </div> -->
                                 </div>
 
                                 <!-- Not visible, but still used -->
@@ -356,18 +342,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div id="hw_panel">
-                <div class="svg-property-split2">
-                  <div class="svg-property" title="Change rectangle width">
-                    <span>width</span>
-                    <input id="rect_width" class="attr_changer" size="3" data-attr="width" />
-                  </div>
-                  <div class="svg-property" title="Change rectangle height">
-                    <span>height</span>
-                    <input id="rect_height" class="attr_changer" size="3" data-attr="height" />
-                  </div>
-                </div>
-              </div> -->
                             <div id="tool_angle" title="{{'editor.transform-angle-title' | translate}}" class="svg-property">
                                 <div class="svg-property-split2">
                                     <div class="svg-property">
@@ -376,11 +350,11 @@
                                     </div>
                                     <div class="svg-property">
                                         <!-- <div class="svg-tool-button" (click)="flipSelected('vertical')" title="Flip vertically">
-                      <span class="icon-flip-vertical"></span>
-                    </div>
-                    <div class="svg-tool-button" (click)="flipSelected('orizontal')" title="Flip orizontally">
-                      <span class="icon-flip-orizontal"></span>
-                    </div> -->
+                                        <span class="icon-flip-vertical"></span>
+                                        </div>
+                                        <div class="svg-tool-button" (click)="flipSelected('orizontal')" title="Flip orizontally">
+                                        <span class="icon-flip-orizontal"></span>
+                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -472,17 +446,6 @@
                                 <div class="svg-property">
                                 </div>
                             </div>
-                            <!-- <ul id="linejoin_opts">
-                <li class="tool_button current" id="linejoin_miter" title="Linejoin: Miter"></li>
-                <li class="tool_button" id="linejoin_round" title="Linejoin: Round"></li>
-                <li class="tool_button" id="linejoin_bevel" title="Linejoin: Bevel"></li>
-              </ul>
-
-              <ul id="linecap_opts">
-                <li class="tool_button current" id="linecap_butt" title="Linecap: Butt"></li>
-                <li class="tool_button" id="linecap_square" title="Linecap: Square"></li>
-                <li class="tool_button" id="linecap_round" title="Linecap: Round"></li>
-              </ul> -->
                         </div>
                     </div>
                 </mat-expansion-panel>
@@ -536,7 +499,6 @@
                             <mat-icon aria-label="Select" *ngIf="!panelEventOpenState">expand_more</mat-icon>
                             <span>{{'editor.interactivity' | translate}}</span> <!-- INTERACTIVITY -->
                         </mat-panel-title>
-                        <!-- <mat-icon aria-label="Add" class="leftbar-edit-btn" (click)="addEvent();$event.stopPropagation()" *ngif="selectedElement">add</mat-icon> -->
                     </mat-expansion-panel-header>
                     <div id="interaction_panel" class="rightbar_panel">
                         <gauge-base #gaugepanel *ngIf="selectedElement" [settings]=getGaugeSettings(selectedElement) (edit)="onGaugeEdit($event)"></gauge-base>
@@ -591,12 +553,6 @@
                                 <mat-icon aria-label="Redo [Y]">redo</mat-icon>
                             </button>
                         </div>
-
-                        <!-- <div class="tool_sep"></div> -->
-                        <!-- <div class="push_button" id="tool_source" title="Edit Source [U]"></div> -->
-                        <!-- <div class="tool_button" id="tool_wireframe" title="Wireframe Mode [F]"></div> -->
-                        <!-- <div class="tool_sep"></div> -->
-                        <!-- <div class="tool_button" id="tool_zoom" title="Zoom Tool [Ctrl+Up/Down]"></div> -->
                     </div>
                     <div id="selected_panel">
                         <div class="main-btn-sep"></div>
@@ -662,130 +618,11 @@
                             <span class="ungroup"></span>
                         </button>
                     </div>
-
-                    <!-- History buttons -->
-                    <!-- <div id="history_panel">
-            <div class="tool_sep"></div>
-            <div class="push_button tool_button_disabled" id="tool_undo" title="Undo [Z]"></div>
-            <div class="push_button tool_button_disabled" id="tool_redo" title="Redo [Y]"></div>
-          </div> -->
-                    <!-- Buttons when a single element is selected -->
-                    <!-- <div id="_selected_panel"> -->
-                    <!-- <div class="toolset"> -->
-                    <!-- <div class="tool_sep"></div> -->
-                    <!-- <div class="push_button" id="tool_clone" title="Duplicate Element [D]"></div> -->
-                    <!-- <div class="push_button" id="tool_delete" title="Delete Element [Delete/Backspace]"></div> -->
-                    <!-- <div class="push_button" id="tool_move_top" title="Bring to Front [ Ctrl+Shift+] ]"></div> -->
-                    <!-- <div class="push_button" id="tool_move_bottom" title="Send to Back [ Ctrl+Shift+[ ]"></div> -->
-                    <!-- <div class="push_button" id="tool_topath" title="Convert to Path"></div> -->
-                    <!-- <div class="push_button" id="tool_reorient" title="Reorient path"></div> -->
-                    <!-- <div class="push_button" id="tool_make_link" title="Make (hyper)link"></div> -->
-                    <!-- </div> -->
-                    <!-- </div> -->
-                    <!-- select panel END -->
-                    <!-- Buttons when multiple elements are selected -->
-                    <!-- <div id="_multiselected_panel"> -->
-                    <!-- <div class="tool_sep"></div> -->
-                    <!-- <div class="push_button" id="tool_clone_multi" title="Clone Elements [C]"></div> -->
-                    <!-- <div class="push_button" id="tool_delete_multi" title="Delete Selected Elements [Delete/Backspace]"></div> -->
-                    <!-- <div class="tool_sep"></div> -->
-                    <!-- <div class="push_button" id="tool_group_elements" title="Group Elements [G]"></div> -->
-                    <!-- <div class="push_button" id="tool_make_link_multi" title="Make (hyper)link"></div> -->
-                    <!-- <div class="push_button" id="tool_alignleft" title="Align Left"></div> -->
-                    <!-- <div class="push_button" id="tool_aligncenter" title="Align Center"></div> -->
-                    <!-- <div class="push_button" id="tool_alignright" title="Align Right"></div> -->
-                    <!-- <div class="push_button" id="tool_aligntop" title="Align Top"></div> -->
-                    <!-- <div class="push_button" id="tool_alignmiddle" title="Align Middle"></div> -->
-                    <!-- <div class="push_button" id="tool_alignbottom" title="Align Bottom"></div> -->
-                    <!-- <label id="tool_align_relative">
-              <span id="relativeToLabel">relative to:</span>
-              <select id="align_relative_to" title="Align relative to ...">
-                <option id="selected_objects" value="selected">selected objects</option>
-                <option id="largest_object" value="largest">largest object</option>
-                <option id="smallest_object" value="smallest">smallest object</option>
-                <option id="page" value="page">page</option>
-              </select>
-            </label> -->
-                    <!-- </div> -->
-
-                    <!-- formerly gsvg_panel -->
-                    <!-- <div id="container_panel"> -->
-                    <!-- <div class="tool_sep"></div> -->
-                    <!-- Add viewBox field here? -->
-                    <!-- <label id="group_title" title="Group identification label">
-              <span>label:</span>
-              <input id="g_title" data-attr="title" size="10" type="text" />
-            </label> -->
-                    <!-- </div> -->
-
-                    <!-- <div id="use_panel">
-            <div class="push_button" id="tool_unlink_use" title="Break link to reference element (make unique)"></div>
-          </div> -->
-
-                    <!-- <div id="g_panel">
-            <div class="push_button" id="tool_ungroup" title="Ungroup Elements [G]"></div>
-          </div> -->
-
-                    <!-- For anchor elements -->
-                    <!-- <div id="a_panel">
-            <label id="tool_link_url" title="Set link URL (leave empty to remove)">
-              <span id="linkLabel" class="icon_label"></span>
-              <input id="link_url" type="text" size="35" />
-            </label>
-          </div> -->
-
-                    <!-- <div id="path_node_panel"> -->
-                    <!-- <div class="tool_sep"></div> -->
-                    <!-- <div class="tool_button push_button_pressed" id="tool_node_link" title="Link Control Points"></div> -->
-                    <!-- <div class="tool_sep"></div> -->
-                    <!-- <label id="tool_node_x">x:
-              <input id="path_node_x" class="attr_changer" title="Change node's x coordinate" size="3" data-attr="x" />
-            </label>
-            <label id="tool_node_y">y:
-              <input id="path_node_y" class="attr_changer" title="Change node's y coordinate" size="3" data-attr="y" />
-            </label> -->
-
-                    <!-- <select id="seg_type" title="Change Segment type">
-              <option id="straight_segments" selected="selected" value="4">Straight</option>
-              <option id="curve_segments" value="6">Curve</option>
-            </select> -->
-                    <!-- <div class="tool_button" id="tool_node_clone" title="Clone Node"></div>
-            <div class="tool_button" id="tool_node_delete" title="Delete Node"></div>
-            <div class="tool_button" id="tool_openclose_path" title="Open/close sub-path"></div>
-            <div class="tool_button" id="tool_add_subpath" title="Add sub-path"></div> -->
-                    <!-- </div> -->
                 </div>
                 <!-- tools_top -->
                 <div id="cur_context_panel">
 
                 </div>
-
-                <!-- tools_left -->
-                <!-- <div id="tools_left" class="tools_panel">
-      <div class="tool_button" id="tool_select" title="Select Tool"></div>
-      <div class="tool_button" id="tool_fhpath" title="Pencil Tool"></div>
-      <div class="tool_button" id="tool_line" title="Line Tool"></div>
-      <div class="tool_button flyout_current" id="tools_rect_show" title="Square/Rect Tool">
-        <div class="flyout_arrow_horiz"></div>
-      </div>
-      <div class="tool_button flyout_current" id="tools_ellipse_show" title="Ellipse/Circle Tool">
-        <div class="flyout_arrow_horiz"></div>
-      </div>
-      <div class="tool_button" id="tool_path" title="Path Tool"></div>
-      <div class="tool_button" id="tool_text" title="Text Tool"></div>
-      <div class="tool_button" id="tool_image" title="Image Tool"></div>
-      <div class="tool_button" id="tool_zoom" title="Zoom Tool [Ctrl+Up/Down]"></div>
-
-      <div style="display: none">
-        <div id="tool_rect" title="Rectangle"></div>
-        <div id="tool_square" title="Square"></div>
-        <div id="tool_fhrect" title="Free-Hand Rectangle"></div>
-        <div id="tool_ellipse" title="Ellipse"></div>
-        <div id="tool_circle" title="Circle"></div>
-        <div id="tool_fhellipse" title="Free-Hand Ellipse"></div>
-      </div>
-    </div> -->
-                <!-- tools_left -->
 
                 <!-- tool bottom -->
                 <div class="bottom-bar tools_panel">
@@ -793,7 +630,6 @@
                     <div class="zoom-menu" title="{{'editor.tools-zoomlevel-title' | translate}}">
                         <div class="zoom-value">
                             <input id="zoom" size="3" value="100" type="text" #zoomValue hidden />
-                            <!-- <span id="zoomLabel">{{zoomValue.value}} %</span> -->
                             <div id="zoom_dropdown" class="dropdown selection" style="margin-top: 0px; margin-bottom: 0px;margin-right: 0px;">
                                 <button style="margin-top: 2px; width: 80px;cursor: pointer; font-size: 12px;">
                                     {{zoomValue.value}} %
@@ -807,7 +643,6 @@
                                     <li>25%</li>
                                     <li id="fit_to_canvas" data-val="canvas">{{'editor.tools-zoomlevel-fitcanvas' | translate}}</li>
                                     <li id="fit_to_sel" data-val="selection">{{'editor.tools-zoomlevel-fitsection' | translate}}</li>
-                                    <!-- <li id="fit_to_layer_content" data-val="layer">Fit to layer content</li> -->
                                     <li id="fit_to_all" data-val="content">{{'editor.tools-zoomlevel-fitcontent' | translate}}</li>
                                     <li>100%</li>
                                 </ul>
@@ -818,7 +653,6 @@
                     <div id="tools_bottom_2" class="colors">
                         <input readonly [(colorPicker)]="colorFill" class="color-fill" title="{{'editor.tools-fillcolor-title' | translate}}" [style.background]="colorFill" [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeFillColor($event)" [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
                         <input readonly [(colorPicker)]="colorStroke" class="color-stroke" title="{{'editor.tools-strokecolor-title' | translate}}" [style.background]="colorStroke" [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeStrokeColor($event)" [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
-                        <!-- <div id="color_tools"> -->
                         <div class="color_tool" id="tool_fill" hidden>
                             <label class="icon_label" for="fill_color" title="{{'editor.tools-fillcolor-title' | translate}}"></label>
                             <div class="color_block">
@@ -831,50 +665,6 @@
                                 <div id="stroke_bg"></div>
                                 <div id="stroke_color" class="color_block" title="{{'editor.tools-strokecolor-title' | translate}}" [style.border-color]="colorStroke"></div>
                             </div>
-
-                            <!-- <div id="toggle_stroke_tools" title="Show/hide more stroke tools"></div> -->
-
-                            <!-- <label class="stroke_tool">
-                  <select id="stroke_style" title="Change stroke dash style">
-                    <option selected="selected" value="none">&#8212;</option>
-                    <option value="2,2">...</option>
-                    <option value="5,5">- -</option>
-                    <option value="5,2,2,2">- .</option>
-                    <option value="5,2,2,2,2,2">- ..</option>
-                  </select>
-                </label> -->
-
-                            <!-- <div class="stroke_tool dropdown" id="stroke_linejoin">
-                  <div id="cur_linejoin" title="Linejoin: Miter"></div>
-                  <button></button>
-                </div> -->
-
-                            <!-- <div class="stroke_tool dropdown" id="stroke_linecap">
-                  <div id="cur_linecap" title="Linecap: Butt"></div>
-                  <button></button>
-                </div> -->
-
-                            <!-- </div> -->
-
-                            <!-- <div class="color_tool" id="tool_opacity" title="Change selected item opacity">
-                <label>
-                  <span id="group_opacityLabel" class="icon_label"></span>
-                  <input id="group_opacity" size="3" value="100" type="text" />
-                </label>
-                <div id="opacity_dropdown" class="dropdown">
-                  <button></button>
-                  <ul>
-                    <li>0%</li>
-                    <li>25%</li>
-                    <li>50%</li>
-                    <li>75%</li>
-                    <li>100%</li>
-                    <li class="special">
-                      <div id="opac_slider"></div>
-                    </li>
-                  </ul>
-                </div>
-              </div> -->
                         </div>
                     </div>
 
@@ -886,18 +676,6 @@
                 </div>
 
                 <div id="option_lists" class="dropdown">
-                    <!-- <ul id="linejoin_opts">
-            <li class="tool_button current" id="linejoin_miter" title="Linejoin: Miter"></li>
-            <li class="tool_button" id="linejoin_round" title="Linejoin: Round"></li>
-            <li class="tool_button" id="linejoin_bevel" title="Linejoin: Bevel"></li>
-          </ul>
-
-          <ul id="linecap_opts">
-            <li class="tool_button current" id="linecap_butt" title="Linecap: Butt"></li>
-            <li class="tool_button" id="linecap_square" title="Linecap: Square"></li>
-            <li class="tool_button" id="linecap_round" title="Linecap: Round"></li>
-          </ul> -->
-
                     <ul id="position_opts" class="optcols3">
                         <li class="push_button" id="tool_posleft" title="Align Left"></li>
                         <li class="push_button" id="tool_poscenter" title="Align Center"></li>
@@ -907,11 +685,6 @@
                         <li class="push_button" id="tool_posbottom" title="Align Bottom"></li>
                     </ul>
                 </div>
-
-
-                <!-- hidden divs -->
-                <!-- <div id="color_picker"></div> -->
-
             </div>
         </mat-drawer-content>
         <!-- work area END -->
@@ -1009,7 +782,6 @@
 
                 <label>
                     <span id="svginfo_lang">Language:</span>
-                    <!-- Source: http://en.wikipedia.org/wiki/Language_names -->
                     <select id="lang_select">
                         <option id="lang_ar" value="ar">العربية</option>
                         <option id="lang_cs" value="cs">Čeština</option>
@@ -1089,20 +861,6 @@
                             <option value="ex">Exs</option>
                         </select>
                     </label>
-                    <!-- Should this be an export option instead? -->
-                    <!-- 
-          <span id="svginfo_unit_system">Unit System:</span>
-          <label>
-            <input type="radio" name="unit_system" value="single" checked="checked"/>
-            <span id="svginfo_single_type_unit">Single type unit</span>
-            <small id="svginfo_single_type_unit_sub">CSS unit type is set on root element. If a different unit type is entered in a text field, it is converted back to user units on export.</small>
-          </label>
-          <label>
-            <input type="radio" name="unit_system" value="multi"/>
-            <span id="svginfo_multi_units">Multiple CSS units</span> 
-            <small id="svginfo_single_type_unit_sub">Attributes can be given different CSS units, which may lead to inconsistant results among viewers.</small>
-          </label>
-   -->
                 </fieldset>
 
             </fieldset>
@@ -1121,9 +879,6 @@
 
     <!-- canvas context menu -->
     <ul id="cmenu_canvas" class="contextMenu svg-workarea-contextmenu">
-        <!-- <li>
-      <a href="#deselect">Clear selection</a>
-    </li> -->
         <li>
             <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">{{'editor.interactivity' | translate}}</a>
         </li>
