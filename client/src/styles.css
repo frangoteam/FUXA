@@ -59,7 +59,7 @@
 }
 
 
-   
+
 /* System and General */
 html {
     height: 100%;
@@ -89,7 +89,7 @@ app-root {
     display: block;
     height: 100%;
   }
-  
+
 /* toaster overwrite */
 /*-------------------*/
 #toast-container > div {
@@ -378,7 +378,7 @@ app-root {
     position: relative;
     /* padding: 15px 0px 4px 0px; */
 }
-  
+
 .my-form-field > span {
     display: block;
     font-size: 12px;
@@ -387,7 +387,7 @@ app-root {
     left: 3px;
     opacity: 0.5;
 }
-  
+
 .my-form-field input, mat-select {
     font-size: 15px;
     border: unset;
@@ -413,7 +413,7 @@ app-root {
     background-color: #f1f3f4;
     /* background-color: rgba(0,0,0,0.01) */
 }
-/* 
+/*
 .my-form-field mat-select:focus {
   padding: 4px 1px 5px 2px;
   border: 2px solid #ccc;
@@ -433,7 +433,7 @@ mat-toolbar, mat-toolbar-row {
     /* min-height: 44px !important; */
     height: 46px !important;
     font-family: 'Open Sans', sans-serif !important;
-    font-weight: 300 !important; 
+    font-weight: 300 !important;
     font-size: 22px !important;
     padding-left: 2px !important;
     align-items: unset !important;
@@ -453,7 +453,7 @@ mat-toolbar, mat-toolbar-row {
     /* min-height: 44px !important; */
     height: 46px !important;
     font-family: 'Open Sans', sans-serif !important;
-    font-weight: 300 !important; 
+    font-weight: 300 !important;
     font-size: 22px !important;
     padding-left: 2px !important;
     align-items: unset !important;
@@ -476,10 +476,7 @@ mat-toolbar, mat-toolbar-row {
 .dialog-property .mat-dialog-container {
     padding-top: 0px;
 }
-/* scroolbar */
-#workarea {
-    overflow: hidden !important;
-}
+
 /* width */
 ::-webkit-scrollbar {
     width: 7px;
@@ -558,7 +555,7 @@ mat-toolbar, mat-toolbar-row {
   border-radius: inherit;
 }
 
-.md-switch input { 
+.md-switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -618,9 +615,9 @@ mat-toolbar, mat-toolbar-row {
 }
 
 .fab-add {
-  position: fixed !important; 
-  right: 20px !important; 
-  bottom: 30px !important; 
+  position: fixed !important;
+  right: 20px !important;
+  bottom: 30px !important;
   z-index: 9999 !important;
 }
 
