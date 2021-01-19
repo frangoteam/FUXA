@@ -3,3 +3,8 @@
     padding-left: 5px !important;
     padding-right: 5px !important;
  }
+
+ .multiline {
+    overflow: auto;
+    max-height: 300px;
+ }

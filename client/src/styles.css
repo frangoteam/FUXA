@@ -483,16 +483,17 @@ mat-toolbar, mat-toolbar-row {
 /* width */
 ::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: rgba(47,47,47,1);
+    background: rgba(47,47,47,0.1);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: rgba(108,108,108,0.6);
+    background: rgba(108,108,108,0.3);
 }
 
 /* Color Picker */

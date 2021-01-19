@@ -47,6 +47,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = BACNETclient.create(data, logger, events, manager);        
+    } else if (data.type === DeviceEnum.WebAPI) {
+        if (!HTTPclient) {
+            return null;
+        }
+        comm = HTTPclient.create(data, logger, events, manager);        
     }
     if (!comm) {
         return null;
@@ -143,6 +148,7 @@ function Device(data, runtime) {
      */
     this.load = function (data) {
         pollingInterval = data.polling || DEVICE_POLLING_INTERVAL;
+        data.polling = pollingInterval;
         return comm.load(data);
     }
 
@@ -291,6 +297,8 @@ function loadPlugin(type, module) {
         MODBUSclient = require(module);
     } else if (type === DeviceEnum.BACnet) {
         BACNETclient = require(module);
+    } else if (type === DeviceEnum.WebAPI) {
+        HTTPclient = require(module);
     }
 }
 

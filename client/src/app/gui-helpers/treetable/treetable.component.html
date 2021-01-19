@@ -13,6 +13,14 @@
 					<mat-icon>label</mat-icon>
 				</button>
 				{{node.text}}
+				<div *ngIf="node.todefine">
+					Key:
+					<!-- <mat-select [(value)]="getDefinedKey(node.todefine)" style="width: 160px"> -->
+                        <!-- <mat-option *ngFor="let key of getToDefineOptions(node.todefine)" [value]="key"> -->
+                            <!-- {{ key }} -->
+                        <!-- </mat-option> -->
+                    <!-- </mat-select> -->
+				</div>
 			</div>
 			<div class="item-property" [style.left.px]="node.childPos * 15">
 				{{node.property}}

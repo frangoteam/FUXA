@@ -19,10 +19,11 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     error: string;
     existing: string[] = [];
     withtree: boolean = false;
-    config = { width: '100%', height: '600px' };
+    config = { width: '100%', height: '600px', type: '' };
     memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
     private subscriptionBrowse: Subscription;
     private subscriptionNodeAttribute: Subscription;
+	private subscriptionDeviceWebApiRequest: Subscription;
 
     @ViewChild(TreetableComponent) treetable: TreetableComponent;
 
@@ -33,10 +34,11 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet) {
+        if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet || this.data.device.type === DeviceType.WebAPI) {
             this.withtree = true;
             this.config.height = '640px';
             this.config.width = '1000px';
+            this.config.type = (this.data.device.type === DeviceType.WebAPI) ? 'todefine' : '';
         } else {
             if (this.isModbus()) {
                 this.tagType = ModbusTagType;
@@ -79,6 +81,15 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                         }
                     }
                 });
+            } else if (this.data.device.type === DeviceType.WebAPI) {
+                this.hmiService.onDeviceWebApiRequest.subscribe(res => {
+                    console.log(res);
+                    if (res.result) {
+                        this.addTreeNodes(res.result);
+                        this.treetable.update(false);
+                    }
+                });
+        		this.hmiService.askWebApiProperty(this.data.device.property);
             }
             this.queryNext(null);
         }
@@ -93,6 +104,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             if (this.subscriptionNodeAttribute) {
                 this.subscriptionNodeAttribute.unsubscribe();
             }
+            if (this.subscriptionDeviceWebApiRequest) {
+				this.subscriptionDeviceWebApiRequest.unsubscribe();
+			}
         } catch (e) {
         }
     }
@@ -146,6 +160,32 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 }
             });
             this.treetable.update();
+        }
+    }
+
+    addTreeNodes(nodes: any, id = '', parent: Node = null) {
+        if (Array.isArray(nodes)) {
+            let res = id + '[]';
+            let node = new Node(res, res);
+            node.setToDefine();
+            this.treetable.addNode(node, parent, true);
+            let idx = 0;
+            for(var n in nodes) {
+                idx++;
+                this.addTreeNodes(nodes[n], id + '[' + idx + ']', node);
+            }
+        } else if (typeof nodes === 'object') {
+            for(var n in nodes) {
+                parent.addToDefine(n);
+            }
+            let res = id;
+            let node = new Node(res, res);
+            node.object = nodes;
+            this.treetable.addNode(node, parent, true);
+                // if (typeof nodes[n] === 'object'){
+                    // this.addTreeNodes(nodes[n], index, node);
+                // }
+            // }
         }
     }
 

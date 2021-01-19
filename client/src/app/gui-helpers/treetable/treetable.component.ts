@@ -11,6 +11,8 @@ export class TreetableComponent implements OnInit {
   @Output() expand = new EventEmitter();
   @ViewChild('treetable') treetable: ElementRef;
 
+
+  treeType = TreeType.Standard;
   nodeType = NodeType;
 
   nodes = {};
@@ -27,6 +29,9 @@ export class TreetableComponent implements OnInit {
       }
       if (this.config.height) {
         this.containerProperty.height = this.config.height;
+      }
+      if (this.config.type === TreeType.ToDefine) {
+        this.treeType = TreeType.ToDefine;
       }
     }
   }
@@ -68,8 +73,8 @@ export class TreetableComponent implements OnInit {
     }
   }
 
-  update() {
-    this.list = this.nodeToItems();
+  update(sort = true) {
+    this.list = this.nodeToItems(sort);
   }
 
   setNodeProperty(node: Node, pro: string) {
@@ -79,7 +84,7 @@ export class TreetableComponent implements OnInit {
     }
   }
 
-  nodeToItems(): Array<Node> {
+  nodeToItems(sort = true): Array<Node> {
     if (this.nodes && Object.values(this.nodes).length) {
       let result = [];
         Object.values(this.nodes).forEach((value: Node) => {
@@ -87,7 +92,11 @@ export class TreetableComponent implements OnInit {
               result.push(value);
           }
       });
-      return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
+      if (sort) {
+        return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
+      } else {
+        return result;
+      }
     } else {
       return [];
     }
@@ -102,6 +111,14 @@ export class TreetableComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  getDefinedKey(todefine) {
+    return '';
+  }
+
+  getToDefineOptions(todefine) {
+    return Object.keys(todefine.options);
   }
 }
 
@@ -121,6 +138,9 @@ export class Node {
   childs: Node[] = [];
   waiting: boolean = true;
   enabled: boolean = true;
+  object: object = null;
+  todefine: any = null;
+
   constructor(id: string, text: string) {
     this.id = id;
     this.text = text;
@@ -135,8 +155,17 @@ export class Node {
       this.parent.childs.push(this);
     }
   }
-}
 
+  setToDefine() {
+    this.todefine = { options: {} };
+  }
+
+  addToDefine(opt: string) {
+    if (this.todefine) {
+      this.todefine[opt] = null;
+    }
+  }
+}
 
 export enum NodeType {
   Unspecified = 0,
@@ -148,4 +177,9 @@ export enum NodeType {
   ReferenceType = 32,
   DataType = 64,
   View = 128
+}
+
+export enum TreeType {
+  Standard = 'standard',  // ask expand, 
+  ToDefine = 'todefine'   // property to define (key and value)
 }
