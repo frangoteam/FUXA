@@ -39,10 +39,10 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
             let g = svgele.node.children[0];
             let clr = '';
             let val = parseFloat(sig.value);
-			if (Number.isNaN(val)) {
-				// maybe boolean
-				val = Number(sig.value);
-			}
+            if (Number.isNaN(val)) {
+              // maybe boolean
+              val = Number(sig.value);
+            }
             if (ga.property && ga.property.ranges) {
                 for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                     if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
@@ -50,7 +50,6 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
                     }
                 }
                 g.setAttribute('fill', clr);
-                g.setAttribute('style', 'filter: url(#blur-filter);');
             }
         }
     }
