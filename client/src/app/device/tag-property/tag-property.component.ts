@@ -6,6 +6,7 @@ import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType } fro
 import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
+import { Utils } from '../../_helpers/utils';
 import { t } from '@angular/core/src/render3';
 
 @Component({
@@ -83,7 +84,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 });
             } else if (this.data.device.type === DeviceType.WebAPI) {
                 this.hmiService.onDeviceWebApiRequest.subscribe(res => {
-                    console.log(res);
                     if (res.result) {
                         this.addTreeNodes(res.result);
                         this.treetable.update(false);
@@ -117,12 +117,17 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         this.data.nodes = [];
-        Object.keys(this.treetable.nodes).forEach((key) => {
-            let n: Node = this.treetable.nodes[key];
-            if (n.checked) {
-                this.data.nodes.push(this.treetable.nodes[key]);
-            }
-        });
+        if (this.data.device.type === DeviceType.WebAPI) {
+            let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
+            this.data.nodes = result;
+        } else {
+            Object.keys(this.treetable.nodes).forEach((key) => {
+                let n: Node = this.treetable.nodes[key];
+                if (n.checked) {
+                    this.data.nodes.push(this.treetable.nodes[key]);
+                }
+            });
+        }
     }
 
     onCheckValue(tag) {
@@ -164,29 +169,100 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     }
 
     addTreeNodes(nodes: any, id = '', parent: Node = null) {
+        let nodeId = id;
+        let nodeName = id;
+        if (parent && parent.id) {
+            nodeId = parent.id + ':' + nodeId;
+        }
+        let node = new Node(nodeId, nodeName);
+        node.parent = parent;
         if (Array.isArray(nodes)) {
-            let res = id + '[]';
-            let node = new Node(res, res);
+            // nodeId = nodeId + '[]';
+            node.class = NodeType.Array;
             node.setToDefine();
+            node.expanded = true;
             this.treetable.addNode(node, parent, true);
             let idx = 0;
             for(var n in nodes) {
-                idx++;
-                this.addTreeNodes(nodes[n], id + '[' + idx + ']', node);
+                this.addTreeNodes(nodes[n], '[' + idx++ + ']', node);
             }
-        } else if (typeof nodes === 'object') {
-            for(var n in nodes) {
-                parent.addToDefine(n);
-            }
-            let res = id;
-            let node = new Node(res, res);
-            node.object = nodes;
-            this.treetable.addNode(node, parent, true);
-                // if (typeof nodes[n] === 'object'){
-                    // this.addTreeNodes(nodes[n], index, node);
-                // }
+        } else if (nodes && typeof nodes === 'object') {
+            // for(var n in nodes) {
+            //     this.addTreeNodes(nodes[n], n, nodes);
             // }
+            // let node = new Node(nodeId, nodeName);
+            node.expanded = true;
+            node.class = NodeType.Object;
+            this.treetable.addNode(node, parent, true);
+            // console.log(`o: ${nodeId} ${nodeName}`);
+            for(var n in nodes) {
+                this.addTreeNodes(nodes[n], n, node);
+                if (parent) {
+                    parent.addToDefine(n);
+                }
+            }
+        } else {
+            // let node = new Node(nodeId, nodeName);
+            node.expandable = false;
+            node.class = NodeType.Variable;
+            node.childs = [];
+            node.property = nodes;
+            let enabled = true;
+            if (node.parent && node.parent.parent && node.parent.parent.class === NodeType.Array) {
+                node.class = NodeType.Item;
+                if (!node.parent.parent.todefine.id && this.data.device.tags[nodeId] && this.data.device.tags[nodeId].options) {
+                    node.parent.parent.todefine.id = this.data.device.tags[nodeId].options.selid;
+                    node.parent.parent.todefine.value = this.data.device.tags[nodeId].options.selval;
+                }  
+            } else if (this.data.device.tags[nodeId]) {
+
+                // console.log(`f: ${nodeId} ${nodeName}`);
+                enabled = false;
+            }
+            this.treetable.addNode(node, parent, enabled);
         }
+    }
+
+    getSelectedTreeNodes(nodes: Array<Node>, defined: any): Array<Node> {
+        let result = [];
+        for (let key in nodes) {
+            let n: Node = nodes[key];
+            // console.log(`id:${n.id} (childs:${n.childs.length})`);
+            if (n.class === NodeType.Array && n.todefine && n.todefine.id && n.todefine.value) {
+                let arrayResult = this.getSelectedTreeNodes(n.childs, n.todefine);
+                for (let ak in arrayResult) {
+                    result.push(arrayResult[ak]);
+                }
+                // console.log(`id:${n.id} childs:${n.childs.length}`);
+            } else if (n.class === NodeType.Object && defined && defined.id && defined.value) {
+                // search defined attributes
+                let childId = null, childValue = null;
+                for (let childKey in n.childs)
+                {
+                    let child = n.childs[childKey];
+                    if (child.text === defined.id) {
+                        childId = child;
+                    } else if (child.text === defined.value) {
+                        childValue = child;
+                    }
+                }
+                if (childId && childValue) {
+                    let objNode = new Node(childId.id, childId.property);  // node array element (id: id:id, text: current id value)
+                    objNode.class = NodeType.Reference;                     // to check
+                    objNode.property = childValue.id                        // value:id
+                    objNode.todefine = { selid: childId.text, selval: childValue.text };
+                    objNode.type = Utils.getType(childValue.property);
+                    result.push(objNode);
+                }
+                // console.log(`id:${n.id} childs:${n.childs.length}`);
+            } else if (n.class === NodeType.Variable && n.checked) {
+                // let objNode = new Node(n.id.split('>').join(''), n.text);
+                let objNode = new Node(n.id, n.text);
+                objNode.type = Utils.getType(n.property);
+                result.push(objNode);
+            }
+        }
+        return result;
     }
 
     getProperty(n: any) {
@@ -241,6 +317,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 		return (this.data.device.type === DeviceType.OPCUA) ? true : false;
     }
     
+    isWebApi() {
+		return (this.data.device.type === DeviceType.WebAPI) ? true : false;
+    }
+
     checkMemAddress(memaddress) {
         if (memaddress === '000000' || memaddress === '100000') {
             this.data.tag.type = ModbusTagType.Bool;
@@ -250,7 +330,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isValidate() {
         if (this.error) {
             return false;
-        } else if (this.isOpcua()) {
+        } else if (this.isOpcua() || this.isWebApi()) {
             return true;
         } else if (this.data.tag && !this.data.tag.name) {
             return false;

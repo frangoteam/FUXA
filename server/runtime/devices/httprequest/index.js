@@ -15,7 +15,9 @@ function HTTPclient(_data, _logger, _events) {
     var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...)
     var overloading = 0;                // Overloading counter to mange the break connection
     var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
+    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampRequest;           // Last Timestamp request
+    var lastTimestampValue;             // Last Timestamp of asked values
 
     /**
      * Connect the client by make a request
@@ -26,23 +28,12 @@ function HTTPclient(_data, _logger, _events) {
                 try {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
-                        // make request
-                        // s7client.ConnectTo(data.property.address, data.property.rack, data.property.slot, function (err) {
-                        //     if (err) {
-                        //         logger.error(`'${data.name}' connect failed! ${err}`);
-                        //         _emitStatus('connect-error');
-                                _clearVarsValue();
-                        //         reject();
-                        //     } else {
-                        //         logger.info(`'${data.name}' connected!`, true);
-                                _emitStatus('connect-ok');
-                                resolve();
-                            connected = true;
-                            lastTimestampRequest = new Date().getTime();
-
-                        //     }
-                            _checkWorking(false);
-                        // });
+                        _clearVarsValue();
+                        _emitStatus('connect-ok');
+                        resolve();
+                        connected = true;
+                        lastTimestampRequest = new Date().getTime();
+                        _checkWorking(false);
                     } else {
                         reject();
                     }
@@ -91,17 +82,29 @@ function HTTPclient(_data, _logger, _events) {
                 _emitStatus('connect-error');
                 _checkWorking(false);
             } else {
-                var readVarsfnc = [];
                 try {
-                    _readRequest().then(() => {
-                        _checkWorking(false);
-                        if (lastStatus !== 'connect-ok') {
-                            _emitStatus('connect-ok');                    
+                    _readRequest().then(result => {
+                        if (result) {
+                            let varsValueChanged = _updateVarsValue(result);
+                            lastTimestampValue = new Date().getTime();
+                            _emitValues(varsValue);
+                            if (this.addDaq) {
+                                var current = new Date().getTime();
+                                if (current - daqInterval > lastDaqInterval) {
+                                    this.addDaq(varsValue);
+                                    lastDaqInterval = current;
+                                } else if (varsValueChanged) {
+                                    this.addDaq(varsValueChanged);
+                                }
+                            }
+                            if (lastStatus !== 'connect-ok') {
+                                _emitStatus('connect-ok');                    
+                            }
                         }
+                        _checkWorking(false);
                     }, reason => {
                         _checkWorking(false);
                     });
-                    // client.readPropertyMultiple(ipAddress, readObjects, (err, value) => {
                 } catch {
                     _checkWorking(false);
                 }
@@ -132,9 +135,11 @@ function HTTPclient(_data, _logger, _events) {
      * Load Tags to read by polling
      */
     this.load = function (_data) {
+        varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
-        // var count = Object.keys(data.tags).length;
-        logger.info(`'${data.name}' load`);
+        var count = Object.keys(data.tags).length;
+        requestItemsMap = data.tags;
+        logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
     /**
@@ -175,21 +180,19 @@ function HTTPclient(_data, _logger, _events) {
      */
     this.getTagProperty = function (id) {
         logger.info(`'${data.name}' getTagProperty`);
-        // if (data.tags[id]) {
-        //     let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
-        //     return prop;
-        // } else {
-        //     return null;
-        // }
+        if (data.tags[id]) {
+            let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
+            return prop;
+        } else {
+            return null;
+        }
     }
 
     var _readRequest = function () {
         return new Promise(function (resolve, reject) {
             if (data.property.method === 'GET') {
-                logger.info(`'${data.name}' _readRequest`);
                 axios.get(data.property.address).then(res => {
                     lastTimestampRequest = new Date().getTime();
-                    requestItemsMap = res.data;
                     resolve(parseData(res.data, data.property));
                 }).catch(err => {
                     reject(err);
@@ -209,6 +212,41 @@ function HTTPclient(_data, _logger, _events) {
             varsValue[id].value = null;
         }
         _emitValues(varsValue);
+    }
+
+    /**
+     * Update the Tags values read
+     * First convert the request data to a flat struct
+     * @param {*} reqdata 
+     */
+    var _updateVarsValue = function (reqdata) {
+        var someval = false;
+        var changed = [];
+        var result = [];
+        var tags = dataToFlat(reqdata, data.property);
+        for (var key in tags) {
+            if (requestItemsMap[key]) {
+                if (requestItemsMap[key].memaddress) {
+                    if (tags[requestItemsMap[key].memaddress]) {
+                        someval = true;
+                        result[key] = { id: requestItemsMap[key].name, value: tags[requestItemsMap[key].memaddress], type: tags[requestItemsMap[key].memaddress].type };
+                    }
+                } else {
+                    someval = true;
+                    result[key] = { id: requestItemsMap[key].name, value: tags[key], type: requestItemsMap[key].type };
+                }
+            }
+        }
+        if (someval) {
+            for (var id in result) {
+                if (varsValue[id] !== result[id]) {
+                    changed[id] = result[id];
+                }
+                varsValue[id] = result[id];
+            }
+            return changed;
+        }
+        return null;
     }
 
     /**
@@ -238,7 +276,8 @@ function HTTPclient(_data, _logger, _events) {
             logger.error(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
-                disconnect();
+                connected = false;
+                // disconnect();
             } else {
                 return false;
             }
@@ -261,6 +300,43 @@ function parseCSV(data) {
 
 }
 
+function dataToFlat(data, property) {
+
+    var parseTree = function(nodes, id, parent) {
+        let result = {};
+        let nodeId = id;
+        if (parent) {
+            nodeId = parent + ':' + nodeId;
+        }
+        if (Array.isArray(nodes)) {
+            let idx = 0;
+            for(var key in nodes) {
+                let tres = parseTree(nodes[key], '[' + idx++ + ']', nodeId);
+                Object.keys(tres).forEach( key => {
+                    result[key] = tres[key]; 
+                });
+            }
+        } else if (nodes && typeof nodes === 'object') {
+            for(var key in nodes) {
+                let tres = parseTree(nodes[key], key, nodeId);
+                Object.keys(tres).forEach( key => {
+                    result[key] = tres[key]; 
+                });
+            }
+        } else {
+            result[nodeId] = nodes; 
+        }
+        return result;
+    }
+
+    if (property.format === 'CSV') {
+
+    } else if (property.format === 'JSON') {
+        return parseTree(data);
+    }
+    return data;
+}
+
 /**
  * Return the result of http request
  */
@@ -269,8 +345,6 @@ function getRequestResult(property) {
         try {
             if (property.method === 'GET') {
                 axios.get(property.address).then(res => {
-                    // console.log(res.data.id);
-                    // console.log(res.data.title);
                     resolve(parseData(res.data, property));
                 }).catch(err => {
                     reject(err);

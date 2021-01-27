@@ -2,12 +2,14 @@ import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angu
 import { MatTable, MatTableDataSource, MatSort, MatMenuTrigger } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatDialog } from '@angular/material';
+import { TranslateService } from '@ngx-translate/core';
 
 import { TagPropertyComponent } from './../tag-property/tag-property.component';
 import { Tag, Device, DeviceType } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
-import { Node } from '../../gui-helpers/treetable/treetable.component';
+import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
 
 @Component({
@@ -36,6 +38,7 @@ export class DeviceListComponent implements OnInit {
 
     constructor(private dialog: MatDialog,
         private hmiService: HmiService,
+        private translateService: TranslateService,
         private projectService: ProjectService) { }
 
     ngOnInit() {
@@ -94,6 +97,26 @@ export class DeviceListComponent implements OnInit {
         this.projectService.setDeviceTags(this.deviceSelected);
     }
 
+    onRemoveAll() {
+        let msg = '';
+        this.translateService.get('msg.tags-remove-all').subscribe((txt: string) => { msg = txt });
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: { msg: msg },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.clearTags();
+            }
+        });
+    }
+
+    private clearTags() {
+        this.deviceSelected.tags = {};
+        this.bindToTable(this.deviceSelected.tags);
+    }
+
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
         const numSelected = this.selection.selected.length;
@@ -119,7 +142,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     onAddTag() {
-        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet) {
+        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
         } else {
             let tag = new Tag();
@@ -138,14 +161,22 @@ export class DeviceListComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.dirty = true;
+                this.clearTags();
                 result.nodes.forEach((n: Node) => {
                     let tag: Tag = new Tag();
                     tag.id = n.id;
                     tag.name = n.id;
+                    tag.type = n.type;
                     if (this.deviceSelected.type === DeviceType.BACnet) {
                         tag.label = n.text;
+                    } else if (this.deviceSelected.type === DeviceType.WebAPI) {
+                        tag.label = n.text;
+                        if (n.class === NodeType.Reference) {
+                            tag.memaddress = n.property;    // in memaddress save the address of the value
+                            tag.options = n.todefine;         // save the id and value in text to set by select list
+                            tag.type = n.type;
+                        }
                     }
-                    tag.type = n.type;
                     tag.address = n.id;
                     this.checkToAdd(tag, result.device);
                 });
@@ -155,7 +186,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     getTagLabel(tag: Tag) {
-        if (this.deviceSelected.type === DeviceType.BACnet) {
+        if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             return tag.label;
         } else {
             return tag.name;
@@ -165,6 +196,11 @@ export class DeviceListComponent implements OnInit {
     getAddress(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
             return  parseInt(tag.address) + parseInt(tag.memaddress);
+        } else if (this.deviceSelected.type === DeviceType.WebAPI) {
+            if (tag.options) {
+                return tag.address + ' / ' + tag.options.selval;
+            }
+            return tag.address;
         }
         return tag.address;
     }

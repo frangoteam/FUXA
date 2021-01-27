@@ -427,6 +427,8 @@
     "device.tag-property-min": "Min",
     "device.tag-property-max": "Max",
     "device.tag-property-address-offset": "Address offset (1-65536)",
+    "device.tag-array-id": "Array ID:",
+    "device.tag-array-value": "Value:",
     
     "users.list-title": "Users settings",
     "users.list-name": "Username",
@@ -564,6 +566,7 @@
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.project-load-error": "Unable to read '{{value}}'",
     "msg.project": "You want to save the Project change?",
+    "msg.tags-remove-all": "Would you like to remove all Tags?",
     "msg.view-remove": "Would you like to remove View '{{value}}'?",
     "msg.device-connection-error": "Device '{{value}}' connection error!",
     "msg.server-connection-error": "Server connection failed!",

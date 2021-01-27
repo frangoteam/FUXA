@@ -38,6 +38,17 @@
     line-height: 40px;
 }
 
+.item-info {
+    position: relative;
+    /* left: 400px; */
+    width: 200px;
+    display: inline-block;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 40px;
+}
+
 .item-check {
     float: right;
     margin-right: 20px;

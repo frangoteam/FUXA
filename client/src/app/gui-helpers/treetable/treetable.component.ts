@@ -12,6 +12,7 @@ export class TreetableComponent implements OnInit {
   @ViewChild('treetable') treetable: ElementRef;
 
 
+  TypeOfTree = TreeType;
   treeType = TreeType.Standard;
   nodeType = NodeType;
 
@@ -47,7 +48,7 @@ export class TreetableComponent implements OnInit {
     } else {
       this.hideNode(node, false);
     }
-    this.list = this.nodeToItems();
+    this.list = this.nodeToItems((this.treeType === TreeType.ToDefine) ? false : true);
     setTimeout(()=>{ this.treetable.nativeElement.scrollTop = currentPosition; },1);
   }
 
@@ -62,7 +63,9 @@ export class TreetableComponent implements OnInit {
     if (parent) {
       let refp = this.nodes[parent.id];
       node.setParent(refp);
-      node.parent.waiting = false;
+      if (node.parent) {
+        node.parent.waiting = false;
+      }
       node.enabled = enabled;
       if (!enabled) {
         node.checked = true;
@@ -129,6 +132,7 @@ export class Node {
   text: string = '';
   class: NodeType;
   childPos: number = 0;
+  expandable: boolean = true;
   expanded: boolean = false;
   visible: boolean = true;
   parent: Node = null;
@@ -138,7 +142,6 @@ export class Node {
   childs: Node[] = [];
   waiting: boolean = true;
   enabled: boolean = true;
-  object: object = null;
   todefine: any = null;
 
   constructor(id: string, text: string) {
@@ -157,26 +160,29 @@ export class Node {
   }
 
   setToDefine() {
-    this.todefine = { options: {} };
+    this.todefine = { options: [''], id: '', value: '' };
   }
 
   addToDefine(opt: string) {
-    if (this.todefine) {
-      this.todefine[opt] = null;
+    if (this.todefine && this.todefine.options.indexOf(opt) === -1) {
+      this.todefine.options.push(opt);
     }
   }
 }
 
 export enum NodeType {
-  Unspecified = 0,
-  Object = 1,   // 'Object',
-  Variable = 2, // 'Variable',
-  Methode = 4,  // 'Methode'
+  Unspecified = 0,    // 
+  Object = 1,         // OPCUA 'Object',
+  Variable = 2,       // OPCUA 'Variable',
+  Methode = 4,        // OPCUA 'Methode'
   ObjectType = 8,
   VariableType = 16,
   ReferenceType = 32,
   DataType = 64,
-  View = 128
+  View = 128,  
+  Array = 256,        // JSON
+  Item = 512,         // JSON
+  Reference = 1024    // JSON
 }
 
 export enum TreeType {

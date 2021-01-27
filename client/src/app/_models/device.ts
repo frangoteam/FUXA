@@ -20,6 +20,8 @@ export class Tag {
     min: string;
     max: string;
     access: string;
+    options: any;
+    format: any;
 }
 
 export class DeviceNetProperty {
