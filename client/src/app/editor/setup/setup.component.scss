@@ -1,0 +1,82 @@
+.mat-button .mat-button-focus-overlay {
+    background-color: transparent;
+  }
+
+.dlg-container {
+    position: relative;
+    // width: 300px;
+    height: 500px;
+}
+
+.separator {
+    align-items: center;
+    display: flex;
+    position: relative;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.separator-line {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    height: 1px;
+    width: 100%;
+}
+.separator-text {
+    background: #FFF;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 13px;
+}
+
+.btn-cards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: -8px;
+    margin-right: -8px;
+    margin-top: 10px;
+    margin-bottom: 16px;
+}
+
+.btn-card {
+    // flex-basis: 25%;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.card-btn {
+    width: 100px;
+    font-size: 16px;
+    text-align: center;
+    -webkit-align-content: center;
+    align-content: center;
+    // padding: 0px !important;
+}
+  
+.card-btn span {
+    display: block;
+    font-weight: normal !important;
+    font-size: 13px;
+    text-align: center;
+}
+
+.card-btn-content {
+    display: block;
+    padding: 10px 0px 5px 0px;
+    text-align: -webkit-center;
+}
+.card-btn-content .mat-icon {
+    display: block;
+    font-size: 32px;
+    height: 32px;
+    width: 32px;
+}
+.card-btn-content span {
+    display: block;
+    font-size: 14px;
+}

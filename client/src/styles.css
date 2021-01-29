@@ -473,9 +473,6 @@ mat-toolbar, mat-toolbar-row {
     font-size: 11px !important;
 }
 
-.dialog-property .mat-dialog-container {
-    padding-top: 0px;
-}
 /* scroolbar */
 #workarea {
     overflow: hidden !important;
@@ -612,10 +609,23 @@ mat-toolbar, mat-toolbar-row {
   }
 }
 
-
+/* Dialog */
 .dialog-action {
   float: right;
   padding-bottom: 20px !important;
+}
+
+
+.dialog-property .mat-dialog-container {
+  padding-top: 0px;
+}
+
+.dialog-close-btn {
+  float:right;
+  margin-right:-10px;
+  margin-top:-10px;
+  color:gray;
+  cursor:pointer;
 }
 
 .fab-add {
