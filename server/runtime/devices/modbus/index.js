@@ -473,7 +473,7 @@ function MODBUSclient(_data, _logger, _events) {
         _emitValues(varsValue);
     }
 
-        /**
+    /**
      * Update the Tags values read
      * @param {*} vars 
      */

@@ -76,6 +76,10 @@ export class Utils {
   static isObject(value) {
     return typeof (value) == 'object' && value !== null;
   }
+
+  static getType(value: any) {
+    return typeof value;
+  }
 }
 
 @Pipe({

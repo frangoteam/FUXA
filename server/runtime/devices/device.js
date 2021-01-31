@@ -7,6 +7,7 @@ var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
+var HTTPclient = require('./httprequest');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -46,6 +47,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = BACNETclient.create(data, logger, events, manager);        
+    } else if (data.type === DeviceEnum.WebAPI) {
+        if (!HTTPclient) {
+            return null;
+        }
+        comm = HTTPclient.create(data, logger, events, manager);        
     }
     if (!comm) {
         return null;
@@ -142,6 +148,7 @@ function Device(data, runtime) {
      */
     this.load = function (data) {
         pollingInterval = data.polling || DEVICE_POLLING_INTERVAL;
+        data.polling = pollingInterval;
         return comm.load(data);
     }
 
@@ -253,14 +260,26 @@ function getSupportedProperty(endpoint, type) {
             }).catch(function (err) {
                 reject(err);
             });
-        // } else if (type === DeviceEnum.BACnet) {
-        //     BACNETclient.getEndPoints(endpoint).then(function (result) {
-        //         resolve(result);
-        //     }).catch(function (err) {
-        //         reject(err);
-        //     });
         } else {
             reject('getSupportedProperty not supported!');
+        }
+    });
+}
+
+/**
+ * Return the result of request
+ * @param {*} property 
+ */
+function getRequestResult(property) {
+    return new Promise(function (resolve, reject) {
+        if (HTTPclient) {
+            HTTPclient.getRequestResult(property).then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else {
+            reject('getRequestResult not supported!');
         }
     });
 }
@@ -278,6 +297,8 @@ function loadPlugin(type, module) {
         MODBUSclient = require(module);
     } else if (type === DeviceEnum.BACnet) {
         BACNETclient = require(module);
+    } else if (type === DeviceEnum.WebAPI) {
+        HTTPclient = require(module);
     }
 }
 
@@ -289,6 +310,7 @@ module.exports = {
         return new Device(data, runtime);
     },
     getSupportedProperty: getSupportedProperty,
+    getRequestResult: getRequestResult,
     loadPlugin: loadPlugin
 }
 
@@ -300,7 +322,8 @@ var DeviceEnum = {
     OPCUA: 'OPCUA',
     ModbusRTU: 'ModbusRTU',
     ModbusTCP: 'ModbusTCP',
-    BACnet: 'BACnet'
+    BACnet: 'BACnet',
+    WebAPI: 'WebAPI'
 }
 
 /**

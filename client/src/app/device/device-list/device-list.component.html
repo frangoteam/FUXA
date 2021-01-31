@@ -88,7 +88,11 @@
 
         <!-- Button remove Column -->
         <ng-container matColumnDef="remove">
-            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                <button mat-icon-button (click)="onRemoveAll()" class="remove">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <button mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove">
                     <mat-icon>clear</mat-icon>

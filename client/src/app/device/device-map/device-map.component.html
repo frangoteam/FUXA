@@ -1,35 +1,48 @@
-<div class="main-line" [style.left.px]="getMainLineLeftPosition()" [style.top.px]="getMainLineTopPosition()" 
-  [style.width.px]="lineSize" [style.height.px]="lineHeight"></div>
-<div *ngFor="let device of devicesValue(); index as i" class="device-line" [style.left.px]="getDeviceLineLeftPosition(i)" [style.top.px]="getDeviceLineTopPosition(i)"
-  [style.width.px]="lineSize" [style.height.px]="lineHeight"></div>
-<div class="connection-line" [style.left.px]="getDeviceConnectionLeftPosition(devicesValue().length)" [style.top.px]="getDeviceConnectionTopPosition(devicesValue().length)"
-  [style.width.px]="getDeviceConnectionWidth(devicesValue().length)" [style.height.px]="lineSize"></div>
+<div class="main-line-flow" [style.left.px]="getMainLineLeftPosition()" [style.top.px]="getMainLineTopPosition('flow')" [style.width.px]="lineFlowSize"
+    [style.height.px]="getMainLineHeight('flow')"></div>
+<div *ngFor="let flow of devicesValue('flow'); index as i" class="flow-line" [style.left.px]="getDeviceLineLeftPosition(i, 'flow')"
+    [style.top.px]="getDeviceLineTopPosition('flow')" [style.width.px]="lineFlowSize" [style.height.px]="flowLineHeight"></div>
+<div class="connection-line" [style.left.px]="getDeviceConnectionLeftPosition('flow')" [style.top.px]="getDeviceConnectionTopPosition('flow')"
+    [style.width.px]="getDeviceConnectionWidth('flow')" [style.height.px]="lineFlowSize"></div>
+
+<div class="main-line" [style.left.px]="getMainLineLeftPosition()" [style.top.px]="getMainLineTopPosition()" [style.width.px]="lineDeviceSize" [style.height.px]="getMainLineHeight()">
+</div>
+<div *ngFor="let device of devicesValue(); index as i" class="device-line" [style.left.px]="getDeviceLineLeftPosition(i)" [style.top.px]="getDeviceLineTopPosition()"
+    [style.width.px]="lineDeviceSize" [style.height.px]="deviceLineHeight"></div>
+<div class="connection-line" [style.left.px]="getDeviceConnectionLeftPosition()" [style.top.px]="getDeviceConnectionTopPosition()"
+    [style.width.px]="getDeviceConnectionWidth()" [style.height.px]="lineDeviceSize"></div>
 <div class="container">
-  <div class="main-device" *ngIf="server && server.property" [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()"
-    [style.width.px]="mainWidth" [style.height.px]="mainHeight" [style.borderWidth.px]="mainBorder">
-    <span class="device-header" style="padding-top: 10px;">{{ server.name }}</span>
-    <span class="device-pro">{{ server.property.address }}</span>
-    <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon>
-    <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit">edit</mat-icon>
-  </div>
-  <div *ngFor="let device of devicesValue(); index as i" class="node-device" [style.color]="(device.enabled) ? '#FFFFFF' : '#C5C5C5'" 
-    [style.left.px]="getDeviceLeftPosition(i)" [style.top.px]="getDeviceTopPosition(i)"
-    [style.width.px]="deviceWidth" [style.height.px]="deviceHeight" [style.borderWidth.px]="deviceBorder">
-    <span class="device-header">{{ device.name }}</span>
-    <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
-    <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
-    <!-- <div *ngIf="isDevicePropertyToShow(device)" style="padding-bottom: 10px;">
-      <span class="device-pro-line" *ngIf="device.property.port">Port: {{ device.property.port }}</span>
-      <span class="device-pro-line" *ngIf="device.property.rack || device.property.rack === 0"> / Rack: {{device.property.rack}}</span>
-      <span class="device-pro-line" *ngIf="device.property.slot || device.property.slot === 0"> / Slot: {{device.property.slot}}</span>
-    </div> -->
-    <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
-    <mat-icon (click)="onListDevice(device)" class="device-icon device-list">list_alt</mat-icon>
-    <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit">edit</mat-icon>
-    <mat-icon (click)="onRemoveDevice(device)" class="device-icon device-delete">clear</mat-icon>
-  </div>
+    <div class="main-device" *ngIf="server && server.property" [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()" [style.width.px]="mainWidth"
+        [style.height.px]="mainHeight" [style.borderWidth.px]="mainBorder">
+        <span class="device-header" style="padding-top: 10px;">{{ server.name }}</span>
+        <span class="device-pro">{{ server.property.address }}</span>
+        <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon>
+        <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit">edit</mat-icon>
+    </div>
+
+    <div *ngFor="let flow of devicesValue('flow'); index as i" class="node-flow" [style.color]="(flow.enabled) ? '#000000' : '#828282'" [style.left.px]="getDeviceLeftPosition(i, 'flow')"
+        [style.top.px]="getDeviceTopPosition('flow')" [style.width.px]="flowWidth" [style.height.px]="flowHeight" [style.borderWidth.px]="flowBorder">
+        <span class="device-header">{{ flow.name }}</span>
+        <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
+        <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(flow) }}</span>
+        <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
+        <mat-icon (click)="onListDevice(flow)" class="device-icon device-list">list_alt</mat-icon>
+        <mat-icon (click)="onEditDevice(flow)" class="device-icon device-edit">edit</mat-icon>
+        <mat-icon (click)="onRemoveDevice(flow)" class="device-icon device-delete">clear</mat-icon>
+    </div>
+
+    <div *ngFor="let device of devicesValue(); index as i" class="node-device" [style.color]="(device.enabled) ? '#FFFFFF' : '#C5C5C5'" [style.left.px]="getDeviceLeftPosition(i)"
+        [style.top.px]="getDeviceTopPosition()" [style.width.px]="deviceWidth" [style.height.px]="deviceHeight" [style.borderWidth.px]="deviceBorder">
+        <span class="device-header">{{ device.name }}</span>
+        <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
+        <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
+        <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
+        <mat-icon (click)="onListDevice(device)" class="device-icon device-list">list_alt</mat-icon>
+        <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit">edit</mat-icon>
+        <mat-icon (click)="onRemoveDevice(device)" class="device-icon device-delete">clear</mat-icon>
+    </div>
 </div>
 
 <button mat-fab color="primary" (click)="addDevice()" class="fab-add">
-  <mat-icon class="">add</mat-icon>
+    <mat-icon class="">add</mat-icon>
 </button>

@@ -1,37 +1,59 @@
-$main-color: rgb(79, 86, 93);
+$main-backcolor: rgb(12, 101, 189);
+$main-bordercolor: #3C3C3C;//rgb(5, 65, 123);
 $device-color: rgb(79, 86, 93);
 $line-color:   #3C3C3C;
-
+$flow-backcolor: rgb(218, 218, 218);
+$flow-bordercolor: #3C3C3C;//rgb(117, 117, 117);
+$flowline-color: #3C3C3C;//rgb(117, 117, 117);
 
 .main-device {
     position: absolute;
     text-align: center;
-    background-color: $main-color;
+    background-color: $main-backcolor;
     color: white;
     border-style: solid;
-    border-color: $line-color;
+    border-color: $main-bordercolor;
 }
 
 .node-device {
     position: absolute;
     background-color: $device-color;
-    color: white;
     text-align: center;
     padding-top: 17px;
     border-style: solid;
     border-color: $line-color;
+    mat-icon {
+        color: white;
+    }
 }
-
+.node-flow {
+    position: absolute;
+    background-color: $flow-backcolor;
+    text-align: center;
+    padding-top: 17px;
+    border-style: solid;
+    border-color: $flow-bordercolor;
+    mat-icon {
+        color: black;
+    }
+}
 .main-line {
     position: absolute;
     background-color: $line-color;
+}
+.main-line-flow {
+    position: absolute;
+    background-color: $flowline-color;
 }
 
 .device-line {
     position: absolute;
     background-color: $line-color;
 }
-
+.flow-line {
+    position: absolute;
+    background-color: $flowline-color;
+}
 .connection-line {
     position: absolute;
     background-color: $line-color;
@@ -74,7 +96,6 @@ $line-color:   #3C3C3C;
 .device-icon {
     position: absolute;
     font-size: 17px;
-    color: rgba(255,255,255,0.8);
     cursor:pointer;
 }
 .device-edit {
@@ -91,7 +112,7 @@ $line-color:   #3C3C3C;
 .device-list {
     // bottom: 0px;
     right: 28px;
-    font-size: 22px;
+    font-size: 24px;
     bottom: 2px;
 }
 

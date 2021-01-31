@@ -11,6 +11,9 @@ export class TreetableComponent implements OnInit {
   @Output() expand = new EventEmitter();
   @ViewChild('treetable') treetable: ElementRef;
 
+
+  TypeOfTree = TreeType;
+  treeType = TreeType.Standard;
   nodeType = NodeType;
 
   nodes = {};
@@ -28,6 +31,9 @@ export class TreetableComponent implements OnInit {
       if (this.config.height) {
         this.containerProperty.height = this.config.height;
       }
+      if (this.config.type === TreeType.ToDefine) {
+        this.treeType = TreeType.ToDefine;
+      }
     }
   }
 
@@ -42,7 +48,7 @@ export class TreetableComponent implements OnInit {
     } else {
       this.hideNode(node, false);
     }
-    this.list = this.nodeToItems();
+    this.list = this.nodeToItems((this.treeType === TreeType.ToDefine) ? false : true);
     setTimeout(()=>{ this.treetable.nativeElement.scrollTop = currentPosition; },1);
   }
 
@@ -57,7 +63,9 @@ export class TreetableComponent implements OnInit {
     if (parent) {
       let refp = this.nodes[parent.id];
       node.setParent(refp);
-      node.parent.waiting = false;
+      if (node.parent) {
+        node.parent.waiting = false;
+      }
       node.enabled = enabled;
       if (!enabled) {
         node.checked = true;
@@ -68,8 +76,8 @@ export class TreetableComponent implements OnInit {
     }
   }
 
-  update() {
-    this.list = this.nodeToItems();
+  update(sort = true) {
+    this.list = this.nodeToItems(sort);
   }
 
   setNodeProperty(node: Node, pro: string) {
@@ -79,7 +87,7 @@ export class TreetableComponent implements OnInit {
     }
   }
 
-  nodeToItems(): Array<Node> {
+  nodeToItems(sort = true): Array<Node> {
     if (this.nodes && Object.values(this.nodes).length) {
       let result = [];
         Object.values(this.nodes).forEach((value: Node) => {
@@ -87,7 +95,11 @@ export class TreetableComponent implements OnInit {
               result.push(value);
           }
       });
-      return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
+      if (sort) {
+        return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
+      } else {
+        return result;
+      }
     } else {
       return [];
     }
@@ -103,6 +115,14 @@ export class TreetableComponent implements OnInit {
       return false;
     }
   }
+
+  getDefinedKey(todefine) {
+    return '';
+  }
+
+  getToDefineOptions(todefine) {
+    return Object.keys(todefine.options);
+  }
 }
 
 export class Node {
@@ -112,6 +132,7 @@ export class Node {
   text: string = '';
   class: NodeType;
   childPos: number = 0;
+  expandable: boolean = true;
   expanded: boolean = false;
   visible: boolean = true;
   parent: Node = null;
@@ -121,6 +142,8 @@ export class Node {
   childs: Node[] = [];
   waiting: boolean = true;
   enabled: boolean = true;
+  todefine: any = null;
+
   constructor(id: string, text: string) {
     this.id = id;
     this.text = text;
@@ -135,17 +158,34 @@ export class Node {
       this.parent.childs.push(this);
     }
   }
+
+  setToDefine() {
+    this.todefine = { options: [''], id: '', value: '' };
+  }
+
+  addToDefine(opt: string) {
+    if (this.todefine && this.todefine.options.indexOf(opt) === -1) {
+      this.todefine.options.push(opt);
+    }
+  }
 }
 
-
 export enum NodeType {
-  Unspecified = 0,
-  Object = 1,   // 'Object',
-  Variable = 2, // 'Variable',
-  Methode = 4,  // 'Methode'
+  Unspecified = 0,    // 
+  Object = 1,         // OPCUA 'Object',
+  Variable = 2,       // OPCUA 'Variable',
+  Methode = 4,        // OPCUA 'Methode'
   ObjectType = 8,
   VariableType = 16,
   ReferenceType = 32,
   DataType = 64,
-  View = 128
+  View = 128,  
+  Array = 256,        // JSON
+  Item = 512,         // JSON
+  Reference = 1024    // JSON
+}
+
+export enum TreeType {
+  Standard = 'standard',  // ask expand, 
+  ToDefine = 'todefine'   // property to define (key and value)
 }

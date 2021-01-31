@@ -1,13 +1,16 @@
-import {EventEmitter, Injectable, Output} from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
+import { Observable } from "rxjs";
 import * as io from 'socket.io-client';
 
-import {environment} from '../../environments/environment';
-import {Tag} from '../_models/device';
-import {DaqQuery, DaqResult, GaugeSettings, Hmi, Variable} from '../_models/hmi';
-import {ProjectService} from '../_services/project.service';
-import {EndPointApi} from '../_helpers/endpointapi';
-import {ToastrService} from 'ngx-toastr';
-import {TranslateService} from '@ngx-translate/core';
+import { environment } from '../../environments/environment';
+import { Device, Tag } from '../_models/device';
+import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
+import { AlarmEvent } from '../_models/alarm';
+import { ProjectService } from './project.service';
+import { EndPointApi } from '../_helpers/endpointapi';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class HmiService {
@@ -21,6 +24,7 @@ export class HmiService {
   @Output() onDeviceProperty: EventEmitter<any> = new EventEmitter();
   @Output() onHostInterfaces: EventEmitter<any> = new EventEmitter();
   @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
+  @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
 
   public version = "1.00";
   public static separator = '^~^';
@@ -29,7 +33,7 @@ export class HmiService {
   viewSignalGaugeMap = new ViewSignalGaugeMap();
   devices = {};
   variables = {};
-  alarms = {highhigh: 0, high: 0, low: 0, info: 0};
+  alarms = { highhigh: 0, high: 0, low: 0, info: 0};
   private socket;
   private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
 
@@ -63,7 +67,7 @@ export class HmiService {
     if (this.variables[sigId]) {
       this.variables[sigId].value = value;
       if (this.socket) {
-        this.socket.emit('device-values', {cmd: 'set', var: this.variables[sigId]});
+        this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
       }
       // this.onVariableChanged.emit(this.variables[sigId]);
     }
@@ -87,9 +91,7 @@ export class HmiService {
         this.onDeviceChanged.emit(message);
         if (message.status === 'connect-error') {
           var msg = '';
-          this.translateService.get('msg.device-connection-error', {value: message.id}).subscribe((txt: string) => {
-            msg = txt
-          });
+          this.translateService.get('msg.device-connection-error', { value: message.id }).subscribe((txt: string) => {msg = txt});
           this.toastr.error(msg, '', {
             timeOut: 3000,
             closeButton: true,
@@ -131,6 +133,9 @@ export class HmiService {
       this.socket.on('host-interfaces', (message) => {
         this.onHostInterfaces.emit(message);
       });
+      this.socket.on('device-webapi-request', (message) => {
+        this.onDeviceWebApiRequest.emit(message);
+      });
 
       this.askDeviceValues();
       this.askAlarmsStatus();
@@ -151,8 +156,18 @@ export class HmiService {
    */
   public askDeviceProperty(endpoint, type) {
     if (this.socket) {
-      let msg = {endpoint: endpoint, type: type};
+      let msg = { endpoint: endpoint, type: type };
       this.socket.emit('device-property', msg);
+    }
+  }
+
+  /**
+   * Ask device webapi result to test
+   */
+  public askWebApiProperty(property) {
+    if (this.socket) {
+      let msg = { property: property };
+      this.socket.emit('device-webapi-request', msg);
     }
   }
 
@@ -197,7 +212,7 @@ export class HmiService {
    */
   public askDeviceBrowse(deviceId: string, node: any) {
     if (this.socket) {
-      let msg = {device: deviceId, node: node};
+      let msg = { device: deviceId, node: node };
       this.socket.emit('device-browse', msg);
     }
   }
@@ -207,7 +222,7 @@ export class HmiService {
    */
   public askNodeAttributes(deviceId: string, node: any) {
     if (this.socket) {
-      let msg = {device: deviceId, node: node};
+      let msg = { device: deviceId, node: node };
       this.socket.emit('device-node-attribute', msg);
     }
   }
@@ -352,7 +367,6 @@ export class HmiService {
       return varsId;
     }
   }
-
   //#endregion
 
   //#region Current Alarms functions

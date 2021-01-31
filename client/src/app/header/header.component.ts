@@ -5,9 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { environment } from '../../environments/environment';
 
-import { ChartConfigComponent } from '../editor/chart-config/chart-config.component';
-import { LayoutPropertyComponent } from '../editor/layout-property/layout-property.component';
-import { PluginsComponent } from '../editor/plugins/plugins.component';
+import { SetupComponent } from '../editor/setup/setup.component';
 
 import { ProjectService } from '../_services/project.service';
 import { HelpData } from '../_models/hmi';
@@ -63,64 +61,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.sidenav.close();
     }
 
-    /**
-     * edit the chart configuration
-     */
-    onChartConfig() {
-        let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
-        let devices = this.projectService.getDevices();
-        let dialogRef = this.dialog.open(ChartConfigComponent, {
-            position: { top: '60px' },
-            data: { charts: chartscopy, devices: devices }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.projectService.setCharts(result.charts);
-            }
-        });
-    }
-
-    /**
-     * edit the layout property of views: menu, header
-     */
-    onLayoutConfig() {
-        let templayout = null;
-        let hmi = this.projectService.getHmi();
-        if (hmi.layout) {
-            templayout = JSON.parse(JSON.stringify(hmi.layout));
-        }
-        if (templayout && templayout.showdev !== false) {
-			templayout.showdev = true;
-		}
-        let dialogRef = this.dialog.open(LayoutPropertyComponent, {
-            position: { top: '60px' },
-            data: { layout: templayout, views: hmi.views }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                hmi.layout = JSON.parse(JSON.stringify(result.layout));
-                this.projectService.setLayout(hmi.layout);
-            }
-        });
-    }
-
-    /**
-     * edit the plugins to install or remove
-     */
-    onPlugins() {
-        let dialogRef = this.dialog.open(PluginsComponent, {
-            position: { top: '60px' },
-        });
-        dialogRef.afterClosed().subscribe(result => {
-        });
-    }
-
     onShowHelp(page) {
         let data = new HelpData();
         data.page = page;
         data.tag = 'device';
         this.showHelp(data);
+    }
+
+    onSetup() {
+        let dialogRef = this.dialog.open(SetupComponent, {
+            position: { top: '60px' },
+        });
     }
 
     showHelp(data: HelpData) {

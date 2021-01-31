@@ -20,6 +20,8 @@ export class Tag {
     min: string;
     max: string;
     access: string;
+    options: any;
+    format: any;
 }
 
 export class DeviceNetProperty {
@@ -33,6 +35,8 @@ export class DeviceNetProperty {
     stopbits: string;
     parity: string;
     options: string;
+    method: string;
+    format: string;
 }
 
 export class DeviceSecurity {
@@ -47,7 +51,8 @@ export enum DeviceType {
     OPCUA = 'OPCUA',
     BACnet = 'BACnet',
     ModbusRTU = 'ModbusRTU',
-    ModbusTCP = 'ModbusTCP'
+    ModbusTCP = 'ModbusTCP',
+    WebAPI = 'WebAPI'
 }
 
 export enum TagType {
