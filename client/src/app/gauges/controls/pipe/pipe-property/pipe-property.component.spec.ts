@@ -1,9 +1,7 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { PipePropertyComponent } from './pipe-property.component';
+import {PipePropertyComponent} from './pipe-property.component';
 
 describe('PipePropertyComponent', () => {
   let component: PipePropertyComponent;
@@ -11,9 +9,9 @@ describe('PipePropertyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PipePropertyComponent ]
+      declarations: [PipePropertyComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
