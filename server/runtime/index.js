@@ -221,7 +221,28 @@ function init(_io, _api, _settings, _log, eventsMain) {
             } catch (err) {
                 logger.error('socket.on.host-interfaces: ' + err);
             }
-        });        
+        });
+        // client ask device webapi request and return result
+        socket.on('device-webapi-request', (message) => {
+            try {
+                if (message && message.property) {
+                    devices.getRequestResult(message.property).then(result => {
+                        message.result = result;
+                        io.emit('device-webapi-request', message);
+                    }).catch(function (err) {
+                        logger.error('socket.on.device-property: ' + err);
+                        message.error = err;
+                        io.emit('device-webapi-request', message);
+                    });
+                } else {
+                    logger.error('socket.on.device-webapi-request: wrong message');
+                    message.error = 'wrong message';
+                    io.emit('device-webapi-request', message);
+                }
+            } catch (err) {
+                logger.error('socket.on.device-webapi-request: ' + err);
+            }
+        });         
     });
 }
 

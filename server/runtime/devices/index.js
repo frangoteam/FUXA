@@ -262,6 +262,14 @@ function getSupportedProperty(endpoint, type) {
     return Device.getSupportedProperty(endpoint, type);
 }
 
+/**
+ * Return result of request
+ * @param {*} property 
+ */
+function getRequestResult(property) {
+    return Device.getRequestResult(property);
+}
+
 var devices = module.exports = {
     init: init,
     start: start,
@@ -278,5 +286,6 @@ var devices = module.exports = {
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,
     isWoking: isWoking,
-    getSupportedProperty: getSupportedProperty
+    getSupportedProperty: getSupportedProperty,
+    getRequestResult: getRequestResult
 }

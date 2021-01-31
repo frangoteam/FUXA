@@ -187,7 +187,9 @@ function DaqNode(_settings, _log, _id) {
                 for (var tagid in tags) {
                     if (!daqTagsMap[tagid]) {
                         var prop = fncGetTagProp(tagid);
-                        addMapfnc.push(_insertTagToMap(prop.id, prop.name, prop.type));
+                        if (prop) {
+                            addMapfnc.push(_insertTagToMap(prop.id, prop.name, prop.type));
+                        }
                     } else {
                         addDaqfnc.push(_insertTagValue(daqTagsMap[tagid].mapid, tags[tagid].value));
                     }

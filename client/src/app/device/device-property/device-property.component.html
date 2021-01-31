@@ -18,7 +18,7 @@
                 </div>
                 <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;" *ngIf="!isFuxaServer">
                     <span>{{'device.property-type' | translate}}</span>
-                    <mat-select [(value)]="data.device.type" #devicetype style="width: 160px" [disabled]="isFuxaServer">
+                    <mat-select [(value)]="data.device.type" (selectionChange)="onDeviceTypeChanged($event)" #devicetype style="width: 160px" [disabled]="isFuxaServer">
                         <mat-option *ngFor="let type of deviceType | enumToArray" [value]="type.key">
                             {{ type.value }}
                         </mat-option>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="my-form-field" style="display: inline-block;margin-left: 15px;" *ngIf="!isFuxaServer">
                     <span>{{'device.property-polling' | translate}}</span>
-                    <mat-select [(value)]="data.device.polling" #devicetype style="width: 80px" [disabled]="isFuxaServer">
+                    <mat-select [(value)]="data.device.polling" style="width: 80px" [disabled]="isFuxaServer">
                         <mat-option *ngFor="let polling of pollingType" [value]="polling.value">
                             {{ polling.text }}
                         </mat-option>
@@ -36,13 +36,13 @@
                     <span>{{'device.property-enable' | translate}}</span>
                     <mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
                 </div>
-                <div *ngIf="data.device.property && data.device.type">
-                    <div *ngIf="isOpcUa(data.device.type)">
+                <div *ngIf="data.device.property && data.device.type" [ngSwitch]="data.device.type">
+                    <div *ngSwitchCase="deviceType.OPCUA">
                         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                             <span>{{'device.property-address' | translate}}</span>
                             <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
                         </div>
-                        <div class="my-form-field" *ngIf="isOpcUa(data.device.type)" style="width: 356px">
+                        <div class="my-form-field" style="width: 356px">
                             <mat-expansion-panel #panelProperty class="my-expansion-panel" style="box-shadow:none !important; background-color: #f1f3f4;" (closed)="onPropertyExpand(false)" (opened)="onPropertyExpand(true);onCheckOpcUaServer()">
                                 <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'" style="padding-left:5px !important;padding-right:17px !important">
                                     <mat-panel-title>
@@ -69,7 +69,7 @@
                             </mat-expansion-panel>
                         </div>
                     </div>
-                    <div *ngIf="isBACnet(data.device.type)">
+                    <div *ngSwitchCase="deviceType.BACnet">
                         <!-- <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'device.property-interface' | translate}}</span>
                             <mat-select [(value)]="data.device.property.interface" style="width: 200px">
@@ -98,7 +98,7 @@
                             </mat-expansion-panel>
                         </div> -->
                     </div>                
-                    <div *ngIf="isSiemensS7(data.device.type)">
+                    <div *ngSwitchCase="deviceType.SiemensS7">
                         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                             <span>{{'device.property-address' | translate}}</span>
                             <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
@@ -116,7 +116,7 @@
                             <input numberOnly [(ngModel)]="data.device.property.slot" style="width: 80px" type="text">
                         </div>
                     </div>
-                    <div *ngIf="isModbusRtu(data.device.type)">
+                    <div *ngSwitchCase="deviceType.ModbusRTU">
                         <div style="display: block;margin-bottom: 10px;">
                             <div class="my-form-field" style="display: inline-block;">
                                 <span>{{'device.property-serialport' | translate}}</span>
@@ -164,7 +164,7 @@
                             <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
                         </div>
                     </div>
-                    <div *ngIf="isModbusTcp(data.device.type)">
+                    <div *ngSwitchCase="deviceType.ModbusTCP">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'device.property-address-port' | translate}}</span>
                             <input [(ngModel)]="data.device.property.address" style="width: 262px" type="ip" (click)="onAddressChanged()">
@@ -176,6 +176,48 @@
                         <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
                             <span>{{'device.property-tockenized' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div *ngSwitchCase="deviceType.WebAPI">
+                        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
+                            <span>{{'device.property-method' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.method" style="width: 160px">
+                                <mat-option *ngFor="let value of methodType" [value]="value">
+                                    {{ value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field" style="margin-bottom: 10px; float: right;">
+                            <span>{{'device.property-format' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.format" style="width: 168px">
+                                <mat-option *ngFor="let value of parserType" [value]="value">
+                                    {{ value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>                        
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.property-url' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                        </div>
+                        <div class="my-form-field" style="width: 356px">
+                            <mat-expansion-panel [disabled]="!data.device.property.method || !data.device.property.address" #panelProperty class="my-expansion-panel" 
+                                style="box-shadow:none !important; background-color: #f1f3f4;" (closed)="onPropertyExpand(false)" 
+                                (opened)="onPropertyExpand(true);onCheckWebApi()">
+                                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'" style="padding-left:5px !important;padding-right:17px !important">
+                                    <mat-panel-title>
+                                        <span *ngIf="propertyExpanded">{{'device.property-webapi-result' | translate}}</span>
+                                        <span *ngIf="!propertyExpanded">{{'device.not-webapi-result' | translate}}</span>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div *ngIf="propertyLoading">
+                                    <mat-spinner style="margin: auto" diameter="20"></mat-spinner>
+                                </div>
+                                <div *ngIf="!propertyLoading">
+                                     <div class="my-form-field multiline" style="display: block;margin: 5px 5px 0px 5px;">
+                                        {{result}}
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
                         </div>
                     </div>
                 </div>

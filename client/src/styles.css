@@ -473,6 +473,7 @@ mat-toolbar, mat-toolbar-row {
     font-size: 11px !important;
 }
 
+
 .dialog-property .mat-dialog-container {
     padding-top: 0px;
 }
@@ -480,16 +481,17 @@ mat-toolbar, mat-toolbar-row {
 /* width */
 ::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: rgba(47,47,47,1);
+    background: rgba(47,47,47,0.1);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: rgba(108,108,108,0.6);
+    background: rgba(108,108,108,0.3);
 }
 
 /* Color Picker */
@@ -608,10 +610,23 @@ mat-toolbar, mat-toolbar-row {
   }
 }
 
-
+/* Dialog */
 .dialog-action {
   float: right;
   padding-bottom: 20px !important;
+}
+
+
+.dialog-property .mat-dialog-container {
+  padding-top: 0px;
+}
+
+.dialog-close-btn {
+  float:right;
+  margin-right:-10px;
+  margin-top:-10px;
+  color:gray;
+  cursor:pointer;
 }
 
 .fab-add {

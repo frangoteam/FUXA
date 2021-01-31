@@ -19,12 +19,21 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Output() goto: EventEmitter<Device> = new EventEmitter();
 	private subscriptionPluginsChange: Subscription;
 
-	lineSize = 6;
-	lineHeight = 60;
+
+	flowBorder = 5;
+	flowWidth = 160;
+	flowHeight = 70;
+	flowLineHeight = 60;
+
 	deviceBorder = 5;
 	deviceWidth = 160;
 	deviceHeight = 90;
-	deviceLine = 60;
+	deviceLineHeight = 60;
+
+	lineFlowSize = 6;
+	lineFlowHeight = 60;
+	lineDeviceSize = 6;
+	mainDeviceLineHeight = 60;
 	mainWidth = 160;
 	mainHeight = 90;
 	mainBorder = 5;
@@ -75,6 +84,15 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
+	checkLayout() {
+		if (this.devices)
+		{
+			if (this.plcs().length && this.flows().length) {
+
+			}
+		}
+	}
+
 	loadAvailableType() {
 		// define available device type (plugins)
 		this.plugins = [];
@@ -85,7 +103,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 				}
 			});
         }, error => {
-        });
+		});
+		this.plugins.push(DeviceType.WebAPI);
 	}
 
 	addDevice() {
@@ -106,11 +125,16 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	private getWindowWidth() {
-		if (window.innerWidth < (Object.values(this.devices).length + 2) * this.deviceWidth) {
-			return (Object.values(this.devices).length + 2) * this.deviceWidth;
-		} else {
-			return window.innerWidth;
+		let result = window.innerWidth;
+		if (this.devices) {
+			if (window.innerWidth < (this.plcs().length + 2) * this.deviceWidth) {
+				result = (this.plcs().length + 2) * this.deviceWidth;
+			}
+			if (result < (this.flows().length + 2) * this.deviceWidth) {
+				result = (this.flows().length + 2) * this.deviceWidth;
+			}
 		}
+		return  result;
 	}
 
 	private getHorizontalCenter() {
@@ -118,7 +142,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	private getVerticalCenter() {
-		return window.innerHeight / 3;
+		if (this.devices && this.plcs().length && this.flows().length) {
+			return window.innerHeight / 5 * 2;
+		} else if (this.flows().length) {
+			return window.innerHeight / 2;
+		} else {
+			return window.innerHeight / 3;
+		}
 	}
 
 	getMainLeftPosition() {
@@ -130,64 +160,147 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	getMainLineLeftPosition() {
-		return this.getHorizontalCenter() - 1 + this.lineSize / 2;
+		return this.getHorizontalCenter() - 1 + this.lineDeviceSize / 2;
 	}
 
-	getMainLineTopPosition() {
+	getMainLineTopPosition(type = null) {
+		if (type === 'flow') {
+			return this.getVerticalCenter() + this.mainBorder - (this.lineFlowHeight + this.mainHeight / 2);
+		}
 		return this.getVerticalCenter() + this.mainBorder + this.mainHeight / 2;
 	}
 
-	getDeviceLeftPosition(index: number) {
-		if (this.devices && Object.values(this.devices).length) {
-			let pos = index + 1;
-			let centerd = Object.keys(this.devices).length + 1;
-			let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
-			return result;
+	getMainLineHeight(type = null) {
+		if (this.devices) {
+			if (type === 'flow') {
+				if (this.flows().length) {
+					return this.lineFlowHeight;
+				}
+			} else {
+				if (this.plcs().length) {
+					return this.mainDeviceLineHeight;
+				}
+			}
 		}
 		return 0;
 	}
 
-	getDeviceTopPosition(index: number) {
-		return this.getVerticalCenter() + (this.mainHeight / 2) + (this.deviceLine * 2);
-	}
-
-	getDeviceLineLeftPosition(index: number) {
-		if (this.devices && Object.values(this.devices).length) {
-			let pos = index + 1;
-			let centerd = Object.keys(this.devices).length + 1;
-			let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
-			result += this.deviceBorder + this.deviceWidth / 2 - this.lineSize / 2;
-			return result;
+	getDeviceLeftPosition(index: number, type = null) {
+		if (this.devices) {
+			if (type === 'flow') {
+				if (this.flows().length) {
+					let pos = index + 1;
+					let centerd = this.flows().length + 1;
+					let result = ((this.getWindowWidth() - this.flowWidth) / centerd) * pos;
+					return result;
+				}
+			} else {
+				if (this.plcs().length) {
+					let pos = index + 1;
+					let centerd = this.plcs().length + 1;
+					let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
+					return result;
+				}
+			}
 		}
 		return 0;
 	}
 
-	getDeviceLineTopPosition(index: number) {
-		return this.getDeviceTopPosition(index) - this.lineHeight;
+	getDeviceTopPosition(type = null) {
+		if (type === 'flow') {
+			return this.getDeviceLineTopPosition(type) - (this.flowHeight + this.flowBorder * 2);
+		} else {
+			return this.getVerticalCenter() + (this.mainHeight / 2 + this.deviceLineHeight + this.mainDeviceLineHeight);
+		}
 	}
 
-	getDeviceConnectionLeftPosition(index: number) {
-		let centerd = Object.keys(this.devices).length + 1;
-		let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * 1;
-		result += this.deviceBorder + (this.deviceWidth - this.lineSize) / 2;
-		return result;
+	getDeviceLineLeftPosition(index: number, type = null) {
+		if (this.devices) {
+			if (type === 'flow') {
+				if (this.flows().length) {
+					let pos = index + 1;
+					let centerd = this.flows().length + 1;
+					let result = ((this.getWindowWidth() - this.flowWidth) / centerd) * pos;
+					result += this.flowBorder + this.flowWidth / 2 - this.lineDeviceSize / 2;
+					return result;
+				}
+			} else {
+				if (this.plcs().length) {
+					let pos = index + 1;
+					let centerd = this.plcs().length + 1;
+					let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
+					result += this.deviceBorder + this.deviceWidth / 2 - this.lineDeviceSize / 2;
+					return result;
+				}
+			}
+		}
+		return 0;
 	}
 
-	getDeviceConnectionTopPosition(index: number) {
-		return this.getDeviceLineTopPosition(index);
+	getDeviceLineTopPosition(type = null) {
+		if (type === 'flow') {
+			return this.getDeviceConnectionTopPosition(type) + this.lineFlowSize - this.flowLineHeight;
+		} else {
+			return this.getDeviceTopPosition(type) - this.deviceLineHeight;
+		}
 	}
 
-	getDeviceConnectionWidth(index: number) {
-		let pos = index;
-		let centerd = Object.keys(this.devices).length + 1;
-		let result = (((this.getWindowWidth() - this.deviceWidth) / centerd) * pos) - (((this.getWindowWidth() - this.deviceWidth) / centerd) * 1);
-		return result;
+	getDeviceConnectionLeftPosition(type = null) {
+		if (type === 'flow') {
+			let centerd = this.flows().length + 1;
+			let result = ((this.getWindowWidth() - this.flowWidth) / centerd) * 1;
+			result += this.deviceBorder + (this.flowWidth - this.lineFlowSize) / 2;
+			return result;
+		} else {
+			let centerd = this.plcs().length + 1;
+			let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * 1;
+			result += this.deviceBorder + (this.deviceWidth - this.lineDeviceSize) / 2;
+			return result;
+		}
 	}
 
-	devicesValue(): Array<Device> {
-		if (this.devices && Object.values(this.devices).length) {
-			let result: Device[] = Object.values(this.devices);
-			return result.sort((a, b) => (a.name > b.name) ? 1 : -1);
+	getDeviceConnectionTopPosition(type = null) {
+		if (type === 'flow') {
+			return this.getMainLineTopPosition(type) - this.lineFlowSize;
+		} else {			
+			return this.getDeviceLineTopPosition();
+		}
+	}
+
+	getDeviceConnectionWidth(type = null) {
+		if (this.devices) {
+			if (type === 'flow') {
+				let count = this.flows().length;
+				if (count) {
+					let centerd = this.flows().length + 1;
+					let result = (((this.getWindowWidth() - this.flowWidth) / centerd) * count) - (((this.getWindowWidth() - this.flowWidth) / centerd) * 1);
+					return result;
+				}
+			} else {
+				let count = this.plcs().length;
+				if (count) {
+					let centerd = this.plcs().length + 1;
+					let result = (((this.getWindowWidth() - this.deviceWidth) / centerd) * count) - (((this.getWindowWidth() - this.deviceWidth) / centerd) * 1);
+					return result;
+				}
+			}
+		}
+		return 0;
+	}
+
+	devicesValue(type = null): Array<Device> {
+		if (this.devices) {
+			if (type === 'flow') {
+				if (this.flows().length) {
+					let result: Device[] = this.flows();
+					return result.sort((a, b) => (a.name > b.name) ? 1 : -1);
+				}
+			} else {
+				if (this.plcs().length) {
+					let result: Device[] = this.plcs();
+					return result.sort((a, b) => (a.name > b.name) ? 1 : -1);
+				}
+			}
 		}
 		return [];
 	}
@@ -290,10 +403,21 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 						device.property.stopbits = tempdevice.property.stopbits;
 						device.property.parity = tempdevice.property.parity;
 						device.property.options = tempdevice.property.options;
+						device.property.method = tempdevice.property.method;
+						device.property.format = tempdevice.property.format;
 					}
 					this.projectService.setDevice(device, olddevice, result.security);
 				}
 			}
+			this.checkLayout();
 		});
+	}
+
+	plcs(): Device[] {
+		return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI);
+	}
+
+	flows(): Device[] {
+		return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI);
 	}
 }

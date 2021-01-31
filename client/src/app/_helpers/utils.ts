@@ -73,6 +73,10 @@ export class Utils {
         }
         return result;
     }
+
+    static getType(value: any) {
+        return typeof value;
+    }
 }
 
 @Pipe({

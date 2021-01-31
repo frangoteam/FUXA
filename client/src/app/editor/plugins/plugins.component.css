@@ -25,10 +25,6 @@
     overflow: hidden;
 }
 
-.list-item mat-icon {
-    /* font-size: 28px; */
-}
-
 .list-item span {
     width: 160px;
     text-overflow: ellipsis;
