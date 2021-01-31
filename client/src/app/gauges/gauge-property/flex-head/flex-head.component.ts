@@ -1,18 +1,19 @@
-import { Component, OnInit, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { take, takeUntil } from 'rxjs/operators';
-import { Subject, ReplaySubject } from 'rxjs';
+import {Component, Input, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {takeUntil} from 'rxjs/operators';
+import {ReplaySubject, Subject} from 'rxjs';
 
-import { FlexInputComponent } from '../flex-input/flex-input.component';
-import { GaugeProperty } from '../../../_models/hmi';
-import { Device, Tag } from '../../../_models/device';
-import { HmiService } from '../../../_services/hmi.service';
-import { Utils } from '../../../_helpers/utils';
+import {FlexInputComponent} from '../flex-input/flex-input.component';
+import {GaugeProperty} from '../../../_models/hmi';
+import {Device, Tag} from '../../../_models/device';
+import {HmiService} from '../../../_services/hmi.service';
+import {Utils} from '../../../_helpers/utils';
 
 interface Variable {
   id: string;
   name: string;
 }
+
 @Component({
   selector: 'flex-head',
   templateUrl: './flex-head.component.html',
@@ -34,13 +35,6 @@ export class FlexHeadComponent implements OnInit {
   defaultColor = Utils.defaultColor;
 
   // alarm: string;
-
-  public deviceCtrl: FormControl = new FormControl();
-  public deviceFilterCtrl: FormControl = new FormControl();
-
-  public variableCtrl: FormControl = new FormControl();
-  public variableFilterCtrl: FormControl = new FormControl();
-
   public alarmDeviceCtrl: FormControl = new FormControl();
   public alarmDeviceFilterCtrl: FormControl = new FormControl();
 
@@ -48,16 +42,15 @@ export class FlexHeadComponent implements OnInit {
   public alarmFilterCtrl: FormControl = new FormControl();
 
   /** list of variable filtered by search keyword */
-  public filteredDevice: ReplaySubject<Device[]> = new ReplaySubject<Device[]>(1);
   public filteredAlarmDevice: ReplaySubject<Device[]> = new ReplaySubject<Device[]>(1);
   /** list of variable filtered by search keyword */
-  public filteredVariable: ReplaySubject<Variable[]> = new ReplaySubject<Variable[]>(1);
   public filteredAlarm: ReplaySubject<Variable[]> = new ReplaySubject<Variable[]>(1);
 
   /** Subject that emits when the component has been destroyed. */
   private _onDestroy = new Subject<void>();
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
     if (!this.property) {
@@ -68,39 +61,18 @@ export class FlexHeadComponent implements OnInit {
     if (this.data.devices) {
       if (this.property.variableSrc || this.property.alarmSrc) {
         this.data.devices.forEach(dev => {
-          if (this.property.variableSrc && dev.name === this.property.variableSrc) {
-            seldevice = dev;
-          }
           if (this.property.alarmSrc && dev.name === this.property.alarmSrc) {
             selalarmdevice = dev;
           }
         });
       }
-      this.loadDevices();
       this.loadAlarmDevices();
-    }
-    // if (this.data.variable) {
-    //   this.variable = this.data.variable;
-    //   this.loadVariable();
-    // }
-    // set value
-    if (seldevice) {
-      this.deviceCtrl.setValue(seldevice);
-      this.onDeviceChange(this.deviceCtrl);
-      if (this.property.variable) {
-        for (let i = 0; i < this.variable.length; i++) {
-          if (this.variable[i].id === this.property.variable) {
-            this.currentTag = this.variable[i];
-          }
-        }
-      }
     }
     if (selalarmdevice) {
       this.withAlarm = true;
       this.alarmDeviceCtrl.setValue(selalarmdevice);
       this.onAlarmDeviceChange(this.alarmDeviceCtrl);
     }
-
   }
 
   ngAfterViewInit() {
@@ -132,32 +104,17 @@ export class FlexHeadComponent implements OnInit {
     }
   }
 
-  onDeviceChange(event) {
-    if (event.value) {
-      if (this.property.variableSrc !== event.value.name) {
-        this.property.variable = '';
-        this.property.variableId = '';
-      }
-      this.property.variableSrc = event.value.name;
-      this.variable = [];
-      this.currentTag = null;
-      if (event.value.tags) {
-        this.variable = Object.values(event.value.tags);
-        this.loadVariable(this.property.variable);
-      }
+  setVariable(event) {
+    console.log('setVariable', event);
+    this.property.variable = event.variable;
+    this.property.variableSrc = event.variableSrc;
+    this.property.variableId = event.variableId;
+
+    if (this.flexInput) {
+      this.flexInput.changeTag(event.variableRaw);
     }
   }
 
-  onVariableChange(event) {
-    if (event.value) {
-      this.property.variable = event.value.name;
-      this.property.variableId = HmiService.toVariableId(this.property.variableSrc, this.property.variable);
-    }
-    this.currentTag = event.value;
-    if (this.flexInput) {
-      this.flexInput.changeTag(this.currentTag);
-    }
-  }
 
   onAlarmDeviceChange(event) {
     if (event.value) {
@@ -179,7 +136,7 @@ export class FlexHeadComponent implements OnInit {
 
   onAlarmChange(event) {
     if (event.value) {
-      this.property.alarm =  (event.value.id) ? event.value.id : event.value.name;
+      this.property.alarm = (event.value.id) ? event.value.id : event.value.name;
       this.property.alarmId = HmiService.toVariableId(this.property.alarmSrc, this.property.alarm);
     }
   }
@@ -191,23 +148,14 @@ export class FlexHeadComponent implements OnInit {
   onAddInput() {
     this.flexInput.onAddInput();
   }
+
   onRangeViewToggle(slideView) {
     this.flexInput.onRangeViewToggle(slideView);
     this.flexInput.changeTag(this.currentTag);
   }
+
   onAlarmEnabled(enabled) {
     this.withAlarm = enabled;
-  }
-
-  private loadDevices() {
-    // load the initial variable list
-    this.filteredDevice.next(this.data.devices.slice());
-    // listen for search field value changes
-    this.deviceFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.filterDevice();
-      });
   }
 
   private loadAlarmDevices() {
@@ -219,24 +167,6 @@ export class FlexHeadComponent implements OnInit {
       .subscribe(() => {
         this.filterAlarmDevice();
       });
-  }
-
-  private filterDevice() {
-    if (!this.data.devices) {
-      return;
-    }
-    // get the search keyword
-    let search = this.deviceFilterCtrl.value;
-    if (!search) {
-      this.filteredDevice.next(this.data.devices.slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-    // filter the device
-    this.filteredDevice.next(
-      this.data.devices.filter(dev => dev.name.toLowerCase().indexOf(search) > -1)
-    );
   }
 
   private filterAlarmDevice() {
@@ -257,30 +187,6 @@ export class FlexHeadComponent implements OnInit {
     );
   }
 
-  private loadVariable(toset?: string) {
-    // load the initial variable list
-    this.filteredVariable.next(this.variable.slice());
-    // listen for search field value changes
-    this.variableFilterCtrl.valueChanges
-      .pipe(takeUntil(this._onDestroy))
-      .subscribe(() => {
-        this.filterVariable();
-      });
-    if (toset) {
-      let idx = -1;
-      this.variable.every(function(value, index, _arr) {
-        if (value.id === toset) {
-          idx = index;
-          return false;
-        }
-        return true;
-      });
-      if (idx >= 0) {
-        this.variableCtrl.setValue(this.variable[idx]);
-      }
-    }
-  }
-
   private loadAlarm(toset?: string) {
     // load the initial variable list
     this.filteredAlarm.next(this.alarme.slice());
@@ -292,7 +198,7 @@ export class FlexHeadComponent implements OnInit {
       });
     if (toset) {
       let idx = -1;
-      this.alarme.every(function(value, index, _arr) {
+      this.alarme.every(function (value, index, _arr) {
         if (value.id === toset) {
           idx = index;
           return false;
@@ -303,24 +209,6 @@ export class FlexHeadComponent implements OnInit {
         this.alarmCtrl.setValue(this.alarme[idx]);
       }
     }
-  }
-
-  private filterVariable() {
-    if (!this.variable) {
-      return;
-    }
-    // get the search keyword
-    let search = this.variableFilterCtrl.value;
-    if (!search) {
-      this.filteredVariable.next(this.variable.slice());
-      return;
-    } else {
-      search = search.toLowerCase();
-    }
-    // filter the variable
-    this.filteredVariable.next(
-      this.variable.filter(vari => vari.name.toLowerCase().indexOf(search) > -1)
-    );
   }
 
   private filterAlarm() {

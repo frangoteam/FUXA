@@ -18,19 +18,7 @@ export class HtmlSwitchComponent {
     }
 
     static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        if (pro.alarmId) {
-            res.push(pro.alarmId);
-        }
-        if (pro.actions) {
-            pro.actions.forEach(act => {
-                res.push(act.variableId);
-            });
-        }
-        return res;
+        return GaugeBaseComponent.getSignals(pro);
     }
 
     static getDialogType(): GaugeDialogType {

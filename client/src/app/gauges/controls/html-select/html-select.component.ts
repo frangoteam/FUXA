@@ -24,14 +24,6 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
     ngOnInit() {
     }
 
-    static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        return res;
-    }
-
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.Step;
     }
@@ -68,7 +60,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
     static initElement(ga: GaugeSettings, isview: boolean = false) {
         let ele = document.getElementById(ga.id);
         if (ele) {
-            let select = Utils.searchTreeStartWith(ele, this.prefix);            
+            let select = Utils.searchTreeStartWith(ele, this.prefix);
             if (select) {
                 if (ga.property) {
                     if (ga.property.readonly) {
@@ -82,7 +74,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
                     if (align) {
                         select.style['text-align-last'] = align;
                     }
-                        
+
                 }
                 select.innerHTML = "";
                 if (!isview) {

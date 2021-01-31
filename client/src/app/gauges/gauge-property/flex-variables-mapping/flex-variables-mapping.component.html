@@ -1,0 +1,16 @@
+<div class="flex-variable-mapping">
+  <button mat-icon-button (click)="addVariableMapping($event)" title="Override variable">
+    <mat-icon>add_circle_outline</mat-icon>
+    Override variable
+  </button>
+
+  <div *ngFor="let variableMap of this.mapping;index as i">
+    <flex-variable-map [data]="data" [view]="view" [value]="mapping[i]" [fromVariables]="viewVars"
+                       (valueChange)="onChange()">
+      <button style="float: right" mat-icon-button (click)="removeVariableMapping($event, i)"
+              title="Remove variable override">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </flex-variable-map>
+  </div>
+</div>

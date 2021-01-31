@@ -1,29 +1,20 @@
 <div class="container">
   <div class="head" style="padding-top: 10px;">
-    <div class="my-form-field" style="width: 220px;">
-      <span>{{'gauges.property-head-device' | translate}}</span>
-      <mat-select [formControl]="deviceCtrl" (selectionChange)="onDeviceChange($event.source)">
-        <mat-select-search [formControl]="deviceFilterCtrl"></mat-select-search>
-        <mat-option *ngFor="let device of filteredDevice | async" [value]="device">
-          {{ device.name }}
-        </mat-option>
-      </mat-select>
-    </div>
-    <div class="my-form-field" style="display:inline-block;width: 400px; padding-left: 20px;">
-      <span>{{'gauges.property-head-variable' | translate}}</span>
-      <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
-        <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
-        <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
-          {{ getVariableLabel(vari) }}
-        </mat-option>
-      </mat-select>
-    </div>
+    <flex-variable [data]="data"
+                   (onchange)="setVariable($event)"
+                   [allowManualEdit]=true
+                   [variableSrc]="property.variableSrc"
+                   [variableId]="property.variableId"
+                   [variable]="property.variable">
+    </flex-variable>
   </div>
-  <flex-input [ranges]="property.ranges" [default]="defaultValue" #flexinput *ngIf="withInput" [inputType]="withInput" style="padding-bottom: 5px"></flex-input>
+  <flex-input [ranges]="property.ranges" [default]="defaultValue" #flexinput *ngIf="withInput" [inputType]="withInput"
+              style="padding-bottom: 5px"></flex-input>
   <div *ngIf="withAlarm" class="head" style="padding-top: 15px;">
     <div class="my-form-field" style="width: 220px;">
       <span>{{'gauges.property-head-device' | translate}}</span>
-      <mat-select [formControl]="alarmDeviceCtrl" (selectionChange)="onAlarmDeviceChange($event.source)" class="select-item">
+      <mat-select [formControl]="alarmDeviceCtrl" (selectionChange)="onAlarmDeviceChange($event.source)"
+                  class="select-item">
         <mat-select-search [formControl]="alarmDeviceFilterCtrl"></mat-select-search>
         <mat-option *ngFor="let device of filteredAlarmDevice | async" [value]="device">
           {{ device.name }}
@@ -42,10 +33,12 @@
     <div style="display: block; width:100%">
       <div class="my-form-field" style="width: 60px;float: right;margin-right: 10px; top: 5px;">
         <span>{{'gauges.property-head-color' | translate}}</span>
-        <input [(colorPicker)]="property.alarmColor" [style.background]="property.alarmColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" 
-            [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
-            [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color input-color" style="padding: 10px 0 0 0;height:20px !important;"
-            [cpPosition]="'left'" [cpAlphaChannel]="'always'"/>        
+        <input [(colorPicker)]="property.alarmColor" [style.background]="property.alarmColor"
+               [cpPresetColors]="defaultColor" [cpOKButton]="true"
+               [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
+               [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="panel-color input-color"
+               style="padding: 10px 0 0 0;height:20px !important;"
+               [cpPosition]="'left'" [cpAlphaChannel]="'always'"/>
         <!-- <mat-select class="panel-color" style="padding: 10px 0 0 0;" disableOptionCentering panelClass="panel-color-class" [(value)]="property.alarmColor"
           [style.background-color]="property.alarmColor" (selectionChange)="onAlarmColorChange($event.source)">
           <mat-option class="option-color" value="green" style="background-color: green"></mat-option>

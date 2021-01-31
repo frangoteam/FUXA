@@ -17,7 +17,7 @@ import panzoom from 'panzoom';
 export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
-	@ViewChild('container') container: ElementRef;
+	  @ViewChild('container') container: ElementRef;
 
     startView: View = new View();
     hmi: Hmi = new Hmi();
@@ -80,7 +80,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         panzoom(element, {
                             bounds: true,
                             boundsPadding: 0.05,
-                        });		
+                        });
                         this.container.nativeElement.style.overflow = 'hidden';
                     }
                 }, 1000);

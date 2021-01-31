@@ -1,9 +1,7 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ShapesComponent } from './shapes.component';
+import {ShapesComponent} from './shapes.component';
 
 describe('ShapesComponent', () => {
   let component: ShapesComponent;
@@ -11,9 +9,9 @@ describe('ShapesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ShapesComponent ]
+      declarations: [ShapesComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

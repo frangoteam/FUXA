@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FlexInputComponent } from './flex-input.component';
+import {FlexInputComponent} from './flex-input.component';
 
 describe('FlexInputComponent', () => {
   let component: FlexInputComponent;
@@ -8,9 +8,9 @@ describe('FlexInputComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FlexInputComponent ]
+      declarations: [FlexInputComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

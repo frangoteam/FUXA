@@ -25,14 +25,6 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     ngOnInit() {
     }
 
-    static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        return res;
-    }
-
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.OnlyValue;
     }
@@ -50,7 +42,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
 
     static initElementColor(bkcolor, color, ele) {
         let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
-        if (htmlButton) {            
+        if (htmlButton) {
             ele.setAttribute('fill', 'rgba(0, 0, 0, 0)');
             ele.setAttribute('stroke', 'rgba(0, 0, 0, 0)');
             for (let i = 0; i < ele.children.length; i++) {

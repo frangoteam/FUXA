@@ -24,14 +24,6 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
     ngOnInit() {
     }
 
-    static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        return res;
-    }
-
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.OnlyValue;
     }
@@ -71,7 +63,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
 
     static initElement(gab: GaugeSettings, isview: boolean) {
         if (isview) {
-            let ele = document.getElementById(gab.id);        
+            let ele = document.getElementById(gab.id);
             if (ele && gab.property) {
                 let input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
@@ -80,7 +72,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
             }
         }
     }
-    
+
     static initElementColor(bkcolor, color, ele) {
         let htmlInput = Utils.searchTreeStartWith(ele, this.prefix);
         if (htmlInput) {

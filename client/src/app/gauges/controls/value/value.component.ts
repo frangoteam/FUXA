@@ -22,14 +22,6 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
     ngOnInit() {
     }
 
-    static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        return res;
-    }
-
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.ValueAndUnit;
     }

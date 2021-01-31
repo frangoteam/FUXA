@@ -22,14 +22,6 @@ export class HtmlBagComponent extends GaugeBaseComponent implements OnInit {
 
     ngOnInit() { }
 
-    static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        return res;
-    }
-
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.Gauge;
     }
@@ -64,7 +56,7 @@ export class HtmlBagComponent extends GaugeBaseComponent implements OnInit {
         let ele = document.getElementById(gab.id);
         if (ele) {
             let htmlBag = Utils.searchTreeStartWith(ele, this.prefixD);
-            if (htmlBag) {        
+            if (htmlBag) {
                 const factory = resolver.resolveComponentFactory(NgxGaugeComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
                 htmlBag.innerHTML = '';

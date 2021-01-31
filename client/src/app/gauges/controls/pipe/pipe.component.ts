@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { Utils } from '../../../_helpers/utils';
+import {GaugeBaseComponent} from "../../gauge-base/gauge-base.component";
 
 declare var SVG: any;
 declare var Raphael: any;
 
 @Injectable()
-export class PipeComponent {
+export class PipeComponent extends GaugeBaseComponent {
 
     static TypeId = 'pipe';
     static TypeTag = 'svg-ext-' + PipeComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
@@ -19,21 +20,6 @@ export class PipeComponent {
         stop: 'shapes.action-stop',
         clockwise: 'shapes.action-clockwise',
         anticlockwise: 'shapes.action-anticlockwise',
-    }
-    static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        if (pro.alarmId) {
-            res.push(pro.alarmId);
-        }
-        if (pro.actions) {
-            pro.actions.forEach(act => {
-                res.push(act.variableId);
-            });
-        }
-        return res;
     }
 
     static getActions() {

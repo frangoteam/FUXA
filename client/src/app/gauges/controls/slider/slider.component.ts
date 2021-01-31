@@ -5,6 +5,7 @@ import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 import { NgxNouisliderComponent } from '../../../gui-helpers/ngx-nouislider/ngx-nouislider.component';
+import {GaugeBaseComponent} from "../../gauge-base/gauge-base.component";
 
 @Injectable()
 export class SliderComponent {
@@ -15,19 +16,7 @@ export class SliderComponent {
     static prefix = 'D-SLI_';
 
     static getSignals(pro: any) {
-        let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
-        if (pro.alarmId) {
-            res.push(pro.alarmId);
-        }
-        if (pro.actions) {
-            pro.actions.forEach(act => {
-                res.push(act.variableId);
-            });
-        }
-        return res;
+      return GaugeBaseComponent.getSignals(pro);
     }
 
     static getDialogType(): GaugeDialogType {
@@ -93,7 +82,7 @@ export class SliderComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
             let htmlSlider = Utils.searchTreeStartWith(ele, this.prefix);
-            if (htmlSlider) {        
+            if (htmlSlider) {
                 const factory = resolver.resolveComponentFactory(NgxNouisliderComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
                 htmlSlider.innerHTML = '';

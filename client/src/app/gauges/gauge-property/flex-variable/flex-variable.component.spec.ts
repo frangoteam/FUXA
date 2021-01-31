@@ -1,9 +1,7 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FlexVariableComponent } from './flex-variable.component';
+import {FlexVariableComponent} from './flex-variable.component';
 
 describe('FlexVariableComponent', () => {
   let component: FlexVariableComponent;
@@ -11,9 +9,9 @@ describe('FlexVariableComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FlexVariableComponent ]
+      declarations: [FlexVariableComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
