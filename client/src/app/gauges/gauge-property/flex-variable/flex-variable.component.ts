@@ -48,7 +48,6 @@ export class FlexVariableComponent implements OnInit {
   private _onDestroy = new Subject<void>();
 
   constructor() {
-    console.log('FlexVariableComponent constructor')
   }
 
   ngOnInit() {
@@ -84,7 +83,6 @@ export class FlexVariableComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('FlexVariableComponent changes: ', changes);
   }
 
   initInput() {
@@ -158,7 +156,6 @@ export class FlexVariableComponent implements OnInit {
   onChanged() {
     this.value.variableId = HmiService.toVariableId(this.value.variableSrc, this.value.variable);
     this.value.variableRaw = this.currentVariable;
-    console.log(this.value);
     this.onchange.emit(this.value)   // Legacy
     this.valueChange.emit(this.value)
   }

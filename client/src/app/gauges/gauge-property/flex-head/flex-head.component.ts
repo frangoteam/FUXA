@@ -105,7 +105,6 @@ export class FlexHeadComponent implements OnInit {
   }
 
   setVariable(event) {
-    console.log('setVariable', event);
     this.property.variable = event.variable;
     this.property.variableSrc = event.variableSrc;
     this.property.variableId = event.variableId;

@@ -15,60 +15,53 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
   public viewVariables;
 
   constructor() {
-    console.log('FlexVariablesMappingComponent.constructor');
   }
 
   ngOnInit() {
-    console.log('FlexVariablesMappingComponent.ngOnInit', this.mapping)
     if (!this.mapping) {
       this.mapping = [];
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-
     if (changes.view) {
-      console.log('FlexVariablesMappingComponent.ngOnChanges', changes);
       this.viewVariables = null;
     }
   }
 
   get viewVars() {
-    console.log('FlexVariablesMappingComponent.viewVariables');
-
     if (this.viewVariables) {
       return this.viewVariables;
     }
-    this.viewVariables = []
+    let viewVariables = {}
     Object.values(this.view.items).forEach((item) => {
       if (item && item.property) {
         if (item.property.variableId) {
-          this.viewVariables.push(this.fetchVariable(item.property));
+          this.assignVariableTo(item.property, viewVariables)
         }
         Object.values(item.property.actions).forEach((action) => {
-          this.viewVariables.push(this.fetchVariable(action));
+          this.assignVariableTo(action, viewVariables);
         });
         Object.values(item.property.events).forEach((event) => {
           if (event['actoptions'] && event['actoptions']['variableId']) {
-            this.viewVariables.push(this.fetchVariable(event['actoptions']));
+            this.assignVariableTo(event['actoptions'], viewVariables);
           } else if (event['actoptions'] && event['actoptions']['variable']) {
-            this.viewVariables.push(event['actoptions']['variable']);
+            this.assignVariableTo(event['actoptions']['variable'], viewVariables);
           }
         });
       }
     })
-    this.viewVariables = this.viewVariables.filter((elem, pos, arr) => {
-      return arr.indexOf(elem) == pos;
-    });
+    this.viewVariables = Object.values(viewVariables)
     return this.viewVariables;
   }
 
-  protected fetchVariable(object) {
-    return {
+  protected assignVariableTo(object, target) {
+    let variable = {
       variableId: object['variableId'],
       variableSrc: object['variableSrc'],
       variable: object['variable']
     }
+    target[variable.variableId] = variable
   }
 
   addVariableMapping($event) {
@@ -82,7 +75,6 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
   }
 
   public onChange() {
-    console.log('FlexVariablesMappingComponent.onChange', this.mapping)
     this.mappingChange.emit(this.mapping);
   }
 }

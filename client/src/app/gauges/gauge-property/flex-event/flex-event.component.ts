@@ -26,11 +26,9 @@ export class FlexEventComponent implements OnInit {
   actionType: any;
 
   constructor() {
-    console.log('FlexEventComponent.constructor');
   }
 
   ngOnInit() {
-    console.log('FlexEventComponent.ngOnInit');
     this.eventType = GaugeEventType;
     this.actionType = GaugeEventActionType;
     if (this.property) {
@@ -48,7 +46,6 @@ export class FlexEventComponent implements OnInit {
   }
 
   getEvents() {
-    console.log('FlexEventComponent.getEvents');
     let result = [];
     if (this.events) {
       this.events.forEach(element => {
@@ -103,7 +100,6 @@ export class FlexEventComponent implements OnInit {
   }
 
   getView(viewId: any) {
-    console.log('FlexEventComponent.getView');
     return this.views.find(function (item) {
       return item.id == viewId
     })
