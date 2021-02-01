@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FuxaViewComponent } from './fuxa-view.component';
+import {FuxaViewComponent} from './fuxa-view.component';
 
 describe('FuxaViewComponent', () => {
   let component: FuxaViewComponent;
@@ -8,9 +8,9 @@ describe('FuxaViewComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FuxaViewComponent ]
+      declarations: [FuxaViewComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

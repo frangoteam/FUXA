@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { GaugePropertyComponent } from './gauge-property.component';
+import {GaugePropertyComponent} from './gauge-property.component';
 
 describe('GaugePropertyComponent', () => {
   let component: GaugePropertyComponent;
@@ -8,9 +8,9 @@ describe('GaugePropertyComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ GaugePropertyComponent ]
+      declarations: [GaugePropertyComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

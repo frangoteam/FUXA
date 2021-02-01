@@ -59,7 +59,7 @@
 }
 
 
-   
+
 /* System and General */
 html {
     height: 100%;
@@ -89,7 +89,7 @@ app-root {
     display: block;
     height: 100%;
   }
-  
+
 /* toaster overwrite */
 /*-------------------*/
 #toast-container > div {
@@ -378,7 +378,7 @@ app-root {
     position: relative;
     /* padding: 15px 0px 4px 0px; */
 }
-  
+
 .my-form-field > span {
     display: block;
     font-size: 12px;
@@ -387,7 +387,7 @@ app-root {
     left: 3px;
     opacity: 0.5;
 }
-  
+
 .my-form-field input, mat-select {
     font-size: 15px;
     border: unset;
@@ -556,7 +556,7 @@ mat-toolbar, mat-toolbar-row {
   border-radius: inherit;
 }
 
-.md-switch input { 
+.md-switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -629,9 +629,9 @@ mat-toolbar, mat-toolbar-row {
 }
 
 .fab-add {
-  position: fixed !important; 
-  right: 20px !important; 
-  bottom: 30px !important; 
+  position: fixed !important;
+  right: 20px !important;
+  bottom: 30px !important;
   z-index: 9999 !important;
 }
 
