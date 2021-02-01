@@ -114,7 +114,7 @@ settings.httpStatic = settings.httpStatic || www;
 if (settings.uiPort === undefined) {
     settings.uiPort = 1880;
 }
-settings.uiHost = settings.uiHost || 'localhost'; //"0.0.0.0";
+settings.uiHost = settings.uiHost || "0.0.0.0";
 
 // Wait ending initialization 
 events.once('init-runtime-ok', function () {

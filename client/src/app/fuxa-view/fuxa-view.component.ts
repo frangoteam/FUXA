@@ -19,7 +19,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	@Input() id: string;
 	@Input() view: View;
 	@Input() hmi: Hmi;
-	@Input() child: boolean = false;;
+	@Input() child: boolean = false;
 	@Input() gaugesManager: GaugesManager;        // gauges.component
 	@Input() parentcards: CardModel[];
 	@Output() onclose = new EventEmitter();
@@ -30,8 +30,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	iframes: CardModel[] = [];
 	dialog: DialogModalModel;
 	mapGaugeStatus = {};
-	
-	
+
+
 	private subscriptionOnChange: Subscription;
 
 	constructor(private el: ElementRef,
@@ -82,7 +82,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	/**
 	 * load the svg content to show in browser, clear all binded to this view
-	 * @param view 
+	 * @param view
 	 */
 	public loadHmi(view: View) {
 		if (this.id) {
@@ -102,7 +102,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	/**
 	 * load all gauge settings, bind gauge with signals, bind gauge event
-	 * @param view 
+	 * @param view
 	 */
 	private loadWatch(view: View) {
 		if (view && view.items) {
@@ -145,7 +145,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	/**
 	 * return the mapped gauge status, if it doesn't exist add it
-	 * @param gaugeId 
+	 * @param gaugeId
 	 */
 	private getGaugeStatus(ga: GaugeSettings) : GaugeStatus {
 		if (this.mapGaugeStatus[ga.id]) {
@@ -157,9 +157,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-	 * check the change of variable value in gauge status 
-	 * @param gaugeStatus 
-	 * @param signal 
+	 * check the change of variable value in gauge status
+	 * @param gaugeStatus
+	 * @param signal
 	 */
 	private checkStatusVaue(gaugeId: string, gaugeStatus: GaugeStatus, signal: any) {
 		let result = true;
@@ -178,7 +178,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	/**
 	 * bind the gauge svg element with click event
-	 * @param ga 
+	 * @param ga
 	 */
 	private onBindClick(ga: GaugeSettings) {
 		let self = this;
@@ -215,7 +215,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
 	/**
 	 * bind the html input control with key-enter event and select control with change event
-	 * @param htmlevent 
+	 * @param htmlevent
 	 */
 	private onBindHtmlEvent(htmlevent: Event) {
 		let self = this;
@@ -362,7 +362,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         iframe.width = event.size.width;
         iframe.height = event.size.height;
 	}
-	
+
 	onCloseIframe(iframe: CardModel) {
 		this.iframes.forEach(f => {
 			if (f.id === iframe.id) {
@@ -401,7 +401,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		// 	this.onCloseCard(this.cards.find((c) => c.name === viewref));
 		// }
 	}
-	
+
     onSetValue(ga: GaugeSettings, event: GaugeEvent) {
         if (event.actparam) {
             if (event.actoptions && event.actoptions['variableId']) {
