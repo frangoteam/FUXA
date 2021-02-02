@@ -443,7 +443,6 @@ export class GaugesManager {
           if (currentValue !== true && currentValue !== false && currentValue !== undefined){
             return;
           }
-          console.log('set ', String(!currentValue));
           this.putSignalValue(sigid, String(!currentValue));
       }
     }
