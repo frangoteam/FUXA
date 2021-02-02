@@ -4,6 +4,8 @@ import {GaugeAction, GaugeSettings, GaugeStatus, Variable} from '../../../_model
 import {Utils} from '../../../_helpers/utils';
 import {GaugeDialogType} from '../../gauge-property/gauge-property.component';
 
+declare var SVG: any;
+
 @Component({
   selector: 'html-button',
   templateUrl: './html-button.component.html',
@@ -95,7 +97,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
       if (ga.property.actions) {
         ga.property.actions.forEach(act => {
           if (act.variableId === sig.id) {
-            HtmlButtonComponent.processAction(act, button, val, gaugeStatus);
+            HtmlButtonComponent.processAction(act, svgele, val, gaugeStatus);
           }
         });
       }
@@ -135,7 +137,8 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     return ele.getAttribute('stroke');
   }
 
-  static processAction(act: GaugeAction, element: any, value: any, gaugeStatus: GaugeStatus) {
+  static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+    let element = SVG.adopt(svgele.node);
     if (act.range.min <= value && act.range.max >= value) {
       this.runAction(element, act.type, gaugeStatus);
     }
@@ -143,10 +146,9 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
 
   static runAction(element, type, gaugeStatus: GaugeStatus) {
     if (this.actionsType[type] === this.actionsType.hide) {
-      element.style.display = 'none'
+      gaugeStatus.actionRef = { type: type, animr: element.hide() };
     } else if (this.actionsType[type] === this.actionsType.show) {
-      element.style.display = 'inline-block';
+      gaugeStatus.actionRef = { type: type, animr: element.show() };
     }
   }
-
 }
