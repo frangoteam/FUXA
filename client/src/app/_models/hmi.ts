@@ -123,14 +123,14 @@ export class GaugeEvent {
 export class GaugeAction {
     variableId: string;
     variableSrc: string;
-    variable: string;    
+    variable: string;
     range: GaugeRangeProperty;
     type: any;
 }
 
 export class GaugeStatus {
     variablesValue = {};
-    onlyChange = false;         // to process value only by change 
+    onlyChange = false;         // to process value only by change
     takeValue = false;          // to process value by check change with gauge value
     actionRef: any;
 }
@@ -146,6 +146,7 @@ export enum GaugeEventActionType {
     oniframe = 'Open iframe',
     oncard = 'Open Window',     // wrong name exchange with 'onwindow'
     onSetValue = 'Set Value',
+    onToggleValue = 'Toggle Value',
     onSetInput = 'Set from Input',
     onclose = 'Close',
 }

@@ -1,11 +1,21 @@
-import { Component, OnInit, AfterViewInit, Input, ViewContainerRef, ComponentFactoryResolver, Output, EventEmitter } from '@angular/core';
-import { ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from "rxjs";
+import {
+  AfterViewInit,
+  Component,
+  ComponentFactoryResolver,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
+import {Subscription} from "rxjs";
 
-import { Hmi, View, GaugeSettings, Event, GaugeEventActionType, GaugeStatus, GaugeEvent } from '../_models/hmi';
-import { GaugesManager } from '../gauges/gauges.component';
-import { isUndefined } from 'util';
-import { Utils } from '../_helpers/utils';
+import {Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeStatus, Hmi, View} from '../_models/hmi';
+import {GaugesManager} from '../gauges/gauges.component';
+import {isUndefined} from 'util';
+import {Utils} from '../_helpers/utils';
 
 declare var SVG: any;
 
@@ -127,7 +137,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 							for (let i = 0; i < gas.length; i++) {
 								let gaugeSetting = gas[i];
 								let gaugeStatus = this.getGaugeStatus(gaugeSetting);
-                                if (this.checkStatusVaue(gaugeSetting.id, gaugeStatus, sig)) {
+								if (this.checkStatusVaue(gaugeSetting.id, gaugeStatus, sig)) {
 									let svgeles = this.getSvgElements(gaugeSetting.id);
 									for (let y = 0; y < svgeles.length; y++) {
 										this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig, gaugeStatus);
@@ -157,10 +167,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	}
 
 	/**
-	 * check the change of variable value in gauge status
-	 * @param gaugeStatus
-	 * @param signal
-	 */
+   * check the change of variable value in gauge status
+   * @param gaugeId
+   * @param gaugeStatus
+   * @param signal
+   */
 	private checkStatusVaue(gaugeId: string, gaugeStatus: GaugeStatus, signal: any) {
 		let result = true;
 		if (gaugeStatus.onlyChange) {
@@ -180,38 +191,40 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 	 * bind the gauge svg element with click event
 	 * @param ga
 	 */
-	private onBindClick(ga: GaugeSettings) {
-		let self = this;
-		let svgele = this.getSvgElement(ga.id);
-		if (svgele) {
-			svgele.click(function (ev) {
-				let event = self.gaugesManager.getBindClick(ga);
-				if (event && event.length > 0) {
-                    for (let i = 0; i < event.length; i++) {
-						let actindex = Object.keys(GaugeEventActionType).indexOf(event[i].action);
-						let eventTypes = Object.values(GaugeEventActionType);
-                        if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
-                            self.loadPage(ev, event[i].actparam);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
-                            self.onOpenCard(ga.id, ev, event[i].actparam);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
-                            self.openDialog(ev, event[i].actparam);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onSetValue) === actindex) {
-							self.onSetValue(ga, event[i]);
-						} else if (eventTypes.indexOf(GaugeEventActionType.onSetInput) === actindex) {
-                            self.onSetInput(ga, event[i]);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.oniframe) === actindex) {
-                            self.openIframe(ga.id, ev, event[i].actparam, event[i].actoptions);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.oncard) === actindex) {
-                            self.openWindow(ga.id, ev, event[i].actparam, event[i].actoptions);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
-                            self.onClose(ev);
-						}
-                    }
-				}
-			});
-		}
-	}
+  private onBindClick(ga: GaugeSettings) {
+    let self = this;
+    let svgele = this.getSvgElement(ga.id);
+    if (svgele) {
+      svgele.click(function (ev) {
+        let event = self.gaugesManager.getBindClick(ga);
+        if (event && event.length > 0) {
+          for (let i = 0; i < event.length; i++) {
+            let actindex = Object.keys(GaugeEventActionType).indexOf(event[i].action);
+            let eventTypes = Object.values(GaugeEventActionType);
+            if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
+              self.loadPage(ev, event[i].actparam);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
+              self.onOpenCard(ga.id, ev, event[i].actparam);
+            } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
+              self.openDialog(ev, event[i].actparam);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onSetValue) === actindex) {
+              self.onSetValue(ga, event[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onToggleValue) === actindex) {
+              self.onToggleValue(ga, event[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onSetInput) === actindex) {
+              self.onSetInput(ga, event[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.oniframe) === actindex) {
+              self.openIframe(ga.id, ev, event[i].actparam, event[i].actoptions);
+            } else if (eventTypes.indexOf(GaugeEventActionType.oncard) === actindex) {
+              self.openWindow(ga.id, ev, event[i].actparam, event[i].actoptions);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
+              self.onClose(ev);
+            }
+          }
+        }
+      });
+    }
+  }
 
 	/**
 	 * bind the html input control with key-enter event and select control with change event
@@ -402,18 +415,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 		// }
 	}
 
-    onSetValue(ga: GaugeSettings, event: GaugeEvent) {
-        if (event.actparam) {
-            if (event.actoptions && event.actoptions['variableId']) {
-                this.gaugesManager.putSignalValue(event.actoptions['variableId'], event.actparam);
-            } else if (ga.property && ga.property.variableId) {
-                this.gaugesManager.putSignalValue(ga.property.variableId, event.actparam);
-            }
-        }
+  onToggleValue(ga: GaugeSettings, event: GaugeEvent){
+    if (event.actoptions && event.actoptions['variableId']) {
+      this.gaugesManager.toggleSignalValue(event.actoptions['variableId']);
+    } else if (ga.property && ga.property.variableId) {
+      this.gaugesManager.toggleSignalValue(ga.property.variableId);
+    }
+  }
+
+  onSetValue(ga: GaugeSettings, event: GaugeEvent) {
+      if (event.actparam) {
+          if (event.actoptions && event.actoptions['variableId']) {
+              this.gaugesManager.putSignalValue(event.actoptions['variableId'], event.actparam);
+          } else if (ga.property && ga.property.variableId) {
+              this.gaugesManager.putSignalValue(ga.property.variableId, event.actparam);
+          }
+      }
 	}
 
 	onSetInput(ga: GaugeSettings, event: GaugeEvent) {
-        if (event.actparam) {
+	  if (event.actparam) {
 			let ele = document.getElementById(event.actparam);
 			if (ele) {
 				let input = null;
@@ -428,8 +449,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 						this.gaugesManager.putSignalValue(ga.property.variableId, input.value);
 					}
 				}
-			}
-        }
+      }
+	  }
 	}
 
 	getCardHeight(height) {
@@ -438,21 +459,21 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 }
 
 export class CardModel {
-	public id: string;
-	public name: string;
-	public link: string;
-	public x: number;
-	public y: number;
-    public scale: number;
-    public scaleX: number;
-	public scaleY: number;
-	public width: number;
-	public height: number;
-	public view: View;
+  public id: string;
+  public name: string;
+  public link: string;
+  public x: number;
+  public y: number;
+  public scale: number;
+  public scaleX: number;
+  public scaleY: number;
+  public width: number;
+  public height: number;
+  public view: View;
 
-	constructor(id: string) {
-		this.id = id;
-	}
+  constructor(id: string) {
+    this.id = id;
+  }
 }
 
 export class DialogModalModel {

@@ -53,13 +53,13 @@ export class GaugesManager {
     // list of gauges tags to speed up the check
     gaugesTags = [];
 
-    // list of gauges with input 
+    // list of gauges with input
     static GaugeWithInput = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, 
+    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
         ApeShapesComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent];
+    static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
@@ -69,7 +69,7 @@ export class GaugesManager {
         private winRef: WindowRef,
         private translateService: TranslateService,
         private dialog: MatDialog) {
-        // subscription to the change of variable value, then emit to the gauges of fuxa-view 
+        // subscription to the change of variable value, then emit to the gauges of fuxa-view
         this.hmiService.onVariableChanged.subscribe(sig => {
             try {
                 this.onchange.emit(sig);
@@ -77,7 +77,7 @@ export class GaugesManager {
 
             }
         });
-        // subscription to DAQ values, then emit to charts gauges of fuxa-view 
+        // subscription to DAQ values, then emit to charts gauges of fuxa-view
         this.hmiService.onDaqResult.subscribe(message => {
             try {
                 if (this.mapChart[message.gid]) {
@@ -125,7 +125,7 @@ export class GaugesManager {
         }
         return result;
     }
-        
+
     isWithEvents(type) {
         if (type) {
             for (let i = 0; i < GaugesManager.GaugeWithEvents.length; i++) {
@@ -156,7 +156,7 @@ export class GaugesManager {
 
     /**
      * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
-     * @param ga 
+     * @param ga
      */
     initInEditor(ga: GaugeSettings, res: any, ref: any,) {
         if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
@@ -191,7 +191,7 @@ export class GaugesManager {
 
     /**
      * called from fuxa-view, is used to emit message for a refresh of all signals values and the gauges of view
-     * @param domViewId 
+     * @param domViewId
      */
     emitBindedSignals(domViewId: string) {
         this.hmiService.emitMappedSignalsGauge(domViewId);
@@ -200,10 +200,10 @@ export class GaugesManager {
 	 * called from fuxa-view, bind dom view, gauge with signal (for animation) and event
 	 * @param gaugekey
 	 * @param gauge
-	 * @param domViewId 
-	 * @param ga 
-	 * @param bindclick 
-	 * @param bindhtmlevent 
+	 * @param domViewId
+	 * @param ga
+	 * @param bindclick
+	 * @param bindhtmlevent
 	 */
     bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, bindclick: any, bindhtmlevent: any) {
         let sigsid: string[] = this.getBindSignals(ga);
@@ -250,7 +250,7 @@ export class GaugesManager {
 
 
 	/**
-     * @param domViewId 
+     * @param domViewId
 	 * called from fuxa-view, remove bind of dom view gauge
 	 */
     unbindGauge(domViewId: string) {
@@ -271,7 +271,7 @@ export class GaugesManager {
 
     /**
      * init element of fuxa-view,
-     * @param ga 
+     * @param ga
      */
     checkElementToInit(ga: GaugeSettings) {
         if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
@@ -305,8 +305,8 @@ export class GaugesManager {
 
 	/**
 	 * get all gauge settings binded to dom view with the signal
-	 * @param domViewId 
-	 * @param sigid 
+	 * @param domViewId
+	 * @param sigid
 	 */
     getGaugeSettings(domViewId: string, sigid: string): GaugeSettings[] {
         let gslist = this.hmiService.getMappedSignalsGauges(domViewId, sigid);
@@ -315,7 +315,7 @@ export class GaugesManager {
 
 	/**
 	 * get all signals mapped in all dom views, used from LabComponent
-	 * @param fulltext a copy with item name and source 
+	 * @param fulltext a copy with item name and source
 	 */
     getMappedGaugesSignals(fulltext: boolean) {
         return this.hmiService.getMappedVariables(fulltext);
@@ -323,7 +323,7 @@ export class GaugesManager {
 
     /**
      * return all signals binded to the gauge
-     * @param ga 
+     * @param ga
      */
     getBindSignals(ga: GaugeSettings) {
         if (ga.property) {
@@ -343,10 +343,9 @@ export class GaugesManager {
         return null;
     }
 
-
     /**
      * return all events binded to the gauge with click event
-     * @param ga 
+     * @param ga
      */
     getBindClick(ga: GaugeSettings) {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
@@ -390,9 +389,9 @@ export class GaugesManager {
 
 	/**
 	 * manage to which gauge to forward the process function
-	 * @param ga 
-	 * @param svgele 
-	 * @param sig 
+	 * @param ga
+	 * @param svgele
+	 * @param sig
 	 */
     processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
@@ -437,9 +436,22 @@ export class GaugesManager {
         }
     }
 
+    toggleSignalValue(sigid: string){
+      if (this.hmiService.variables.hasOwnProperty(sigid)) {
+          console.log('currentValue', this.hmiService.variables);
+          let currentValue = this.hmiService.variables[sigid].value;
+          // Only boolean values
+          if (currentValue !== true && currentValue !== false && currentValue !== undefined){
+            return;
+          }
+          console.log('set ', String(!currentValue));
+          this.putSignalValue(sigid, String(!currentValue));
+      }
+    }
+
     /**
      * called from fuxa-view to emit and send signal value from a gauge event ('key-enter' of input, 'change' of select)
-     * @param event 
+     * @param event
      */
     putEvent(event: Event) {
         if (event.ga.property && event.ga.property.variableId) {
@@ -451,8 +463,8 @@ export class GaugesManager {
 
     /**
      * called from fuxa-view to emit and send signal value from a gauge event (click)
-     * @param sigid 
-     * @param val 
+     * @param sigid
+     * @param val
      */
     putSignalValue(sigid: string, val: string) {
         this.hmiService.putSignalValue(sigid, val);
@@ -513,9 +525,9 @@ export class GaugesManager {
 
     /**
      * used from controls in editor to change fill and stroke colors
-     * @param bkcolor 
-     * @param color 
-     * @param elems 
+     * @param bkcolor
+     * @param color
+     * @param elements
      */
     static initElementColor(bkcolor, color, elements) {
         var elems = elements.filter(function(el) { return el; });
@@ -533,10 +545,10 @@ export class GaugesManager {
         }
     }
 
-    
+
     /**
      * Return the default prefix of gauge name
-     * @param type 
+     * @param type
      */
     static getPrefixGaugeName(type: string) {
         if (type.startsWith(GaugeProgressComponent.TypeTag)) {
