@@ -438,7 +438,6 @@ export class GaugesManager {
 
     toggleSignalValue(sigid: string){
       if (this.hmiService.variables.hasOwnProperty(sigid)) {
-          console.log('currentValue', this.hmiService.variables);
           let currentValue = this.hmiService.variables[sigid].value;
           // Only boolean values
           if (currentValue !== true && currentValue !== false && currentValue !== undefined){

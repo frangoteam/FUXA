@@ -31,12 +31,12 @@ function init(_io, _api, _settings, _log, eventsMain) {
         if (!events.listenerCount('init-plugins-ok') && !events.listenerCount('init-users-ok') && !events.listenerCount('init-project-ok')) {
             eventsMain.emit('init-runtime-ok');
         }
-    } 
+    }
     events.once('init-plugins-ok', checkInit);
     events.once('init-users-ok', checkInit);
     events.once('init-project-ok', checkInit);
-  
-    
+
+
     daqstorage.init(settings, logger);
 
     plugins.init(settings, logger).then(result => {
@@ -100,9 +100,9 @@ function init(_io, _api, _settings, _log, eventsMain) {
                     io.emit('device-property', message);
                 }
             } catch (err) {
-                logger.error('socket.on.device-values: ' + err);
+                logger.error('socket.on.device-property: ' + err);
             }
-        });        
+        });
         // client ask device values
         socket.on('device-values', (message) => {
             try {
@@ -134,7 +134,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                     }
                 }
             } catch (err) {
-                logger.error('socket.on.device-values: ' + err);
+                logger.error('socket.on.device-browse: ' + err);
             }
         });
         // client ask device node attribute
@@ -172,7 +172,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                                 if (!result[values[x][y].dt]) {
                                     result[values[x][y].dt] = Array(msg.sids.length + 1).fill(null);
                                     result[values[x][y].dt][0] = values[x][y].dt;
-                                } 
+                                }
                                 result[values[x][y].dt][x + 1] = (values[x][y].value) ? parseFloat(values[x][y].value) : null;
                             }
                         }
@@ -242,7 +242,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
             } catch (err) {
                 logger.error('socket.on.device-webapi-request: ' + err);
             }
-        });         
+        });
     });
 }
 
@@ -323,7 +323,7 @@ function restart(clear) {
                 }).catch(function (err) {
                     logger.error('runtime.update-project-start: ' + err);
                     reject();
-                });                
+                });
             }).catch(function (err) {
                 logger.error('runtime.update-project-stop: ' + err);
                 reject();
@@ -346,7 +346,7 @@ function updateDevice(event) {
 
 /**
  * Transmit the device values to all frontend
- * @param {*} event 
+ * @param {*} event
  */
 function updateDeviceValues(event) {
     // console.log('emit updateDeviceValues: ' + event);
@@ -359,7 +359,7 @@ function updateDeviceValues(event) {
 
 /**
  * Transmit the device status to all frontend
- * @param {*} event 
+ * @param {*} event
  */
 function updateDeviceStatus(event) {
     try {
@@ -391,7 +391,7 @@ var runtime = module.exports = {
     stop: stop,
     update: update,
     restart: restart,
-    
+
     get io() { return io },
     get logger() { return logger },
     get settings() { return settings },
