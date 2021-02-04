@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FlexHeadComponent } from './flex-head.component';
+import {FlexHeadComponent} from './flex-head.component';
 
 describe('FlexHeadComponent', () => {
   let component: FlexHeadComponent;
@@ -8,9 +8,9 @@ describe('FlexHeadComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FlexHeadComponent ]
+      declarations: [FlexHeadComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

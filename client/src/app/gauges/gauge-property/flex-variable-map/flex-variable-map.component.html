@@ -1,0 +1,13 @@
+<div class="flex-variable-mapping">
+  <div class="my-form-field" style="min-width: 200px;margin-right: 10px">
+    <span>{{'gauges.property-events-mapping-from' | translate}}</span>
+    <mat-select class="my-form-field" [compareWith]="compareVariables" [(value)]="value.from"
+                (valueChange)="onValueChange()">
+      <mat-option *ngFor="let vr of fromVariables" [value]="vr">{{ vr.variable }}</mat-option>
+    </mat-select>
+  </div>
+  =
+  <flex-variable style="display: inline-block" [data]="data" [(value)]="value.to" (valueChange)="onValueChange()"
+                 [allowManualEdit]="true"></flex-variable>
+  <ng-content></ng-content>
+</div>

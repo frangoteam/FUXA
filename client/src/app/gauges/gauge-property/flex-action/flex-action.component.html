@@ -1,5 +1,5 @@
 <div *ngFor="let item of actions; index as i" class="item">
-    <flex-variable class="item-head" [data]="data" (onchange)="setVariable(i, $event)" [variableSrc]="item.variableSrc" [variableId]="item.variableId" [variable]="item.variable"></flex-variable>
+    <flex-variable class="item-head" [allowManualEdit]="true" [data]="data" (onchange)="setVariable(i, $event)" [variableSrc]="item.variableSrc" [variableId]="item.variableId" [variable]="item.variable"></flex-variable>
     <div class="item-content">
         <div *ngIf="slideView" class="item-range">
             <div class="my-form-field">

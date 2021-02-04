@@ -1,70 +1,71 @@
 <div *ngFor="let item of events; index as i" class="item">
-    <div class="item-remove">
-        <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">
-            <mat-icon>clear</mat-icon>
-        </button>
+  <div class="item-remove">
+    <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+  <div style="display: inline-block;">
+    <div class="my-form-field" style="width: 140px;">
+      <span>{{'gauges.property-event-type' | translate}}</span>
+      <mat-select [(value)]="item.type">
+        <mat-option *ngFor="let ev of eventType | enumToArray" [value]="ev.key">
+          {{ ev.value }}
+        </mat-option>
+      </mat-select>
     </div>
-    <div style="display: inline-block;">
-        <div class="my-form-field" style="width: 140px;">
-            <span>{{'gauges.property-event-type' | translate}}</span>
-            <mat-select [(value)]="item.type">
-                <mat-option *ngFor="let ev of eventType | enumToArray" [value]="ev.key">
-                    {{ ev.value }}
-                </mat-option>
-            </mat-select>
-        </div>
-        <div class="my-form-field" style="width: 140px;padding-left: 20px">
-            <span>{{'gauges.property-event-action' | translate}}</span>
-            <mat-select [(value)]="item.action" (change)="item.actparam = '';">
-                <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
-                    {{ type.value }}
-                </mat-option>
-            </mat-select>
-        </div>
+    <div class="my-form-field" style="width: 140px;padding-left: 20px">
+      <span>{{'gauges.property-event-action' | translate}}</span>
+      <mat-select [(value)]="item.action" (change)="item.actparam = '';">
+        <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
+          {{ type.value }}
+        </mat-option>
+      </mat-select>
     </div>
-    <div class="my-form-field" style="width: 260px;padding-left: 20px" *ngIf="withDestination(item.action)">
-        <span>{{'gauges.property-event-destination' | translate}}</span>
-        <mat-select [(value)]="item.actparam">
-            <mat-option *ngFor="let v of views; index as i" [(value)]="v.id">{{v.name}}</mat-option>
-        </mat-select>
+  </div>
+  <div class="my-form-field" style="width: 260px;padding-left: 20px" *ngIf="withDestination(item.action)">
+    <span>{{'gauges.property-event-destination' | translate}}</span>
+    <mat-select [(value)]="item.actparam">
+      <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
+    </mat-select>
+  </div>
+  <div *ngIf="withDestination(item.action)">
+    <flex-variables-mapping [(mapping)]="item.actoptions['variablesMapping']" [view]="getView(item.actparam)" [data]="data"></flex-variables-mapping>
+  </div>
+  <div style="display: inline-block" *ngIf="withSetInput(item.action)">
+    <div class="my-form-field" style="width: 260px;padding-left: 20px;">
+      <span>{{'gauges.property-event-input' | translate}}</span>
+      <mat-select [(value)]="item.actparam">
+        <mat-option *ngFor="let v of inputs; index as i" [value]="v.id">{{v.name}}</mat-option>
+      </mat-select>
     </div>
-    <div style="display: inline-block" *ngIf="withSetInput(item.action)">
-        <div class="my-form-field" style="width: 260px;padding-left: 20px;">
-            <span>{{'gauges.property-event-input' | translate}}</span>
-            <mat-select [(value)]="item.actparam">
-                <mat-option *ngFor="let v of inputs; index as i" [(value)]="v.id">{{v.name}}</mat-option>
-            </mat-select>
-        </div>
+  </div>
+  <div style="display: inline-block" *ngIf="withSetValue(item.action)">
+    <div class="my-form-field" style="padding-left: 20px;">
+      <span>{{'gauges.property-event-value' | translate}}</span>
+      <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 260px">
     </div>
-    <div style="display: inline-block" *ngIf="withSetValue(item.action)">
-        <div class="my-form-field" style="padding-left: 20px;">
-            <span>{{'gauges.property-event-value' | translate}}</span>
-            <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 260px">
-        </div>
+  </div>
+  <div style="display: block; padding-bottom: 10px; padding-top: 5px;padding-left: 25px;" *ngIf="withSetValue(item.action) || withSetInput(item.action)">
+    <flex-variable style="display: block" [allowManualEdit]="true" [data]="data" [(value)]="item.actoptions.variable"></flex-variable>
+  </div>
+  <div style="display: inline-block" *ngIf="withAddress(item.action)">
+    <div class="my-form-field" style="padding-left: 20px;">
+      <span>{{'gauges.property-event-address' | translate}}</span>
+      <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
     </div>
-    <div style="display: block; padding-bottom: 10px; padding-top: 5px;padding-left: 25px;" *ngIf="withSetValue(item.action) || withSetInput(item.action)">
-        <flex-variable style="display: block" [data]="data" (onchange)="setVariable(i, $event)" [variableSrc]="item.actoptions.variableSrc" [variableId]="item.actoptions.variableId"
-            [variable]="item.actoptions.variable">
-        </flex-variable>
+    <div style="display: table; padding-left: 20px; padding-bottom: 10px; padding-top: 5px;" *ngIf="withAddress(item.action)">
+      <div class="my-form-field">
+        <span>{{'gauges.property-event-width' | translate}}</span>
+        <input numberOnly [(ngModel)]="item.actoptions.width" type="text" style="width: 60px">
+      </div>
+      <div class="my-form-field" style="padding-left: 20px;">
+        <span>{{'gauges.property-event-height' | translate}}</span>
+        <input numberOnly [(ngModel)]="item.actoptions.height" type="text" style="width: 60px">
+      </div>
+      <div class="my-form-field" style="padding-left: 20px;" *ngIf="withScale(item.action)">
+        <span>{{'gauges.property-event-scale' | translate}}</span>
+        <input numberOnly [(ngModel)]="item.actoptions.scale" type="text" style="width: 60px">
+      </div>
     </div>
-    <div style="display: inline-block" *ngIf="withAddress(item.action)">
-        <div class="my-form-field" style="padding-left: 20px;">
-            <span>{{'gauges.property-event-address' | translate}}</span>
-            <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
-        </div>
-        <div style="display: table; padding-left: 20px; padding-bottom: 10px; padding-top: 5px;" *ngIf="withAddress(item.action)">
-            <div class="my-form-field">
-                <span>{{'gauges.property-event-width' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.width" type="text" style="width: 60px">
-            </div>
-            <div class="my-form-field" style="padding-left: 20px;">
-                <span>{{'gauges.property-event-height' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.height" type="text" style="width: 60px">
-            </div>
-            <div class="my-form-field" style="padding-left: 20px;" *ngIf="withScale(item.action)">
-                <span>{{'gauges.property-event-scale' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.scale" type="text" style="width: 60px">
-            </div>            
-        </div>
-    </div>
+  </div>
 </div>

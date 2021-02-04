@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { FlexEventComponent } from './flex-event.component';
+import {FlexEventComponent} from './flex-event.component';
 
 describe('FlexEventComponent', () => {
   let component: FlexEventComponent;
@@ -8,9 +8,9 @@ describe('FlexEventComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FlexEventComponent ]
+      declarations: [FlexEventComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
