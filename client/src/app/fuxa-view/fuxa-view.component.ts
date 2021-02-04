@@ -27,6 +27,7 @@ declare var SVG: any;
   styleUrls: ['./fuxa-view.component.css']
 })
 export class FuxaViewComponent implements OnInit, AfterViewInit {
+  
   @Input() id: string;
   @Input() variablesMapping: any = [];
   @Input() view: View;
@@ -552,6 +553,7 @@ export class CardModel {
 }
 
 export class DialogModalModel {
+
   public id: string;
   public name: string;
   public width: number;
@@ -564,4 +566,3 @@ export class DialogModalModel {
     this.id = id;
   }
 }
-

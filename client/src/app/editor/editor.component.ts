@@ -497,7 +497,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * event from svg-editor by new selection svg element 
+     * event from svg-editor by new selection svg element
      * @param event svg element
      */
     private onSelectedElement(event) {
@@ -512,7 +512,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (event.length <= 1) {
                 this.selectedElement = event[0];
-                this.selectedElement.type = event[0].type;
+                this.selectedElement.type = event[0].type || 'svg-ext-shapes-default';
                 this.checkColors(this.selectedElement);
                 this.checkGaugeInView(this.selectedElement);
             }
@@ -521,7 +521,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * event from svg-editor: for every loaded extension
-     * @param args 
+     * @param args
      */
     private onExtensionLoaded(args) {
         if (args && args.length) {

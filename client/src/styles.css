@@ -413,7 +413,7 @@ app-root {
     background-color: #f1f3f4;
     /* background-color: rgba(0,0,0,0.01) */
 }
-/* 
+/*
 .my-form-field mat-select:focus {
   padding: 4px 1px 5px 2px;
   border: 2px solid #ccc;
@@ -433,7 +433,7 @@ mat-toolbar, mat-toolbar-row {
     /* min-height: 44px !important; */
     height: 46px !important;
     font-family: 'Open Sans', sans-serif !important;
-    font-weight: 300 !important; 
+    font-weight: 300 !important;
     font-size: 22px !important;
     padding-left: 2px !important;
     align-items: unset !important;
@@ -453,7 +453,7 @@ mat-toolbar, mat-toolbar-row {
     /* min-height: 44px !important; */
     height: 46px !important;
     font-family: 'Open Sans', sans-serif !important;
-    font-weight: 300 !important; 
+    font-weight: 300 !important;
     font-size: 22px !important;
     padding-left: 2px !important;
     align-items: unset !important;
@@ -473,10 +473,6 @@ mat-toolbar, mat-toolbar-row {
     font-size: 11px !important;
 }
 
-/* scroolbar */
-#workarea {
-    overflow: hidden !important;
-}
 /* width */
 ::-webkit-scrollbar {
     width: 7px;
