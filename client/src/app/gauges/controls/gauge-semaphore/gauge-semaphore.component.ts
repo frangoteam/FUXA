@@ -50,7 +50,6 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
                     }
                 }
                 g.setAttribute('fill', clr);
-                g.setAttribute('style', 'filter: url(#blur-filter);');
             }
         }
     }
