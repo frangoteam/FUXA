@@ -174,7 +174,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Init, first init the svg-editor component
      */
     private myInit() {
-        try {           
+        try {
             // first init svg-editor component
             mypathseg.initPathSeg();
             mybrowser.initBrowser();
@@ -188,7 +188,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.onSelectedElement(selected);
                     let ga: GaugeSettings = this.getGaugeSettings(selected);
                 },
-                (type, args) => {                     
+                (type, args) => {
                     this.onExtensionLoaded(args);
                     this.clearSelection();
                     if (type === 'shapes') {
@@ -234,7 +234,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                                     let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
                                     gadest.property = JSON.parse(JSON.stringify(gasrc.property));
                                     this.setGaugeSettings(gadest);
-                                    this.checkGaugeAdded(gadest);    
+                                    this.checkGaugeAdded(gadest);
                                 }
                             }
                         }
@@ -253,7 +253,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * Load the hmi resource and bind it 
+     * Load the hmi resource and bind it
      */
     private loadHmi() {
         this.currentView = null;
@@ -349,7 +349,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * add the gauge settings to the current view items list
-     * @param ga GaugeSettings 
+     * @param ga GaugeSettings
      */
     private setGaugeSettings(ga) {
         this.currentView.items[ga.id] = ga;
@@ -401,7 +401,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * return the fill color of svg element 'g'
-     * @param eleId 
+     * @param eleId
      */
     private getFillColor(eleId) {
         if (eleId) {
@@ -441,7 +441,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 for (let key in v.items) {
                     let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
                     this.checkGaugeAdded(ga);
-                    // GaugesManager.initElementAdded(v.items[key], this.resolver, this.viewContainerRef);                
+                    // GaugesManager.initElementAdded(v.items[key], this.resolver, this.viewContainerRef);
                 }
             }, 500);
 
@@ -469,7 +469,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     //#endregion
 
-    //#region Svg-editor event and function interface 
+    //#region Svg-editor event and function interface
     /**
      * set the mode to svg-editor (line,text,...)
      * @param mode mode to set
@@ -497,7 +497,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * event from svg-editor by new selection svg element 
+     * event from svg-editor by new selection svg element
      * @param event svg element
      */
     private onSelectedElement(event) {
@@ -512,7 +512,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (event.length <= 1) {
                 this.selectedElement = event[0];
-                this.selectedElement.type = event[0].type;
+                this.selectedElement.type = event[0].type || 'svg-ext-shapes-default';
                 this.checkColors(this.selectedElement);
                 this.checkGaugeInView(this.selectedElement);
             }
@@ -521,7 +521,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * event from svg-editor: for every loaded extension
-     * @param args 
+     * @param args
      */
     private onExtensionLoaded(args) {
         if (args && args.length) {
@@ -651,7 +651,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * convert image file to code to attach in svg 
+     * convert image file to code to attach in svg
      * @param file image file
      * @param callback event for end load image
      */
@@ -665,7 +665,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * set stroke to svg selected (joinmieter, joinround, joinbevel, capbutt, capsquare, capround)
-     * @param option stroke type 
+     * @param option stroke type
      */
     onSetStrokeOption(option) {
         this.winRef.nativeWindow.svgEditor.setStrokeOption(option);
@@ -688,7 +688,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * align the svg text (left,middle,right) 
+     * align the svg text (left,middle,right)
      * @param align type
      */
     onTextAlignChange(align) {
@@ -701,8 +701,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * check and set the special gauge like ngx-dygraphs, ngx-gauge, ... if added
-     * if return true then the GaugeSettings is changed have to set again 
-     * @param ga 
+     * if return true then the GaugeSettings is changed have to set again
+     * @param ga
      */
     checkGaugeAdded(ga: GaugeSettings) {
         let gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
@@ -710,7 +710,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (gauge !== true) {
                 if (this.gaugesRef.indexOf(ga.id) === -1) {
                     this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
-                }    
+                }
             }
             this.setGaugeSettings(ga);
         }
@@ -792,7 +792,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * Clone the View, copy and change all ids
-     * @param view 
+     * @param view
      */
     onCloneView(view: View) {
         if (view) {
@@ -931,7 +931,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * Export view in a file json format MyView.fuxav
-     * @param view 
+     * @param view
      */
     onExportView(view: View) {
         let filename = 'MyView.fuxav';
@@ -950,7 +950,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
         /**
-     * open Project event file loaded 
+     * open Project event file loaded
      * @param event file resource
      */
     onViewFileChangeListener(event) {
@@ -987,7 +987,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //#region Panels State
     /**
-     * Load the left panels state copied in localstorage  
+     * Load the left panels state copied in localstorage
      */
     private loadPanelState() {
         let ps = localStorage.getItem("@frango.webeditor.panelsState");
@@ -1021,7 +1021,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * callback to open edit gauge property form (from GaugeBase)
-     * @param event 
+     * @param event
      */
     onGaugeEdit(event) {
         let settings = this.gaugePanelComponent.settings;
@@ -1050,9 +1050,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * edit the gauges/chart settings property, the settings are composed from gauge id... and property
      * in property will be the result values saved
-     * 
-     * @param settings 
-     * @param callback 
+     *
+     * @param settings
+     * @param callback
      */
     openEditGauge(settings, callback) {
         let tempsettings = JSON.parse(JSON.stringify(settings));
