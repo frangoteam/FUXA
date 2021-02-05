@@ -5,7 +5,7 @@
   /* right: 0px; */
   /* display: block; */
   background:#AAA;
-  height:100%; 
+  height:100%;
   width:100%;
   display: flex;
   flex-direction: column;
@@ -69,12 +69,12 @@ color: rgba(255,255,255,1);
   color: rgba(255,255,255,1);
   /* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */
  }
- 
+
  .svg-workarea-flybar-h mat-icon {
      background-color: rgba(33,33,33,1);
      color: rgba(255,255,255,1);
  }
- 
+
  .svg-workarea-flybar-h span {
      background-color: rgba(33,33,33,1);
      color: rgba(255,255,255,1);
@@ -82,14 +82,14 @@ color: rgba(255,255,255,1);
      padding-left: 3px;
      font-size: 11px;
  }
- 
+
  /* .svg-workarea-flybar-h:hover {
  } */
- 
+
  .svg-workarea-flybar-h:enabled .svg-workarea-flybar-h::selection{
      background-color: rgba(33,33,33,1);
      color: rgba(255,255,255,1);
- }   
+ }
 
 .svg-workarea-fly-p {
   box-shadow: none !important;
@@ -163,11 +163,11 @@ color: rgba(255,255,255,1);
 
 .svg-tools-fly {
   z-index: 9999;
-  position:absolute; 
-  right:25px; 
-  top:55px; 
+  position:absolute;
+  right:25px;
+  top:55px;
   overflow-y: auto;
-  max-height: calc(100% - 75px); 
+  max-height: calc(100% - 75px);
 
 }
 
@@ -194,15 +194,11 @@ color: rgba(255,255,255,1);
   background: rgba(0, 0, 0, 0.1);
 }
 
-.svg-tool-active:active {
-  /* border: 1px solid #000000; */
-  background-color: rgba(48,89,175,1);        
+.svg-tool-active, .svg-tool-active:active, .svg-tool-active:hover {
+    /* border: 1px solid #000000; */
+  background-color: rgba(48,89,175,1);
 }
 
-.svg-tool-active {
-  /* border: 1px solid #000000; */
-  background-color: rgba(48,89,175,1);        
-}
 
 .leave-header-area {
   margin-top: 36px;
@@ -319,11 +315,11 @@ color: rgba(255,255,255,1);
 
 .leftbar-item-active {
   /* font-weight: 600; */
-  background-color: rgba(48,89,175,1);    
+  background-color: rgba(48,89,175,1);
 }
 
 .leftbar-item span {
-  padding-left: 15px;    
+  padding-left: 15px;
   float: left;
 }
 .leftbar-item mat-icon {
@@ -349,7 +345,7 @@ color: rgba(255,255,255,1);
   /* padding-left: 10px !important; */
   flex-wrap: wrap !important;
   background-color: rgba(47,47,47,1);
-  
+
 }
 
 ::ng-deep .mat-menu-item {
@@ -386,7 +382,7 @@ color: rgba(255,255,255,1);
 .zoom-menu {
   float: left;
   padding-left: 5px;
-  width: 90px;  
+  width: 90px;
 }
 
 .zoom-value {
@@ -438,7 +434,7 @@ color: rgba(255,255,255,1);
 
 .zoom-value li:hover {
   background-color: rgb(22, 22, 22);
-  
+
 }
 
 .colors {
@@ -569,7 +565,7 @@ select#start_marker option[value="D"] { background:url('/assets/images/select-po
   background: url('/assets/images/text.svg') no-repeat center center;
   background-size: contain;
   height: 30px;
-  width: 30px; 
+  width: 30px;
 }
 
 .icon-image {
