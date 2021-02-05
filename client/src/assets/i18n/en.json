@@ -1,6 +1,6 @@
 {
     "with param": "sample {{value}}",
-    
+
     "header.new-project": "New Project",
     "header.save-project": "Save Project",
     "header.saveas-project": "Save Project As...",
@@ -20,7 +20,7 @@
     "header.info-version": "Version ",
 
     "sidenav.title": "FUXA",
-    
+
     "tutorial.title": "FUXA Tutorial",
 
     "dlg.info-title": "FUXA",
@@ -32,12 +32,12 @@
     "dlg.layout-show-dev": "Show button",
     "dlg.layout-navigation": "Navigation (Side Menu)",
     "dlg.layout-nav-bkcolor": "Background Color",
-    "dlg.layout-nav-fgcolor": "Color",    
+    "dlg.layout-nav-fgcolor": "Color",
     "dlg.layout-lbl-smode": "Side Mode:",
     "dlg.layout-lbl-type": "Type:",
     "dlg.layout-header": "Header",
     "dlg.layout-header-bkcolor": "Background Color",
-    "dlg.layout-header-fgcolor": "Color", 
+    "dlg.layout-header-fgcolor": "Color",
     "dlg.layout-lbl-title": "Title",
     "dlg.layout-lbl-alarms": "Alarms notification mode",
     "dlg.layout-lbl-infos": "Info notification mode",
@@ -64,7 +64,7 @@
 
     "dlg.ok": "OK",
     "dlg.cancel": "CANCEL",
-    
+
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
@@ -80,9 +80,9 @@
     "general.username": "Username",
     "general.password": "Password",
 
-    
+
     "tester.title": "Variable",
-    
+
     "item.navsmode-none": "None",
     "item.navsmode-push": "Push",
     "item.navsmode-over": "Over",
@@ -110,7 +110,7 @@
     "chart.config-name": "Name",
     "chart.config-rename": "Rename",
     "chart.config-delete": "Delete",
-    
+
     "chart.property-props": "Property",
     "chart.property-layout": "Layout",
     "chart.property-chart": "Chart to show",
@@ -194,7 +194,7 @@
     "editor.cmenu-layer-delete": "Delete Layer",
     "editor.cmenu-layer-marge-down": "Merge Down",
     "editor.cmenu-layer-marge-all": "Merge All",
-    
+
     "editor.transform": "Transform",
     "editor.transform-x": "x",
     "editor.transform-x-title": "Change X coordinate",
@@ -416,7 +416,7 @@
     "device.security-none": "None",
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encript",
-    
+
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",
     "device.tag-property-device": "Device",
@@ -463,7 +463,8 @@
     "gauges.property-actions": "Actions",
     "gauges.property-action-type": "Type",
     "gauges.property-action-param": "Action Id",
-    
+    "gauges.property-events-mapping-from": "View Variable For Override",
+
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
     "bag.property-subdivisions": "SubDivisions",

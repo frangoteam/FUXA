@@ -1,155 +1,179 @@
 .grid-conta {
-    margin-left: 30px;
-    /* max-height: 260px; */
-    /* overflow: auto; */
+  margin-left: 30px;
+  /* max-height: 260px; */
+  /* overflow: auto; */
 }
 
 .item {
-    display: block;
-    min-height: 54px;
-    width: 100%;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    padding: 5px 0px 0px 0px;
-    margin-bottom: -1px;
-}
-.item-alarm {
-    margin-left: -30px;
-    width: calc(100% + 30px);
-}
-.remove {
-    position: relative;
-    top: 4px;
-    right: 0px;
-}
-.item-range {
-    display: inline-block;
-    min-width: 320px;
-    max-width: 320px;
-    width: 320px;
-}
-.item-minmax {
-    display: inline-block;
-    width: 100%;
-}
-.item-step {
-    display: inline-block;
-    width: 320px;
-}
-.item-unit {
-    display: inline-block;
-    width: 520px;
-}
-.item-remove {
-    display: inline-block;
-    float: right;
-    /* padding-top: 6px; */
-    /* min-width: 140px; */
-}
-.panel-color-class {
-    position: relative;
-    top: 30px;
-}
-.panel-color {
-    display: inline-block;
-    padding-top: 10px;
-    max-width: 60px;
-    /* border: 1px solid rgba(0,0,0,0.1); */
-    height: 21px;
-    line-height: 12px;
-    margin-right: 25px;
-}
-.option-color {
-    height: 32px !important;
-}
-.panel-color-class {
-    margin-top: 30px !important;
-}
-.input-range {
-    display: inline-block;
-    max-width: 80px;
-}
-.input-range input {
-    font-size: 15px;
-    text-align: center;
-}
-.input-minmax {
-    display: inline-block;
-    max-width: 80px;
-}
-.input-minmax input {
-    font-size: 15px;
-    text-align: center;
-}
-.input-step {
-    display: inline-block;
-    max-width: 80px;
-}
-.input-step input {
-    font-size: 15px;
-    text-align: center;
-}
-.input-minmax-cb {
-    font-size: 15px;
+  display: block;
+  min-height: 54px;
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 5px 0px 0px 0px;
+  margin-bottom: -1px;
 }
 
-::ng-deep .ng5-slider .ng5-slider-pointer { 
-    width: 16px !important;
-    height: 16px !important;
-    border-radius: 8px !important; 
-    top: -7px !important 
+.item-alarm {
+  margin-left: -30px;
+  width: calc(100% + 30px);
 }
-::ng-deep .ng5-slider .ng5-slider-pointer:after { 
-    top: 6px !important;
-    left: 6px !important;
-    width: 4px !important;
-    height: 4px !important; 
-    border-radius: 2px !important 
+
+.remove {
+  position: relative;
+  top: 4px;
+  right: 0px;
+}
+
+.item-range {
+  display: inline-block;
+  min-width: 320px;
+  max-width: 320px;
+  width: 320px;
+}
+
+.item-minmax {
+  display: inline-block;
+  width: 100%;
+}
+
+.item-step {
+  display: inline-block;
+  width: 320px;
+}
+
+.item-unit {
+  display: inline-block;
+  width: 520px;
+}
+
+.item-remove {
+  display: inline-block;
+  float: right;
+  /* padding-top: 6px; */
+  /* min-width: 140px; */
+}
+
+.panel-color-class {
+  position: relative;
+  top: 30px;
+}
+
+.panel-color {
+  display: inline-block;
+  padding-top: 10px;
+  max-width: 60px;
+  /* border: 1px solid rgba(0,0,0,0.1); */
+  height: 21px;
+  line-height: 12px;
+  margin-right: 25px;
+}
+
+.option-color {
+  height: 32px !important;
+}
+
+.panel-color-class {
+  margin-top: 30px !important;
+}
+
+.input-range {
+  display: inline-block;
+  max-width: 80px;
+}
+
+.input-range input {
+  font-size: 15px;
+  text-align: center;
+}
+
+.input-minmax {
+  display: inline-block;
+  max-width: 80px;
+}
+
+.input-minmax input {
+  font-size: 15px;
+  text-align: center;
+}
+
+.input-step {
+  display: inline-block;
+  max-width: 80px;
+}
+
+.input-step input {
+  font-size: 15px;
+  text-align: center;
+}
+
+.input-minmax-cb {
+  font-size: 15px;
+}
+
+::ng-deep .ng5-slider .ng5-slider-pointer {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 8px !important;
+  top: -7px !important
+}
+
+::ng-deep .ng5-slider .ng5-slider-pointer:after {
+  top: 6px !important;
+  left: 6px !important;
+  width: 4px !important;
+  height: 4px !important;
+  border-radius: 2px !important
 }
 
 ::ng-deep .input-range .input-step .input-minmax .mat-form-field-wrapper {
-    margin-bottom: -15px !important;
+  margin-bottom: -15px !important;
 }
+
 ::ng-deep .input-range .input-step .input-minmax .mat-form-field-infix {
-    padding-top: 1px;
-    padding-bottom: 5px;
+  padding-top: 1px;
+  padding-bottom: 5px;
 }
+
 .input-step input {
-    font-size: 15px;
-    text-align: center;
+  font-size: 15px;
+  text-align: center;
 }
 
 .input-slider {
-    display: inline;
-    /* max-width: 160px; */
+  display: inline;
+  /* max-width: 160px; */
 }
+
 ::ng-deep .input-slider span {
-    font-size: 14px !important;
+  font-size: 14px !important;
 }
+
 .input-slider ng5-slider {
-    /* display: block; */
-    max-width: 300px;
-    margin-top: 29px;
-    margin-right: 20px;
+  /* display: block; */
+  max-width: 300px;
+  margin-top: 29px;
+  margin-right: 20px;
 }
 
 .toolbox {
-    margin-top: 3px;
-    margin-bottom: 3px;
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
+
 .toolbox button {
-    margin-right: 8px;
-    margin-left: 8px;
+  margin-right: 8px;
+  margin-left: 8px;
 }
 
 .slider-field span {
-    padding-left: 2px;
-    text-overflow: clip;
-    max-width: 125px;
-    white-space: nowrap;
-    overflow: hidden;
+  padding-left: 2px;
+  text-overflow: clip;
+  max-width: 125px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .slider-field mat-slider {
-    background-color: #f1f3f4;
-    height: 30px;
+  background-color: #f1f3f4;
+  height: 30px;
 }
