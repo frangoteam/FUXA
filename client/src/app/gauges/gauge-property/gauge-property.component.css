@@ -22,3 +22,15 @@
 ::ng-deep .mat-dialog-container {
   display: inline-table !important;
 }
+
+.mat-tab-container {
+  min-height:300px;
+  height:60vmin;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 15px;
+}
+
+.mat-tab-container > div {
+  display: block;
+}
