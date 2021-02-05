@@ -91,7 +91,9 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
             clr = ga.property.ranges[idx].color;
           }
         }
-        button.style.backgroundColor = clr;
+        if (clr)  {
+          button.style.backgroundColor = clr;
+        }
       }
       // check actions
       if (ga.property.actions) {
