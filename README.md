@@ -17,20 +17,18 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
-You need to have installed [Node](https://nodejs.org) (Version 10 or 12) and NPM (Version >=6.11).
+You need to have installed [Node](https://nodejs.org) (Version 10, 12 or 14) and NPM (Version >=6.11).
 
-Clone this repository or download it
+Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (first option)
 ```
-git clone https://github.com/frangoteam/fuxa.git
+npm install -g --unsafe-perm @frangoteam/fuxa
+fuxa
 ```
-Install
+
+Or [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it (second option)
 ```
 cd ./server
 npm install
-```
-Start NodeJS server at http://localhost:1881
-```
-cd ./server
 npm start
 ```
 Open up a browser (better Chrome) and navigate to http://localhost:1881
@@ -67,6 +65,22 @@ Tested with:
 ## Contributing
 Any contributions you make are greatly appreciated.
 If you identify any errors, or have an idea for an improvement, please open an [issue](/../../issues).
+But before filing a new issue, please look through already existing issues. Search open and closed issues first.
+
+### Pull-Requests
+If you want to raise a pull-request with a new feature, or a refactoring of existing code please first open an issue explaining the problem.
+```
+1. Fork the Project
+2. Create your Feature Branch (git checkout -b feature/AmazingFeature)
+3. Commit your Changes (git commit -m 'Add some AmazingFeature')
+4. Push to the Branch (git push origin feature/AmazingFeature)
+5. Open a Pull Request
+```
+
+### Coding standards
+Please ensure you follow the coding standards used through-out the existing code base. Some basic rules include:
+- Indent with 4-spaces, no tabs.
+- Opening brace on same line as if/for/function and so on, closing brace on its own line.
 
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.

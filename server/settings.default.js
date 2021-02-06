@@ -30,7 +30,7 @@ module.exports = {
     // Used to identify a directory of static content
     // that should be served at http://localhost:1881/.
     // Default: '/client/dist'
-    //httpStatic: '/client/dist',
+    //httpStatic: '/usr/home/fuxa/dist',
 
     // The maximum size of HTTP request that will be accepted by the runtime api.
     // Default: 15mb
