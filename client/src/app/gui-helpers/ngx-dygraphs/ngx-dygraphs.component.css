@@ -6,8 +6,9 @@
 }
 
 .mychart-edit {
+  z-index: 1;
   display: block;
-  position: fixed;
+  position: absolute;
   top: 0px;
   bottom: 0px;
   left: 0px;

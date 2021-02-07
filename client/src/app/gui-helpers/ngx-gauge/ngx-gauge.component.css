@@ -1,16 +1,29 @@
 
-.container {
+.mygauge-container {
+    z-index: 1;
     position: relative;
     width: 100%; 
     height:100%;
     padding: 20;
 }
 
-.canvas {
+.mygauge-canvas {
     margin: 0;
     position: absolute;
     top: 50%;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+}
+
+.mygauge-value {
+    text-align: center; 
+    font-size: 18px; 
+    font-weight: bold;
+    color: black; 
+    font-family: 'Amaranth', sans-serif;
+    position: absolute; 
+    top: 5px; 
+    left: 0; 
+    right: 0;
 }
