@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const http = require('http');
 const https = require('https');
 const socketIO = require('socket.io');
+const nopt = require("nopt");
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
@@ -21,8 +22,42 @@ var settingsFile;
 
 var startTime = new Date();
 
-// Define work directory in AppData
-var workDir = path.resolve(__dirname, '_appdata');
+var knownOpts = {
+    "help": Boolean,
+    "port": Number,
+    "userDir": [path]
+};
+var shortHands = {
+    "?":["--help"],
+    "p":["--port"],
+    "u":["--userDir"]
+};
+
+nopt.invalidHandler = function(k,v,t) {
+    // TODO: console.log(k,v,t);
+}
+
+var parsedArgs = nopt(knownOpts, shortHands, process.argv, 2);
+
+if (parsedArgs.help) {
+    console.log("FUXA v" + FUXA.version());
+    console.log("Usage: fuxa [-?] [--port PORT] [--userDir DIR]");
+    console.log("");
+    console.log("Options:");
+    console.log("  -p, --port     PORT  port to listen on");
+    console.log("  -u, --userDir  DIR   use specified user directory");
+    console.log("  -?, --help           show this help");
+    process.exit();
+}
+
+// Define directory
+var rootDir = __dirname;
+var workDir = path.resolve(__dirname, '_appdata');;
+if (parsedArgs.userDir) {
+    rootDir = parsedArgs.userDir;
+    workDir = path.resolve(parsedArgs.userDir, '_appdata')
+}
+
 if (!fs.existsSync(workDir)) {
     fs.mkdirSync(workDir);
 }
@@ -48,7 +83,7 @@ try {
     var settings = require(settingsFile);
     settings.workDir = workDir;
     settings.appDir = __dirname;
-    settings.packageDir = path.resolve(__dirname, '_pkg');
+    settings.packageDir = path.resolve(rootDir, '_pkg');
     settings.settingsFile = settingsFile;
     settings.environment = process.env.NODE_ENV || 'prod';
     // check new settings from default and merge if not defined
@@ -71,7 +106,7 @@ try {
 
 // Check logger
 if (!settings.logDir) {
-    settings.logDir = path.resolve(__dirname, '_logs'); 
+    settings.logDir = path.resolve(rootDir, '_logs'); 
 }
 if (!fs.existsSync(settings.logDir)) {
     fs.mkdirSync(settings.logDir);
@@ -87,7 +122,7 @@ if (version.indexOf('beta') > 0) {
 
 // Check storage Database dir
 if (!settings.dbDir) {
-    settings.dbDir = path.resolve(__dirname, '_db');
+    settings.dbDir = path.resolve(rootDir, '_db');
 }
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
@@ -111,8 +146,12 @@ const io = socketIO(server);
 var www = path.resolve(__dirname, '../client/dist');
 settings.httpStatic = settings.httpStatic || www;
 
-if (settings.uiPort === undefined) {
-    settings.uiPort = 1880;
+if (parsedArgs.port !== undefined){
+    settings.uiPort = parsedArgs.port;
+} else {
+    if (settings.uiPort === undefined){
+        settings.uiPort = 1881;
+    }
 }
 settings.uiHost = settings.uiHost || "0.0.0.0";
 
