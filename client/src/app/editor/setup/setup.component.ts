@@ -89,5 +89,12 @@ export class SetupComponent implements OnInit, AfterViewInit {
         });
         dialogRef.afterClosed().subscribe(result => {
         });
-    }    
+    }
+
+    /**
+     * edit application settings
+     */
+    onSettings() {
+
+    }
 }

@@ -567,6 +567,7 @@
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
+    "dlg.setup-settings": "Settings",
 
     "msg.alarm-remove": "Would you like to remove Alarm ",
     "msg.text-remove": "Would you like to remove Text ",
