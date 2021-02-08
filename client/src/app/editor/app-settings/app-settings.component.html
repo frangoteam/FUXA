@@ -1,0 +1,24 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.app-settings-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;color:gray;cursor:pointer;">clear</mat-icon>
+    <div mat-dialog-content>
+        <mat-tab-group style="height: 500px">
+            <mat-tab label="{{'dlg.app-settings-system' | translate}}">
+                <div style="width: 420px; margin-top: 20px;">
+                    <div class="my-form-field">
+                        <span>{{'dlg.app-settings-language' | translate}}</span>
+                        <mat-select [(value)]="settings.language" style="width: 260px" (selectionChange)="onLanguageChange($event.value)">
+                            <mat-option *ngFor="let language of languageType" [value]="language.value">
+                                {{ language.text }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

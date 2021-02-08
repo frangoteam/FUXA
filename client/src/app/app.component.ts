@@ -1,10 +1,11 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from "rxjs";
 
 import { ProjectService } from './_services/project.service';
+import { SettingsService } from './_services/settings.service';
 
 @Component({
 	selector: 'app-root',
@@ -22,24 +23,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	constructor(private router: Router,
 		private projectService: ProjectService,
-		private fuxaLanguage: TranslateService,
+		private settingsService: SettingsService,
 		location: Location) {
 		this.location = location;
-
-		// this language will be used as a fallback when a translation isn't found in the current language
-		fuxaLanguage.setDefaultLang('en');
-		// the lang to use, if the lang isn't available, it will use the current loader to get them
-		fuxaLanguage.use('en');
 	}
 
 	ngOnInit() {
 	}
-
+	
 	ngAfterViewInit() {
-    }
-
-    ngAfterContentChecked() {
 		try {
+			this.settingsService.init();
 			let hmi = this.projectService.getHmi();
 			if (hmi) {
 				this.checkSettings();

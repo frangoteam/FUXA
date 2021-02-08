@@ -567,6 +567,12 @@
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
+    "dlg.setup-settings": "Settings",
+    "dlg.app-settings-title": "Settings",
+    "dlg.app-settings-system": "System",
+    "dlg.app-settings-language": "Language",
+    "dlg.app-language-en": "English",
+    "dlg.app-language-ru": "Russian",
 
     "msg.alarm-remove": "Would you like to remove Alarm ",
     "msg.text-remove": "Would you like to remove Text ",
