@@ -111,7 +111,7 @@
     "chart.config-rename": "Переименовать",
     "chart.config-delete": "Удалить",
 
-    "chart.property-props": "Свойство",
+    "chart.property-props": "Свойства",
     "chart.property-layout": "Вид",
     "chart.property-chart": "График для показа",
     "chart.property-chart-type": "Режим отображения",
@@ -137,10 +137,10 @@
     "chart.legend-onmouseover": "по наведению мыши",
     "chart.legend-never": "никогда",
 
-    "editor.views": "Views",
+    "editor.views": "Виды",
     "editor.view-delete": "Удалить",
     "editor.view-rename": "Переименовать",
-    "editor.view-property": "Свойство",
+    "editor.view-property": "Свойства",
     "editor.view-clone": "Клонировать",
     "editor.view-export": "Экспортировать",
     "editor.view-import": "Импортировать Вид",
@@ -311,7 +311,7 @@
     "shapes.action-anticlockwise": "Повернуть против часовой стрелке",
     "shapes.action-downup": "Вверх и вниз",
 
-    "pipe.property-props": "Свойство",
+    "pipe.property-props": "Свойства",
     "pipe.property-border-width": "Ширина границы",
     "pipe.property-border-color": "Цвет границы",
     "pipe.property-pipe-width": "Ширина трубы",
@@ -436,7 +436,7 @@
 
     "gauges.property-props": "Свойства",
     "gauges.property-events": "События",
-    "gauges.property-title": "Свойство",
+    "gauges.property-title": "Свойства",
     "gauges.property-name": "Имя",
     "gauges.property-permission": "Авторизация",
     "gauges.property-readonly": "Только чтение",
