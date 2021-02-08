@@ -52,10 +52,10 @@ if (parsedArgs.help) {
 
 // Define directory
 var rootDir = __dirname;
-var workDir = path.resolve(__dirname, '_appdata');;
+var workDir = path.resolve(process.cwd(), '_appdata');
 if (parsedArgs.userDir) {
     rootDir = parsedArgs.userDir;
-    workDir = path.resolve(parsedArgs.userDir, '_appdata')
+    workDir = path.resolve(parsedArgs.userDir, '_appdata');
 }
 
 if (!fs.existsSync(workDir)) {
