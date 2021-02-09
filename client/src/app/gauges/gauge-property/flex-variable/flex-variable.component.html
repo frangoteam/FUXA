@@ -1,31 +1,31 @@
 <div style="display: block;">
-  <div *ngIf="manualEdit" class="my-form-field">
-    <span>{{'gauges.property-input-value' | translate}}</span>
-    <input name="test" style="width: 220px" type="text" [(ngModel)]="this.value.variable" (change)="onChanged()">
-  </div>
-  <div *ngIf="!manualEdit" class="my-form-field" style="min-width: 200px;">
-    <span>{{'gauges.property-head-device' | translate}}</span>
-    <mat-select [formControl]="deviceCtrl" (selectionChange)="onDeviceChange($event.source)">
-      <mat-select-search [formControl]="deviceFilterCtrl"></mat-select-search>
-      <mat-option *ngFor="let device of filteredDevice | async" [value]="device">
-        {{ device.name }}
-      </mat-option>
-    </mat-select>
-  </div>
-  <div *ngIf="!manualEdit" class="my-form-field" style="min-width: 200px;display:inline-block;padding-left: 20px;">
-    <span>{{'gauges.property-head-variable' | translate}}</span>
-    <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
-      <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
-      <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
-        {{ getVariableLabel(vari) }}
-      </mat-option>
-    </mat-select>
-  </div>
+    <div *ngIf="manualEdit" class="my-form-field">
+        <span>{{'gauges.property-input-value' | translate}}</span>
+        <input name="test" style="width: 220px" type="text" [(ngModel)]="this.value.variable" (change)="onChanged()">
+    </div>
+    <div *ngIf="!manualEdit" class="my-form-field" style="min-width: 200px;">
+        <span>{{'gauges.property-head-device' | translate}}</span>
+        <mat-select [formControl]="deviceCtrl" (selectionChange)="onDeviceChange($event.source)">
+            <mat-select-search [formControl]="deviceFilterCtrl"></mat-select-search>
+            <mat-option *ngFor="let device of filteredDevice | async" [value]="device">
+                {{ device.name }}
+            </mat-option>
+        </mat-select>
+    </div>
+    <div *ngIf="!manualEdit" class="my-form-field" style="min-width: 200px;display:inline-block;padding-left: 20px;">
+        <span>{{'gauges.property-head-variable' | translate}}</span>
+        <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
+            <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
+            <mat-option *ngFor="let vari of filteredVariable | async" [value]="vari">
+                {{ getVariableLabel(vari) }}
+            </mat-option>
+        </mat-select>
+    </div>
 
-  <button *ngIf="allowManualEdit && !manualEdit" mat-icon-button title="Toggle edit" (click)="toggleView($event)">
-    <mat-icon>edit</mat-icon>
-  </button>
-  <button *ngIf="manualEdit" mat-icon-button title="Toggle edit" (click)="toggleView($event)">
-    <mat-icon>list</mat-icon>
-  </button>
+    <button *ngIf="allowManualEdit && !manualEdit" mat-icon-button title="Toggle edit" (click)="toggleView($event)">
+        <mat-icon>edit</mat-icon>
+    </button>
+    <button *ngIf="manualEdit" mat-icon-button title="Toggle edit" (click)="toggleView($event)">
+        <mat-icon>list</mat-icon>
+    </button>
 </div>
