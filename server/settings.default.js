@@ -1,9 +1,12 @@
 
 module.exports = {
-    // version to manage update
+    // Version to manage update
     version: 1.1,
     
-    // the tcp port that the FUXA web server is listening on
+    // Standard language (editor)
+    language: 'en',
+
+    // The tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,
 
     // Used to identify a directory of logger
@@ -17,6 +20,7 @@ module.exports = {
     // DAQ Enabled
     // Default: true    
     daqEnabled: true,
+
     // DAQ DB to Tokenizer the file and save in archive
     // Default: 24 Hours (1 Day), 0 is disabled only 1 DB file
     daqTokenizer: 24,

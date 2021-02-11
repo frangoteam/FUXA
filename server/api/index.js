@@ -2,6 +2,7 @@
  * 'api/project': API server initialization and general GET/POST
  */
 
+const fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var authJwt = require('./jwt-helper');
@@ -54,11 +55,47 @@ function init(_server, _runtime) {
                     runtime.logger.error('api get settings: Value Not Found!');
                 }
             });
+
+            /**
+             * POST Server user settings
+             */
+            apiApp.post("/api/settings", authJwt.verifyToken, function(req, res, next) {
+                var groups = verifyGroups(req);
+                if (res.statusCode === 403) {
+                    runtime.logger.error("api post settings: Tocken Expired");
+                } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                    res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                    runtime.logger.error("api post settings: Unauthorized");
+                } else {
+                    try {
+                        fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
+                        mergeUserSettings(req.body);
+                        res.end();
+                    } catch (err) {
+                        res.status(400).json({ error: "unexpected_error", message: err });
+                        runtime.logger.error("api post settings: " + err);
+                    }
+                }
+            });
+
             runtime.logger.info('api: init successful!', true);
         } else {
         }
         resolve();
     });
+}
+
+function mergeUserSettings(settings) {
+    if (settings.language) {
+        runtime.settings.language = settings.language;
+    }
+    // if (settings.uiPort) {
+    //     runtime.settings.uiPort = settings.uiPort;
+    // }
+    runtime.settings.secureEnabled = settings.secureEnabled;
+    if (settings.secureEnabled) {
+        runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
+    }
 }
 
 function verifyGroups(req) {

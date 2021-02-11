@@ -1,3 +1,6 @@
 export class AppSettings {
-    language: string = 'en';
+    language = 'en';
+    uiPort = 1881;
+    secureEnabled = false;
+    tokenExpiresIn = '1h';
 }

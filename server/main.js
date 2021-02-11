@@ -63,20 +63,20 @@ if (!fs.existsSync(workDir)) {
 }
 
 // Read app settings 
-var userSettingsFile = path.join(workDir, 'settings.js');
-if (fs.existsSync(userSettingsFile)) {
+var appSettingsFile = path.join(workDir, 'settings.js');
+if (fs.existsSync(appSettingsFile)) {
     // _appdata/settings.js exists
-    settingsFile = userSettingsFile;
+    settingsFile = appSettingsFile;
 } else {
     // Not exist, copy from code resource
     var defaultSettings = path.join(__dirname, 'settings.default.js');
     try {
-        fs.copyFileSync(defaultSettings, userSettingsFile, fs.constants.COPYFILE_EXCL);
+        fs.copyFileSync(defaultSettings, appSettingsFile, fs.constants.COPYFILE_EXCL);
         logger.debug('settings.js default created successful!');
     } catch (err) {
         logger.error(err);
     }
-    settingsFile = userSettingsFile;
+    settingsFile = appSettingsFile;
 }
 try {
     // load settings and set some app variable
@@ -102,6 +102,26 @@ try {
         logger.error(err);
     }
     process.exit();
+}
+// Read user settings
+try {
+    var userSettingsFile = path.join(workDir, 'mysettings.json');
+    settings.userSettingsFile = userSettingsFile;
+    if (fs.existsSync(userSettingsFile)) {
+        var mysettings = JSON.parse(fs.readFileSync(userSettingsFile, 'utf8'));
+        if (mysettings.language) {
+            settings.language = mysettings.language;
+        }
+        if (mysettings.uiPort) {
+            settings.uiPort = mysettings.uiPort;
+        }
+        if (mysettings.secureEnabled) {
+            settings.secureEnabled = mysettings.secureEnabled;
+            settings.tokenExpiresIn = mysettings.tokenExpiresIn;
+        }
+    }
+} catch (err) {
+    logger.error('Error loading user settings file: ' + userSettingsFile)
 }
 
 // Check logger
