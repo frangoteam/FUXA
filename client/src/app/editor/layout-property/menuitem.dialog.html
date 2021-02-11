@@ -8,7 +8,7 @@
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>
                 </mat-select-trigger>
-                <mat-option *ngFor="let icon of icons" [value]="icon">
+                <mat-option *ngFor="let icon of icons" [value]="icon" style="display: inline-block !important;">
                     <mat-icon class="">{{ icon }}</mat-icon>
                 </mat-option>
             </mat-select>
