@@ -8,83 +8,83 @@ import { GaugeSettings, Variable } from '../_models/hmi';
 
 
 @Component({
-  selector: 'app-tester',
-  templateUrl: './tester.component.html',
-  styleUrls: ['./tester.component.css']
+    selector: 'app-tester',
+    templateUrl: './tester.component.html',
+    styleUrls: ['./tester.component.css']
 })
 export class TesterComponent implements OnInit {
 
-  show: boolean = false;
-  items: Variable[] = [];
-  output: string[] = [];
-  subscription: Subscription;
-  demoSwitch = true;
+    show: boolean = false;
+    items: Variable[] = [];
+    output: string[] = [];
+    subscription: Subscription;
+    demoSwitch = true;
 
-  // items: Map<string, GaugeSettings> = new Map<string, GaugeSettings>();
+    // items: Map<string, GaugeSettings> = new Map<string, GaugeSettings>();
 
 
-  constructor(private hmiService: HmiService, private gaugesManager: GaugesManager,
-    private testerService: TesterService) { }
+    constructor(private hmiService: HmiService, private gaugesManager: GaugesManager,
+        private testerService: TesterService) { }
 
-  ngOnInit() {
-    this.testerService.change.subscribe(isOpen => {
-      this.show = isOpen;
-    });
+    ngOnInit() {
+        this.testerService.change.subscribe(isOpen => {
+            this.show = isOpen;
+        });
 
-    this.gaugesManager.onevent.subscribe(event => {
-      if (event.dbg) {
-        this.addOutput(event.dbg);
-      }
-    });
-  }
-
-  ngOnDestroy() {
-    this.stopDemo();
-  }
-
-  setSignal(sig:any) {
-    this.hmiService.setSignalValue(sig);
-    this.addOutput('set ' + sig.source + ' - ' + sig.name + ' = ' + sig.value);
-  }
-
-  setSignals(items: any) {
-    this.items = items;
-  }
-
-  setDemo(flag) {
-    if (flag) {
-      // this.gaugesManager.startDemo();
-    } else {
-      // this.gaugesManager.stopDemo();
+        this.gaugesManager.onevent.subscribe(event => {
+            if (event.dbg) {
+                this.addOutput(event.dbg);
+            }
+        });
     }
-  }
 
-  addOutput(item: string) {
-    this.output.unshift(item);
-  }
-
-  close() {
-    this.testerService.toggle(false);
-  }
-
-  startDemo() {
-    this.stopDemo();
-    let sourcetimer = timer(2000, 1500);
-    this.subscription = sourcetimer.subscribe(t => {
-      this.demoValue();
-    });
-  }
-
-  stopDemo() {
-    try {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
-    } catch (e) {
-
+    ngOnDestroy() {
+        this.stopDemo();
     }
-  }
 
-  demoValue() {
-  }
+    setSignal(sig: any) {
+        this.hmiService.setSignalValue(sig);
+        this.addOutput('set ' + sig.source + ' - ' + sig.name + ' = ' + sig.value);
+    }
+
+    setSignals(items: any) {
+        this.items = items;
+    }
+
+    setDemo(flag) {
+        if (flag) {
+            // this.gaugesManager.startDemo();
+        } else {
+            // this.gaugesManager.stopDemo();
+        }
+    }
+
+    addOutput(item: string) {
+        this.output.unshift(item);
+    }
+
+    close() {
+        this.testerService.toggle(false);
+    }
+
+    startDemo() {
+        this.stopDemo();
+        let sourcetimer = timer(2000, 1500);
+        this.subscription = sourcetimer.subscribe(t => {
+            this.demoValue();
+        });
+    }
+
+    stopDemo() {
+        try {
+            if (this.subscription) {
+                this.subscription.unsubscribe();
+            }
+        } catch (e) {
+
+        }
+    }
+
+    demoValue() {
+    }
 }

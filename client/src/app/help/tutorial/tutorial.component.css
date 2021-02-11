@@ -1,48 +1,46 @@
 .tutorial-panel {
-   width: 460px;
-   height: 720px;
-   z-index: 99999 !important;
-   position: absolute;
-   right: 10px;
-   top: 50px;
-   background-color: rgb(240, 240, 240);
-   /* background-color: rgb(250,250,250); */
-   box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.188235);/*1px 2px 5px 1px rgba(0,0,0,.26);*/
-   border: 0px !important;
- }
- 
- .tutorial-header {
-   height: 36px;
-   background-color: #212121;
-   color: #ffffff;
-   padding-left: 5px;
-   cursor: move;
-   line-height: 30px;
- }
+    width: 460px;
+    height: 720px;
+    z-index: 99999 !important;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    background-color: rgb(240, 240, 240);
+    /* background-color: rgb(250,250,250); */
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2),
+        0 2px 6px 0 rgba(0, 0, 0, 0.188235); /*1px 2px 5px 1px rgba(0,0,0,.26);*/
+    border: 0px !important;
+}
+
+.tutorial-header {
+    height: 36px;
+    background-color: #212121;
+    color: #ffffff;
+    padding-left: 5px;
+    cursor: move;
+    line-height: 30px;
+}
 
 .tutorial-title {
     padding: 5px 10px 5px 20px;
     font-size: 16px;
- }
- 
- .tutorial-close {
-   font-size: 28px;
-   /* float: right; */
-   cursor: pointer;
-   /* padding-right: 5px; */
-   right: 5px;
-     position: absolute;
-     top: 0px;
- }
+}
 
- .my-expansion-panel {
+.tutorial-close {
+    font-size: 28px;
+    /* float: right; */
+    cursor: pointer;
+    /* padding-right: 5px; */
+    right: 5px;
+    position: absolute;
+    top: 0px;
+}
+
+.my-expansion-panel {
     margin: 0px;
- }
- 
- .header {
- }
- .header mat-panel-title {
+}
+
+.header mat-panel-title {
     font-size: 20px;
     font-weight: 100;
- }
- 
+}

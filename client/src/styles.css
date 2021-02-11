@@ -322,6 +322,7 @@ app-root {
     display: inline-block;
     padding: 10px 0px 10px 0px;
     text-align: -webkit-center;
+    text-align: -moz-center;
 }
 .menu-item-content-block .mat-icon {
     display: block;

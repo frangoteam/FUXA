@@ -1,42 +1,36 @@
-<div draggable  [draggableHeight]="30" class="tester-panel" *ngIf="show">
-  <style>
-    pre {
-      white-space: pre-line;
-    }
-  </style>
-  <div name="dlgTesterForm">
-    <div class="tester-header">
-      <div class="tester-title">
-        {{'tester.title' | translate}}
-      </div>
-      <div class="tester-close" (click)="close()">
-        &times;
-      </div>
-    </div>
-    <div class="tester-body">
-      <div class="_svg-property" mat-dialog-actions>
-        <!-- <button mat-button color="warn" type="button" class="" (click)="setDemo(true)">
-          Start
-        </button>
-        <button mat-button color="warn" type="button" class="" (click)="setDemo(false)">
-          End
-        </button> -->
-      </div>
-      <br>
-      <div *ngFor="let item of items">
-        <div class="svg-property">
-          <span>{{item.source}} - {{item.name}} :</span>
-          <input id="item.name" [(ngModel)]="item.value" type="text" class="no-spinners" />
-          <button type="button" class="" (click)="setSignal(item)">
-            >>
-          </button>
+<div class="tester-panel" *ngIf="show" ngDraggable>
+    <style>
+        pre {
+            white-space: pre-line;
+        }
+    </style>
+    <div name="dlgTesterForm">
+        <div class="tester-header">
+            <div class="tester-title">
+                {{'tester.title' | translate}}
+            </div>
+            <div class="tester-close" (click)="close()">
+                &times;
+            </div>
         </div>
-      </div>
+        <div class="tester-body">
+            <div class="_svg-property" mat-dialog-actions>
+            </div>
+            <br>
+            <div *ngFor="let item of items">
+                <div class="svg-property">
+                    <span>{{item.source}} - {{item.name}} :</span>
+                    <input id="item.name" [(ngModel)]="item.value" type="text" class="no-spinners" />
+                    <button type="button" class="" (click)="setSignal(item)">
+                        >>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="tester-output">
+            <span *ngFor="let item of output; index as i" class="output-item">
+                {{item}}
+            </span>
+        </div>
     </div>
-    <div class="tester-output">
-      <span *ngFor="let item of output; index as i" class="output-item">
-        {{item}}
-      </span>
-    </div>
-  </div>
 </div>
