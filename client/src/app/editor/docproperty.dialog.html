@@ -1,21 +1,35 @@
 <div>
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.docproperty-title' | translate}}</h1>
+    <h1 mat-dialog-title style="display:inline-block; cursor:move;" mat-dialog-draggable>{{'dlg.docproperty-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn" cdkFocusInitial>clear</mat-icon>
-    <div mat-dialog-content>
-        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
-            <span>{{'dlg.docproperty-width' | translate}}</span>
-            <input numberOnly [(ngModel)]="data.width" style="width: 100px" type="text">
+    <div mat-dialog-content style="width: 300px;">
+        <div style="display: block; width: 100%; margin-top: 10px;">
+            <div class="my-form-field" style="display: inline-block;">
+                <span>{{'dlg.docproperty-width' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.width" style="width: 120px" type="text">
+            </div>
+            <div class="my-form-field" style="float: right">
+                <span>{{'dlg.docproperty-height' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.height" style="width: 120px" type="text">
+            </div>
         </div>
-        <div class="my-form-field" style="margin-bottom: 10px; float:right">
-            <span>{{'dlg.docproperty-height' | translate}}</span>
-            <input numberOnly [(ngModel)]="data.height" style="width: 100px" type="text">
+        <div style="display: block; margin-top: 20px; width: 100%">
+            <div class="my-form-field">
+                <span>{{'dlg.docproperty-size' | translate}}</span>
+                <mat-select placeholder="{{'dlg.docproperty-select' | translate}}" (selectionChange)="onSizeChange($event.value)" style="width: 293px;">
+                    <mat-option *ngFor="let prop of propSizeType" [value]="prop.value">
+                        {{ prop.text }}
+                    </mat-option>
+                </mat-select>
+            </div>
         </div>
-        <div class="my-form-field" style="display: block; margin-top: 10px;margin-bottom:10px">
-            <span style="font-size:12px;">{{'dlg.docproperty-background' | translate}}</span>
-            <input style="width: 220px;height:15px;border:1px solid rgba(0,0,0,0.2);margin-top: 4px;height:15px !important" readonly [(colorPicker)]="data.bkcolor" class="input-color"
-                title="Change stroke color" [style.background]="data.bkcolor" [cpPresetColors]="defaultColor" [cpAlphaChannel]="'always'" [cpPosition]="'bottom'"
-                [value]="data.bkcolor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true"
-                [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
+        <div style="display: block; margin-top: 20px; margin-bottom: 20px; width: 100%">
+            <div class="my-form-field" style="width: 300px;">
+                <span style="font-size:12px;">{{'dlg.docproperty-background' | translate}}</span>
+                <input style="width: 292px; border: 1px solid rgba(0,0,0,0.2); height:15px !important" readonly [(colorPicker)]="data.bkcolor" class="input-color"
+                    title="Change stroke color" [style.background]="data.bkcolor" [cpPresetColors]="defaultColor" [cpAlphaChannel]="'always'" [cpPosition]="'bottom'"
+                    [value]="data.bkcolor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true"
+                    [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
