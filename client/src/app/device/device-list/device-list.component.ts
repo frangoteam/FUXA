@@ -161,7 +161,9 @@ export class DeviceListComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.dirty = true;
-                this.clearTags();
+                if (this.deviceSelected.type === DeviceType.WebAPI) {
+                    this.clearTags();
+                }
                 result.nodes.forEach((n: Node) => {
                     let tag: Tag = new Tag();
                     tag.id = n.id;

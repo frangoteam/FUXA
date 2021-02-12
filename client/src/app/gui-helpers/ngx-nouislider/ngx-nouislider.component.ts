@@ -20,6 +20,8 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
     defOptions = new NgxNouisliderOptions();
     uiSlider: any;
     onUpdate: any;
+    uiWorking = false;
+    uiWorkingTimeout: any;
 
     constructor() { }
 
@@ -116,13 +118,28 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
 		let self = this;
         this.uiSlider.on('slide', function (values, handle) {
             if (self.onUpdate) {
+                self.resetWorkingTimeout();
                 self.onUpdate(values[handle]);
             }
         });
     }
 
+    resetWorkingTimeout()
+    {
+        this.uiWorking = true;
+        if (this.uiWorkingTimeout) {
+            clearTimeout(this.uiWorkingTimeout);
+        }
+		let self = this;
+        this.uiWorkingTimeout = setTimeout(function() {
+            self.uiWorking = false;
+        }, 1000);
+    }
+
     setValue(value: number) {
-        this.uiSlider.set(value);
+        if (!this.uiWorking) {
+            this.uiSlider.set(value);
+        }
     }
 
     bindUpdate(calback: any) {
