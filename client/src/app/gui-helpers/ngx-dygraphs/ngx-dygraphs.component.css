@@ -6,73 +6,73 @@
 }
 
 .mychart-edit {
-  z-index: 1;
-  display: block;
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
+    z-index: 1;
+    display: block;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
 }
 
 .mychart-edit #bord {
-  display: block;
-  position: absolute;
-  top: 20px;
-  bottom: 40px;
-  left: 50px;
-  right: 60px;
-  border-left: 1px solid #000;
-  border-bottom: 1px solid #000;
+    display: block;
+    position: absolute;
+    top: 20px;
+    bottom: 40px;
+    left: 50px;
+    right: 60px;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #000;
 }
 .mychart-edit #grido {
-  position: absolute;
-  top: 30%;
-  bottom: 40%;
-  left: 50px;
-  right: 60px;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    position: absolute;
+    top: 30%;
+    bottom: 40%;
+    left: 50px;
+    right: 60px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 .mychart-edit #gridv {
-  position: absolute;
-  top: 20px;
-  bottom: 40px;
-  left: 30%;
-  right: 40%;
-  border-left: 1px solid rgba(0, 0, 0, 0.05);
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
+    position: absolute;
+    top: 20px;
+    bottom: 40px;
+    left: 30%;
+    right: 40%;
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 .mychart-edit #a {
-  position: absolute;
-  left: 40px;
-  bottom: 30px;
+    position: absolute;
+    left: 40px;
+    bottom: 30px;
 }
 .mychart-edit #b {
-  position: absolute;
-  left: 30px;
-  bottom: 50%;
+    position: absolute;
+    left: 30px;
+    bottom: 50%;
 }
 .mychart-edit #c {
-  position: absolute;
-  left: 30px;
-  top: 30px;
+    position: absolute;
+    left: 30px;
+    top: 30px;
 }
 .mychart-edit #x1 {
-  position: absolute;
-  left: 45%;
-  bottom: 20px;
+    position: absolute;
+    left: 45%;
+    bottom: 20px;
 }
 .mychart-edit #x2 {
-  position: absolute;
-  right: 60px;
-  bottom: 20px;
+    position: absolute;
+    right: 60px;
+    bottom: 20px;
 }
 .mychar-edit-panel {
-  float: left;
-  height: 100%;
-  width: 100%;
-  background-color:transparent;
+    float: left;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
 }
 
 .mychart-graph {
@@ -84,110 +84,118 @@
 }
 
 .mychar-toolbar {
-  display: block;
-  height: 34px !important;
-  width: 100% !important;
-  background-color:transparent;
+    display: block;
+    height: 34px !important;
+    width: 100% !important;
+    background-color: transparent;
 }
 
 .mychar-toolbar-button {
-  /* width: 30px; */
-  height: 26px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border: 0;
-  background-color: inherit;
-  border-radius: 2px;
-  color: inherit;
+    /* width: 30px; */
+    height: 26px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 0;
+    background-color: inherit;
+    border-radius: 2px;
+    color: inherit;
 }
 
 .mychar-toolbar-space {
-  width:100%;
-  height: 26px;
-  /* background-color: rgba(0, 0, 0, 0.1); */
-  line-height: 26px;
+    width: 100%;
+    height: 26px;
+    /* background-color: rgba(0, 0, 0, 0.1); */
+    line-height: 26px;
 }
 
 .mychart-toolbar-select {
-  width:160px;
-  padding: 4px 3px 5px 4px;
-  background-color: inherit;
-  position: relative;
-  top: -5px;
-  color: inherit;
+    width: 160px;
+    padding: 4px 3px 5px 4px;
+    background-color: inherit;
+    position: relative;
+    top: -5px;
+    color: inherit;
 }
 
 .mychart-toolbar-select /deep/ .mat-select-value {
-  color: inherit;
+    color: inherit;
 }
 
 .mychart-toolbar-select /deep/ .mat-select-arrow {
-  color: inherit;
+    color: inherit;
 }
 
 .mychart-toolbar-select /deep/ .mat-select-content {
-  color: inherit;
-  background-color: inherit;
+    color: inherit;
+    background-color: inherit;
 }
 
 .toolbar-cmp {
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 1px -2px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 1px -2px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .toolbar-cmp:active {
-  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.01), 0 1px 3px 0 rgba(0, 0, 0, 0.01), 0 1px 1px -2px rgba(0, 0, 0, 0.02);
-  /* background-color: rgba(0, 0, 0, 0.01); */
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.01), 0 1px 3px 0 rgba(0, 0, 0, 0.01),
+        0 1px 1px -2px rgba(0, 0, 0, 0.02);
+    /* background-color: rgba(0, 0, 0, 0.01); */
 }
 
 .ng-dygraphs {
-  position: relative; }
-  .ng-dygraphs .name-nodes-holder {
+    position: relative;
+}
+.ng-dygraphs .name-nodes-holder {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
     -webkit-flex-direction: row;
-        -ms-flex-direction: row;
-            flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
     padding-right: 30px;
-    padding-left: 30px; }
-  .ng-dygraphs .ng-dygraphs-chart-container {
+    padding-left: 30px;
+}
+.ng-dygraphs .ng-dygraphs-chart-container {
     background-color: #fff;
     padding: 0;
-    margin: 0px;}
-    .ng-dygraphs .ng-dygraphs-chart-container .nodata {
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-pack: center;
-         -ms-flex-pack: center;
-       justify-content: center;
-     -webkit-box-align: center;
-        -ms-flex-align: center;
-           align-items: center;
-      color: #5c5c5c;
-      font-weight: bold;
-      font-size: 24px; 
-      display: flex;
-      align-content: center; }
-    .ng-dygraphs .ng-dygraphs-chart-container .hide {
-       display: none; }
-  .ng-dygraphs .loader-holder {
+    margin: 0px;
+}
+.ng-dygraphs .ng-dygraphs-chart-container .nodata {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #5c5c5c;
+    font-weight: bold;
+    font-size: 24px;
+    display: flex;
+    align-content: center;
+}
+.ng-dygraphs .ng-dygraphs-chart-container .hide {
+    display: none;
+}
+.ng-dygraphs .loader-holder {
     position: absolute;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
     -webkit-align-items: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     width: 100%;
     height: 100%;
     background-color: #fff;
     z-index: 55;
-    opacity: 0.9; }
-  .ng-dygraphs .loader {
+    opacity: 0.9;
+}
+.ng-dygraphs .loader {
     color: #0dc5c1;
     font-size: 20px;
     margin: 100px auto;
@@ -199,42 +207,79 @@
     -webkit-animation: load4 1.3s infinite linear;
     animation: load4 1.3s infinite linear;
     -webkit-transform: translateZ(0);
-    transform: translateZ(0); }
+    transform: translateZ(0);
+}
 
 @-webkit-keyframes load4 {
-  0%,
-  100% {
-    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0; }
-  12.5% {
-    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }
-  25% {
-    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }
-  37.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em; }
-  50% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em; }
-  62.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em; }
-  75% {
-    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0; }
-  87.5% {
-    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em; } }
+    0%,
+    100% {
+        box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em,
+            0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0;
+    }
+    12.5% {
+        box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em,
+            0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em;
+    }
+    25% {
+        box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0,
+            0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em;
+    }
+    37.5% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em,
+            0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
+    }
+    50% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em,
+            0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
+    }
+    62.5% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em,
+            0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
+    }
+    75% {
+        box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em,
+            2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em,
+            -2em -2em 0 0;
+    }
+    87.5% {
+        box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em,
+            0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+    }
+}
 
 @keyframes load4 {
-  0%,
-  100% {
-    box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0; }
-  12.5% {
-    box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }
-  25% {
-    box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0, 0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em; }
-  37.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em; }
-  50% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em; }
-  62.5% {
-    box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em; }
-  75% {
-    box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0; }
-  87.5% {
-    box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em; } }
+    0%,
+    100% {
+        box-shadow: 0 -3em 0 0.2em, 2em -2em 0 0em, 3em 0 0 -1em, 2em 2em 0 -1em,
+            0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 0;
+    }
+    12.5% {
+        box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 3em 0 0 0, 2em 2em 0 -1em,
+            0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em;
+    }
+    25% {
+        box-shadow: 0 -3em 0 -0.5em, 2em -2em 0 0, 3em 0 0 0.2em, 2em 2em 0 0,
+            0 3em 0 -1em, -2em 2em 0 -1em, -3em 0 0 -1em, -2em -2em 0 -1em;
+    }
+    37.5% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 0, 2em 2em 0 0.2em,
+            0 3em 0 0em, -2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
+    }
+    50% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 0em,
+            0 3em 0 0.2em, -2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
+    }
+    62.5% {
+        box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em,
+            0 3em 0 0, -2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
+    }
+    75% {
+        box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 3em 0em 0 -1em,
+            2em 2em 0 -1em, 0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0.2em,
+            -2em -2em 0 0;
+    }
+    87.5% {
+        box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 3em 0 0 -1em, 2em 2em 0 -1em,
+            0 3em 0 -1em, -2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+    }
+}

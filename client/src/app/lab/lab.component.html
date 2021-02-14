@@ -1,15 +1,14 @@
 <div *ngIf="isLoading" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(0,0,0,0.2); z-index: 99999;">
-    <mat-progress-bar mode="indeterminate" color="warn"
-        style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
+    <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
 <div [style.background-color]="backgroudColor" style="height: 100%">
-  <app-fuxa-view *ngIf="labView" class="lab-body" id="lab" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
-  <div *ngIf="!labView">
-      Loading...
-  </div>
-  <template #messagecontainer>
-  </template>    
-  <button mat-mini-fab color="warn" class="fab-btn" (click)="onTest()">Test</button>
-  <app-tester #tester></app-tester>
+    <app-fuxa-view *ngIf="labView" class="lab-body" id="lab" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+    <div *ngIf="!labView">
+        Loading...
+    </div>
+    <template #messagecontainer>
+    </template>
+    <button mat-mini-fab color="warn" class="fab-btn" (click)="onTest()">Test</button>
+    <app-tester #tester></app-tester>
 </div>

@@ -1,10 +1,9 @@
-
- ::ng-deep .mat-expansion-panel-body {
+::ng-deep .mat-expansion-panel-body {
     padding-left: 5px !important;
     padding-right: 5px !important;
- }
+}
 
- .multiline {
+.multiline {
     overflow: auto;
     max-height: 300px;
- }
+}

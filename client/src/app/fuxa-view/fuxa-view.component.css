@@ -1,103 +1,103 @@
 .view-container {
-  display: table;
+    display: table;
 }
 
 .fab-card {
-  position: absolute;
-  width: 1300px;
-  height: 800px;
-  /* background-color:black; */
-  /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.26); */
-  box-shadow: 0px 1px 4px 1px #888888;
+    position: absolute;
+    width: 1300px;
+    height: 800px;
+    /* background-color:black; */
+    /* box-shadow: 0 2px 5px 0 rgba(0,0,0,.26); */
+    box-shadow: 0px 1px 4px 1px #888888;
 }
 
 .card-close {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  height: 22px;
-  width: 100%;
-  color: rgba(0, 0, 0, 0.7);
-  background-color: transparent;
-  font-size: 12px;
-  cursor: move !important;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 22px;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.7);
+    background-color: transparent;
+    font-size: 12px;
+    cursor: move !important;
 }
 
 .card-close i {
-  float: right;
+    float: right;
 }
 
 .fab-iframe {
-  position: absolute;
-  width: 800px;
-  height: 600px;
-  background-color: black;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
-  /* box-shadow: 0px 2px 6px -1px #888888; */
+    position: absolute;
+    width: 800px;
+    height: 600px;
+    background-color: black;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    /* box-shadow: 0px 2px 6px -1px #888888; */
 }
 
 .iframe-header {
-  display: block;
-  height: 22px;
-  width: 100%;
-  color: white;
-  background-color: black;
-  font-size: 12px;
-  text-align: center;
-  line-height: 22px;
+    display: block;
+    height: 22px;
+    width: 100%;
+    color: white;
+    background-color: black;
+    font-size: 12px;
+    text-align: center;
+    line-height: 22px;
 }
 
 .iframe-header i {
-  float: right;
-  color: white;
+    float: right;
+    color: white;
 }
 
 .iframe-class {
-  display: block;
-  height: 100%;
-  transform-origin: 0 0;
-  /* transform-origin:left top; */
+    display: block;
+    height: 100%;
+    transform-origin: 0 0;
+    /* transform-origin:left top; */
 }
 
 .ng-draggable {
-  cursor: move;
+    cursor: move;
 }
 
 .dialog-modal {
-  /* display: none; */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  /*background-color: rgb(0,0,0); /* Fallback color */
-  /*background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    /* display: none; */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    /*background-color: rgb(0,0,0); /* Fallback color */
+    /*background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
 .dialog-modal-content {
-  /* background-color: #fefefe; */
-  margin: 15% auto; /*15% from the top and centered */
-  /* padding: 20px; */
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-  box-shadow: 0 0 12px #000000 !important;
+    /* background-color: #fefefe; */
+    margin: 15% auto; /*15% from the top and centered */
+    /* padding: 20px; */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    box-shadow: 0 0 12px #000000 !important;
 }
 
 .dialog-modal-close {
-  position: relative;
-  top: 0px;
-  right: 0px;
-  height: 22px;
-  width: 100%;
-  color: rgba(0, 0, 0, 0.7);
-  background-color: transparent;
-  font-size: 12px;
-  cursor: move !important;
+    position: relative;
+    top: 0px;
+    right: 0px;
+    height: 22px;
+    width: 100%;
+    color: rgba(0, 0, 0, 0.7);
+    background-color: transparent;
+    font-size: 12px;
+    cursor: move !important;
 }
 
 .dialog-modal-close i {
-  float: right;
+    float: right;
 }

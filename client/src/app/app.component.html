@@ -1,11 +1,11 @@
 <div id="main-container" class="container">
-  <app-header class="header" [hidden]="isHidden()"></app-header>
-  <div [ngClass]="getClass()">
-    <router-outlet></router-outlet>
-    <ngx-fab-button *ngIf="showDevNavigation()" #fabmenu icon="menu" iconOpen="menu" class="fab-button" color="rgba(68,138,255, 1)">
-      <ngx-fab-item-button color="rgba(68,138,255, 1)" content="editor" (click)="onGoTo('editor')" (touchend)="onGoTo('editor')">editor</ngx-fab-item-button>
-      <ngx-fab-item-button color="rgba(68,138,255, 1)" content="lab" (click)="onGoTo('lab')" (touchend)="onGoTo('lab')">lab</ngx-fab-item-button>
-      <ngx-fab-item-button color="rgba(68,138,255, 1)" content="home" (click)="onGoTo('home')" (touchend)="onGoTo('home')">home</ngx-fab-item-button>
-    </ngx-fab-button>
-  </div>
+    <app-header class="header" [hidden]="isHidden()"></app-header>
+    <div [ngClass]="getClass()">
+        <router-outlet></router-outlet>
+        <ngx-fab-button *ngIf="showDevNavigation()" #fabmenu icon="menu" iconOpen="menu" class="fab-button" color="rgba(68,138,255, 1)">
+            <ngx-fab-item-button color="rgba(68,138,255, 1)" content="editor" (click)="onGoTo('editor')" (touchend)="onGoTo('editor')">editor</ngx-fab-item-button>
+            <ngx-fab-item-button color="rgba(68,138,255, 1)" content="lab" (click)="onGoTo('lab')" (touchend)="onGoTo('lab')">lab</ngx-fab-item-button>
+            <ngx-fab-item-button color="rgba(68,138,255, 1)" content="home" (click)="onGoTo('home')" (touchend)="onGoTo('home')">home</ngx-fab-item-button>
+        </ngx-fab-button>
+    </div>
 </div>

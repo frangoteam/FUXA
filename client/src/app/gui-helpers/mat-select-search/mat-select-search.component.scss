@@ -4,44 +4,46 @@ $clear-button-width: 20px;
 $multiple-check-width: 33px;
 
 .mat-select-search-hidden {
-  visibility: hidden;
+    visibility: hidden;
 }
 .mat-select-search-inner {
-  position: absolute;
-  top: 0;
-  width: calc(100% + #{2 * $mat-menu-side-padding - $scrollbar-width});
-  border-bottom: 1px solid #cccccc;
-  background: white;
-  z-index: 100;
-  &.mat-select-search-inner-multiple {
-
-    width: calc(100% + #{2 * $mat-menu-side-padding - $scrollbar-width + $multiple-check-width});
-  }
+    position: absolute;
+    top: 0;
+    width: calc(100% + #{2 * $mat-menu-side-padding - $scrollbar-width});
+    border-bottom: 1px solid #cccccc;
+    background: white;
+    z-index: 100;
+    &.mat-select-search-inner-multiple {
+        width: calc(
+            100% + #{2 * $mat-menu-side-padding - $scrollbar-width +
+                $multiple-check-width}
+        );
+    }
 }
 
 ::ng-deep .mat-select-search-panel {
-  /* allow absolute positioning relative to outer options container */
-  transform: none !important;
-  max-height: 350px;
+    /* allow absolute positioning relative to outer options container */
+    transform: none !important;
+    max-height: 350px;
 }
 
 .mat-select-search-input {
-  padding: $mat-menu-side-padding;
-  padding-right: $mat-menu-side-padding + $clear-button-width;
-  box-sizing: border-box;
-  font-size: 15px;
-  border: none;
+    padding: $mat-menu-side-padding;
+    padding-right: $mat-menu-side-padding + $clear-button-width;
+    box-sizing: border-box;
+    font-size: 15px;
+    border: none;
 }
 .mat-select-search-no-entries-found {
-  padding: $mat-menu-side-padding;
+    padding: $mat-menu-side-padding;
 }
 .mat-select-search-clear {
-  position: absolute;
-  right: 0;
-  top: 4px;
+    position: absolute;
+    right: 0;
+    top: 4px;
 }
 ::ng-deep .cdk-overlay-pane-select-search {
-  /* correct offsetY so that the selected option is at the position of the select box when opening */
-  // margin-top: -50px;
-  margin-top: 40px;
+    /* correct offsetY so that the selected option is at the position of the select box when opening */
+    // margin-top: -50px;
+    margin-top: 40px;
 }
