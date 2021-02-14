@@ -96,6 +96,7 @@ body {
 
 * {
     text-decoration: none;
+    scrollbar-width: thin;
 }
 
 *:focus {
