@@ -26,6 +26,7 @@ export class FlexVariableComponent implements OnInit {
     @Input() variable: string;
 
     @Input() value: any;
+    @Input() tobind = false;
 
     @Input() allowManualEdit: boolean = false;
     @Output() onchange: EventEmitter<any> = new EventEmitter();

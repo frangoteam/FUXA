@@ -1,7 +1,7 @@
 <div class="container">
     <div class="head" style="padding-top: 10px;">
         <flex-variable [data]="data" (onchange)="setVariable($event)" [allowManualEdit]=true [variableSrc]="property.variableSrc" [variableId]="property.variableId"
-            [variable]="property.variable">
+            [variable]="property.variable" [tobind]="true">
         </flex-variable>
     </div>
     <flex-input [ranges]="property.ranges" [default]="defaultValue" #flexinput *ngIf="withInput" [inputType]="withInput" style="padding-bottom: 5px"></flex-input>

@@ -1,12 +1,12 @@
 <div class="flex-variable-mapping">
-    <button mat-icon-button (click)="addVariableMapping($event)" title="Override variable">
+    <button mat-icon-button (click)="addVariableMapping($event)">
         <mat-icon>add_circle_outline</mat-icon>
-        Override variable
+        {{'gauges.property-map-variable' | translate}}
     </button>
 
     <div *ngFor="let variableMap of this.mapping;index as i">
         <flex-variable-map [data]="data" [view]="view" [value]="mapping[i]" [fromVariables]="viewVars" (valueChange)="onChange()">
-            <button style="float: right" mat-icon-button (click)="removeVariableMapping($event, i)" title="Remove variable override">
+            <button style="float: right; margin-top: 7px;" mat-icon-button (click)="removeVariableMapping($event, i)"  matTooltip="{{'gauges.property-head-remove-mapvariable' | translate}}">
                 <mat-icon>clear</mat-icon>
             </button>
         </flex-variable-map>
