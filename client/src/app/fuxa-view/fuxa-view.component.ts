@@ -10,14 +10,14 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
-import {Subscription} from "rxjs";
+import { Subscription } from "rxjs";
 
-import {Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeStatus, Hmi, View} from '../_models/hmi';
-import {GaugesManager} from '../gauges/gauges.component';
-import {isUndefined} from 'util';
-import {Utils} from '../_helpers/utils';
-import {HmiService} from "../_services/hmi.service";
-import {USER_DEFINED_VARIABLE} from "../gauges/gauge-property/flex-variable/flex-variable.component";
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeStatus, Hmi, View } from '../_models/hmi';
+import { GaugesManager } from '../gauges/gauges.component';
+import { isUndefined } from 'util';
+import { Utils } from '../_helpers/utils';
+import { HmiService } from "../_services/hmi.service";
+import { USER_DEFINED_VARIABLE } from "../_models/device";
 
 declare var SVG: any;
 
@@ -49,8 +49,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     protected plainVariableMapping: any = {};
 
     constructor(private el: ElementRef,
-                private viewContainerRef: ViewContainerRef,
-                private resolver: ComponentFactoryResolver) {
+        private viewContainerRef: ViewContainerRef,
+        private resolver: ComponentFactoryResolver) {
     }
 
     ngOnInit() {
@@ -211,10 +211,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
             if (property.events) {
                 property.events.forEach((event: GaugeEvent) => {
-                    if (Utils.isObject(event.actoptions['variable'])) {
-                        this.applyVariableMappingTo(event.actoptions['variable']);
-                    } else {
-                        this.applyVariableMappingTo(event.actoptions);
+                    if (event.actoptions) {
+                        if (Utils.isObject(event.actoptions['variable'])) {
+                            this.applyVariableMappingTo(event.actoptions['variable']);
+                        } else {
+                            this.applyVariableMappingTo(event.actoptions);
+                        }
                     }
                 })
             }
@@ -449,7 +451,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         iframe.link = link;
         iframe.name = link;
         this.iframes.push(iframe);
-        this.onIframeResizing(iframe, {size: {width: iframe.width, height: iframe.height}});
+        this.onIframeResizing(iframe, { size: { width: iframe.width, height: iframe.height } });
     }
 
     onIframeResizing(iframe: CardModel, event) {

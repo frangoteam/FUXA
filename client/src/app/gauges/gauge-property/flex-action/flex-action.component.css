@@ -18,15 +18,14 @@
 }
 
 .item-remove {
-    display: inline-block;
     float: right;
     /* padding-top: 6px; */
     /* min-width: 140px; */
 }
 
-.item-content {
+.action-content {
     display: block;
-    padding-top: 7px;
+    padding-top: 2px;
 }
 
 .item-range {

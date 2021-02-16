@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { View } from "../../../_models/hmi";
+
+import { View } from '../../../_models/hmi';
+import { USER_DEFINED_VARIABLE } from '../../../_models/device';
 
 @Component({
     selector: 'flex-variables-mapping',
@@ -33,24 +35,30 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
         if (this.viewVariables) {
             return this.viewVariables;
         }
-        let viewVariables = {}
-        Object.values(this.view.items).forEach((item) => {
-            if (item && item.property) {
-                if (item.property.variableId) {
-                    this.assignVariableTo(item.property, viewVariables)
-                }
-                Object.values(item.property.actions).forEach((action) => {
-                    this.assignVariableTo(action, viewVariables);
-                });
-                Object.values(item.property.events).forEach((event) => {
-                    if (event['actoptions'] && event['actoptions']['variableId']) {
-                        this.assignVariableTo(event['actoptions'], viewVariables);
-                    } else if (event['actoptions'] && event['actoptions']['variable']) {
-                        this.assignVariableTo(event['actoptions']['variable'], viewVariables);
+        let viewVariables = {};
+        if (this.view) {
+            Object.values(this.view.items).forEach((item) => {
+                if (item && item.property && item.property.variableSrc === USER_DEFINED_VARIABLE) {
+                    if (item.property.variableId) {
+                        this.assignVariableTo(item.property, viewVariables)
                     }
-                });
-            }
-        })
+                    if (item.property.actions) {
+                        Object.values(item.property.actions).forEach((action) => {
+                            this.assignVariableTo(action, viewVariables);
+                        });
+                    }
+                    if (item.property.events) {
+                        Object.values(item.property.events).forEach((event) => {
+                            if (event['actoptions'] && event['actoptions']['variableId']) {
+                                this.assignVariableTo(event['actoptions'], viewVariables);
+                            } else if (event['actoptions'] && event['actoptions']['variable']) {
+                                this.assignVariableTo(event['actoptions']['variable'], viewVariables);
+                            }
+                        });
+                    }
+                }
+            });
+        }
         this.viewVariables = Object.values(viewVariables)
         return this.viewVariables;
     }

@@ -480,6 +480,7 @@
     "gauges.property-events-mapping-from": "Context variable",
     "gauges.property-map-variable": "Add context variable to bind",
     "gauges.property-head-remove-mapvariable": "Remove the bind",
+    "gauges.property-tooltip-add-event": "Add event",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
