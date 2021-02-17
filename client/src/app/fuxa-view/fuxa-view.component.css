@@ -78,12 +78,12 @@
 
 /* Modal Content/Box */
 .dialog-modal-content {
-    /* background-color: #fefefe; */
-    margin: 15% auto; /*15% from the top and centered */
-    /* padding: 20px; */
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
     box-shadow: 0 0 12px #000000 !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .dialog-modal-close {
