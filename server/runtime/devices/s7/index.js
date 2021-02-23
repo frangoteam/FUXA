@@ -360,7 +360,7 @@ function S7client(_data, _logger, _events) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.error(`'${data.name}' working (connection || polling) overload! ${overloading}`);
+            logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 s7client.Disconnect();

@@ -317,7 +317,7 @@ function DaqNode(_settings, _log, _id) {
      */
     var _checkMapWorking = function (check) {
         if (check && mapworking) {
-            logger.error(`daqstorage.mapping-overload! '${id}'`);
+            logger.warn(`daqstorage.mapping-overload! '${id}'`);
             return false;
         }
         mapworking = check;
@@ -330,7 +330,7 @@ function DaqNode(_settings, _log, _id) {
      */
     var _checkDataWorking = function (check) {
         if (check && dataworking) {
-            logger.error(`daqstorage.data-overload! '${id}'`);
+            logger.warn(`daqstorage.data-overload! '${id}'`);
             return false;
         }
         dataworking = check;
