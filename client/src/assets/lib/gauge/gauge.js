@@ -988,5 +988,3 @@
   }
 
 }).call(this);
-
-//# sourceMappingURL=gauge.js.map
