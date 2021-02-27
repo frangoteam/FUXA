@@ -123,7 +123,9 @@ function init(_io, _api, _settings, _log, eventsMain) {
             try {
                 if (message) {
                     if (message.device) {
-                        devices.browseDevice(message.device, message.node).then(result => {
+                        devices.browseDevice(message.device, message.node, function (nodes) { 
+                            io.emit('device-browse', nodes);
+                        }).then(result => {
                             message.result = result;
                             io.emit('device-browse', message);
                         }).catch(function (err) {

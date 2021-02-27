@@ -1,89 +1,131 @@
-<div style="position: relative;">
-    <div>
-        <h1 *ngIf="!withtree" mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
-            {{'device.tag-property-title' | translate}}
-        </h1>
-        <h1 *ngIf="withtree" mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
-            {{'device.browsetag-property-title' | translate}}
-        </h1>
-        <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
-    </div>
-    <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden;" *ngIf="!withtree">
-        <div style="display: block;">
-            <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                <span>{{'device.tag-property-device' | translate}}</span>
-                <mat-select [(value)]="data.device.name" style="width: 350px" [disabled]="true">
-                    <mat-option *ngFor="let device of devicesValue()" [value]="device.name">
-                        {{ device.name }}
-                    </mat-option>
-                </mat-select>
+<div style="width: 100%;position: relative;">
+    <div [ngSwitch]="dialogType">
+        <div *ngSwitchCase="TypeOfDialog.Standard">
+            <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+                {{'device.tag-property-title' | translate}}
+            </h1>
+            <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+            <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden;">
+                <div style="display: block;">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.tag-property-device' | translate}}</span>
+                        <mat-select [(value)]="data.device.name" style="width: 350px" [disabled]="true">
+                            <mat-option *ngFor="let device of devicesValue()" [value]="device.name">
+                                {{ device.name }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.tag-property-name' | translate}}</span>
+                        <input [(ngModel)]="data.tag.name" style="width: 350px" type="text" (input)="onCheckValue($event)">
+                    </div>
+                    <div *ngIf="isSiemensS7()">
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.tag-property-type' | translate}}</span>
+                            <mat-select [(value)]="data.tag.type" style="width: 350px">
+                                <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                                    {{ type.value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.tag-property-address' | translate}}</span>
+                            <input [(ngModel)]="data.tag.address" style="width: 350px" type="text">
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
+                            <span>{{'device.tag-property-min' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.tag.min" style="width: 80px" type="text">
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
+                            <span>{{'device.tag-property-max' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.tag.max" style="width: 80px" type="text">
+                        </div>
+                    </div>
+                    <div *ngIf="isModbus()">
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.tag-property-register' | translate}}</span>
+                            <mat-select [(value)]="data.tag.memaddress" style="width: 350px" #memaddress (selectionChange)="checkMemAddress(data.tag.memaddress)">
+                                <mat-option *ngFor="let type of memAddress | enumToArray" [value]="type.value">
+                                    {{ type.key }}
+                                </mat-option>
+                            </mat-select>
+                        </div>                
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.tag-property-type' | translate}}</span>
+                            <mat-select [(value)]="data.tag.type" style="width: 350px" [disabled]="!memaddress.value || memaddress.value == '000000' || memaddress.value == '100000'">
+                                <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                                    {{ type.value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.tag-property-address-offset' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.tag.address" style="width: 350px" type="text" [disabled]="!memaddress.value">
+                        </div>
+                        <!-- <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
+                            <span>{{'device.tag-property-min' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.tag.min" style="width: 80px" type="text">
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
+                            <span>{{'device.tag-property-max' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.tag.max" style="width: 80px" type="text">
+                        </div> -->
+                    </div>
+                    <div class="error" *ngIf="error">
+                        <span>{{error}}</span>
+                    </div>
+                </div>
+            </div>            
+        </div>
+        <div *ngSwitchCase="TypeOfDialog.List" style="width: 670px;">
+            <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+                {{'device.browsetopics-property-title' | translate}}
+            </h1>
+            <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+            <div style="display: block; margin-bottom: 10px;">
+                <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
+                    <span>{{'device.discovery-topics' | translate}}</span>
+                    <input [(ngModel)]="topicSource" style="width: 350px" type="text">
+                </div>
+                <button mat-icon-button (click)="onDiscoveryTopics(topicSource)" style="display:inline-block;" *ngIf="!discoveryWait">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <div style="display:inline-block; margin-left: 10px;width: 30px; vertical-align: middle;" *ngIf="discoveryWait">
+                    <mat-spinner diameter="20"></mat-spinner>
+                </div>
+                <button mat-icon-button (click)="onClearDiscovery()" style="display:inline-block;">
+                    <mat-icon>delete_outline</mat-icon>
+                </button>                
+                <div *ngIf="discoveryError" style="display: block; color: red;">
+                    {{discoveryError}}
+                </div>
             </div>
-            <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                <span>{{'device.tag-property-name' | translate}}</span>
-                <input [(ngModel)]="data.tag.name" style="width: 350px" type="text" (input)="onCheckValue($event)">
-            </div>
-            <div *ngIf="isSiemensS7()">
-                <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                    <span>{{'device.tag-property-type' | translate}}</span>
-                    <mat-select [(value)]="data.tag.type" style="width: 350px">
-                        <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
-                            {{ type.value }}
-                        </mat-option>
-                    </mat-select>
-                </div>
-                <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                    <span>{{'device.tag-property-address' | translate}}</span>
-                    <input [(ngModel)]="data.tag.address" style="width: 350px" type="text">
-                </div>
-                <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
-                    <span>{{'device.tag-property-min' | translate}}</span>
-                    <input numberOnly [(ngModel)]="data.tag.min" style="width: 80px" type="text">
-                </div>
-                <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
-                    <span>{{'device.tag-property-max' | translate}}</span>
-                    <input numberOnly [(ngModel)]="data.tag.max" style="width: 80px" type="text">
+            <div style="overflow-y: auto; overflow-x: hidden; min-height: 600px; max-height: 600px;">
+                <div *ngFor="let topic of topicsList | keyvalue">
+                    <div class="topic">
+                        <div class="topic-text">
+                            {{topic.key}}
+                        </div>
+                        <div class="topic-value">
+                            {{topic.value.value}}
+                        </div>
+                        <div class="topic-check">
+                            <mat-checkbox [(ngModel)]="topic.value.checked" [disabled]="!topic.value.enabled"></mat-checkbox>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div *ngIf="isModbus()">
-                <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                    <span>{{'device.tag-property-register' | translate}}</span>
-                    <mat-select [(value)]="data.tag.memaddress" style="width: 350px" #memaddress (selectionChange)="checkMemAddress(data.tag.memaddress)">
-                        <mat-option *ngFor="let type of memAddress | enumToArray" [value]="type.value">
-                            {{ type.key }}
-                        </mat-option>
-                    </mat-select>
-                </div>                
-                <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                    <span>{{'device.tag-property-type' | translate}}</span>
-                    <mat-select [(value)]="data.tag.type" style="width: 350px" [disabled]="!memaddress.value || memaddress.value == '000000' || memaddress.value == '100000'">
-                        <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
-                            {{ type.value }}
-                        </mat-option>
-                    </mat-select>
-                </div>
-                <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                    <span>{{'device.tag-property-address-offset' | translate}}</span>
-                    <input numberOnly [(ngModel)]="data.tag.address" style="width: 350px" type="text" [disabled]="!memaddress.value">
-                </div>
-                <!-- <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
-                    <span>{{'device.tag-property-min' | translate}}</span>
-                    <input numberOnly [(ngModel)]="data.tag.min" style="width: 80px" type="text">
-                </div>
-                <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
-                    <span>{{'device.tag-property-max' | translate}}</span>
-                    <input numberOnly [(ngModel)]="data.tag.max" style="width: 80px" type="text">
-                </div> -->
-            </div>
-            <div class="error" *ngIf="error">
-                <span>{{error}}</span>
+        </div>
+        <div *ngSwitchCase="TypeOfDialog.Tree">
+            <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+                {{'device.browsetag-property-title' | translate}}
+            </h1>
+            <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+            <div style="overflow-y: auto; overflow-x: hidden;">
+                <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
             </div>
         </div>
     </div>
-
-    <div style="overflow-y: auto; overflow-x: hidden;" [hidden]="!withtree">
-        <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
-    </div>
-
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button [disabled]="!isValidate()" color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>

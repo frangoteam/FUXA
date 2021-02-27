@@ -52,7 +52,8 @@ export enum DeviceType {
     BACnet = 'BACnet',
     ModbusRTU = 'ModbusRTU',
     ModbusTCP = 'ModbusTCP',
-    WebAPI = 'WebAPI'
+    WebAPI = 'WebAPI',
+    MQTTclient = 'MQTTclient'
 }
 
 export enum TagType {

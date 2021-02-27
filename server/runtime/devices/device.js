@@ -8,6 +8,7 @@ var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
+var MQTTclient = require('./mqtt');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -52,6 +53,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = HTTPclient.create(data, logger, events, manager);        
+    } else if (data.type === DeviceEnum.MQTTclient) {
+        if (!MQTTclient) {
+            return null;
+        }
+        comm = MQTTclient.create(data, logger, events, manager);        
     }
     if (!comm) {
         return null;
@@ -183,7 +189,7 @@ function Device(data, runtime) {
     /**
      * Call Device to return browser result Tags/Nodes (only OPCUA)
      */
-    this.browse = function (path) {
+    this.browse = function (path, callback) {
         return new Promise(function (resolve, reject) {
             if (data.type === DeviceEnum.OPCUA) {
                 comm.browse(path).then(function (result) {
@@ -197,12 +203,18 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            } else if (data.type === DeviceEnum.MQTTclient) {
+                comm.browse(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
             } else {
                 reject('Browse not supported!');
             }
         });
     }
-
+    
     /**
      * Call Device to return Tag/Node attribute (only OPCUA)
      */
@@ -299,6 +311,8 @@ function loadPlugin(type, module) {
         BACNETclient = require(module);
     } else if (type === DeviceEnum.WebAPI) {
         HTTPclient = require(module);
+    } else if (type === DeviceEnum.MQTTclient) {
+        MQTTclient = require(module);
     }
 }
 
@@ -323,7 +337,8 @@ var DeviceEnum = {
     ModbusRTU: 'ModbusRTU',
     ModbusTCP: 'ModbusTCP',
     BACnet: 'BACnet',
-    WebAPI: 'WebAPI'
+    WebAPI: 'WebAPI',
+    MQTTclient: 'MQTTclient'
 }
 
 /**
