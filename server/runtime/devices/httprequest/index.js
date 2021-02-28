@@ -179,7 +179,6 @@ function HTTPclient(_data, _logger, _events) {
      * Return Tag property
      */
     this.getTagProperty = function (id) {
-        logger.info(`'${data.name}' getTagProperty`);
         if (data.tags[id]) {
             let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
             return prop;

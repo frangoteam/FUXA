@@ -32,3 +32,9 @@
     line-height: 30px;
     /* display: inline-block; */
 }
+
+.separator-line {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    height: 1px;
+    width: 100%;
+}

@@ -427,6 +427,10 @@
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encript",
 
+    "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
+    "device.discovery-topics": "Browser Topics on broker",
+    "device.add-topics": "Publish my Topics on broker",
+    "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",
     "device.tag-property-device": "Device",

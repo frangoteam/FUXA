@@ -12,12 +12,14 @@ function MQTTclient(_data, _logger, _events) {
     var lastStatus = '';                // Last connections status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var overloading = 0;                // Overloading counter to mange the break connection
-    var lastTimestampRequest;           // Last Timestamp request
+    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
+    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of asked values
     var options = {};
     var client = null;
     var browser = null;
     var timeoutBrowser;
+
     /**
      * Connect the mqtt client to broker
      * Emit connection status, Clear the memory Topics value
@@ -201,7 +203,7 @@ function MQTTclient(_data, _logger, _events) {
      */
     this.getValue = function (id) {
         if (varsValue[id]) {
-            return { id: id, value: varsValue[id].value, ts: varsValue[id].timestamp };
+            return { id: id, value: varsValue[id].value, ts: lastTimestampValue };
         }
         return null;
     }
@@ -217,7 +219,9 @@ function MQTTclient(_data, _logger, _events) {
      * Set the Topic value, publish to broker
      */
     this.setValue = function (sigid, value) {
-        logger.error(`'${data.name}' setValue`);
+        if (client && client.connected) {
+            client.publish(sigid, value);
+        }
     }
 
     /**
@@ -230,8 +234,13 @@ function MQTTclient(_data, _logger, _events) {
     /**
      * Return Topic property, not used (Topics don't have property)
      */
-    this.getTagProperty = function (id) {
-        logger.error(`'${data.name}' getTagProperty`);
+    this.getTagProperty = function (topic) {
+        if (data.tags[topic]) {
+            let prop = { id: topic, name: data.tags[topic].name, type: data.tags[topic].type };
+            return prop;
+        } else {
+            return null;
+        }        
     }
 
     /**

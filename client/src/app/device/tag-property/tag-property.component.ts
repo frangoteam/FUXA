@@ -26,6 +26,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     topicSource = '';
     topicsList = {};
+    topicsToAdd = {};
     discoveryError = '';
     discoveryWait = false;
     discoveryTimer = null;
@@ -153,8 +154,20 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
             this.data.nodes = result;
         } else if (this.data.device.type === DeviceType.MQTTclient) {
+            let listcheck = {};
             Object.values(this.topicsList).forEach((topic:any) => {
                 if (topic.checked && topic.enabled) {
+                    listcheck[topic.name] = 1;
+                    let t = new Tag();
+                    t.id = topic.name;
+                    t.name = topic.name;
+                    t.address = topic.name;                    
+                    this.data.nodes.push(t);
+                }
+            });
+            Object.values(this.topicsToAdd).forEach((topic:any) => {
+                if (!listcheck[topic.name]) {
+                    listcheck[topic.name] = 1;
                     let t = new Tag();
                     t.id = topic.name;
                     t.name = topic.name;
@@ -199,6 +212,18 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 			    clearInterval(this.discoveryTimer);
             }
 		} catch { }
+    }
+
+    onAddTopics(topic) {
+        if (topic && !this.topicsToAdd[topic]) {
+            this.topicsToAdd[topic] =  { name: topic };
+        }
+    }
+
+    onRemoveAddedTopics(topic) {
+        if (this.topicsToAdd[topic]) {
+            delete this.topicsToAdd[topic];
+        }
     }
 
     addNodes(parent: Node, nodes: any) {
