@@ -129,7 +129,7 @@
                         <mat-panel-title>
                             <mat-icon aria-label="Select" *ngIf="panelsState[shGrp.name]">expand_less</mat-icon>
                             <mat-icon aria-label="Select" *ngIf="!panelsState[shGrp.name]">expand_more</mat-icon>
-                            <span>{{shGrp.name}}</span>
+                            <span>{{shGrp.name | translate}}</span>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
                     <div id="__tools_left" class="leftbar-panel">
