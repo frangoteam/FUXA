@@ -1,8 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeAction, GaugeSettings, GaugeStatus, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+
+declare var SVG: any;
 
 @Component({
     selector: 'html-button',
@@ -17,6 +19,11 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     static LabelTag = 'HtmlButton';
     static prefixB = 'B-HXB_';
     static prefixRect = 'svg_';
+
+    static actionsType = {
+        hide: 'shapes.action-hide',
+        show: 'shapes.action-show',
+    }
 
     constructor() {
         super();
@@ -34,7 +41,11 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static getDialogType(): GaugeDialogType {
-        return GaugeDialogType.OnlyValue;
+        return GaugeDialogType.Range;
+    }
+
+    static getActions() {
+        return this.actionsType;
     }
 
     static initElement(gab: GaugeSettings) {
@@ -43,14 +54,13 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
                 htmlButton.innerHTML = (gab.name) ? gab.name : '<span>&nbsp;</span>';
-                //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
             }
         }
     }
 
     static initElementColor(bkcolor, color, ele) {
         let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
-        if (htmlButton) {            
+        if (htmlButton) {
             ele.setAttribute('fill', 'rgba(0, 0, 0, 0)');
             ele.setAttribute('stroke', 'rgba(0, 0, 0, 0)');
             for (let i = 0; i < ele.children.length; i++) {
@@ -63,20 +73,38 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
             if (color) {
                 htmlButton.style.color = color;
             }
-
-            // htmlButton.innerHTML = gab.name;
-            //   htmlLabel.style.display = (gap.style[0]) ? 'block' : 'none';
         }
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
-        // if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-        //   let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
-        //   if (input) {
-        //     let val = parseInt(sig.value, 10);
-        //     input.value = val;
-        //   }
-        // }
+        if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
+            let button = Utils.searchTreeStartWith(svgele.node, this.prefixB);
+            let clr = '';
+            let val = parseFloat(sig.value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
+            if (ga.property && ga.property.ranges) {
+                for (let idx = 0; idx < ga.property.ranges.length; idx++) {
+                    if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
+                        clr = ga.property.ranges[idx].color;
+                    }
+                }
+                if (clr) {
+                    button.style.backgroundColor = clr;
+                }
+            }
+            // check actions
+            if (ga.property.actions) {
+                ga.property.actions.forEach(act => {
+                    if (act.variableId === sig.id) {
+                        HtmlButtonComponent.processAction(act, svgele, val, gaugeStatus);
+                    }
+                });
+            }
+        }
+
     }
 
     static getFillColor(ele) {
@@ -109,5 +137,20 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
             }
         }
         return ele.getAttribute('stroke');
+    }
+
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+        let element = SVG.adopt(svgele.node);
+        if (act.range.min <= value && act.range.max >= value) {
+            this.runAction(element, act.type, gaugeStatus);
+        }
+    }
+
+    static runAction(element, type, gaugeStatus: GaugeStatus) {
+        if (this.actionsType[type] === this.actionsType.hide) {
+            gaugeStatus.actionRef = { type: type, animr: element.hide() };
+        } else if (this.actionsType[type] === this.actionsType.show) {
+            gaugeStatus.actionRef = { type: type, animr: element.show() };
+        }
     }
 }

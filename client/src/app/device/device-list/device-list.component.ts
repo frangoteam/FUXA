@@ -144,6 +144,8 @@ export class DeviceListComponent implements OnInit {
     onAddTag() {
         if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
+        } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
+            this.addTopic();
         } else {
             let tag = new Tag();
             this.editTag(tag, true);
@@ -152,8 +154,6 @@ export class DeviceListComponent implements OnInit {
 
     addOpcTags(tag: Tag) {
         let dialogRef = this.dialog.open(TagPropertyComponent, {
-            // width: '1000px',
-            // height: '750px',
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: tag, devices: this.devices },
             position: { top: '60px' }
@@ -161,7 +161,9 @@ export class DeviceListComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.dirty = true;
-                this.clearTags();
+                if (this.deviceSelected.type === DeviceType.WebAPI) {
+                    this.clearTags();
+                }
                 result.nodes.forEach((n: Node) => {
                     let tag: Tag = new Tag();
                     tag.id = n.id;
@@ -219,23 +221,48 @@ export class DeviceListComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.dirty = true;
-                // tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
-                tag.id = temptag.name;
-                tag.name = temptag.name;
-                tag.type = temptag.type;
-                tag.address = temptag.address;
-                tag.memaddress = temptag.memaddress;
-                tag.min = temptag.min;
-                tag.max = temptag.max;
-                if (checkToAdd) {
-                    this.checkToAdd(tag, result.device);
-                } else if (tag.id !== oldtag) {
-                    //remove old tag device reference
-                    delete result.device.tags[oldtag];
-                    this.checkToAdd(tag, result.device);
+                if (this.deviceSelected.type === DeviceType.MQTTclient) {
+                    result.nodes.forEach((ta: Tag) => {
+                        this.checkToAdd(tag, result.device);
+                    });
+                    this.projectService.setDeviceTags(this.deviceSelected);
+                } else {
+                    this.dirty = true;
+                    // tag.id = (tag.id) ? tag.id : Utils.getShortGUID();
+                    tag.id = temptag.name;
+                    tag.name = temptag.name;
+                    tag.type = temptag.type;
+                    tag.address = temptag.address;
+                    tag.memaddress = temptag.memaddress;
+                    tag.min = temptag.min;
+                    tag.max = temptag.max;
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, result.device);
+                    } else if (tag.id !== oldtag) {
+                        //remove old tag device reference
+                        delete result.device.tags[oldtag];
+                        this.checkToAdd(tag, result.device);
+                    }
+                    this.projectService.setDeviceTags(this.deviceSelected);
                 }
-                this.projectService.setDeviceTags(this.deviceSelected);
+            }
+        });
+    }
+
+    addTopic() {
+        let dialogRef = this.dialog.open(TagPropertyComponent, {
+            panelClass: 'dialog-property',
+            data: { device: this.deviceSelected, devices: this.devices },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (this.deviceSelected.type === DeviceType.MQTTclient) {
+                    result.nodes.forEach((tag: Tag) => {
+                        this.checkToAdd(tag, result.device);
+                    });
+                    this.projectService.setDeviceTags(this.deviceSelected);
+                }
             }
         });
     }

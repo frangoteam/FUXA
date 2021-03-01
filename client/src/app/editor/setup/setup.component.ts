@@ -7,6 +7,7 @@ import { ProjectService } from '../../_services/project.service';
 import { ChartConfigComponent } from '../../editor/chart-config/chart-config.component';
 import { LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
+import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
 
 @Component({
     selector: 'app-setup',
@@ -89,5 +90,17 @@ export class SetupComponent implements OnInit, AfterViewInit {
         });
         dialogRef.afterClosed().subscribe(result => {
         });
-    }    
+    }
+
+    /**
+     * edit application settings
+     */
+    onSettings() {
+        this.onNoClick();
+        let dialogRef = this.dialog.open(AppSettingsComponent, {
+            position: { top: '60px' },
+        });
+        dialogRef.afterClosed().subscribe(result => {
+        });
+    }
 }

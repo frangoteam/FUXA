@@ -1,43 +1,43 @@
 .svg-property-split2:after {
-  display: table;
-  clear: both;
+    display: table;
+    clear: both;
 }
 
 .svg-property-split2 div {
-  /* float: left; */
-  /* width: 49%; */
-  display: inline-block;
+    /* float: left; */
+    /* width: 49%; */
+    display: inline-block;
 }
 
 .svg-property {
-  /* display: block; */
-  color: rgba(255,255,255,0.75);
-  /* position: relative; */
-  /* left: 5px; */
-  /* right: 5px; */
-  /* width: 100%; */
+    /* display: block; */
+    color: rgba(255, 255, 255, 0.75);
+    /* position: relative; */
+    /* left: 5px; */
+    /* right: 5px; */
+    /* width: 100%; */
 }
 
 .svg-property span {
-  /* float: left; */
-  display: block;
-  font-size: 10px;
-  margin: 0px 5px 0px 10px;
+    /* float: left; */
+    display: block;
+    font-size: 10px;
+    margin: 0px 5px 0px 10px;
 }
 
 .svg-property input {
-  /* float: right; */
-  /* position: relative; */
-  /* left: 0px; */
-  /* right: 0px; */
-  display: block;
-  margin: 0px 10px 12px 10px;
-  border: unset;
-  background-color: inherit;
-  color: inherit;
-  border-bottom: 1px solid rgba(255,255,255,0.75);
+    /* float: right; */
+    /* position: relative; */
+    /* left: 0px; */
+    /* right: 0px; */
+    display: block;
+    margin: 0px 10px 12px 10px;
+    border: unset;
+    background-color: inherit;
+    color: inherit;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.75);
 }
 
 .mat-button {
-  min-width: 60px;
+    min-width: 60px;
 }

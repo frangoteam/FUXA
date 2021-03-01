@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, GaugeStatus, Variable } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 @Component({
@@ -39,10 +39,10 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
             let g = svgele.node.children[0];
             let clr = '';
             let val = parseFloat(sig.value);
-			if (Number.isNaN(val)) {
-				// maybe boolean
-				val = Number(sig.value);
-			}
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(sig.value);
+            }
             if (ga.property && ga.property.ranges) {
                 for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                     if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {

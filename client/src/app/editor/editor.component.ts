@@ -1198,14 +1198,28 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 })
 export class DialogDocProperty {
     defaultColor = Utils.defaultColor;
-    constructor(
+    propSizeType = [{text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 }}, {text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 }},
+                    {text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 }}, {text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 }},
+                    {text: 'dlg.docproperty-size-1024-768', value: { width: 1024, height: 768 }}, {text: 'dlg.docproperty-size-1280-960', value: { width: 1280, height: 960 }},
+                    {text: 'dlg.docproperty-size-1600-1200', value: { width: 1600, height: 1200 }}, {text: 'dlg.docproperty-size-1920-1080', value: { width: 1920, height: 1080 }}];
+    constructor(private translateService: TranslateService,
         public dialogRef: MatDialogRef<DialogDocProperty>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) {
+        for (let i = 0; i < this.propSizeType.length; i++) {
+            this.translateService.get(this.propSizeType[i].text).subscribe((txt: string) => { this.propSizeType[i].text = txt });
+        }
+    }
 
     onNoClick(): void {
         this.dialogRef.close();
     }
 
+    onSizeChange(size) {
+        if (size && size.width && size.height) {
+            this.data.width = size.width;
+            this.data.height = size.height;
+        }
+    }
 }
 
 @Component({

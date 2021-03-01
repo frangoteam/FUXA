@@ -1,191 +1,191 @@
 import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'ngx-treetable',
-  templateUrl: './treetable.component.html',
-  styleUrls: ['./treetable.component.css']
+    selector: 'ngx-treetable',
+    templateUrl: './treetable.component.html',
+    styleUrls: ['./treetable.component.css']
 })
 export class TreetableComponent implements OnInit {
 
-  @Input() config: any;
-  @Output() expand = new EventEmitter();
-  @ViewChild('treetable') treetable: ElementRef;
+    @Input() config: any;
+    @Output() expand = new EventEmitter();
+    @ViewChild('treetable') treetable: ElementRef;
 
 
-  TypeOfTree = TreeType;
-  treeType = TreeType.Standard;
-  nodeType = NodeType;
+    TypeOfTree = TreeType;
+    treeType = TreeType.Standard;
+    nodeType = NodeType;
 
-  nodes = {};
-  list: any[] = [];
+    nodes = {};
+    list: any[] = [];
 
-  containerProperty = { width: '100%', height: '100%' };
+    containerProperty = { width: '100%', height: '100%' };
 
-  constructor() { }
+    constructor() { }
 
-  ngOnInit() {
-    if (this.config) {
-      if (this.config.width) {
-        this.containerProperty.width = this.config.width;
-      }
-      if (this.config.height) {
-        this.containerProperty.height = this.config.height;
-      }
-      if (this.config.type === TreeType.ToDefine) {
-        this.treeType = TreeType.ToDefine;
-      }
-    }
-  }
-
-  onExpandToggle(node: Node, event: any) {
-    const currentPosition = this.treetable.nativeElement.scrollTop;
-    node.expanded = (node.expanded) ? false : true;
-    if (node.expanded) {
-        if (!node.childs.length) {
-            this.expand.emit(node);
+    ngOnInit() {
+        if (this.config) {
+            if (this.config.width) {
+                this.containerProperty.width = this.config.width;
+            }
+            if (this.config.height) {
+                this.containerProperty.height = this.config.height;
+            }
+            if (this.config.type === TreeType.ToDefine) {
+                this.treeType = TreeType.ToDefine;
+            }
         }
-      this.hideNode(node, true);
-    } else {
-      this.hideNode(node, false);
     }
-    this.list = this.nodeToItems((this.treeType === TreeType.ToDefine) ? false : true);
-    setTimeout(()=>{ this.treetable.nativeElement.scrollTop = currentPosition; },1);
-  }
 
-  hideNode(node: Node, visible: boolean) {
-    Object.values(node.childs).forEach((n) => {
-      n.visible = visible;
-      this.hideNode(n, (visible) ? n.expanded : visible);
-    });
-  }
-
-  addNode(node: Node, parent: Node, enabled: boolean) {
-    if (parent) {
-      let refp = this.nodes[parent.id];
-      node.setParent(refp);
-      if (node.parent) {
-        node.parent.waiting = false;
-      }
-      node.enabled = enabled;
-      if (!enabled) {
-        node.checked = true;
-      }
+    onExpandToggle(node: Node, event: any) {
+        const currentPosition = this.treetable.nativeElement.scrollTop;
+        node.expanded = (node.expanded) ? false : true;
+        if (node.expanded) {
+            if (!node.childs.length) {
+                this.expand.emit(node);
+            }
+            this.hideNode(node, true);
+        } else {
+            this.hideNode(node, false);
+        }
+        this.list = this.nodeToItems((this.treeType === TreeType.ToDefine) ? false : true);
+        setTimeout(() => { this.treetable.nativeElement.scrollTop = currentPosition; }, 1);
     }
-    if (Object.keys(this.nodes).indexOf(node.id) < 0) {
-      this.nodes[node.id] = node;
+
+    hideNode(node: Node, visible: boolean) {
+        Object.values(node.childs).forEach((n) => {
+            n.visible = visible;
+            this.hideNode(n, (visible) ? n.expanded : visible);
+        });
     }
-  }
 
-  update(sort = true) {
-    this.list = this.nodeToItems(sort);
-  }
-
-  setNodeProperty(node: Node, pro: string) {
-    if (this.nodes[node.id]) {
-      this.nodes[node.id].property = pro;
-      this.nodes[node.id].type = node.type;
+    addNode(node: Node, parent: Node, enabled: boolean) {
+        if (parent) {
+            let refp = this.nodes[parent.id];
+            node.setParent(refp);
+            if (node.parent) {
+                node.parent.waiting = false;
+            }
+            node.enabled = enabled;
+            if (!enabled) {
+                node.checked = true;
+            }
+        }
+        if (Object.keys(this.nodes).indexOf(node.id) < 0) {
+            this.nodes[node.id] = node;
+        }
     }
-  }
 
-  nodeToItems(sort = true): Array<Node> {
-    if (this.nodes && Object.values(this.nodes).length) {
-      let result = [];
-        Object.values(this.nodes).forEach((value: Node) => {
-          if (value.visible) {
-              result.push(value);
-          }
-      });
-      if (sort) {
-        return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
-      } else {
-        return result;
-      }
-    } else {
-      return [];
+    update(sort = true) {
+        this.list = this.nodeToItems(sort);
     }
-  }
 
-  changeStatus(node: Node, $event) {
-  }
-
-  expandable(type: NodeType) {
-    if (type === NodeType.Object) {
-      return true;
-    } else {
-      return false;
+    setNodeProperty(node: Node, pro: string) {
+        if (this.nodes[node.id]) {
+            this.nodes[node.id].property = pro;
+            this.nodes[node.id].type = node.type;
+        }
     }
-  }
 
-  getDefinedKey(todefine) {
-    return '';
-  }
+    nodeToItems(sort = true): Array<Node> {
+        if (this.nodes && Object.values(this.nodes).length) {
+            let result = [];
+            Object.values(this.nodes).forEach((value: Node) => {
+                if (value.visible) {
+                    result.push(value);
+                }
+            });
+            if (sort) {
+                return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
+            } else {
+                return result;
+            }
+        } else {
+            return [];
+        }
+    }
 
-  getToDefineOptions(todefine) {
-    return Object.keys(todefine.options);
-  }
+    changeStatus(node: Node, $event) {
+    }
+
+    expandable(type: NodeType) {
+        if (type === NodeType.Object) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    getDefinedKey(todefine) {
+        return '';
+    }
+
+    getToDefineOptions(todefine) {
+        return Object.keys(todefine.options);
+    }
 }
 
 export class Node {
-  static readonly SEPARATOR = '>';
-  id: string = '';
-  path: string = '';
-  text: string = '';
-  class: NodeType;
-  childPos: number = 0;
-  expandable: boolean = true;
-  expanded: boolean = false;
-  visible: boolean = true;
-  parent: Node = null;
-  property: string = '';
-  type: string = '';          // boolean, int ...
-  checked: boolean = false;
-  childs: Node[] = [];
-  waiting: boolean = true;
-  enabled: boolean = true;
-  todefine: any = null;
+    static readonly SEPARATOR = '>';
+    id: string = '';
+    path: string = '';
+    text: string = '';
+    class: NodeType;
+    childPos: number = 0;
+    expandable: boolean = true;
+    expanded: boolean = false;
+    visible: boolean = true;
+    parent: Node = null;
+    property: string = '';
+    type: string = '';          // boolean, int ...
+    checked: boolean = false;
+    childs: Node[] = [];
+    waiting: boolean = true;
+    enabled: boolean = true;
+    todefine: any = null;
 
-  constructor(id: string, text: string) {
-    this.id = id;
-    this.text = text;
-    this.path = this.text;
-  }
-
-  setParent(parent: Node) {
-    if (parent) {
-      this.parent = parent;
-      this.path = parent.path + Node.SEPARATOR + this.text;
-      this.childPos = parent.childPos + 1;
-      this.parent.childs.push(this);
+    constructor(id: string, text: string) {
+        this.id = id;
+        this.text = text;
+        this.path = this.text;
     }
-  }
 
-  setToDefine() {
-    this.todefine = { options: [''], id: '', value: '' };
-  }
-
-  addToDefine(opt: string) {
-    if (this.todefine && this.todefine.options.indexOf(opt) === -1) {
-      this.todefine.options.push(opt);
+    setParent(parent: Node) {
+        if (parent) {
+            this.parent = parent;
+            this.path = parent.path + Node.SEPARATOR + this.text;
+            this.childPos = parent.childPos + 1;
+            this.parent.childs.push(this);
+        }
     }
-  }
+
+    setToDefine() {
+        this.todefine = { options: [''], id: '', value: '' };
+    }
+
+    addToDefine(opt: string) {
+        if (this.todefine && this.todefine.options.indexOf(opt) === -1) {
+            this.todefine.options.push(opt);
+        }
+    }
 }
 
 export enum NodeType {
-  Unspecified = 0,    // 
-  Object = 1,         // OPCUA 'Object',
-  Variable = 2,       // OPCUA 'Variable',
-  Methode = 4,        // OPCUA 'Methode'
-  ObjectType = 8,
-  VariableType = 16,
-  ReferenceType = 32,
-  DataType = 64,
-  View = 128,  
-  Array = 256,        // JSON
-  Item = 512,         // JSON
-  Reference = 1024    // JSON
+    Unspecified = 0,    // 
+    Object = 1,         // OPCUA 'Object',
+    Variable = 2,       // OPCUA 'Variable',
+    Methode = 4,        // OPCUA 'Methode'
+    ObjectType = 8,
+    VariableType = 16,
+    ReferenceType = 32,
+    DataType = 64,
+    View = 128,
+    Array = 256,        // JSON
+    Item = 512,         // JSON
+    Reference = 1024    // JSON
 }
 
 export enum TreeType {
-  Standard = 'standard',  // ask expand, 
-  ToDefine = 'todefine'   // property to define (key and value)
+    Standard = 'standard',  // ask expand, 
+    ToDefine = 'todefine'   // property to define (key and value)
 }

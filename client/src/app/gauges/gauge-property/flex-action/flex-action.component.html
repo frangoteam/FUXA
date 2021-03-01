@@ -1,6 +1,8 @@
-<div *ngFor="let item of actions; index as i" class="item">
-    <flex-variable class="item-head" [allowManualEdit]="true" [data]="data" (onchange)="setVariable(i, $event)" [variableSrc]="item.variableSrc" [variableId]="item.variableId" [variable]="item.variable"></flex-variable>
-    <div class="item-content">
+<div *ngFor="let item of actions; index as i" class="item" style="padding-bottom: 4px;">
+    <flex-variable class="item-head" [allowManualEdit]="true" [data]="data" (onchange)="setVariable(i, $event)" [variableSrc]="item.variableSrc" [variableId]="item.variableId" 
+        [variable]="item.variable" [tobind]="true">
+    </flex-variable>
+    <div class="action-content">
         <div *ngIf="slideView" class="item-range">
             <div class="my-form-field">
                 <span>{{'gauges.property-input-min' | translate}}</span>

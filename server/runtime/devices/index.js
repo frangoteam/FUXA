@@ -220,10 +220,10 @@ function setDeviceValue(deviceid, sigid, value) {
  * @param {*} deviceid 
  * @param {*} node 
  */
-function browseDevice(deviceid, node) {
+function browseDevice(deviceid, node, callback) {
     return new Promise(function (resolve, reject) {
         if (activeDevices[deviceid] && activeDevices[deviceid].browse) {
-            activeDevices[deviceid].browse(node).then(function (result) {
+            activeDevices[deviceid].browse(node, callback).then(function (result) {
                 resolve(result);
             }).catch(function (err) {
                 reject(err);

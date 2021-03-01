@@ -47,7 +47,8 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
         this.renderer.setElementAttribute(this.el.nativeElement, 'draggable', 'false');
     }
 
-    onDragStart(event: MouseEvent) {
+    onDragStart(event: any) {
+        event.dataTransfer.setData("text/plain", event.target.id);
         this.active = false;
         if (this.draggableHeight && this.draggableHeight < event.offsetY) {
             return;
@@ -77,6 +78,4 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
         this.renderer.setElementStyle(this.el.nativeElement, 'top', (y - this.dy) + 'px');
         this.renderer.setElementStyle(this.el.nativeElement, 'left', (x - this.dx) + 'px');
     }
-
-
 }

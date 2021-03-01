@@ -295,7 +295,7 @@ function AlarmsManager(_runtime) {
 
     var _checkWorking = function (check) {
         if (check && working) {
-            logger.error('alarms working (check) overload!');
+            logger.warn('alarms working (check) overload!');
             return false;
         }
         working = check;

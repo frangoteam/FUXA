@@ -1,47 +1,47 @@
 .container {
-  /* border: 1px solid rgba(248,249,250, 1); */
+    /* border: 1px solid rgba(248,249,250, 1); */
 }
 
 .head {
-  /* background-color: rgba(243,243,243, 1); */
-  /* padding-left: 10px; */
-  /* padding-right: 10px; */
-  padding-top: 0;
+    /* background-color: rgba(243,243,243, 1); */
+    /* padding-left: 10px; */
+    /* padding-right: 10px; */
+    padding-top: 0;
 }
 
 .selection {
-  margin-right: 20px;
-  margin-bottom: -10px;
-  margin-top: 2px;
-  width: 220px;
+    margin-right: 20px;
+    margin-bottom: -10px;
+    margin-top: 2px;
+    width: 220px;
 }
 
 .selection .mat-form-field-wrapper {
-  padding-bottom: 15px !important;
+    padding-bottom: 15px !important;
 }
 
 .item-set {
-  display: inline-block;
-  float: right;
-  padding-top: 13px;
-  min-width: 140px;
+    display: inline-block;
+    float: right;
+    padding-top: 13px;
+    min-width: 140px;
 }
 
 .panel-color-class {
-  position: relative;
-  top: 30px;
+    position: relative;
+    top: 30px;
 }
 
 .panel-color {
-  display: inline-block;
-  padding-top: 10px;
-  max-width: 60px;
-  /* border: 1px solid rgba(0,0,0,0.1); */
-  height: 20px;
-  line-height: 12px;
-  margin-right: 25px;
+    display: inline-block;
+    padding-top: 10px;
+    max-width: 60px;
+    /* border: 1px solid rgba(0,0,0,0.1); */
+    height: 20px;
+    line-height: 12px;
+    margin-right: 25px;
 }
 
 .option-color {
-  height: 32px !important;
+    height: 32px !important;
 }

@@ -1,87 +1,86 @@
-
 .tester-panel {
-  width: 300px;
-  height: 563px;
-  z-index: 99999 !important;
-  position: absolute;
-  right: 10px;
-  top: 50px;
-  background-color: rgb(240, 240, 240);
-  /* background-color: rgb(250,250,250); */
-  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.2),0 2px 6px 0 rgba(0,0,0,0.18);/*1px 2px 5px 1px rgba(0,0,0,.26);*/
-  border: 0px !important;
+    width: 300px;
+    height: 563px;
+    z-index: 99999 !important;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    background-color: rgb(240, 240, 240);
+    /* background-color: rgb(250,250,250); */
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2), 0 2px 6px 0 rgba(0, 0, 0, 0.18); /*1px 2px 5px 1px rgba(0,0,0,.26);*/
+    border: 0px !important;
 }
 
 .tester-header {
-  height: 30px;
-  background-color: rgb(230, 230, 230);
-  padding-left: 10px;
-  cursor: move;
-  line-height: 30px;
+    height: 30px;
+    background-color: rgb(230, 230, 230);
+    padding-left: 10px;
+    cursor: move;
+    line-height: 30px;
 }
 
 .tester-close {
-  font-size: 28px;
-  /* float: right; */
-  cursor: pointer;
-  /* padding-right: 5px; */
-  right: 5px;
+    font-size: 28px;
+    /* float: right; */
+    cursor: pointer;
+    /* padding-right: 5px; */
+    right: 5px;
     position: absolute;
     top: 0px;
 }
 
 .tester-body {
-  overflow-y: auto;
-  height: 350px;
+    overflow-y: auto;
+    height: 350px;
 }
 
 .tester-output {
-  /* position: absolute; */
-  /* bottom: 0px; */
-  /* left: 0px; */
-  /* right: 0px; */
-  overflow-y: auto;
-  height: 180px;
-  border-top: 1px solid gray;
-  padding: 2px 2px 0px 2px;
+    /* position: absolute; */
+    /* bottom: 0px; */
+    /* left: 0px; */
+    /* right: 0px; */
+    overflow-y: auto;
+    height: 180px;
+    border-top: 1px solid gray;
+    padding: 2px 2px 0px 2px;
 }
 
 .output-item {
-  display: block;
-  font-size: 12px;
+    display: block;
+    font-size: 12px;
 }
 
 .svg-property {
-  color: rgba(0,0,0,0.75);
+    color: rgba(0, 0, 0, 0.75);
 }
 
 .svg-property span {
-  display: block;
-  font-size: 12px;
-  margin: 0px 5px 0px 10px;
+    display: block;
+    font-size: 12px;
+    margin: 0px 5px 0px 10px;
 }
 
 .svg-property input {
-  width: 50%;
-  display: inline-block;
-  margin: 0px 10px 12px 10px;
-  border: unset;
-  background-color: inherit;
-  color: inherit;
-  /* border: 1px solid rgba(255,255,255,0.75); */
-  background-color: rgb(230, 230, 230);
+    width: 50%;
+    display: inline-block;
+    margin: 0px 10px 12px 10px;
+    border: unset;
+    background-color: inherit;
+    color: inherit;
+    /* border: 1px solid rgba(255,255,255,0.75); */
+    background-color: rgb(230, 230, 230);
 
-  /* border-bottom: 1px solid rgba(255,255,255,0.75); */
+    /* border-bottom: 1px solid rgba(255,255,255,0.75); */
 }
 
 .svg-property button {
-  /* float: right; */
-  color: inherit;
-  border: none;
-  max-width: 50px;
-  min-width: 50px;
-  max-height: 20px;
-  min-height: 20px;
-  /* background-color: rgb(77, 74, 74); */
-  font-weight: bold;
+    /* float: right; */
+    color: inherit;
+    border: none;
+    max-width: 50px;
+    min-width: 50px;
+    max-height: 20px;
+    min-height: 20px;
+    /* background-color: rgb(77, 74, 74); */
+    font-weight: bold;
 }

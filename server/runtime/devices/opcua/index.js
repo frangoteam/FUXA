@@ -563,7 +563,7 @@ function OpcUAclient(_data, _logger, _events) {
      */
     var _checkWorking = function (check) {
         if (check && working) {
-            logger.error(`'${data.name}' working (connection || polling) overload!`);
+            logger.warn(`'${data.name}' working (connection || polling) overload!`);
             return false;
         }
         working = check;

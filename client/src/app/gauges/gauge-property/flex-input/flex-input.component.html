@@ -1,87 +1,80 @@
 <div class="grid-conta">
-  <div *ngFor="let item of ranges; index as i" class="item">
-    <div *ngIf="isWithRange()">
-      <div *ngIf="slideView" class="item-range">
-        <div class="my-form-field">
-          <span>{{'gauges.property-input-min' | translate}}</span>
-          <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
+    <div *ngFor="let item of ranges; index as i" class="item">
+        <div *ngIf="isWithRange()">
+            <div *ngIf="slideView" class="item-range">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-input-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
+                </div>
+                <div class="my-form-field" style="padding-left: 20px;">
+                    <span>{{'gauges.property-input-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
+                </div>
+            </div>
+            <div class="item-range input-slider" *ngIf="!slideView">
+                <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
+            </div>
+            <div class="my-form-field" style="width: 60px; top: 6px;" *ngIf="isWithRangeColor()">
+                <span>{{'gauges.property-input-color' | translate}}</span>
+                <input [(colorPicker)]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                    [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
+                    style="padding: 8px 0 0 0;height:20px !important;width:58px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
+            </div>
+            <div class="item-remove">
+                <button mat-icon-button (click)="onRemoveInput(i)" class="remove">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
         </div>
-        <div class="my-form-field" style="padding-left: 20px;">
-          <span>{{'gauges.property-input-max' | translate}}</span>
-          <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
+        <div *ngIf="isMinMax()">
+            <div class="item-minmax">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-input-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
+                </div>
+                <div class="my-form-field" style="padding-left: 20px;">
+                    <span>{{'gauges.property-input-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
+                </div>
+                <div class="my-form-field" style="padding-left: 30px">
+                    <!-- <span>Unit</span>
+                    <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important"> -->
+                </div>
+                <div class="my-form-field" style="width: 60px;padding-left: 20px; top: 4px;">
+                    <span>{{'gauges.property-input-color' | translate}}</span>
+                    <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                        class="input-color" style="padding: 8px 0 0 0;height:20px;width:58px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
+                </div>
+                <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 30px" [(ngModel)]="withLabel">Range</mat-checkbox> -->
+                <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 20px" [(ngModel)]="withValue">Value</mat-checkbox> -->
+            </div>
         </div>
-      </div>
-      <div class="item-range input-slider" *ngIf="!slideView">
-        <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
-      </div>
-      <div class="my-form-field" style="width: 60px; top: 6px;" *ngIf="isWithRangeColor()">
-        <span>{{'gauges.property-input-color' | translate}}</span>
-        <input [(colorPicker)]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor"
-               [cpOKButton]="true" [cpCancelButton]="true"
-               [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-               [cpOKButtonClass]="'cpOKButtonClass'"
-               class="input-color" style="padding: 8px 0 0 0;height:20px !important;width:58px;" [cpPosition]="'auto'"
-               [cpAlphaChannel]="'always'"/>
-      </div>
-      <div class="item-remove">
-        <button mat-icon-button (click)="onRemoveInput(i)" class="remove">
-          <mat-icon>clear</mat-icon>
-        </button>
-      </div>
+        <div *ngIf="isWithStep()" class="item-step">
+            <div class="my-form-field">
+                <span>{{'gauges.property-input-value' | translate}}</span>
+                <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
+            </div>
+            <div class="my-form-field" style="padding-left: 20px;">
+                <span>{{'gauges.property-input-label' | translate}}</span>
+                <input [(ngModel)]="item.text" type="text" style="width: 160px;text-align: left !important">
+            </div>
+        </div>
+        <div *ngIf="isWithUnit()" class="item-unit">
+            <div class="my-form-field">
+                <span>{{'gauges.property-input-unit' | translate}}</span>
+                <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important">
+            </div>
+            <div class="my-form-field slider-field" style="padding-left: 20px">
+                <span>{{'gauges.property-format-digits' | translate}}</span>
+                <mat-slider style="display:inline-block;min-width: 110px;" [max]="5" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="item.fractionDigits"
+                    (input)="onChangeFormat('fractionDigits', $event.value)">
+                </mat-slider>
+            </div>
+            <div class="my-form-field" style="padding-left: 30px">
+                <span></span>
+                {{valueresult}} {{item.text}}
+            </div>
+        </div>
     </div>
-    <div *ngIf="isMinMax()">
-      <div class="item-minmax">
-        <div class="my-form-field">
-          <span>{{'gauges.property-input-min' | translate}}</span>
-          <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
-        </div>
-        <div class="my-form-field" style="padding-left: 20px;">
-          <span>{{'gauges.property-input-max' | translate}}</span>
-          <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
-        </div>
-        <div class="my-form-field" style="padding-left: 30px">
-          <!-- <span>Unit</span>
-<input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important"> -->
-        </div>
-        <div class="my-form-field" style="width: 60px;padding-left: 20px; top: 4px;">
-          <span>{{'gauges.property-input-color' | translate}}</span>
-          <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor"
-                 [cpOKButton]="true"
-                 [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
-                 [cpOKButtonText]="'OK'"
-                 [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
-                 style="padding: 8px 0 0 0;height:20px;width:58px;" [cpPosition]="'auto'"
-                 [cpAlphaChannel]="'always'"/>
-        </div>
-        <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 30px" [(ngModel)]="withLabel">Range</mat-checkbox> -->
-        <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 20px" [(ngModel)]="withValue">Value</mat-checkbox> -->
-      </div>
-    </div>
-    <div *ngIf="isWithStep()" class="item-step">
-      <div class="my-form-field">
-        <span>{{'gauges.property-input-value' | translate}}</span>
-        <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
-      </div>
-      <div class="my-form-field" style="padding-left: 20px;">
-        <span>{{'gauges.property-input-label' | translate}}</span>
-        <input [(ngModel)]="item.text" type="text" style="width: 160px;text-align: left !important">
-      </div>
-    </div>
-    <div *ngIf="isWithUnit()" class="item-unit">
-      <div class="my-form-field">
-        <span>{{'gauges.property-input-unit' | translate}}</span>
-        <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important">
-      </div>
-      <div class="my-form-field slider-field" style="padding-left: 20px">
-        <span>{{'gauges.property-format-digits' | translate}}</span>
-        <mat-slider style="display:inline-block;min-width: 110px;" [max]="5" [min]="0" [step]="1" [thumbLabel]="true"
-                    [(ngModel)]="item.fractionDigits" (input)="onChangeFormat('fractionDigits', $event.value)">
-        </mat-slider>
-      </div>
-      <div class="my-form-field" style="padding-left: 30px">
-        <span></span>
-        {{valueresult}} {{item.text}}
-      </div>
-    </div>
-  </div>
 </div>

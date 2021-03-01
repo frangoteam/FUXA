@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-tutorial',
-  templateUrl: './tutorial.component.html',
-  styleUrls: ['./tutorial.component.css']
+    selector: 'app-tutorial',
+    templateUrl: './tutorial.component.html',
+    styleUrls: ['./tutorial.component.css']
 })
 export class TutorialComponent implements OnInit {
 
-  show: boolean = false;
+    show: boolean = false;
 
-  constructor() { }
+    constructor() { }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
-  close() {
-    this.show = false;
-  }
+    close() {
+        this.show = false;
+    }
 }

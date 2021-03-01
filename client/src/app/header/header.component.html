@@ -1,6 +1,5 @@
 <div class="header-panel" *ngIf="ineditor">
-    <button mat-button title="{{'header.save-project' | translate}}" [matMenuTriggerFor]="prjview" #prjviewtrigger="matMenuTrigger" class="main-btn"
-        (click)="prjedittrigger.closeMenu()">
+    <button mat-button title="{{'header.save-project' | translate}}" [matMenuTriggerFor]="prjview" #prjviewtrigger="matMenuTrigger" class="main-btn">
         <mat-icon aria-label="Save Project">save</mat-icon>
     </button>
     <mat-menu #prjview="matMenu" class="leftbar-item-menu header-menu" yPosition="below" [overlapTrigger]="false">

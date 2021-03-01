@@ -60,6 +60,9 @@ typings/
 # next.js build output
 .next
 
+#appdata
+_appdata/
+
 # logs
 _logs/
 

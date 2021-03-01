@@ -1,35 +1,30 @@
 <div #dataContainer class="view-container" id="content">
 </div>
-<div *ngFor="let card of cards; let i = index" [draggableHeight]="22" [style.height]="getCardHeight(card.height) + 'px'" [style.left]="card.x + 'px'"
-     [style.top]="card.y +'px'" [style.width]="card.width +'px'" class="fab-card"
-     draggable>
-  <a (click)="onCloseCard(card);" class="card-close">
-    <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
-  </a>
-  <app-fuxa-view (onclose)="onCloseCard(card)" [child]='true' [gaugesManager]="gaugesManager"
-                 [hmi]="hmi" [parentcards]="cards" [variablesMapping]="card.variablesMapping"
-                 [view]="card.view"></app-fuxa-view>
+<div *ngFor="let card of cards; let i = index" [style.height]="getCardHeight(card.height) + 'px'" [style.left]="card.x + 'px'" [style.top]="card.y +'px'"
+    [style.width]="card.width +'px'" class="fab-card" style="cursor: auto  !important;" ngDraggable>
+    <a (click)="onCloseCard(card);" class="card-close">
+        <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+    </a>
+    <app-fuxa-view (onclose)="onCloseCard(card)" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [parentcards]="cards" [variablesMapping]="card.variablesMapping"
+        [view]="card.view"></app-fuxa-view>
 </div>
 <div *ngIf="dialog" class="dialog-modal">
-  <div [style.background-color]="dialog.bkcolor" [style.height]="dialog.height + 'px'" [style.width]="dialog.width +'px'"
-       class="dialog-modal-content">
-    <a (click)="onCloseDialog();" class="dialog-modal-close">
-      <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
-    </a>
-    <app-fuxa-view (onclose)="onCloseDialog()" [child]='true' [gaugesManager]="gaugesManager"
-                   [hmi]="hmi" [variablesMapping]="dialog.variablesMapping" [view]="dialog.view"></app-fuxa-view>
-  </div>
+    <div [style.background-color]="dialog.bkcolor" [style.height]="dialog.height + 'px'" [style.width]="dialog.width +'px'" class="dialog-modal-content">
+        <a (click)="onCloseDialog();" class="dialog-modal-close">
+            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+        </a>
+        <app-fuxa-view (onclose)="onCloseDialog()" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [variablesMapping]="dialog.variablesMapping" [view]="dialog.view">
+        </app-fuxa-view>
+    </div>
 </div>
-<div (rzResizing)="onIframeResizing(iframe, $event)" *ngFor="let iframe of iframes; let i = index" [handle]="iframeHandle" [style.height]="(iframe.height + 22) + 'px'" [style.left]="iframe.x + 'px'"
-     [style.top]="iframe.y + 'px'" [style.width]="iframe.width + 'px'" class="fab-iframe"
-     ngDraggable ngResizable>
-  <div #iframeHandle class="iframe-header">
-    <span>{{iframe.name}}</span>
-    <a (click)="onCloseIframe(iframe);">
-      <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
-    </a>
-  </div>
-  <app-iframe [link]="iframe.link" [style.height]="iframe.height + 'px'"
-              [style.transform]="'scale(' + iframe.scale + ')'" [style.width]="iframe.width + 'px'" [style.zoom]="1 / iframe.scale"
-              class="iframe-class"></app-iframe>
+<div (rzResizing)="onIframeResizing(iframe, $event)" *ngFor="let iframe of iframes; let i = index" [handle]="iframeHandle" [style.height]="(iframe.height + 22) + 'px'"
+    [style.left]="iframe.x + 'px'" [style.top]="iframe.y + 'px'" [style.width]="iframe.width + 'px'" class="fab-iframe" ngDraggable ngResizable>
+    <div #iframeHandle class="iframe-header">
+        <span>{{iframe.name}}</span>
+        <a (click)="onCloseIframe(iframe);">
+            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+        </a>
+    </div>
+    <app-iframe [link]="iframe.link" [style.height]="iframe.height + 'px'" [style.transform]="'scale(' + iframe.scale + ')'" [style.width]="iframe.width + 'px'"
+        [style.zoom]="1 / iframe.scale" class="iframe-class"></app-iframe>
 </div>

@@ -52,7 +52,8 @@ export enum DeviceType {
     BACnet = 'BACnet',
     ModbusRTU = 'ModbusRTU',
     ModbusTCP = 'ModbusTCP',
-    WebAPI = 'WebAPI'
+    WebAPI = 'WebAPI',
+    MQTTclient = 'MQTTclient'
 }
 
 export enum TagType {
@@ -121,3 +122,5 @@ export enum BACnetObjectType {
     COMMAND = '',                               // 7
     DEVICE = ''                                 // 8
 }
+
+export const USER_DEFINED_VARIABLE = 'user-defined';

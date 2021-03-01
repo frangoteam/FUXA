@@ -4,19 +4,19 @@ import { MatButtonModule, MatInputModule, MatIconModule } from '@angular/materia
 import { CommonModule } from '@angular/common';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule
-  ],
-  declarations: [
-    MatSelectSearchComponent
-  ],
-  exports: [
-    MatButtonModule,
-    MatInputModule,
-    MatSelectSearchComponent
-  ]
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule
+    ],
+    declarations: [
+        MatSelectSearchComponent
+    ],
+    exports: [
+        MatButtonModule,
+        MatInputModule,
+        MatSelectSearchComponent
+    ]
 })
 export class MatSelectSearchModule { }

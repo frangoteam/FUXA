@@ -1,21 +1,21 @@
 /* tslint:disable:no-unused-variable */
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {FlexVariableMappingComponent} from './flex-variable.component';
+import {FlexVariablesMappingComponent} from './flex-variables-mapping.component';
 
-describe('FlexVariableComponent', () => {
-  let component: FlexVariableMappingComponent;
-  let fixture: ComponentFixture<FlexVariableMappingComponent>;
+describe('FlexVariableMappingComponent', () => {
+  let component: FlexVariablesMappingComponent;
+  let fixture: ComponentFixture<FlexVariablesMappingComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [FlexVariableMappingComponent]
+      declarations: [FlexVariablesMappingComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FlexVariableMappingComponent);
+    fixture = TestBed.createComponent(FlexVariablesMappingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

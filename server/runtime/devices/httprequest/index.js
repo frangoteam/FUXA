@@ -179,7 +179,6 @@ function HTTPclient(_data, _logger, _events) {
      * Return Tag property
      */
     this.getTagProperty = function (id) {
-        logger.info(`'${data.name}' getTagProperty`);
         if (data.tags[id]) {
             let prop = { id: id, name: data.tags[id].name, type: data.tags[id].type };
             return prop;
@@ -273,7 +272,7 @@ function HTTPclient(_data, _logger, _events) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.error(`'${data.name}' working (connection || polling) overload! ${overloading}`);
+            logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 connected = false;

@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const http = require('http');
 const https = require('https');
 const socketIO = require('socket.io');
+const nopt = require("nopt");
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
@@ -21,34 +22,68 @@ var settingsFile;
 
 var startTime = new Date();
 
-// Define work directory in AppData
-var workDir = path.resolve(__dirname, '_appdata');
+var knownOpts = {
+    "help": Boolean,
+    "port": Number,
+    "userDir": [path]
+};
+var shortHands = {
+    "?":["--help"],
+    "p":["--port"],
+    "u":["--userDir"]
+};
+
+nopt.invalidHandler = function(k,v,t) {
+    // TODO: console.log(k,v,t);
+}
+
+var parsedArgs = nopt(knownOpts, shortHands, process.argv, 2);
+
+if (parsedArgs.help) {
+    console.log("FUXA v" + FUXA.version());
+    console.log("Usage: fuxa [-?] [--port PORT] [--userDir DIR]");
+    console.log("");
+    console.log("Options:");
+    console.log("  -p, --port     PORT  port to listen on");
+    console.log("  -u, --userDir  DIR   use specified user directory");
+    console.log("  -?, --help           show this help");
+    process.exit();
+}
+
+// Define directory
+var rootDir = __dirname;
+var workDir = path.resolve(process.cwd(), '_appdata');
+if (parsedArgs.userDir) {
+    rootDir = parsedArgs.userDir;
+    workDir = path.resolve(parsedArgs.userDir, '_appdata');
+}
+
 if (!fs.existsSync(workDir)) {
     fs.mkdirSync(workDir);
 }
 
 // Read app settings 
-var userSettingsFile = path.join(workDir, 'settings.js');
-if (fs.existsSync(userSettingsFile)) {
+var appSettingsFile = path.join(workDir, 'settings.js');
+if (fs.existsSync(appSettingsFile)) {
     // _appdata/settings.js exists
-    settingsFile = userSettingsFile;
+    settingsFile = appSettingsFile;
 } else {
     // Not exist, copy from code resource
     var defaultSettings = path.join(__dirname, 'settings.default.js');
     try {
-        fs.copyFileSync(defaultSettings, userSettingsFile, fs.constants.COPYFILE_EXCL);
+        fs.copyFileSync(defaultSettings, appSettingsFile, fs.constants.COPYFILE_EXCL);
         logger.debug('settings.js default created successful!');
     } catch (err) {
         logger.error(err);
     }
-    settingsFile = userSettingsFile;
+    settingsFile = appSettingsFile;
 }
 try {
     // load settings and set some app variable
     var settings = require(settingsFile);
     settings.workDir = workDir;
     settings.appDir = __dirname;
-    settings.packageDir = path.resolve(__dirname, '_pkg');
+    settings.packageDir = path.resolve(rootDir, '_pkg');
     settings.settingsFile = settingsFile;
     settings.environment = process.env.NODE_ENV || 'prod';
     // check new settings from default and merge if not defined
@@ -68,10 +103,30 @@ try {
     }
     process.exit();
 }
+// Read user settings
+try {
+    var userSettingsFile = path.join(workDir, 'mysettings.json');
+    settings.userSettingsFile = userSettingsFile;
+    if (fs.existsSync(userSettingsFile)) {
+        var mysettings = JSON.parse(fs.readFileSync(userSettingsFile, 'utf8'));
+        if (mysettings.language) {
+            settings.language = mysettings.language;
+        }
+        if (mysettings.uiPort) {
+            settings.uiPort = mysettings.uiPort;
+        }
+        if (mysettings.secureEnabled) {
+            settings.secureEnabled = mysettings.secureEnabled;
+            settings.tokenExpiresIn = mysettings.tokenExpiresIn;
+        }
+    }
+} catch (err) {
+    logger.error('Error loading user settings file: ' + userSettingsFile)
+}
 
 // Check logger
 if (!settings.logDir) {
-    settings.logDir = path.resolve(__dirname, '_logs'); 
+    settings.logDir = path.resolve(rootDir, '_logs'); 
 }
 if (!fs.existsSync(settings.logDir)) {
     fs.mkdirSync(settings.logDir);
@@ -87,7 +142,7 @@ if (version.indexOf('beta') > 0) {
 
 // Check storage Database dir
 if (!settings.dbDir) {
-    settings.dbDir = path.resolve(__dirname, '_db');
+    settings.dbDir = path.resolve(rootDir, '_db');
 }
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
@@ -111,8 +166,12 @@ const io = socketIO(server);
 var www = path.resolve(__dirname, '../client/dist');
 settings.httpStatic = settings.httpStatic || www;
 
-if (settings.uiPort === undefined) {
-    settings.uiPort = 1880;
+if (parsedArgs.port !== undefined){
+    settings.uiPort = parsedArgs.port;
+} else {
+    if (settings.uiPort === undefined){
+        settings.uiPort = 1881;
+    }
 }
 settings.uiHost = settings.uiHost || "0.0.0.0";
 

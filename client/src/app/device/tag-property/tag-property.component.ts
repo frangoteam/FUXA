@@ -19,9 +19,18 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     tagType: any;
     error: string;
     existing: string[] = [];
-    withtree: boolean = false;
+    TypeOfDialog = EditTagDialogType;
+	dialogType = EditTagDialogType.Standard;
     config = { width: '100%', height: '600px', type: '' };
     memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
+
+    topicSource = '';
+    topicsList = {};
+    topicsToAdd = {};
+    discoveryError = '';
+    discoveryWait = false;
+    discoveryTimer = null;
+
     private subscriptionBrowse: Subscription;
     private subscriptionNodeAttribute: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
@@ -36,10 +45,12 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
         this.tagType = TagType;
         if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet || this.data.device.type === DeviceType.WebAPI) {
-            this.withtree = true;
+            this.dialogType = EditTagDialogType.Tree;
             this.config.height = '640px';
             this.config.width = '1000px';
             this.config.type = (this.data.device.type === DeviceType.WebAPI) ? 'todefine' : '';
+        } else if (this.data.device.type === DeviceType.MQTTclient) {
+            this.dialogType = EditTagDialogType.List;
         } else {
             if (this.isModbus()) {
                 this.tagType = ModbusTagType;
@@ -59,7 +70,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        if (this.withtree) {
+        if (this.dialogType === EditTagDialogType.Tree) {
             if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet) {
                 this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(values => {
                     if (this.data.device.name === values.device) {
@@ -92,6 +103,24 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         		this.hmiService.askWebApiProperty(this.data.device.property);
             }
             this.queryNext(null);
+        } else if (this.dialogType === EditTagDialogType.List && this.data.device.type === DeviceType.MQTTclient) {
+            this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(value => {
+                if (value.result === 'error') {
+                    this.discoveryError = value.result;
+                } else if (value.topic) {
+                    if (this.topicsList[value.topic]) {
+                        this.topicsList[value.topic].value = value.msg;
+                    } else {
+                        let checked = false;
+                        let enabled = true;
+                        if (this.data.device.tags[value.topic]) {
+                            checked = true;
+                            enabled = false;
+                        }
+                        this.topicsList[value.topic] = { name: value.topic, value: value.msg, checked: checked, enabled: enabled };
+                    }
+                }
+            });
         }
     }
 
@@ -109,6 +138,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 			}
         } catch (e) {
         }
+        if (this.discoveryTimer) {
+            clearInterval(this.discoveryTimer);
+        }
+		this.discoveryTimer = null;
     }
 
     onNoClick(): void {
@@ -120,6 +153,28 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         if (this.data.device.type === DeviceType.WebAPI) {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
             this.data.nodes = result;
+        } else if (this.data.device.type === DeviceType.MQTTclient) {
+            let listcheck = {};
+            Object.values(this.topicsList).forEach((topic:any) => {
+                if (topic.checked && topic.enabled) {
+                    listcheck[topic.name] = 1;
+                    let t = new Tag();
+                    t.id = topic.name;
+                    t.name = topic.name;
+                    t.address = topic.name;                    
+                    this.data.nodes.push(t);
+                }
+            });
+            Object.values(this.topicsToAdd).forEach((topic:any) => {
+                if (!listcheck[topic.name]) {
+                    listcheck[topic.name] = 1;
+                    let t = new Tag();
+                    t.id = topic.name;
+                    t.name = topic.name;
+                    t.address = topic.name;                    
+                    this.data.nodes.push(t);
+                }
+            });
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
@@ -136,6 +191,38 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.translateService.get('msg.device-tag-exist').subscribe((txt: string) => { this.error = txt });
         } else {
             this.error = '';
+        }
+    }
+
+    onDiscoveryTopics(source) {
+        this.discoveryError = '';
+        this.discoveryWait = true;
+		this.discoveryTimer = setTimeout(() => {
+            this.discoveryWait = false;
+		}, 10000);        
+        this.hmiService.askDeviceBrowse(this.data.device.name, source);
+    }
+
+    onClearDiscovery() {
+        this.topicsList = {};
+        this.discoveryError = '';
+        this.discoveryWait = false;
+        try {
+            if (this.discoveryTimer) {
+			    clearInterval(this.discoveryTimer);
+            }
+		} catch { }
+    }
+
+    onAddTopics(topic) {
+        if (topic && !this.topicsToAdd[topic]) {
+            this.topicsToAdd[topic] =  { name: topic };
+        }
+    }
+
+    onRemoveAddedTopics(topic) {
+        if (this.topicsToAdd[topic]) {
+            delete this.topicsToAdd[topic];
         }
     }
 
@@ -321,6 +408,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 		return (this.data.device.type === DeviceType.WebAPI) ? true : false;
     }
 
+    isMqtt() {
+		return (this.data.device.type === DeviceType.MQTTclient) ? true : false;
+    }
+
     checkMemAddress(memaddress) {
         if (memaddress === '000000' || memaddress === '100000') {
             this.data.tag.type = ModbusTagType.Bool;
@@ -332,6 +423,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             return false;
         } else if (this.isOpcua() || this.isWebApi()) {
             return true;
+        } else if (this.isMqtt()) {
+            return true;
         } else if (this.data.tag && !this.data.tag.name) {
             return false;
         } else if (this.isModbus() && (!this.data.tag.address || parseInt(this.data.tag.address) <= 0)) {
@@ -339,4 +432,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         }
         return true;
     }
+}
+
+export enum EditTagDialogType {
+    Standard = 'standard',  // without browser
+    Tree = 'tree',
+    List = 'list',
 }

@@ -1,26 +1,20 @@
 .toolbox {
-  display: inline-block;
-  float: right;
-  margin-top: 10px;
-  margin-bottom: 3px;
+    float: right;
+    line-height: 44px;
 }
 
 .toolbox button {
-  margin-right: 8px;
-  margin-left: 8px;
-}
-
-::ng-deep .input-text .mat-form-field-wrapper {
-  /* margin-bottom: -15px !important; */
+    margin-right: 8px;
+    margin-left: 8px;
 }
 
 ::ng-deep .input-text .mat-form-field-infix {
-  padding-top: 5px;
-  padding-bottom: 0px;
+    padding-top: 5px;
+    padding-bottom: 0px;
 }
 
 ::ng-deep .mat-dialog-container {
-  display: inline-table !important;
+    display: inline-table !important;
 }
 
 .mat-tab-container {
