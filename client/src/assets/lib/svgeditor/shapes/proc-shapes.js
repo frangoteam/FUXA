@@ -2,7 +2,7 @@
 // add the shape library: with file name as parameter (have to be unique)
 (function () {
     'use strict';
-    var shapesGroupName = 'Proc. Eng.'; // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
+    var shapesGroupName = 'editor.processeng'; // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
     var typeId = 'proceng';          // used to identify shapes type, 'proc-eng' is binded with angular component 'ProcEngComponent'
     // if you make a new type you have to implement the angular component too 
 

@@ -578,7 +578,6 @@
     "msg.device-tag-remove": "Вы действительно хотете удалить Тег ",
     "msg.device-tag-exist": "Имя Тега уже существует!",
 
-    "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.home-welcome": "Подождите... перейдите в редактор, сопоставьте устройства, настройте визуализацию и привяжите переменные устройств",
     "msg.project-load-error": "Невозможно прочитать '{{value}}'",
     "msg.project": "Вы хотите сохранить  изменения в проекте?",
