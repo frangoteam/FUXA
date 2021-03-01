@@ -1,7 +1,7 @@
 // add the shape library: with file name as parameter (have to be unique)
 (function () {
     'use strict';
-    var shapesGroupName = 'Anim';     // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
+    var shapesGroupName = 'editor.animated';     // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
     var typeId = 'ape';              // used to identify shapes type, 'shapes' is binded with angular component 'ApeShapesComponent'
     // if you make a new type you have to implement the angular component too 
 
