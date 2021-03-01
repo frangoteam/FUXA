@@ -23,11 +23,11 @@
     </div>
 
     <button *ngIf="allowManualEdit && !manualEdit" mat-icon-button (click)="toggleView($event)" matTooltip="{{'gauges.property-head-tomapvariable' | translate}}" 
-    style="margin-left: 2px; font-weight: bold; font-size: 20px;margin-bottom: 2px;">
+    style="margin-left: 2px; font-weight: bold; font-size: 20px;margin-bottom: 2px; color: gray;">
         {{'{x}'}}
         <!-- <mat-icon>edit</mat-icon> -->
     </button>
-    <button *ngIf="manualEdit" mat-icon-button (click)="toggleView($event)" matTooltip="{{'gauges.property-head-todevice' | translate}}">
+    <button *ngIf="manualEdit" mat-icon-button (click)="toggleView($event)" matTooltip="{{'gauges.property-head-todevice' | translate}}" style="color: gray;">
         <mat-icon>device_hub</mat-icon>
     </button>
 </div>
