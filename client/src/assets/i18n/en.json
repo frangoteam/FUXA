@@ -89,6 +89,7 @@
     "general.search-notfound": "No options found",
     "general.username": "Username",
     "general.password": "Password",
+    "general.clientId": "Client ID",
 
 
     "tester.title": "Variable",
