@@ -43,6 +43,7 @@ export class DeviceSecurity {
     mode: any;
     username: string;
     password: string;
+    clientId: string;
 }
 
 export enum DeviceType {

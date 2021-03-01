@@ -110,13 +110,14 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.propertyLoading = false;
 		});		
 		// check security
-		if (this.data.device.name && this.data.device.type === DeviceType.OPCUA) {
+		if (this.data.device.name && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient)) {
 			this.projectService.getDeviceSecurity(this.data.device.name).subscribe(result => {
 				this.setSecurity(result.value);
 			}, err => {
 				console.log('get Device Security err: ' + err);
 			});
 		}
+
 		if (!this.data.device.property.baudrate) {
 			this.data.device.property.baudrate = 9600;
 		}
@@ -217,15 +218,21 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	getSecurity(): any {
-		if (this.data.device.type !== DeviceType.OPCUA || !this.propertyExpanded) {
+		if (!this.propertyExpanded || (this.data.device.type !== DeviceType.OPCUA && this.data.device.type !== DeviceType.MQTTclient)) {
 			return null;
 		} else {
-			if (this.securityRadio || this.security.username || this.security.password) {
-				let result = { mode: this.securityRadio, uid: this.security.username, pwd: this.security.password };
-				return result;
-			} else {
-				return null;
+			if (this.data.device.type === DeviceType.OPCUA) {
+				if (this.securityRadio || this.security.username || this.security.password) {
+					let result = { mode: this.securityRadio, uid: this.security.username, pwd: this.security.password };
+					return result;
+				}
+			} else if (this.data.device.type === DeviceType.MQTTclient) {
+				if (this.security.clientId || this.security.username || this.security.password) {
+					let result = { clientId: this.security.clientId, uid: this.security.username, pwd: this.security.password };
+					return result;
+				}
 			}
+			return null;
 		}
 	}
 
@@ -235,6 +242,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.mode = value.mode;
 			this.security.username = value.uid;
 			this.security.password = value.pwd;
+			this.security.clientId = value.clientId;
 			this.panelProperty.open();
 		}
 	}
