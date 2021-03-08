@@ -144,7 +144,7 @@ export class DeviceListComponent implements OnInit {
     onAddTag() {
         if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
-        } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
+        } else if (this.deviceSelected.type === DeviceType.MQTTclient || this.deviceSelected.type === DeviceType.inmation) {
             this.addTopic();
         } else {
             let tag = new Tag();

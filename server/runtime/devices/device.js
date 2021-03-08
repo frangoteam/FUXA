@@ -59,7 +59,7 @@ function Device(data, runtime) {
             return null;
         }
         comm = MQTTclient.create(data, logger, events, manager);        
-    } else if (data.type === DeviceEnum.INMATION) {
+    } else if (data.type === DeviceEnum.inmation) {
         if (!INMATIONclient) {
             return null;
         }
@@ -319,7 +319,7 @@ function loadPlugin(type, module) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
-    } else if (type === DeviceEnum.INMATION) {
+    } else if (type === DeviceEnum.inmation) {
         INMATIONclient = require(module);
     }
 }
@@ -347,7 +347,7 @@ var DeviceEnum = {
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
-    INMATION: 'inmation'
+    inmation: 'inmation'
 }
 
 /**
