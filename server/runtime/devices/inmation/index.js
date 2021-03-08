@@ -17,8 +17,8 @@ function INMATIONclient(_data, _logger, _events) {
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of asked values
+    var getProperty = null;             // Function to ask property (security)
     var options = {};
-    var client = null;
     var timeoutBrowser;
 
     /**
@@ -26,13 +26,24 @@ function INMATIONclient(_data, _logger, _events) {
      * Emit connection status, Clear the memory Topics value
      */    
     this.connect = function () {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             if (data.property && data.property.address) {
                 try {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         _clearVarsValue();
                         options = getConnectionOptions(data.property)
+                        if (getProperty) {
+                            var result = await getProperty({query: 'security', name: data.name});
+                            if (result && result.value && result.value !== 'null') {
+                                // property security mode
+                                var property = JSON.parse(result.value);
+                                options.auth['authority'] = property.clientId;
+                                options.auth['username'] = property.username;
+                                options.auth['password'] = property.password;
+                                options.auth['grant_type'] = property.gt;
+                            }
+                        }
                         client.connectWS(options.url, function (err) {
                             if (err) {
                                 connected = false;
@@ -162,6 +173,13 @@ function INMATIONclient(_data, _logger, _events) {
         daqInterval = intervalToSave;
     }
     this.addDaq = null;      
+    
+    /**
+     * Set function to ask property (security)
+     */
+     this.bindGetProperty = function (fnc) {
+        getProperty = fnc;
+    }
 
     /**
      * Load Items attribute to read with polling
@@ -293,6 +311,17 @@ function INMATIONclient(_data, _logger, _events) {
         working = check;
         overloading = 0;
         return true;
+    }
+}
+
+/**
+ * Return connection option from device property
+ * @param {*} property 
+ */
+ function getConnectionOptions (property) {
+    return {
+        url: property.address,
+        auth: {},
     }
 }
 
