@@ -18,8 +18,10 @@ function INMATIONclient(_data, _logger, _events) {
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of asked values
     var getProperty = null;             // Function to ask property (security)
-    var options = {};
-    var timeoutBrowser;
+    var options = {};                   // Connection options
+    var itemsMap = {};                  // Items Mapped Tag name with Item path to find for set value
+
+    // var browser = { client: new Client(), connected: false, timeout: 0 };
 
     /**
      * Connect the client to inmation server
@@ -39,8 +41,8 @@ function INMATIONclient(_data, _logger, _events) {
                                 // property security mode
                                 var property = JSON.parse(result.value);
                                 options.auth['authority'] = property.clientId;
-                                options.auth['username'] = property.username;
-                                options.auth['password'] = property.password;
+                                options.auth['username'] = property.uid;
+                                options.auth['password'] = property.pwd;
                                 options.auth['grant_type'] = property.gt;
                             }
                         }
@@ -61,18 +63,18 @@ function INMATIONclient(_data, _logger, _events) {
                             }
                         }, options);
                         client.onWSConnectionChanged((connectionInfo) => {
-                            const webAPIStatusInfo = connectionInfo.webapi_status || {};
-                            const webAPIStatus = webAPIStatusInfo.status || 'unknown'
-                            console.log(`Connection state: ${connectionInfo.state}, ${connectionInfo.stateString}, Authenticated: ${connectionInfo.authenticated}, Web API Status: ${webAPIStatus}`);
-                            const auditTrail = webAPIStatusInfo.audit_trail
-                            if (auditTrail) {
-                                console.log(`Audit Trail enabled: ${auditTrail.enabled}, user_comment_mandatory: ${auditTrail.user_comment_mandatory}`);
-                            }
-                            const tokenResponse = connectionInfo.token_response
-                            if (tokenResponse) {
-                                console.log(`Token response token_type: ${tokenResponse.token_type}, expires_in: ${tokenResponse.expires_in} seconds`);
-                                console.log(`Token response access_token: ${tokenResponse.access_token}`);
-                            }
+                            // const webAPIStatusInfo = connectionInfo.webapi_status || {};
+                            // const webAPIStatus = webAPIStatusInfo.status || 'unknown'
+                            // console.log(`Connection state: ${connectionInfo.state}, ${connectionInfo.stateString}, Authenticated: ${connectionInfo.authenticated}, Web API Status: ${webAPIStatus}`);
+                            // const auditTrail = webAPIStatusInfo.audit_trail
+                            // if (auditTrail) {
+                            //     console.log(`Audit Trail enabled: ${auditTrail.enabled}, user_comment_mandatory: ${auditTrail.user_comment_mandatory}`);
+                            // }
+                            // const tokenResponse = connectionInfo.token_response
+                            // if (tokenResponse) {
+                            //     console.log(`Token response token_type: ${tokenResponse.token_type}, expires_in: ${tokenResponse.expires_in} seconds`);
+                            //     console.log(`Token response access_token: ${tokenResponse.access_token}`);
+                            // }
                         });
                         // client.on("disconnect", function () {
                         //     logger.warn(`'${data.name}' client disconnect ${data.property.address}`, true);
@@ -133,7 +135,7 @@ function INMATIONclient(_data, _logger, _events) {
      */    
     this.polling = function () {
         if (_checkWorking(true)) {
-            if (client && isConnected()) {
+            if (client) {
                 try {
                     var varsValueChanged = _clearVarsChanged();
                     lastTimestampValue = new Date().getTime();
@@ -157,6 +159,50 @@ function INMATIONclient(_data, _logger, _events) {
             }
         }
     }
+
+    /**
+     * Return the result of inmation browsing by configure it
+     */
+    // this.browse = function (topic, callback) {
+    //     return new Promise(function (resolve, reject) {
+    //         try {
+    //             _resetBrowserTimeout();
+    //             if (!browser.connected) {
+    //                 browser.client.connectWS(options.url, function (err) {
+    //                     if (err) {
+    //                         browser.connected = false;
+    //                         reject(err);
+    //                     } else {
+    //                         browser.connected = true;
+    //                         resolve('ok');
+    //                     }
+    //                 }, options);
+    //                 browser.client.onDataChanged((err, items) => {
+    //                     if (err) console.log(err.message);
+    //                     for (const item of items) {
+    //                         if (callback) {
+    //                             callback({ topic: item.p, msg: item.v.toString() });
+    //                         }
+    //                         console.log(`Path: ${item.p} value: ${item.v}`);
+    //                     }
+    //                 });
+    //                 browser.client.onError((err) => {
+    //                     reject(err);
+    //                 });
+    //                 client.on("close", function (err) {
+    //                     console.log('mqtt browser closed');
+    //                 });                    
+    //             } else {
+    //                 resolve('ok');
+    //             }
+    //             const items = [new model.Item(topic)];
+    //             browser.client.subscribeToDataChanges(items, function() {
+    //             });
+    //         } catch (err) {
+    //             reject('browse-error: ' + err);
+    //         }
+    //     });
+    // }
 
     /**
      * Return if INMATION client is connected
@@ -187,7 +233,11 @@ function INMATIONclient(_data, _logger, _events) {
     this.load = function (_data) {
         varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
+        itemsMap = {};
         var count = Object.keys(data.tags).length;
+        for (var tname in data.tags) {
+            itemsMap[data.tags[tname].address] = tname;
+        }
         logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 
@@ -212,7 +262,15 @@ function INMATIONclient(_data, _logger, _events) {
      * Set the Items value, publish to broker
      */
     this.setValue = function (sigid, value) {
-        logger.error(`'${data.name}'setValue not supported`);
+        if (client && connected && data.tags[sigid]) {
+            let item = new model.Item(data.tags[sigid].address);
+            item.v = value;
+            client.write([item], (err) => {
+                if (err) {
+                    logger.error(`'${data.name}'setValue ${err}`);
+                }
+            });
+        }
     }
 
     /**
@@ -239,14 +297,28 @@ function INMATIONclient(_data, _logger, _events) {
      */
     var _createSubscription = function () {
         return new Promise(function (resolve, reject) {
-            client.onDataChanged( function(topic, msg, pkt) {
-                if (data.tags[topic]) {
-                    data.tags[topic].value = msg.toString();
-                    data.tags[topic].timestamp = new Date().getTime();
-                    data.tags[topic].changed = true;
+            var topics = Object.keys(itemsMap).map((item) => new model.Item(item));
+            client.subscribeToDataChanges(topics, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    client.onDataChanged((err, items) => {
+                        if (err) {
+                            logger.error(`'${data.name}'onDataChanged ${err}`);
+                        }
+                        for (const item of items) {
+                            let tagname = itemsMap[item.p];
+                            if (data.tags[tagname]) {
+                                data.tags[tagname].value = item.v.toString();
+                                data.tags[tagname].timestamp = new Date().getTime();
+                                data.tags[tagname].changed = true;
+                            }
+                            // console.log(`Path: ${item.p} value: ${item.v}`);
+                        }                
+                    });
+                    resolve();
                 }
             });
-            resolve();
         });   
     }
 
@@ -312,6 +384,21 @@ function INMATIONclient(_data, _logger, _events) {
         overloading = 0;
         return true;
     }
+
+    /**
+     * Reset the timeout by browse the Topics, 10 seconds to receive published Topics
+     */    
+    // var _resetBrowserTimeout = function () {
+    //     if (browser.timeout) {
+    //         clearTimeout(browser.timeout);
+    //     }        
+    //     browser.timeout = setTimeout(() => {
+    //         if (browser.client && browser.connected) {
+    //             browser.client.disconnectWS();
+    //         }
+    //         browser.connected = false;
+    //     }, 20000);
+    // }
 }
 
 /**

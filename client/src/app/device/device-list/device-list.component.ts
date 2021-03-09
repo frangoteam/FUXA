@@ -144,7 +144,7 @@ export class DeviceListComponent implements OnInit {
     onAddTag() {
         if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
-        } else if (this.deviceSelected.type === DeviceType.MQTTclient || this.deviceSelected.type === DeviceType.inmation) {
+        } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.addTopic();
         } else {
             let tag = new Tag();
@@ -208,7 +208,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type) {
-        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU);
+        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.inmation);
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {

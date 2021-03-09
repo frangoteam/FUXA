@@ -90,6 +90,8 @@
     "general.username": "Username",
     "general.password": "Password",
     "general.clientId": "Client ID",
+    "general.authority": "Authority",
+    "general.grant-type": "Grant type",
 
 
     "tester.title": "Variable",
@@ -443,6 +445,8 @@
     "device.tag-property-min": "Min",
     "device.tag-property-max": "Max",
     "device.tag-property-address-offset": "Address offset (1-65536)",
+    "device.tag-property-obj-name": "Object Name",
+    "device.tag-property-path": "Path",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     

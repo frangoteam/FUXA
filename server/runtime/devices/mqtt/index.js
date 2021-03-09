@@ -15,6 +15,7 @@ function MQTTclient(_data, _logger, _events) {
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of asked values
+    var getProperty = null;             // Function to ask property (security)
     var options = {};
     var client = null;
     var browser = null;
@@ -25,13 +26,23 @@ function MQTTclient(_data, _logger, _events) {
      * Emit connection status, Clear the memory Topics value
      */    
     this.connect = function () {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             if (data.property && data.property.address) {
                 try {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         options = getConnectionOptions(data.property)
                         options.connectTimeout = 5 * 1000;
+                        if (getProperty) {
+                            var result = await getProperty({query: 'security', name: data.name});
+                            if (result && result.value && result.value !== 'null') {
+                                // property security mode
+                                var property = JSON.parse(result.value);
+                                options.clientId = property.clientId;
+                                options.username = property.username;
+                                options.password = property.password;
+                            }
+                        }
                         client = mqtt.connect(options.url, options);
                         _clearVarsValue();
                         client.on('connect', function () {
@@ -187,6 +198,13 @@ function MQTTclient(_data, _logger, _events) {
         daqInterval = intervalToSave;
     }
     this.addDaq = null;      
+    
+    /**
+     * Set function to ask property (security)
+     */
+    this.bindGetProperty = function (fnc) {
+        getProperty = fnc;
+    }
 
     /**
      * Load Topics attribute to read with polling
