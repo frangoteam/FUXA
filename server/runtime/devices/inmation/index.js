@@ -264,7 +264,18 @@ function INMATIONclient(_data, _logger, _events) {
     this.setValue = function (sigid, value) {
         if (client && connected && data.tags[sigid]) {
             let item = new model.Item(data.tags[sigid].address);
-            item.v = value;
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            item.v = val;
             client.write([item], (err) => {
                 if (err) {
                     logger.error(`'${data.name}'setValue ${err}`);
