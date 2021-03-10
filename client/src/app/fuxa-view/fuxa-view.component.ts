@@ -128,14 +128,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 if (!items.hasOwnProperty(key)) {
                     continue;
                 }
-                let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true);
-                this.gaugesManager.bindGauge(gauge, this.id, items[key],
-                    (gatobindclick) => {
-                        this.onBindClick(gatobindclick);
-                    },
-                    (gatobindhtmlevent) => {
-                        this.onBindHtmlEvent(gatobindhtmlevent);
-                    });
+                try {
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true);
+                    this.gaugesManager.bindGauge(gauge, this.id, items[key],
+                        (gatobindclick) => {
+                            this.onBindClick(gatobindclick);
+                        },
+                        (gatobindhtmlevent) => {
+                            this.onBindHtmlEvent(gatobindhtmlevent);
+                        });
+                } catch (err) {
+                    console.log('loadWatch: ' + err);
+                }
             }
             this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(this.handleSignal.bind(this));
             for (let variableId in this.staticValues) {
