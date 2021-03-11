@@ -34,11 +34,13 @@ function MQTTclient(_data, _logger, _events) {
                         options = getConnectionOptions(data.property)
                         options.connectTimeout = 5 * 1000;
                         if (getProperty) {
-                            var secprop = await getProperty({query: 'security', name: data.name});
-                            if (secprop) {
-                                options.clientId = secprop.clientId;
-                                options.username = secprop.username;
-                                options.password = secprop.password;
+                            var result = await getProperty({query: 'security', name: data.name});
+                            if (result && result.value && result.value !== 'null') {
+                                // property security mode
+                                var property = JSON.parse(result.value);
+                                options.clientId = property.clientId;
+                                options.username = property.username;
+                                options.password = property.password;
                             }
                         }
                         client = mqtt.connect(options.url, options);
