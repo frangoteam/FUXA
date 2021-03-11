@@ -3,6 +3,8 @@ import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
 import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
+import { Utils } from '../../../_helpers/utils';
+
 @Component({
     selector: 'gauge-value',
     templateUrl: './value.component.html',
@@ -50,7 +52,7 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
             }
             let unit = GaugeBaseComponent.getUnit(ga.property);
             let digit = GaugeBaseComponent.getDigits(ga.property);
-            if (digit) {
+            if (!Utils.isNullOrUndefined(digit)) {
                 val = parseFloat(val).toFixed(digit);
             }
             g.textContent = val;
