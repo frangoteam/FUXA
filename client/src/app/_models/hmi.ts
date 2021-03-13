@@ -158,6 +158,7 @@ export class GaugeRangeProperty {
     color: string;
     type: any;
     style: any;
+    stroke: string;
 }
 
 export class GaugeChartProperty {

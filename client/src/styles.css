@@ -678,5 +678,6 @@ mat-toolbar-row {
 .input-color {
     cursor: pointer;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    height: 28px !important;
+    height: 14px !important;
+    color:gray;
 }

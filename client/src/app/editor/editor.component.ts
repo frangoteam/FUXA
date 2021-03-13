@@ -500,19 +500,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * event from svg-editor by new selection svg element
      * @param event svg element
      */
-    private onSelectedElement(event) {
+    private onSelectedElement(elems) {
         this.selectedElement = null;
         try {
             // to remove some strange effects
             if (document.activeElement !== document.body) (document.activeElement as HTMLElement).blur();
         } catch (e) { }
-        if (event) {
-            for (let i = 0; i < event.length; i++) {
+        if (elems) {
+            for (let i = 0; i < elems.length; i++) {
                 // console.log('selected: ' + event[i].id + ' ' + event[i].type);
             }
-            if (event.length <= 1) {
-                this.selectedElement = event[0];
-                this.selectedElement.type = event[0].type || 'svg-ext-shapes-default';
+            if (elems.length <= 1) {
+                this.selectedElement = elems[0];
+                this.selectedElement.type = elems[0].type || 'svg-ext-shapes-' + (this.currentMode || 'default');
                 this.checkColors(this.selectedElement);
                 this.checkGaugeInView(this.selectedElement);
             }

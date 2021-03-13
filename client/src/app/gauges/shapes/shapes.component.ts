@@ -54,7 +54,6 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (svgele.node) {
-            let clr = '';
             let value = parseFloat(sig.value);
             if (Number.isNaN(value)) {
                 // maybe boolean
@@ -64,14 +63,23 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
             }
             if (ga.property) {
                 if (ga.property.variableId === sig.id && ga.property.ranges) {
+                    let fill = '';
+                    let stroke = '';        
                     for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                         if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
-                            clr = ga.property.ranges[idx].color;
+                            fill = ga.property.ranges[idx].color;
+                            stroke = ga.property.ranges[idx].stroke;
                         }
                     }
-                    if (clr) {
-                        svgele.node.setAttribute('fill', clr);
+                    // check if general shape (line/path/fpath/text) to set the stroke 
+                    let mode = ga.type.replace('svg-ext-shapes-', '');
+                    if (fill) {
+                        svgele.node.setAttribute('fill', fill);
                     }
+                    if (stroke) {
+                        svgele.node.setAttribute('stroke', stroke);
+                    }
+
                 }
                 // check actions
                 if (ga.property.actions) {

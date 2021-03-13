@@ -59,15 +59,22 @@ export class FlexInputComponent implements OnInit {
                 this.onChangeFormat('fractionDigits', this.ranges[0]['fractionDigits']);
             }
         }
-        // this.ranges.forEach(element => {
-        //   this.addInput(element.type, element.min, element.max, element.color);
-        // });
+        this.ranges.forEach(range => {
+            if (!range.color) {
+                range.color = '';
+            }
+            if (!range.stroke) {
+                range.stroke = '';
+            }
+        });
     }
 
     onAddInput() {
-        let ip: GaugeRangeProperty = new GaugeRangeProperty();
-        ip.type = this.type;
-        this.addInput(ip);
+        let gap: GaugeRangeProperty = new GaugeRangeProperty();
+        gap.type = this.type;
+        gap.color = '';
+        gap.stroke = '';
+        this.addInput(gap);
     }
 
     onRemoveInput(index: number) {
