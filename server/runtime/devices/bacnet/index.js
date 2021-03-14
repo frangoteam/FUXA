@@ -107,7 +107,7 @@ function BACNETclient(_data, _logger, _events) {
                 if (_checkWorking(true)) {
                     try {
                         if (node.parent) {      // BACnet object => read property
-
+                            _checkWorking(false);
                         } else {                // BACnet device => read object list
                             _readObjectList(node.id).then(result => {
                                 resolve(result);
@@ -336,7 +336,8 @@ function BACNETclient(_data, _logger, _events) {
                     var device = devs[index];
                     try {
                         readfnc.push(_readProperty({ type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: device.deviceId}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME));
-                    } catch (error) {
+                    } catch (err) {
+                        logger.error(`'${data.name}' _readProperty error! ${err}`);
                     }
                 }
                 Promise.all(readfnc).then(results => {

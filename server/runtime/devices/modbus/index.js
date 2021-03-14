@@ -117,15 +117,20 @@ function MODBUSclient(_data, _logger, _events) {
             if (!data.property.options) {
                 for (var memaddr in memory) {
                     var tokenizedAddress = parseAddress(memaddr);
-                    readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
-                    readVarsfnc.push(await delay(100));
+                    try {
+                        readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
+                        readVarsfnc.push(await delay(100));
+                    } catch (err) {
+                        logger.error(`'${data.name}' _readMemory error! ${err}`);
+                    }
                 }
             } else {
                 for (var memaddr in mixItemsMap) {
                     try {
                         readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
                         readVarsfnc.push(await delay(100));
-                    } catch (error) {
+                    } catch (err) {
+                        logger.error(`'${data.name}' _readMemory error! ${err}`);
                     }
                 }
             }

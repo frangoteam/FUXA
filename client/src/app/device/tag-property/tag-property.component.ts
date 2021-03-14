@@ -233,6 +233,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 node.class = n.class;
                 node.property = this.getProperty(n);
                 if (this.data.device.type === DeviceType.BACnet) {
+                    node.class = Node.strToType(n.class);
                     node.type = n.type;
                     var typetext = Object.values(BACnetObjectType)[n.type];
                     if (typetext) {

@@ -168,6 +168,13 @@ export class Node {
             this.todefine.options.push(opt);
         }
     }
+
+    static strToType(str: string): any {
+        if (NodeType[str]) {
+            return NodeType[str];
+        }
+        return str;
+    }
 }
 
 export enum NodeType {
