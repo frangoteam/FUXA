@@ -405,13 +405,13 @@ app-root {
     opacity: 0.5;
 }
 
-.my-form-field input,
-mat-select {
-    font-size: 15px;
+.my-form-field input, mat-select {
+    font-size: 13px;
     border: unset;
     /* border: 0.5px solid rgba(0,0,0,0.1); */
     border-radius: 2px;
     opacity: 1;
+    font-size: 13px;
 }
 
 .my-form-field input {
@@ -678,6 +678,13 @@ mat-toolbar-row {
 .input-color {
     cursor: pointer;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    height: 14px !important;
+    font-size: 13px;
+    padding: 6px 3px 7px 4px;
     color:gray;
+}
+
+.input-color input:focus {
+    padding: 4px 1px 5px 2px;
+    border: 2px solid #ccc;
+    background-color: white;
 }
