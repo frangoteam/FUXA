@@ -212,8 +212,12 @@ function MQTTclient(_data, _logger, _events) {
     this.load = function (_data) {
         varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
-        var count = Object.keys(data.tags).length;
-        logger.info(`'${data.name}' data loaded (${count})`, true);
+        try {
+            var count = Object.keys(data.tags).length;
+            logger.info(`'${data.name}' data loaded (${count})`, true);
+        } catch (err) {
+            logger.error(`'${data.name}' load error! ${err}`);
+        }
     }
 
     /**

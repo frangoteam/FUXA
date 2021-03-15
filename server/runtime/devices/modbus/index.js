@@ -185,54 +185,62 @@ function MODBUSclient(_data, _logger, _events) {
         var stepsMap = {};
         var count = 0;
         for (var id in data.tags) {
-            var offset = parseInt(data.tags[id].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
-            var token = Math.trunc(offset / TOKEN_LIMIT);
-            var memaddr = formatAddress(data.tags[id].memaddress, token);
-            if (!memory[memaddr]) {
-                memory[memaddr] = new MemoryItems();
-            }
-            if (!memory[memaddr].Items[offset]) {
-                memory[memaddr].Items[offset] = new MemoryItem(data.tags[id].type, offset);
-            }
-            memory[memaddr].Items[offset].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
-            
-            if (offset < memory[memaddr].Start) {
-                if (memory[memaddr].Start != 65536) {
-                    memory[memaddr].MaxSize += memory[memaddr].Start - offset;
-                    memory[memaddr].Start = offset;
+            try {
+                var offset = parseInt(data.tags[id].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
+                var token = Math.trunc(offset / TOKEN_LIMIT);
+                var memaddr = formatAddress(data.tags[id].memaddress, token);
+                if (!memory[memaddr]) {
+                    memory[memaddr] = new MemoryItems();
+                }
+                if (!memory[memaddr].Items[offset]) {
+                    memory[memaddr].Items[offset] = new MemoryItem(data.tags[id].type, offset);
+                }
+                memory[memaddr].Items[offset].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
+                
+                if (offset < memory[memaddr].Start) {
+                    if (memory[memaddr].Start != 65536) {
+                        memory[memaddr].MaxSize += memory[memaddr].Start - offset;
+                        memory[memaddr].Start = offset;
+                    } else {
+                        memory[memaddr].MaxSize = datatypes[data.tags[id].type].WordLen;
+                        memory[memaddr].Start = offset;
+                    }
                 } else {
-                    memory[memaddr].MaxSize = datatypes[data.tags[id].type].WordLen;
-                    memory[memaddr].Start = offset;
+                    var len = offset + datatypes[data.tags[id].type].WordLen - memory[memaddr].Start;
+                    if (memory[memaddr].MaxSize < len) {
+                        memory[memaddr].MaxSize = len;
+                    }
                 }
-            } else {
-                var len = offset + datatypes[data.tags[id].type].WordLen - memory[memaddr].Start;
-                if (memory[memaddr].MaxSize < len) {
-                    memory[memaddr].MaxSize = len;
-                }
+                memItemsMap[id] = memory[memaddr].Items[offset];
+                stepsMap[parseInt(data.tags[id].memaddress) + offset] = datatypes[data.tags[id].type].WordLen;
+            } catch (err) {
+                logger.error(`'${data.name}' load error! ${err}`);
             }
-            memItemsMap[id] = memory[memaddr].Items[offset];
-            stepsMap[parseInt(data.tags[id].memaddress) + offset] = datatypes[data.tags[id].type].WordLen;
         }
         stepsMap[999999] = true;    // used to process the last right address
         let laststart = -1;
         let lastkey = -1;
         Object.keys(stepsMap).sort().forEach(function(key) {
             // lastkey++;
-            var adr = parseInt(key);
-            if (laststart >= 0 && adr > lastkey) {
-                let mits = new MemoryItems();
-                mits.Start = laststart - getMemoryAddress(laststart, false);
-                mits.MaxSize = lastkey - laststart; 
-                var memaddr = getMemoryAddress(laststart, true);
-                mits.Items = getMemoryItems(memory[memaddr].Items, mits.Start, mits.MaxSize);
-                mixItemsMap[laststart] = mits;
-                laststart = adr;
+            try {
+                var adr = parseInt(key);
+                if (laststart >= 0 && adr > lastkey) {
+                    let mits = new MemoryItems();
+                    mits.Start = laststart - getMemoryAddress(laststart, false);
+                    mits.MaxSize = lastkey - laststart; 
+                    var memaddr = getMemoryAddress(laststart, true);
+                    mits.Items = getMemoryItems(memory[memaddr].Items, mits.Start, mits.MaxSize);
+                    mixItemsMap[laststart] = mits;
+                    laststart = adr;
 
-            } 
-            if (laststart < 0) {
-                laststart = adr;
+                } 
+                if (laststart < 0) {
+                    laststart = adr;
+                }
+                lastkey = adr + stepsMap[key];
+            } catch (err) {
+                logger.error(`'${data.name}' load error! ${err}`);
             }
-            lastkey = adr + stepsMap[key];
         });
         logger.info(`'${data.name}' data loaded (${count})`, true);
     }
