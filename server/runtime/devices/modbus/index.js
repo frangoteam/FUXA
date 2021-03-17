@@ -17,7 +17,7 @@ function MODBUSclient(_data, _logger, _events) {
     var lastStatus = '';                // Last Device status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var memItemsMap = {};               // Mapped Signale name with MemoryItem to find for set value
-    var mixItemsMap = {};               // 
+    var mixItemsMap = {};               // Map the fragmented Signale { key = start address, value = MemoryItems }
     var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
     var lastDaqInterval = 0;            // Help to check daqInterval
     var overloading = 0;                // Overloading counter to mange the break connection
@@ -181,8 +181,8 @@ function MODBUSclient(_data, _logger, _events) {
         memory = {};
         varsValue = [];
         // memItemsMap = {};
-        mixItemsMap = {};
-        var stepsMap = {};
+        mixItemsMap = {};   // Map the fragmented tag { key = start address, value = MemoryItems }
+        var stepsMap = {};  // Map the tag start address and size { key = start address, value = signal size and offset }
         var count = 0;
         for (var id in data.tags) {
             try {
@@ -212,32 +212,36 @@ function MODBUSclient(_data, _logger, _events) {
                     }
                 }
                 memItemsMap[id] = memory[memaddr].Items[offset];
-                stepsMap[parseInt(data.tags[id].memaddress) + offset] = datatypes[data.tags[id].type].WordLen;
+                stepsMap[parseInt(data.tags[id].memaddress) + offset] =  { size: datatypes[data.tags[id].type].WordLen, offset: offset };
             } catch (err) {
                 logger.error(`'${data.name}' load error! ${err}`);
             }
         }
-        stepsMap[999999] = true;    // used to process the last right address
-        let laststart = -1;
-        let lastkey = -1;
-        Object.keys(stepsMap).sort().forEach(function(key) {
-            // lastkey++;
+        // for fragmented
+        let lastStart = -1;             // last start address
+        let lastMemAdr = -1;
+        let nextAdr = -1;
+        Object.keys(stepsMap).sort((a, b) => {return a - b; }).forEach(function(key) {
             try {
-                var adr = parseInt(key);
-                if (laststart >= 0 && adr > lastkey) {
+                var adr = parseInt(key);        // tag address
+                let lastAdrSize = adr + stepsMap[key].size;
+                let offset = stepsMap[key].offset;
+                if (nextAdr < adr) {                    
+                    // to fragment then new range
+                    lastStart = adr;
                     let mits = new MemoryItems();
-                    mits.Start = laststart - getMemoryAddress(laststart, false);
-                    mits.MaxSize = lastkey - laststart; 
-                    var memaddr = getMemoryAddress(laststart, true);
-                    mits.Items = getMemoryItems(memory[memaddr].Items, mits.Start, mits.MaxSize);
-                    mixItemsMap[laststart] = mits;
-                    laststart = adr;
-
-                } 
-                if (laststart < 0) {
-                    laststart = adr;
+                    mits.Start = lastStart - getMemoryAddress(lastStart, false);
+                    mits.MaxSize = lastAdrSize - lastStart;
+                    var token = Math.trunc(offset / TOKEN_LIMIT);
+                    lastMemAdr = getMemoryAddress(lastStart, true, token);
+                    mits.Items = getMemoryItems(memory[lastMemAdr].Items, mits.Start, mits.MaxSize);
+                    mixItemsMap[lastStart] = mits;
+                } else if (mixItemsMap[lastStart]) {    
+                    // to attach of exist range
+                    mixItemsMap[lastStart].MaxSize = lastAdrSize - lastStart;
+                    mixItemsMap[lastStart].Items = getMemoryItems(memory[lastMemAdr].Items, mixItemsMap[lastStart].Start, mixItemsMap[lastStart].MaxSize);
                 }
-                lastkey = adr + stepsMap[key];
+                nextAdr = 1 + adr + stepsMap[key].size;
             } catch (err) {
                 logger.error(`'${data.name}' load error! ${err}`);
             }
@@ -562,22 +566,37 @@ function MODBUSclient(_data, _logger, _events) {
 
     const formatAddress = function(address, token) { return token + '-' + address; }
     const parseAddress = function(address) { return { token:  address.split('-')[0], address: address.split('-')[1] }; }
-    const getMemoryAddress = function(address, askey) {
+    const getMemoryAddress = function(address, askey, token) {
         if (address < ModbusMemoryAddress.DigitalInputs) {
-            if (askey) return formatAddress('000000', '0');
+            if (askey) {
+                return formatAddress('000000', token);
+            } 
             return ModbusMemoryAddress.CoilStatus;
         } else if (address < ModbusMemoryAddress.InputRegisters) {
-            if (askey) return formatAddress(ModbusMemoryAddress.DigitalInputs, '0');
+            if (askey) {
+                return formatAddress(ModbusMemoryAddress.DigitalInputs, token);
+            }
             return ModbusMemoryAddress.DigitalInputs;
         } else if (address < ModbusMemoryAddress.HoldingRegisters) {
-            if (askey) return formatAddress(ModbusMemoryAddress.InputRegisters, '0');
+            if (askey) {
+                return formatAddress(ModbusMemoryAddress.InputRegisters, token);
+            }
             return ModbusMemoryAddress.InputRegisters;
         } else {
-            if (askey) return formatAddress(ModbusMemoryAddress.HoldingRegisters, '0');
+            if (askey) {
+                return formatAddress(ModbusMemoryAddress.HoldingRegisters, token);
+            }
             return ModbusMemoryAddress.HoldingRegisters;
         }
     }
 
+    /**
+     * Return the Items that are wit address and size in the range start, size
+     * @param {*} items 
+     * @param {*} start 
+     * @param {*} size 
+     * @returns 
+     */
     const getMemoryItems = function(items, start, size) {
         let result = {};
         for (var itemidx in items) {

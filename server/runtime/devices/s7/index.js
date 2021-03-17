@@ -147,29 +147,33 @@ function S7client(_data, _logger, _events) {
         mixItemsMap = {};
         var count = 0;
         for (var id in data.tags) {
-            var varDb = _getTagItem(data.tags[id]);
-            if (varDb instanceof DbItem) {
-                if (!db[varDb.dbnum]) {
-                    var grptag = new DbItems(varDb.dbnum);
-                    db[varDb.dbnum] = grptag;
+            try {
+                var varDb = _getTagItem(data.tags[id]);
+                if (varDb instanceof DbItem) {
+                    if (!db[varDb.dbnum]) {
+                        var grptag = new DbItems(varDb.dbnum);
+                        db[varDb.dbnum] = grptag;
+                    }
+                    if (!db[varDb.dbnum].Items[varDb.Start]) {
+                        db[varDb.dbnum].Items[varDb.Start] = varDb;
+                    }
+                    db[varDb.dbnum].Items[varDb.Start].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
+                    if (db[varDb.dbnum].MaxSize < varDb.Start + datatypes[varDb.type].S7WordLen) {
+                        db[varDb.dbnum].MaxSize = varDb.Start + datatypes[varDb.type].S7WordLen;
+                    }
+                    // check Bit to Map
+                    if (varDb.bit >= 0) {
+                        varDb.BitMap[varDb.bit] = id;
+                    }
+                    count++;
+                    dbItemsMap[id] = db[varDb.dbnum].Items[varDb.Start];
+                } else if (varDb && !isNaN(varDb.Start)) {
+                    varDb.id = id;
+                    varDb.name = data.tags[id].name;
+                    mixItemsMap[id] = varDb;
                 }
-                if (!db[varDb.dbnum].Items[varDb.Start]) {
-                    db[varDb.dbnum].Items[varDb.Start] = varDb;
-                }
-                db[varDb.dbnum].Items[varDb.Start].Tags.push(data.tags[id]); // because you can have multiple tags at the same DB address
-                if (db[varDb.dbnum].MaxSize < varDb.Start + datatypes[varDb.type].S7WordLen) {
-                    db[varDb.dbnum].MaxSize = varDb.Start + datatypes[varDb.type].S7WordLen;
-                }
-                // check Bit to Map
-                if (varDb.bit >= 0) {
-                    varDb.BitMap[varDb.bit] = id;
-                }
-                count++;
-                dbItemsMap[id] = db[varDb.dbnum].Items[varDb.Start];
-            } else if (varDb && !isNaN(varDb.Start)) {
-                varDb.id = id;
-                varDb.name = data.tags[id].name;
-                mixItemsMap[id] = varDb;
+            } catch (err) {
+                logger.error(`'${data.name}' load error! ${err}`);
             }
         }
         logger.info(`'${data.name}' data loaded (${count})`, true);
