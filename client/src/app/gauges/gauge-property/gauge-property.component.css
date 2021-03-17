@@ -17,6 +17,10 @@
     display: inline-table !important;
 }
 
+::ng-deep .mat-tab-label {
+  height: 34px !important;
+}
+
 .mat-tab-container {
   min-height:300px;
   height:60vmin;

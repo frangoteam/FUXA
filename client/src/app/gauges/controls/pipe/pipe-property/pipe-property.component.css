@@ -53,3 +53,7 @@
 ::ng-deep .mat-dialog-container {
     display: inline-table !important;
 }
+
+::ng-deep .mat-tab-label {
+    height: 34px !important;
+}

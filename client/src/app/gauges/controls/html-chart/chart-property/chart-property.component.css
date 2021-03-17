@@ -30,6 +30,10 @@
     width: 100px;
 }
 
+::ng-deep .mat-tab-label {
+    height: 34px !important;
+}
+
 .color-field input {
     padding: 0 !important;
     height: 29px;

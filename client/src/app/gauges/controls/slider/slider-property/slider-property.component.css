@@ -21,3 +21,7 @@
     padding: 0 !important;
     height: 29px;
 }
+
+::ng-deep .mat-tab-label {
+    height: 34px !important;
+}

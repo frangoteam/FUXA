@@ -498,6 +498,10 @@ mat-toolbar-row {
     align-items: unset !important;
 }
 
+.mat-dialog-title {
+    margin: 0 0 12px !important;
+}
+
 .mat-raised-button {
     /* padding: 2px 4px !important; */
     font-weight: 600 !important;

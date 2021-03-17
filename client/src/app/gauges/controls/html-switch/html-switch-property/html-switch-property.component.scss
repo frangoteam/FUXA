@@ -25,3 +25,7 @@
 .slider-small > .mat-slider-horizontal {
     min-width: 80px;
 }
+
+::ng-deep .mat-tab-label {
+    height: 34px !important;
+}
