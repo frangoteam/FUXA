@@ -85,12 +85,5 @@ Please ensure you follow the coding standards used through-out the existing code
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.
 
-## Thank you!
-- [SVG-edit](https://github.com/SVG-Edit/svgedit)
-- [node-snap7](https://github.com/mathiask88/node-snap7)
-- [node-opcua](https://github.com/node-opcua/node-opcua)
-- [node-modbus-serial](https://github.com/yaacov/node-modbus-serial)
-- [node-bacstack](https://github.com/fh1ch/node-bacstack)
-
 ## License
 MIT.
