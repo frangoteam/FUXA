@@ -150,8 +150,18 @@ export class GaugesManager {
         return false;
     }
 
+    /**
+     * Return if is a gauge by check the svg attribute 'type' = 'svg-ext-...'
+     * @param type 
+     * @returns 
+     */
     isGauge(type: string) {
-        return this.gaugesTags.indexOf(type) > -1;
+        for (let tag in this.gaugesTags) {
+            if (type.startsWith(this.gaugesTags[tag])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
