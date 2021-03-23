@@ -333,13 +333,16 @@ function BACNETclient(_data, _logger, _events) {
      * @param {*} devs 
      */
     var _askName = function (devs) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             var readfnc = [];
             if (devs.length) {
                 for (var index in devs) {
                     var device = devs[index];
                     try {
-                        readfnc.push(_readProperty({ type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: device.deviceId}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME));
+                        let rp = await _readProperty({ type: bacnet.enum.ObjectTypes.OBJECT_DEVICE, instance: device.deviceId}, bacnet.enum.PropertyIds.PROP_OBJECT_NAME);
+                        if (rp) {
+                            readfnc.push(rp);
+                        }
                     } catch (err) {
                         logger.error(`'${data.name}' _readProperty error! ${err}`);
                     }
@@ -435,11 +438,11 @@ function BACNETclient(_data, _logger, _events) {
         return new Promise(function (resolve, reject) {
             client.readProperty(ipAddress, bacobj, property, (err, value) => {
                 if (err) {
-                    reject(err);
+                    resolve();
                 } else if (value && value.values && value.values[0] && value.values[0].value) {
                     resolve({ type: bacobj.type, instance: bacobj.instance, value: value.values[0].value });
                 } else {
-                    reject('unknow error');
+                    resolve();
                 }
             });
         });
