@@ -506,6 +506,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         if (event.actparam) {
             let variableId = this.fetchVariableId(event) || ga.property.variableId
             this.gaugesManager.putSignalValue(variableId, event.actparam);
+            if (variableId.startsWith(USER_DEFINED_VARIABLE)) {
+                this.gaugesManager.setSignalValue(variableId, event.actparam);
+            }
         }
     }
 

@@ -187,10 +187,15 @@ export class GaugesManager {
         return false;
     }
 
-
-    //! toremove
-    setSignalValue(sig: Variable) {
-        this.onchange.emit(sig);
+    /**
+     * emit the signal value to the frontend, used for user_defined variable to make logic in frontend
+     * @param sigId 
+     * @param value 
+     */
+    setSignalValue(sigId: string, value: any) {
+        let variable = new Variable(sigId, null, null);
+        variable.value = value;
+        this.onchange.emit(variable);
     }
 
     //! toremove

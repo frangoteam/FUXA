@@ -69,7 +69,6 @@ export class HmiService {
             if (this.socket) {
                 this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
             }
-            // this.onVariableChanged.emit(this.variables[sigId]);
         }
     }
 
