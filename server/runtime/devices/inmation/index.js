@@ -319,10 +319,14 @@ function INMATIONclient(_data, _logger, _events) {
                         }
                         for (const item of items) {
                             let tagname = itemsMap[item.p];
-                            if (data.tags[tagname]) {
-                                data.tags[tagname].value = item.v.toString();
-                                data.tags[tagname].timestamp = new Date().getTime();
-                                data.tags[tagname].changed = true;
+                            if (data.tags[tagname] && item.v !== undefined && item.v !== null) {
+                                try {
+                                    data.tags[tagname].value = item.v.toString();
+                                    data.tags[tagname].timestamp = new Date().getTime();
+                                    data.tags[tagname].changed = true;
+                                } catch (error) {
+                                    console.log(error);
+                                }
                             }
                             // console.log(`Path: ${item.p} value: ${item.v}`);
                         }                
