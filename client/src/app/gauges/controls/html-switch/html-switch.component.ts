@@ -77,8 +77,10 @@ export class HtmlSwitchComponent {
                 htmlSwitch.appendChild(loaderComponentElement);
                 if (ga.property && ga.property.options) {
                     ga.property.options.height = htmlSwitch.clientHeight;
-                    if (!componentRef.instance.setOptions(ga.property.options)) {
-                        // componentRef.instance.init();
+                    if (componentRef.instance.setOptions(ga.property.options)) {
+                        if (ga.property.options.radius) {
+                            htmlSwitch.style.borderRadius = ga.property.options.radius + 'px';
+                        }
                     }
                 }
                 return componentRef.instance;

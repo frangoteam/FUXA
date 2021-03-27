@@ -623,7 +623,7 @@ mat-toolbar-row {
     border-radius: inherit;
     transition: margin-left 300ms ease-in-out, background-color 300ms,
         color 300ms;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.28);
     position: absolute;
     cursor: pointer;
     top: 0;
