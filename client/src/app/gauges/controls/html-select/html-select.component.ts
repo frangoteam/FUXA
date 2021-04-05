@@ -1,8 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, GaugeAction, Event, GaugeActionsType } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+
+declare var SVG: any;
 
 @Component({
     selector: 'html-select',
@@ -17,6 +19,8 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
     static LabelTag = 'HtmlSelect';
     static prefix = 'S-HXS_';
 
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show };
+
     constructor() {
         super();
     }
@@ -29,11 +33,20 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
         if (pro.variableId) {
             res.push(pro.variableId);
         }
+        if (pro.actions && pro.actions.length) {
+            pro.actions.forEach(act => {
+                res.push(act.variableId);
+            });
+        }
         return res;
     }
 
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.Step;
+    }
+
+    static getActions() {
+        return this.actionsType;
     }
 
     static getHtmlEvents(ga: GaugeSettings): Event {
@@ -52,17 +65,29 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
-        let select = Utils.searchTreeStartWith(svgele.node, this.prefix);
-        if (select) {
-            let val = parseFloat(sig.value);
-            if (Number.isNaN(val)) {
-                // maybe boolean
-                val = Number(sig.value);
-            } else {
-                val = parseFloat(val.toFixed(5));
+        try {
+            let select = Utils.searchTreeStartWith(svgele.node, this.prefix);
+            if (select) {
+                let val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                } else {
+                    val = parseFloat(val.toFixed(5));
+                }
+                select.value = val;
+                // check actions
+                if (ga.property.actions) {
+                    ga.property.actions.forEach(act => {
+                        if (act.variableId === sig.id) {
+                            HtmlSelectComponent.processAction(act, svgele, select, val, gaugeStatus);
+                        }
+                    });
+                }
             }
-            select.value = val;
-        }
+        } catch (err) {
+            console.log(err);
+        }            
     }
 
     static initElement(ga: GaugeSettings, isview: boolean = false) {
@@ -135,5 +160,19 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
             }
         }
         return ele.getAttribute('stroke');
+    }
+
+    static processAction(act: GaugeAction, svgele: any, select: any, value: any, gaugeStatus: GaugeStatus) {
+        if (this.actionsType[act.type] === this.actionsType.hide) {
+            if (act.range.min <= value && act.range.max >= value) {
+                let element = SVG.adopt(svgele.node);
+                this.runActionHide(element, act.type, gaugeStatus);
+            }
+        } else if (this.actionsType[act.type] === this.actionsType.show) {
+            if (act.range.min <= value && act.range.max >= value) {
+                let element = SVG.adopt(svgele.node);
+                this.runActionShow(element, act.type, gaugeStatus);
+            }
+        }
     }
 }

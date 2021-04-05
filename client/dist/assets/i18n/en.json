@@ -318,6 +318,7 @@
 
     "shapes.action-hide": "Hide",
     "shapes.action-show": "Show",
+    "shapes.action-blink": "Blink",
     "shapes.action-stop": "Stop",
     "shapes.action-clockwise": "Turn clockwise",
     "shapes.action-anticlockwise": "Turn anticlockwise",
@@ -488,6 +489,7 @@
     "gauges.property-map-variable": "Add context variable to bind",
     "gauges.property-head-remove-mapvariable": "Remove the bind",
     "gauges.property-tooltip-add-event": "Add event",
+    "gauges.property-interval-msec": "Interval (msec.)",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",

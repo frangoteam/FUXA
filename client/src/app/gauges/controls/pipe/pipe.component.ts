@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType } from '../../../_models/hmi';
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { Utils } from '../../../_helpers/utils';
 
@@ -15,11 +16,8 @@ export class PipeComponent {
     static LabelTag = 'Pipe';
     static prefixB = 'PIE_';
 
-    static actionsType = {
-        stop: 'shapes.action-stop',
-        clockwise: 'shapes.action-clockwise',
-        anticlockwise: 'shapes.action-anticlockwise',
-    }
+    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
+
     static getSignals(pro: any) {
         let res: string[] = [];
         if (pro.variableId) {
@@ -45,40 +43,44 @@ export class PipeComponent {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
-        if (svgele.node) {
-            let clr = '';
-            let value = parseFloat(sig.value);
-            if (Number.isNaN(value)) {
-                // maybe boolean
-                value = Number(sig.value);
-            } else {
-                value = parseFloat(value.toFixed(5));
-            }
-            if (ga.property) {
-                // check actions
-                if (ga.property.actions) {
-                    ga.property.actions.forEach(act => {
-                        if (act.variableId === sig.id) {
-                            PipeComponent.processAction(act, svgele, value, gaugeStatus);
-                        }
-                    });
+        try {
+            if (svgele.node) {
+                let clr = '';
+                let value = parseFloat(sig.value);
+                if (Number.isNaN(value)) {
+                    // maybe boolean
+                    value = Number(sig.value);
+                } else {
+                    value = parseFloat(value.toFixed(5));
+                }
+                if (ga.property) {
+                    // check actions
+                    if (ga.property.actions) {
+                        ga.property.actions.forEach(act => {
+                            if (act.variableId === sig.id) {
+                                PipeComponent.processAction(act, svgele, value, gaugeStatus);
+                            }
+                        });
+                    }
                 }
             }
+        } catch (err) {
+            console.log(err);
         }
     }
 
     static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
-        var element = SVG.adopt(svgele.node);
         if (act.range.min <= value && act.range.max >= value) {
-            PipeComponent.runAction(element, act.type, gaugeStatus);
-        }
+            var element = SVG.adopt(svgele.node);
+            PipeComponent.runMyAction(element, act.type, gaugeStatus);
+        }    
     }
 
-    static runAction(element, type, gaugeStatus: GaugeStatus) {
+    static runMyAction(element, type, gaugeStatus: GaugeStatus) {
         if (PipeComponent.actionsType[type] === PipeComponent.actionsType.stop) {
             if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
                 clearTimeout(gaugeStatus.actionRef.timer);
-                gaugeStatus.actionRef = null;
+                gaugeStatus.actionRef.timer = null;
             }
         } else {
             if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
@@ -86,7 +88,7 @@ export class PipeComponent {
             }
             if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
                 clearTimeout(gaugeStatus.actionRef.timer);
-                gaugeStatus.actionRef = null;
+                gaugeStatus.actionRef.timer = null;
             }
             var eletoanim = Utils.searchTreeStartWith(element.node, 'c' + this.prefixB);
             if (eletoanim) {
@@ -97,14 +99,14 @@ export class PipeComponent {
                         eletoanim.style.strokeDashoffset = len;
                         len--;
                     }, 20);
-                    gaugeStatus.actionRef = { type: type, timer: timeout };
+                    gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
                 } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.anticlockwise) {
                     let timeout = setInterval(() => {
                         if (len > 1000) len = 0;
                         eletoanim.style.strokeDashoffset = len;
                         len++;
                     }, 20);
-                    gaugeStatus.actionRef = { type: type, timer: timeout };
+                    gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
                 }
             }
         }

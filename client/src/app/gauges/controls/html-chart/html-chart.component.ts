@@ -31,7 +31,11 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, gauge?: NgxDygraphsComponent) {
-        gauge.addValue(sig.id, sig.value);
+        try {
+            gauge.addValue(sig.id, sig.value);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean, chartRange: any) {

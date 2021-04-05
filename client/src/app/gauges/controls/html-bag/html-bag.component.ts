@@ -35,7 +35,11 @@ export class HtmlBagComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, gauge?: NgxGaugeComponent) {
-        gauge.setValue(sig.value);
+        try {
+            gauge.setValue(sig.value);
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean) {

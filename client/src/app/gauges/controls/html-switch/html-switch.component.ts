@@ -51,15 +51,19 @@ export class HtmlSwitchComponent {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, switcher?: NgxSwitchComponent) {
-        if (switcher) {
-            let val = parseFloat(sig.value);
-            if (Number.isNaN(val)) {
-                // maybe boolean
-                val = Number(sig.value);
-            } else {
-                val = parseFloat(val.toFixed(5));
+        try {
+            if (switcher) {
+                let val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                } else {
+                    val = parseFloat(val.toFixed(5));
+                }
+                switcher.setValue(val);
             }
-            switcher.setValue(val);
+        } catch (err) {
+            console.log(err);
         }
     }
 

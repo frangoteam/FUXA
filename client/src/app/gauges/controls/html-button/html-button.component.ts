@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeAction, GaugeSettings, GaugeStatus, Variable } from '../../../_models/hmi';
+import { GaugeAction, GaugeSettings, GaugeStatus, Variable, GaugeActionsType } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -20,10 +20,8 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     static prefixB = 'B-HXB_';
     static prefixRect = 'svg_';
 
-    static actionsType = {
-        hide: 'shapes.action-hide',
-        show: 'shapes.action-show',
-    }
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink };
+    // static actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
 
     constructor() {
         super();
@@ -36,6 +34,11 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
         let res: string[] = [];
         if (pro.variableId) {
             res.push(pro.variableId);
+        }
+        if (pro.actions && pro.actions.length) {
+            pro.actions.forEach(act => {
+                res.push(act.variableId);
+            });
         }
         return res;
     }
@@ -77,34 +80,39 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-            let button = Utils.searchTreeStartWith(svgele.node, this.prefixB);
-            let clr = '';
-            let val = parseFloat(sig.value);
-            if (Number.isNaN(val)) {
-                // maybe boolean
-                val = Number(sig.value);
-            }
-            if (ga.property && ga.property.ranges) {
-                for (let idx = 0; idx < ga.property.ranges.length; idx++) {
-                    if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
-                        clr = ga.property.ranges[idx].color;
+        try {
+            if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
+                let button = Utils.searchTreeStartWith(svgele.node, this.prefixB);
+                let clr = '';
+                let val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                }
+                if (ga.property) {
+                    if (ga.property.ranges) {
+                        for (let idx = 0; idx < ga.property.ranges.length; idx++) {
+                            if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
+                                clr = ga.property.ranges[idx].color;
+                            }
+                        }
+                        if (clr) {
+                            button.style.backgroundColor = clr;
+                        }
+                    }
+                    // check actions
+                    if (ga.property.actions) {
+                        ga.property.actions.forEach(act => {
+                            if (act.variableId === sig.id) {
+                                HtmlButtonComponent.processAction(act, svgele, button, val, gaugeStatus);
+                            }
+                        });
                     }
                 }
-                if (clr) {
-                    button.style.backgroundColor = clr;
-                }
             }
-            // check actions
-            if (ga.property.actions) {
-                ga.property.actions.forEach(act => {
-                    if (act.variableId === sig.id) {
-                        HtmlButtonComponent.processAction(act, svgele, val, gaugeStatus);
-                    }
-                });
-            }
+        } catch (err) {
+            console.log(err);
         }
-
     }
 
     static getFillColor(ele) {
@@ -139,18 +147,20 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
         return ele.getAttribute('stroke');
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
-        let element = SVG.adopt(svgele.node);
-        if (act.range.min <= value && act.range.max >= value) {
-            this.runAction(element, act.type, gaugeStatus);
-        }
-    }
-
-    static runAction(element, type, gaugeStatus: GaugeStatus) {
-        if (this.actionsType[type] === this.actionsType.hide) {
-            gaugeStatus.actionRef = { type: type, animr: element.hide() };
-        } else if (this.actionsType[type] === this.actionsType.show) {
-            gaugeStatus.actionRef = { type: type, animr: element.show() };
+    static processAction(act: GaugeAction, svgele: any, button: any, value: any, gaugeStatus: GaugeStatus) {
+        if (this.actionsType[act.type] === this.actionsType.hide) {
+            if (act.range.min <= value && act.range.max >= value) {
+                let element = SVG.adopt(svgele.node);
+                this.runActionHide(element, act.type, gaugeStatus);
+            }
+        } else if (this.actionsType[act.type] === this.actionsType.show) {
+            if (act.range.min <= value && act.range.max >= value) {
+                let element = SVG.adopt(svgele.node);
+                this.runActionShow(element, act.type, gaugeStatus);
+            }
+        } else if (this.actionsType[act.type] === this.actionsType.blink) {
+            let inRange = (act.range.min <= value && act.range.max >= value);
+            this.checkActionBlink(button, act.type, gaugeStatus, inRange, act.options, true);
         }
     }
 }

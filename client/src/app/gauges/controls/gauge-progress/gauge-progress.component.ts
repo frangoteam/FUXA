@@ -43,32 +43,36 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
-            let gap: GaugeRangeProperty = ga.property.ranges[0];
-            let g = svgele.node.children[0];
-            let val = parseFloat(sig.value);
-            let rectBase = Utils.searchTreeStartWith(svgele.node, this.prefixA);
-            let heightBase = parseFloat(rectBase.getAttribute('height'));
-            let yBase = parseFloat(rectBase.getAttribute('y'));
-            let rect = Utils.searchTreeStartWith(svgele.node, this.prefixB);
-            if (rectBase && rect) {
-                if (val > gap.max) val = gap.max;
-                if (val < gap.min) val = gap.min;
-                let k = (heightBase - 0) / (gap.max - gap.min);
-                let vtoy = k * (val - gap.min);
-                rect.setAttribute('y', yBase + heightBase - vtoy);
-                rect.setAttribute('height', vtoy);
-                if (gap.style[1]) {
-                    let htmlValue = Utils.searchTreeStartWith(svgele.node, this.prefixValue);
-                    if (htmlValue) {
-                        htmlValue.innerHTML = val;
-                        if (gap.text) {
-                            htmlValue.innerHTML += ' ' + gap.text;
+        try {
+            if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
+                let gap: GaugeRangeProperty = ga.property.ranges[0];
+                let g = svgele.node.children[0];
+                let val = parseFloat(sig.value);
+                let rectBase = Utils.searchTreeStartWith(svgele.node, this.prefixA);
+                let heightBase = parseFloat(rectBase.getAttribute('height'));
+                let yBase = parseFloat(rectBase.getAttribute('y'));
+                let rect = Utils.searchTreeStartWith(svgele.node, this.prefixB);
+                if (rectBase && rect) {
+                    if (val > gap.max) val = gap.max;
+                    if (val < gap.min) val = gap.min;
+                    let k = (heightBase - 0) / (gap.max - gap.min);
+                    let vtoy = k * (val - gap.min);
+                    rect.setAttribute('y', yBase + heightBase - vtoy);
+                    rect.setAttribute('height', vtoy);
+                    if (gap.style[1]) {
+                        let htmlValue = Utils.searchTreeStartWith(svgele.node, this.prefixValue);
+                        if (htmlValue) {
+                            htmlValue.innerHTML = val;
+                            if (gap.text) {
+                                htmlValue.innerHTML += ' ' + gap.text;
+                            }
+                            htmlValue.style.top = (heightBase - vtoy - 7).toString() + 'px';
                         }
-                        htmlValue.style.top = (heightBase - vtoy - 7).toString() + 'px';
                     }
                 }
             }
+        } catch (err) {
+            console.log(err);
         }
     }
 

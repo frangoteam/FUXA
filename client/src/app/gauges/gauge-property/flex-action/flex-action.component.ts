@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeProperty, GaugeAction, GaugeRangeProperty } from '../../../_models/hmi';
+import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-action',
@@ -15,7 +15,8 @@ export class FlexActionComponent implements OnInit {
     @Input() property: GaugeProperty;
 
     actions: GaugeAction[];
-    actionType: any;
+    actionsSupported: any;
+    actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
     itemtype: any;
     slideView = true;
 
@@ -30,9 +31,9 @@ export class FlexActionComponent implements OnInit {
         }
         // this.itemtype = this.data.withActions.clockwise;
         if (this.data.withActions) {
-			this.actionType = this.data.withActions;
-			Object.keys(this.actionType).forEach(key => {
-				this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt });
+			this.actionsSupported = this.data.withActions;
+			Object.keys(this.actionsSupported).forEach(key => {
+				this.translateService.get(this.actionsSupported[key]).subscribe((txt: string) => { this.actionsSupported[key] = txt });
 			});
 		}
     }
@@ -76,5 +77,11 @@ export class FlexActionComponent implements OnInit {
             this.actions = [];
         }
         this.actions.push(ga);
+    }
+
+    onCheckActionType(type: any, ga: GaugeAction) {
+        if (type === this.actionBlink && typeof(ga.options) !== typeof(GaugeActionBlink)) {
+            ga.options = new GaugeActionBlink();
+        }
     }
 }

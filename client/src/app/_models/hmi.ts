@@ -120,19 +120,48 @@ export class GaugeEvent {
     actoptions = {};
 }
 
+export enum GaugeActionsType {
+    hide = 'shapes.action-hide',
+    show = 'shapes.action-show',
+    blink = 'shapes.action-blink',
+    stop = 'shapes.action-stop',
+    clockwise = 'shapes.action-clockwise',
+    anticlockwise = 'shapes.action-anticlockwise',
+    downup = 'shapes.action-downup'
+}
+
 export class GaugeAction {
     variableId: string;
     variableSrc: string;
     variable: string;
     range: GaugeRangeProperty;
     type: any;
+    options: any = {};
+}
+
+export class GaugeActionBlink {
+    strokeA: string = null;
+    strokeB: string = null;
+    fillA: string = null;
+    fillB: string = null;
+    interval: number = 1000;
 }
 
 export class GaugeStatus {
     variablesValue = {};
     onlyChange = false;         // to process value only by change
     takeValue = false;          // to process value by check change with gauge value
-    actionRef: any;
+    actionRef: GaugeActionStatus;
+}
+
+export class GaugeActionStatus {
+    type: string;
+    timer: any = null;
+    animr: any = null;
+    spool: any;
+    constructor(type: string) {
+        this.type = type;
+    }
 }
 
 export enum GaugeEventType {

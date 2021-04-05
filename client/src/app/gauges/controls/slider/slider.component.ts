@@ -48,15 +48,19 @@ export class SliderComponent {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, slider?: NgxNouisliderComponent) {
-        if (slider) {
-            let val = parseFloat(sig.value);
-            if (Number.isNaN(val)) {
-                // maybe boolean
-                val = Number(sig.value);
-            } else {
-                val = parseFloat(val.toFixed(5));
+        try {
+            if (slider) {
+                let val = parseFloat(sig.value);
+                if (Number.isNaN(val)) {
+                    // maybe boolean
+                    val = Number(sig.value);
+                } else {
+                    val = parseFloat(val.toFixed(5));
+                }
+                slider.setValue(val);
             }
-            slider.setValue(val);
+        } catch (err) {
+            console.log(err);
         }
     }
 

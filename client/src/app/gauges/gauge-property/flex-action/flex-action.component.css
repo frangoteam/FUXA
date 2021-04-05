@@ -26,13 +26,18 @@
 .action-content {
     display: block;
     padding-top: 2px;
+    margin-left: 30px;
 }
 
 .item-range {
     display: inline-block;
     min-width: 240px;
     width: 240px;
-    margin-left: 30px;
+}
+
+.action-blink {
+    display: inline-block;
+    padding-top: 5px;
 }
 
 ::ng-deep .ng5-slider .ng5-slider-pointer { 

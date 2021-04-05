@@ -1,8 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, GaugeAction, Event, GaugeActionsType } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+
+declare var SVG: any;
 
 @Component({
     selector: 'html-input',
@@ -17,6 +19,8 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
     static LabelTag = 'HtmlInput';
     static prefix = 'I-HXI_';
 
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show };
+
     constructor() {
         super();
     }
@@ -29,11 +33,20 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
         if (pro.variableId) {
             res.push(pro.variableId);
         }
+        if (pro.actions && pro.actions.length) {
+            pro.actions.forEach(act => {
+                res.push(act.variableId);
+            });
+        }        
         return res;
     }
 
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.OnlyValue;
+    }
+
+    static getActions() {
+        return this.actionsType;
     }
 
     static getHtmlEvents(ga: GaugeSettings): Event {
@@ -52,20 +65,32 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
-        if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-            let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
-            if (input) {
-                let val = parseFloat(sig.value);
-                if (Number.isNaN(val)) {
-                    // maybe boolean
-                    val = Number(sig.value);
-                } else {
-                    val = parseFloat(val.toFixed(5));
-                }
-                if (!input.value || input.value.length <= 0) {
-                    input.value = val;
+        try {
+            if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
+                let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
+                if (input) {
+                    let val = parseFloat(sig.value);
+                    if (Number.isNaN(val)) {
+                        // maybe boolean
+                        val = Number(sig.value);
+                    } else {
+                        val = parseFloat(val.toFixed(5));
+                    }
+                    if (!input.value || input.value.length <= 0) {
+                        input.value = val;
+                    }
+                    // check actions
+                    if (ga.property.actions) {
+                        ga.property.actions.forEach(act => {
+                            if (act.variableId === sig.id) {
+                                HtmlInputComponent.processAction(act, svgele, input, val, gaugeStatus);
+                            }
+                        });
+                    }                
                 }
             }
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -111,5 +136,19 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
             }
         }
         return ele.getAttribute('stroke');
+    }
+
+    static processAction(act: GaugeAction, svgele: any, input: any, value: any, gaugeStatus: GaugeStatus) {
+        if (this.actionsType[act.type] === this.actionsType.hide) {
+            if (act.range.min <= value && act.range.max >= value) {
+                let element = SVG.adopt(svgele.node);
+                this.runActionHide(element, act.type, gaugeStatus);
+            }
+        } else if (this.actionsType[act.type] === this.actionsType.show) {
+            if (act.range.min <= value && act.range.max >= value) {
+                let element = SVG.adopt(svgele.node);
+                this.runActionShow(element, act.type, gaugeStatus);
+            }
+        }
     }
 }

@@ -18,8 +18,8 @@
         </div> -->
         <div class="my-form-field" style="width: 300px;">
             <span>{{'gauges.property-action-type' | translate}}</span>
-            <mat-select [(value)]="item.type">
-                <mat-option *ngFor="let ev of actionType | enumToArray" [value]="ev.key">
+            <mat-select [(value)]="item.type" (selectionChange)="onCheckActionType(item.type, item)">
+                <mat-option *ngFor="let ev of actionsSupported | enumToArray" [value]="ev.key">
                     {{ ev.value }}
                 </mat-option>
             </mat-select>
@@ -28,6 +28,38 @@
             <button mat-icon-button (click)="onRemoveAction(i)" class="_remove">
                 <mat-icon>clear</mat-icon>
             </button>
+        </div>
+        <div [ngSwitch]="item.type">
+            <div *ngSwitchCase="actionBlink" class="action-blink">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-input-color' | translate}}</span>
+                    <input [(colorPicker)]="item.options.fillA" [value]="item.options.fillA" [style.background]="item.options.fillA" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
+                        style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+                </div>
+                <div class="my-form-field" style="margin-left: 10px;">
+                    <span>{{'gauges.property-input-stroke' | translate}}</span>
+                    <input [(colorPicker)]="item.options.strokeA" [value]="item.options.strokeA" [style.background]="item.options.strokeA" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
+                        style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+                </div>
+                <div class="my-form-field" style="padding-left: 35px;padding-right: 35px;">
+                    <span>{{'gauges.property-interval-msec' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.interval" type="text" style="width: 80px">
+                </div>
+                <div class="my-form-field">
+                    <span>{{'gauges.property-input-color' | translate}}</span>
+                    <input [(colorPicker)]="item.options.fillB" [value]="item.options.fillB" [style.background]="item.options.fillB" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
+                        style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+                </div>
+                <div class="my-form-field" style="margin-left: 10px;">
+                    <span>{{'gauges.property-input-stroke' | translate}}</span>
+                    <input [(colorPicker)]="item.options.strokeB" [value]="item.options.strokeB" [style.background]="item.options.strokeB" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
+                        style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+                </div>
+            </div>
         </div>
     </div>
 </div>

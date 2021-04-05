@@ -89,6 +89,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             try {
                 if (gs.actionRef && gs.actionRef.timer) {
                     clearTimeout(gs.actionRef.timer);
+                    gs.actionRef.timer = null;
                 }
             } catch (e) {
             }
