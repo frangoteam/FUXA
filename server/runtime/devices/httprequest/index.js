@@ -150,10 +150,9 @@ function HTTPclient(_data, _logger, _events) {
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
     this.getValue = function (id) {
-        // if (varsValue[id]) {
-        //     return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
-        // }
-        logger.info(`'${data.name}' getValue`);
+        if (varsValue[id]) {
+            return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
+        }
         return null;
     }
 
@@ -161,7 +160,6 @@ function HTTPclient(_data, _logger, _events) {
      * Return Tags values array { id: <name>, value: <value>, type: <type> }
      */
     this.getValues = function () {
-        logger.info(`'${data.name}' getValues`);
         return varsValue;
     }
 
@@ -169,7 +167,7 @@ function HTTPclient(_data, _logger, _events) {
      * Set the Tag value, not used
      */
     this.setValue = function (sigid, value) {
-        logger.info(`'${data.name}' setValue`);
+        logger.warn(`'${data.name}' setValue not supported!`);
     }
 
     /**
