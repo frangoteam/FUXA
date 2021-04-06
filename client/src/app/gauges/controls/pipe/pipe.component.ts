@@ -83,10 +83,10 @@ export class PipeComponent {
                 gaugeStatus.actionRef.timer = null;
             }
         } else {
-            if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
-                return;
-            }
             if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
+                if (gaugeStatus.actionRef.type === type) {
+                    return;
+                }
                 clearTimeout(gaugeStatus.actionRef.timer);
                 gaugeStatus.actionRef.timer = null;
             }
