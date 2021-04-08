@@ -81,33 +81,33 @@ function HTTPclient(_data, _logger, _events) {
             if ((lastTimestampRequest + (data.polling * 3)) < dt) {
                 _emitStatus('connect-error');
                 _checkWorking(false);
-            } else {
-                try {
-                    _readRequest().then(result => {
-                        if (result) {
-                            let varsValueChanged = _updateVarsValue(result);
-                            lastTimestampValue = new Date().getTime();
-                            _emitValues(varsValue);
-                            if (this.addDaq) {
-                                var current = new Date().getTime();
-                                if (current - daqInterval > lastDaqInterval) {
-                                    this.addDaq(varsValue);
-                                    lastDaqInterval = current;
-                                } else if (varsValueChanged) {
-                                    this.addDaq(varsValueChanged);
-                                }
-                            }
-                            if (lastStatus !== 'connect-ok') {
-                                _emitStatus('connect-ok');                    
+            }
+            try {
+                _readRequest().then(result => {
+                    if (result) {
+                        let varsValueChanged = _updateVarsValue(result);
+                        lastTimestampValue = new Date().getTime();
+                        _emitValues(varsValue);
+                        if (this.addDaq) {
+                            var current = new Date().getTime();
+                            if (current - daqInterval > lastDaqInterval) {
+                                this.addDaq(varsValue);
+                                lastDaqInterval = current;
+                            } else if (varsValueChanged) {
+                                this.addDaq(varsValueChanged);
                             }
                         }
-                        _checkWorking(false);
-                    }, reason => {
-                        _checkWorking(false);
-                    });
-                } catch {
+                        if (lastStatus !== 'connect-ok') {
+                            _emitStatus('connect-ok');                    
+                        }
+                    }
                     _checkWorking(false);
-                }
+                }, reason => {
+                    logger.error(`'${data.name}' _readRequest error! ${reason}`);
+                    _checkWorking(false);
+                });
+            } catch {
+                _checkWorking(false);
             }
         } else {
             _emitStatus('connect-busy');
