@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, HostListener, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, HostListener, ElementRef, Input } from '@angular/core';
 
 declare const noUiSlider: any;
 declare const wNumb: any;
@@ -8,7 +8,7 @@ declare const wNumb: any;
     templateUrl: './ngx-nouislider.component.html',
     styleUrls: ['./ngx-nouislider.component.css']
 })
-export class NgxNouisliderComponent implements OnInit, AfterViewInit {
+export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() public id: string;
     @ViewChild('panel') public panel: ElementRef;
@@ -39,6 +39,23 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit {
         this.size.h = height - (2 * this.padding);
         this.size.w = width - (2 * this.padding);
         this.init();
+    }
+
+    ngOnDestroy() {
+        try {
+            this.slider.nativeElement.remove();
+            this.panel.nativeElement.remove();
+            if (this.uiWorkingTimeout) {
+                clearTimeout(this.uiWorkingTimeout);
+            }
+            if (this.uiSlider) {
+                this.uiSlider.off();
+                this.uiSlider.destroy();
+                delete this.uiSlider;
+                delete this.onUpdate;
+            }
+        } catch (e) {
+        }
     }
 
     setOptions(options: any): boolean {

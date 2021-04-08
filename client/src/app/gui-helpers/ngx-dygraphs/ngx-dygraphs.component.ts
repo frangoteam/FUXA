@@ -1,4 +1,4 @@
-import { Component, Input, Output, ElementRef, OnInit, AfterViewInit, OnChanges, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, Input, Output, ElementRef, OnInit, AfterViewInit, OnDestroy, OnChanges, ViewChild, SimpleChanges, EventEmitter } from '@angular/core';
 import { ChangeDetectorRef  } from '@angular/core';
 import { DygraphOptions } from './dygraphOptions';
 
@@ -17,7 +17,7 @@ declare const Dygraph: any;
  *
  * @class NgDygraphsComponent
  */
-export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
+export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     @Input() public id: string;
     @Input() public options: DygraphOptions;
     @Input() public data: any;
@@ -125,6 +125,15 @@ export class NgxDygraphsComponent implements OnInit, AfterViewInit, OnChanges {
             this.onRangeChanged(this.rangeTypeValue);
         }
         this.changeDetector.detectChanges();
+    }
+
+    ngOnDestroy() {
+        try {
+            delete this.dygraph;
+            this.chart.nativeElement.remove();
+            this.chartPanel.nativeElement.remove();
+        } catch (e) {
+        }
     }
 
     /**

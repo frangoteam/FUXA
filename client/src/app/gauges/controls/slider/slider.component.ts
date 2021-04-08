@@ -82,6 +82,7 @@ export class SliderComponent {
                         componentRef.instance.init();
                     }
                 }
+                componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
             }
         }

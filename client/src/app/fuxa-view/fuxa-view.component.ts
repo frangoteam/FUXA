@@ -69,29 +69,38 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         this.loadHmi(this.view);
         try {
             this.gaugesManager.emitBindedSignals(this.id);
-        } catch (e) {
+        } catch (err) {
+            console.log(err);
         }
     }
 
     ngOnDestroy() {
-        this.gaugesManager.unbindGauge(this.id);
-        this.clearGaugeStatus();
         try {
+            this.gaugesManager.unbindGauge(this.id);
+            this.clearGaugeStatus();
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
             }
-        } catch (e) {
+        } catch (err) {
+            console.log(err);
         }
     }
 
     private clearGaugeStatus() {
         Object.values(this.mapGaugeStatus).forEach((gs: GaugeStatus) => {
             try {
-                if (gs.actionRef && gs.actionRef.timer) {
-                    clearTimeout(gs.actionRef.timer);
-                    gs.actionRef.timer = null;
+                if (gs.actionRef) {
+                    if (gs.actionRef.timer) {
+                        clearTimeout(gs.actionRef.timer);
+                        gs.actionRef.timer = null;
+                    }
+                    if (gs.actionRef.animr) {
+                        gs.actionRef.animr.reset();
+                        delete gs.actionRef.animr;
+                    }
                 }
-            } catch (e) {
+            } catch (err) {
+                console.log(err);
             }
         });
         this.mapGaugeStatus = {};
@@ -103,8 +112,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
      */
     public loadHmi(view: View) {
         if (this.id) {
-            this.gaugesManager.unbindGauge(this.id);
-            this.clearGaugeStatus();
+            try {
+                this.gaugesManager.unbindGauge(this.id);
+                this.clearGaugeStatus();
+                this.viewContainerRef.clear();
+                this.dataContainer.nativeElement.innerHTML = '';
+            } catch (err) {
+                console.log(err);
+            }
         }
         if (view) {
             this.id = view.id;
@@ -142,7 +157,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     console.log('loadWatch: ' + err);
                 }    
             }
-            this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(this.handleSignal.bind(this));
+            if (!this.subscriptionOnChange) {
+                this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(this.handleSignal.bind(this));
+            }
             for (let variableId in this.staticValues) {
                 if (!this.staticValues.hasOwnProperty(variableId)) {
                     continue;

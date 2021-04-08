@@ -273,13 +273,37 @@ export class GaugesManager {
         // first remove special gauge like chart from memorySigGauges
         let sigGaugeSettingsIdremoved = this.hmiService.removeSignalGaugeFromMap(domViewId);
         Object.keys(sigGaugeSettingsIdremoved).forEach(sid => {
-            if (this.memorySigGauges[sid] && this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]]) {
-                delete this.memorySigGauges[sid][sigGaugeSettingsIdremoved[sid]];
+            if (this.memorySigGauges[sid]) {
+                for (let i = 0; i < sigGaugeSettingsIdremoved[sid].length; i++) {
+                    let gsId = sigGaugeSettingsIdremoved[sid][i];
+                    if (this.memorySigGauges[sid][gsId]) {
+                        let g = this.memorySigGauges[sid][gsId];
+                        try {
+                            if (g.myComRef) {
+                                g.myComRef.destroy();
+                            }
+                            delete this.memorySigGauges[sid][gsId];
+                            if (this.mapChart[g.id]) {
+                                delete this.mapChart[g.id];
+                            }
+                            if (this.mapGauges[g.id]) {
+                                delete this.mapGauges[g.id];
+                            }
+                        } catch (err) {
+                            console.log(err);
+                        }
+                    }
+                }
             }
         });
+
         // remove mapped gauge for events of this view
         Object.values(this.mapGaugeView).forEach(val => {
             if (val[domViewId]) {
+                let g = val[domViewId];
+                if (g.myComRef) {
+                    g.myComRef.destroy();
+                }
                 delete val[domViewId];
             }
         });

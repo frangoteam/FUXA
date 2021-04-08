@@ -66,6 +66,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
                 const loaderComponentElement = componentRef.location.nativeElement;
                 htmlChart.appendChild(loaderComponentElement);
                 componentRef.instance.resize(htmlChart.clientHeight - ((componentRef.instance.withToolbar) ? 34 : 0), htmlChart.clientWidth);
+                componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
             }
         }

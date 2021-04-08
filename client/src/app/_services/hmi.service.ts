@@ -276,9 +276,9 @@ export class HmiService {
         let sigsIdremoved = this.viewSignalGaugeMap.getSignalIds(domViewId);
         let result = {};
         sigsIdremoved.forEach(sigid => {
-            let gs: GaugeSettings = this.viewSignalGaugeMap.signalsGauges(domViewId, sigid);
-            if (gs) {
-                result[sigid] = gs[0].id;
+            let gaugesSettings: GaugeSettings[] = this.viewSignalGaugeMap.signalsGauges(domViewId, sigid);
+            if (gaugesSettings) {
+                result[sigid] = gaugesSettings.map(gs => { return gs.id });
             }
         })
         this.viewSignalGaugeMap.remove(domViewId);
