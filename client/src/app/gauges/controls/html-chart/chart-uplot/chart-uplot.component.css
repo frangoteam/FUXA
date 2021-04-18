@@ -1,0 +1,17 @@
+.mychart-panel {
+    display: block;
+    margin: 0 auto;
+    /* background-color: aqua; */
+    height: inherit;
+    width: inherit;
+}
+
+.mychart-graph {
+    display: block;
+    margin: 0 auto;
+    /* height: calc(100% - 130px); */
+    /* width: inherit; */
+    /*height: 600px;*/
+    /* height: 100% !important; */
+    /* width: 100% !important; */
+}

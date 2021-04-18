@@ -27,6 +27,8 @@ import { SliderComponent } from './controls/slider/slider.component';
 import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
+import { ChartUplotComponent } from './controls/html-chart/chart-uplot/chart-uplot.component';
+import { UplotOptions, Serie } from '../gui-helpers/ngx-uplot/uplotOptions';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { forEach } from '@angular/router/src/utils/collection';
@@ -82,7 +84,7 @@ export class GaugesManager {
         this.hmiService.onDaqResult.subscribe(message => {
             try {
                 if (this.mapChart[message.gid]) {
-                    let gauge: NgxDygraphsComponent = this.mapChart[message.gid];
+                    let gauge: ChartUplotComponent = this.mapChart[message.gid];
                     for (let i = 0; i < message.values.length; i++) {
                         message.values[i][0] = new Date(message.values[i][0]);
                     }
@@ -175,7 +177,10 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
             HtmlButtonComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-            HtmlChartComponent.detectChange(ga, res, ref);
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlChartComponent.detectChange(ga, res, ref);
+            this.setChartPropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
@@ -322,16 +327,20 @@ export class GaugesManager {
 
     checkElementToResize(ga: GaugeSettings, res: any, ref: any) {
         if (ga && this.mapGauges[ga.id]) {
-            for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-                if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
-                    if (typeof GaugesManager.Gauges[i]['resize'] === 'function') {
-                        let options;
-                        if (this.mapGauges[ga.id].options) {
-                            options = this.mapGauges[ga.id].options;
+            if (typeof this.mapGauges[ga.id]['resize'] === 'function') {
+                this.mapGauges[ga.id]['resize']();
+            } else {
+                for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+                    if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                        if (typeof GaugesManager.Gauges[i]['resize'] === 'function') {
+                            let options;
+                            if (this.mapGauges[ga.id].options) {
+                                options = this.mapGauges[ga.id].options;
+                            }
+                            return GaugesManager.Gauges[i]['resize'](ga, res, ref, options);
                         }
-                        return GaugesManager.Gauges[i]['resize'](ga, res, ref, options);
+                        return;
                     }
-                    return;
                 }
             }
         }
@@ -614,7 +623,7 @@ export class GaugesManager {
     }
 
 	/**
-	 * initialize the gauge element found in svg, like ngx-dygraph, ngx-gauge
+	 * initialize the gauge element found in svg view and editor, like ngx-dygraph, ngx-gauge
 	 * in svg is only a 'div' that have to be dynamic build and render from angular
 	 * @param ga gauge settings
 	 * @param res reference to factory
@@ -638,21 +647,9 @@ export class GaugesManager {
             Object.keys(chartRange).forEach(key => {
                 this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
             });
-            let gauge: NgxDygraphsComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
-            gauge.init();
-            if (ga.property && ga.property.id) {
-                let chart = this.hmiService.getChart(ga.property.id);
-                if (chart) {
-                    chart.lines.forEach(line => {
-                        let sigid = HmiService.toVariableId(line.device, line.id);
-                        let sigProperty = this.hmiService.getMappedVariable(sigid, true);
-                        if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line.color);
-                        }
-                    });
-                    gauge.setOptions({ title: chart.name });
-                }
-            }
+            let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
+            this.setChartPropety(gauge, ga.property);
+            // gauge.init();
             this.mapChart[ga.id] = gauge;
             gauge.resize();
             gauge.onTimeRange.subscribe(data => {
@@ -681,6 +678,29 @@ export class GaugesManager {
             let gauge = HtmlSwitchComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
+        }
+    }
+
+    /**
+     * add the chart settings (line) and property options to the gauge
+     * @param gauge 
+     * @param chart 
+     * @param property 
+     */
+    private setChartPropety(gauge: ChartUplotComponent, property: any) {
+        if (property && property.id) {
+            let chart = this.hmiService.getChart(property.id);
+            if (chart) {
+                const opt = <UplotOptions>{...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
+                gauge.setOptions(opt);
+                chart.lines.forEach(line => {
+                    let sigid = HmiService.toVariableId(line.device, line.id);
+                    let sigProperty = this.hmiService.getMappedVariable(sigid, true);
+                    if (sigProperty) {
+                        gauge.addLine(sigid, sigProperty.name, line.color);
+                    }
+                });
+            }
         }
     }
 

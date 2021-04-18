@@ -1,0 +1,23 @@
+<div class="mychart-panel" #chartPanel>
+    <div class="mychar-toolbar" >
+        <!-- <div class="mychar-toolbar-space" *ngIf="isEditor">Toolbar</div> -->
+        <div style="display: block; padding-right: 5px;text-align: center;" class="my-form-field">
+            <!-- <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-select toolbar-cmp" (selectionChange)="onRangeChanged($event.source.value)">
+                <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key">
+                    {{ ev.value }}
+                </mat-option>
+            </mat-select> -->
+            <!-- <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('T')">T</button> -->
+            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('B')">
+                <<
+            </button>
+            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('F')">
+                >>
+            </button>
+        </div>
+    </div>
+    <ngx-uplot class="mychart-graph" #uplot></ngx-uplot>
+    <!-- <div class="loader-holder"> -->
+        <!-- <div class="loader"></div> -->
+    <!-- </div> -->
+</div>

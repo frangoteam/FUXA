@@ -26,9 +26,12 @@
             ],
             "styles": [
               "src/styles.css",
-              "src/theme.scss"
+              "src/theme.scss",
+              "node_modules/uplot/dist/uPlot.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/uplot/dist/uPlot.iife.min.js"
+            ]
           },
           "configurations": {
             "production": {

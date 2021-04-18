@@ -109,6 +109,9 @@ import { SliderComponent } from './gauges/controls/slider/slider.component';
 import { SliderPropertyComponent } from './gauges/controls/slider/slider-property/slider-property.component';
 import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
+import { NgxUplotComponent } from './gui-helpers/ngx-uplot/ngx-uplot.component';
+import { ChartUplotComponent } from './gauges/controls/html-chart/chart-uplot/chart-uplot.component';
+
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -193,7 +196,9 @@ export function createTranslateLoader(http: HttpClient) {
         LoginComponent,
         DialogUserInfo,
         ViewComponent,
-        DialogItemText
+        DialogItemText,
+        NgxUplotComponent,
+        ChartUplotComponent
     ],
     imports: [
         BrowserModule,
@@ -275,7 +280,9 @@ export function createTranslateLoader(http: HttpClient) {
         DialogUser,
         LoginComponent,
         DialogUserInfo,
-        DialogItemText
+        DialogItemText,
+        ChartUplotComponent,
+        NgxUplotComponent
     ],
     bootstrap: [AppComponent]
 })
