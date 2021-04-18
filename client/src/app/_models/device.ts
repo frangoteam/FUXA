@@ -1,30 +1,50 @@
 
 export class Device {
+    /** Device id, GUID */
     id: string;
+    /** Device name */
     name: string;
+    /** Enabled */
     enabled: boolean;
+    /** Connection property, DeviceNetProperty */
     property: any;
+    /** Device type, OPC, Modbus, S7, etc. */
     type: DeviceType;
+    /** Polling interval, check changed value after ask value, by OPCUA there is a monitor  */
     polling: number;
+    /** Tags list of Tag */
     tags: any;
 }
 
 export class Tag {
+    /** Tag id, is like the name */
     id: string;
+    /** Tag name, is like the id  */
     name: string;
+    /** Tag label, used by BACnet and WebAPI  */
     label: string;
+    /** not used yet */
     value: string;
+    /** Tag type, Bool, Byte, etc. */
     type: string;
+    /** Address of Tag, combine with address by Modbus, some property for WebAPI */
     memaddress: string;
+    /** Tag address, for OPCUA like the id */
     address: string;
+    /** not used yet */
     min: string;
+    /** not used yet */
     max: string;
+    /** not used yet */
     access: string;
+    /** Options, used for WebAPI */
     options: any;
+    /** not used yet */
     format: any;
 }
 
 export class DeviceNetProperty {
+    
     address: string;
     port: string;
     slot: string;

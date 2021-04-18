@@ -698,12 +698,19 @@ export class ProjectService {
 
 export class ProjectData {
     version: string = "1.00";
+    /** FUXA Server */
     server: Device = new Device();
+    /** Hmi resource, layout, SVG, etc. */
     hmi: Hmi = new Hmi();
+    /** Devices, connection, Tags, etc. */
     devices = {};
+    /** Charts, Tags, colors, etc. */
     charts: Chart[] = [];
+    /** Alarms, Tags, logic, level, colors, etc.  */
     alarms: Alarm[] = [];
+    /** not used yet */
     texts: Text[] = [];
+    /** Plugins, name, version */
     plugin: Plugin[] = [];
 }
 
