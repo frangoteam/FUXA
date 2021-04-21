@@ -20,9 +20,8 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     uplot: any;
     sampleData = [
-        [1546300800, 1546387200],    // x-values (timestamps)
-        [35, 71],    // y-values (series 1)
-        [90, 15],    // y-values (series 2)
+        [1546300800, 1546387200],   // x-values (timestamps)
+        [35, 71],                   // y-values (series 1)
     ];
     sampleSerie = [
         {},
@@ -42,8 +41,8 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
     defOptions: UplotOptions = {
-        title: "My Chart",
-        id: "chart1",
+        title: "Default Chart",
+        id: "defchart",
         class: "my-chart",
         width: 800,
         height: 600,
@@ -59,6 +58,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor() { }
 
     ngOnInit() {
+        this.options = this.defOptions;
         this.uplot = new uPlot(this.defOptions, this.sampleData, this.graph.nativeElement);
     }
 
@@ -82,22 +82,33 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             width = chart.clientWidth;
         }
         this.uplot.setSize({height: height, width: width});
+        // this.uplot.redraw(false, true);
     }
 
     init(options?: UplotOptions) {
         this.data = [[]];
-        // this.series = [{}];
-
         if (options) {
             this.options = options;
             if (!options.id) {
+                this.options.axes = [{ label: 'Time' },
+                {
+                    grid: { width: 1 / devicePixelRatio, },
+                    ticks: { width: 1 / devicePixelRatio, }
+                }];
                 this.data = this.sampleData;
                 this.options.series = this.sampleSerie;
             }
         }
         let opt = this.options || this.defOptions;
-        this.uplot.destroy();
+        if (this.uplot) {
+            this.uplot.destroy();
+        }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
+    }
+
+    setOptions(options: UplotOptions) {
+        this.options = options;
+        this.init(this.options);
     }
 
     addSerie(index: string, attribute: Serie) {
@@ -138,7 +149,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.uplot.setData(this.data);
     }
 
-    redraw() {
-        this.uplot.redraw();
+    redraw(flag: boolean = false) {
+        this.uplot.redraw(flag);
     }
 }

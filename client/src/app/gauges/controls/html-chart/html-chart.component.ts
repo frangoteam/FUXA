@@ -5,7 +5,7 @@ import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 import { NgxDygraphsComponent } from '../../../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
-import { ChartUplotComponent } from './chart-uplot/chart-uplot.component';
+import { ChartUplotComponent, ChartOptions } from './chart-uplot/chart-uplot.component';
 
 @Component({
     selector: "html-chart",
@@ -57,10 +57,12 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlChart.appendChild(componentRef.location.nativeElement);
-                if (gab.property && gab.property.options) {
-                    componentRef.instance.setOptions(gab.property.options);
-                }
-                componentRef.instance.resize();//htmlChart.clientHeight, htmlChart.clientWidth);
+                let opt = <ChartOptions>{ title: 'Void Chart', panel: { height: htmlChart.clientHeight, width: htmlChart.clientWidth } };
+                componentRef.instance.setOptions(opt);
+                // if (gab.property && gab.property.options) {
+                    // componentRef.instance.setOptions(opt);//gab.property.options);
+                // }
+                // componentRef.instance.resize(htmlChart.clientHeight, htmlChart.clientWidth);
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
             }

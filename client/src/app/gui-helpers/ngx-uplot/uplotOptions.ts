@@ -271,19 +271,4 @@ export interface UplotOptions {
 	hooks?: any; //Hooks.Arrays;
 
 	plugins?: any; //Plugin[];
-
-    connectSeparatedPoints?: boolean;
-    labelsSeparateLines?: boolean;
-    titleHeight?: number;
-    axisLabelFontSize?: number;
-    axisLabelWidth?: number;
-    labelsDivWidth?: number;
-    axisLineColor?: string;
-    axisLabelColor?: string;
-    gridLineColor?: string;
-
-    fontFamily?: string;
-    legendFontSize?: number;
-    colorBackground?: string;
-    legendBackground?: string;
 }

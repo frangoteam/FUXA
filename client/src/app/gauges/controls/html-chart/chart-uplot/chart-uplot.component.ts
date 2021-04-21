@@ -18,7 +18,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     
     public id: string;
     public withToolbar = false;
-    public options: UplotOptions;
+    public options: ChartOptions;
     public isEditor = false;
     public rangeType: any;//ChartRangeType;
     mapData = {};
@@ -29,7 +29,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.resize(300, 400);
     }
 
     ngOnDestroy() {
@@ -45,7 +44,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     }
 
-    public resize(height?, width?) {
+    public resize(height?: number, width?: number) {
         let chart = this.chartPanel.nativeElement;
         if (!height && chart.offsetParent) {
             height = chart.offsetParent.clientHeight;
@@ -53,33 +52,37 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!width && chart.offsetParent) {
             width = chart.offsetParent.clientWidth;
         }
-        let w = width;
-        let h = height - 80;
-        this.uplot.resize(h, w);
+        if (height && width) {
+            this.options.panel.width = width;
+            this.options.width = width;
+            this.options.panel.height = height;
+            this.options.height = height - 80;
+            this.uplot.resize(this.options.height, this.options.width);
+        }
     }
 
-    public init(options: UplotOptions = null) {
+    public init(options: ChartOptions = null) {
         this.mapData = {};
-        // if (options) {
-            this.uplot.init(options);
-            this.resize();//options.height, options.width);
-        // } 
-        // else {
-        //     this.uplot.init(<UplotOptions>{ title: 'asdf', id: 'asdf', width: 900, height: 700, scales: { x: { time: false } } });
-        //     this.resize();//700, 900);
-        // }
+        if (options) {
+            this.options = options;
+            if (this.options.panel) {
+                this.resize(this.options.panel.height, this.options.panel.width);
+            }
+        }
+        this.uplot.init(this.options);
     }
 
     public setRange(startRange) {
     }
 
-    public setOptions(options: UplotOptions) {
-        this.options = JSON.parse(JSON.stringify(options));
-        this.options.axes = [{ label: 'asdf' }, { label: 'tr' }, 
-            { label: 'sasd', side: Axis.Side.Right, grid: { stroke: options.gridLineColor, width: 1 / devicePixelRatio, },
-            ticks: { stroke: options.gridLineColor, width: 1 / devicePixelRatio, } } ];
+    public setOptions(options: ChartOptions, clear: boolean = false) {
+        this.options = { ...this.options, ...options };
+        if (clear) {
+            this.options = { ...this.options, ...<ChartOptions>{ series: [{}] } };
+        }
         // this.options.axes = [{ labelFont: options.fontFamily }, { labelFont: options.fontFamily } ];
         this.init(this.options);
+        this.redraw();
     }
 
     public addLine(id: string, name:string, color: string) {
@@ -105,4 +108,22 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     public redraw() {
         this.uplot.redraw();
     }
+}
+
+export interface ChartOptions extends UplotOptions  {
+    panel: { height: number, width: number };
+    connectSeparatedPoints?: boolean;
+    labelsSeparateLines?: boolean;
+    titleHeight?: number;
+    axisLabelFontSize?: number;
+    axisLabelWidth?: number;
+    labelsDivWidth?: number;
+    axisLineColor?: string;
+    axisLabelColor?: string;
+    gridLineColor?: string;
+
+    fontFamily?: string;
+    legendFontSize?: number;
+    colorBackground?: string;
+    legendBackground?: string;
 }

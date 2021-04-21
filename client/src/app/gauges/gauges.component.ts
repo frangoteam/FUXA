@@ -27,8 +27,7 @@ import { SliderComponent } from './controls/slider/slider.component';
 import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';
 import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
-import { ChartUplotComponent } from './controls/html-chart/chart-uplot/chart-uplot.component';
-import { UplotOptions, Serie } from '../gui-helpers/ngx-uplot/uplotOptions';
+import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { forEach } from '@angular/router/src/utils/collection';
@@ -691,8 +690,8 @@ export class GaugesManager {
         if (property && property.id) {
             let chart = this.hmiService.getChart(property.id);
             if (chart) {
-                const opt = <UplotOptions>{...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
-                gauge.setOptions(opt);
+                const opt = <ChartOptions>{...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
+                gauge.setOptions(opt, true);
                 chart.lines.forEach(line => {
                     let sigid = HmiService.toVariableId(line.device, line.id);
                     let sigProperty = this.hmiService.getMappedVariable(sigid, true);
