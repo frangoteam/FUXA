@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
 import { NgxUplotComponent } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { UplotOptions, Serie, Axis } from '../../../../gui-helpers/ngx-uplot/uplotOptions';
+import { Options, Series, Axis } from '../../../../gui-helpers/ngx-uplot/uPlot';
 import { DaqQuery } from '../../../../_models/hmi';
 
 @Component({
@@ -12,7 +12,7 @@ import { DaqQuery } from '../../../../_models/hmi';
 export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('chartPanel') public chartPanel: ElementRef;
-    @ViewChild('uplot') public uplot: NgxUplotComponent;
+    @ViewChild('nguplot') public nguplot: NgxUplotComponent;
     
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
     
@@ -34,7 +34,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy() {
         try {
             delete this.chartPanel;
-            delete this.uplot;
+            delete this.nguplot;
         } catch (e) {
             console.log(e);
         }
@@ -57,7 +57,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.width = width;
             this.options.panel.height = height;
             this.options.height = height - 80;
-            this.uplot.resize(this.options.height, this.options.width);
+            this.nguplot.resize(this.options.height, this.options.width);
         }
     }
 
@@ -69,7 +69,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.resize(this.options.panel.height, this.options.panel.width);
             }
         }
-        this.uplot.init(this.options);
+        this.nguplot.init(this.options);
     }
 
     public setRange(startRange) {
@@ -87,33 +87,41 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public addLine(id: string, name:string, color: string) {
         if (!this.mapData[id]) {
-            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, attribute: <Serie>{ label: name, stroke: color, spanGaps: true } };
-            this.uplot.addSerie(this.mapData[id].index, this.mapData[id].attribute);
+            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, attribute: <Series>{ label: name, stroke: color, spanGaps: true } };
+            this.nguplot.addSerie(this.mapData[id].index, this.mapData[id].attribute);
         }
         if (this.isEditor) {
-            this.uplot.setSample();
+            this.nguplot.setSample();
         }
     }
 
     public addValue(id: string, x, y) {
         if (this.mapData[id]) {
-            this.uplot.addValue(this.mapData[id].index, x, y);
+            this.nguplot.addValue(this.mapData[id].index, x, y);
         }
     }
 
     public setValues(values) {
-        this.uplot.setData(values);
+        this.nguplot.setData(values);
     }
 
     public redraw() {
-        this.uplot.redraw();
+        this.nguplot.redraw();
+    }
+
+    public static DefaultOptions() {
+        return <ChartOptions>{ fontFamily: 'Roboto-Regular', legendFontSize: 10, colorBackground: 'rgba(0,0,0,0)', legendBackground: 'rgba(0,0,0,0)', 
+        titleHeight: 20, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
+        legendMode: 'always', series: [], width: 360, height: 200 };
     }
 }
 
-export interface ChartOptions extends UplotOptions  {
-    panel: { height: number, width: number };
+export interface ChartOptions extends Options  {
+    /** chart panel size, with from toolbar to legend */
+    panel?: { height: number, width: number };
+    /** when true, null data values will not cause line breaks, Series.spanGaps */
     connectSeparatedPoints?: boolean;
-    labelsSeparateLines?: boolean;
+
     titleHeight?: number;
     axisLabelFontSize?: number;
     axisLabelWidth?: number;
@@ -126,4 +134,5 @@ export interface ChartOptions extends UplotOptions  {
     legendFontSize?: number;
     colorBackground?: string;
     legendBackground?: string;
+    legendMode?: string;
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
 
-import { Serie, UplotOptions } from './uplotOptions';
+import { Series, Options } from './uPlot';
 
 declare const uPlot: any;
 
@@ -12,17 +12,16 @@ declare const uPlot: any;
 export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() public id: string;
-    @Input() public options: UplotOptions;
+    @Input() public options: Options;
     @ViewChild('graph') public graph: ElementRef;
-    
-    data = [[]];
-    // series = [{}];
 
     uplot: any;
-    sampleData = [
-        [1546300800, 1546387200],   // x-values (timestamps)
-        [35, 71],                   // y-values (series 1)
-    ];
+    data: number[][];
+    xtime = [new Date().getTime() / 1000 - 1, new Date().getTime() / 1000];     // start and sample x time
+    sampleData = [this.xtime, [35, 71]];
+    
+    fmtDate = uPlot.fmtDate("{DD}/{MM}/{YY} {HH}:{mm}:{ss}");
+
     sampleSerie = [
         {},
         {
@@ -31,7 +30,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             spanGaps: false,
             // // in-legend display
             label: "Serie",
-            value: (self, rawValue) => "$" + rawValue.toFixed(2),
+            value: (self, rawValue) => rawValue.toFixed(2),
             // // series style
             stroke: "red",
             width: 1,
@@ -40,7 +39,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     ];
 
-    defOptions: UplotOptions = {
+    defOptions: Options = {
         title: "Default Chart",
         id: "defchart",
         class: "my-chart",
@@ -85,7 +84,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.uplot.redraw(false, true);
     }
 
-    init(options?: UplotOptions) {
+    init(options?: Options) {
         this.data = [[]];
         if (options) {
             this.options = options;
@@ -97,6 +96,9 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 }];
                 this.data = this.sampleData;
                 this.options.series = this.sampleSerie;
+            } else {
+                // this.data = this.sampleData;
+                this.data = [this.xtime];
             }
         }
         let opt = this.options || this.defOptions;
@@ -106,18 +108,19 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
     }
 
-    setOptions(options: UplotOptions) {
+    setOptions(options: Options) {
         this.options = options;
         this.init(this.options);
     }
 
-    addSerie(index: string, attribute: Serie) {
+    addSerie(index: string, attribute: Series) {
+        this.data.push([null,null]);
         this.uplot.addSeries(attribute, index);
-        this.data.push([]);
+        this.uplot.setData(this.data);
     }
 
     setSample() {
-        let sample = [[1546300800, 1546387200]];
+        let sample = [this.xtime];
         for (let i = 0; i < this.uplot.series.length; i++) {
             sample.push([Math.floor(Math.random() * 20), Math.floor(Math.random() * 30)]);
         }

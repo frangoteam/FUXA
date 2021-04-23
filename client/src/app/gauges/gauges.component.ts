@@ -650,7 +650,8 @@ export class GaugesManager {
             this.setChartPropety(gauge, ga.property);
             // gauge.init();
             this.mapChart[ga.id] = gauge;
-            gauge.resize();
+            // gauge.resize();
+            // gauge.redraw();
             gauge.onTimeRange.subscribe(data => {
                 this.hmiService.queryDaqValues(data);
             });
@@ -692,13 +693,14 @@ export class GaugesManager {
             if (chart) {
                 const opt = <ChartOptions>{...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
                 gauge.setOptions(opt, true);
-                chart.lines.forEach(line => {
+                for (let i = 0; i < chart.lines.length; i++) {
+                    let line = chart.lines[i];
                     let sigid = HmiService.toVariableId(line.device, line.id);
                     let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                     if (sigProperty) {
                         gauge.addLine(sigid, sigProperty.name, line.color);
                     }
-                });
+                }
             }
         }
     }
