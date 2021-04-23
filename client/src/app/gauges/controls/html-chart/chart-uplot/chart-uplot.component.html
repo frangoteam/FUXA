@@ -1,5 +1,5 @@
 <div class="mychart-panel" #chartPanel>
-    <div class="mychar-toolbar" >
+    <div class="mychar-toolbar" *ngIf="withToolbar">
         <!-- <div class="mychar-toolbar-space" *ngIf="isEditor">Toolbar</div> -->
         <div style="display: block; padding-right: 5px;text-align: center;" class="my-form-field">
             <!-- <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-select toolbar-cmp" (selectionChange)="onRangeChanged($event.source.value)">
@@ -16,7 +16,7 @@
             </button>
         </div>
     </div>
-    <ngx-uplot class="mychart-graph" #nguplot></ngx-uplot>
+    <ngx-uplot class="mychart-graph" #nguplot [style.background]="options.colorBackground"></ngx-uplot>
     <!-- <div class="loader-holder"> -->
         <!-- <div class="loader"></div> -->
     <!-- </div> -->

@@ -42,7 +42,7 @@
             </div>
         </mat-tab>
         <mat-tab label="{{'chart.property-layout' | translate}}">
-            <ngx-uplot class="mychart-graph" #nguplot></ngx-uplot>
+            <chart-uplot #chartuplot [options]="options" class="mychart-graph"></chart-uplot>
             <div class="toolbox">
                 <div class="field-row">
                     <div class="my-form-field" style="width:160px">

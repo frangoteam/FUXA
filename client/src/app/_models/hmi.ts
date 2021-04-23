@@ -190,7 +190,7 @@ export class GaugeRangeProperty {
     stroke: string;
 }
 
-export class GaugeChartProperty {
+export interface GaugeChartProperty {
     id: string;
     type: string;
     options: any;

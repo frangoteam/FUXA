@@ -31,7 +31,7 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     public chartCtrl: FormControl = new FormControl();
     public chartFilterCtrl: FormControl = new FormControl();
 
-    @ViewChild('nguplot') public nguplot: ChartUplotComponent;
+    @ViewChild('chartuplot') public chartuplot: ChartUplotComponent;
 
     // public dygraph: any;
     // public defOptions: DygraphOptions = {
@@ -78,12 +78,11 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
                     selected = chart;
                 }
             });
-            // if (this.data.settings.property.options) {
-            //     this.options = Object.assign(this.options, this.data.settings.property.options);
-            // }
+            if (this.data.settings.property.options) {
+                this.options = Object.assign(this.options, this.data.settings.property.options);
+            }
         }
-        // this.syncOptions(this.options);
-        // this.nguplot.init(this.options);
+        this.syncOptions(this.options);
         if (selected) {
             this.chartCtrl.setValue(selected);
         }
@@ -94,6 +93,8 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
         // this.dygraph.ready(graph => {
         //     this.dygraph.resize(600, 280);
         // });
+        this.chartuplot.withToolbar = false;
+        this.chartuplot.setOptions(this.options);
     }
 
     ngOnDestroy() {
@@ -106,43 +107,46 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     }
 
     onOkClick(): void {
-        // this.data.settings.property = <GaugeChartProperty>{ id: null, type: this.chartViewValue, options: this.options };
-        // if (this.chartCtrl.value) {
-        //     this.data.settings.name = this.chartCtrl.value.name;
-        //     this.data.settings.property.id = this.chartCtrl.value.id;
-        // } else {
-        //     this.data.settings.name = '';
-        // }
+        this.data.settings.property = <GaugeChartProperty>{ id: null, type: this.chartViewValue, options: this.options };
+        if (this.chartCtrl.value) {
+            this.data.settings.name = this.chartCtrl.value.name;
+            this.data.settings.property.id = this.chartCtrl.value.id;
+        } else {
+            this.data.settings.name = '';
+        }
     }
 
     onChangeOptions(option, value) {
-        // if (option === 'titleHeight') {
-        //     this.options.titleHeight = value;
-        // } else if (option === 'axisLabelFontSize') {
-        //     this.options.axisLabelFontSize = value;
-        // } else if (option === 'legend') {
+        if (option === 'titleHeight') {
+            this.options.titleHeight = value;
+            this.chartuplot.setOptions(this.options);
+        } else if (option === 'axisLabelFontSize') {
+            this.options.axisLabelFontSize = value;
+            this.chartuplot.setOptions(this.options);
+            // } else if (option === 'legend') {
         //     this.options.legend = value;
-        // } else if (option === 'axisLabelColor') {
-        //     this.options.axisLineColor = value;
-        //     this.options.axisLabelColor = value;
-        //     this.changeTitleColor(value);
-        // } else if (option === 'fontFamily') {
-        //     this.options.fontFamily = value;
+        } else if (option === 'axisLabelColor') {
+            this.options.axisLineColor = value;
+            this.options.axisLabelColor = value;
+            this.chartuplot.setOptions(this.options);
+        } else if (option === 'fontFamily') {
+            this.options.fontFamily = value;
+            this.chartuplot.setOptions(this.options);
         //     this.changeFontFamily(value);
         //     return;
         // } else if (option === 'legendFontSize') {
         //     this.options.legendFontSize = value;
         //     this.changeLegendFontSize(value);
         //     return;
-        // } else if (option === 'colorBackground') {
-        //     this.options.colorBackground = value;
-        //     this.changeBackgroundColor(value);
+        } else if (option === 'colorBackground') {
+            this.options.colorBackground = value;
+            this.chartuplot.setOptions(this.options);
         //     return;
         // } else if (option === 'legendBackground') {
         //     this.options.legendBackground = value;
         //     this.changeLegendBackgroundColor(value);
         //     return;
-        // }
+        }
         // this.syncOptions(this.options);
         // this.dygraph.updateOptions(this.defOptions);
     }
@@ -186,6 +190,7 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     }
 
     private syncOptions(options) {
+        // this.cha
         // this.defOptions = Object.assign(this.defOptions, options);
         // delete this.defOptions['fontFamily'];
         // delete this.defOptions['legendFontSize'];

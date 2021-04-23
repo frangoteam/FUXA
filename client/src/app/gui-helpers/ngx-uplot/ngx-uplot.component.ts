@@ -89,11 +89,11 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (options) {
             this.options = options;
             if (!options.id) {
-                this.options.axes = [{ label: 'Time' },
-                {
-                    grid: { width: 1 / devicePixelRatio, },
-                    ticks: { width: 1 / devicePixelRatio, }
-                }];
+                // this.options.axes = [{ label: 'Time' },
+                // {
+                //     grid: { width: 1 / devicePixelRatio, },
+                //     ticks: { width: 1 / devicePixelRatio, }
+                // }];
                 this.data = this.sampleData;
                 this.options.series = this.sampleSerie;
             } else {
@@ -154,5 +154,9 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     redraw(flag: boolean = false) {
         this.uplot.redraw(flag);
+    }
+
+    checkAxisOptions() {
+
     }
 }
