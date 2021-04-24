@@ -3,6 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, 
 import { NgxUplotComponent } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { Options, Series, Axis } from '../../../../gui-helpers/ngx-uplot/uPlot';
 import { DaqQuery } from '../../../../_models/hmi';
+import { Utils } from '../../../../_helpers/utils';
 
 @Component({
     selector: 'chart-uplot',
@@ -59,7 +60,13 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.panel.width = width;
             this.options.width = width;
             this.options.panel.height = height;
-            this.options.height = height - 80;
+            this.options.height = height - 45;
+            if (this.withToolbar) {
+                this.options.height -= 34;
+            }
+            let size = Utils.getDomTextHeight(this.options.axisLabelFontSize, this.options.fontFamily);
+            if (size < 10) size = 10;
+            this.options.height -= size;
             this.nguplot.resize(this.options.height, this.options.width);
         }
     }
@@ -68,11 +75,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.mapData = {};
         if (options) {
             this.options = options;
-            if (this.options.panel) {
-                this.resize(this.options.panel.height, this.options.panel.width);
-            }
         }
         this.updateCanvasOptions(this.nguplot);
+        if (this.options.panel) {
+            this.resize(this.options.panel.height, this.options.panel.width);
+        }
         this.nguplot.init(this.options);
         this.updateDomOptions(this.nguplot);
     }
@@ -116,7 +123,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public static DefaultOptions() {
         return <ChartOptions>{ title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(0,0,0,0)', legendBackground: 'rgba(0,0,0,0)', 
-        titleHeight: 20, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
+        titleHeight: 18, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
         legendMode: 'always', series: [], width: 360, height: 200 };
     }
 
@@ -130,6 +137,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.options.fontFamily) font += ' ' + this.options.fontFamily;
             this.options.axes[i].font = font;
             this.options.axes[i].labelFont = font;
+            this.options.axes[i].grid = { width: 1 / devicePixelRatio };
+            this.options.axes[i].ticks = { width: 1 / devicePixelRatio };
             if (this.options.axisLabelColor) this.options.axes[i].stroke = this.options.axisLabelColor;
         }
         // for (let i = 0; i < this.options.series.length; i++) {
@@ -144,7 +153,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (ele) {
                 let title = ele[0];
                 if (this.options.axisLabelColor) title.style.color = this.options.axisLabelColor;
-                if (this.options.titleHeight) title.style.fontSize = this.options.titleHeight + "px";
+                if (this.options.titleHeight) title.style.fontSize = "16px";    //this.options.titleHeight + "px";
                 if (this.options.fontFamily) title.style.fontFamily = this.options.fontFamily;
             }
 

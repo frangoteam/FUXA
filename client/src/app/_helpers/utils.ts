@@ -80,6 +80,31 @@ export class Utils {
     static getType(value: any) {
         return typeof value;
     }
+
+    static getTextHeight(font) {
+        // re-use canvas object for better performance
+        var canvas = document.createElement("canvas");
+        var context = canvas.getContext("2d");
+        context.font = font;
+        var metrics = context.measureText('M');
+        return metrics.width;
+    }
+
+    static getDomTextHeight(size: number, font: string) {
+        let text = document.createElement("span");
+        document.body.appendChild(text);
+        text.style.font = font;
+        text.style.fontSize = size + "px";
+        text.style.height = 'auto';
+        text.style.width = 'auto';
+        text.style.position = 'absolute';
+        text.style.whiteSpace = 'no-wrap';
+        text.innerHTML = 'M';
+
+        let height = Math.ceil(text.clientHeight);
+        document.body.removeChild(text);
+        return height;
+    }
 }
 
 @Pipe({
