@@ -1,9 +1,9 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
 import { NgxUplotComponent } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { Options, Series, Axis } from '../../../../gui-helpers/ngx-uplot/uPlot';
 import { DaqQuery } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
+// import { Options, Series, Axis } from '../../../../gui-helpers/ngx-uplot/uPlot';
 
 @Component({
     selector: 'chart-uplot',
@@ -184,4 +184,37 @@ export interface ChartOptions extends Options  {
     colorBackground?: string;
     legendBackground?: string;
     legendMode?: string;
+}
+
+export interface Options {
+    /** chart title */
+    title?: string;
+
+    /** id to set on chart div */
+    id?: string;
+
+    /** width of plotting area + axes in CSS pixels */
+    width: number;
+
+    /** height of plotting area + axes in CSS pixels (excludes title & legend height) */
+    height: number;
+
+    series: Series[];
+
+    scales?: any;
+
+    axes?: any[];
+
+    legend?: any;
+}
+
+export interface Series {
+    /** when true, null data values will not cause line breaks */
+    spanGaps?: boolean;
+
+    /** legend label */
+    label?: string;
+
+    /** line & legend color */
+    stroke?: any;
 }
