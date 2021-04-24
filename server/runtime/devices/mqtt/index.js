@@ -39,8 +39,8 @@ function MQTTclient(_data, _logger, _events) {
                                 // property security mode
                                 var property = JSON.parse(result.value);
                                 options.clientId = property.clientId;
-                                options.username = property.username;
-                                options.password = property.password;
+                                options.username = property.uid;
+                                options.password = property.pwd;
                             }
                         }
                         client = mqtt.connect(options.url, options);
