@@ -380,7 +380,8 @@ function getConnectionOptions (property) {
         username: property.username,
         password: property.password,
         keepalive: 60,
-        connectTimeout: 1 * 1000
+        connectTimeout: 1 * 1000,
+        reconnectPeriod: 0
     //   tls: options.encryption,
     //   clientId: options.clientId,
     //   certValidation: options.certValidation,
