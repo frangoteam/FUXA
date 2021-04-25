@@ -341,7 +341,11 @@ function MQTTclient(_data, _logger, _events) {
             logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
-                disconnect();
+                try {
+                    if (client) client.end(true);
+                } catch (e) {
+                    console.log(e);
+                }
             } else {
                 return false;
             }
