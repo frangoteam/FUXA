@@ -139,6 +139,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.axes[i].labelFont = font;
             this.options.axes[i].grid = { width: 1 / devicePixelRatio };
             this.options.axes[i].ticks = { width: 1 / devicePixelRatio };
+            if (this.options.gridLineColor) {
+                this.options.axes[i].grid.stroke = this.options.gridLineColor;
+                this.options.axes[i].ticks.stroke = this.options.gridLineColor;
+            }
             if (this.options.axisLabelColor) this.options.axes[i].stroke = this.options.axisLabelColor;
         }
         // for (let i = 0; i < this.options.series.length; i++) {

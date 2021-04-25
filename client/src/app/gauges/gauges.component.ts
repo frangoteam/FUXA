@@ -170,7 +170,7 @@ export class GaugesManager {
      * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
      * @param ga
      */
-    initInEditor(ga: GaugeSettings, res: any, ref: any,) {
+    initInEditor(ga: GaugeSettings, res: any, ref: any) {
         if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
@@ -647,17 +647,19 @@ export class GaugesManager {
                 this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
             });
             let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
-            this.setChartPropety(gauge, ga.property);
-            // gauge.init();
-            this.mapChart[ga.id] = gauge;
-            // gauge.resize();
-            // gauge.redraw();
-            gauge.onTimeRange.subscribe(data => {
-                this.hmiService.queryDaqValues(data);
-            });
-            gauge.setRange(Object.keys(chartRange)[0]);
-            // gauge.onTimeRange = this.onTimeRange;
-            this.mapGauges[ga.id] = gauge;
+            if (gauge) {
+                this.setChartPropety(gauge, ga.property);
+                // gauge.init();
+                this.mapChart[ga.id] = gauge;
+                // gauge.resize();
+                // gauge.redraw();
+                gauge.onTimeRange.subscribe(data => {
+                    this.hmiService.queryDaqValues(data);
+                });
+                gauge.setRange(Object.keys(chartRange)[0]);
+                // gauge.onTimeRange = this.onTimeRange;
+                this.mapGauges[ga.id] = gauge;
+            }
             return gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
@@ -688,19 +690,23 @@ export class GaugesManager {
      * @param property 
      */
     private setChartPropety(gauge: ChartUplotComponent, property: any) {
-        if (property && property.id) {
-            let chart = this.hmiService.getChart(property.id);
-            if (chart) {
-                const opt = <ChartOptions>{...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
-                gauge.setOptions(opt, true);
-                for (let i = 0; i < chart.lines.length; i++) {
-                    let line = chart.lines[i];
-                    let sigid = HmiService.toVariableId(line.device, line.id);
-                    let sigProperty = this.hmiService.getMappedVariable(sigid, true);
-                    if (sigProperty) {
-                        gauge.addLine(sigid, sigProperty.name, line.color);
+        if (property) {
+            if (property.id) {
+                let chart = this.hmiService.getChart(property.id);
+                if (chart) {
+                    const opt = <ChartOptions>{...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
+                    gauge.setOptions(opt, true);
+                    for (let i = 0; i < chart.lines.length; i++) {
+                        let line = chart.lines[i];
+                        let sigid = HmiService.toVariableId(line.device, line.id);
+                        let sigProperty = this.hmiService.getMappedVariable(sigid, true);
+                        if (sigProperty) {
+                            gauge.addLine(sigid, sigProperty.name, line.color);
+                        }
                     }
                 }
+            } else {
+                gauge.setOptions(property.options, true);  
             }
         }
     }

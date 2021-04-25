@@ -141,6 +141,9 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
         } else if (option === 'colorBackground') {
             this.options.colorBackground = value;
             this.chartuplot.setOptions(this.options);
+        } else if (option === 'gridLineColor') {
+            this.options.gridLineColor = value;
+            this.chartuplot.setOptions(this.options);
         //     return;
         // } else if (option === 'legendBackground') {
         //     this.options.legendBackground = value;
