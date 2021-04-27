@@ -30,7 +30,8 @@
               "node_modules/uplot/dist/uPlot.min.css"
             ],
             "scripts": [
-              "node_modules/uplot/dist/uPlot.iife.min.js"
+              "node_modules/uplot/dist/uPlot.iife.min.js",
+              "src/assets/lib/uplot/placement.min.js"
             ]
           },
           "configurations": {

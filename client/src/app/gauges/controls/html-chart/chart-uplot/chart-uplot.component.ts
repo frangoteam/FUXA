@@ -1,9 +1,9 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { NgxUplotComponent } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
+import { ChartLegendMode } from '../../../../_models/chart';
+import { NgxUplotComponent, NgxOptions, NgxSeries } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
-// import { Options, Series, Axis } from '../../../../gui-helpers/ngx-uplot/uPlot';
 
 @Component({
     selector: 'chart-uplot',
@@ -99,7 +99,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public addLine(id: string, name:string, color: string) {
         if (!this.mapData[id]) {
-            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, attribute: <Series>{ label: name, stroke: color, spanGaps: true } };
+            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, attribute: <NgxSeries>{ label: name, stroke: color, spanGaps: true } };
             this.nguplot.addSerie(this.mapData[id].index, this.mapData[id].attribute);
         }
         if (this.isEditor) {
@@ -124,7 +124,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     public static DefaultOptions() {
         return <ChartOptions>{ title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(0,0,0,0)', legendBackground: 'rgba(0,0,0,0)', 
         titleHeight: 18, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
-        legendMode: 'always', series: [], width: 360, height: 200 };
+        legendMode: 'always', series: [], width: 360, height: 200, decimalsPrecision: 2 };
     }
 
     private updateCanvasOptions(ngup: NgxUplotComponent) {
@@ -145,10 +145,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (this.options.axisLabelColor) this.options.axes[i].stroke = this.options.axisLabelColor;
         }
+        let always = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.always);
+        let bottom = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.bottom);
+        let follow = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.follow);
+        this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), width: 1 };
+        this.options.tooltip = { show: (this.options.legendMode === always || this.options.legendMode === follow) };
         // for (let i = 0; i < this.options.series.length; i++) {
             // this.options.series[i] = font;
         // }
-        // this.options.legend.
     }
 
     private updateDomOptions(ngup: NgxUplotComponent) {
@@ -165,11 +169,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         // for (let i = 0; i < this.options.series.length; i++) {
             // this.options.series[i] = font;
         // }
-        // this.options.legend.
     }
 }
 
-export interface ChartOptions extends Options  {
+export interface ChartOptions extends NgxOptions  {
     /** chart panel size, with from toolbar to legend */
     panel?: { height: number, width: number };
     /** when true, null data values will not cause line breaks, Series.spanGaps */
@@ -188,37 +191,4 @@ export interface ChartOptions extends Options  {
     colorBackground?: string;
     legendBackground?: string;
     legendMode?: string;
-}
-
-export interface Options {
-    /** chart title */
-    title?: string;
-
-    /** id to set on chart div */
-    id?: string;
-
-    /** width of plotting area + axes in CSS pixels */
-    width: number;
-
-    /** height of plotting area + axes in CSS pixels (excludes title & legend height) */
-    height: number;
-
-    series: Series[];
-
-    scales?: any;
-
-    axes?: any[];
-
-    legend?: any;
-}
-
-export interface Series {
-    /** when true, null data values will not cause line breaks */
-    spanGaps?: boolean;
-
-    /** legend label */
-    label?: string;
-
-    /** line & legend color */
-    stroke?: any;
 }

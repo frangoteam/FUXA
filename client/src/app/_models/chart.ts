@@ -26,7 +26,8 @@ export enum ChartRangeType {
 
 export enum ChartLegendMode {
     always = 'chart.legend-always',
-    // follow = 'chart.legend-follow',
+    follow = 'chart.legend-follow',
+    bottom = 'chart.legend-bottom',
     // onmouseover = 'chart.legend-onmouseover',
     never = 'chart.legend-never'
 }

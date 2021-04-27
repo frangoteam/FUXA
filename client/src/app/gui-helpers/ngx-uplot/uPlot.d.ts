@@ -352,6 +352,10 @@ declare namespace uPlot {
 		hooks?: Hooks.Arrays;
 
 		plugins?: Plugin[];
+
+		decimalsPrecision?: number;
+
+		tooltip?: Legend;
 	}
 
 	export interface Focus {

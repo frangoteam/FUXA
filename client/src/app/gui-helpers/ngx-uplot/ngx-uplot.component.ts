@@ -3,6 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Inp
 import { Series, Options } from './uPlot';
 
 declare const uPlot: any;
+declare const placement: any;
 
 @Component({
     selector: 'ngx-uplot',
@@ -30,7 +31,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             spanGaps: false,
             // // in-legend display
             label: "Serie",
-            value: (self, rawValue) => rawValue.toFixed(2),
+            value: (self, rawValue) => rawValue.toFixed(this.options.decimalsPrecision),
             // // series style
             stroke: "red",
             width: 1,
@@ -100,6 +101,8 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.uplot) {
             this.uplot.destroy();
         }
+       opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
+
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
     }
 
@@ -154,4 +157,62 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     checkAxisOptions() {
 
     }
+
+    tooltipPlugin(opts: any = null) {
+        let over, bound, bLeft, bTop;
+        function syncBounds() {
+            let bbox = over.getBoundingClientRect();
+            bLeft = bbox.left;
+            bTop = bbox.top;
+        }
+
+        const overlay = document.createElement("div");
+        overlay.id = "overlay";
+        overlay.style.display = "none";
+        overlay.style.position = "absolute";
+        document.body.appendChild(overlay);
+
+        return {
+            hooks: {
+                init: u => {
+                    over = u.root.querySelector(".u-over");
+
+                    bound = over;
+                    //	bound = document.body;
+
+                    over.onmouseenter = () => {
+                        overlay.style.display = "block";
+                    };
+
+                    over.onmouseleave = () => {
+                        overlay.style.display = "none";
+                    };
+                },
+                setSize: u => {
+                    syncBounds();
+                },
+                setCursor: u => {
+                    const { left, top, idx } = u.cursor;
+                    const x = u.data[0][idx];
+                    const y = u.data[1][idx];
+                    const anchor = { left: left + bLeft, top: top + bTop };
+                    const time = this.fmtDate(new Date(x * 1e3));
+                    const xdiv = `<div class="ut-head">${u.series[0].label}: ${time}</div>`;
+                    let series = '';
+                    for (let i = 1; i < u.series.length; i++) {
+                        const value = (u.data[i][idx]) ? u.data[i][idx].toFixed(this.options.decimalsPrecision) : '';
+                        series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
+                    }
+                    overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
+                    placement(overlay, anchor, "right", "start", { bound });
+                }
+            }
+        };
+    }
+}
+
+export interface NgxOptions extends Options {
+}
+
+export interface NgxSeries extends Series {
 }

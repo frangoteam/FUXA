@@ -144,11 +144,9 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
         } else if (option === 'gridLineColor') {
             this.options.gridLineColor = value;
             this.chartuplot.setOptions(this.options);
-        //     return;
-        // } else if (option === 'legendBackground') {
-        //     this.options.legendBackground = value;
-        //     this.changeLegendBackgroundColor(value);
-        //     return;
+        } else if (option === 'legend') {
+            this.options.legendMode = value;
+            this.chartuplot.setOptions(this.options);
         }
         // this.syncOptions(this.options);
         // this.dygraph.updateOptions(this.defOptions);

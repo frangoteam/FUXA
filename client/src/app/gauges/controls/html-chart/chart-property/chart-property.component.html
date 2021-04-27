@@ -103,7 +103,7 @@
                     </div>
                     <div class="my-form-field" style="width:120px;padding-left: 30px">
                         <span>{{'chart.property-legend.mode' | translate}}</span>
-                        <mat-select [(value)]="options.legend" (selectionChange)="onChangeOptions('legend',  $event.value)">
+                        <mat-select [(value)]="options.legendMode" (selectionChange)="onChangeOptions('legend',  $event.value)">
                             <mat-option *ngFor="let ev of legendModes | enumToArray" [value]="ev.key">
                                 {{ ev.value }}
                             </mat-option>

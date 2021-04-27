@@ -145,7 +145,7 @@
 
     "chart.legend-always": "always",
     "chart.legend-follow": "follow",
-    "chart.legend-onmouseover": "onmouseover",
+    "chart.legend-bottom": "bottom",
     "chart.legend-never": "never",
 
     "editor.views": "Views",

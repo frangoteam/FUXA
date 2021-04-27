@@ -105,6 +105,10 @@ export class Utils {
         document.body.removeChild(text);
         return height;
     }
+
+    static getEnumKey(etype: any, ekey: any) {
+        return Object.keys(etype).find(key => etype[key] === ekey);
+    }
 }
 
 @Pipe({
