@@ -5,6 +5,10 @@
     height: 480px;
 }
 
+.panelTop .chart-list, .device-list, .tag-list {
+    height: 480px;
+}
+
 .panelBottom {
     display: block;
     width: 100%;
