@@ -4,7 +4,6 @@ import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
-import { NgxDygraphsComponent } from '../../../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { ChartUplotComponent, ChartOptions } from './chart-uplot/chart-uplot.component';
 
 @Component({

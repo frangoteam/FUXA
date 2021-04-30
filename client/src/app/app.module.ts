@@ -60,7 +60,6 @@ import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.c
 import { NgxFabItemButtonComponent } from './gui-helpers/fab-button/ngx-fab-item-button.component';
 import { TreetableComponent } from './gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dialog.component';
-import { NgxDygraphsComponent } from './gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { SelOptionsComponent } from './gui-helpers/sel-options/sel-options.component';
 import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.component';
 
@@ -181,7 +180,6 @@ export function createTranslateLoader(http: HttpClient) {
         TreetableComponent,
         SelOptionsComponent,
         LazyForDirective,
-        NgxDygraphsComponent,
         NgxSwitchComponent,
         ChartConfigComponent,
         AlarmListComponent,
@@ -269,7 +267,6 @@ export function createTranslateLoader(http: HttpClient) {
         AppSettingsComponent,
         SetupComponent,
         DialogMenuItem,
-        NgxDygraphsComponent,
         NgxSwitchComponent,
         ChartConfigComponent,
         AlarmListComponent,

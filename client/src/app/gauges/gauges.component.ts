@@ -26,7 +26,6 @@ import { SliderComponent } from './controls/slider/slider.component';
 
 import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';
-import { NgxDygraphsComponent } from '../gui-helpers/ngx-dygraphs/ngx-dygraphs.component';
 import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
@@ -84,9 +83,6 @@ export class GaugesManager {
             try {
                 if (this.mapChart[message.gid]) {
                     let gauge: ChartUplotComponent = this.mapChart[message.gid];
-                    for (let i = 0; i < message.values.length; i++) {
-                        message.values[i][0] = new Date(message.values[i][0]);
-                    }
                     gauge.setValues(message.values);
                 }
             } catch (err) {
@@ -622,7 +618,7 @@ export class GaugesManager {
     }
 
 	/**
-	 * initialize the gauge element found in svg view and editor, like ngx-dygraph, ngx-gauge
+	 * initialize the gauge element found in svg view and editor, like ngx-uplot, ngx-gauge
 	 * in svg is only a 'div' that have to be dynamic build and render from angular
 	 * @param ga gauge settings
 	 * @param res reference to factory

@@ -7,14 +7,12 @@ import { Subject } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeChartProperty } from '../../../../_models/hmi';
+import { GaugeChartProperty, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Chart, ChartViewType, ChartLegendMode } from '../../../../_models/chart';
-// import { DygraphOptions } from '../../../../gui-helpers/ngx-dygraphs/dygraphOptions';
 import { ChartOptions, ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
 
-declare const Dygraph: any;
 
 @Component({
     selector: 'app-chart-property',
@@ -24,6 +22,9 @@ declare const Dygraph: any;
 export class ChartPropertyComponent implements OnInit, AfterViewInit {
 
     chartViewType = ChartViewType;
+    chartViewRealtime = Utils.getEnumKey(ChartViewType, ChartViewType.realtime1);
+    dateFormat = DateFormatType;
+    timeFormat = TimeFormatType;
     legendModes = ChartLegendMode;
     fonts = Define.fonts;
     defaultColor = Utils.defaultColor;
@@ -33,25 +34,9 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
 
     @ViewChild('chartuplot') public chartuplot: ChartUplotComponent;
 
-    // public dygraph: any;
-    // public defOptions: DygraphOptions = {
-    //     // width: "auto",
-    //     // height: "auto",
-    //     labels: ['Date', 'Temperature'],
-    //     colors: ['#f70808'],
-    //     // xlabel: "X label text",
-    //     // ylabel: "Y label text",
-    //     title: 'My Title',
-    //     animatedZooms: true,
-    //     connectSeparatedPoints: true,
-    //     labelsSeparateLines: true,
-    //     // pointSize: 2,
-    // };
     options: ChartOptions = ChartUplotComponent.DefaultOptions();
 
     autoScala = { enabled: true, min: 0, max: 10 };
-
-    // public sampleData = [[new Date('1967/09/14'), 0], [new Date('1968/09/14'), 3], [new Date('1969/09/14'), 1], [new Date('1970/09/14'), 2]];
 
     public filteredChart: ReplaySubject<Chart[]> = new ReplaySubject<Chart[]>(1);
 
@@ -82,17 +67,12 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
                 this.options = Object.assign(this.options, this.data.settings.property.options);
             }
         }
-        this.syncOptions(this.options);
         if (selected) {
             this.chartCtrl.setValue(selected);
         }
     }
 
     ngAfterViewInit() {
-        // this.dygraph = new Dygraph(this.chart.nativeElement, this.sampleData, this.defOptions);
-        // this.dygraph.ready(graph => {
-        //     this.dygraph.resize(600, 280);
-        // });
         this.chartuplot.withToolbar = false;
         this.chartuplot.setOptions(this.options);
     }
@@ -119,84 +99,28 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     onChangeOptions(option, value) {
         if (option === 'titleHeight') {
             this.options.titleHeight = value;
-            this.chartuplot.setOptions(this.options);
         } else if (option === 'axisLabelFontSize') {
             this.options.axisLabelFontSize = value;
-            this.chartuplot.setOptions(this.options);
-            // } else if (option === 'legend') {
-        //     this.options.legend = value;
         } else if (option === 'axisLabelColor') {
             this.options.axisLineColor = value;
             this.options.axisLabelColor = value;
-            this.chartuplot.setOptions(this.options);
         } else if (option === 'fontFamily') {
             this.options.fontFamily = value;
-            this.chartuplot.setOptions(this.options);
-        //     this.changeFontFamily(value);
-        //     return;
-        // } else if (option === 'legendFontSize') {
-        //     this.options.legendFontSize = value;
-        //     this.changeLegendFontSize(value);
-        //     return;
         } else if (option === 'colorBackground') {
             this.options.colorBackground = value;
-            this.chartuplot.setOptions(this.options);
         } else if (option === 'gridLineColor') {
             this.options.gridLineColor = value;
-            this.chartuplot.setOptions(this.options);
         } else if (option === 'legend') {
             this.options.legendMode = value;
-            this.chartuplot.setOptions(this.options);
+        } else if (option === 'date') {
+            this.options.dateFormat = value;
+        } else if (option === 'time') {
+            this.options.timeFormat = value;
         }
-        // this.syncOptions(this.options);
-        // this.dygraph.updateOptions(this.defOptions);
+        this.chartuplot.setOptions(this.options);
     }
 
     onTabChanged() {
-        // this.changeFontFamily(this.options.fontFamily);
-        // this.changeLegendFontSize(this.options.legendFontSize);
-        // this.changeBackgroundColor(this.options.colorBackground);
-        // this.changeLegendBackgroundColor(this.options.legendBackground);
-        // this.changeTitleColor(this.options.axisLabelColor);
-    }
-
-    private changeFontFamily(font) {
-        // if (font) {
-        //     this.chart.nativeElement.style.fontFamily = font;
-        // }
-    }
-
-    private changeLegendFontSize(size) {
-        // let  ele = this.chart.nativeElement.getElementsByClassName('dygraph-legend');
-        // if (ele && ele.length) {
-        //     ele[0].style.fontSize = size + 'px';
-        // }
-    }
-
-    private changeLegendBackgroundColor(color) {
-        // let  ele = this.chart.nativeElement.getElementsByClassName('dygraph-legend');
-        // if (ele && ele.length) {
-        //     ele[0].style.backgroundColor = color;
-        // }
-    }
-
-    private changeBackgroundColor(color) {
-        // if (color) {
-        //     this.chart.nativeElement.style.backgroundColor = color;
-        // }
-    }
-
-    private changeTitleColor(color) {
-        // this.chart.nativeElement.style.color =  color;
-    }
-
-    private syncOptions(options) {
-        // this.cha
-        // this.defOptions = Object.assign(this.defOptions, options);
-        // delete this.defOptions['fontFamily'];
-        // delete this.defOptions['legendFontSize'];
-        // delete this.defOptions['colorBackground'];
-        // delete this.defOptions['legendBackground'];
     }
 
     private loadChart(toset?: string) {

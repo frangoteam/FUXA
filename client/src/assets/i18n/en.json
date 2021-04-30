@@ -126,6 +126,7 @@
     "chart.property-layout": "Layout",
     "chart.property-chart": "Chart to show",
     "chart.property-chart-type": "Show mode",
+    "chart.property-realtime-max": "Max minutes",
     "chart.viewtype-realtime1": "Realtime",
     "chart.viewtype-history": "History",
     "chart.property-font": "Font",
@@ -137,6 +138,8 @@
     "chart.property-color.grid": "Grid color",
     "chart.property-color.legend": "Legend color",
     "chart.property-legend.mode": "Legend show mode",
+    "chart.property-date.format": "Date format",
+    "chart.property-time.format": "Time format",
 
     "chart.rangetype-last8h": "Last 8 hours",
     "chart.rangetype-last1d": "Last day",

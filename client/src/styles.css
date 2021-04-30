@@ -354,15 +354,6 @@ app-root {
     text-align: left !important;
 }
 
-.dygraph-legend {
-    background: transparent;
-    width: fit-content !important;
-    left: 100px !important;
-    padding: 3px;
-    border-radius: 2px;
-    z-index: 99999;
-}
-
 .sidenav-btn {
     width: 100%;
     min-width: 100% !important;
@@ -706,6 +697,7 @@ mat-toolbar-row {
     /* font-family: 'Rombo'; */
     border-radius: 3px;
     z-index: 9999;
+    padding-bottom: 0.3rem;
 }
 
 #overlay > .ut-head {
@@ -716,7 +708,7 @@ mat-toolbar-row {
 }
 
 #overlay > .ut-serie {
-    padding: 0.3rem 0.5rem;
+    padding: 0.4rem 0.5rem 0 0.5rem;
     display: block;
 }
 

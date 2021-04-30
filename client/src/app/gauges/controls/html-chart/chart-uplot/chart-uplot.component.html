@@ -1,18 +1,18 @@
 <div class="mychart-panel" #chartPanel>
     <div class="mychar-toolbar" *ngIf="withToolbar">
-        <!-- <div class="mychar-toolbar-space" *ngIf="isEditor">Toolbar</div> -->
         <div style="display: block; padding-right: 5px;text-align: center;" class="my-form-field">
-            <!-- <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-select toolbar-cmp" (selectionChange)="onRangeChanged($event.source.value)">
+            <button *ngIf="isEditor" style="margin-left:5px; border: 0px; height: 28px; width: 200px; cursor: pointer; vertical-align: middle;">
+            </button>
+            <mat-select *ngIf="!isEditor" [(value)]="rangeTypeValue" style="width: 200px" (selectionChange)="onRangeChanged($event.source.value)">
                 <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key">
                     {{ ev.value }}
                 </mat-option>
-            </mat-select> -->
-            <!-- <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('T')">T</button> -->
-            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('B')">
-                <<
+            </mat-select>
+            <button style="margin-left:5px; border: 0px; height: 28px; width: 40px; cursor: pointer; vertical-align: middle;" (click)="onClick('B')">
+				<mat-icon aria-label="<<">skip_previous</mat-icon>
             </button>
-            <button class="mychar-toolbar-button toolbar-cmp" style="margin-top:1px" (click)="onClick('F')">
-                >>
+            <button style="margin-left:5px; border: 0px; height: 28px; width: 40px; cursor: pointer; vertical-align: middle;" (click)="onClick('F')">
+				<mat-icon aria-label=">>">skip_next</mat-icon>
             </button>
         </div>
     </div>

@@ -169,20 +169,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                     }
                     var result = {};
                     Promise.all(dbfncs).then(values => {
-                        for (var x = 0; x < values.length; x++) {
-                            for (var y = 0; y < values[x].length; y++) {
-                                if (!result[values[x][y].dt]) {
-                                    result[values[x][y].dt] = Array(msg.sids.length + 1).fill(null);
-                                    result[values[x][y].dt][0] = values[x][y].dt;
-                                }
-                                result[values[x][y].dt][x + 1] = (values[x][y].value) ? parseFloat(values[x][y].value) : null;
-                            }
-                        }
-                        let res = []
-                        Object.keys(result).sort().forEach(k => {
-                            res.push(result[k]);
-                        });
-                        io.emit('daq-result', {gid: msg.gid, values: res });
+                        io.emit('daq-result', {gid: msg.gid, values: values });
                     }, reason => {
                         if (reason && reason.stack) {
                             logger.error('socket.on.daq-query: ' + reason.stack);

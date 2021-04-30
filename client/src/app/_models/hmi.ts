@@ -262,3 +262,16 @@ interface DictionaryGaugeSettings {
 interface DictionaryVariables {
     [id: string]: Variable
 }
+
+export enum DateFormatType {
+    YYYY_MM_DD = '1998/03/25',
+    MM_DD_YYYY = '03/25/1998',
+    DD_MM_YYYY = '25/03/1998',
+    MM_DD_YY = '03/25/98',
+    DD_MM_YY = '25/03/98',
+}
+
+export enum TimeFormatType {
+    hh_mm_ss = '16:58:10',
+    hh_mm_ss_AA = '04:58:10 PM',
+}

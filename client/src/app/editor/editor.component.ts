@@ -700,7 +700,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * check and set the special gauge like ngx-dygraphs, ngx-gauge, ... if added
+     * check and set the special gauge like ngx-uplot, ngx-gauge, ... if added
      * if return true then the GaugeSettings is changed have to set again
      * @param ga
      */
