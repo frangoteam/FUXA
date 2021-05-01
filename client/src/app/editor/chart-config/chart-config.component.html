@@ -47,23 +47,27 @@
         <div class="panelBottom">
             <mat-list class="list">
                 <mat-list-item class="list-item list-header">
-                    <span>{{'chart.config-lines' | translate}}</span>
+                    <span style="width: 30%;max-width: 30%;">{{'chart.config-line-name' | translate}}</span>
+                    <span style="width: 25%;max-width: 25%;">{{'chart.config-line-label' | translate}}</span>
+                    <span style="width: 25%;max-width: 25%;">{{'chart.config-devices' | translate}}</span>
+                    <span style="width: 10%;max-width: 10%;">{{'chart.config-line-yaxis' | translate}}</span>
                 </mat-list-item>
                 <div style="height: calc(100% - 36px); overflow-y: auto">
-                    <mat-list-item *ngFor="let tag of selectedChart.lines" class="list-item" (click)="editChartLine(tag)">
-                        <mat-icon (click)="$event.stopPropagation();removeChartLine(tag)" style="color:gray;font-size: 20px">delete</mat-icon>
-                        <div class="list-item-text" style="width: 50%;max-width: 50%;">
-                            <span>{{getDeviceTagName(tag)}}</span>
+                    <mat-list-item *ngFor="let line of selectedChart.lines" class="list-item list-item-hover" (click)="editChartLine(line)">
+                        <mat-icon (click)="$event.stopPropagation();removeChartLine(line)" style="color:gray;font-size: 20px">delete</mat-icon>
+                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                            <span>{{getDeviceTagName(line)}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 40%;max-width: 40%;">
-                            <span>{{tag.device}}</span>
+                        <div class="list-item-text" style="width: 25%;max-width: 25%;">
+                            <span>{{line.label}}</span>
+                        </div>                        
+                        <div class="list-item-text" style="width: 25%;max-width: 25%;">
+                            <span>{{line.device}}</span>
                         </div>
-                        <div>
-                            <input [(colorPicker)]="tag.color" class="color-line input-color" title="{{'chart.config-line-color' | translate}}"
-                            [style.background]="tag.color" [cpAlphaChannel]="'always'" [cpPosition]="'top'" style="height:20px !important"
-                            [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
-                        </div>
+                        <div class="list-item-text" style="width: 10%;max-width: 10%;">
+                            <span>{{line.yaxis}}</span>
+                        </div>                        
+                        <div [style.background-color]="line.color" style="height:20px; width:30px"></div>
                     </mat-list-item>
                 </div>
             </mat-list>

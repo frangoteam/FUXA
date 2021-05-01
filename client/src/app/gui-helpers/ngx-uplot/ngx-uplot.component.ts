@@ -219,11 +219,13 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.uplot.setData(this.data);
     }
 
+    setXScala(min: number, max: number) {
+        this.uplot.setScale('x', { min: min, max: max });
+    }
+
 	addValue(index, x, y, size) {
         let xpos = this.data[0].indexOf(x);
         if (xpos < 0) {
-            // define how many to remove
-            let min = x - size;
             this.data[0].push(x);
             for (let i = 0; i < this.data.length; i++) {
 
@@ -236,17 +238,13 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.data[index][xpos] = y;
         }
+        // remove data out of size
         let min = x - size;
         if (this.data[0][0] < min) {
             for (let i = 0; i < this.data.length; i++) {
                 this.data[i].shift();
             }
         }
-        let m = '';
-        for (let i = 0; i < this.data.length; i++) {
-            m += this.data[i].length + ' ' ;
-        }
-        console.log(m);
         this.uplot.setData(this.data);
     }
 

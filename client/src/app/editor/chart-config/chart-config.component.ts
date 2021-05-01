@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSelectionList } from '@ang
 
 import { Utils } from '../../_helpers/utils';
 import { Device } from '../../_models/device';
+import { Chart, ChartLine } from '../../_models/chart';
 
 @Component({
   selector: 'app-chart-config',
@@ -13,7 +14,7 @@ export class ChartConfigComponent implements OnInit {
 
     @ViewChild(MatSelectionList) selTags: MatSelectionList;
 
-    selectedChart = { id: null, name: null, lines: [] };
+    selectedChart = <Chart>{ id: null, name: null, lines: [] };
     selectedDevice = { id: null, name: null, tags: []};
     selectedTags = [];
     data = { charts: [], devices: [] };
@@ -101,7 +102,7 @@ export class ChartConfigComponent implements OnInit {
      * @param device
      * @param tags
      */
-    checkChartTags(chart, device, tags) {
+    checkChartTags(chart:Chart, device, tags) {
         if (chart && chart.id) {
             let toremove = [];
             // check to remove
@@ -139,11 +140,8 @@ export class ChartConfigComponent implements OnInit {
                     }
                 }
                 if (!found) {
-                    const myCopiedObject = {};
-                    myCopiedObject['id'] = tags[x].id;
-                    myCopiedObject['name'] = tags[x].name;
-                    myCopiedObject['device'] = device.name;
-                    myCopiedObject['color'] = this.getNextColor();
+                    const myCopiedObject: ChartLine = {id: tags[x].id, name: this.getTagLabel(tags[x]), device: device.name, color: this.getNextColor(), 
+                        label: this.getTagLabel(tags[x]), yaxis: 1 };
                     chart.lines.push(myCopiedObject);
                 }
             }
@@ -154,8 +152,18 @@ export class ChartConfigComponent implements OnInit {
         this.checkChartTags(this.selectedChart, this.selectedDevice, this.selectedTags);
     }
 
-    editChartLine(tag) {
-        console.log('ed ' + tag);
+    editChartLine(line: ChartLine) {
+        let dialogRef = this.dialog.open(DialogChartLine, {
+            position: { top: '60px' },
+            data: <ChartLine>{ id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis }
+        });
+        dialogRef.afterClosed().subscribe((result: ChartLine) => {
+            if (result) {
+                line.label = result.label;
+                line.color = result.color;
+                line.yaxis = result.yaxis;
+            }
+        });
     }
 
     removeChartLine(tag) {
@@ -192,12 +200,12 @@ export class ChartConfigComponent implements OnInit {
         }
     }
 
-    getDeviceTagName(tag) {
-        let devices = this.data.devices.filter(x => x.name === tag.device);
+    getDeviceTagName(line: ChartLine) {
+        let devices = this.data.devices.filter(x => x.name === line.device);
         if (devices && devices.length > 0) {
             let tags = devices[0].tags;
             for (let i = 0; i < tags.length; i++) {
-                if (tag.id === tags[i].id) {
+                if (line.id === tags[i].id) {
                     return this.getTagLabel(tags[i]);
                 }
             }
@@ -240,5 +248,25 @@ export class DialogListItem {
     onOkClick(): void {
         this.dialogRef.close(true);
     }
+}
 
+@Component({
+    selector: 'dialog-chart-line',
+    templateUrl: './chart-line.dialog.html',
+    styleUrls: ['./chart-config.component.css']
+})
+export class DialogChartLine {
+    defaultColor = Utils.defaultColor;
+    chartAxesType = [1, 2, 3, 4];
+    constructor(
+        public dialogRef: MatDialogRef<DialogChartLine>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    onOkClick(): void {
+        this.dialogRef.close(this.data);
+    }
 }

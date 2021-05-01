@@ -9,7 +9,9 @@ export class ChartLine {
     device: string;
     id: string;
     name: string;
+    label: string;
     color: string;
+    yaxis: number;
 }
 
 export enum ChartViewType {

@@ -30,7 +30,7 @@ import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-propert
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
-import { ChartConfigComponent, DialogListItem } from './editor/chart-config/chart-config.component';
+import { ChartConfigComponent, DialogListItem, DialogChartLine } from './editor/chart-config/chart-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
@@ -189,6 +189,7 @@ export function createTranslateLoader(http: HttpClient) {
         NgxGaugeComponent,
         NgxNouisliderComponent,
         DialogListItem,
+        DialogChartLine,
         UsersComponent,
         DialogUser,
         LoginComponent,
@@ -274,6 +275,7 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmPropertyComponent,
         TextListComponent,
         DialogListItem,
+        DialogChartLine,
         DialogUser,
         LoginComponent,
         DialogUserInfo,

@@ -645,15 +645,13 @@ export class GaugesManager {
             let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
             if (gauge) {
                 this.setChartPropety(gauge, ga.property);
-                // gauge.init();
                 this.mapChart[ga.id] = gauge;
-                // gauge.resize();
-                // gauge.redraw();
                 gauge.onTimeRange.subscribe(data => {
                     this.hmiService.queryDaqValues(data);
                 });
-                gauge.setRange(Object.keys(chartRange)[0]);
-                // gauge.onTimeRange = this.onTimeRange;
+                if (isview) {
+                    gauge.setRange(Object.keys(chartRange)[0]);
+                }
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;
@@ -697,9 +695,10 @@ export class GaugesManager {
                         let sigid = HmiService.toVariableId(line.device, line.id);
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line.color);
+                            gauge.addLine(sigid, sigProperty.name, line.color, line.label, line.yaxis);
                         }
                     }
+                    gauge.redraw();
                 }
             } else {
                 gauge.setOptions(property.options, true);  

@@ -126,6 +126,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public setRange(startRange) {
+        if (this.withToolbar) {
+            this.onRangeChanged(startRange);
+        }
     }
 
     public setOptions(options: ChartOptions, clear: boolean = false) {
@@ -137,9 +140,17 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.redraw();
     }
 
-    public addLine(id: string, name:string, color: string) {
+    public addLine(id: string, name:string, color: string, label: string, yaxis: number) {
         if (!this.mapData[id]) {
-            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, attribute: <NgxSeries>{ label: name, stroke: color, spanGaps: true } };
+            const linelabel = label || name;
+            let serie = <NgxSeries>{ label: linelabel, stroke: color, spanGaps: true };
+            if (yaxis > 1) {
+                serie.scale = yaxis.toString();
+            } else {
+                serie.scale = '1';
+            }
+            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, 
+                                 attribute: serie };
             this.nguplot.addSerie(this.mapData[id].index, this.mapData[id].attribute);
         }
         if (this.isEditor) {
@@ -147,6 +158,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    /**
+     * add value to a realtime chart
+     * @param id 
+     * @param x 
+     * @param y 
+     */
     public addValue(id: string, x, y) {
         if (this.mapData[id]) {
             this.nguplot.addValue(this.mapData[id].index, x, y, this.options.realtime * 60);
@@ -154,6 +171,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
+     * set values to a history chart
      * the values is composed of a matrix of array, array of lines values[]<datetime, value> [line][pos]{dt, value}
      * the have to be transform in uplot format. a matrix with array of datetime and arrays of values [datetime[dt], lineN[value]]
      * @param values 
@@ -185,6 +203,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
         this.nguplot.setData(result);
+        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
     }
 
     public redraw() {
@@ -200,7 +219,13 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private updateCanvasOptions(ngup: NgxUplotComponent) {
-        if (!this.options.axes) this.options.axes = [{ label: 'Time' }, { grid: { width: 1 / devicePixelRatio, }, ticks: { width: 1 / devicePixelRatio, }}];
+        if (!this.options.axes) { 
+            this.options.axes = [{ label: 'Time', grid: { show: true, width: 1 / devicePixelRatio }, ticks: { } }];
+            this.options.axes.push({ grid: { show: true, width: 1 / devicePixelRatio }, ticks: { }, scale: '1'});
+            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: { }, side: 1, scale: '2' });
+            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: { }, side: 3, scale: '3' });
+            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: { }, side: 1, scale: '4' });
+        }
         for (let i = 0; i < this.options.axes.length; i++) {
             let font = '';
             if (this.options.axisLabelFontSize) {
@@ -209,7 +234,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.options.fontFamily) font += ' ' + this.options.fontFamily;
             this.options.axes[i].font = font;
             this.options.axes[i].labelFont = font;
-            this.options.axes[i].grid = { width: 1 / devicePixelRatio };
             this.options.axes[i].ticks = { width: 1 / devicePixelRatio };
             if (this.options.gridLineColor) {
                 this.options.axes[i].grid.stroke = this.options.gridLineColor;
@@ -217,14 +241,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (this.options.axisLabelColor) this.options.axes[i].stroke = this.options.axisLabelColor;
         }
+
         let always = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.always);
         let bottom = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.bottom);
         let follow = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.follow);
         this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), width: 1 };
         this.options.tooltip = { show: (this.options.legendMode === always || this.options.legendMode === follow) };
-        // for (let i = 0; i < this.options.series.length; i++) {
-            // this.options.series[i] = font;
-        // }
     }
 
     private updateDomOptions(ngup: NgxUplotComponent) {
@@ -239,10 +261,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 title.style.display = 'none';
             }
         }
-
-        // for (let i = 0; i < this.options.series.length; i++) {
-            // this.options.series[i] = font;
-        // }
     }
 }
 

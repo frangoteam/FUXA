@@ -59,6 +59,9 @@
     overflow: hidden;
 }
 
+.list-item-hover:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
 
 .list-item-selected {
   background-color: rgba(0, 0, 0, 0.1);
@@ -87,4 +90,9 @@
     border-radius: 2px;
     opacity: 1;
     background-color: #f1f3f4;
-  }
+}
+  
+.color-field input {
+    padding: 0 !important;
+    height: 29px;
+}
