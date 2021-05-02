@@ -44,18 +44,29 @@ export class Tag {
 }
 
 export class DeviceNetProperty {
-    
+    /** Device address (IP) */
     address: string;
+    /** Address port */
     port: string;
+    /** Slot number used for Siemens S7 connection */
     slot: string;
+    /** Rack number used for Siemens S7 connection */
     rack: string;
+    /** Slave ID used for Modbus connection */
     slaveid: string;
+    /** Serial baudrate used for Modbus RTU connection */
     baudrate: string;
+    /** Serial databits used for Modbus RTU connection */
     databits: string;
+    /** Serial stopbits used for Modbus RTU connection */
     stopbits: string;
+    /** Serial parity used for Modbus RTU connection */
     parity: string;
+    /** Options settings used for Modbus tockenized frame */
     options: string;
+    /** Method flag used for WebAPI (GET/POST) */
     method: string;
+    /** Data format flag used for WebAPI (CSV/JSON) */
     format: string;
 }
 
