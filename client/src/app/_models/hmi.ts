@@ -2,6 +2,7 @@ import { Tag, Device } from './device';
 import { extend } from 'webdriver-js-extender';
 
 export class Hmi {
+    /** Layout for navigation menu, header bar, ...  */
     layout: LayoutSettings = new LayoutSettings();
     views: View[] = [];
     // variables: Variable[] = [];
