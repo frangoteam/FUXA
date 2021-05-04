@@ -213,7 +213,7 @@ export class DeviceListComponent implements OnInit {
 
     editTag(tag: Tag, checkToAdd: boolean) {
         let oldtag = tag.name;
-        let temptag = JSON.parse(JSON.stringify(tag));
+        let temptag: Tag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: temptag, devices: this.devices },
@@ -236,6 +236,7 @@ export class DeviceListComponent implements OnInit {
                     tag.memaddress = temptag.memaddress;
                     tag.min = temptag.min;
                     tag.max = temptag.max;
+                    tag.divisor = temptag.divisor;
                     if (checkToAdd) {
                         this.checkToAdd(tag, result.device);
                     } else if (tag.id !== oldtag) {

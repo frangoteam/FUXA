@@ -292,7 +292,7 @@ function MODBUSclient(_data, _logger, _events) {
         if (data.tags[sigid]) {
             var memaddr = data.tags[sigid].memaddress;
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
-            var val = datatypes[data.tags[sigid].type].formatter(value);
+            var val = datatypes[data.tags[sigid].type].formatter(convertValue(value, data.tags[sigid].divisor, true));
             _writeMemory(parseInt(memaddr), offset, val).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
             }, reason => {
@@ -506,7 +506,7 @@ function MODBUSclient(_data, _logger, _events) {
                     let value = items[itemidx].value;
                     let tags = items[itemidx].Tags;
                     tags.forEach(tag => {
-                        result[tag.name] = { id: tag.name, value: value, type: type };
+                        result[tag.name] = { id: tag.name, value: convertValue(value, tag.divisor), type: type };
                         someval = true;
                     });
                 } else {
@@ -588,6 +588,20 @@ function MODBUSclient(_data, _logger, _events) {
             }
             return ModbusMemoryAddress.HoldingRegisters;
         }
+    }
+    const convertValue = function (value, divisor, tosrc = false) { 
+        try {
+            if (divisor && parseFloat(divisor)) {
+                if (tosrc) {
+                    return value * parseFloat(divisor);
+                } else {
+                    return value / parseFloat(divisor);
+                }
+            }
+        } catch (err) {
+            console.log(err);
+        }
+        return value;
     }
 
     /**

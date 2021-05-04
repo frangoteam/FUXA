@@ -44,12 +44,12 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet || this.data.device.type === DeviceType.WebAPI) {
+        if (this.isOpcua() || this.isBACnet() || this.isWebApi()) {
             this.dialogType = EditTagDialogType.Tree;
             this.config.height = '640px';
             this.config.width = '1000px';
-            this.config.type = (this.data.device.type === DeviceType.WebAPI) ? 'todefine' : '';
-        } else if (this.data.device.type === DeviceType.MQTTclient) {
+            this.config.type = (this.isWebApi()) ? 'todefine' : '';
+        } else if (this.isMqtt()) {
             this.dialogType = EditTagDialogType.List;
         } else {
             if (this.isModbus()) {
@@ -71,7 +71,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.dialogType === EditTagDialogType.Tree) {
-            if (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.BACnet) {
+            if (this.isOpcua() || this.isBACnet()) {
                 this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(values => {
                     if (this.data.device.name === values.device) {
                         if (values.error) {
@@ -93,7 +93,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                         }
                     }
                 });
-            } else if (this.data.device.type === DeviceType.WebAPI) {
+            } else if (this.isWebApi()) {
                 this.hmiService.onDeviceWebApiRequest.subscribe(res => {
                     if (res.result) {
                         this.addTreeNodes(res.result);
@@ -103,7 +103,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         		this.hmiService.askWebApiProperty(this.data.device.property);
             }
             this.queryNext(null);
-        } else if (this.dialogType === EditTagDialogType.List && this.data.device.type === DeviceType.MQTTclient) {
+        } else if (this.dialogType === EditTagDialogType.List && this.isMqtt()) {
             this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(value => {
                 if (value.result === 'error') {
                     this.discoveryError = value.result;
@@ -150,10 +150,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         this.data.nodes = [];
-        if (this.data.device.type === DeviceType.WebAPI) {
+        if (this.isWebApi()) {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
             this.data.nodes = result;
-        } else if (this.data.device.type === DeviceType.MQTTclient) {
+        } else if (this.isMqtt()) {
             let listcheck = {};
             Object.values(this.topicsList).forEach((topic:any) => {
                 if (topic.checked && topic.enabled) {
@@ -175,6 +175,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     this.data.nodes.push(t);
                 }
             });
+        } else if (this.isModbus()) {
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
@@ -232,7 +233,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 let node = new Node(n.id, n.name);
                 node.class = n.class;
                 node.property = this.getProperty(n);
-                if (this.data.device.type === DeviceType.BACnet) {
+                if (this.isBACnet()) {
                     node.class = Node.strToType(n.class);
                     node.type = n.type;
                     var typetext = Object.values(BACnetObjectType)[n.type];
@@ -374,7 +375,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     queryNext(node: Node) {
         let n = (node) ? { id: node.id } : null;
-        if (this.data.device.type === DeviceType.BACnet && node) {
+        if (this.isBACnet() && node) {
             n['parent'] = (node.parent) ? node.parent.id : null;
         }
         this.hmiService.askDeviceBrowse(this.data.device.name, n);
@@ -411,6 +412,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     isMqtt() {
 		return (this.data.device.type === DeviceType.MQTTclient) ? true : false;
+    }
+
+    isBACnet() {
+        return (this.data.device.type === DeviceType.BACnet) ? true : false;
     }
 
     checkMemAddress(memaddress) {

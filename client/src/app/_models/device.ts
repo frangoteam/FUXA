@@ -35,6 +35,8 @@ export class Tag {
     min: string;
     /** not used yet */
     max: string;
+    /** Valuie divisor, used by Modbus */
+    divisor: number;
     /** not used yet */
     access: string;
     /** Options, used for WebAPI */
