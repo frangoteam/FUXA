@@ -11,13 +11,13 @@
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'general.password' | translate}}</span>
-            <input [(ngModel)]="data.user.password" type="text" width="250px" *ngIf="data.editmode >= 1">
-            <input [(ngModel)]="data.user.password" type="text" width="250px" placeholder="******" *ngIf="data.editmode == 0">
+            <input [(ngModel)]="data.user.password" type="password" width="250px" *ngIf="data.editmode >= 1">
+            <input [(ngModel)]="data.user.password" type="password" width="250px" placeholder="•••••••" *ngIf="data.editmode == 0">
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.userproperty-groups' | translate}}</span>
             <sel-options #seloptions [selected]="selectedGroups" [disabled]="isAdmin()" [options]="groups"></sel-options>
-        </div>        
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
