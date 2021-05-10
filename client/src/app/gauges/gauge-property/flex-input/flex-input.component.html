@@ -67,6 +67,11 @@
                 <span>{{'gauges.property-input-label' | translate}}</span>
                 <input [(ngModel)]="item.text" type="text" style="width: 160px;text-align: left !important">
             </div>
+            <div class="item-remove">
+                <button mat-icon-button (click)="onRemoveInput(i)" class="remove">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
         </div>
         <div *ngIf="isWithUnit()" class="item-unit">
             <div class="my-form-field">

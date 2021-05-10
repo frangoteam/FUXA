@@ -68,6 +68,9 @@ export class HmiService {
             this.variables[sigId].value = value;
             if (this.socket) {
                 this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
+            } else if (!environment.serverEnabled) {
+                // for demo, only frontend
+                this.setSignalValue(this.variables[sigId]);
             }
         }
     }

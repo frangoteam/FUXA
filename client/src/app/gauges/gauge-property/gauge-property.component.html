@@ -34,7 +34,7 @@
 						</button> -->
 					</div>
 				</div>
-				<div mat-dialog-content style="overflow: hidden; width:100%">
+				<div mat-dialog-content style="overflow: visible; width:100%;">
 					<flex-head [data]="data" [property]="property" #flexhead></flex-head>
 				</div>
 			</div>
@@ -46,7 +46,7 @@
 						<mat-icon>add_circle_outline</mat-icon>
 					</button>
 				</div>
-				<div mat-dialog-content style="overflow: hidden; width:100%;">
+				<div mat-dialog-content style="overflow: visible; width:100%;">
 					<flex-event [property]="property" [views]="views" [data]="data" [inputs]="inputs" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
 				</div>
 			</div>
