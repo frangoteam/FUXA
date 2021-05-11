@@ -88,7 +88,7 @@ We’d be really happy if you send us your own shapes in order to collect a libr
 ## Donation
 If you find this project useful, please donate and help to support it! you can offer me a espresso (cup of coffee) :)
 
-[![paypal](https://github.com/frangoteam/frangoteam.github.io/blob/master/donate.svg)](https://www.paypal.com/donate?hosted_button_id=SXVWLHBVN7D6Y)
+[![paypal](https://frangoteam.github.io/assets/images/donate.svg)](https://www.paypal.com/donate?hosted_button_id=SXVWLHBVN7D6Y)
 
 ## License
 MIT.
