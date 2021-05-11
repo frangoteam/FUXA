@@ -74,3 +74,9 @@
 .selectidthClass{
     flex: 0 0 50px;
  }
+
+ .show-password {
+    bottom: 2px;
+    right: 8px;
+    position: absolute;
+}

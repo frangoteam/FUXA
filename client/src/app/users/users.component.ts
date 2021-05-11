@@ -140,9 +140,10 @@ export class DialogUser {
 	isValid(name): boolean {
 		if (this.data.editmode <= 0) {
 			return true;
-		} else {
+		} else if (name) {
 			return (this.data.users.find((n) => n === name)) ? false : true;
 		}
+		return false;
 	}
 
 	isAdmin(): boolean {

@@ -7,12 +7,13 @@
     <div mat-dialog-content *ngIf="data.editmode >= 0">
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'general.username' | translate}}</span>
-            <input [(ngModel)]="data.user.username" type="text" width="250px" [readonly]="data.editmode == 0">
+            <input [(ngModel)]="data.user.username" type="text" style="width: 250px" [readonly]="data.editmode == 0">
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'general.password' | translate}}</span>
-            <input [(ngModel)]="data.user.password" type="password" width="250px" *ngIf="data.editmode >= 1">
-            <input [(ngModel)]="data.user.password" type="password" width="250px" placeholder="•••••••" *ngIf="data.editmode == 0">
+            <input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="data.user.password" style="width: 250px" *ngIf="data.editmode >= 1">
+            <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password" *ngIf="data.editmode >= 1">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            <input autocomplete="off" [(ngModel)]="data.user.password" type="password" style="width: 250px" placeholder="•••••••" *ngIf="data.editmode == 0">
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.userproperty-groups' | translate}}</span>

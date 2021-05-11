@@ -434,7 +434,7 @@
     "device.property-hide": "Hide Device property",
     "device.security-none": "None",
     "device.security-sign": "Sign",
-    "device.security-signandencrypt": "Sign & Encript",
+    "device.security-signandencrypt": "Sign & Encrypt",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.discovery-topics": "Browser Topics on broker",
@@ -453,7 +453,7 @@
     "device.tag-property-address-offset": "Address offset (1-65536)",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
-    
+
     "users.list-title": "Users settings",
     "users.list-name": "Username",
     "users.list-groups": "Groups",

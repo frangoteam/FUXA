@@ -726,3 +726,9 @@ mat-toolbar-row {
     display: inline-block;
     margin-left: 4px;
 }
+
+.show-password {
+    bottom: 2px;
+    right: 4px;
+    position: absolute;
+}
