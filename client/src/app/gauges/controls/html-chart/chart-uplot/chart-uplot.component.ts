@@ -4,6 +4,7 @@ import { ChartLegendMode, ChartRangeType, ChartRangeConverter } from '../../../.
 import { NgxUplotComponent, NgxOptions, NgxSeries } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'chart-uplot',
@@ -26,7 +27,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
 
-    constructor() { }
+    constructor(private translateService: TranslateService) { 
+    }
 
     ngOnInit() {
         if (!this.options) {
@@ -35,6 +37,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        this.translateService.get('chart.labels-serie').subscribe((txt: string) => { this.nguplot.languageLabels.serie = txt });
+        this.translateService.get('chart.labels-time').subscribe((txt: string) => { this.nguplot.languageLabels.time = txt });
+        this.translateService.get('chart.labels-title').subscribe((txt: string) => { this.nguplot.languageLabels.title = txt });
     }
 
     ngOnDestroy() {

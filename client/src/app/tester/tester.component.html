@@ -21,8 +21,8 @@
                 <div class="svg-property">
                     <span>{{item.source}} - {{item.name}} :</span>
                     <input id="item.name" [(ngModel)]="item.value" type="text" class="no-spinners" />
-                    <button type="button" class="" (click)="setSignal(item)">
-                        >>
+                    <button mat-raised-button color="primary" type="button" class="" (click)="setSignal(item)">
+                        {{'tester.send' | translate}}
                     </button>
                 </div>
             </div>

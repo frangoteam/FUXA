@@ -56,40 +56,14 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlChart.appendChild(componentRef.location.nativeElement);
-                let opt = <ChartOptions>{ title: 'Void Chart', panel: { height: htmlChart.clientHeight, width: htmlChart.clientWidth } };
+                let opt = <ChartOptions>{ title: '', panel: { height: htmlChart.clientHeight, width: htmlChart.clientWidth } };
                 componentRef.instance.setOptions(opt);
-                // if (gab.property && gab.property.options) {
-                    // componentRef.instance.setOptions(opt);//gab.property.options);
-                // }
-                // componentRef.instance.resize(htmlChart.clientHeight, htmlChart.clientWidth);
+
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
             }
         }
     }
-
-    // static resize(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
-    //     let ele = document.getElementById(gab.id);
-    //     if (ele) {
-    //         let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD);
-    //         if (htmlChart) {
-    //             const factory = resolver.resolveComponentFactory(ChartUplotComponent);
-    //             const componentRef = viewContainerRef.createComponent(factory);
-    //             htmlChart.innerHTML = '';
-    //             // componentRef.instance.defOptions = Object.assign(componentRef.instance.defOptions, options);
-    //             componentRef.instance.isEditor = true;
-    //             componentRef.changeDetectorRef.detectChanges();
-    //             const loaderComponentElement = componentRef.location.nativeElement;
-    //             htmlChart.appendChild(loaderComponentElement);
-    //             if (options) {
-    //                 componentRef.instance.setOptions(options);
-    //             }
-    //             componentRef.instance.resize();//htmlChart.clientHeight, htmlChart.clientWidth);
-    //             componentRef.instance['myComRef'] = componentRef;
-    //             return componentRef.instance;
-    //         }
-    //     }
-    // }
 
     static detectChange(gab: GaugeSettings, res: any, ref: any) {
         return HtmlChartComponent.initElement(gab, res, ref, false, null);

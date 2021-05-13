@@ -3,7 +3,7 @@
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-            <span>Icon</span>
+            <span>{{'dlg.menuitem-icon' | translate}}</span>
             <mat-select [(value)]="data.item.icon" style="width: 60px; height: 30px" #iconsel>
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>

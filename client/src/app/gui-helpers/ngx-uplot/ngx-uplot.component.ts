@@ -134,7 +134,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         series: this.sampleSerie,
     };
-
+    languageLabels = { time: 'Time', serie: 'Serie', title: 'Title' };
     constructor() { }
 
     ngOnInit() {
@@ -187,8 +187,17 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.fmtDate = uPlot.fmtDate(this.xDateFormat[this.options.dateFormat].legendDate + ' ' + this.xTimeFormat[this.options.timeFormat]);
             this.options.axes[0].values = this.xDateFormat[this.options.dateFormat].values;
         }
-        this.options.series[0].value = (self, rawValue) => this.fmtDate(new Date(rawValue * 1e3));
-
+        this.sampleSerie[1].label = this.languageLabels.serie;
+        if (this.options.series.length > 0) {
+            this.options.series[0].value = (self, rawValue) => this.fmtDate(new Date(rawValue * 1e3));
+            this.options.series[0].label = this.languageLabels.time;
+        }
+        if (this.options.axes.length > 0) {
+            this.options.axes[0].label = this.languageLabels.time;
+        }
+        if (!this.options.title) {
+            this.options.title = this.languageLabels.title;
+        }
         // set plugins
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
 
