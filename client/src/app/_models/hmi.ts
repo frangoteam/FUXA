@@ -4,34 +4,48 @@ import { extend } from 'webdriver-js-extender';
 export class Hmi {
     /** Layout for navigation menu, header bar, ...  */
     layout: LayoutSettings = new LayoutSettings();
+    /** Views list of hmi project */
     views: View[] = [];
-    // variables: Variable[] = [];
-    // alarmes: Alarm[] = [];
-    // devices = {};
 }
 
 export class View {
+    /** View id, random number */
     id: string = '';
+    /** View name used as reference in configuration */
     name: string = '';
+    /** View profile size, background color */
     profile: DocProfile = new DocProfile();
+    /** Gauges settings list used in the view  */
     items: DictionaryGaugeSettings = {};
+    /** Variables (Tags) list used in the view */
     variables: DictionaryVariables = {};
+    /** Svg code content of the view  */
     svgcontent: string = '';
 }
 
 export class LayoutSettings {
+    /** Start view (home) */
     start: string = '';
+    /** Left side navigation menu settings */
     navigation: NavigationSettings = new NavigationSettings();
+    /** On top header settings */
     header: HeaderSettings = new HeaderSettings();
+    /** Show development blue button (Home, Lab, Editor) */
     showdev: boolean = true;
+    /** Enable zoom in view */
     zoom: ZoomModeType;
 }
 
 export class NavigationSettings {
+    /** Side menu mode (over, push, fix) */
     mode: NaviModeType;
+    /** Menu item show type (text, icon) */
     type: NaviItemType;
+    /** Menu background color */
     bkcolor: string;
+    /** Menu item text and icon color */
     fgcolor: string;
+    /** Menu items */
     items: NaviItem[];
     constructor() {
         this.mode = Object.keys(NaviModeType).find(key => NaviModeType[key] === NaviModeType.over) as NaviModeType;
