@@ -85,9 +85,10 @@ export class ChartConfigComponent implements OnInit {
     }
 
     loadDeviceConfig() {
-        if (this.selectedChart && this.selectedChart.lines && this.selectedDevice) {
-            this.selectedChart.lines.forEach(line => {
-                this.selectedDevice.tags.forEach(tag => {
+        if (this.selectedChart && this.selectedChart.lines && this.selectedDevice && this.selectedDevice.name) {
+            this.selectedDevice.tags.forEach(tag => {
+                tag.selected = false;
+                this.selectedChart.lines.forEach(line => {
                     if (line.device === this.selectedDevice.name && line.id === tag.id) {
                         tag.selected = true;
                     }
@@ -167,17 +168,19 @@ export class ChartConfigComponent implements OnInit {
     }
 
     removeChartLine(tag) {
-        let found = -1;
         for (let i = 0; i < this.selectedTags.length; i++) {
             if (tag.id === this.selectedTags[i].id) {
-                found = i;
+                this.selectedTags.splice(i, 1)
                 break;
             }
         }
-        if (found >= 0) {
-            this.selectedTags.splice(found, 1)
+        for (let i = 0; i < this.selectedChart.lines.length; i++) {
+            if (this.selectedChart.lines[i].id === tag.id) {
+                this.selectedChart.lines.splice(i, 1);
+                break;
+            }
         }
-        this.checkChartTags(this.selectedChart, this.selectedDevice, this.selectedTags);
+        this.loadDeviceConfig();
     }
 
     isChartSelected(chart) {
