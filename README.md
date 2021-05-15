@@ -56,12 +56,6 @@ cd ./client
 ng build --prod
 ```
 
-## Test
-Tested with:
-- Ubuntu 16.04 LTS, nodejs version 10.22.0, npm version 6.14.6
-- Windows 10, nodejs version 10.8.0, npm version 6.2.0
-- Raspberry PI (Raspbian 2018-11-13, Kernel 4.14), nodejs version 10.15.3, npm version 6.4.1
-
 ## Contributing
 Any contributions you make are greatly appreciated.
 If you identify any errors, or have an idea for an improvement, please open an [issue](/../../issues).
