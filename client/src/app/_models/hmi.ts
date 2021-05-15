@@ -21,7 +21,13 @@ export class View {
     variables: DictionaryVariables = {};
     /** Svg code content of the view  */
     svgcontent: string = '';
+    type: ViewType;
 }
+
+export enum ViewType {
+    SVG = 'SVG',
+    CARDS ='CARDS'
+} 
 
 export class LayoutSettings {
     /** Start view (home) */

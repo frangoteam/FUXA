@@ -25,7 +25,7 @@ import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogDocProperty, DialogDocName, DialogLinkProperty } from './editor/editor.component';
+import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
@@ -157,6 +157,7 @@ export function createTranslateLoader(http: HttpClient) {
         FuxaViewComponent,
         DialogDocProperty,
         DialogDocName,
+        DialogNewDoc,
         DialogLinkProperty,
         ConfirmDialogComponent,
         DialogInfo,
@@ -271,6 +272,7 @@ export function createTranslateLoader(http: HttpClient) {
     entryComponents: [
         DialogDocProperty,
         DialogDocName,
+        DialogNewDoc,
         DialogLinkProperty,
         DialogInfo,
         GaugePropertyComponent,
