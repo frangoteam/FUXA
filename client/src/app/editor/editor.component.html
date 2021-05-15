@@ -740,8 +740,11 @@
                         <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
                     </button>
                 </div>
-                <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: white;">
-
+                <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
+                    <div class="grid-stack"></div>
+                    <button mat-fab color="primary" (click)="addWidget()" class="fab-add">
+                        <mat-icon class="">add</mat-icon>
+                    </button>
                 </div>
             </div>
         </mat-drawer-content>

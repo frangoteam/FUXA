@@ -31,6 +31,9 @@ import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
+import { GridStackOptions } from 'gridstack/dist/types';
+
+declare var GridStack: any;
 declare var Gauge: any;
 
 declare var $: any;
@@ -95,6 +98,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelEventOpenState: boolean;
     panelMarkerOpenState: boolean;
     panelHyperlinkOpenState: boolean;
+
+    gridstack: any;
 
     shapesGrps = [];
     private gaugesRef = [];
@@ -448,7 +453,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.winRef.nativeWindow.svgEditor.refreshCanvas();
                 }, 500);
             } else {
-
+                setTimeout(() => {
+                    this.initCardsEditor();
+                }, 500);
             }
         }
     }
@@ -473,6 +480,18 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
     //#endregion
+
+    //#region Cards Widget
+    private initCardsEditor() {
+        if (this.gridstack) {
+            this.gridstack.removeAll();
+        }
+        let options = <GridStackOptions> { alwaysShowResizeHandle: true, cellHeight: '200px', resizable: { handles: 'all'} };
+        this.gridstack = GridStack.init(options);
+        this.gridstack.addWidget({w: 2, content: 'item 1'});
+    }
+
+    //#region 
 
     //#region Svg-editor event and function interface
     /**
