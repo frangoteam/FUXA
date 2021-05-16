@@ -31,9 +31,8 @@ import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
-import { GridStackOptions } from 'gridstack/dist/types';
+import { GridsterConfig, GridsterItem }  from 'angular-gridster2';
 
-declare var GridStack: any;
 declare var Gauge: any;
 
 declare var $: any;
@@ -99,7 +98,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelMarkerOpenState: boolean;
     panelHyperlinkOpenState: boolean;
 
-    gridstack: any;
+    gridOptions: GridsterConfig;
+    dashboard: Array<GridsterItem>;
 
     shapesGrps = [];
     private gaugesRef = [];
@@ -139,6 +139,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (err) {
             console.log(err);
         }
+        this.gridOptions = {
+            draggable: {
+                enabled: true,
+              },
+              resizable: {
+                enabled: true,
+              },
+            itemChangeCallback: EditorComponent.itemChange,
+            itemResizeCallback: EditorComponent.itemResize,
+          };
     }
 
     /**
@@ -482,15 +492,35 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     //#endregion
 
     //#region Cards Widget
-    private initCardsEditor() {
-        if (this.gridstack) {
-            this.gridstack.removeAll();
-        }
-        let options = <GridStackOptions> { alwaysShowResizeHandle: true, cellHeight: '200px', resizable: { handles: 'all'} };
-        this.gridstack = GridStack.init(options);
-        this.gridstack.addWidget({w: 2, content: 'item 1'});
+    static itemChange(item, itemComponent) {
+        // console.info('itemChanged', item, itemComponent);
+      }
+    
+      static itemResize(item, itemComponent) {
+        // console.info('itemResized', item, itemComponent);
     }
 
+    private initCardsEditor() {
+        this.dashboard = [
+            {cols: 2, rows: 1, y: 0, x: 0},
+            {cols: 2, rows: 2, y: 0, x: 2}
+          ];
+    //     if (this.gridstack) {
+    //         this.gridstack.removeAll();
+    //     }
+    //     let options = { alwaysShowResizeHandle: true, cellHeight: '200px', resizable: { handles: 'all'} };
+    //     this.gridstack = GridStack.init(options);
+    //     this.addCardsWidget();
+    }
+
+    // addCardsWidget() {
+    //     let content = '<button (click)="removeCardsWidget()">X</button>' + 1; 
+    //     this.gridstack.addWidget({w: 2, content: content});
+    // }
+
+    // removeCardsWidget(el) {
+    //     this.gridstack.removeWidget(el);
+    // }
     //#region 
 
     //#region Svg-editor event and function interface

@@ -733,9 +733,3 @@ mat-toolbar-row {
     right: 4px;
     position: absolute;
 }
-
-.grid-stack-item-content {
-    color: #2c3e50;
-    text-align: center;
-    background-color: #18bc9c;
-}

@@ -115,6 +115,8 @@ import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-
 import { NgxUplotComponent } from './gui-helpers/ngx-uplot/ngx-uplot.component';
 import { ChartUplotComponent } from './gauges/controls/html-chart/chart-uplot/chart-uplot.component';
 
+import { GridsterModule } from 'angular-gridster2';
+
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 import { environment } from '../environments/environment';
 
@@ -241,7 +243,8 @@ export function createTranslateLoader(http: HttpClient) {
                 useFactory: createTranslateLoader,
                 deps: [HttpClient]
             }
-        })
+        }),
+        GridsterModule
     ],
     providers: [
         // providersResourceService,

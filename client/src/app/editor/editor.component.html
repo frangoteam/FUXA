@@ -741,8 +741,13 @@
                     </button>
                 </div>
                 <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
-                    <div class="grid-stack"></div>
-                    <button mat-fab color="primary" (click)="addWidget()" class="fab-add">
+                    <gridster [options]="gridOptions">
+                        <gridster-item [item]="item" *ngFor="let item of dashboard">
+                          <!-- your content here -->
+                        </gridster-item>
+                    </gridster>
+                    <!-- <div class="grid-stack"></div> -->
+                    <button mat-fab color="primary" (click)="addCardsWidget()" class="fab-add">
                         <mat-icon class="">add</mat-icon>
                     </button>
                 </div>

@@ -27,13 +27,11 @@
             "styles": [
               "src/styles.css",
               "src/theme.scss",
-              "node_modules/uplot/dist/uPlot.min.css",
-              "node_modules/gridstack/dist/gridstack.min.css"
+              "node_modules/uplot/dist/uPlot.min.css"
             ],
             "scripts": [
               "node_modules/uplot/dist/uPlot.iife.min.js",
-              "src/assets/lib/uplot/placement.min.js",
-              "node_modules/gridstack/dist/gridstack-h5.js"
+              "src/assets/lib/uplot/placement.min.js"
             ]
           },
           "configurations": {
