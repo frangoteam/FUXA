@@ -16,6 +16,8 @@ import { Hmi, View, NaviModeType, NotificationModeType, ZoomModeType, HeaderSett
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 
+import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
+
 import panzoom from 'panzoom';
 // declare var panzoom: any;
 
@@ -50,6 +52,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	alarmsPanelOpen = false;
 	layoutHeader = new HeaderSettings();
 
+	gridOptions: GridsterConfig;
+    dashboard: Array<GridsterItem>;
+
 	private subscriptionLoad: Subscription;
 	private subscriptionAlarmsStatus: Subscription;
 
@@ -62,7 +67,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private gaugesManager: GaugesManager) { }
 
 	ngOnInit() {
-
+        this.gridOptions = {
+            gridType: GridType.Fixed,
+            compactType: CompactType.None,
+            draggable: {
+                enabled: false,
+            },
+            resizable: {
+                enabled: false,
+            },
+            itemChangeCallback: function () {},
+            itemResizeCallback: function () {},
+        };
+		this.dashboard = [
+            { cols: 2, rows: 1, y: 0, x: 0 },
+            { cols: 2, rows: 2, y: 0, x: 2 }
+        ];
 	}
 
 	ngAfterViewInit() {

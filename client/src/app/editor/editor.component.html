@@ -743,11 +743,15 @@
                 <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
                     <gridster [options]="gridOptions">
                         <gridster-item [item]="item" *ngFor="let item of dashboard">
-                          <!-- your content here -->
+                            <div *ngIf="item.content" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:lawngreen;" [innerHTML]="item.content | keepHtml"></div>
+                            <div style="position:absolute;top: 50%;left: 50%;transform:translate(-50%, -50%); width: 70px">
+                                <mat-icon (click)="removeCardsWidget(item)" style="cursor: pointer;">edit</mat-icon>
+                                <mat-icon (click)="removeCardsWidget(item)" style="margin-left: 20px;cursor: pointer;">delete</mat-icon>
+                            </div>
                         </gridster-item>
                     </gridster>
                     <!-- <div class="grid-stack"></div> -->
-                    <button mat-fab color="primary" (click)="addCardsWidget()" class="fab-add">
+                    <button mat-fab color="primary" (click)="addCard()" class="fab-add">
                         <mat-icon class="">add</mat-icon>
                     </button>
                 </div>

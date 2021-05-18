@@ -25,7 +25,7 @@ import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
+import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty, DialogCardType } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
@@ -57,7 +57,7 @@ import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
 import { WindowRef } from './_helpers/windowref';
-import { Utils, EnumToArrayPipe } from './_helpers/utils';
+import { Utils, EnumToArrayPipe, EscapeHtmlPipe } from './_helpers/utils';
 import { Define } from './_helpers/define';
 import { Dictionary } from './_helpers/dictionary';
 import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.component';
@@ -161,6 +161,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogDocName,
         DialogNewDoc,
         DialogLinkProperty,
+        DialogCardType,
         ConfirmDialogComponent,
         DialogInfo,
         GaugeBaseComponent,
@@ -194,6 +195,7 @@ export function createTranslateLoader(http: HttpClient) {
         ValueComponent,
         DialogDraggableDirective,
         EnumToArrayPipe,
+        EscapeHtmlPipe,
         DraggableDirective,
         NumberOnlyDirective,
         NgxFabButtonComponent,
@@ -277,6 +279,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogDocName,
         DialogNewDoc,
         DialogLinkProperty,
+        DialogCardType,
         DialogInfo,
         GaugePropertyComponent,
         DialogGaugePermission,

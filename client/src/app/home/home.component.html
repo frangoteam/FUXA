@@ -35,6 +35,11 @@
 			</div>
 		</div>
 		<div id="container"  class="home-container" #container>
+			<!-- <gridster [options]="gridOptions">
+				<gridster-item [item]="item" *ngFor="let item of dashboard">
+					<app-fuxa-view *ngIf="showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+				</gridster-item>
+			</gridster> -->
 			<app-fuxa-view *ngIf="showHomeView" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
 			<app-iframe *ngIf="showHomeLink" [hidden]="isLoading || !showHomeLink" #iframeview [link]="homeLink" class="home-body" style="width:100%; height:100%"></app-iframe>
 			<div [style.display]="(showHomeView || showHomeLink) ? 'none' : 'block' " class="home-body home-info">

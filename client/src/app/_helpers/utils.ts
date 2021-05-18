@@ -1,4 +1,5 @@
 import { Injectable, Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable()
 export class Utils {
@@ -127,4 +128,14 @@ export class EnumToArrayPipe implements PipeTransform {
         //or if you want to order the result:
         //return result.sort((a, b) => a.value < b.value ? -1 : 1);
     }
+}
+
+@Pipe({ name: 'keepHtml', pure: false })
+export class EscapeHtmlPipe implements PipeTransform {
+  constructor(private sanitizer: DomSanitizer) {
+  }
+
+  transform(content) {
+    return this.sanitizer.bypassSecurityTrustHtml(content);
+  }
 }

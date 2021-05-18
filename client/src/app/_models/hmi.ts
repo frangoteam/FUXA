@@ -25,8 +25,8 @@ export class View {
 }
 
 export enum ViewType {
-    SVG = 'SVG',
-    CARDS ='CARDS'
+    svg = 'SVG',
+    cards ='CARDS'
 } 
 
 export class LayoutSettings {
@@ -295,4 +295,17 @@ export enum DateFormatType {
 export enum TimeFormatType {
     hh_mm_ss = '16:58:10',
     hh_mm_ss_AA = '04:58:10 PM',
+}
+
+export class CardWidget {
+    content: string;
+    type: string;
+    constructor(type: string, content: string) {
+        this.type = type;
+        this.content = content;
+    }
+}
+
+export enum CardWidgetType {
+    view = 'View',
 }
