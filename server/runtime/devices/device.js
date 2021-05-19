@@ -9,6 +9,7 @@ var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
+var INMATIONclient = require('./inmation');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -58,6 +59,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = MQTTclient.create(data, logger, events, manager);        
+    } else if (data.type === DeviceEnum.INMATION) {
+        if (!INMATIONclient) {
+            return null;
+        }
+        comm = INMATIONclient.create(data, logger, events, manager);     
     }
     if (!comm) {
         return null;
@@ -313,6 +319,8 @@ function loadPlugin(type, module) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
+    } else if (type === DeviceEnum.INMATION) {
+        INMATIONclient = require(module);
     }
 }
 
@@ -338,7 +346,8 @@ var DeviceEnum = {
     ModbusTCP: 'ModbusTCP',
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
-    MQTTclient: 'MQTTclient'
+    MQTTclient: 'MQTTclient',
+    INMATION: 'inmation'
 }
 
 /**
