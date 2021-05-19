@@ -77,6 +77,7 @@ export class DeviceSecurity {
     username: string;
     password: string;
     clientId: string;
+    grant_type: string;
 }
 
 export enum DeviceType {
@@ -88,7 +89,7 @@ export enum DeviceType {
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',
     MQTTclient = 'MQTTclient',
-    INMATION = 'inmation'
+    inmation = 'inmation'
 }
 
 export enum TagType {
