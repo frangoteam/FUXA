@@ -107,6 +107,32 @@
                 </div>
             </div>
         </div>
+        <div *ngSwitchCase="TypeOfDialog.Simple">
+            <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+                {{'device.tag-property-title' | translate}}
+            </h1>
+            <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+            <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden;">
+                <div style="display: block;">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.tag-property-device' | translate}}</span>
+                        <mat-select [(value)]="data.device.name" style="width: 550px" [disabled]="true">
+                            <mat-option *ngFor="let device of devicesValue()" [value]="device.name">
+                                {{ device.name }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.tag-property-obj-name' | translate}}</span>
+                        <input [(ngModel)]="data.tag.name" style="width: 550px" type="text" (input)="onCheckValue($event)">
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.tag-property-path' | translate}}</span>
+                        <input [(ngModel)]="data.tag.address" style="width: 550px" type="text">
+                    </div>                    
+                </div>
+            </div>
+        </div>
         <div *ngSwitchCase="TypeOfDialog.List" style="width: 670px;">
             <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
                 {{'device.browsetopics-property-title' | translate}}
