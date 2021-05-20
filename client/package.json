@@ -13,6 +13,7 @@
     "start": "ng serve",
     "start-ele": "ng serve -c winele",
     "start-demo": "ng serve -c demo",
+    "start-client": "ng serve -c client",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
