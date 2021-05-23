@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
+import { ProjectData, ProjectDataCmdType } from '../_models/project';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Alarm } from '../_models/alarm';
@@ -12,6 +13,10 @@ import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { ResourceStorageService } from './rcgi/resource-storage.service';
+import { ResDemoService } from './rcgi/resdemo.service';
+import { ResClientService } from './rcgi/resclient.service';
+import { ResWebApiService } from './rcgi/reswebapi.service';
 
 import * as FileSaver from 'file-saver';
 
@@ -23,32 +28,39 @@ export class ProjectService {
 
     private projectData = new ProjectData();            // Project data
 
-    public version = '1.00';
-    public separator = '^~^';
     public serverSettings: ServerSettings;
+    private storage: ResourceStorageService;
 
-    private prjresource = 'prj-data';
-    private endPointConfig: string = EndPointApi.getURL();
     private projectOld: string = '';
-    private saveworking = false;
     private ready = false;
 
-    constructor(private http: HttpClient,
+    constructor(private resewbApiService: ResWebApiService,
+        private resDemoService: ResDemoService,
+        private resClientService: ResClientService,
         private translateService: TranslateService,
         private toastr: ToastrService) {
 
-        if (environment.serverEnabled) {
-            this.checkServer().subscribe(result => {
-                this.serverSettings = result;
-                this.load();
-            }, error => {
-                console.error('project.service err: ' + error);
-                this.load();
-                this.notifyServerError();
-            });
-        } else {
-            this.load();
+        this.storage = resewbApiService;
+        switch (environment.type) {
+            case "demo":
+                console.log("mode:", "demo");
+                this.storage = resDemoService;
+            break;
+            case "client":
+                console.log("mode:", "client");
+                this.storage = resClientService;
+            break;
         }
+        this.storage.checkServer().subscribe(result => {
+            if (result) {
+                this.serverSettings = result;
+            }
+            this.load();
+        }, error => {
+            console.error('project.service err: ' + error);
+            this.load();
+            this.notifyServerError();
+        });
     }
 
     //#region Load and Save
@@ -57,64 +69,40 @@ export class ProjectService {
      * From Local Storage, from 'assets' if demo or create a local project
      */
     private load() {
-        if (this.serverSettings) {
-            this.getServerProject().subscribe(prj => {
+        this.storage.getStorageProject().subscribe(prj => {
+            if (environment.type === 'demo' && !prj) {
+                console.log('create demo');
+                this.setNewProject();
+            } else {
                 this.projectData = prj;
                 // copy to check before save
                 this.projectOld = JSON.parse(JSON.stringify(this.projectData));
                 this.ready = true;
                 this.notifyToLoadHmi();
-                console.log('Load Server Project: ' + prj);
-            }, err => {
-                console.log('Load Server Project err: ' + err);
-            });
-        } else {
-            if (!this.projectData || this.projectData.hmi.views.length <= 0) {
-                let res = localStorage.getItem(this.prjresource);
-                if (res) {
-                    console.log('Load Local Project');
-                    this.projectData = JSON.parse(res);
-                } else if (environment.type === 'demo') {
-                    console.log('Load Demo Project');
-                    // try root path
-                    this.http.get<any>('./assets/project.demo.fuxap').subscribe(
-                        prj => {
-                            this.projectData = prj;
-                        }, err => {
-                        });
-                } else {
-                    console.log('Create Local Project');
-                    this.setNewProject();
-                }
             }
-            this.notifyToLoadHmi();
-            this.ready = true;
-        }
+        }, err => {
+            console.log('Load Server Project err: ' + err);
+        });
     }
 
     /**
-     * Save Project to Server if enabled
+     * Save Project
      */
     private save(): boolean {
-        if (this.serverSettings) {
-            // check project change don't work some svg object change the order and this to check ...boooo
-            this.setServerProject(this.projectData).subscribe(result => {
-                this.load();
-                this.toastr.success('Project save successful!');
-            }, err => {
-                console.log(err);
-                var msg = '';
-                this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
-                this.toastr.error(msg, '', {
-                    timeOut: 3000,
-                    closeButton: true,
-                    disableTimeOut: true
-                });
-            });
-        } else {
-            localStorage.setItem(this.prjresource, JSON.stringify(this.projectData));
+        // check project change don't work some svg object change the order and this to check isn't easy...boooo
+        this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
-        }
+            this.toastr.success('Project save successful!');
+        }, err => {
+            console.log(err);
+            var msg = '';
+            this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+            this.toastr.error(msg, '', {
+                timeOut: 3000,
+                closeButton: true,
+                disableTimeOut: true
+            });
+        });
         return true;
     }
 
@@ -156,33 +144,29 @@ export class ProjectService {
     setDevice(device: Device, old: Device, security?: any) {
         if (this.projectData.devices) {
             this.projectData.devices[device.name] = device;
-            if (environment.serverEnabled) {
-                this.setDeviceSecurity(device.name, security).subscribe(() => {
-                    this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
-                        if (old && old.name && old.name !== device.name && old.id === device.id) {
-                            this.removeDevice(old);
-                        }
-                    }, err => {
-                        console.log(err);
-                        this.notifySaveError(err);
-                    });                
+            this.storage.setDeviceSecurity(device.name, security).subscribe(() => {
+                this.storage.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+                    if (old && old.name && old.name !== device.name && old.id === device.id) {
+                        this.removeDevice(old);
+                    }
                 }, err => {
                     console.log(err);
                     this.notifySaveError(err);
-                });
-            }
+                });                
+            }, err => {
+                console.log(err);
+                this.notifySaveError(err);
+            });
         }
     }
 
     setDeviceTags(device: Device) {
         this.projectData.devices[device.name] = device;
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });                
-        }
+        this.storage.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });                
     }
 
     /**
@@ -192,24 +176,20 @@ export class ProjectService {
      */
     removeDevice(device: Device) {
         delete this.projectData.devices[device.name];
-        // Object.keys(this.projectData.devices).forEach((key) => {
-        //     if (this.projectData.devices[key].id === device.id) {
-        //         delete this.projectData.devices[key];
-        //         return;
-        //     }
-        // });
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });
-            this.setDeviceSecurity(device.name, '').subscribe(() => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });            
-        }
+        this.storage.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });
+        this.storage.setDeviceSecurity(device.name, '').subscribe(() => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });
+    }
+
+    getDeviceSecurity(name: string): Observable<any> {
+        return this.storage.getDeviceSecurity(name);
     }
     //#endregion
 
@@ -231,13 +211,11 @@ export class ProjectService {
         } else {
             this.projectData.hmi.views.push(view);
         }
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });
-        }
+        this.storage.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });
     }
 
     /**
@@ -252,64 +230,11 @@ export class ProjectService {
                 break;
             }
         }
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });
-        }
-    }
-    //#endregion
-
-    //#region ToServer api
-    getServerProject(): Observable<any> {
-        return this.http.get<any>(this.endPointConfig + '/api/project', {});
-    }
-
-    setServerProject(prj: ProjectData) {
-        // let header = new HttpHeaders();
-        // header.append("Access-Control-Allow-Origin", "*");
-        // header.append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        return this.http.post<ProjectData>(this.endPointConfig + '/api/project', prj, { headers: header });
-    }
-
-    setServerProjectData(cmd: ProjectDataCmdType, data: any) {
-        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { cmd: cmd, data: data };
-        return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
-    }
-    
-    getDeviceSecurity(name: string): Observable<any> {
-        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { query: 'security', name: name };
-        return this.http.get<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
-    }
-
-    setDeviceSecurity(name: string, value: string): Observable<any> {
-        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { query: 'security', name: name, value: value };
-        return this.http.post<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
-    }
-
-    getAlarmsValues(): Observable<any> {
-        return this.http.get<any>(this.endPointConfig + '/api/alarms', {});
-    }
-    
-    setAlarmAck(name: string): Observable<any> {
-        return new Observable((observer) => {
-            let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-            this.http.post<any>(this.endPointConfig + '/api/alarmack', { headers: header, params: name }).subscribe(result => {
-                observer.next();
-            }, err => {
-                observer.error(err);
-            });                
+        this.storage.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
         });
-
-        // let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        // let params = { alarmname: name };
-        // return this.http.post<string>(this.endPointConfig + '/api/alarmack', { headers: header, params: name });
     }
     //#endregion
 
@@ -324,13 +249,11 @@ export class ProjectService {
 
     setLayout(layout: LayoutSettings) {
         this.projectData.hmi.layout = layout;
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });
-        }
+        this.storage.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });
     }
     //#endregion
 
@@ -356,17 +279,15 @@ export class ProjectService {
      */
     setCharts(charts: Chart[]) {
         this.projectData.charts = charts;
-        if (environment.serverEnabled) {
-            this.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
-            }, err => {
-                console.log(err);
-                this.notifySaveError(err);
-            });
-        }
+        this.storage.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
+        }, err => {
+            console.log(err);
+            this.notifySaveError(err);
+        });
     }
     //#endregion
 
-    //#region Alarms resource
+    //#region Alarms resource    
     /**
      * get alarms resource
      */
@@ -394,7 +315,7 @@ export class ProjectService {
             } else {
                 this.projectData.alarms.push(alarm);
             }
-            this.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm).subscribe(result => {
+            this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm).subscribe(result => {
                 if (old && old.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
                         observer.next();
@@ -424,7 +345,7 @@ export class ProjectService {
                     }
                 }
             }
-            this.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm).subscribe(result => {
+            this.storage.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm).subscribe(result => {
                 observer.next();
             }, err => {
                 console.log(err);
@@ -432,6 +353,14 @@ export class ProjectService {
                 observer.error(err);
             });
         });
+    }
+
+    getAlarmsValues(): Observable<any> {
+        return this.storage.getAlarmsValues();
+    }
+    
+    setAlarmAck(name: string): Observable<any> {
+        return this.storage.setAlarmAck(name);
     }
     //#endregion
 
@@ -458,7 +387,7 @@ export class ProjectService {
         } else {
             this.projectData.texts.push(text);
         }
-        this.setServerProjectData(ProjectDataCmdType.SetText, text).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text).subscribe(result => {
             if (old && old.name && old.name !== text.name) {
                 this.removeText(old);
             }
@@ -481,7 +410,7 @@ export class ProjectService {
                 }
             }
         }
-        this.setServerProjectData(ProjectDataCmdType.DelText, text).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -491,7 +420,7 @@ export class ProjectService {
 
     //#region Notify
 
-    notifyToLoadHmi() {
+    private notifyToLoadHmi() {
         this.onLoadHmi.emit(true);
     }
 
@@ -545,6 +474,10 @@ export class ProjectService {
         return this.projectData;
     }
 
+    checkServer() {
+        return this.storage.checkServer();
+    }
+
     getServer(): Device {
         return (this.projectData) ? this.projectData.server : null;
     }
@@ -590,14 +523,6 @@ export class ProjectService {
      */
     saveProject(saveas?: boolean) {
         this.onSaveCurrent.emit(saveas);
-    }
-
-    checkServer() {
-        return this.http.get<any>(this.endPointConfig + '/api/settings');
-    }
-
-    getDemoProject() {
-        return this.http.get<any>(this.endPointConfig + '/api/projectdemo');
     }
 
     isSecurityEnabled() {
@@ -694,37 +619,6 @@ export class ProjectService {
         }
         return obj;
     }
-}
-
-export class ProjectData {
-    version: string = "1.00";
-    /** FUXA Server */
-    server: Device = new Device();
-    /** Hmi resource, layout, SVG, etc. */
-    hmi: Hmi = new Hmi();
-    /** Devices, connection, Tags, etc. */
-    devices = {};
-    /** Charts, Tags, colors, etc. */
-    charts: Chart[] = [];
-    /** Alarms, Tags, logic, level, colors, etc.  */
-    alarms: Alarm[] = [];
-    /** not used yet */
-    texts: Text[] = [];
-    /** Plugins, name, version */
-    plugin: Plugin[] = [];
-}
-
-export enum ProjectDataCmdType {
-    SetDevice = 'set-device',
-    DelDevice = 'del-device',
-    SetView = 'set-view',
-    DelView = 'del-view',
-    HmiLayout = 'layout',
-    Charts = 'charts',
-    SetText = 'set-text',
-    DelText = 'del-text',
-    SetAlarm = 'set-alarm',
-    DelAlarm = 'del-alarm',
 }
 
 export class ServerSettings {

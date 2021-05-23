@@ -1,9 +1,9 @@
 declare function require(moduleName: string): any;
 export const environment = {
   version: require('../../package.json').version,
-  production: false,
+  production: true,
   apiEndpoint: null,
-  apiPort: 1881,
+  apiPort: null,
   serverEnabled: false,
   type: 'client'
 };

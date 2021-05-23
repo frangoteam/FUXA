@@ -69,6 +69,14 @@
               "vendorChunk": false,
               "buildOptimizer": true
             },
+            "demodebug": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.demo.ts"
+                }
+              ]
+            },
             "client": {
               "fileReplacements": [
                 {
@@ -85,24 +93,15 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true              
-            },            
-            "winele": {
+            },
+            "clientdebug": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.winele.ts"
+                  "with": "src/environments/environment.client.ts"
                 }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
-            }            
+              ]           
+            }
           }
         },
         "serve": {
@@ -115,7 +114,10 @@
               "browserTarget": "FUXA:build:production"
             },
             "client": {
-              "browserTarget": "FUXA:build:client"
+              "browserTarget": "FUXA:build:clientdebug"
+            },
+            "demo": {
+              "browserTarget": "FUXA:build:demodebug"
             }
           }
         },
