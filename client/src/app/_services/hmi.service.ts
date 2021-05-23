@@ -26,10 +26,8 @@ export class HmiService {
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
 
-    public version = "1.00";
     public static separator = '^~^';
     public hmi: Hmi;
-    hmiresource: string = "hmi-config";
     viewSignalGaugeMap = new ViewSignalGaugeMap();
     devices = {};
     variables = {};

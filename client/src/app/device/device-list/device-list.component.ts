@@ -208,7 +208,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type) {
-        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU);
+        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.inmation);
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {

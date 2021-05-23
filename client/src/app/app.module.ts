@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule } from '@angular/core';
+import { NgModule, Provider } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -49,6 +49,10 @@ import { UserService } from './_services/user.service';
 import { SettingsService } from './_services/settings.service';
 import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
+import { ResWebApiService } from './_services/rcgi/reswebapi.service';
+import { ResDemoService } from './_services/rcgi/resdemo.service';
+import { ResClientService } from './_services/rcgi/resclient.service';
+import { ResourceStorageService } from './_services/rcgi/resource-storage.service';
 import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
@@ -112,10 +116,24 @@ import { NgxUplotComponent } from './gui-helpers/ngx-uplot/ngx-uplot.component';
 import { ChartUplotComponent } from './gauges/controls/html-chart/chart-uplot/chart-uplot.component';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
+import { environment } from '../environments/environment';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+
+// console.log("environment: " + environment.type);
+// var providersResourceService: Provider = { provide: ResourceStorageService, useClass: ResWebApiService };
+// switch (environment.type) {
+// 	case "demo":
+// 		console.log("Found:", "ResDemoService");
+// 		providersResourceService = { provide: ResourceStorageService, useClass: ResDemoService };
+// 	break;
+// 	case "client":
+// 		console.log("Found:", "ResClientService");
+// 		providersResourceService = { provide: ResourceStorageService, useClass: ResClientService };
+// 	break;
+// }
 
 @NgModule({
     declarations: [
@@ -225,6 +243,10 @@ export function createTranslateLoader(http: HttpClient) {
         })
     ],
     providers: [
+        // providersResourceService,
+        ResClientService,
+        ResWebApiService,
+        ResDemoService,
         HmiService,
         ProjectService,
         UserService,

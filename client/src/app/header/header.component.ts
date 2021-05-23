@@ -26,7 +26,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     ineditor = false;
     savededitor = false;
-    winele = false;
     private subscriptionShowHelp: Subscription;
     
     constructor(private router: Router,
@@ -43,9 +42,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        if (environment.type === 'winele') {
-            this.winele = true;
-        }
     }
 
     ngOnDestroy() {

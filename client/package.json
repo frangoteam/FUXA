@@ -11,8 +11,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start-ele": "ng serve -c winele",
-    "start-demo": "ng serve -c demo",
+    "demo": "ng serve -c demo",
+    "client": "ng serve -c client",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

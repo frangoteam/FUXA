@@ -241,6 +241,80 @@
                         </mat-expansion-panel>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.inmation">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.property-mqtt-address' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field" style="width: 356px">
+                        <mat-expansion-panel #panelProperty class="my-expansion-panel" style="box-shadow:none !important; background-color: #f1f3f4;" (closed)="onPropertyExpand(false)" (opened)="onPropertyExpand(true);">
+                            <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'" style="padding-left:5px !important;padding-right:17px !important">
+                                <mat-panel-title>
+                                    <span *ngIf="propertyExpanded">{{'device.property-security' | translate}}</span>
+                                    <span *ngIf="!propertyExpanded">{{'device.not-property-security' | translate}}</span>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div *ngIf="propertyLoading">
+                                <mat-spinner style="margin: auto" diameter="20"></mat-spinner>
+                            </div>
+                            <div *ngIf="!propertyLoading">
+                                <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                    <span>{{'general.authority' | translate}}</span>
+                                    <input [(ngModel)]="security.clientId" style="width: 315px;border:1px solid#dcdcdc" type="text">
+                                </div>                                    
+                                <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                    <span>{{'general.username' | translate}}</span>
+                                    <input [(ngModel)]="security.username" style="width: 315px;border:1px solid#dcdcdc" type="text">
+                                </div>
+                                <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                    <span>{{'general.password' | translate}}</span>
+                                    <input [(ngModel)]="security.password" style="width: 315px;border:1px solid #dcdcdc" type="text">
+                                </div>
+                                <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                    <span>{{'general.grant-type' | translate}}</span>
+                                    <input [(ngModel)]="security.grant_type" style="width: 315px;border:1px solid #dcdcdc" type="text">
+                                </div>                                    
+                            </div>
+                        </mat-expansion-panel>
+                    </div>
+                    <div *ngSwitchCase="deviceType.inmation">
+                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                            <span>{{'device.property-mqtt-address' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                        </div>
+                        <div class="my-form-field" style="width: 356px">
+                            <mat-expansion-panel #panelProperty class="my-expansion-panel" style="box-shadow:none !important; background-color: #f1f3f4;" (closed)="onPropertyExpand(false)" (opened)="onPropertyExpand(true);">
+                                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'" style="padding-left:5px !important;padding-right:17px !important">
+                                    <mat-panel-title>
+                                        <span *ngIf="propertyExpanded">{{'device.property-security' | translate}}</span>
+                                        <span *ngIf="!propertyExpanded">{{'device.not-property-security' | translate}}</span>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div *ngIf="propertyLoading">
+                                    <mat-spinner style="margin: auto" diameter="20"></mat-spinner>
+                                </div>
+                                <div *ngIf="!propertyLoading">
+                                    <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                        <span>{{'general.authority' | translate}}</span>
+                                        <input [(ngModel)]="security.clientId" style="width: 315px;border:1px solid#dcdcdc" type="text">
+                                    </div>                                    
+                                    <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                        <span>{{'general.username' | translate}}</span>
+                                        <input [(ngModel)]="security.username" style="width: 315px;border:1px solid#dcdcdc" type="text">
+                                    </div>
+                                    <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                        <span>{{'general.password' | translate}}</span>
+                                        <input [(ngModel)]="security.password" style="width: 315px;border:1px solid #dcdcdc" type="text">
+                                    </div>
+                                    <div class="my-form-field" style="display: block;margin: 5px 10px 0px 10px;">
+                                        <span>{{'general.grant-type' | translate}}</span>
+                                        <input [(ngModel)]="security.grant_type" style="width: 315px;border:1px solid #dcdcdc" type="text">
+                                    </div>                                    
+                                </div>
+                            </mat-expansion-panel>
+                        </div>
+                    </div>                    
+                </div>
             </div>
         </div>
     </div>

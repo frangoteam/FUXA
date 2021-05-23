@@ -51,6 +51,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.config.type = (this.isWebApi()) ? 'todefine' : '';
         } else if (this.isMqtt()) {
             this.dialogType = EditTagDialogType.List;
+        } else if (this.data.device.type === DeviceType.inmation) {
+            this.dialogType = EditTagDialogType.Simple;
         } else {
             if (this.isModbus()) {
                 this.tagType = ModbusTagType;
@@ -417,6 +419,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isBACnet() {
         return (this.data.device.type === DeviceType.BACnet) ? true : false;
     }
+    
+    isInmation() {
+		return (this.data.device.type === DeviceType.inmation) ? true : false;
+    }
 
     checkMemAddress(memaddress) {
         if (memaddress === '000000' || memaddress === '100000') {
@@ -431,6 +437,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             return true;
         } else if (this.isMqtt()) {
             return true;
+        } else if (this.isInmation()) {
+            return true;
         } else if (this.data.tag && !this.data.tag.name) {
             return false;
         } else if (this.isModbus() && (!this.data.tag.address || parseInt(this.data.tag.address) <= 0)) {
@@ -442,6 +450,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
 export enum EditTagDialogType {
     Standard = 'standard',  // without browser
+    Simple = 'simple',        // name and path
     Tree = 'tree',
     List = 'list',
 }

@@ -110,7 +110,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.propertyLoading = false;
 		});		
 		// check security
-		if (this.data.device.name && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient)) {
+		if (this.data.device.name && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient || 
+			this.data.device.type === DeviceType.inmation)) {
 			this.projectService.getDeviceSecurity(this.data.device.name).subscribe(result => {
 				this.setSecurity(result.value);
 			}, err => {
@@ -218,7 +219,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	getSecurity(): any {
-		if (!this.propertyExpanded || (this.data.device.type !== DeviceType.OPCUA && this.data.device.type !== DeviceType.MQTTclient)) {
+		if (!this.propertyExpanded || (this.data.device.type !== DeviceType.OPCUA && this.data.device.type !== DeviceType.MQTTclient && 
+										this.data.device.type !== DeviceType.inmation)) {
 			return null;
 		} else {
 			if (this.data.device.type === DeviceType.OPCUA) {
@@ -229,6 +231,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			} else if (this.data.device.type === DeviceType.MQTTclient) {
 				if (this.security.clientId || this.security.username || this.security.password) {
 					let result = { clientId: this.security.clientId, uid: this.security.username, pwd: this.security.password };
+					return result;
+				}
+			} else if (this.data.device.type === DeviceType.inmation) {
+				if (this.security.clientId || this.security.username || this.security.password || this.security.grant_type) {
+					let result = { clientId: this.security.clientId, uid: this.security.username, pwd: this.security.password, gt: this.security.grant_type };
 					return result;
 				}
 			}
@@ -243,6 +250,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.security.username = value.uid;
 			this.security.password = value.pwd;
 			this.security.clientId = value.clientId;
+			this.security.grant_type = value.gt;
 			this.panelProperty.open();
 		}
 	}
