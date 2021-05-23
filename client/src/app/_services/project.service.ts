@@ -92,7 +92,9 @@ export class ProjectService {
         // check project change don't work some svg object change the order and this to check isn't easy...boooo
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
-            this.toastr.success('Project save successful!');
+            var msg = '';
+            this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt });
+            this.toastr.success(msg);
         }, err => {
             console.log(err);
             var msg = '';
@@ -107,7 +109,7 @@ export class ProjectService {
     }
 
     saveAs() {
-        let filename = 'MyProject.fuxap';
+        let filename = 'fuxa-project.json';
         let date = new Date();
         let content = JSON.stringify(this.convertToSave(this.getProject()));
         let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
@@ -446,6 +448,16 @@ export class ProjectService {
             disableTimeOut: true
         });
     }
+
+    private notifyFormatError() {
+        let msg = '';
+        this.translateService.get('msg.project-format-error').subscribe((txt: string) => { msg = txt });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
+    }
     //#endregion
 
     /**
@@ -454,9 +466,12 @@ export class ProjectService {
      * @param prj project data to save
      */
     setProject(prj: ProjectData, notify?: boolean) {
-
-        this.projectData = prj;
-        this.save();
+        if (prj.version && prj.server && prj.hmi && prj.devices) {
+            this.projectData = prj;
+            this.save();
+        } else {
+            this.notifyFormatError()
+        }
     }
 
     setNewProject() {

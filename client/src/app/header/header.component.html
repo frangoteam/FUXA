@@ -10,7 +10,7 @@
         <mat-divider class="menu-separator"></mat-divider>
         <button mat-menu-item (click)="onOpenProject();$event.stopPropagation()">{{'header.open-project' | translate}}</button>
         <!-- <button mat-menu-item (click)="onImportVariable();$event.stopPropagation()">Import Variable</button> -->
-        <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)" accept=".fuxap" />
+        <input type="file" #fileImportInput style="display: none" id="projectFileUpload" (change)="onFileChangeListener($event)" accept=".fuxap,.json" />
     </mat-menu>
     <button mat-button title="{{'header.edit-project' | translate}}" class="main-btn" (click)="onSetup()">
         <mat-icon aria-label="Edit Views">settings</mat-icon>
