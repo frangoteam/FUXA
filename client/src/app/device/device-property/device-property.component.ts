@@ -113,7 +113,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		if (this.data.device.name && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient || 
 			this.data.device.type === DeviceType.inmation)) {
 			this.projectService.getDeviceSecurity(this.data.device.name).subscribe(result => {
-				this.setSecurity(result.value);
+				if (result) {
+					this.setSecurity(result.value);
+				}
 			}, err => {
 				console.log('get Device Security err: ' + err);
 			});
