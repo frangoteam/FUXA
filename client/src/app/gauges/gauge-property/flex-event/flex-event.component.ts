@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 
+import { TranslateService } from '@ngx-translate/core';
+
 import {
     GaugeEvent,
     GaugeEventActionType,
@@ -25,12 +27,20 @@ export class FlexEventComponent implements OnInit {
     eventType: any;
     actionType: any;
 
-    constructor() {
+    constructor(private translateService: TranslateService) {
     }
 
     ngOnInit() {
         this.eventType = GaugeEventType;
         this.actionType = GaugeEventActionType;
+
+        Object.keys(this.eventType).forEach(key => {
+            this.translateService.get(this.eventType[key]).subscribe((txt: string) => { this.eventType[key] = txt });
+        });
+        Object.keys(this.actionType).forEach(key => {
+            this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt });
+        });
+
         if (this.property) {
             this.events = this.property.events;
             // compatibility with <= 1.0.4

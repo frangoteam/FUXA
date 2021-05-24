@@ -180,19 +180,19 @@ export class GaugeActionStatus {
 }
 
 export enum GaugeEventType {
-    click = 'Click',
+    click = 'shapes.event-click',
 }
 
 export enum GaugeEventActionType {
-    onpage = 'Open Page',
-    onwindow = 'Open Card',
-    ondialog = 'Open Dialog',
-    oniframe = 'Open iframe',
-    oncard = 'Open Window',     // wrong name exchange with 'onwindow'
-    onSetValue = 'Set Value',
-    onToggleValue = 'Toggle Value',
-    onSetInput = 'Set from Input',
-    onclose = 'Close',
+    onpage = 'shapes.event-onpage',
+    onwindow = 'shapes.event-onwindow',
+    ondialog = 'shapes.event-ondialog',
+    oniframe = 'shapes.event-oniframe',
+    oncard = 'shapes.event-oncard',     // wrong name exchange with 'onwindow'
+    onSetValue = 'shapes.event-onsetvalue',
+    onToggleValue = 'shapes.event-ontogglevalue',
+    onSetInput = 'shapes.event-onsetinput',
+    onclose = 'shapes.event-onclose',
 }
 
 export class GaugeRangeProperty {
