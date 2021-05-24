@@ -29,6 +29,7 @@
     "live-plugin-manager": "^0.15.1",
     "morgan": "^1.9.1",
     "mqtt": "^4.2.6",
+    "node-bacnet": "^0.2.4",
     "node-opcua": "^2.28.3",
     "node-snap7": "^1.0.1",
     "nopt": "5.0.0",
