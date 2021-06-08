@@ -530,17 +530,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     addCard() {
-        let cardtype = Utils.getEnumKey(ViewType, ViewType.cards)
-        let views = this.hmi.views.filter((v) => v.type !== cardtype).map((v) => { return v.name });
-        let dialogRef = this.dialog.open(DialogCardType, {
-            data: { card: new CardWidget(Utils.getEnumKey(CardWidgetType, CardWidgetType.view), ''), views: views },
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.addCardsWidget(0, 0, 4, 3, result.card);
-            }
-        });
+        this.addCardsWidget(0, 0, 4, 3, <CardWidget> { type: CardWidgetType.view });
     }
 
     addCardsWidget(x: number, y: number, cols: number, rows: number, card: CardWidget) {
