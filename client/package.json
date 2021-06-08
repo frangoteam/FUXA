@@ -55,7 +55,7 @@
     "panzoom": "^9.2.5",
     "rxjs": "6.0.0",
     "socket.io-client": "^2.2.0",
-    "uplot": "1.6.7",
+    "uplot": "1.6.12",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

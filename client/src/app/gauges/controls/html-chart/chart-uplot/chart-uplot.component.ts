@@ -266,6 +266,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 title.style.display = 'none';
             }
         }
+        this.chartPanel.nativeElement.style.backgroundColor = this.options.colorBackground;
     }
 }
 
