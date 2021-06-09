@@ -1,4 +1,4 @@
-uplot@1.6.7
+uplot@1.6.12
 MIT
 The MIT License (MIT)
 
