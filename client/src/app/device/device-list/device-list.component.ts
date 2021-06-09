@@ -169,7 +169,7 @@ export class DeviceListComponent implements OnInit {
                     tag.id = n.id;
                     tag.name = n.id;
                     tag.type = n.type;
-                    if (this.deviceSelected.type === DeviceType.BACnet) {
+                    if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.OPCUA) {
                         tag.label = n.text;
                     } else if (this.deviceSelected.type === DeviceType.WebAPI) {
                         tag.label = n.text;
@@ -190,6 +190,8 @@ export class DeviceListComponent implements OnInit {
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             return tag.label;
+        } else if (this.deviceSelected.type === DeviceType.OPCUA) {
+            return tag.label;
         } else {
             return tag.name;
         }
@@ -197,7 +199,7 @@ export class DeviceListComponent implements OnInit {
 
     getAddress(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
-            return  parseInt(tag.address) + parseInt(tag.memaddress);
+            return parseInt(tag.address) + parseInt(tag.memaddress);
         } else if (this.deviceSelected.type === DeviceType.WebAPI) {
             if (tag.options) {
                 return tag.address + ' / ' + tag.options.selval;
@@ -208,7 +210,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type) {
-        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.inmation);
+        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU);
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
