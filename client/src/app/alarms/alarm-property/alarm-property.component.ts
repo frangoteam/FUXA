@@ -62,7 +62,12 @@ export class AlarmPropertyComponent implements OnInit {
             this.data.alarm.info.enabled = true;
             this.data.alarm.info.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)];
         }
-
+        if (!this.data.alarm.logme) {
+            this.data.alarm.logme = new AlarmSubProperty();
+            this.data.alarm.logme.bkcolor = "#FFFFFF";
+            this.data.alarm.logme.color = "#000";
+            this.data.alarm.logme.enabled = true;
+        }
         Object.keys(this.ackMode).forEach(key => {
             this.translateService.get(this.ackMode[key]).subscribe((txt: string) => { this.ackMode[key] = txt });
         });

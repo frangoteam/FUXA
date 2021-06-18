@@ -652,7 +652,7 @@
 	"msg.user-remove": "Kullanıcıyı silmek istiyor musunuz?",
 	"msg.project-save-error": "Proje kaydedilemedi.",
 	"msg.project-save-unauthorized": "Proje kaydedilemedi. Yetkiniz yok.",
-	"msg.project-save-ask": "Projeden çıkmak istiyormusunuz?",
+	"msg.project-save-ask": "Projeden çıkmak istiyor musunuz?",
 	"msg.login-username-required": "Kullanıcı adı girin",
 	"msg.login-password-required": "Şifre girin",
 	"msg.signin-failed": "Yetkisiz giriş."

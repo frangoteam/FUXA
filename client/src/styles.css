@@ -66,6 +66,39 @@
 }
 
 @font-face {
+    font-family: "Quicksand-Regular";
+    src: local("Quicksand"), local("Quicksand-Regular"),
+        url("./assets/fonts/quicksand-regular\Quicksand-Regular.woff")
+            format("woff"),
+        url("./assets/fonts/quicksand-regular\Quicksand-Regular.woff2")
+            format("woff2"),
+        url("./assets/fonts/quicksand-regular\Quicksand-Regular.ttf")
+            format("truetype");
+}
+
+@font-face {
+    font-family: "Quicksand-Medium";
+    src: local("Quicksand Medium"), local("Quicksand-Medium"),
+        url("./assets/fonts/quicksand-medium\Quicksand-Medium.woff")
+            format("woff"),
+        url("./assets/fonts/quicksand-medium\Quicksand-Medium.woff2")
+            format("woff2"),
+        url("./assets/fonts/quicksand-medium\Quicksand-Medium.ttf")
+            format("truetype");
+}
+
+@font-face {
+    font-family: "Quicksand-Bold";
+    src: local("Quicksand"), local("Quicksand-Bold"),
+        url("./assets/fonts/quicksand-bold\Quicksand-Bold.woff")
+            format("woff"),
+        url("./assets/fonts/quicksand-bold\Quicksand-Bold.woff2")
+            format("woff2"),
+        url("./assets/fonts/quicksand-bold\Quicksand-Bold.ttf")
+            format("truetype");
+}
+
+@font-face {
     font-family: "Roboto-Bold";
     src: local("Roboto Bold"), local("Roboto-Bold"),
         url("./assets/fonts/roboto-bold/roboto-bold-webfont.woff")
@@ -74,7 +107,8 @@
             format("woff2"),
         url("./assets/fonts/roboto-bold/roboto-bold-webfont.ttf")
             format("truetype"),
-        url("./assets/fonts/roboto-bold/roboto-bold-webfont.svg") format("svg");
+        url("./assets/fonts/roboto-bold/roboto-bold-webfont.svg")
+		    format("svg");
 }
 
 /* System and General */

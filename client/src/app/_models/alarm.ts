@@ -24,6 +24,7 @@ export class AlarmSubProperty {
     ackmode: AlarmAckMode;
     bkcolor: string;
     color: string;
+	logme:boolean;
 }
 
 export enum AlarmAckMode {

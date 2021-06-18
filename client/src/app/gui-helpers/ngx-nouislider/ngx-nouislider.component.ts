@@ -16,7 +16,8 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
     @Input() public options: NgxNouisliderOptions;
 
     size = { w: 0, h: 0 };
-    padding = 40;
+	//alt boşluk
+    padding = 20;
     defOptions = new NgxNouisliderOptions();
     uiSlider: any;
     onUpdate: any;
@@ -117,11 +118,11 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
         if (this.options.tooltip.type === 'show') {
             var tp = this.uiSlider.target.getElementsByClassName('noUi-tooltip');
             if (tp && tp.length > 0)
-                tp[0].style.display = 'block';
+                tp[0].style.display = 'inline';
         } else if (this.options.tooltip.type === 'hide') {
             var tp = this.uiSlider.target.getElementsByClassName('noUi-active noUi-tooltip');
             if (tp && tp.length > 0)
-                tp[0].style.display = 'block';
+                tp[0].style.display = 'inline';
         }
         if (this.options.tooltip.type !== 'none') {
             var tp = this.uiSlider.target.getElementsByClassName('noUi-tooltip');
@@ -171,12 +172,12 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
 
 export class NgxNouisliderOptions {
     orientation = 'vertical';//'horizontal';
-    direction = 'ltr';
+    direction = 'rtl';
     fontFamily = 'Sans-serif';
     shape = { baseColor: '#dcdcdc', connectColor: '#49b2ff', handleColor: '#018ef5' };
-    marker = { color: '#000', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
+    marker = { color: '#000', subWidth: 5, subHeight: 1, fontSize: 12, divHeight: 2, divWidth: 10 };
     range = { min: 0, max: 100 };
     step = 1;
-    pips = { mode: 'values', values: [0, 50, 100], density: 4 };
-    tooltip = { type: 'none', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 }
+    pips = { mode: 'values', values: [0, 50, 100], density: 5 };
+    tooltip = { type: 'hide', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 }
 }
