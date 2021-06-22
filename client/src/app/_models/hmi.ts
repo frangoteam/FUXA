@@ -298,14 +298,16 @@ export enum TimeFormatType {
 }
 
 export class CardWidget {
-    content: string;
+    data: string;
     type: string;
-    constructor(type: string, content: string) {
+    constructor(type: string, data: string) {
         this.type = type;
-        this.content = content;
+        this.data = data;
     }
 }
 
 export enum CardWidgetType {
-    view = 'View',
+    view = 'card.widget-view',
+    alarms = 'card.widget-alarms',
+    table = 'card.widget-table',
 }

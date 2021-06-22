@@ -12,9 +12,10 @@ import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
+import { Utils } from '../_helpers/utils';
 
 import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
 
@@ -54,6 +55,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	gridOptions: GridsterConfig;
     dashboard: Array<GridsterItem>;
+    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
 	private subscriptionLoad: Subscription;
 	private subscriptionAlarmsStatus: Subscription;
@@ -127,7 +129,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (view) {
 			this.homeView = view;
 			this.setBackground();
-			this.fuxaview.loadHmi(this.homeView);
+			if (this.homeView.type !== this.cardViewType) {
+				this.fuxaview.loadHmi(this.homeView);
+			}
 		}
 	}
 

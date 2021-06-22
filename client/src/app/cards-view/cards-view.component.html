@@ -1,0 +1,16 @@
+<gridster [options]="gridOptions">
+    <gridster-item [item]="item" *ngFor="let item of dashboard">
+        <div *ngIf="item.content" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;">
+            <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+            <div style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(87, 87, 87, 0.4) !important;"></div>
+        </div>
+        <div style="position:absolute;top: 50%;left: 50%;transform:translate(-50%, -50%); width: 100px">
+            <button mat-mini-fab color="white" style="float: left;" (click)="onEditCard(item)">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-mini-fab color="white" style="float: right;" (click)="onRemoveCard(item)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
+    </gridster-item>
+</gridster>

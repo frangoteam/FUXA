@@ -34,8 +34,8 @@
                                 <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
                                 <button mat-menu-item (click)="onRenameView(item)">{{'editor.view-rename' | translate}}</button>
                                 <button mat-menu-item (click)="onPropertyView(item)">{{'editor.view-property' | translate}}</button>
-                                <button mat-menu-item (click)="onCloneView(item)">{{'editor.view-clone' | translate}}</button>
-                                <button mat-menu-item (click)="onExportView(item)">{{'editor.view-export' | translate}}</button>
+                                <button mat-menu-item (click)="onCloneView(item)" *ngIf="item.type !== cardViewType">{{'editor.view-clone' | translate}}</button>
+                                <button mat-menu-item (click)="onExportView(item)" *ngIf="item.type !== cardViewType">{{'editor.view-export' | translate}}</button>
                             </mat-menu>
                         </div>
                     </div>
@@ -741,15 +741,24 @@
                     </button>
                 </div>
                 <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
-                    <gridster [options]="gridOptions">
+                    <app-cards-view #cardsview [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager" 
+                                (editCard)="editCardsWidget($event)" (save)="onSaveProject()"></app-cards-view>
+                    <!-- <gridster [options]="gridOptions">
                         <gridster-item [item]="item" *ngFor="let item of dashboard">
-                            <div *ngIf="item.content" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:lawngreen;" [innerHTML]="item.content | keepHtml"></div>
-                            <div style="position:absolute;top: 50%;left: 50%;transform:translate(-50%, -50%); width: 70px">
-                                <mat-icon (click)="removeCardsWidget(item)" style="cursor: pointer;">edit</mat-icon>
-                                <mat-icon (click)="removeCardsWidget(item)" style="margin-left: 20px;cursor: pointer;">delete</mat-icon>
+                            <div *ngIf="item.content" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;">
+                                <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+                                <div style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(87, 87, 87, 0.4) !important;"></div>
+                            </div>
+                            <div style="position:absolute;top: 50%;left: 50%;transform:translate(-50%, -50%); width: 100px">
+                                <button mat-mini-fab color="white" style="float: left;" (click)="editCardsWidget(item)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-mini-fab color="white" style="float: right;" (click)="removeCardsWidget(item)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
                             </div>
                         </gridster-item>
-                    </gridster>
+                    </gridster> -->
                     <!-- <div class="grid-stack"></div> -->
                     <button mat-fab color="primary" (click)="addCard()" class="fab-add">
                         <mat-icon class="">add</mat-icon>

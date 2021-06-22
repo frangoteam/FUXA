@@ -25,12 +25,13 @@ import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty, DialogCardType } from './editor/editor.component';
+import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent, DialogListItem, DialogChartLine } from './editor/chart-config/chart-config.component';
+import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
@@ -42,6 +43,7 @@ import { TagPropertyComponent } from './device/tag-property/tag-property.compone
 import { DeviceListComponent } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
+import { CardsViewComponent } from './cards-view/cards-view.component';
 import { TesterComponent } from './tester/tester.component';
 import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
@@ -138,7 +140,7 @@ export function createTranslateLoader(http: HttpClient) {
 // }
 
 @NgModule({
-    declarations: [
+    declarations: [	
         HomeComponent,
         EditorComponent,
         HeaderComponent,
@@ -161,7 +163,6 @@ export function createTranslateLoader(http: HttpClient) {
         DialogDocName,
         DialogNewDoc,
         DialogLinkProperty,
-        DialogCardType,
         ConfirmDialogComponent,
         DialogInfo,
         GaugeBaseComponent,
@@ -205,6 +206,7 @@ export function createTranslateLoader(http: HttpClient) {
         LazyForDirective,
         NgxSwitchComponent,
         ChartConfigComponent,
+        CardConfigComponent,
         AlarmListComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,
@@ -220,8 +222,9 @@ export function createTranslateLoader(http: HttpClient) {
         ViewComponent,
         DialogItemText,
         NgxUplotComponent,
-        ChartUplotComponent
-    ],
+        ChartUplotComponent,
+        CardsViewComponent
+   ],
     imports: [
         BrowserModule,
         FormsModule,
@@ -279,7 +282,6 @@ export function createTranslateLoader(http: HttpClient) {
         DialogDocName,
         DialogNewDoc,
         DialogLinkProperty,
-        DialogCardType,
         DialogInfo,
         GaugePropertyComponent,
         DialogGaugePermission,
@@ -300,6 +302,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogMenuItem,
         NgxSwitchComponent,
         ChartConfigComponent,
+        CardConfigComponent,
         AlarmListComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,

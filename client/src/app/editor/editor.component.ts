@@ -31,7 +31,9 @@ import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
-import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
+import { GridsterItem } from 'angular-gridster2';
+import { CardConfigComponent } from './card-config/card-config.component';
+import { CardsViewComponent } from '../cards-view/cards-view.component';
 
 declare var Gauge: any;
 
@@ -68,7 +70,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // @ViewChild('fillcolor') fillcolor: ElementRef;
     @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
     @ViewChild('viewFileImportInput') viewFileImportInput: any;
-
+    @ViewChild('cardsview') cardsview: CardsViewComponent;
+    
     fonts = Define.fonts;
     isLoading = true;
     editorModeType = EditorModeType;
@@ -98,8 +101,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelMarkerOpenState: boolean;
     panelHyperlinkOpenState: boolean;
 
-    gridOptions: GridsterConfig;
     dashboard: Array<GridsterItem>;
+    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
     shapesGrps = [];
     private gaugesRef = [];
@@ -139,23 +142,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (err) {
             console.log(err);
         }
-        this.gridOptions = {
-            gridType: GridType.Fixed,
-            compactType: CompactType.None,
-            maxCols: 20,
-            maxRows: 20,
-            fixedColWidth: 95,
-            fixedRowHeight: 95,
-            disableWarnings: true,
-            draggable: {
-                enabled: true,
-            },
-            resizable: {
-                enabled: true,
-            },
-            itemChangeCallback: this.itemChange,
-            itemResizeCallback: this.itemChange,
-        };
     }
 
     /**
@@ -186,10 +172,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         } catch (e) {
         }
-        if (this.currentView) {
-            this.currentView.svgcontent = this.getContent();
-            this.saveView(this.currentView);
-        }
+        this.onSaveProject();
     }
     //#endregion
 
@@ -322,12 +305,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private getContent() {
         if (this.currentView.type === Utils.getEnumKey(ViewType, ViewType.cards)) {
-            let temp = JSON.parse(JSON.stringify(this.dashboard));
-            for (let i = 0; i < temp.length; i++) {
-                delete temp[i]['content'];
-                delete temp[i]['background'];
-            }
-            return JSON.stringify(temp);
+            this.currentView.svgcontent = this.cardsview.getContent();
+            return this.currentView.svgcontent;
+            // let temp = JSON.parse(JSON.stringify(this.dashboard));
+            // for (let i = 0; i < temp.length; i++) {
+            //     delete temp[i]['content'];
+            //     delete temp[i]['background'];
+            // }
+            // return JSON.stringify(temp);
         } else {
             return this.winRef.nativeWindow.svgEditor.getSvgString();
         }
@@ -478,10 +463,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     this.winRef.nativeWindow.svgEditor.refreshCanvas();
                 }, 500);
-            } else {
-                setTimeout(() => {
-                    this.initCardsEditor();
-                }, 500);
             }
         }
     }
@@ -508,51 +489,37 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     //#endregion
 
     //#region Cards Widget
-    private initCardsEditor() {
-        this.dashboard = [];
-        if (this.currentView.svgcontent) {
-            let dashboard = JSON.parse(this.currentView.svgcontent);
-            for (let i = 0; i < dashboard.length; i++) {
-                this.addCardsWidget(dashboard[i].x, dashboard[i].y, dashboard[i].cols, dashboard[i].rows, dashboard[i].card);
-            }
-        } else {
-            this.addCardsWidget(0, 0, 4, 3, <CardWidget> { type: CardWidgetType.view });
+    editCardsWidget(item: any) {
+        let exist: string[] = this.cardsview.getWindgetViewName();
+        if (item.card.data && exist.indexOf(item.card.data) >= 0) {
+            exist = exist.filter((n) => n !== item.card.data);
         }
-    }
-
-    private itemChange(item, itemComponent) {
-        console.info('itemResized', item, itemComponent);
-        // if (this.dashboard) {
-        //     for (let i = 0; i < item.self.dashboard.length; i++) {
-        //         console.log(item.self.dashboard[i]);
-        //     }
-        // }
+        let cardType = Utils.getEnumKey(ViewType, ViewType.cards);
+        let views = this.hmi.views.filter((v) => v.type !== cardType && exist.indexOf(v.name) < 0).map((v) => { return v.name })
+        let dialogRef = this.dialog.open(CardConfigComponent, {
+            position: { top: '60px' },
+            data: { item: item, views: views }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                let view = this.hmi.views.filter((v) => v.name === item.card.data);
+                if (view && view.length) {
+                    item.content = view[0];
+                } else {
+                    item.content = null;
+                }
+                this.onSaveProject();
+                this.cardsview.render();
+            }
+        });
     }
 
     addCard() {
-        this.addCardsWidget(0, 0, 4, 3, <CardWidget> { type: CardWidgetType.view });
+        this.cardsview.addCardsWidget();
     }
 
-    addCardsWidget(x: number, y: number, cols: number, rows: number, card: CardWidget) {
-        let content = '';
-        let background = '';
-        if (card) {
-            let views = this.hmi.views.filter((v) => v.name === card.content);
-            if (views && views.length) {
-                if (views[0].svgcontent) {
-                    content = views[0].svgcontent.replace('<title>Layer 1</title>', '');
-                }
-                if (views[0].profile.bkcolor) {
-                    background = views[0].profile.bkcolor;
-                }
-            }
-        }
-        this.dashboard.push({x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background });
-    }
-
-
-    removeCardsWidget(item) {
-        this.dashboard.splice(this.dashboard.indexOf(item), 1);
+    saveCards(dashboard) {
+        // this.dashboard.splice(this.dashboard.indexOf(item), 1);
     }
     // #region 
 
@@ -1377,21 +1344,6 @@ export class DialogDocName {
 export class DialogLinkProperty {
     constructor(
         public dialogRef: MatDialogRef<DialogLinkProperty>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-}
-
-@Component({
-    selector: 'dialog-doc-name',
-    templateUrl: 'cardtype.dialog.html',
-})
-export class DialogCardType {
-    cardType = CardWidgetType;
-    constructor(
-        public dialogRef: MatDialogRef<DialogCardType>,
         @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     onNoClick(): void {
