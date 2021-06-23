@@ -17,7 +17,7 @@ import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
 
-import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
+import { GridsterConfig, GridType, CompactType } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
 // declare var panzoom: any;
@@ -41,7 +41,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	homeView: View = new View();
 	hmi: Hmi = new Hmi();
 	showSidenav = 'over';
-	showHomeView = false;
 	homeLink = '';
 	showHomeLink = false;
 	securityEnabled = false;
@@ -53,9 +52,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	alarmsPanelOpen = false;
 	layoutHeader = new HeaderSettings();
 
-	gridOptions: GridsterConfig;
-    dashboard: Array<GridsterItem>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+    gridOptions: GridsterConfig = {
+        gridType: GridType.Fixed,
+        compactType: CompactType.None,
+        maxCols: 20,
+        maxRows: 20,
+        fixedColWidth: 95,
+        fixedRowHeight: 95,
+        disableWarnings: true,
+        draggable: {
+            enabled: false,
+        },
+        resizable: {
+            enabled: false,
+        }
+    };
 
 	private subscriptionLoad: Subscription;
 	private subscriptionAlarmsStatus: Subscription;
@@ -69,22 +81,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private gaugesManager: GaugesManager) { }
 
 	ngOnInit() {
-        this.gridOptions = {
-            gridType: GridType.Fixed,
-            compactType: CompactType.None,
-            draggable: {
-                enabled: false,
-            },
-            resizable: {
-                enabled: false,
-            },
-            itemChangeCallback: function () {},
-            itemResizeCallback: function () {},
-        };
-		this.dashboard = [
-            { cols: 2, rows: 1, y: 0, x: 0 },
-            { cols: 2, rows: 2, y: 0, x: 2 }
-        ];
 	}
 
 	ngAfterViewInit() {
@@ -123,11 +119,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	onGoToPage(event: string) {
 		const view = this.hmi.views.find(x => x.id === event);
-        this.showHomeView = (this.homeView) ? true : false;
         this.showHomeLink = false;
         this.changeDetector.detectChanges();
 		if (view) {
 			this.homeView = view;
+            this.changeDetector.detectChanges();
 			this.setBackground();
 			if (this.homeView.type !== this.cardViewType) {
 				this.fuxaview.loadHmi(this.homeView);
@@ -137,7 +133,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	onGoToLink(event: string) {
 		if (event.indexOf('://') >= 0) {
-			this.showHomeView = false;
             this.showHomeLink = true;
             this.changeDetector.detectChanges();
 			this.iframeview.loadLink(event);
@@ -268,7 +263,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 					}, 1000);
 				}
 			}
-			this.showHomeView = (this.homeView) ? true : false;
 		}
 		if (this.homeView && this.fuxaview) {
 			this.fuxaview.loadHmi(this.homeView);

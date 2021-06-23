@@ -12,6 +12,8 @@ import { Utils } from '../_helpers/utils';
 })
 export class CardsViewComponent implements OnInit, AfterViewInit {
 
+    @Input() options: GridsterConfig;
+    @Input() edit: boolean = true;
     @Input() view: View;
     @Input() hmi: Hmi;
     @Input() gaugesManager: GaugesManager;        // gauges.component
@@ -24,9 +26,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
     widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
 
-    constructor() { }
-
-    ngOnInit() {
+    constructor() { 
         this.gridOptions = {
             gridType: GridType.Fixed,
             compactType: CompactType.None,
@@ -46,7 +46,11 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         };
     }
 
+    ngOnInit() {
+    }
+
     ngAfterViewInit() {
+        this.gridOptions = { ...this.gridOptions, ...this.options };
         setTimeout(() => {
             this.initCardsEditor(this.view.svgcontent);
         }, 500);
