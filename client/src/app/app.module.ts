@@ -25,12 +25,13 @@ import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogDocProperty, DialogDocName, DialogLinkProperty } from './editor/editor.component';
+import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent, DialogListItem, DialogChartLine } from './editor/chart-config/chart-config.component';
+import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
@@ -42,6 +43,7 @@ import { TagPropertyComponent } from './device/tag-property/tag-property.compone
 import { DeviceListComponent } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
+import { CardsViewComponent } from './cards-view/cards-view.component';
 import { TesterComponent } from './tester/tester.component';
 import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
@@ -57,7 +59,7 @@ import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
 import { WindowRef } from './_helpers/windowref';
-import { Utils, EnumToArrayPipe } from './_helpers/utils';
+import { Utils, EnumToArrayPipe, EscapeHtmlPipe } from './_helpers/utils';
 import { Define } from './_helpers/define';
 import { Dictionary } from './_helpers/dictionary';
 import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.component';
@@ -115,6 +117,8 @@ import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-
 import { NgxUplotComponent } from './gui-helpers/ngx-uplot/ngx-uplot.component';
 import { ChartUplotComponent } from './gauges/controls/html-chart/chart-uplot/chart-uplot.component';
 
+import { GridsterModule } from 'angular-gridster2';
+
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 import { environment } from '../environments/environment';
 
@@ -136,7 +140,7 @@ export function createTranslateLoader(http: HttpClient) {
 // }
 
 @NgModule({
-    declarations: [
+    declarations: [	
         HomeComponent,
         EditorComponent,
         HeaderComponent,
@@ -157,6 +161,7 @@ export function createTranslateLoader(http: HttpClient) {
         FuxaViewComponent,
         DialogDocProperty,
         DialogDocName,
+        DialogNewDoc,
         DialogLinkProperty,
         ConfirmDialogComponent,
         DialogInfo,
@@ -191,6 +196,7 @@ export function createTranslateLoader(http: HttpClient) {
         ValueComponent,
         DialogDraggableDirective,
         EnumToArrayPipe,
+        EscapeHtmlPipe,
         DraggableDirective,
         NumberOnlyDirective,
         NgxFabButtonComponent,
@@ -200,6 +206,7 @@ export function createTranslateLoader(http: HttpClient) {
         LazyForDirective,
         NgxSwitchComponent,
         ChartConfigComponent,
+        CardConfigComponent,
         AlarmListComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,
@@ -215,8 +222,9 @@ export function createTranslateLoader(http: HttpClient) {
         ViewComponent,
         DialogItemText,
         NgxUplotComponent,
-        ChartUplotComponent
-    ],
+        ChartUplotComponent,
+        CardsViewComponent
+   ],
     imports: [
         BrowserModule,
         FormsModule,
@@ -240,7 +248,8 @@ export function createTranslateLoader(http: HttpClient) {
                 useFactory: createTranslateLoader,
                 deps: [HttpClient]
             }
-        })
+        }),
+        GridsterModule
     ],
     providers: [
         // providersResourceService,
@@ -271,6 +280,7 @@ export function createTranslateLoader(http: HttpClient) {
     entryComponents: [
         DialogDocProperty,
         DialogDocName,
+        DialogNewDoc,
         DialogLinkProperty,
         DialogInfo,
         GaugePropertyComponent,
@@ -292,6 +302,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogMenuItem,
         NgxSwitchComponent,
         ChartConfigComponent,
+        CardConfigComponent,
         AlarmListComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,

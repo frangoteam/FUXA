@@ -6,9 +6,14 @@
             <span>{{'dlg.docname-name' | translate}}</span>
             <input [(ngModel)]="data.name" type="text" style="width:300px" [readonly]="data.readonly">
         </div>
-        <!-- <div style="display: grid; margin-bottom: 20px;">
-      <input [(ngModel)]="data.name" type="text" width="100%" [readonly]="data.readonly">
-    </div> -->
+        <div class="my-form-field" style="margin-bottom: 10px;;">
+            <span>{{'dlg.docproperty-type' | translate}}</span>
+            <mat-select [(value)]="data.type" placeholder="{{'dlg.doctype' | translate}}" style="width: 300px;">
+                <mat-option *ngFor="let type of docType | enumToArray" [value]="type.key">
+                    {{ type.value }}
+                </mat-option>
+            </mat-select>
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

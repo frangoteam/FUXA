@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService } from '../_services/project.service';
-import { Hmi, View, GaugeSettings, SelElement, LayoutSettings } from '../_models/hmi';
+import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
 import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
@@ -30,6 +30,10 @@ import { ValueComponent } from '../gauges/controls/value/value.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
+
+import { GridsterItem } from 'angular-gridster2';
+import { CardConfigComponent } from './card-config/card-config.component';
+import { CardsViewComponent } from '../cards-view/cards-view.component';
 
 declare var Gauge: any;
 
@@ -66,9 +70,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // @ViewChild('fillcolor') fillcolor: ElementRef;
     @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
     @ViewChild('viewFileImportInput') viewFileImportInput: any;
-
+    @ViewChild('cardsview') cardsview: CardsViewComponent;
+    
     fonts = Define.fonts;
     isLoading = true;
+    editorModeType = EditorModeType;
+    editorMode: EditorModeType = EditorModeType.SVG;
     defaultColor = Utils.defaultColor;
     colorFill: string = '#FFFFFF'
     colorStroke: string = '#000000'
@@ -93,6 +100,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelEventOpenState: boolean;
     panelMarkerOpenState: boolean;
     panelHyperlinkOpenState: boolean;
+
+    dashboard: Array<GridsterItem>;
+    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
     shapesGrps = [];
     private gaugesRef = [];
@@ -139,16 +149,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     ngAfterViewInit() {
         this.myInit();
-            this.setMode('select');
-            let hmi = this.projectService.getHmi();
-            if (hmi) {
-                this.loadHmi();
-            }
-            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-                this.loadHmi();
-            }, error => {
-                console.log('Error loadHMI');
-            });
+        this.setMode('select');
+        let hmi = this.projectService.getHmi();
+        if (hmi) {
+            this.loadHmi();
+        }
+        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+            this.loadHmi();
+        }, error => {
+            console.log('Error loadHMI');
+        });
         this.changeDetector.detectChanges();
     }
 
@@ -162,10 +172,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         } catch (e) {
         }
-        if (this.currentView) {
-            this.currentView.svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
-            this.saveView(this.currentView);
-        }
+        this.onSaveProject();
     }
     //#endregion
 
@@ -224,13 +231,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 (copiedpasted) => {
                     if (copiedpasted && copiedpasted.copy && copiedpasted.past) {
-                        copiedpasted.copy = copiedpasted.copy.filter(function(e) {return e });
+                        copiedpasted.copy = copiedpasted.copy.filter(function (e) { return e });
                         if (copiedpasted.copy.length == copiedpasted.past.length) {
                             for (let i = 0; i < copiedpasted.copy.length; i++) {
                                 let srctype = copiedpasted.copy[i].getAttribute("type");
                                 let srcid = copiedpasted.copy[i].getAttribute("id");
                                 if (srcid && srctype) {
-                                    let gasrc: GaugeSettings = this.searchGaugeSettings({ id: srcid, type: srctype});
+                                    let gasrc: GaugeSettings = this.searchGaugeSettings({ id: srcid, type: srctype });
                                     let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
                                     gadest.property = JSON.parse(JSON.stringify(gasrc.property));
                                     this.setGaugeSettings(gadest);
@@ -261,7 +268,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         // check new hmi
         if (!this.hmi.views || this.hmi.views.length <= 0) {
             this.hmi.views = [];
-            this.onAddView();
+            this.addView();
             // this.selectView(this.hmi.views[0].name);
         } else {
             let oldsel = localStorage.getItem("@frango.webeditor.currentview");
@@ -296,8 +303,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.projectService.removeView(view);
     }
 
-    private saveHmi() {
-        console.log('TO REMOVE!!!!!!!!!');
+    private getContent() {
+        if (this.currentView.type === Utils.getEnumKey(ViewType, ViewType.cards)) {
+            this.currentView.svgcontent = this.cardsview.getContent();
+            return this.currentView.svgcontent;
+            // let temp = JSON.parse(JSON.stringify(this.dashboard));
+            // for (let i = 0; i < temp.length; i++) {
+            //     delete temp[i]['content'];
+            //     delete temp[i]['background'];
+            // }
+            // return JSON.stringify(temp);
+        } else {
+            return this.winRef.nativeWindow.svgEditor.getSvgString();
+        }
     }
 
     /**
@@ -307,7 +325,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let temp = this.winRef.nativeWindow.svgEditor.getShapes();
         let grps = [];
         Object.keys(temp).forEach(grpk => {
-            grps.push({name: grpk, shapes: temp[grpk]});
+            grps.push({ name: grpk, shapes: temp[grpk] });
         }),
         this.shapesGrps = grps;
     }
@@ -416,35 +434,36 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * load the view to svg-editor and canvas
      * @param view view to load
      */
-    private loadView(view) {
+    private loadView(view: View) {
         if (view) {
             this.clearEditor();
-            let svgcontent: string = '';
-            let v = this.getView(view.name)
-            if (v) {
-                svgcontent = v.svgcontent;
-            }
-            if (svgcontent.length <= 0) {
-                svgcontent = '<svg id="' + view.name + '" width="' + view.profile.width + '" height="' + view.profile.height +
-                    '" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">' +
-                    '<filter id="blur-filter" x="-3" y="-3" width="200" height="200"><feGaussianBlur in="SourceGraphic" stdDeviation="3" /></filter>' +
-                    '<g><title>Layer 1</title></g></svg>';
-            }
-            if (this.winRef.nativeWindow.svgEditor) {
-                this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
-                this.winRef.nativeWindow.svgEditor.setSvgString(svgcontent);
-            }
-
-            // check gauge to init
-            this.gaugesRef = [];
-            setTimeout(() => {
-                for (let key in v.items) {
-                    let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
-                    this.checkGaugeAdded(ga);
-                    // GaugesManager.initElementAdded(v.items[key], this.resolver, this.viewContainerRef);
+            if (this.editorMode !== EditorModeType.CARDS) {
+                let svgcontent: string = '';
+                let v = this.getView(view.name)
+                if (v) {
+                    svgcontent = v.svgcontent;
                 }
-            }, 500);
+                if (svgcontent.length <= 0) {
+                    svgcontent = '<svg id="' + view.name + '" width="' + view.profile.width + '" height="' + view.profile.height +
+                        '" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">' +
+                        '<filter id="blur-filter" x="-3" y="-3" width="200" height="200"><feGaussianBlur in="SourceGraphic" stdDeviation="3" /></filter>' +
+                        '<g><title>Layer 1</title></g></svg>';
+                }
+                if (this.winRef.nativeWindow.svgEditor) {
+                    this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
+                    this.winRef.nativeWindow.svgEditor.setSvgString(svgcontent);
+                }
 
+                // check gauge to init
+                this.gaugesRef = [];
+                setTimeout(() => {
+                    for (let key in v.items) {
+                        let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
+                        this.checkGaugeAdded(ga);
+                    }
+                    this.winRef.nativeWindow.svgEditor.refreshCanvas();
+                }, 500);
+            }
         }
     }
 
@@ -468,6 +487,41 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
     //#endregion
+
+    //#region Cards Widget
+    editCardsWidget(item: any) {
+        let exist: string[] = this.cardsview.getWindgetViewName();
+        if (item.card.data && exist.indexOf(item.card.data) >= 0) {
+            exist = exist.filter((n) => n !== item.card.data);
+        }
+        let cardType = Utils.getEnumKey(ViewType, ViewType.cards);
+        let views = this.hmi.views.filter((v) => v.type !== cardType && exist.indexOf(v.name) < 0).map((v) => { return v.name })
+        let dialogRef = this.dialog.open(CardConfigComponent, {
+            position: { top: '60px' },
+            data: { item: item, views: views }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                let view = this.hmi.views.filter((v) => v.name === item.card.data);
+                if (view && view.length) {
+                    item.content = view[0];
+                } else {
+                    item.content = null;
+                }
+                this.onSaveProject();
+                this.cardsview.render();
+            }
+        });
+    }
+
+    addCard() {
+        this.cardsview.addCardsWidget();
+    }
+
+    saveCards(dashboard) {
+        // this.dashboard.splice(this.dashboard.indexOf(item), 1);
+    }
+    // #region 
 
     //#region Svg-editor event and function interface
     /**
@@ -722,7 +776,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onMakeHyperlink() {
         let dialogRef = this.dialog.open(DialogLinkProperty, {
             data: { url: 'https://' },
-			position: { top: '60px' }
+            position: { top: '60px' }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -750,7 +804,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onSaveProject() {
         if (this.currentView) {
-            this.currentView.svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
+            this.currentView.svgcontent = this.getContent();
             this.saveView(this.currentView);
         }
     }
@@ -758,10 +812,24 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     //#endregion
 
     //#region View Events (Add/Rename/Delete/...)
+    onAddDoc() {
+        let exist = this.hmi.views.map((v) => { return v.name });
+        let dialogRef = this.dialog.open(DialogNewDoc, {
+            position: { top: '60px' },
+            data: { name: '', type: Utils.getEnumKey(ViewType, ViewType.svg), exist: exist }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && result.name && result.type) {
+                this.addView(result.name, result.type);
+            }
+        });
+    }
+
     /**
      * Add View to Project with a default name View_[x]
      */
-    onAddView() {
+    addView(name?: string, type?: ViewType) {
         if (this.hmi.views) {
             let nn = "View_";
             let idx = 1;
@@ -777,7 +845,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     break;
             }
             let v = new View();
-            if (this.hmi.views.length <= 0) {
+            v.type = type;
+            if (name) {
+                v.name = name;
+            } else if (this.hmi.views.length <= 0) {
                 v.name = 'MainView';
             } else {
                 v.name = nn + idx;
@@ -818,7 +889,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 idrenamed.push(newid);
             }
             let strv = this.winRef.nativeWindow.svgEditor.renameAllSvgExtensionId(torename.content, idrenamed);
-            let v:View = JSON.parse(strv);
+            let v: View = JSON.parse(strv);
             v.id = 'v_' + Utils.getShortGUID();
             v.name = nn + idx;
             this.hmi.views.push(v);
@@ -908,7 +979,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private onSelectView(view) {
         if (this.currentView) {
-            this.currentView.svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
+            this.currentView.svgcontent = this.getContent();
             // this.hmi.views[this.currentView].svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();
         } else {
             this.setFillColor(this.colorFill);
@@ -917,6 +988,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.saveView(this.currentView);
         }
         this.currentView = view;
+        if (this.currentView.type === Utils.getEnumKey(ViewType, ViewType.cards)) {
+            this.editorMode = EditorModeType.CARDS;
+        } else {
+            this.editorMode = EditorModeType.SVG;
+        }
         localStorage.setItem("@frango.webeditor.currentview", this.currentView.name);
         this.loadView(this.currentView);
     }
@@ -949,10 +1025,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         ele.click();
     }
 
-        /**
-     * open Project event file loaded
-     * @param event file resource
-     */
+    /**
+ * open Project event file loaded
+ * @param event file resource
+ */
     onViewFileChangeListener(event) {
         let text = [];
         let files = event.srcElement.files;
@@ -964,7 +1040,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 let idx = 1;
                 let startname = view.name;
                 let existView = null;
-                while(existView = this.hmi.views.find((v) => v.name === view.name)) {
+                while (existView = this.hmi.views.find((v) => v.name === view.name)) {
                     view.name = startname + '_' + idx++;
                 }
                 view.id = 'v_' + Utils.getShortGUID();
@@ -1193,15 +1269,36 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 }
 
 @Component({
+    selector: 'dialog-new-doc',
+    templateUrl: 'newdoc.dialog.html',
+})
+export class DialogNewDoc {
+    docType = ViewType;
+    constructor(
+        public dialogRef: MatDialogRef<DialogNewDoc>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    isValid(name): boolean {
+        if (!this.data.type) return false;
+        if (!this.data.name) return false;
+        return (this.data.exist.find((n) => n === name)) ? false : true;
+    }
+}
+
+@Component({
     selector: 'dialog-doc-property',
     templateUrl: 'docproperty.dialog.html',
 })
 export class DialogDocProperty {
     defaultColor = Utils.defaultColor;
-    propSizeType = [{text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 }}, {text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 }},
-                    {text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 }}, {text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 }},
-                    {text: 'dlg.docproperty-size-1024-768', value: { width: 1024, height: 768 }}, {text: 'dlg.docproperty-size-1280-960', value: { width: 1280, height: 960 }},
-                    {text: 'dlg.docproperty-size-1600-1200', value: { width: 1600, height: 1200 }}, {text: 'dlg.docproperty-size-1920-1080', value: { width: 1920, height: 1080 }}];
+    propSizeType = [{ text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 } }, { text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 } },
+    { text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 } }, { text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 } },
+    { text: 'dlg.docproperty-size-1024-768', value: { width: 1024, height: 768 } }, { text: 'dlg.docproperty-size-1280-960', value: { width: 1280, height: 960 } },
+    { text: 'dlg.docproperty-size-1600-1200', value: { width: 1600, height: 1200 } }, { text: 'dlg.docproperty-size-1920-1080', value: { width: 1920, height: 1080 } }];
     constructor(private translateService: TranslateService,
         public dialogRef: MatDialogRef<DialogDocProperty>,
         @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -1254,10 +1351,7 @@ export class DialogLinkProperty {
     }
 }
 
-//#region Model Help
-// export class PanelState {
-//     width: Number = 640;
-//     height: Number = 480;
-//     bkcolor: String = '';
-// }
-//#endregion
+export enum EditorModeType {
+    SVG,
+    CARDS
+}

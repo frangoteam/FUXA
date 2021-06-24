@@ -21,7 +21,14 @@ export class View {
     variables: DictionaryVariables = {};
     /** Svg code content of the view  */
     svgcontent: string = '';
+    /** Type of view SVG/CARDS */
+    type: ViewType;
 }
+
+export enum ViewType {
+    svg = 'SVG',
+    cards ='CARDS'
+} 
 
 export class LayoutSettings {
     /** Start view (home) */
@@ -289,4 +296,19 @@ export enum DateFormatType {
 export enum TimeFormatType {
     hh_mm_ss = '16:58:10',
     hh_mm_ss_AA = '04:58:10 PM',
+}
+
+export class CardWidget {
+    data: string;
+    type: string;
+    constructor(type: string, data: string) {
+        this.type = type;
+        this.data = data;
+    }
+}
+
+export enum CardWidgetType {
+    view = 'card.widget-view',
+    alarms = 'card.widget-alarms',
+    table = 'card.widget-table',
 }

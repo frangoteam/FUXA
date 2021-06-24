@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { Subscription } from "rxjs";
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeStatus, Hmi, View } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeStatus, Hmi, View, ViewType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
@@ -43,6 +43,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     iframes: CardModel[] = [];
     dialog: DialogModalModel;
     mapGaugeStatus = {};
+
+    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
@@ -124,7 +126,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         if (view) {
             this.id = view.id;
             this.view = view;
-            this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+            if (view.type === this.cardViewType) {
+                let cards = JSON.parse(view.svgcontent);
+                if (cards.content) {
+                    this.dataContainer.nativeElement.innerHTML = cards.content.replace('<title>Layer 1</title>', '');
+                }
+            } else {
+                this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+            }
             if (view.profile.bkcolor && this.child) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }

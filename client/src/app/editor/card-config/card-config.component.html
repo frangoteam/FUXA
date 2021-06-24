@@ -1,0 +1,32 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'card.config-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn" cdkFocusInitial>clear</mat-icon>
+    <div mat-dialog-content  style="width: 700px; height: 500px">
+        <div class="my-form-field" style="margin-bottom: 10px;">
+            <span>{{'card.config-content-type' | translate}}</span>
+            <mat-select [(value)]="card.type" style="width: 320px;">
+                <mat-option *ngFor="let type of cardType | enumToArray" [value]="type.key">
+                    {{ type.value }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field" *ngIf="card.type === widgetView" style="float: right; margin-bottom: 10px;">
+            <span>{{'card.config-content-view' | translate}}</span>
+            <mat-select [(value)]="card.data" style="width: 320px;">
+                <mat-option *ngFor="let view of data.views" [value]="view">
+                    {{ view }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div [ngSwitch]="card.type">
+            <div *ngSwitchCase="widgetView">
+            </div>
+            <div *ngSwitchCase="widgetAlarms">
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

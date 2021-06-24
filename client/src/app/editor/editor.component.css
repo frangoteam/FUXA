@@ -205,6 +205,7 @@
 .svg-sidenav {
     min-width: 160px;
     max-width: 200px;
+    width: 200px;
     background: rgba(33, 33, 33, 1);
 }
 

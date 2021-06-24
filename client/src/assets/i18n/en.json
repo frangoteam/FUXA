@@ -69,6 +69,7 @@
 
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
+    "dlg.docproperty-type": "View type",
 
     "dlg.linkproperty-title": "Make Hyperlink",
     "dlg.linkproperty-url": "Hyperlink URL",
@@ -588,6 +589,13 @@
     "alarm.status-active": "Active",
     "alarm.status-passive": "Passive",
     "alarm.status-active-ack": "Active-ACK",
+
+    "card.config-title": "Card settings",
+    "card.config-content-type": "Content type",
+    "card.config-content-view": "Content View",
+    "card.widget-view": "View",
+    "card.widget-alarms": "Alarms",
+    "card.widget-table": "Table",
 
     "texts.list-title": "Texts settings",
     "texts.list-filter": "Filter",

@@ -33,6 +33,7 @@
     "@codebyjordan/scrollbar": "^2.1.6",
     "@ngx-translate/core": "10.0.2",
     "@ngx-translate/http-loader": "3.0.1",
+    "angular-gridster2": "^6.0.10",
     "angular2-draggable": "^2.3.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
