@@ -2,8 +2,11 @@
 	<div style="display: block; margin: auto">
 		<mat-icon [style.color]="'rgb(59, 144, 255)'">account_circle</mat-icon>
 	</div>
-	<div style="font-size: 18px;display: block;padding-top: 10px;padding-bottom: 10px;">
+	<div style="font-size: 14px;display: block;padding-top: 10px;padding-bottom: 10px;">
 		{{data.username}}
+	</div>
+	<div style="font-size: 14px;display: block;padding-top: 10px;padding-bottom: 10px;">
+		{{data.fullname}}
 	</div>
 	<div style="display: block; padding-bottom:20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
 		<button mat-raised-button [mat-dialog-close]="true">{{'dlg.logout-btn' | translate}}</button>

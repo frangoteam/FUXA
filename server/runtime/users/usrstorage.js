@@ -41,7 +41,7 @@ function _bind() {
             logger.info(`usrstorage.connected ${dbfile} database`, true);
         });
         // prepare query
-        var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, password TEXT, groups INTEGER);";
+        var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, fullname TEXT, password TEXT, groups INTEGER);";
         db_usr.exec(sql, function (err) {
             if (err) {
                 logger.error(`usrstorage.bind failed! ${err}`);
@@ -60,7 +60,7 @@ function setDefault() {
     return new Promise(function (resolve, reject) {
         // prepare query
         var sql = "";
-        sql += "INSERT OR REPLACE INTO users (username, password, groups) VALUES('admin','"+ bcrypt.hashSync('123456', 10) + "','-1');";
+        sql += "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('admin', 'Administrator Account', '"+ bcrypt.hashSync('123456', 10) + "','-1');";
         db_usr.exec(sql, function (err) {
             if (err) {
                 logger.error(`usrstorage.set failed! ${err}`);
@@ -77,9 +77,9 @@ function setDefault() {
  */
 function getUsers(user) {
     return new Promise(function (resolve, reject) {
-        var sql = "SELECT username, groups FROM users";
+        var sql = "SELECT username, fullname, groups FROM users";
         if (user && user.username) {
-            sql = "SELECT username, password, groups FROM users WHERE username = '" + user.username + "'";
+            sql = "SELECT username, fullname, password, groups FROM users WHERE username = '" + user.username + "'";
         }
         db_usr.all(sql, function (err, rows) {
             if (err) {
@@ -94,7 +94,7 @@ function getUsers(user) {
 /**
  * Set user value in database
  */
-function setUser(usr, pwd, groups) {
+function setUser(usr, fullname, pwd, groups) {
     return new Promise(function (resolve, reject) {
         // prepare query
         var exist = false;
@@ -104,7 +104,7 @@ function setUser(usr, pwd, groups) {
             }
             var sql = "";
             if (pwd) {
-                sql = "INSERT OR REPLACE INTO users (username, password, groups) VALUES('" + usr + "','"+ bcrypt.hashSync(pwd, 10) + "','" + groups + "');";
+                sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('" + usr +"','" + fullname + "','"+ bcrypt.hashSync(pwd, 10) + "','" + groups + "');";
                 if (exist) {
                     sql = "UPDATE users SET password = '"+ bcrypt.hashSync(pwd, 10) + "', groups = '" + groups + "' WHERE username = '" + usr + "';";
                 }

@@ -103,5 +103,5 @@ export class Define {
     // Toggle
     'check_box', 'check_box_outline_blank', 'indeterminate_check_box', 'radio_button_checked', 'radio_button_unchecked', 'star', 'star_border', 'star_half'];
 
-    static fonts = ['Sans-serif', 'Roboto-Thin', 'Roboto-Light', 'Roboto-Regular', 'Roboto-Medium', 'Roboto-Bold']; 
+    static fonts = ['Sans-serif', 'Roboto-Thin', 'Roboto-Light', 'Roboto-Regular', 'Roboto-Medium', 'Roboto-Bold', 'Quicksand-Regular', 'Quicksand-Medium', 'Quicksand-Bold']; 
 }

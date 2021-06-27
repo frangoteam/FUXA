@@ -1,5 +1,6 @@
 export class User {
     username: string;
+	fullname: string;
     password: string;
     groups: number;
 }
@@ -7,12 +8,12 @@ export class User {
 export class UserGroups {
     static ADMINMASK = [-1, 255];
     static EXTENSION = 8;
-    static Groups = [{id: 1, label: 'A'},
-            {id: 2, label: 'B'},
-            {id: 4, label: 'C'},
-            {id: 8, label: 'D'},
-            {id: 16, label: 'E'},
-            {id: 32, label: 'F'},
+    static Groups = [{id: 1, label: 'Viewer'},
+            {id: 2, label: 'Operator'},
+            {id: 4, label: 'Engineer'},
+            {id: 8, label: 'Supervisor'},
+            {id: 16, label: 'Manager'},
+            {id: 32, label: 'Administrator'},
             {id: 64, label: 'G'},
             {id: 128, label: 'H'}];
 

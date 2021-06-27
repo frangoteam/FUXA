@@ -14,7 +14,7 @@ import { User, UserGroups } from '../_models/user';
 })
 export class UsersComponent implements OnInit, AfterViewInit {
 
-	displayedColumns = ['select', 'username', 'groups', 'remove'];
+	displayedColumns = ['select', 'username', 'fullname', 'groups', 'remove'];
 	dataSource = new MatTableDataSource([]);
 
 	users: User[];

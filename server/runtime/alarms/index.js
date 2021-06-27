@@ -7,7 +7,7 @@
 const alarmstorage = require('./alarmstorage');
 
 var ALARMS_CHECK_STATUS_INTERVAL = 1000;
-
+var TimeMultiplier	= 1000;		//1000 = rates are in seconds - alpaslanske
 
 function AlarmsManager(_runtime) {
     var runtime = _runtime;
@@ -351,7 +351,7 @@ function Alarm(name, type, subprop, tagprop) {
     }
 
     this.check = function (time, dt, value) {
-        if (this.lastcheck + (this.subproperty.checkdelay * 1000) > time) {
+        if (this.lastcheck + (this.subproperty.checkdelay * TimeMultiplier) > time) {
             return false;
         }
         this.lastcheck = time;
@@ -366,7 +366,7 @@ function Alarm(name, type, subprop, tagprop) {
                     this.ontime = dt;
                     return false;
                 }
-                if (this.ontime + (this.subproperty.timedelay * 1000) < time) {
+                if (this.ontime + (this.subproperty.timedelay * TimeMultiplier) < time) {
                     this.status = AlarmStatusEnum.ON;
                     return true;
                 }
@@ -374,7 +374,9 @@ function Alarm(name, type, subprop, tagprop) {
                 // check to deactivate
                 if (!onrange) {
                     this.status = AlarmStatusEnum.OFF;
-                    this.offtime = time;
+					if (this.offtime == 0) {
+						this.offtime = time;
+					}
                     // remove if float or already acknowledged
                     if (this.subproperty.ackmode === AlarmAckModeEnum.float || this.acktime) {
                         this.toRemove();
@@ -391,6 +393,7 @@ function Alarm(name, type, subprop, tagprop) {
                 if (onrange) {
                     this.status = AlarmStatusEnum.ON;
                     this.acktime = 0;
+					this.offtime = 0;
                     return true;
                 }
                 // remove if acknowledged
@@ -402,7 +405,10 @@ function Alarm(name, type, subprop, tagprop) {
             case AlarmStatusEnum.ACK:
                 // remove if deactivate
                 if (!onrange) {
-                    this.toRemove();
+					if (this.offtime == 0) {
+						this.offtime = time;
+					}
+                    this.status = AlarmStatusEnum.ON;
                     return true;
                 }
                 return false;                
