@@ -66,7 +66,8 @@
     "dlg.docproperty-size-1280-960": "1280 x 960 pixels",
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixels",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixels",
-
+    "dlg.docproperty-margin": "Margin",
+    
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",

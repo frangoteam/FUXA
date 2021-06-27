@@ -463,6 +463,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     this.winRef.nativeWindow.svgEditor.refreshCanvas();
                 }, 500);
+            } else if (this.cardsview) {
+                this.cardsview.view = view;
+                this.cardsview.reload();
             }
         }
     }
@@ -854,6 +857,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 v.name = nn + idx;
                 v.profile.bkcolor = '#ffffffff';
             }
+            if (type === Utils.getEnumKey(ViewType, ViewType.cards)) {
+                v.profile.bkcolor = 'rgba(67, 67, 67, 1)';
+            }
             v.id = 'v_' + Utils.getShortGUID();
             this.hmi.views.push(v);
             this.onSelectView(v);
@@ -959,14 +965,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onPropertyView(view) {
         let dialogRef = this.dialog.open(DialogDocProperty, {
             position: { top: '60px' },
-            data: { name: view.name, width: view.profile.width, height: view.profile.height, bkcolor: view.profile.bkcolor }
+            data: { name: view.name, type: view.type, profile: view.profile }
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if (result && result.width && result.height) {
-                view.profile.width = parseInt(result.width);
-                view.profile.height = parseInt(result.height);
-                view.profile.bkcolor = result.bkcolor;
+            if (result && result.profile) {
+                if (result.profile.height) view.profile.height = parseInt(result.profile.height);
+                if (result.profile.width) view.profile.width = parseInt(result.profile.width);
+                if (result.profile.margin >= 0) view.profile.margin = parseInt(result.profile.margin);
+                view.profile.bkcolor = result.profile.bkcolor;
                 this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
                 this.onSelectView(view);
             }
@@ -1292,9 +1299,12 @@ export class DialogNewDoc {
 @Component({
     selector: 'dialog-doc-property',
     templateUrl: 'docproperty.dialog.html',
+    styleUrls: ['docproperty.dialog.css']
 })
 export class DialogDocProperty {
     defaultColor = Utils.defaultColor;
+    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+
     propSizeType = [{ text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 } }, { text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 } },
     { text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 } }, { text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 } },
     { text: 'dlg.docproperty-size-1024-768', value: { width: 1024, height: 768 } }, { text: 'dlg.docproperty-size-1280-960', value: { width: 1280, height: 960 } },
@@ -1313,8 +1323,8 @@ export class DialogDocProperty {
 
     onSizeChange(size) {
         if (size && size.width && size.height) {
-            this.data.width = size.width;
-            this.data.height = size.height;
+            this.data.profile.width = size.width;
+            this.data.profile.height = size.height;
         }
     }
 }

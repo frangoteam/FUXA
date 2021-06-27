@@ -120,10 +120,12 @@
 #alarms-panel.is-active {
     bottom: 0px;
     transition: bottom 300ms;
+    z-index: 999;
 }
 
 #alarms-panel.is-full-active {
     top: 46px;
     height: 100%;
     transition:  top 300ms;
+    z-index: 999;
 }

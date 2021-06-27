@@ -1,0 +1,12 @@
+.slider-field span {
+    padding-left: 2px;
+    text-overflow: clip;
+    max-width: 125px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.slider-field mat-slider {
+    background-color: #f1f3f4;
+    height: 30px;
+}

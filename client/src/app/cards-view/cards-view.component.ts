@@ -30,10 +30,11 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         this.gridOptions = {
             gridType: GridType.Fixed,
             compactType: CompactType.None,
-            maxCols: 20,
-            maxRows: 20,
-            fixedColWidth: 95,
-            fixedRowHeight: 95,
+            maxCols: 100,
+            maxRows: 100,
+            fixedColWidth: 35,
+            fixedRowHeight: 35,
+            margin: 10,
             disableWarnings: true,
             draggable: {
                 enabled: true,
@@ -53,7 +54,19 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         this.gridOptions = { ...this.gridOptions, ...this.options };
         setTimeout(() => {
             this.initCardsEditor(this.view.svgcontent);
-        }, 500);
+        }, 200);
+    }
+
+    reload() {
+        let element: HTMLElement = document.querySelector('gridster');
+        if (element && this.view.profile.bkcolor) {
+            element.style.backgroundColor = this.view.profile.bkcolor;
+        }
+        if (this.view.profile.margin >= 0) {
+            this.gridOptions.margin = this.view.profile.margin;
+            this.gridOptions.api.optionsChanged();
+        }
+        this.initCardsEditor(this.view.svgcontent);
     }
 
     initCardsEditor(dashboardContent: string) {
@@ -64,7 +77,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 this.addCardsWidget(dashboard[i].x, dashboard[i].y, dashboard[i].cols, dashboard[i].rows, dashboard[i].card);
             }
         } else {
-            this.addCardsWidget(0, 0, 4, 3, <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view) });
+            this.addCardsWidget(0, 0, 10, 8, <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view) });
         }
     }
 
@@ -77,22 +90,24 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         this.view.svgcontent = JSON.stringify(this.dashboard);
     }
 
-    addCardsWidget(x: number = 0, y: number = 0, cols: number = 4, rows: number = 3, card: CardWidget = <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view) }) {
+    addCardsWidget(x: number = 0, y: number = 0, cols: number = 10, rows: number = 8, card: CardWidget = <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view) }) {
         let content: any = null;
         let background = '';
-        if (card) {
-            let views = this.hmi.views.filter((v) => v.name === card.data);
-            if (views && views.length) {
-                if (views[0].svgcontent) {
-                    content = views[0];//.svgcontent.replace('<title>Layer 1</title>', '');
-                }
-                if (views[0].profile.bkcolor) {
-                    background = views[0].profile.bkcolor;
+        let item: GridsterItem = { x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background };
+        item.initCallback = () => {
+            if (card) {
+                let views = this.hmi.views.filter((v) => v.name === card.data);
+                if (views && views.length) {
+                    if (views[0].svgcontent) {
+                        item.content = views[0];//.svgcontent.replace('<title>Layer 1</title>', '');
+                    }
+                    if (views[0].profile.bkcolor) {
+                        item.background = views[0].profile.bkcolor;
+                    }
                 }
             }
         }
-        this.dashboard.push({ x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background });
-        this.view.svgcontent = JSON.stringify(this.dashboard);
+        this.dashboard.push(item);
     }
 
     render() {

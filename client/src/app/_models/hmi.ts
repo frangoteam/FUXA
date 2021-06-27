@@ -105,6 +105,7 @@ export class DocProfile {
     width: number = 640;
     height: number = 480;
     bkcolor: string = '';
+    margin: number = 10;
 }
 
 export class MyItem {

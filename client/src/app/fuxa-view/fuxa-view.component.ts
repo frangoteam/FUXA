@@ -11,6 +11,7 @@ import {
     ViewContainerRef
 } from '@angular/core';
 import { Subscription } from "rxjs";
+import { ChangeDetectorRef } from '@angular/core';
 
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeStatus, Hmi, View, ViewType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
@@ -51,6 +52,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     protected plainVariableMapping: any = {};
 
     constructor(private el: ElementRef,
+        private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver) {
     }
@@ -138,6 +140,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
         }
+        this.changeDetector.detectChanges();
         this.loadWatch(this.view);
     }
 
