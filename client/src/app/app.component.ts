@@ -6,6 +6,7 @@ import { Subscription } from "rxjs";
 
 import { ProjectService } from './_services/project.service';
 import { SettingsService } from './_services/settings.service';
+import { UserGroups } from './_models/user';
 
 @Component({
 	selector: 'app-root',
@@ -24,6 +25,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	constructor(private router: Router,
 		private projectService: ProjectService,
 		private settingsService: SettingsService,
+		private translateService: TranslateService,
 		location: Location) {
 		this.location = location;
 	}
@@ -42,6 +44,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.checkSettings();
 			}, error => {
 				console.log('Error loadHMI');
+			});
+			// define user groups text
+			this.translateService.get('general.usergroups').subscribe((txt: string) => {
+				let grpLabels = txt.split(',');
+				if (grpLabels && grpLabels.length > 0) {
+					for (let i = 0; i < grpLabels.length && i < UserGroups.Groups.length; i++) {
+						UserGroups.Groups[i].label = grpLabels[i];
+					}
+				}
 			});
 		}
 		catch (err) {

@@ -47,7 +47,24 @@ function _bind() {
                 logger.error(`usrstorage.bind failed! ${err}`);
                 reject();
             } else {
-                resolve(dbfileExist);
+                _checkUpdate().then(() => {
+                    resolve(dbfileExist);
+                }).catch(() => {
+                    resolve(dbfileExist);
+                });
+            }
+        });  
+    });
+}
+
+function _checkUpdate() {
+    return new Promise(function (resolve, reject)  {
+        var sql = "ALTER TABLE users ADD COLUMN fullname TEXT;";
+        db_usr.exec(sql, function (err, rows) {
+            if (err) {
+                resolve();
+            } else {
+                resolve();
             }
         });  
     });
