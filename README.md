@@ -17,7 +17,7 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
-You need to have installed [Node](https://nodejs.org) (Version 10, 12 or 14) and NPM (Version >=6.11).
+You need to have installed [Node](https://nodejs.org) (Version 10, 12 or 14) and NPM (Version >= 6.11 and < 7.xx).
 
 Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (first option)
 ```

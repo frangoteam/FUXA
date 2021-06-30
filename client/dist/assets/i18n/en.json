@@ -99,7 +99,7 @@
     "general.clientId": "Client ID",
     "general.authority": "Authority",
     "general.grant-type": "Grant type",
-
+    "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,Administrator,G,H",
 
     "tester.title": "Variable",
     "tester.send": "Send",

@@ -72,13 +72,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('viewFileImportInput') viewFileImportInput: any;
     @ViewChild('cardsview') cardsview: CardsViewComponent;
     
+    readonly colorDefault = { fill: '#FFFFFF', stroke: '#000000' };
+
     fonts = Define.fonts;
     isLoading = true;
     editorModeType = EditorModeType;
     editorMode: EditorModeType = EditorModeType.SVG;
     defaultColor = Utils.defaultColor;
-    colorFill: string = '#FFFFFF'
-    colorStroke: string = '#000000'
+    colorFill = this.colorDefault.fill;
+    colorStroke = this.colorDefault.stroke;
     currentView: View = null;
     hmi: Hmi = new Hmi();// = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
     currentMode = '';
@@ -533,6 +535,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     setMode(mode: string) {
         this.currentMode = mode;
+        this.clearSelection();
+        this.checkFillAndStrokeColor();
         this.winRef.nativeWindow.svgEditor.clickToSetMode(mode);
     }
 
@@ -550,6 +554,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     private clearEditor() {
         if (this.winRef.nativeWindow.svgEditor) {
             this.winRef.nativeWindow.svgEditor.clickClearAll();
+        }
+    }
+
+    /** 
+     * check if fill and stroke not the same color is, text and label set all to black
+     */
+    private checkFillAndStrokeColor() {
+        if (this.colorFill && this.colorStroke && this.colorFill === this.colorStroke) {
+            this.setFillColor(this.colorDefault.fill);
+            this.setStrokeColor(this.colorDefault.stroke);
         }
     }
 
