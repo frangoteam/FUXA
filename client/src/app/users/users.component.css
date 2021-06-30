@@ -59,16 +59,19 @@
 }
 
 .mat-column-username {
-    flex: 0 0 400px;
+    flex: 0 0 200px;
 }
 
+.mat-column-fullname {
+    flex: 0 0 250px;
+}
 
 .mat-column-groups {
-    flex: 0 0 860px;
+    flex: 0 0 750px;
 }
 
 .mat-column-remove {
-    flex: 0 0 160px;
+    flex: 0 0 60px;
 }
 
 .selectidthClass{

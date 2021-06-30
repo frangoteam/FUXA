@@ -24,6 +24,12 @@
 				<mat-cell *matCellDef="let element"> {{element.username}} </mat-cell>
 			</ng-container>
 
+			<!-- Fullname Column -->
+			<ng-container matColumnDef="fullname">
+				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-fullname' | translate}} </mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.fullname}} </mat-cell>
+			</ng-container>
+			
 			<!-- Access Column -->
 			<ng-container matColumnDef="groups">
 				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-groups' | translate}} </mat-header-cell>

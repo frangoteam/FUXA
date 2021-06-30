@@ -94,6 +94,7 @@
     "general.search": "Search...",
     "general.search-notfound": "No options found",
     "general.username": "Username",
+	"general.fullname": "Fullname",
     "general.password": "Password",
     "general.clientId": "Client ID",
     "general.authority": "Authority",
@@ -201,6 +202,7 @@
     "editor.controls-slider-settings": "Slider settings",
     "editor.controls-shape-settings": "Shape settings",
     "editor.controls-html-switch-settings": "Switch settings",
+	"editor.controls-switch": "Switch",
 
     "editor.layout-settings": "Layout settings",
 
@@ -482,6 +484,7 @@
 
     "users.list-title": "Users settings",
     "users.list-name": "Username",
+	"users.list-fullname": "Full Name",
     "users.list-groups": "Groups",
 
     "gauges.property-props": "Property",
