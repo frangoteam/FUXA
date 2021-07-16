@@ -40,6 +40,7 @@ import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
 import { TagPropertyComponent } from './device/tag-property/tag-property.component';
+import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
 import { DeviceListComponent } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
@@ -150,6 +151,7 @@ export function createTranslateLoader(http: HttpClient) {
         LabComponent,
         DeviceComponent,
         TagPropertyComponent,
+        TopicPropertyComponent,
         DevicePropertyComponent,
         LayoutPropertyComponent,
         PluginsComponent,
@@ -294,6 +296,7 @@ export function createTranslateLoader(http: HttpClient) {
         HtmlSwitchPropertyComponent,
         DevicePropertyComponent,
         TagPropertyComponent,
+        TopicPropertyComponent,
         ConfirmDialogComponent,
         LayoutPropertyComponent,
         PluginsComponent,

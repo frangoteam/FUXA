@@ -1,0 +1,95 @@
+<div style="width: 100%;position: relative;">
+    <div style="width: 700px;">
+        <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
+            {{'device.browsetopics-property-title' | translate}}
+        </h1>
+        <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+        <mat-tab-group style="width: 100%; height: 100%">
+            <mat-tab label="{{'device.browsetopics-property-sub' | translate}}">
+                <div style="display: block; margin-bottom: 10px;margin-top: 10px">
+                    <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
+                        <span>{{'device.discovery-topics' | translate}}</span>
+                        <input [(ngModel)]="topicSource" style="width: 400px" type="text">
+                    </div>
+                    <button mat-icon-button (click)="onDiscoveryTopics(topicSource)" style="display:inline-block;" *ngIf="!discoveryWait">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                    <div style="display:inline-block; margin-left: 10px;width: 30px; vertical-align: middle;" *ngIf="discoveryWait">
+                        <mat-spinner diameter="20"></mat-spinner>
+                    </div>
+                    <button mat-icon-button (click)="onClearDiscovery()" style="display:inline-block;">
+                        <mat-icon>delete_outline</mat-icon>
+                    </button>
+                    <div *ngIf="discoveryError" style="display: block; color: red;">
+                        {{discoveryError}}
+                    </div>
+                </div>
+                <div style="overflow-y: auto; overflow-x: hidden; height: 300px;">
+                    <div *ngFor="let topic of topicsList | keyvalue">
+                        <div class="topic" (click)="selectTopic(topic);" [ngClass]="{'topic-active': isTopicSelected(topic)}">
+                            <div class="topic-text">
+                                {{topic.key}}
+                            </div>
+                            <div class="topic-value">
+                                {{topic.value.value}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator-line"></div>
+                <div style="margin-top: 5px; display: block;">
+                    <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
+                        <span>{{'device.topic-selected' | translate}}</span>
+                        <input [(ngModel)]="selectedTopic.key" class="my-form-readonly-input" style="width: 400px;" type="text" [readonly]="true">
+                    </div>
+                    <mat-button-toggle-group [(ngModel)]="topicSelectedType" (change)="onSubTopicValChange($event.value)">
+                        <mat-button-toggle class="mytoogle" value="raw">{{'device.topic-raw' | translate}}</mat-button-toggle>
+                        <mat-button-toggle class="mytoogle" value="json">{{'device.topic-json' | translate}}</mat-button-toggle>
+                    </mat-button-toggle-group>
+                    <button style="margin-left: 20px" mat-raised-button (click)="onAddToSubscribe()" [disabled]="!isSubscriptionValid()" color="primary">{{'general.subscribe' | translate}}</button>
+                </div>
+                <div style="overflow-y: auto; overflow-x: hidden; height: 160px; width: 100%; padding-top: 12px;">
+                    <div *ngFor="let tcontent of topicContent">
+                        <div class="topic">
+                            <div class="topic-text">
+                                {{tcontent.key}}
+                            </div>
+                            <div class="topic-value">
+                                {{tcontent.value}}
+                            </div>
+                            <div class="topic-check">
+                                <mat-checkbox [(ngModel)]="tcontent.checked" value="true"></mat-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'device.browsetopics-property-pub' | translate}}">
+                <div style="display: block; margin-bottom: 10px;">
+                    <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
+                        <span>{{'device.add-topics' | translate}}</span>
+                        <input [(ngModel)]="topicToAdd" style="width: 350px" type="text">
+                    </div>
+                    <button mat-icon-button (click)="onAddTopics(topicToAdd)" style="display:inline-block;">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </div>
+                <div style="overflow-y: auto; overflow-x: hidden; min-height: 200px; max-height: 200px;">
+                    <div *ngFor="let addtopic of topicsToAdd | keyvalue">
+                        <div class="topic">
+                            <div class="topic-text">
+                                {{addtopic.key}}
+                            </div>
+                            <div (click)="onRemoveAddedTopics(addtopic.key)" style="float: right;cursor: pointer;margin-right: 5px;">
+                                <mat-icon>clear</mat-icon>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.close' | translate}}</button>
+    </div>
+</div>

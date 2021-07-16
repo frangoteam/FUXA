@@ -110,6 +110,19 @@ export class Utils {
     static getEnumKey(etype: any, ekey: any) {
         return Object.keys(etype).find(key => etype[key] === ekey);
     }
+
+    static isJson(item) {
+        try {
+            let obj = JSON.parse(item);
+            if (obj && Object.keys(obj).length) {
+                return true;
+            }
+
+        } catch (e) {
+        }        
+        return false;
+    }
+
 }
 
 @Pipe({

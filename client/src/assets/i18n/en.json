@@ -80,6 +80,7 @@
 
     "dlg.ok": "OK",
     "dlg.cancel": "CANCEL",
+    "dlg.close": "CLOSE",
 
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",
@@ -100,6 +101,7 @@
     "general.authority": "Authority",
     "general.grant-type": "Grant type",
     "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,Administrator,G,H",
+    "general.subscribe": "Subscribe",
 
     "tester.title": "Variable",
     "tester.send": "Send",
@@ -463,7 +465,12 @@
     "device.security-signandencrypt": "Sign & Encrypt",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
+    "device.browsetopics-property-sub": "Subscribe",
+    "device.browsetopics-property-pub": "Publish",
     "device.discovery-topics": "Browser Topics on broker",
+    "device.topic-selected": "Topic selected",
+    "device.topic-raw": "raw",
+    "device.topic-json": "json",
     "device.add-topics": "Publish my Topics on broker",
     "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",

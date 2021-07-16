@@ -113,6 +113,7 @@ function Device(data, runtime) {
             this.connect().then(function () {
                 status = DeviceStatusEnum.IDLE;
             }).catch(function (err) {
+                console.error(err);
                 // devices.woking = null;
             });
         } else if (status === DeviceStatusEnum.IDLE && !comm.isConnected()) {

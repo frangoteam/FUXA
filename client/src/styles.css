@@ -468,6 +468,12 @@ app-root {
     vertical-align: top;
 }
 
+.my-form-readonly-input {
+    padding: 6px 3px 7px 4px !important;
+    background-color: #f1f3f4 !important;
+    border: unset !important;
+}
+
 /*
 .my-form-field mat-select:focus {
   padding: 4px 1px 5px 2px;

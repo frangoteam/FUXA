@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TagPropertyComponent } from './../tag-property/tag-property.component';
+import { TopicPropertyComponent } from './../topic-property/topic-property.component';
 import { Tag, Device, DeviceType } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
@@ -145,7 +146,7 @@ export class DeviceListComponent implements OnInit {
         if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
-            this.addTopic();
+            this.editTopics();
         } else {
             let tag = new Tag();
             this.editTag(tag, true);
@@ -252,24 +253,6 @@ export class DeviceListComponent implements OnInit {
         });
     }
 
-    addTopic() {
-        let dialogRef = this.dialog.open(TagPropertyComponent, {
-            panelClass: 'dialog-property',
-            data: { device: this.deviceSelected, devices: this.devices },
-            position: { top: '60px' }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                if (this.deviceSelected.type === DeviceType.MQTTclient) {
-                    result.nodes.forEach((tag: Tag) => {
-                        this.checkToAdd(tag, result.device);
-                    });
-                    this.projectService.setDeviceTags(this.deviceSelected);
-                }
-            }
-        });
-    }
-
     checkToAdd(tag: Tag, device: Device) {
         let exist = false;
         Object.keys(device.tags).forEach((key) => {
@@ -300,6 +283,30 @@ export class DeviceListComponent implements OnInit {
     devicesValue(): Array<Device> {
         return Object.values(this.devices);
     }
+    
+    /**
+     * to add MQTT topic for subscription or publish
+     */
+     editTopics() {
+        let dialogRef = this.dialog.open(TopicPropertyComponent, {
+            panelClass: 'dialog-property',
+            data: { device: this.deviceSelected, devices: this.devices },
+            position: { top: '60px' }
+        });
+        dialogRef.componentInstance.invokeSubscribe = (topics) => this.addTopicSubscription(topics);
+        dialogRef.afterClosed().subscribe(result => {
+        });
+    }
+
+    private addTopicSubscription(topics: Tag[]) {
+        if (topics) {
+            topics.forEach((tag: Tag) => {
+                this.checkToAdd(tag, this.deviceSelected);
+            });
+            this.projectService.setDeviceTags(this.deviceSelected);
+        }
+    }
+
 }
 
 export interface Element extends Tag {

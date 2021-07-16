@@ -20,6 +20,7 @@ function MQTTclient(_data, _logger, _events) {
     var client = null;
     var browser = null;
     var timeoutBrowser;
+    var topicsMap = {};
 
     /**
      * Connect the mqtt client to broker
@@ -47,12 +48,13 @@ function MQTTclient(_data, _logger, _events) {
                         _clearVarsValue();
                         client.on('connect', function () {
                             logger.info(`'${data.name}' connected!`, true);
-                            _checkWorking(false);
                             _emitStatus('connect-ok');
                             _createSubscription().then(() => {
                                 resolve();
+                                _checkWorking(false);
                             }).catch(function (err) {
                                 reject(err);
+                                _checkWorking(false);
                             });
                         });
                         client.on("offline", function () {
@@ -152,12 +154,22 @@ function MQTTclient(_data, _logger, _events) {
      * Return the result of mqtt browsing by configure it
      */
     this.browse = function (topic, callback) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             try {
                 _resetBrowserTimeout();
                 if (!browser || !browser.connected) {
-                    let opts = getConnectionOptions(data.property);
-                    browser = mqtt.connect(opts.url, opts);
+                    let options = getConnectionOptions(data.property);
+                    if (getProperty) {
+                        var result = await getProperty({query: 'security', name: data.name});
+                        if (result && result.value && result.value !== 'null') {
+                            // property security mode
+                            var property = JSON.parse(result.value);
+                            options.clientId = property.clientId;
+                            options.username = property.uid;
+                            options.password = property.pwd;
+                        }
+                    }
+                    browser = mqtt.connect(options.url, options);
                     browser.on('connect', function () {
                         resolve('ok');
                     });
@@ -270,22 +282,46 @@ function MQTTclient(_data, _logger, _events) {
      */
     var _createSubscription = function () {
         return new Promise(function (resolve, reject) {
-            var topics = Object.keys(data.tags);
-            client.subscribe(topics, function (err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    client.on('message', function(topic, msg, pkt) {
-                        if (data.tags[topic]) {
-                            data.tags[topic].value = msg.toString();
-                            data.tags[topic].timestamp = new Date().getTime();
-                            data.tags[topic].changed = true;
-                        }
-                    });
-                    resolve();
-                }
-            });     
+            var topics = Object.values(data.tags).map(t => t.address);
+            _mapTopicsAddress(Object.values(data.tags));
+            if (topics && topics.length) {
+                client.subscribe(topics, function (err) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        client.on('message', function(topicAddr, msg, pkt) {   
+                            if (topicsMap[topicAddr]) {
+                                for (var i = 0; i < topicsMap[topicAddr].length; i++) {
+                                    var id = topicsMap[topicAddr][i].id;
+                                    data.tags[id].value = msg.toString();
+                                    data.tags[id].timestamp = new Date().getTime();
+                                    data.tags[id].changed = true;
+                                }
+                            }
+                        });
+                        resolve();
+                    }
+                });
+            } else {
+                resolve();
+            }
         });   
+    }
+
+    /**
+     * Map the topics to address (path)
+     * @param {*} topics 
+     */
+    var _mapTopicsAddress = function (topics) {
+        var tmap = {};
+        for (var i = 0; i < topics.length; i++) {
+            if (tmap[topics[i].address]) {
+                tmap[topics[i].address].push(topics[i]);
+            } else {
+                tmap[topics[i].address] = [topics[i]];
+            }
+        }
+        topicsMap = tmap;
     }
 
     /**
@@ -366,7 +402,7 @@ function MQTTclient(_data, _logger, _events) {
             if (browser && browser.connected) {
                 browser.end(true);
             }
-        }, 10000);
+        }, 15000);
     }
 }
 
