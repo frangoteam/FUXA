@@ -1,13 +1,14 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef } from '@angular/core';
 import { Subscription } from "rxjs";
 import { MatDialog } from '@angular/material';
 
 import { DevicePropertyComponent } from './../device-property/device-property.component';
 import { ProjectService } from '../../_services/project.service';
 import { PluginService } from '../../_services/plugin.service';
-import { Device, DeviceType, DeviceNetProperty } from './../../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { Plugin } from '../../_models/plugin';
+import { AppService } from '../../_services/app.service';
 
 @Component({
 	selector: 'app-device-map',
@@ -44,10 +45,15 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	devicesStatus = {};
 	dirty: boolean = false;
+	domArea: any;
 
 	constructor(private dialog: MatDialog,
+		private elementRef: ElementRef,
+        private appService: AppService,
         private pluginService: PluginService,
-		private projectService: ProjectService) { }
+		private projectService: ProjectService) { 
+			this.domArea = this.elementRef.nativeElement.parent;
+		}
 
 	ngOnInit() {
 		this.loadCurrentProject();
@@ -58,6 +64,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	ngAfterViewInit() {
+		if (this.appService.isClientApp) {
+			this.mainDeviceLineHeight = 0;
+			this.mainHeight = 0;
+			this.flowLineHeight = 0;
+			this.flowHeight = 0;
+			this.lineFlowHeight = 0;
+		}
 	}
 
 	ngOnDestroy() {
@@ -96,22 +109,26 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	loadAvailableType() {
 		// define available device type (plugins)
 		this.plugins = [];
-		this.pluginService.getPlugins().subscribe(plugins => {
-			Object.values(plugins).forEach((pg) => {
-				if (pg.current.length) {
-					this.plugins.push(pg.type);
-				}
+		if (!this.appService.isClientApp && !this.appService.isDemoApp) {
+			this.pluginService.getPlugins().subscribe(plugins => {
+				Object.values(plugins).forEach((pg) => {
+					if (pg.current.length) {
+						this.plugins.push(pg.type);
+					}
+				});
+			}, error => {
 			});
-        }, error => {
-		});
-		this.plugins.push(DeviceType.WebAPI);
-		this.plugins.push(DeviceType.MQTTclient);
-		this.plugins.push(DeviceType.inmation);
+			this.plugins.push(DeviceType.WebAPI);
+			this.plugins.push(DeviceType.MQTTclient);
+            this.plugins.push(DeviceType.internal);
+		} else {
+            this.plugins.push(DeviceType.external);
+            this.plugins.push(DeviceType.internal);
+		}
 	}
 
 	addDevice() {
-		let device = new Device();
-		device.id = Utils.getGUID();
+		let device = new Device(Utils.getGUID(DEVICE_PREFIX));
 		device.property = new DeviceNetProperty();
 		device.enabled = false;
 		device.tags = {};
@@ -123,13 +140,16 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	removeDevice(device: Device) {
-		delete this.devices[device.name];
+		delete this.devices[device.id];
 	}
 
 	private getWindowWidth() {
 		let result = window.innerWidth;
+		if (this.appService.isClientApp && this.elementRef.nativeElement && this.elementRef.nativeElement.parentElement) {
+			result = this.elementRef.nativeElement.parentElement.clientWidth;
+		}
 		if (this.devices) {
-			if (window.innerWidth < (this.plcs().length + 2) * this.deviceWidth) {
+			if (result < (this.plcs().length + 2) * this.deviceWidth) {
 				result = (this.plcs().length + 2) * this.deviceWidth;
 			}
 			if (result < (this.flows().length + 2) * this.deviceWidth) {
@@ -209,7 +229,18 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	getDeviceTopPosition(type = null) {
-		if (type === 'flow') {
+		if (!this.server) {
+			let pos = this.elementRef.nativeElement.parentElement.clientHeight / 2;
+            if (pos < 200) {
+                pos = 200;
+            }
+			if (type === 'flow') {
+				pos -= (this.mainHeight * 2);
+			} else {
+				pos += (this.mainHeight / 2);
+			}
+            return pos;
+		} else if (type === 'flow') {
 			return this.getDeviceLineTopPosition(type) - (this.flowHeight + this.flowBorder * 2);
 		} else {
 			return this.getVerticalCenter() + (this.mainHeight / 2 + this.deviceLineHeight + this.mainDeviceLineHeight);
@@ -317,6 +348,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
+	isClientDevice(device) {
+        return (device.type === DeviceType.external && this.appService.isClientApp);
+	}
+
 	getDevicePropertyToShow(device) {
 		let result = '';
 		if (device.property) {
@@ -368,6 +403,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
+    getNodeClass(device: Device) {
+        if (device.type === DeviceType.internal) {
+            return 'node-internal';
+        }
+        return 'node-device';
+    }
+
 	setDeviceStatus(event) {
 		this.devicesStatus[event.id] = { status: event.status, last: new Date().getTime() };
 	}
@@ -378,7 +420,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		let tempdevice = JSON.parse(JSON.stringify(device));
 		let dialogRef = this.dialog.open(DevicePropertyComponent, {
 			panelClass: 'dialog-property',
-			data: { device: tempdevice, remove: toremove, exist: exist, availableType: this.plugins },
+			data: { device: tempdevice, remove: toremove, exist: exist, availableType: this.plugins,
+                projectService: this.projectService },
 			position: { top: '60px' }
 		});
 
@@ -394,6 +437,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 					device.type = tempdevice.type;
 					device.enabled = tempdevice.enabled;
 					device.polling = tempdevice.polling;
+                    if (this.appService.isClientApp || this.appService.isDemoApp) {
+                        delete device.property;
+                    }
 					if (device.property && tempdevice.property) {
 						device.property.address = tempdevice.property.address;
 						device.property.port = parseInt(tempdevice.property.port);

@@ -58,6 +58,7 @@ import { ResClientService } from './_services/rcgi/resclient.service';
 import { ResourceStorageService } from './_services/rcgi/resource-storage.service';
 import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
+import { AppService } from './_services/app.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
 import { WindowRef } from './_helpers/windowref';
 import { Utils, EnumToArrayPipe, EscapeHtmlPipe } from './_helpers/utils';
@@ -259,6 +260,7 @@ export function createTranslateLoader(http: HttpClient) {
         ResWebApiService,
         ResDemoService,
         HmiService,
+        AppService,
         ProjectService,
         UserService,
         PluginService,

@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 
 import { SetupComponent } from '../editor/setup/setup.component';
 
-import { ProjectService } from '../_services/project.service';
+import { ProjectService, SaveMode } from '../_services/project.service';
 import { HelpData } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -65,6 +65,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
 
     onSetup() {
+        this.projectService.saveProject(SaveMode.Current);
         let dialogRef = this.dialog.open(SetupComponent, {
             position: { top: '60px' },
         });
@@ -97,7 +98,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             let msg = '';
             this.translateService.get('msg.project-save-ask').subscribe((txt: string) => { msg = txt });
             if (window.confirm(msg)) {
-                this.projectService.saveProject();
+                // this.projectService.saveProject(SaveMode.Save);
                 this.projectService.setNewProject();
             }
         } catch (e) {
@@ -113,7 +114,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             if (this.savededitor) {
                 this.projectService.saveAs();
             } else {
-                this.projectService.saveProject(true);
+                this.projectService.saveProject(SaveMode.SaveAs);
             }
         } catch (e) {
 
@@ -153,7 +154,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
      */
     onSaveProject() {
         try {
-            this.projectService.saveProject();
+            this.projectService.saveProject(SaveMode.Save);
         } catch (e) {
 
         }

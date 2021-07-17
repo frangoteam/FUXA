@@ -15,6 +15,8 @@ export class SettingsService {
     private appSettings = new AppSettings();
     private endPointConfig: string = EndPointApi.getURL();
 
+    private editModeLocked = false;
+
     constructor(private http: HttpClient,
         private fuxaLanguage: TranslateService,
         private translateService: TranslateService,
@@ -82,4 +84,28 @@ export class SettingsService {
             disableTimeOut: true
         });
     }
+
+    //#region Editor Mode Check
+    lockEditMode() {
+        this.editModeLocked = true;
+    }
+
+    unlockEditMode() {
+        this.editModeLocked = false;
+    }
+
+    isEditModeLocked(): boolean {
+        return this.editModeLocked;
+    }
+
+    notifyEditorLocked() {
+        var msg = '';
+        this.translateService.get('msg.editor-mode-locked').subscribe((txt: string) => { msg = txt });
+        this.toastr.warning(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: false
+        });
+    }
+    //#endregion
 }

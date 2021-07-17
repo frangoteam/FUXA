@@ -1,7 +1,13 @@
-<div class="header-panel">
-    {{'device.list-title' | translate}}
+<div style="width: 100%;height: 100% !important;position: absolute;">
+    <div class="header-panel">
+        {{'device.list-title' | translate}}
+    </div>
+    <diV class="work-panel">
+        <app-device-list [hidden]="showMode === 'map'" #devicelist (goto)="gotoMap()"></app-device-list>
+        <app-device-map [hidden]="showMode === 'tags'" #devicemap (goto)="gotoList($event)"></app-device-map>
+    </diV>
 </div>
-<diV class="work-panel">
-    <app-device-list [hidden]="showMode === 'map'" #devicelist (goto)="gotoMap()"></app-device-list>
-    <app-device-map [hidden]="showMode === 'tags'" #devicemap (goto)="gotoList($event)"></app-device-map>
-</diV>
+
+<button mat-fab color="primary" (click)="addItem()" class="fab-add">
+    <mat-icon class="">add</mat-icon>
+</button>

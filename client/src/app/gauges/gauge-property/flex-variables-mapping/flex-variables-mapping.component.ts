@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 import { View } from '../../../_models/hmi';
-import { USER_DEFINED_VARIABLE } from '../../../_models/device';
 
 @Component({
     selector: 'flex-variables-mapping',
@@ -38,7 +37,7 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
         let viewVariables = {};
         if (this.view) {
             Object.values(this.view.items).forEach((item) => {
-                if (item && item.property && item.property.variableSrc === USER_DEFINED_VARIABLE) {
+                if (item && item.property) {
                     if (item.property.variableId) {
                         this.assignVariableTo(item.property, viewVariables)
                     }
@@ -65,9 +64,7 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
 
     protected assignVariableTo(object, target) {
         let variable = {
-            variableId: object['variableId'],
-            variableSrc: object['variableSrc'],
-            variable: object['variable']
+            variableId: object['variableId']
         }
         target[variable.variableId] = variable
     }

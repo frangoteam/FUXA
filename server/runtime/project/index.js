@@ -148,11 +148,11 @@ function setProjectData(cmd, value) {
                 setHmiLayout(value);
             } else if (cmd === ProjectDataCmdType.SetDevice) {
                 section.table = prjstorage.TableType.DEVICES;
-                section.name = value.name;
+                section.name = value.id;
                 setDevice(value);
             } else if (cmd === ProjectDataCmdType.DelDevice) {
                 section.table = prjstorage.TableType.DEVICES;
-                section.name = value.name;
+                section.name = value.id;
                 toremove = removeDevice(value);
             } else if (cmd === ProjectDataCmdType.Charts) {
                 section.table = prjstorage.TableType.GENERAL;
@@ -367,7 +367,7 @@ function setProject(prjcontent) {
                         var devices = prjcontent[key];
                         if (devices) {
                             Object.values(prjcontent[key]).forEach((device) => {
-                                scs.push({ table: prjstorage.TableType.DEVICES, name: device.name, value: device });
+                                scs.push({ table: prjstorage.TableType.DEVICES, name: device.id, value: device });
                             });
                         }
                     } else if (key === 'hmi') {

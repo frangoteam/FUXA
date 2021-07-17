@@ -23,7 +23,8 @@
 
 .mat-table {
     overflow: auto;
-    min-width: 1560px;
+    /* min-width: 1500px; */
+    height: 100%;
 }
   
 .mat-header-cell.mat-sort-header-sorted {
@@ -49,16 +50,16 @@
 }
 
 .mat-column-name {
-    flex: 0 0 400px;
+    flex: 0 0 180px;
 }
 
 
 .mat-column-address {
-    flex: 0 0 260px;
+    flex: 0 0 360px;
 }
 
 .mat-column-device {
-    flex: 0 0 200px;
+    flex: 0 0 180px;
 }
 
 .mat-column-type {

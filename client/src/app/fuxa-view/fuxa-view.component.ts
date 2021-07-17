@@ -18,7 +18,6 @@ import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
 import { HmiService } from "../_services/hmi.service";
-import { USER_DEFINED_VARIABLE } from "../_models/device";
 
 declare var SVG: any;
 
@@ -263,14 +262,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             return;
         }
         if (this.plainVariableMapping.hasOwnProperty(target.variableId)) {
-            if (HmiService.variableSrc(this.plainVariableMapping[target.variableId]) === USER_DEFINED_VARIABLE) {
-                // Generate uniq user defined variable name and set static value
-                let value = HmiService.variable(this.plainVariableMapping[target.variableId]);
-                target.variableId = HmiService.toVariableId(USER_DEFINED_VARIABLE, Utils.getShortGUID());
-                this.staticValues[target.variableId] = value;
-            } else {
-                target.variableId = this.plainVariableMapping[target.variableId];
-            }
+            target.variableId = this.plainVariableMapping[target.variableId];
         }
     }
 
@@ -536,9 +528,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         if (event.actparam) {
             let variableId = this.fetchVariableId(event) || ga.property.variableId
             this.gaugesManager.putSignalValue(variableId, event.actparam);
-            if (variableId.startsWith(USER_DEFINED_VARIABLE)) {
-                this.gaugesManager.setSignalValue(variableId, event.actparam);
-            }
         }
     }
 

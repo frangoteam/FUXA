@@ -40,7 +40,7 @@ export class Utils {
         return keys.map(el => Object(p)[el]);
     }
 
-    static getGUID(): string {
+    static getGUID(prefix: string = ''): string {
         var uuid = "", i, random;
         for (i = 0; i < 16; i++) {
             random = Math.random() * 16 | 0;
@@ -49,10 +49,10 @@ export class Utils {
             }
             uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
         }
-        return uuid;
+        return prefix + uuid; 
     };
 
-    static getShortGUID(): string {
+    static getShortGUID(prefix: string = ''): string {
         var uuid = "", i, random;
         for (i = 0; i < 12; i++) {
             random = Math.random() * 16 | 0;
@@ -61,8 +61,8 @@ export class Utils {
             }
             uuid += (i == 4 ? 4 : (i == 6 ? (random & 3 | 8) : random)).toString(12);
         }
-        return uuid;
-    };
+        return prefix + uuid; 
+    }
 
     static getNextName(prefix: string, inuse: string[]) {
         let index = 1;

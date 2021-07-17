@@ -3,8 +3,9 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
-import { Device, USER_DEFINED_VARIABLE } from '../../../_models/device';
+import { Device, DeviceType, Tag, TAG_PREFIX } from '../../../_models/device';
 import { HmiService } from '../../../_services/hmi.service';
+import { Utils } from '../../../_helpers/utils';
 
 interface Variable {
     id: string;
@@ -19,10 +20,7 @@ interface Variable {
 export class FlexVariableComponent implements OnInit {
     @Input() data: any;
     // Legacy
-    @Input() variableSrc: string;
     @Input() variableId: string;
-    @Input() variable: string;
-
     @Input() value: any;
     @Input() tobind = false;
 
@@ -52,15 +50,11 @@ export class FlexVariableComponent implements OnInit {
     ngOnInit() {
         this.initInput();
 
-        if (this.allowManualEdit && this.value.variableSrc == USER_DEFINED_VARIABLE) {
-            this.manualEdit = true;
-        }
-
-        let selDevice = null;
+        let selDevice: Device = null;
         if (this.data.devices) {
-            if (this.value.variableSrc) {
-                this.data.devices.forEach(dev => {
-                    if (this.value.variableSrc && dev.name === this.value.variableSrc) {
+            if (this.value.variableId) {
+                this.data.devices.forEach((dev: Device) => {
+                    if (dev.tags[this.value.variableId]) {
                         selDevice = dev;
                     }
                 });
@@ -70,10 +64,10 @@ export class FlexVariableComponent implements OnInit {
         // set value
         if (selDevice) {
             this.deviceCtrl.setValue(selDevice);
-            this.setDevise(this.deviceCtrl);
+            this.setDevice(this.deviceCtrl);
             if (this.variableList) {
                 for (let i = 0; i < this.variableList.length; i++) {
-                    if (this.variableList[i].id === this.variable) {
+                    if (this.variableList[i].id === this.variableId) {
                         this.currentVariable = this.variableList[i];
                     }
                 }
@@ -87,19 +81,7 @@ export class FlexVariableComponent implements OnInit {
     initInput() {
         if (!this.value) {
             this.value = {
-                variableId: this.variableId,
-                variableSrc: this.variableSrc,
-                variable: this.variable
-            }
-        }
-
-        if (this.value.variableId) {
-            let variableParts = HmiService.fromVariableId(this.value.variableId);
-            if (!this.value.variableSrc) {
-                this.value.variableSrc = variableParts[0]
-            }
-            if (!this.value.variable) {
-                this.value.variable = variableParts[1]
+                variableId: this.variableId
             }
         }
 
@@ -110,37 +92,22 @@ export class FlexVariableComponent implements OnInit {
 
     getVariableLabel(vari) {
         return vari.label || vari.name;
+
     }
 
-    toggleView(event) {
-        event.stopPropagation();
-        this.manualEdit = !this.manualEdit;
-        if (this.manualEdit) {
-            this.value.variableSrc = USER_DEFINED_VARIABLE;
-        } else {
-            this.value.variableSrc = this.deviceCtrl.value ? this.deviceCtrl.value.name : '';
-            this.value.variable = this.variableCtrl.value ? this.variableCtrl.value.name : '';
-        }
-        this.onChanged();
-    }
-
-    setDevise(event) {
+    setDevice(event) {
         if (event.value) {
-            if (this.value.variableSrc !== event.value.name) {
-                this.value.variableSrc = '';
-            }
-            this.value.variableSrc = event.value.name;
             this.variableList = [];
             this.currentVariable = null;
             if (event.value.tags) {
                 this.variableList = Object.values(event.value.tags);
-                this.loadVariable(this.value.variable);
+                this.loadVariable(this.value.variableId);
             }
         }
     }
 
     onDeviceChange(event) {
-        this.setDevise(event);
+        this.setDevice(event);
         this.onChanged();
     }
 
@@ -153,15 +120,25 @@ export class FlexVariableComponent implements OnInit {
     }
 
     onChanged() {
-        this.value.variableId = HmiService.toVariableId(this.value.variableSrc, this.value.variable);
-        this.value.variableRaw = this.currentVariable;
-        this.onchange.emit(this.value)   // Legacy
-        this.valueChange.emit(this.value)
+        if (this.currentVariable) {
+            this.value.variableId = this.currentVariable.id;
+            this.value.variableRaw = this.currentVariable;
+        }
+        this.onchange.emit(this.value);   // Legacy
+        this.valueChange.emit(this.value);
+    }
+
+    private getDevices() {
+        if (this.allowManualEdit) {
+            let result = this.data.devices.filter((d: Device) => d.type === DeviceType.internal);
+            return result;
+        }
+        return this.data.devices.slice();
     }
 
     private loadDevices() {
         // load the initial variable list
-        this.filteredDevice.next(this.data.devices.slice());
+        this.filteredDevice.next(this.getDevices());
         // listen for search field value changes
         this.deviceFilterCtrl.valueChanges
             .pipe(takeUntil(this._onDestroy))
@@ -177,14 +154,14 @@ export class FlexVariableComponent implements OnInit {
         // get the search keyword
         let search = this.deviceFilterCtrl.value;
         if (!search) {
-            this.filteredDevice.next(this.data.devices.slice());
+            this.filteredDevice.next(this.getDevices());
             return;
         } else {
             search = search.toLowerCase();
         }
         // filter the device
         this.filteredDevice.next(
-            this.data.devices.filter(dev => dev.name.toLowerCase().indexOf(search) > -1)
+            this.getDevices().filter(dev => dev.name.toLowerCase().indexOf(search) > -1)
         );
     }
 
@@ -225,8 +202,14 @@ export class FlexVariableComponent implements OnInit {
             search = search.toLowerCase();
         }
         // filter the variable
-        this.filteredVariable.next(
-            this.variableList.filter(vari => vari.name.toLowerCase().indexOf(search) > -1)
-        );
+        if (this.deviceCtrl.value.type === DeviceType.external) {
+            this.filteredVariable.next(
+                this.variableList.filter(vari => (vari.name && vari.name.toLowerCase().indexOf(search) > -1) || (vari.address && vari.address.toLowerCase().indexOf(search) > -1))
+            );
+        } else {
+            this.filteredVariable.next(
+                this.variableList.filter(vari => vari.name.toLowerCase().indexOf(search) > -1)
+            );  
+        }
     }
 }

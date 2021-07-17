@@ -692,7 +692,7 @@ export class GaugesManager {
                     gauge.setOptions(opt, true);
                     for (let i = 0; i < chart.lines.length; i++) {
                         let line = chart.lines[i];
-                        let sigid = HmiService.toVariableId(line.device, line.id);
+                        let sigid = line.id;
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
                             gauge.addLine(sigid, sigProperty.name, line.color, line.label, line.yaxis);

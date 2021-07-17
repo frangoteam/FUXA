@@ -37,9 +37,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.translateService.get('chart.labels-serie').subscribe((txt: string) => { this.nguplot.languageLabels.serie = txt });
-        this.translateService.get('chart.labels-time').subscribe((txt: string) => { this.nguplot.languageLabels.time = txt });
-        this.translateService.get('chart.labels-title').subscribe((txt: string) => { this.nguplot.languageLabels.title = txt });
+        this.translateService.get('chart.labels-serie').subscribe((txt: string) => { if (this.nguplot) this.nguplot.languageLabels.serie = txt });
+        this.translateService.get('chart.labels-time').subscribe((txt: string) => { if (this.nguplot) this.nguplot.languageLabels.time = txt });
+        this.translateService.get('chart.labels-title').subscribe((txt: string) => { if (this.nguplot) this.nguplot.languageLabels.title = txt });
     }
 
     ngOnDestroy() {

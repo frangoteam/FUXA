@@ -122,12 +122,6 @@ export class GaugeSettings {
 
 export class GaugeProperty {
     variableId: string;
-    variableSrc: string;
-    variable: string;
-    alarmId: string;
-    alarmSrc: string;
-    alarm: string;
-    alarmColor: string;
     permission: number;
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
@@ -155,8 +149,6 @@ export enum GaugeActionsType {
 
 export class GaugeAction {
     variableId: string;
-    variableSrc: string;
-    variable: string;
     range: GaugeRangeProperty;
     type: any;
     options: any = {};

@@ -21,7 +21,6 @@ export class GaugePropertyComponent implements OnInit {
     @ViewChild('flexevent') flexEvent: FlexEventComponent;
     @ViewChild('flexaction') flexAction: FlexActionComponent;
 
-    withAlarm = false;
     slideView = true;
     slideActionView = true;
     property: GaugeProperty;
@@ -49,20 +48,6 @@ export class GaugePropertyComponent implements OnInit {
             this.property = new GaugeProperty();
         }
 
-        // // check for button and to add the old binded signal to a event
-        // if (this.data.settings.id.startsWith('HXB_') && this.property && this.property.variableId) {
-        //     let eventwithsetvalue = this.property.events.find(ev => GaugeEventType[ev.type] === GaugeEventType.click &&
-        //         GaugeEventActionType[ev.action] === GaugeEventActionType.onSetValue);
-        //     if (eventwithsetvalue) {
-        //         eventwithsetvalue.actoptions['variableSrc'] = this.property.variableSrc;
-        //         eventwithsetvalue.actoptions['variableId'] = this.property.variableId;
-        //         eventwithsetvalue.actoptions['variable'] = this.property.variable;
-        //         this.property.variable = "";
-        //         this.property.variableId = "";
-        //         this.property.variableSrc = "";
-        //     }
-        // }
-
         this.defaultValue = this.data.default;
 
         if (this.dialogType === GaugeDialogType.OnlyValue) {
@@ -71,19 +56,13 @@ export class GaugePropertyComponent implements OnInit {
             this.flexHead.withInput = 'unit';
         } else {
             this.flexHead.defaultValue = this.defaultValue;
-            if (this.property && this.property.alarmSrc) {
-                this.withAlarm = true;
-            }
             this.flexHead.withInput = 'range';
             if (this.dialogType === GaugeDialogType.ValueWithRef) {
                 this.flexHead.withInput = 'text';
-                this.withAlarm = false;
             } else if (this.dialogType === GaugeDialogType.Step) {
                 this.flexHead.withInput = 'step';
-                this.withAlarm = false;
             } else if (this.dialogType === GaugeDialogType.MinMax) {
                 this.flexHead.withInput = 'minmax';
-                this.withAlarm = false;
             }
         }
     }
@@ -126,10 +105,6 @@ export class GaugePropertyComponent implements OnInit {
 
     onActionRangeViewToggle() {
         this.flexAction.onRangeViewToggle(this.slideActionView);
-    }
-
-    onAlarmToggle() {
-        this.flexHead.onAlarmEnabled(this.withAlarm);
     }
 
     isToolboxToShow() {

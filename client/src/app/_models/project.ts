@@ -1,13 +1,14 @@
-import { Device } from './device';
+import { Device, DEVICE_PREFIX } from './device';
 import { Hmi } from './hmi';
 import { Chart } from './chart';
 import { Alarm } from './alarm';
 import { Text } from './text';
+import { Utils } from '../_helpers/utils';
 
 export class ProjectData {
     version: string = "1.00";
     /** FUXA Server */
-    server: Device = new Device();
+    server: Device = new Device(Utils.getGUID(DEVICE_PREFIX));
     /** Hmi resource, layout, SVG, etc. */
     hmi: Hmi = new Hmi();
     /** Devices, connection, Tags, etc. */

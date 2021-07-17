@@ -43,6 +43,7 @@ function AlarmsManager(_runtime) {
                 clearInterval(alarmsCheckStatus);
                 alarmsCheckStatus = null;
                 status = AlarmsStatusEnum.INIT;
+                working = false;
             }
             resolve();
         });

@@ -1,6 +1,6 @@
 <div class="container">
     <div class="filter" *ngIf="deviceSelected">
-        <button mat-icon-button title="Device Map" (click)="onGoBack()" style="margin-right:10px;margin-left:-10px;">
+        <button mat-icon-button title="Device Map" (click)="onGoBack()" style="margin-right:10px;margin-left:-10px; color: black">
             <mat-icon aria-label="Show devices map">arrow_back</mat-icon>
         </button>
         <div class="my-form-field" style="padding-right: 10px;">
@@ -100,11 +100,7 @@
             </mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+        <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
     </mat-table>
 </div>
-
-<button mat-fab color="primary" (click)="onAddTag()" class="fab-add">
-    <mat-icon class="">add</mat-icon>
-</button>

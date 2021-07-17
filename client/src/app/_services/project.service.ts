@@ -1,5 +1,5 @@
 
-import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Injectable, Output, EventEmitter, Inject, Optional } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Alarm } from '../_models/alarm';
 import { Text } from '../_models/text';
-import { Device, DeviceType, DeviceNetProperty } from '../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,16 +17,19 @@ import { ResourceStorageService } from './rcgi/resource-storage.service';
 import { ResDemoService } from './rcgi/resdemo.service';
 import { ResClientService } from './rcgi/resclient.service';
 import { ResWebApiService } from './rcgi/reswebapi.service';
+import { AppService } from './app.service';
+import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
 
 @Injectable()
 export class ProjectService {
 
-    @Output() onSaveCurrent: EventEmitter<boolean> = new EventEmitter();
+    @Output() onSaveCurrent: EventEmitter<SaveMode> = new EventEmitter();
     @Output() onLoadHmi: EventEmitter<boolean> = new EventEmitter();
 
     private projectData = new ProjectData();            // Project data
+    public AppId = '';
 
     public serverSettings: ServerSettings;
     private storage: ResourceStorageService;
@@ -37,30 +40,61 @@ export class ProjectService {
     constructor(private resewbApiService: ResWebApiService,
         private resDemoService: ResDemoService,
         private resClientService: ResClientService,
-        private translateService: TranslateService,
+        private appService: AppService,
+        private translateService: TranslateService,        
         private toastr: ToastrService) {
 
         this.storage = resewbApiService;
-        switch (environment.type) {
-            case "demo":
-                console.log("mode:", "demo");
-                this.storage = resDemoService;
-            break;
-            case "client":
-                console.log("mode:", "client");
-                this.storage = resClientService;
-            break;
+        if (appService.isDemoApp) {
+            this.storage = resDemoService;
+        } else if (appService.isClientApp) {
+            this.storage = resClientService;
         }
+        console.log("mode:", environment.type);
+        this.storage.getAppId = () => { return this.getAppId(); }
+        this.storage.onRefreshProject = (): boolean => { return this.onRefreshProject() };
         this.storage.checkServer().subscribe(result => {
             if (result) {
                 this.serverSettings = result;
+                this.load();
             }
-            this.load();
         }, error => {
             console.error('project.service err: ' + error);
             this.load();
             this.notifyServerError();
         });
+    }
+
+    getAppId() {
+        return this.AppId;
+    }
+
+    init(bridge?: any) {
+        this.storage.init(bridge);            
+        if (this.appService.isClientApp) {
+        }
+        this.reload();
+    }
+
+    onRefreshProject(): boolean {
+        console.log('FUXA onRefreshProject: ', this.AppId);
+        this.storage.getStorageProject().subscribe(prj => {
+            if (prj) {
+                this.projectData = prj;
+                // copy to check before save
+                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+                this.ready = true;
+                this.notifyToLoadHmi();
+            } else {
+                let msg = '';
+                this.translateService.get('msg.get-project-void').subscribe((txt: string) => { msg = txt });
+                console.warn(msg);
+                // this.notifySaveError(msg);
+            }
+        }, err => {
+            console.error('FUXA onRefreshProject error', err);
+        });
+        return true;
     }
 
     //#region Load and Save
@@ -70,9 +104,18 @@ export class ProjectService {
      */
     private load() {
         this.storage.getStorageProject().subscribe(prj => {
-            if (environment.type === 'demo' && !prj) {
+            if (!prj && this.appService.isDemoApp) {
                 console.log('create demo');
                 this.setNewProject();
+            } else if (this.appService.isClientApp) {
+                console.log('FUXA load project: ', prj);
+                if (!prj && (this.storage as ResClientService).isReady) {
+                    this.setNewProject();
+                } else {
+                    this.projectData = prj;
+                }
+                this.ready = true;
+                this.notifyToLoadHmi();
             } else {
                 this.projectData = prj;
                 // copy to check before save
@@ -81,14 +124,14 @@ export class ProjectService {
                 this.notifyToLoadHmi();
             }
         }, err => {
-            console.log('Load Server Project err: ' + err);
+            console.error('FUXA load error', err);
         });
     }
 
     /**
      * Save Project
      */
-    private save(): boolean {
+    save(): boolean {
         // check project change don't work some svg object change the order and this to check isn't easy...boooo
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
@@ -119,7 +162,7 @@ export class ProjectService {
     reload() {
         this.load();
     }
-    
+
     /**
      * Remove Tag value to save without value
      * Value was added by HmiService from socketIo event
@@ -127,6 +170,10 @@ export class ProjectService {
      */
     private convertToSave(prj: ProjectData) {
         let result = JSON.parse(JSON.stringify(prj));
+        if (this.appService.isClientApp) {
+            let sprj = ResourceStorageService.sanitizeProject(prj);
+            result = JSON.parse(JSON.stringify(sprj));
+        }
         for (let devid in result.devices) {
             for (let tagid in result.devices[devid].tags) {
                 delete result.devices[devid].tags[tagid].value;
@@ -145,10 +192,10 @@ export class ProjectService {
      */
     setDevice(device: Device, old: Device, security?: any) {
         if (this.projectData.devices) {
-            this.projectData.devices[device.name] = device;
-            this.storage.setDeviceSecurity(device.name, security).subscribe(() => {
-                this.storage.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
-                    if (old && old.name && old.name !== device.name && old.id === device.id) {
+            this.projectData.devices[device.id] = device;
+            this.storage.setDeviceSecurity(device.id, security).subscribe(() => {
+                this.storage.setServerProjectData(ProjectDataCmdType.SetDevice, device, this.projectData).subscribe(result => {
+                    if (old && old.id !== device.id) {
                         this.removeDevice(old);
                     }
                 }, err => {
@@ -163,8 +210,8 @@ export class ProjectService {
     }
 
     setDeviceTags(device: Device) {
-        this.projectData.devices[device.name] = device;
-        this.storage.setServerProjectData(ProjectDataCmdType.SetDevice, device).subscribe(result => {
+        this.projectData.devices[device.id] = device;
+        this.storage.setServerProjectData(ProjectDataCmdType.SetDevice, device, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -177,21 +224,21 @@ export class ProjectService {
      * @param device
      */
     removeDevice(device: Device) {
-        delete this.projectData.devices[device.name];
-        this.storage.setServerProjectData(ProjectDataCmdType.DelDevice, device).subscribe(result => {
+        delete this.projectData.devices[device.id];
+        this.storage.setServerProjectData(ProjectDataCmdType.DelDevice, device, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
         });
-        this.storage.setDeviceSecurity(device.name, '').subscribe(() => {
+        this.storage.setDeviceSecurity(device.id, '').subscribe(() => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
         });
     }
 
-    getDeviceSecurity(name: string): Observable<any> {
-        return this.storage.getDeviceSecurity(name);
+    getDeviceSecurity(id: string): Observable<any> {
+        return this.storage.getDeviceSecurity(id);
     }
     //#endregion
 
@@ -213,7 +260,7 @@ export class ProjectService {
         } else {
             this.projectData.hmi.views.push(view);
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.SetView, view).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -232,7 +279,7 @@ export class ProjectService {
                 break;
             }
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.DelView, view).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.DelView, view, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -251,7 +298,7 @@ export class ProjectService {
 
     setLayout(layout: LayoutSettings) {
         this.projectData.hmi.layout = layout;
-        this.storage.setServerProjectData(ProjectDataCmdType.HmiLayout, layout).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.HmiLayout, layout, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -281,7 +328,7 @@ export class ProjectService {
      */
     setCharts(charts: Chart[]) {
         this.projectData.charts = charts;
-        this.storage.setServerProjectData(ProjectDataCmdType.Charts, charts).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.Charts, charts, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -317,7 +364,7 @@ export class ProjectService {
             } else {
                 this.projectData.alarms.push(alarm);
             }
-            this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm).subscribe(result => {
+            this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm, this.projectData).subscribe(result => {
                 if (old && old.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
                         observer.next();
@@ -347,7 +394,7 @@ export class ProjectService {
                     }
                 }
             }
-            this.storage.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm).subscribe(result => {
+            this.storage.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm, this.projectData).subscribe(result => {
                 observer.next();
             }, err => {
                 console.log(err);
@@ -389,7 +436,7 @@ export class ProjectService {
         } else {
             this.projectData.texts.push(text);
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(result => {
             if (old && old.name && old.name !== text.name) {
                 this.removeText(old);
             }
@@ -412,7 +459,7 @@ export class ProjectService {
                 }
             }
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);
@@ -427,36 +474,32 @@ export class ProjectService {
     }
 
     private notifySaveError(err: any) {
-        let msg = '';
+        console.error('FUXA notifySaveError error', err);
+        let msg = null;
         this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
         if (err.status === 401) {
             this.translateService.get('msg.project-save-unauthorized').subscribe((txt: string) => { msg = txt });
         }
-        this.toastr.error(msg, '', {
-            timeOut: 3000,
-            closeButton: true,
-            disableTimeOut: true
-        });
+        if (msg) {
+            this.toastr.error(msg, '', {
+                timeOut: 3000,
+                closeButton: true,
+                disableTimeOut: true
+            });
+        }
     }
 
     private notifyServerError() {
-        let msg = '';
+        console.error('FUXA notifyServerError error');
+        let msg = null;
         this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt });
-        this.toastr.error(msg, '', {
-            timeOut: 3000,
-            closeButton: true,
-            disableTimeOut: true
-        });
-    }
-
-    private notifyFormatError() {
-        let msg = '';
-        this.translateService.get('msg.project-format-error').subscribe((txt: string) => { msg = txt });
-        this.toastr.error(msg, '', {
-            timeOut: 3000,
-            closeButton: true,
-            disableTimeOut: true
-        });
+        if (msg) {
+            this.toastr.error(msg, '', {
+                timeOut: 3000,
+                closeButton: true,
+                disableTimeOut: true
+            });
+        }
     }
     //#endregion
 
@@ -466,22 +509,25 @@ export class ProjectService {
      * @param prj project data to save
      */
     setProject(prj: ProjectData, notify?: boolean) {
-        if (prj.version && prj.server && prj.hmi && prj.devices) {
-            this.projectData = prj;
-            this.save();
-        } else {
-            this.notifyFormatError()
+        this.projectData = prj;
+        if (this.appService.isClientApp) {
+            this.projectData = ResourceStorageService.defileProject(prj);
         }
+        this.save();
     }
 
     setNewProject() {
         this.projectData = new ProjectData();
-        let server = new Device();
-        server.name = 'FUXA Server';
+        let server = new Device(Utils.getGUID(DEVICE_PREFIX));
+        server.name = 'FUXA';
         server.id = '0';
         server.type = DeviceType.FuxaServer;
         server.property = new DeviceNetProperty();
-        this.projectData.server = server;
+        if (!this.appService.isClientApp) {
+            this.projectData.server = server;
+        } else {
+            delete this.projectData.server;
+        }
         this.save();
     }
 
@@ -511,33 +557,21 @@ export class ProjectService {
         return result;
     }
 
-    getDeviceFromSource(source: string): any {
-        return this.projectData.devices[source];
-    }
-
-    setDevices(devices: any, nosave?: boolean): boolean {
-        this.projectData.devices = devices;
-        if (nosave) {
-            return true;
+    getDeviceFromTagId(tagId: string): any {
+        let devices = <Device[]>Object.values(this.projectData.devices);
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i].tags[tagId]) {
+                return devices[i];
+            }
         }
-        return this.save();
-    }
-
-    addDevice(d: Device): boolean {
-        let dev = this.projectData.devices[d.name];
-        if (dev) {
-            this.projectData.devices[d.name];
-            return this.save();
-        }
-        return false;
     }
 
     /**
      * Send Save Project to to editor component
      * @param saveas 
      */
-    saveProject(saveas?: boolean) {
-        this.onSaveCurrent.emit(saveas);
+    saveProject(mode = SaveMode.Save) {
+        this.onSaveCurrent.emit(mode);
     }
 
     isSecurityEnabled() {
@@ -639,4 +673,10 @@ export class ProjectService {
 export class ServerSettings {
     version: string;
     secureEnabled: boolean;
+}
+
+export enum SaveMode {
+    Current,
+    Save,
+    SaveAs
 }

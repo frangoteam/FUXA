@@ -41,7 +41,7 @@ function OpcUAclient(_data, _logger, _events) {
                     // step 1 check property
                     function (callback) {
                         if (getProperty) {
-                            getProperty({query: 'security', name: data.name}).then(result => {
+                            getProperty({query: 'security', name: data.id}).then(result => {
                                 if (result && result.value && result.value !== 'null') {
                                     // property security mode
                                     property = JSON.parse(result.value);

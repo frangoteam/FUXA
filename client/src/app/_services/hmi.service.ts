@@ -15,7 +15,6 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable()
 export class HmiService {
 
-    // @Output() onSaveCurrent: EventEmitter<boolean> = new EventEmitter();
     @Output() onVariableChanged: EventEmitter<Variable> = new EventEmitter();
     @Output() onDeviceChanged: EventEmitter<boolean> = new EventEmitter();
     @Output() onDeviceBrowse: EventEmitter<any> = new EventEmitter();
@@ -29,13 +28,13 @@ export class HmiService {
     public static separator = '^~^';
     public hmi: Hmi;
     viewSignalGaugeMap = new ViewSignalGaugeMap();
-    devices = {};
     variables = {};
     alarms = { highhigh: 0, high: 0, low: 0, info: 0 };
     private socket;
     private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
+    private bridge: any = null;     
 
-    constructor(private projectService: ProjectService,
+    constructor(public projectService: ProjectService,
         private translateService: TranslateService,
         private toastr: ToastrService) {
         if (environment.serverEnabled) {
@@ -66,6 +65,9 @@ export class HmiService {
             this.variables[sigId].value = value;
             if (this.socket) {
                 this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
+            } else if (this.bridge) {
+                this.bridge.setDeviceValue(this.variables[sigId]);
+                this.setSignalValue(this.variables[sigId]);
             } else if (!environment.serverEnabled) {
                 // for demo, only frontend
                 this.setSignalValue(this.variables[sigId]);
@@ -73,12 +75,40 @@ export class HmiService {
         }
     }
 
-
     public getAllSignals() {
         return this.variables;
     }
 
-    //#region Scket.io
+    //#region Communication Socket.io and Bridge
+    /**
+     * Init the bridge for client communication
+     * @param bridge 
+     * @returns 
+     */
+    initClient(bridge?: any) {
+        console.log('FUXA init client bridge: ', (bridge) ? true : false);
+        if (!bridge) return false;
+        this.bridge = bridge;
+        if (this.bridge) {
+            this.bridge.onDeviceValues = (tags: Variable[]) => this.onDeviceValues(tags);
+            this.askDeviceValues();
+            return true;
+        }
+        return false;
+    }
+
+    private onDeviceValues(tags: Variable[]) {
+        // console.log('FUXA onDeviceValues: ', tags);
+        for (let idx = 0; idx < tags.length; idx++) {
+            let varid = tags[idx].id;
+            if (!this.variables[varid]) {
+                this.variables[varid] = new Variable(varid, null, null);
+            }
+            this.variables[varid].value = tags[idx].value;
+            this.setSignalValue(this.variables[varid]);
+        }
+    }
+
     /**
      * Init the socket and subsribe to device status and signal value change
      */
@@ -106,9 +136,9 @@ export class HmiService {
             // devices values
             this.socket.on('device-values', (message) => {
                 for (let idx = 0; idx < message.values.length; idx++) {
-                    let varid = message.id + HmiService.separator + message.values[idx].id;
+                    let varid = message.id;
                     if (!this.variables[varid]) {
-                        this.variables[varid] = new Variable(varid, message.id, message.values[idx].id);
+                        this.variables[varid] = new Variable(varid, null, null);
                     }
                     this.variables[varid].value = message.values[idx].value;
                     this.setSignalValue(this.variables[varid]);
@@ -186,6 +216,8 @@ export class HmiService {
     public askDeviceValues() {
         if (this.socket) {
             this.socket.emit('device-values', 'get');
+        } else if (this.bridge) {
+            this.bridge.getDeviceValues(null);
         }
     }
 
@@ -237,10 +269,9 @@ export class HmiService {
 
     //#region Signals Gauges Mapping
     addSignal(signalId: string, ga: GaugeSettings) {
-        let sigsplit = signalId.split(HmiService.separator);
         // add to variable list
         if (!this.variables[signalId]) {
-            let v = new Variable(signalId, sigsplit[0], sigsplit[1]);
+            let v = new Variable(signalId, null, null);
             this.variables[signalId] = v;
         }
     }
@@ -253,18 +284,10 @@ export class HmiService {
      */
     addSignalGaugeToMap(domViewId: string, signalId: string, ga: GaugeSettings) {
         this.viewSignalGaugeMap.add(domViewId, signalId, ga);
-        let sigsplit = signalId.split(HmiService.separator);
         // add to variable list
         if (!this.variables[signalId]) {
-            let v = new Variable(signalId, sigsplit[0], sigsplit[1]);
+            let v = new Variable(signalId, null, null);
             this.variables[signalId] = v;
-        }
-        // add to device list
-        if (!this.devices[sigsplit[0]]) {
-            this.devices[sigsplit[0]] = {};
-            this.devices[sigsplit[0]] = sigsplit[1];
-        } else if (!this.devices[sigsplit[0]][sigsplit[1]]) {
-            this.devices[sigsplit[0]] = sigsplit[1];
         }
     }
 
@@ -306,11 +329,11 @@ export class HmiService {
                 let toadd = this.variables[sigid];
                 if (fulltext) {
                     toadd = Object.assign({}, this.variables[sigid]);
-                    let device = this.projectService.getDeviceFromSource(toadd.source);
+                    let device = this.projectService.getDeviceFromTagId(toadd.id);
                     if (device) {
                         toadd['source'] = device.name;
-                        if (device.tags[toadd.name]) {
-                            toadd['name'] = this.getTagLabel(device.tags[toadd.name]);
+                        if (device.tags[toadd.id]) {
+                            toadd['name'] = this.getTagLabel(device.tags[toadd.id]);
                         }
                     }
                 }
@@ -330,7 +353,7 @@ export class HmiService {
             let result = this.variables[sigid];
             if (fulltext) {
                 result = Object.assign({}, this.variables[sigid]);
-                let device = this.projectService.getDeviceFromSource(result.source);
+                let device = this.projectService.getDeviceFromTagId(result.id);
                 if (device) {
                     result['source'] = device.name;
                     if (device.tags[result.name]) {
@@ -362,7 +385,7 @@ export class HmiService {
         if (chart) {
             let varsId = [];
             chart.lines.forEach(line => {
-                varsId.push(HmiService.toVariableId(line.device, line.id));
+                varsId.push(line.id);
             });
             return varsId;
         }
@@ -385,37 +408,6 @@ export class HmiService {
         return src + HmiService.separator + name;
     }
 
-    //#endregion
-    //#region My Static functions
-    public static fromVariableId(variableId: string) {
-        if (!variableId) {
-            return {};
-        }
-        let parts = variableId.split(HmiService.separator);
-        return {
-            variableId: variableId,
-            variableSrc: parts[0],
-            variable: parts[1],
-        }
-    }
-    //#endregion
-
-    //#region My Static functions
-    public static variableSrc(variableId: string) {
-        if (!variableId) {
-            return null;
-        }
-        return variableId.split(HmiService.separator)[0] || '';
-    }
-    //#endregion
-
-    //#region My Static functions
-    public static variable(variableId: string) {
-        if (!variableId) {
-            return null;
-        }
-        return variableId.split(HmiService.separator)[1] || '';
-    }
     //#endregion
 }
 

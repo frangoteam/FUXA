@@ -36,7 +36,7 @@ function INMATIONclient(_data, _logger, _events) {
                         _clearVarsValue();
                         options = getConnectionOptions(data.property)
                         if (getProperty) {
-                            var result = await getProperty({query: 'security', name: data.name});
+                            var result = await getProperty({query: 'security', name: data.id});
                             if (result && result.value && result.value !== 'null') {
                                 // property security mode
                                 var property = JSON.parse(result.value);

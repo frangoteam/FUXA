@@ -5,7 +5,7 @@ import { Subscription } from "rxjs";
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { Tag } from '../../_models/device';
+import { Tag, TAG_PREFIX } from '../../_models/device';
 
 @Component({
     selector: 'app-topic-property',
@@ -24,6 +24,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     discoveryWait = false;
     discoveryTimer = null;
     selectedTopic = { key: '', value: null };
+    topicToAdd = {};
 
     constructor(
         private hmiService: HmiService,
@@ -123,8 +124,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         if (this.topicContent && this.topicContent.length && this.invokeSubscribe) {
             let topics = this.topicContent.filter(t => t.checked);
             let tags = topics.map(t => {
-                let tag = new Tag();
-                tag.id = Utils.getGUID();
+                let tag = new Tag(Utils.getGUID(TAG_PREFIX));
                 tag.name = t.key;
                 tag.type = t.type;
                 tag.address = this.selectedTopic.key;

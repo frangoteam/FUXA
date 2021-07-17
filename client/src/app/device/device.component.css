@@ -1,6 +1,5 @@
 .header-panel {
     /* z-index: 9999 !important; */
-    position: fixed;
     top: 0px;
     left: 0px;
     background-color: rgba(33,33,33,1);
@@ -35,4 +34,5 @@
     left: 0px;
     right: 0px;
     bottom: 0px;
+    overflow: auto;
 }

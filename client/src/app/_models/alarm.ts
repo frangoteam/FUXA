@@ -9,8 +9,6 @@ export class Alarm {
 }
 export class AlarmProperty {
     variableId: string;
-    variableSrc: string;
-    variable: string;
     permission: number;
 }
 export class AlarmSubProperty {

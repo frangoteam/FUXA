@@ -12,7 +12,7 @@
             </mat-option>
         </mat-select>
     </div>
-    <div *ngIf="!manualEdit" class="my-form-field" style="min-width: 200px;display:inline-block;padding-left: 20px;">
+    <div *ngIf="!manualEdit" class="my-form-field" style="width: 360px;display:inline-block;padding-left: 20px;">
         <span>{{'gauges.property-head-variable' | translate}}</span>
         <mat-select [formControl]="variableCtrl" (selectionChange)="onVariableChange($event.source)">
             <mat-select-search [formControl]="variableFilterCtrl"></mat-select-search>
@@ -22,12 +22,11 @@
         </mat-select>
     </div>
 
-    <button *ngIf="allowManualEdit && !manualEdit" mat-icon-button (click)="toggleView($event)" matTooltip="{{'gauges.property-head-tomapvariable' | translate}}" 
+    <!-- <button *ngIf="allowManualEdit && !manualEdit" mat-icon-button (click)="toggleView($event)" matTooltip="{{'gauges.property-head-tomapvariable' | translate}}" 
     style="margin-left: 2px; font-weight: bold; font-size: 20px;margin-bottom: 2px; color: gray;">
         {{'{x}'}}
-        <!-- <mat-icon>edit</mat-icon> -->
     </button>
     <button *ngIf="manualEdit" mat-icon-button (click)="toggleView($event)" matTooltip="{{'gauges.property-head-todevice' | translate}}" style="color: gray;">
         <mat-icon>device_hub</mat-icon>
-    </button>
+    </button> -->
 </div>

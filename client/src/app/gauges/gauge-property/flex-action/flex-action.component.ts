@@ -67,9 +67,7 @@ export class FlexActionComponent implements OnInit {
     }
 
     setVariable(index, event) {
-        this.actions[index].variableSrc = event.variableSrc;
         this.actions[index].variableId = event.variableId;
-        this.actions[index].variable = event.variable;
     }
 
     private addAction(ga: GaugeAction) {

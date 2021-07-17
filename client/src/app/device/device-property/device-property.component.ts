@@ -48,12 +48,15 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	private subscriptionHostInterfaces: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
 
+    private projectService: ProjectService;
+
 	constructor(
 		private hmiService: HmiService,
-		private projectService: ProjectService,
         private translateService: TranslateService,
 		public dialogRef: MatDialogRef<DevicePropertyComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: any) { }
+		@Inject(MAT_DIALOG_DATA) public data: any) { 
+            this.projectService = data.projectService;
+        }
 
 	ngOnInit() {
 		this.isToRemove = this.data.remove;
@@ -66,6 +69,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 					}
 				}
 			}
+		}
+		// set default is only one type
+		if (this.data.availableType.length === 1) {
+			this.data.device.type = this.data.availableType[0];
 		}
 
 		this.subscriptionDeviceProperty = this.hmiService.onDeviceProperty.subscribe(res => {
@@ -110,29 +117,28 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.propertyLoading = false;
 		});		
 		// check security
-		if (this.data.device.name && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient || 
-			this.data.device.type === DeviceType.inmation)) {
-			this.projectService.getDeviceSecurity(this.data.device.name).subscribe(result => {
-				if (result) {
-					this.setSecurity(result.value);
-				}
+		if (this.data.device.id && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient)) {
+			this.projectService.getDeviceSecurity(this.data.device.id).subscribe(result => {
+				this.setSecurity(result.value);
 			}, err => {
-				console.log('get Device Security err: ' + err);
+				console.error('get Device Security err: ' + err);
 			});
 		}
 
-		if (!this.data.device.property.baudrate) {
-			this.data.device.property.baudrate = 9600;
-		}
-		if (!this.data.device.property.databits) {
-			this.data.device.property.databits = 8;
-		}
-		if (!this.data.device.property.stopbits) {
-			this.data.device.property.stopbits = 1;
-		}
-		if (!this.data.device.property.parity) {
-			this.data.device.property.parity = 'None';
-		}
+        if (this.data.device.property) {
+            if (!this.data.device.property.baudrate) {
+                this.data.device.property.baudrate = 9600;
+            }
+            if (!this.data.device.property.databits) {
+                this.data.device.property.databits = 8;
+            }
+            if (!this.data.device.property.stopbits) {
+                this.data.device.property.stopbits = 1;
+            }
+            if (!this.data.device.property.parity) {
+                this.data.device.property.parity = 'None';
+            }
+        }
 		this.subscriptionHostInterfaces = this.hmiService.onHostInterfaces.subscribe(res => {
 			if (res.result) {
 				this.hostInterfaces = res;
@@ -206,7 +212,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	isValid(device): boolean {
-        if (!device.name) {
+        if (!device.name || !device.type) {
             return false;
         }
 		return (this.data.exist.find((n) => n === device.name)) ? false : true;
@@ -221,8 +227,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	getSecurity(): any {
-		if (!this.propertyExpanded || (this.data.device.type !== DeviceType.OPCUA && this.data.device.type !== DeviceType.MQTTclient && 
-										this.data.device.type !== DeviceType.inmation)) {
+		if (!this.propertyExpanded || (this.data.device.type !== DeviceType.OPCUA && this.data.device.type !== DeviceType.MQTTclient)) {
 			return null;
 		} else {
 			if (this.data.device.type === DeviceType.OPCUA) {
@@ -235,12 +240,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 					let result = { clientId: this.security.clientId, uid: this.security.username, pwd: this.security.password };
 					return result;
 				}
-			} else if (this.data.device.type === DeviceType.inmation) {
-				if (this.security.clientId || this.security.username || this.security.password || this.security.grant_type) {
-					let result = { clientId: this.security.clientId, uid: this.security.username, pwd: this.security.password, gt: this.security.grant_type };
-					return result;
-				}
-			}
+            }
 			return null;
 		}
 	}
@@ -253,7 +253,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.security.password = value.pwd;
 			this.security.clientId = value.clientId;
 			this.security.grant_type = value.gt;
-			this.panelProperty.open();
+			if (this.panelProperty) {
+				this.panelProperty.open();
+			}
 		}
 	}
 

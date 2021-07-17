@@ -6,14 +6,16 @@ import { Observable } from 'rxjs';
 import { ProjectData, ProjectDataCmdType } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
 
-@Injectable({
-	providedIn: "root"
-})
+@Injectable()
 export class ResDemoService implements ResourceStorageService {
 
-    private prjresource = 'prj-data';
+    public onRefreshProject: () => boolean;
 
     constructor(private http: HttpClient) {
+    }
+
+    init(): boolean {
+        return true;
     }
 
     getDemoProject(): Observable<any> {
@@ -22,7 +24,7 @@ export class ResDemoService implements ResourceStorageService {
 
     getStorageProject(): Observable<any> {
         return new Observable((observer) => {
-            let prj = localStorage.getItem(this.prjresource);
+            let prj = localStorage.getItem(this.getAppId());
             if (prj) {
                 observer.next(JSON.parse(prj));
                 console.log('get localStorage');
@@ -39,7 +41,7 @@ export class ResDemoService implements ResourceStorageService {
 
     setServerProject(prj: ProjectData) {
         return new Observable((observer) => {
-            localStorage.setItem(this.prjresource, JSON.stringify(prj));
+            localStorage.setItem(this.getAppId(), JSON.stringify(prj));
             observer.next();
         });
     }
@@ -50,7 +52,7 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
     
-    getDeviceSecurity(name: string): Observable<any> {
+    getDeviceSecurity(id: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });
@@ -78,5 +80,9 @@ export class ResDemoService implements ResourceStorageService {
         return new Observable((observer) => {
             observer.next();
         });
+    }
+
+    getAppId() {
+        return ResourceStorageService.prjresource;
     }
 }

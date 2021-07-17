@@ -47,7 +47,7 @@
     </div>
     <div style="display: block; padding-bottom: 10px; padding-top: 5px;padding-left: 25px;"
         *ngIf="withToggleValue(item.action) || withSetValue(item.action) || withSetInput(item.action)">
-        <flex-variable style="display: block" [allowManualEdit]="true" [data]="data" [(value)]="item.actoptions.variable"></flex-variable>
+        <flex-variable style="display: block" [data]="data" [(value)]="item.actoptions.variable"></flex-variable>
     </div>
     <div style="display: inline-block" *ngIf="withAddress(item.action)">
         <div class="my-form-field" style="padding-left: 20px;">
