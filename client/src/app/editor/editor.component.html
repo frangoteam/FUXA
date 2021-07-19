@@ -5,7 +5,7 @@
 <div id="svg_editor_container">
     <mat-drawer-container class="svg-workarea-container">
         <!-- LEFT BAR -->
-        <mat-drawer mode="side" opened="true" class="svg-sidenav leave-header-area">
+        <mat-drawer mode="side" opened="true" class="svg-sidenav leave-header-area" disableClose>
             <mat-accordion multi="true">
                 <mat-expansion-panel class="svg-workarea-leftbar-p" (opened)="panelsState.panelView=true;savePanelState()" (closed)="panelsState.panelView=false;savePanelState()"
                     hideToggle="true" [expanded]="panelsState.panelView">
