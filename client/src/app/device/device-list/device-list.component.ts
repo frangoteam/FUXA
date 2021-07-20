@@ -23,8 +23,8 @@ import { Utils } from '../../_helpers/utils';
 export class DeviceListComponent implements OnInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
-    readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
-    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'min', 'max', 'value', 'remove'];
+    readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
+    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -93,7 +93,7 @@ export class DeviceListComponent implements OnInit {
                 this.bindToTable(this.deviceSelected.tags);
             }
         });
-        if (this.deviceSelected.type === DeviceType.external) {
+        if (this.deviceSelected.type === DeviceType.WebStudio) {
             this.displayedColumns = this.defClientColumns;
             this.tableWidth = this.defClientRowWidth;
         } else if (this.deviceSelected.type === DeviceType.internal) {
@@ -192,7 +192,8 @@ export class DeviceListComponent implements OnInit {
                 }
                 result.nodes.forEach((n: Node) => {
                     let tag = new Tag(Utils.getGUID(TAG_PREFIX));
-                    tag.name = n.id;
+                    tag.name = n.text;
+                    tag.label = n.text;
                     tag.type = n.type;
                     if (this.deviceSelected.type === DeviceType.BACnet) {
                         tag.label = n.text;
@@ -235,7 +236,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type) {
-        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.external ||
+        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio ||
                 type === DeviceType.internal);
     }
 
@@ -302,11 +303,8 @@ export class DeviceListComponent implements OnInit {
         for (let id in sigs) {
             if (this.tagsMap[id]) {
                 this.tagsMap[id].value = sigs[id].value;
+                this.tagsMap[id].error = sigs[id].error;
             }
-            // let vartoken = id.split(HmiService.separator);
-            // if (vartoken.length > 1 && this.devices[vartoken[0]] && this.devices[vartoken[0]].tags[vartoken[1]]) {
-            //     this.devices[vartoken[0]].tags[vartoken[1]].value = sigs[id].value;
-            // }
         }
         this.changeDetector.detectChanges();
     }

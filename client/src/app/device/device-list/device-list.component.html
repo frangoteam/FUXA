@@ -86,6 +86,16 @@
             <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
         </ng-container>
 
+        <!-- Warning Column -->
+        <ng-container matColumnDef="warning">
+            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-icon-button *ngIf="element.error" class="warning">
+                    <mat-icon>warning_amber</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+
         <!-- Button remove Column -->
         <ng-container matColumnDef="remove">
             <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">

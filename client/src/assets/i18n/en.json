@@ -488,6 +488,7 @@
     "device.tag-property-path": "Path",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
+    "device-tag-dialog-title": "Tag Selection",
 
     "users.list-title": "Users settings",
     "users.list-name": "Username",
@@ -511,6 +512,7 @@
     "gauges.property-event-scale": "Scale",
     "gauges.property-head-device": "Device",
     "gauges.property-head-variable": "Variable",
+    "gauges.property-variable-value": "Value",
     "gauges.property-head-alarm": "Alarm",
     "gauges.property-head-color": "Color",
     "gauges.property-head-mapvariable": "Context variable",

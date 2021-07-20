@@ -58,9 +58,12 @@ export class GaugeBaseComponent implements OnInit {
         return res;
     }
 
-    static getUnit(pro: GaugeProperty) {
+    static getUnit(pro: GaugeProperty, id: string, value: string ) {
         if (pro) {
             if (pro.ranges && pro.ranges.length > 0 && pro.ranges[0].type === 'unit') {
+                if (pro.ranges[0].textId === id) {
+                    pro.ranges[0].text = value;
+                }
                 return pro.ranges[0].text;
             }
         }

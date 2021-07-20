@@ -122,6 +122,7 @@ export class GaugeSettings {
 
 export class GaugeProperty {
     variableId: string;
+    variableValue: string;
     permission: number;
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
@@ -199,6 +200,7 @@ export class GaugeRangeProperty {
     min: number;
     max: number;
     text: string;
+    textId: string;
     color: string;
     type: any;
     style: any;

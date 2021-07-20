@@ -97,7 +97,7 @@ export enum DeviceType {
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',
     MQTTclient = 'MQTTclient',
-    external = 'external',
+    WebStudio = 'WebStudio',
     internal = 'internal'
 }
 
@@ -170,3 +170,23 @@ export enum BACnetObjectType {
 
 export const DEVICE_PREFIX = 'd_';
 export const TAG_PREFIX = 't_';
+
+export class DevicesUtils {
+    static getDeviceFromTagId (devices: Device[], id: string): Device {
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i].tags[id]) {
+                return devices[i];
+            }
+        }
+        return null;
+    }
+
+    static getTagFromTagId (devices: Device[], id: string): Tag {
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i].tags[id]) {
+                return devices[i].tags[id];
+            }
+        }
+        return null;
+    }
+}

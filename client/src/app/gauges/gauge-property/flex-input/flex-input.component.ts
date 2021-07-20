@@ -11,6 +11,7 @@ import { Utils } from '../../../_helpers/utils';
     styleUrls: ['./flex-input.component.css']
 })
 export class FlexInputComponent implements OnInit {
+    @Input() data: any;
     @Input() ranges: GaugeRangeProperty[];
     @Input() type: string;
     @Input() inputType: string;
@@ -176,6 +177,11 @@ export class FlexInputComponent implements OnInit {
 
     onChangeFormat(formattype, value) {
         this.valueresult = parseFloat(this.valueresult).toFixed(value);
+    }
+
+    onUnitChanged(range: GaugeRangeProperty, event) {
+        range.textId = event.variableId;
+        range.text = event.variableValue;
     }
 
     private addInput(gap: GaugeRangeProperty) {

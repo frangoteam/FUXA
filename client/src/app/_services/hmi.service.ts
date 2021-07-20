@@ -136,7 +136,7 @@ export class HmiService {
             // devices values
             this.socket.on('device-values', (message) => {
                 for (let idx = 0; idx < message.values.length; idx++) {
-                    let varid = message.id;
+                    let varid = message.values[idx].id;
                     if (!this.variables[varid]) {
                         this.variables[varid] = new Variable(varid, null, null);
                     }

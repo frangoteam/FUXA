@@ -238,7 +238,7 @@ function removeView(view) {
  * @param {*} device 
  */
 function setDevice(device) {
-    data.devices[device.name] = device;
+    data.devices[device.id] = device;
 }
 
 /**
@@ -246,7 +246,7 @@ function setDevice(device) {
  * @param {*} device 
  */
 function removeDevice(device) {
-    delete data.devices[device.name];
+    delete data.devices[device.id];
     return true;
 }
 

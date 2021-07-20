@@ -1,5 +1,5 @@
 .grid-conta {
-    margin-left: 30px;
+    /* margin-left: 30px; */
     /* max-height: 260px; */
     /* overflow: auto; */
 }
@@ -43,7 +43,7 @@
 
 .item-unit {
     display: inline-block;
-    width: 520px;
+    /* width: 520px; */
 }
 
 .item-remove {

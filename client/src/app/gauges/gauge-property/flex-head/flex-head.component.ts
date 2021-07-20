@@ -82,6 +82,7 @@ export class FlexHeadComponent implements OnInit {
 
     setVariable(event) {
         this.property.variableId = event.variableId;
+        this.property.variableValue = event.variableValue;
 
         if (this.flexInput) {
             this.flexInput.changeTag(event.variableRaw);

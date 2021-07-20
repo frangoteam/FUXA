@@ -18,8 +18,8 @@
         [style.height.px]="mainHeight" [style.borderWidth.px]="mainBorder">
         <span class="device-header" style="padding-top: 10px;">{{ server.name }}</span>
         <span class="device-pro">{{ server.property.address }}</span>
-        <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon>
-        <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit">edit</mat-icon>
+        <!-- <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon> -->
+        <!-- <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit" >edit</mat-icon> -->
     </div>
 
     <div *ngFor="let flow of devicesValue('flow'); index as i" class="node-flow" [style.color]="(flow.enabled) ? '#000000' : '#828282'" [style.left.px]="getDeviceLeftPosition(i, 'flow')"

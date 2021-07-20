@@ -70,6 +70,10 @@
     flex: 0 0 180px;
 }
 
+.mat-column-warning {
+    flex: 0 0 60px;
+}
+
 .mat-column-min {
     flex: 0 0 100px;
 }
@@ -84,4 +88,8 @@
 
 .selectidthClass{
     flex: 0 0 50px;
+ }
+
+ .warning {
+     color: red;
  }

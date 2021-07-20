@@ -147,9 +147,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     return;
                 }
             }
-            if (!this.data.tag.name) {
-                this.data.tag.name = this.data.tag.address;
-            }
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
@@ -358,7 +355,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     }
     
     isExternal() {
-        return (this.data.device.type === DeviceType.external) ? true : false;
+        return (this.data.device.type === DeviceType.WebStudio) ? true : false;
     }
 
     isInternal() {
