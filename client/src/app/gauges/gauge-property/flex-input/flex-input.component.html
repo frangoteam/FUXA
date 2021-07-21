@@ -74,23 +74,12 @@
             </div>
         </div>
         <div *ngIf="isWithUnit()" class="item-unit">
-            <flex-variable [data]="data" (onchange)="onUnitChanged(item, $event)" [variableId]="item.textId" [variableValue]="item.text" [variableLabel]="'gauges.property-input-unit'">
+            <flex-variable [data]="data" (onchange)="onUnitChanged(item, $event)" [variableId]="item.textId" [variableValue]="item.text"
+                [variableLabel]="'gauges.property-input-unit'">
             </flex-variable>
-
-            <div class="my-form-field">
-                <span>{{'gauges.property-input-unit' | translate}}</span>
-                <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important">
-            </div>
-            <!-- <div class="my-form-field slider-field" style="padding-left: 20px">
-                <span>{{'gauges.property-format-digits' | translate}}</span>
-                <mat-slider style="display:inline-block;min-width: 110px;" [max]="5" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="item.fractionDigits"
-                    (input)="onChangeFormat('fractionDigits', $event.value)">
-                </mat-slider>
-            </div>
-            <div class="my-form-field" style="padding-left: 30px">
-                <span></span>
-                {{valueresult}} {{item.text}}
-            </div> -->
+            <flex-variable [data]="data" (onchange)="onFormatDigitChanged(item, $event)" [variableId]="item.fractionDigitsId" [variableValue]="item.fractionDigits"
+                [variableLabel]="'gauges.property-format-digits'">
+            </flex-variable>
         </div>
     </div>
 </div>

@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus } from '../../_models/hmi';
 
+import { Utils } from '../../_helpers/utils';
+
 // declare var SVG: any;
 
 @Component({
@@ -58,11 +60,11 @@ export class GaugeBaseComponent implements OnInit {
         return res;
     }
 
-    static getUnit(pro: GaugeProperty, id: string, value: string ) {
+    static getUnit(pro: GaugeProperty, gaugeStatus: GaugeStatus) {
         if (pro) {
             if (pro.ranges && pro.ranges.length > 0 && pro.ranges[0].type === 'unit') {
-                if (pro.ranges[0].textId === id) {
-                    pro.ranges[0].text = value;
+                if (pro.ranges[0].textId && !Utils.isNullOrUndefined(gaugeStatus.variablesValue[pro.ranges[0].textId])) {
+                    pro.ranges[0].text = gaugeStatus.variablesValue[pro.ranges[0].textId];
                 }
                 return pro.ranges[0].text;
             }
@@ -70,13 +72,18 @@ export class GaugeBaseComponent implements OnInit {
         return '';
     }
 
-    static getDigits(pro: GaugeProperty) {
+    static getDigits(pro: GaugeProperty, gaugeStatus: GaugeStatus) {
         if (pro) {
-            if (pro.ranges && pro.ranges.length > 0 && pro.ranges[0]['fractionDigits']) {
-                return pro.ranges[0]['fractionDigits'];
+            if (pro.ranges && pro.ranges.length > 0) {
+                if (pro.ranges[0]['fractionDigitsId'] && !Utils.isNullOrUndefined(gaugeStatus.variablesValue[pro.ranges[0]['fractionDigitsId']])) {
+                    pro.ranges[0]['fractionDigits'] = gaugeStatus.variablesValue[pro.ranges[0]['fractionDigitsId']];
+                } 
+                if (pro.ranges[0]['fractionDigits']) {
+                    return pro.ranges[0]['fractionDigits'];
+                }
             }
         }
-        return 0;
+        return null;
     }
 
     static runActionHide(element, type, gaugeStatus: GaugeStatus) {

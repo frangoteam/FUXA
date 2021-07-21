@@ -22,12 +22,12 @@ interface Variable {
 })
 export class FlexVariableComponent implements OnInit {
     @Input() data: any;
-    // Legacy
     @Input() variableId: string;
     @Input() value: any;
     @Input() allowManualEdit: boolean = false;
     @Input() variableValue: string;
     @Input() variableLabel: string = 'gauges.property-variable-value';
+    @Input() withStaticValue: boolean = true;;
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();

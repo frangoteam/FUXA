@@ -45,16 +45,14 @@ function OpcUAclient(_data, _logger, _events) {
                                 if (result && result.value && result.value !== 'null') {
                                     // property security mode
                                     property = JSON.parse(result.value);
-                                    var opts = { 
-                                        endpoint_must_exist: false, 
+                                    var opts = {
+                                        // applicationName: 'Myclient',
+                                        endpointMustExist: false,
                                         keepSessionAlive: true,
                                         connectionStrategy: { maxRetry: 1 } };
                                     if (property.mode) {
                                         if (property.mode.securityMode) {
                                             opts['securityMode'] = property.mode.securityMode;
-                                        }
-                                        if (property.mode.securityPolicy) {
-                                            opts['securityPolicy'] = property.mode.securityPolicy;
                                         }
                                         if (property.mode.securityPolicy) {
                                             opts['securityPolicy'] = property.mode.securityPolicy;

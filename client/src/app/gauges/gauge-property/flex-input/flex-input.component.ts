@@ -56,9 +56,7 @@ export class FlexInputComponent implements OnInit {
                 this.withValue = this.ranges[0].style[1];
             }
         } else if (this.isWithUnit()) {
-            if (this.ranges[0]['fractionDigits']) {
-                this.onChangeFormat('fractionDigits', this.ranges[0]['fractionDigits']);
-            }
+
         }
         this.ranges.forEach(range => {
             if (!range.color) {
@@ -175,8 +173,9 @@ export class FlexInputComponent implements OnInit {
         return false;
     }
 
-    onChangeFormat(formattype, value) {
-        this.valueresult = parseFloat(this.valueresult).toFixed(value);
+    onFormatDigitChanged(range: GaugeRangeProperty, event) {
+        range['fractionDigitsId'] = event.variableId;
+        range['fractionDigits'] = event.variableValue;
     }
 
     onUnitChanged(range: GaugeRangeProperty, event) {

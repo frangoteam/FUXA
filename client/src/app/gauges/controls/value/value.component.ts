@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, Input, AfterViewInit } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, Variable, GaugeStatus, GaugeAction, GaugeActionsType } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, GaugeAction, GaugeActionsType, GaugeRangeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 import { Utils } from '../../../_helpers/utils';
@@ -38,6 +38,16 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
                 res.push(act.variableId);
             });
         }
+        if (pro.ranges) {
+            pro.ranges.forEach((range: GaugeRangeProperty) => {
+                if (range.textId) {
+                    res.push(range.textId);
+                }
+                if (range['fractionDigitsId']) {
+                    res.push(range['fractionDigitsId']);
+                }
+            })
+        }
         return res;
     }
 
@@ -67,8 +77,9 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
                     val = parseFloat(val.toFixed(5));
                 }
                 if (ga.property) {
-                    let unit = GaugeBaseComponent.getUnit(ga.property, sig.id, val);
-                    let digit = GaugeBaseComponent.getDigits(ga.property);
+                    let unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
+                    let digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
+
                     if (!isString && !Utils.isNullOrUndefined(digit)) {
                         val = parseFloat(val).toFixed(digit);
                     }

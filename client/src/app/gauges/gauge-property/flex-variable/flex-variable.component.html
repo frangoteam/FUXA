@@ -1,5 +1,5 @@
 <div style="display: block;">
-    <div class="my-form-field" style="max-width: 100px;">
+    <div class="my-form-field" style="max-width: 100px;" *ngIf="withStaticValue">
         <span>{{variableLabel | translate}}</span>
         <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 100px" type="text">
     </div>
