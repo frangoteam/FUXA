@@ -38,6 +38,7 @@
 .action-blink {
     display: inline-block;
     padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 ::ng-deep .ng5-slider .ng5-slider-pointer { 

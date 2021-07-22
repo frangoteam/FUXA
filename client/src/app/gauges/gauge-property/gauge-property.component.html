@@ -11,7 +11,7 @@
 					</div>
 					<div class="my-form-field" style="vertical-align: bottom; margin-left: 13px;">
 						<span>{{'gauges.property-permission' | translate}}</span>
-						<div style="width:80px;height:30px;background-color:#f1f3f4;text-align:center;cursor:pointer;" (click)="onEditPermission()">
+						<div style="width:80px;height:28px;background-color:#f1f3f4;text-align:center;cursor:pointer;" (click)="onEditPermission()">
 							<mat-icon class="header-icon" style="line-height: 30px;" *ngIf="!property || !property.permission">lock_open</mat-icon>
 							<mat-icon class="header-icon" style="line-height: 30px;" *ngIf="property && property.permission">lock</mat-icon>
 						</div>

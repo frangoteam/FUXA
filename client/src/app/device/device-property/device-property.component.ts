@@ -4,6 +4,7 @@ import { Subscription } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 
 import { HmiService } from '../../_services/hmi.service';
+import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
 import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
@@ -30,8 +31,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	pollingType = this.pollingPlcType;
 
-	isFuxaServer: boolean = false;
-	isToRemove: boolean = false;
+	isFuxaServer = false;
+	isWithPolling = true;
+	isToRemove = false;
 	propertyExpanded: boolean;
 	propertyLoading: boolean;
 	securityMode: any = [];
@@ -53,6 +55,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	constructor(
 		private hmiService: HmiService,
         private translateService: TranslateService,
+        private appService: AppService,
 		public dialogRef: MatDialogRef<DevicePropertyComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) { 
             this.projectService = data.projectService;
@@ -61,6 +64,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.isToRemove = this.data.remove;
 		this.isFuxaServer = (this.data.device.type && this.data.device.type === DeviceType.FuxaServer) ? true : false;
+		if (this.appService.isClientApp || this.appService.isDemoApp) {
+			this.isWithPolling = false;
+		}
 		for (let key in DeviceType) {
 			if (!this.isFuxaServer && key !== DeviceType.FuxaServer) {
 				for (let idx = 0; idx < this.data.availableType.length; idx++) {

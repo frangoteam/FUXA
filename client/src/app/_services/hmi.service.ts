@@ -64,6 +64,10 @@ export class HmiService {
         if (this.variables[sigId]) {
             this.variables[sigId].value = value;
             if (this.socket) {
+                let device = this.projectService.getDeviceFromTagId(sigId);
+                if (device) {
+                    this.variables[sigId]['source'] = device.id;
+                }
                 this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
             } else if (this.bridge) {
                 this.bridge.setDeviceValue(this.variables[sigId]);

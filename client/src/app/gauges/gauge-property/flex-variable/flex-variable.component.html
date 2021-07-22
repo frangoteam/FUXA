@@ -1,14 +1,16 @@
-<div style="display: block;">
-    <div class="my-form-field" style="max-width: 100px;" *ngIf="withStaticValue">
+<div style="display: block; margin-bottom: 5px;">
+    <div class="my-form-field" style="max-width: 100px;margin-right: 18px;" *ngIf="withStaticValue">
         <span>{{variableLabel | translate}}</span>
         <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 100px" type="text">
     </div>
-    <div class="my-form-field" style="display:inline-block;padding-left: 10px;">
-        <button mat-icon-button (click)="onBindTag()">
+    <div class="my-form-field" style="display:inline-block;">
+        <span>Tag</span>
+        <div style="position:absolute; bottom: 0px; right: 0px; height: 28px; background-color:rgb(241,243,244); width: 28px; border-radius: 2px 0px 0px 2px;"></div>
+        <button mat-icon-button (click)="onBindTag()" style="line-height: 28px;height:28px; width:28px; vertical-align: middle;">
             <mat-icon>link</mat-icon>
         </button>
     </div>
-    <div class="my-form-field" style="margin-left: 3px;">
+    <div class="my-form-field" style="margin-left: 0px;">
         <span>{{getDeviceName(variableId)}}</span>
         <input style="font-size: 13px;min-width: 450px" value="{{getVariableName(variableId)}}" readonly="true" [disabled]="true">
     </div>

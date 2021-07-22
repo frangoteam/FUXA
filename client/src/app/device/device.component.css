@@ -68,11 +68,11 @@
     position: sticky;
     z-index: 1;
     /* background-color: rgba(0,0,0,0.7); */
-    background-color: rgb(30, 30, 30);
-    color: white;
+    /* background-color: rgb(30, 30, 30); */
+    /* color: white; */
 }
 .mat-header-cell {
-    color: white;
+    /* color: white; */
     font-size: 13px;
 }
 
@@ -104,7 +104,7 @@
 }
 
 .my-header-filter /deep/ .mat-sort-header-arrow {
-    color: white;
+    /* color: white; */
     top: -12px;
     right: 20px;
 }
@@ -113,7 +113,9 @@
     display: block; 
     margin-top: 4px;
     margin-bottom: 6px;
-    background-color: rgb(51, 51, 51);
-    color: white;
+    background-color: rgba(241,243,244);
+    /* color: white; */
     border: 0px solid rgba(51, 51, 51);
+    padding: 3px 1px 3px 2px;
+    border-radius: 2px;
 }

@@ -1,4 +1,4 @@
-<div *ngFor="let item of actions; index as i" class="item" style="padding-bottom: 4px;">
+<div *ngFor="let item of actions; index as i" class="item">
     <flex-variable class="item-head" [data]="data" (onchange)="setVariable(i, $event)" [variableId]="item.variableId" [withStaticValue]="false">
     </flex-variable>
     <div class="action-content">

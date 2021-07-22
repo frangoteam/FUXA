@@ -438,6 +438,7 @@
     "device.property-type": "Type",
     "device.property-polling": "Polling",
     "device.property-enable": "Enable",
+    "device.property-subscribe": "Subscribe",
     "device.property-address": "Address (IP or opc.tcp://[server]:[port])",
     "device.property-device-port": "Device IP and Port (127.0.0.1:47808)",
     "device.property-address-port": "Slave IP and Port (127.0.0.1:502)",
