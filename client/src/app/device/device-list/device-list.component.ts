@@ -22,7 +22,7 @@ import { Utils } from '../../_helpers/utils';
 
 export class DeviceListComponent implements OnInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'min', 'max', 'value', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
     readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'remove'];
     readonly defAllRowWidth = 1400;
@@ -54,6 +54,9 @@ export class DeviceListComponent implements OnInit {
         private projectService: ProjectService) { }
 
     ngOnInit() {
+    }
+
+    ngAfterViewInit() {
         this.devices = this.projectService.getDevices();
         if (!this.deviceSelected && this.devices) {
             this.deviceSelected = this.devices[0];
@@ -63,9 +66,7 @@ export class DeviceListComponent implements OnInit {
                 this.tagsMap[t.id] = t;
             })
         });
-    }
-
-    ngAfterViewInit() {
+        
         if (this.deviceSelected) {
             this.bindToTable(this.deviceSelected.tags);
         }

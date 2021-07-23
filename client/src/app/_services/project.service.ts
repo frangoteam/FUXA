@@ -50,7 +50,7 @@ export class ProjectService {
         } else if (appService.isClientApp) {
             this.storage = resClientService;
         }
-        console.log("mode:", environment.type);
+        // console.log("mode:", environment.type);
         this.storage.getAppId = () => { return this.getAppId(); }
         this.storage.onRefreshProject = (): boolean => { return this.onRefreshProject() };
         this.storage.checkServer().subscribe(result => {

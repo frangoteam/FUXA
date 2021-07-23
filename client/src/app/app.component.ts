@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from "rxjs";
 
+import { environment } from '../environments/environment';
+
 import { ProjectService } from './_services/project.service';
 import { SettingsService } from './_services/settings.service';
 import { UserGroups } from './_models/user';
@@ -31,6 +33,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		console.log(`FUXA v${environment.version}`);
 	}
 	
 	ngAfterViewInit() {

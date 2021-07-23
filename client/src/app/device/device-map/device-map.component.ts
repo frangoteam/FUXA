@@ -386,13 +386,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	getDeviceStatusColor(device) {
-		if (this.devicesStatus[device.name]) {
+		if (this.devicesStatus[device.id]) {
 			let milli = new Date().getTime();
-			if (this.devicesStatus[device.name].last + 15000 < milli) {
-				this.devicesStatus[device.name].status = 'connect-error';
-				this.devicesStatus[device.name].last = new Date().getTime();
+			if (this.devicesStatus[device.id].last + 15000 < milli) {
+				this.devicesStatus[device.id].status = 'connect-error';
+				this.devicesStatus[device.id].last = new Date().getTime();
 			}
-			let st = this.devicesStatus[device.name].status;
+			let st = this.devicesStatus[device.id].status;
 			if (st === 'connect-ok') {
 				return '#00b050';
 			} else if (st === 'connect-error' || st === 'connect-failed') {

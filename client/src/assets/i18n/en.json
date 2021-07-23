@@ -440,6 +440,7 @@
     "device.property-enable": "Enable",
     "device.property-subscribe": "Subscribe",
     "device.property-address": "Address (IP or opc.tcp://[server]:[port])",
+    "device.property-address-opc": "Address (opc.tcp://[server]:[port])",
     "device.property-device-port": "Device IP and Port (127.0.0.1:47808)",
     "device.property-address-port": "Slave IP and Port (127.0.0.1:502)",
     "device.property-security": "Security and encryption mode",
@@ -485,7 +486,7 @@
     "device.tag-property-max": "Max",
     "device.tag-property-divisor": "Divisor",
     "device.tag-property-address-offset": "Address offset (1-65536)",
-    "device.tag-property-obj-name": "Object Name",
+    "device.tag-property-obj-name": "Name",
     "device.tag-property-path": "Path",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
@@ -691,5 +692,7 @@
     "msg.project-save-ask": "You want to leave the project?",
     "msg.login-username-required": "Enter a username",
     "msg.login-password-required": "Enter a password",
-    "msg.signin-failed": "Unauthorized"
+    "msg.signin-failed": "Unauthorized",
+    "msg.get-project-void": "Project not found!",
+    "msg.editor-mode-locked": "The editor is already open!"
 }

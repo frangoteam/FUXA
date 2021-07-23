@@ -16,12 +16,6 @@
             <span>{{'device.list-filter' | translate}}</span>
             <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
         </div>
-        <!-- <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field> -->
-        <!-- <div class="my-form-field" style="padding: 10 20 10 20">
-      <input (keyup)="applyFilter($event.target.value)" placeholder="Filter" type="text" style="width: 100%">
-    </div> -->
     </div>
     <mat-table #table [dataSource]="dataSource" matSort>
         <!-- Checkbox Column -->
@@ -30,17 +24,12 @@
                 <button mat-icon-button (click)="onAddTag()" class="remove">
                     <mat-icon>add</mat-icon>
                 </button>
-                <!-- <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()">
-        </mat-checkbox> -->
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
                 <button mat-icon-button (click)="onEditRow(element)" class="remove"
                     *ngIf="isToEdit(deviceSelected.type)">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
-        </mat-checkbox> -->
             </mat-cell>
         </ng-container>
 

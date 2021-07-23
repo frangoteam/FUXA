@@ -77,7 +77,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
 		this.discoveryTimer = setTimeout(() => {
             this.discoveryWait = false;
 		}, 10000);        
-        this.hmiService.askDeviceBrowse(this.data.device.name, source);
+        this.hmiService.askDeviceBrowse(this.data.device.id, source);
     }
 
     onClearDiscovery() {

@@ -39,7 +39,7 @@
             <div *ngIf="data.device.property && data.device.type" [ngSwitch]="data.device.type">
                 <div *ngSwitchCase="deviceType.OPCUA">
                     <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                        <span>{{'device.property-address' | translate}}</span>
+                        <span>{{'device.property-address-opc' | translate}}</span>
                         <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
                     <div class="my-form-field" style="width: 356px">

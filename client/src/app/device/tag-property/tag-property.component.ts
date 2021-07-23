@@ -68,7 +68,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         if (this.dialogType === EditTagDialogType.Tree) {
             if (this.isOpcua() || this.isBACnet()) {
                 this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(values => {
-                    if (this.data.device.name === values.device) {
+                    if (this.data.device.id === values.device) {
                         if (values.error) {
                             this.addError(values.node, values.error);
                         } else {
@@ -77,7 +77,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     }
                 });
                 this.subscriptionNodeAttribute = this.hmiService.onDeviceNodeAttribute.subscribe(values => {
-                    if (this.data.device.name === values.device) {
+                    if (this.data.device.id === values.device) {
                         if (values.error) {
                             //   this.addError(values.node, values.error);
                         } else if (values.node) {
@@ -190,7 +190,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 }
                 this.treetable.addNode(node, parent, enabled);
                 if (node.class === NodeType.Variable && this.data.device.type !== DeviceType.BACnet) {
-                    this.hmiService.askNodeAttributes(this.data.device.name, n);
+                    this.hmiService.askNodeAttributes(this.data.device.id, n);
                 }
             });
             this.treetable.update();
@@ -318,7 +318,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         if (this.isBACnet() && node) {
             n['parent'] = (node.parent) ? node.parent.id : null;
         }
-        this.hmiService.askDeviceBrowse(this.data.device.name, n);
+        this.hmiService.askDeviceBrowse(this.data.device.id, n);
     }
 
     attributeToString(attribute) {

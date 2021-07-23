@@ -75,17 +75,17 @@ function update() {
  * @param {*} device 
  */
 function updateDevice(device) {
-    if (!activeDevices[device.name]) {
+    if (!activeDevices[device.id]) {
         if (devices.loadDevice(device) && device.enabled) {
-            activeDevices[device.name].start();
+            activeDevices[device.id].start();
         }
     } else {
-        activeDevices[device.name].stop().then(function () {
+        activeDevices[device.id].stop().then(function () {
             devices.loadDevice(device);
             if (device.enabled) {
-                activeDevices[device.name].start();
+                activeDevices[device.id].start();
             } else {
-                delete activeDevices[device.name];
+                delete activeDevices[device.id];
             }
         }).catch(function (err) {
             runtime.logger.error('devices.update-device ' + device.name + ': ' + err);
@@ -98,13 +98,13 @@ function updateDevice(device) {
  * @param {*} device 
  */
 function removeDevice(device) {
-    if (!activeDevices[device.name]) {
-        delete activeDevices[device.name];
+    if (!activeDevices[device.id]) {
+        delete activeDevices[device.id];
     } else {
-        activeDevices[device.name].stop().then(function () {
-            delete activeDevices[device.name];
+        activeDevices[device.id].stop().then(function () {
+            delete activeDevices[device.id];
         }).catch(function (err) {
-            delete activeDevices[device.name];
+            delete activeDevices[device.id];
             runtime.logger.error('devices.remove-device by stop ' + device.name + ': ' + err);
         });
     }
@@ -126,7 +126,7 @@ function load() {
     // log remove device not used
     for (var id in activeDevices) {
         if (Object.keys(tempdevices).indexOf(id) < 0) {
-            runtime.logger.info(`devices.load-removed: '${id}'`, true);
+            runtime.logger.info(`devices.load-removed: '${activeDevices[id].name}'`, true);
         }
     }
 }
@@ -136,25 +136,25 @@ function load() {
  * @param {*} device 
  */
 function loadDevice(device) {
-    if (activeDevices[device.name]) {
+    if (activeDevices[device.id]) {
         // device exist
         runtime.logger.info(`'${device.name}' exist`, true);
-        activeDevices[device.name].load(device);
+        activeDevices[device.id].load(device);
     } else {
         // device create
         let tdev = Device.create(device, runtime);
         if (tdev && tdev.start) {
             runtime.logger.info(`'${device.name}' created`);
-            activeDevices[device.name] = tdev;
-            activeDevices[device.name].bindGetProperty(runtime.project.getDeviceProperty);
+            activeDevices[device.id] = tdev;
+            activeDevices[device.id].bindGetProperty(runtime.project.getDeviceProperty);
         } else {
             runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
             return false;
         }
     }
     if (runtime.settings.daqEnabled) {
-        var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.name, activeDevices[device.name].getTagProperty);
-        activeDevices[device.name].bindSaveDaqValue(fncToSaveDaqValue);
+        var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.name, activeDevices[device.id].getTagProperty);
+        activeDevices[device.id].bindSaveDaqValue(fncToSaveDaqValue);
     }
     return true;
 }
