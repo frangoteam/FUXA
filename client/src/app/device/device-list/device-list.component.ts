@@ -66,7 +66,7 @@ export class DeviceListComponent implements OnInit {
                 this.tagsMap[t.id] = t;
             })
         });
-        
+
         if (this.deviceSelected) {
             this.bindToTable(this.deviceSelected.tags);
         }
@@ -242,7 +242,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
-        let oldtag = tag.name;
+        let oldtag = tag.id;
         let temptag: Tag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
             panelClass: 'dialog-property',
@@ -262,8 +262,6 @@ export class DeviceListComponent implements OnInit {
                     tag.type = temptag.type;
                     tag.address = temptag.address;
                     tag.memaddress = temptag.memaddress;
-                    tag.min = temptag.min;
-                    tag.max = temptag.max;
                     tag.divisor = temptag.divisor;
                     if (this.deviceSelected.type === DeviceType.internal) {
                         tag.value = '0';

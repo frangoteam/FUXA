@@ -35,11 +35,7 @@ export class Tag {
     memaddress: string;
     /** Tag address, for OPCUA like the id */
     address: string;
-    /** not used yet */
-    min: string;
-    /** not used yet */
-    max: string;
-    /** Valuie divisor, used by Modbus */
+    /** Value divisor, used by Modbus */
     divisor: number;
     /** not used yet */
     access: string;

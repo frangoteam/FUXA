@@ -282,7 +282,7 @@ function DaqNode(_settings, _log, _id) {
                 // search in current db
                     _getTagValues(db_daqdata, daqTagsMap[tagid].mapid, fromts, tots).then(function (rows) {
                     // search in archive
-                    var archivefiles = _getArchiveFiles(fromts, tots);
+                    var archivefiles = _getArchiveFiles(id, fromts, tots);
                     var dbfncs = [];
                     archivefiles.forEach(file => {
                         dbfncs.push(_bindAndGetTagValues(file, daqTagsMap[tagid].mapid, fromts, tots));
@@ -427,7 +427,7 @@ function DaqNode(_settings, _log, _id) {
         });
     }
 
-    function _getArchiveFiles(fromts, tots) {
+    function _getArchiveFiles(id, fromts, tots) {
         var archive = path.resolve(settings.dbDir, 'archive');
         var result = [];
         if (fs.existsSync(archive)) {
@@ -438,7 +438,7 @@ function DaqNode(_settings, _log, _id) {
                     var to = ranges[ranges.length - 1];
                     var f = _suffixToTimestamp(fr);
                     var t = _suffixToTimestamp(to);
-                    if (f <= tots && t >= fromts) {
+                    if (file.indexOf(id) > 0 && f <= tots && t >= fromts) {
                         result.push(path.join(archive, file));
                     }
                 }

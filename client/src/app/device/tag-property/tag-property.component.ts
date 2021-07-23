@@ -126,7 +126,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         if (this.isWebApi()) {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
             this.data.nodes = result;
-        } else if (this.isModbus()) {
+        } else if (this.isModbus() || this.isSiemensS7()) {
         } else if (this.isInternal()) {
             let tags = <Tag[]>Object.values(this.data.device.tags);
             this.error = '';

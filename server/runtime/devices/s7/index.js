@@ -292,10 +292,10 @@ function S7client(_data, _logger, _events) {
                         if (type === 'BOOL') {
                             try {
                                 let pos = parseInt(tag.address.charAt(tag.address.length - 1));
-                                result[tag.name] = { id: tag.name, value: (_getBit(value, pos)) ? 1 : 0, type: type };
+                                result[tag.id] = { id: tag.id, value: (_getBit(value, pos)) ? 1 : 0, type: type };
                             } catch (err) { }
                         } else {
-                            result[tag.name] = { id: tag.name, value: value, type: type };
+                            result[tag.id] = { id: tag.id, value: value, type: type };
                         }
                         someval = true;
                     });
@@ -305,7 +305,7 @@ function S7client(_data, _logger, _events) {
                             items[itemidx].value = (_getBit(items[itemidx].value, items[itemidx].bit)) ? 1 : 0;
                         } catch (err) { }
                     }
-                    result[items[itemidx].name] = { id: items[itemidx].name, value: items[itemidx].value, type: items[itemidx].type };
+                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type };
                     someval = true;
                 }
             }
@@ -345,7 +345,7 @@ function S7client(_data, _logger, _events) {
      * @param {*} values 
      */
     var _emitValues = function (values) {
-        events.emit('device-value:changed', { id: data.name, values: values });
+        events.emit('device-value:changed', { id: data.id, values: values });
     }
 
     /**
@@ -354,7 +354,7 @@ function S7client(_data, _logger, _events) {
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        events.emit('device-status:changed', { id: data.name, status: status });
+        events.emit('device-status:changed', { id: data.id, status: status });
     }
 
     /**

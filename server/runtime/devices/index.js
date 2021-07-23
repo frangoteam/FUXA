@@ -153,7 +153,7 @@ function loadDevice(device) {
         }
     }
     if (runtime.settings.daqEnabled) {
-        var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.name, activeDevices[device.id].getTagProperty);
+        var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.id, activeDevices[device.id].getTagProperty);
         activeDevices[device.id].bindSaveDaqValue(fncToSaveDaqValue);
     }
     return true;

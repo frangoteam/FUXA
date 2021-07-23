@@ -34,14 +34,24 @@ function addDaqNode(id, fncgetprop) {
     // return daqnodes[id].addDaqValue;
 }
 
-function getNodeValues(nodeid, tagid, fromts, tots) {
+function getNodeValues(tagid, fromts, tots) {
     return new Promise(function (resolve, reject) {
-        if (daqnodes[nodeid]) {
-            resolve(daqnodes[nodeid].getDaqValue(tagid, fromts, tots));
+        var daqnode = _getDaqNode(tagid);
+        if (daqnode) {
+            resolve(daqnode.getDaqValue(tagid, fromts, tots));
         } else {
             reject();
         }
     });
+}
+
+function _getDaqNode(tagid) {
+    var nodes = Object.values(daqnodes);
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].getDaqMap()[tagid]) {
+            return nodes[i];
+        }
+    }
 }
 
 module.exports = {

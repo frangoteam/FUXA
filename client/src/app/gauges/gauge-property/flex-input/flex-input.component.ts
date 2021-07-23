@@ -117,16 +117,6 @@ export class FlexInputComponent implements OnInit {
         this.tag = _tag;
         if (this.tag) {
             const newOptions: Options = Object.assign({}, this.options);
-            try {
-                if (this.tag.min != null) {
-                    newOptions.floor = parseInt(this.tag.min);
-                }
-                if (this.tag.max != null) {
-                    newOptions.ceil = parseInt(this.tag.max);
-                }
-                this.options = newOptions;
-            } catch (e) {
-            }
             for (let i = 0; i < this.ranges.length; i++) {
                 if (!this.ranges[i].min || this.ranges[i].min <= newOptions.floor) {
                     this.ranges[i].min = newOptions.floor;
