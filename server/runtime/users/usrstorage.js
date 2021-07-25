@@ -123,12 +123,12 @@ function setUser(usr, fullname, pwd, groups) {
             if (pwd) {
                 sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('" + usr +"','" + fullname + "','"+ bcrypt.hashSync(pwd, 10) + "','" + groups + "');";
                 if (exist) {
-                    sql = "UPDATE users SET password = '"+ bcrypt.hashSync(pwd, 10) + "', groups = '" + groups + "' WHERE username = '" + usr + "';";
+                    sql = "UPDATE users SET password = '"+ bcrypt.hashSync(pwd, 10) + "', groups = '" + groups + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
                 }
             } else {
-                sql = "INSERT OR REPLACE INTO users (username, groups) VALUES('" + usr + "','" + groups + "');";
+                sql = "INSERT OR REPLACE INTO users (username, fullname, groups) VALUES('" + usr + "','" + fullname + "','" + groups + "');";
                 if (exist) {
-                    sql = "UPDATE users SET groups = '" + groups + "' WHERE username = '" + usr + "';";
+                    sql = "UPDATE users SET groups = '" + groups + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
                 }
             }
             db_usr.exec(sql, function (err) {

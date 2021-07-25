@@ -35,15 +35,15 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
 	onAddUser() {
 		let user = new User();
-		this.editUser(user, 1);
+		this.editUser(user, user);
 	}
 
 	onEditUser(user: User) {
-		this.editUser(user, 0);
+		this.editUser(user, user);
 	}
 
 	onRemoveUser(user: User) {
-		this.editUser(user, -1);
+		this.editUser(user, null);
 	}
 
 	isAdmin(user: User): boolean {
@@ -70,16 +70,16 @@ export class UsersComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	private editUser(user: User, toAdd: number) {
+	private editUser(user: User, current: User) {
 		let muser: User = JSON.parse(JSON.stringify(user));
 		muser.password = '';
 		let dialogRef = this.dialog.open(DialogUser, {
 			position: { top: '60px' },
-			data: { user: muser, editmode: toAdd, users: this.users.map((u: User) => { return u.username }) }
+			data: { user: muser, current: current, users: this.users.map((u: User) => { return u.username }) }
 		});
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {
-				if (toAdd < 0) {
+				if (!current) {
 					this.userService.removeUser(result).subscribe(result => {
 						this.users = this.users.filter(function (el) { return el.username !== muser.username; });
 						this.bindToTable(this.users);
@@ -87,17 +87,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 					});
 				} else {
 					this.userService.setUser(result).subscribe(result => {
-						if (toAdd < 0) {
-							this.users.push(muser);
-						} else if (toAdd > 0) {
-							this.users.push(muser);
-						} else {
-							user.groups = muser.groups;
-							if (muser.password) {
-								user.password = muser.password;
-							}
-						}
-						this.bindToTable(this.users);
+						this.loadUsers();
 					}, err => {
 					});
 				}
@@ -138,12 +128,17 @@ export class DialogUser {
 	}
 
 	isValid(name): boolean {
-		if (this.data.editmode <= 0) {
+		if (!this.data.current) {	// to remove
 			return true;
 		} else if (name) {
-			return (this.data.users.find((n) => n === name)) ? false : true;
+			let editname = (this.data.user) ? this.data.user.username : null;
+			return (this.data.users.find((n) => n === name && n !== editname)) ? false : true;
 		}
 		return false;
+	}
+
+	isNewUser() {
+		return (this.data.current && this.data.current.username) ? true : false;
 	}
 
 	isAdmin(): boolean {
