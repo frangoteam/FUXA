@@ -557,7 +557,7 @@ export class ProjectService {
         return result;
     }
 
-    getDeviceFromTagId(tagId: string): any {
+    getDeviceFromTagId(tagId: string): Device {
         let devices = <Device[]>Object.values(this.projectData.devices);
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags[tagId]) {

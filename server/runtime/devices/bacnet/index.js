@@ -16,6 +16,7 @@ function BACNETclient(_data, _logger, _events) {
     var client = null;
 
     var varsValue = {};                 // Signale to send to frontend { id, type, value }
+    var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     // var getProperty = null;             // Function to ask property
@@ -140,7 +141,7 @@ function BACNETclient(_data, _logger, _events) {
         if (_checkWorking(true) ) {
             var readObjects = [];
             for (var tagId in data.tags) {
-                let obj = _extractId(tagId);
+                let obj = _extractId(data.tags[tagId].address);
                 readObjects.push({objectId: {type: obj.type, instance: obj.instance}, properties: [{id: bacnet.enum.PropertyIdentifier.PRESENT_VALUE}]});
             }
             if (readObjects.length) {
@@ -157,11 +158,11 @@ function BACNETclient(_data, _logger, _events) {
                                 let errors = [];
                                 value.values.forEach(data => { 
                                     if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIdentifier.PRESENT_VALUE) {
-                                        let id = _formatId(data.objectId.type, data.objectId.instance);
+                                        let address = _formatId(data.objectId.type, data.objectId.instance);
                                         if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTag.ERROR) {
-                                            errors.push({ id: id, value: data.values[0].value.value, type:  data.objectId.type });    
+                                            errors.push({ address: address, value: data.values[0].value.value, type:  data.objectId.type });    
                                         } else {
-                                            result.push({ id: id, value: data.values[0].value[0].value, type:  data.objectId.type });    
+                                            result.push({ address: address, value: data.values[0].value[0].value, type:  data.objectId.type });    
                                         }
                                     }
                                 });
@@ -204,7 +205,15 @@ function BACNETclient(_data, _logger, _events) {
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
         try {
+            requestItemsMap = {};
             var count = Object.keys(data.tags).length;
+            for (var id in data.tags) {
+                if (!requestItemsMap[data.tags[id].address]) {
+                    requestItemsMap[data.tags[id].address] = [data.tags[id]];
+                } else {
+                    requestItemsMap[data.tags[id].address].push(data.tags[id]);   
+                }
+            }
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
             logger.error(`'${data.name}' load error! ${err}`);
@@ -561,11 +570,16 @@ function BACNETclient(_data, _logger, _events) {
         var someval = false;
         var changed = {};
         for (var index in vars) {
-            let id = vars[index].id;
-            if (!varsValue[id] || varsValue[id].value !== vars[index].value) {
-                changed[id] = { id: vars[index].id, value: vars[index].value, type: vars[index].type };
-                varsValue[id] = changed[id];
-                someval = true;
+            var address = vars[index].address;
+            if (requestItemsMap[address]) {
+                for (var index in requestItemsMap[address]) {
+                    var tag = requestItemsMap[address][index];
+                    if (!varsValue[tag.id] || varsValue[tag.id].value !== vars[index].value) {
+                        changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type };
+                        varsValue[tag.id] = changed[tag.id];
+                        someval = true;
+                    }
+                }
             }
         }
         if (someval) {

@@ -402,7 +402,7 @@ function OpcUAclient(_data, _logger, _events) {
             let valtosend = _toValue(opctype, value);
             var nodesToWrite = [
                 {
-                    nodeId: sigid,
+                    nodeId: data.tags[sigid].address,
                     attributeId: opcua.AttributeIds.Value,
                     value: /*new DataValue(*/{
                         value: {/* Variant */
@@ -580,7 +580,7 @@ function OpcUAclient(_data, _logger, _events) {
      * @param {*} values 
      */
     var _emitValues = function (values) {
-        events.emit('device-value:changed', { id: data.name, values: values });
+        events.emit('device-value:changed', { id: data.id, values: values });
     }
 
     /**
@@ -589,7 +589,7 @@ function OpcUAclient(_data, _logger, _events) {
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        events.emit('device-status:changed', { id: data.name, status: status });
+        events.emit('device-status:changed', { id: data.id, status: status });
     }
 
     /**

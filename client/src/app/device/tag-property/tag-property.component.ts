@@ -125,7 +125,12 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         this.data.nodes = [];
         if (this.isWebApi()) {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
-            this.data.nodes = result;
+            result.forEach((n: Node) => {
+                if (n.checked && n.enabled) {
+                    this.data.nodes.push(n);
+                }
+            });
+            // this.data.nodes = result;
         } else if (this.isModbus() || this.isSiemensS7()) {
         } else if (this.isInternal()) {
             let tags = <Tag[]>Object.values(this.data.device.tags);
@@ -150,7 +155,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
-                if (n.checked) {
+                if (n.checked && n.enabled) {
                     this.data.nodes.push(this.treetable.nodes[key]);
                 }
             });
@@ -169,6 +174,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     addNodes(parent: Node, nodes: any) {
         if (nodes) {
+            let tempTags = Object.values(this.data.device.tags);
             nodes.forEach((n) => {
                 let node = new Node(n.id, n.name);
                 node.class = n.class;
@@ -184,9 +190,11 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     // Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)]
                 }
                 let enabled = true;
-                if (this.data.device.tags[n.id] && node.class === NodeType.Variable) {
-                    // node allready selected
-                    enabled = false;
+                if (node.class === NodeType.Variable) {
+                    const selected = tempTags.find((t: Tag) => t.address === n.id);
+                    if (selected) {
+                        enabled = false;
+                    }
                 }
                 this.treetable.addNode(node, parent, enabled);
                 if (node.class === NodeType.Variable && this.data.device.type !== DeviceType.BACnet) {
@@ -237,13 +245,14 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             node.childs = [];
             node.property = nodes;
             let enabled = true;
+            const selected = Object.values(this.data.device.tags).find((t: Tag) => t.address === nodeId);
             if (node.parent && node.parent.parent && node.parent.parent.class === NodeType.Array) {
                 node.class = NodeType.Item;
                 if (!node.parent.parent.todefine.id && this.data.device.tags[nodeId] && this.data.device.tags[nodeId].options) {
                     node.parent.parent.todefine.id = this.data.device.tags[nodeId].options.selid;
                     node.parent.parent.todefine.value = this.data.device.tags[nodeId].options.selval;
                 }  
-            } else if (this.data.device.tags[nodeId]) {
+            } else if (selected) {
 
                 // console.log(`f: ${nodeId} ${nodeName}`);
                 enabled = false;
@@ -281,6 +290,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     objNode.property = childValue.id                        // value:id
                     objNode.todefine = { selid: childId.text, selval: childValue.text };
                     objNode.type = Utils.getType(childValue.property);
+                    objNode.checked = true;
+                    objNode.enabled = n.enabled;
                     result.push(objNode);
                 }
                 // console.log(`id:${n.id} childs:${n.childs.length}`);
@@ -288,6 +299,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 // let objNode = new Node(n.id.split('>').join(''), n.text);
                 let objNode = new Node(n.id, n.text);
                 objNode.type = Utils.getType(n.property);
+                objNode.checked = n.checked;
+                objNode.enabled = n.enabled;
                 result.push(objNode);
             }
         }

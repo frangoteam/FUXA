@@ -189,7 +189,7 @@ export class DeviceListComponent implements OnInit {
             if (result) {
                 this.dirty = true;
                 if (this.deviceSelected.type === DeviceType.WebAPI) {
-                    this.clearTags();
+                    // this.clearTags();
                 }
                 result.nodes.forEach((n: Node) => {
                     let tag = new Tag(Utils.getGUID(TAG_PREFIX));

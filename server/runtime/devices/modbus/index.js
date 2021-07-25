@@ -506,11 +506,11 @@ function MODBUSclient(_data, _logger, _events) {
                     let value = items[itemidx].value;
                     let tags = items[itemidx].Tags;
                     tags.forEach(tag => {
-                        result[tag.name] = { id: tag.name, value: convertValue(value, tag.divisor), type: type };
+                        result[tag.id] = { id: tag.id, value: convertValue(value, tag.divisor), type: type };
                         someval = true;
                     });
                 } else {
-                    result[items[itemidx].name] = { id: items[itemidx].name, value: items[itemidx].value, type: items[itemidx].type };
+                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type };
                     someval = true;
                 }
             }
@@ -532,7 +532,7 @@ function MODBUSclient(_data, _logger, _events) {
      * @param {*} values 
      */
     var _emitValues = function (values) {
-        events.emit('device-value:changed', { id: data.name, values: values });
+        events.emit('device-value:changed', { id: data.id, values: values });
     }
 
     /**
@@ -541,7 +541,7 @@ function MODBUSclient(_data, _logger, _events) {
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        events.emit('device-status:changed', { id: data.name, status: status });
+        events.emit('device-status:changed', { id: data.id, status: status });
     }
 
     /**

@@ -12,7 +12,7 @@ function HTTPclient(_data, _logger, _events) {
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last webapi status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-    var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...)
+    var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
     var overloading = 0;                // Overloading counter to mange the break connection
     var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
@@ -138,8 +138,16 @@ function HTTPclient(_data, _logger, _events) {
         varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
         try {
+            requestItemsMap = {};
             var count = Object.keys(data.tags).length;
-            requestItemsMap = data.tags;
+            for (var id in data.tags) {
+                if (!requestItemsMap[data.tags[id].address]) {
+                    requestItemsMap[data.tags[id].address] = [data.tags[id]];
+                } else {
+                    requestItemsMap[data.tags[id].address].push(data.tags[id]);   
+                }
+            }
+
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
             logger.error(`'${data.name}' load error! ${err}`);
@@ -224,17 +232,18 @@ function HTTPclient(_data, _logger, _events) {
         var someval = false;
         var changed = [];
         var result = [];
-        var tags = dataToFlat(reqdata, data.property);
-        for (var key in tags) {
+        var items = dataToFlat(reqdata, data.property);
+        for (var key in items) {
             if (requestItemsMap[key]) {
-                if (requestItemsMap[key].memaddress) {
-                    if (tags[requestItemsMap[key].memaddress]) {
+                for (var index in requestItemsMap[key]) {
+                    var tag = requestItemsMap[key][index];
+                    if (tag) {
                         someval = true;
-                        result[key] = { id: requestItemsMap[key].name, value: tags[requestItemsMap[key].memaddress], type: tags[requestItemsMap[key].memaddress].type };
+                        result[tag.id] = { id: tag.id, value: (tag.memaddress) ? items[tag.memaddress] : items[key], type: items[key].type };
+                    } else {
+                        someval = true;
+                        result[tag.id] = { id: tag.id, value: items[key], type: requestItemsMap[key].type };
                     }
-                } else {
-                    someval = true;
-                    result[key] = { id: requestItemsMap[key].name, value: tags[key], type: requestItemsMap[key].type };
                 }
             }
         }
@@ -256,7 +265,7 @@ function HTTPclient(_data, _logger, _events) {
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        events.emit('device-status:changed', { id: data.name, status: status });
+        events.emit('device-status:changed', { id: data.id, status: status });
     }
 
     /**
@@ -264,7 +273,7 @@ function HTTPclient(_data, _logger, _events) {
      * @param {*} values 
      */
     var _emitValues = function (values) {
-        events.emit('device-value:changed', { id: data.name, values: values });
+        events.emit('device-value:changed', { id: data.id, values: values });
     }
 
     /**

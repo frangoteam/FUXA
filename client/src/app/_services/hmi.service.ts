@@ -4,7 +4,7 @@ import { Observable } from "rxjs";
 import * as io from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
-import { Device, Tag } from '../_models/device';
+import { Device, Tag, DeviceType } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
 import { AlarmEvent } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
@@ -68,7 +68,11 @@ export class HmiService {
                 if (device) {
                     this.variables[sigId]['source'] = device.id;
                 }
-                this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
+                if (device.type === DeviceType.internal) {
+                    this.setSignalValue(this.variables[sigId]);
+                } else {
+                    this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
+                }
             } else if (this.bridge) {
                 this.bridge.setDeviceValue(this.variables[sigId]);
                 this.setSignalValue(this.variables[sigId]);
@@ -109,6 +113,7 @@ export class HmiService {
                 this.variables[varid] = new Variable(varid, null, null);
             }
             this.variables[varid].value = tags[idx].value;
+            this.variables[varid].error = tags[idx].error;
             this.setSignalValue(this.variables[varid]);
         }
     }
@@ -124,8 +129,11 @@ export class HmiService {
             this.socket.on('device-status', (message) => {
                 this.onDeviceChanged.emit(message);
                 if (message.status === 'connect-error') {
-                    var msg = '';
-                    this.translateService.get('msg.device-connection-error', { value: message.id }).subscribe((txt: string) => { msg = txt });
+                    let name = message.id;
+                    let device = this.projectService.getDeviceFromId(message.id);
+                    if (device) name = device.name;
+                    let msg = '';
+                    this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt });
                     this.toastr.error(msg, '', {
                         timeOut: 3000,
                         closeButton: true,
