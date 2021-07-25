@@ -10,7 +10,7 @@
                 <flex-auth [name]="data.alarm.name" [permission]="property.permission" #flexauth></flex-auth>
             </div>
             <div mat-dialog-content style="overflow: hidden; width:100%">
-                <flex-head [data]="data" [property]="property" #flexhead></flex-head>
+                <flex-head [data]="data" [property]="property" #flexhead [withStaticValue]="false"></flex-head>
             </div>
         </div>
         <mat-autocomplete #textAuto="matAutocomplete">

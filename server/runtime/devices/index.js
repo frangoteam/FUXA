@@ -197,6 +197,21 @@ function getDeviceValue(deviceid, sigid) {
 }
 
 /**
+ * Get the Device from the tag id
+ * used from Alarms
+ * @param {*} sigid 
+ */
+ function getDeviceIdForomTag(sigid) {
+    for (var id in activeDevices) {
+        var tag = activeDevices[id].getTagProperty(sigid);
+        if (tag) {
+            return id;
+        }
+    }
+    return null;
+}
+
+/**
  * Return if manager is working (started or stopped)
  */
 function isWoking() {
@@ -283,6 +298,7 @@ var devices = module.exports = {
     getDevicesValues: getDevicesValues,
     getDeviceValue: getDeviceValue,
     setDeviceValue: setDeviceValue,
+    getDeviceIdForomTag: getDeviceIdForomTag,
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,
     isWoking: isWoking,

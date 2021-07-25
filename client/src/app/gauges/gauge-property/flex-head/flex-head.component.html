@@ -1,6 +1,6 @@
 <div class="container">
     <div class="head" style="padding-top: 10px;">
-        <flex-variable [data]="data" (onchange)="setVariable($event)" [variableId]="property.variableId" [variableValue]="property.variableValue">
+        <flex-variable [data]="data" (onchange)="setVariable($event)" [variableId]="property.variableId" [variableValue]="property.variableValue" [withStaticValue]="withStaticValue">
         </flex-variable>
     </div>
     <flex-input #flexinput *ngIf="withInput" [data]="data" [ranges]="property.ranges" [default]="defaultValue" [inputType]="withInput" style="padding-bottom: 5px">

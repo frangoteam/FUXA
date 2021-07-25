@@ -368,8 +368,8 @@ export class HmiService {
                 let device = this.projectService.getDeviceFromTagId(result.id);
                 if (device) {
                     result['source'] = device.name;
-                    if (device.tags[result.name]) {
-                        result['name'] = this.getTagLabel(device.tags[result.name]);
+                    if (device.tags[result.id]) {
+                        result['name'] = this.getTagLabel(device.tags[result.id]);
                     }
                 }
             }

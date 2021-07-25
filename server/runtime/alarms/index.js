@@ -172,8 +172,7 @@ function AlarmsManager(_runtime) {
             var changed = [];
             Object.keys(alarms).forEach(alrkey => {
                 var groupalarms = alarms[alrkey];
-                let tks = alrkey.split('^~^');
-                var tag = devices.getDeviceValue(tks[0], tks[1]);
+                var tag = devices.getDeviceValue(alarms[alrkey]['variableSource'], alrkey);
                 if (tag !== null) {
                     groupalarms.forEach(alr => {
                         if (alr.check(time, tag.ts, Number(tag.value))) {
@@ -223,9 +222,14 @@ function AlarmsManager(_runtime) {
                 var alarmsFound = 0;
                 if (result) {
                     result.forEach(alr => {
-                        if (alr.property && alr.property.variable && alr.property.variableSrc) {
+                        if (alr.property && alr.property.variableId) {
                             if (!alarms[alr.property.variableId]) {
                                 alarms[alr.property.variableId] = [];
+                                var deviceId = devices.getDeviceIdForomTag(alr.property.variableId);
+                                if (deviceId) {
+                                    // help for a fast get value
+                                    alarms[alr.property.variableId]['variableSource'] = deviceId;
+                                }
                             }
                             if (_isAlarmEnabled(alr.highhigh)) {
                                 var alarm = new Alarm(alr.name, 'highhigh', alr.highhigh, alr.property);
