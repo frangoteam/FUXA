@@ -61,11 +61,12 @@
         <div *ngIf="isWithStep()" class="item-step">
             <div class="my-form-field">
                 <span>{{'gauges.property-input-value' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
+                <input numberOnly [(ngModel)]="item.min" type="text" style="width: 100px">
             </div>
-            <div class="my-form-field" style="padding-left: 20px;">
+            <div style="font-size: 18px;width: 11px; display:inline-block;text-align: center;">-</div>
+            <div class="my-form-field">
                 <span>{{'gauges.property-input-label' | translate}}</span>
-                <input [(ngModel)]="item.text" type="text" style="width: 160px;text-align: left !important">
+                <input [(ngModel)]="item.text" type="text" style="width: 200px;text-align: left !important">
             </div>
             <div class="item-remove">
                 <button mat-icon-button (click)="onRemoveInput(i)" class="remove">

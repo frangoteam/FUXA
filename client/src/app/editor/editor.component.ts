@@ -220,7 +220,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (eleadded) => {
-                    console.log('added: ' + eleadded.id + ' ' + eleadded.type);
+                    // console.log('added: ' + eleadded.id + ' ' + eleadded.type);
                     let ga: GaugeSettings = this.getGaugeSettings(eleadded);
                     this.checkGaugeAdded(ga);
                     // this.hmiService.addGauge(this.hmi, eleadded);

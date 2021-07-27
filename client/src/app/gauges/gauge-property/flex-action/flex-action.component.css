@@ -1,10 +1,10 @@
 .item {
     display: block;
-    min-height: 100px;
+    /* min-height: 100px; */
     width: 100%;
     border-bottom: 1px solid rgba(0,0,0,0.1);
-    padding: 5px 0px 0px 0px;
-    margin-bottom: -1px;
+    padding: 0px 0px 5px 0px;
+    margin-bottom: 3px;
 }
 
 .item-head {
@@ -38,7 +38,6 @@
 .action-blink {
     display: inline-block;
     padding-top: 5px;
-    padding-bottom: 5px;
 }
 
 ::ng-deep .ng5-slider .ng5-slider-pointer { 

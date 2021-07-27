@@ -5,14 +5,14 @@
             <mat-option *ngFor="let vr of fromVariables" [value]="vr">{{ vr.variable }}</mat-option>
         </mat-select>
     </div> -->
-    <flex-variable style="display: inline-block" [data]="data" [(value)]="value.from" (valueChange)="onValueChange()" [allowManualEdit]="true"></flex-variable>
-    <div style="display: inline-block; vertical-align: bottom; margin-left: 14px;">
-        <mat-icon>link</mat-icon>
+    <div style="display: inline-block;">
+        <flex-variable style="display: block" [data]="data" [(value)]="value.from" (valueChange)="onValueChange()" [allowManualEdit]="true"></flex-variable>
+        <flex-variable style="display: block" [data]="data" [(value)]="value.to" (valueChange)="onValueChange()" [allowManualEdit]="false"></flex-variable>
     </div>
-    <div style="height:6px;">&nbsp;</div>
-    <flex-variable style="display: inline-block" [data]="data" [(value)]="value.to" (valueChange)="onValueChange()" [allowManualEdit]="false"></flex-variable>
-    <div style="display: inline-block; vertical-align: bottom; margin-left: 10px;">
-        <mat-icon>subdirectory_arrow_left</mat-icon>
+    <div style="display: inline-block;">
+        <div style="display: inline-block; margin-bottom: 2px; width: 12px; border-radius: 2px; height: 45px; 
+            border-radius: 0px 3px 3px 0px; border-top: 2px solid #cacaca; border-right: 2px solid #cacaca; border-bottom: 2px solid #cacaca;">
+        </div>
     </div>
     <ng-content></ng-content>
 </div>

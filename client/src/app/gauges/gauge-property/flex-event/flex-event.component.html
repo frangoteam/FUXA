@@ -28,7 +28,7 @@
             <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
         </mat-select>
     </div>
-    <div *ngIf="withDestination(item.action)">
+    <div *ngIf="withDestination(item.action)" style="padding-left: 25px;">
         <flex-variables-mapping [(mapping)]="item.actoptions['variablesMapping']" [view]="getView(item.actparam)" [data]="data"></flex-variables-mapping>
     </div>
     <div style="display: inline-block" *ngIf="withSetInput(item.action)">
@@ -45,16 +45,16 @@
             <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 260px">
         </div>
     </div>
-    <div style="display: block; padding-bottom: 10px; padding-top: 5px;padding-left: 25px;"
+    <div style="display: block; padding-top: 5px;padding-left: 25px;"
         *ngIf="withToggleValue(item.action) || withSetValue(item.action) || withSetInput(item.action)">
-        <flex-variable style="display: block" [data]="data" [(value)]="item.actoptions.variable"></flex-variable>
+        <flex-variable style="display: block" [data]="data" [(value)]="item.actoptions.variable" [withStaticValue]="false"></flex-variable>
     </div>
     <div style="display: inline-block" *ngIf="withAddress(item.action)">
         <div class="my-form-field" style="padding-left: 20px;">
             <span>{{'gauges.property-event-address' | translate}}</span>
             <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
         </div>
-        <div style="display: table; padding-left: 20px; padding-bottom: 10px; padding-top: 5px;" *ngIf="withAddress(item.action)">
+        <div style="display: table; padding-left: 20px; padding-top: 5px;" *ngIf="withAddress(item.action)">
             <div class="my-form-field">
                 <span>{{'gauges.property-event-width' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.width" type="text" style="width: 60px">

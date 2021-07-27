@@ -6,11 +6,10 @@
 
 .item {
     display: block;
-    min-height: 54px;
+    /* min-height: 54px; */
     width: 100%;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding: 0px 0px 5px 0px;
-    margin-bottom: -1px;
 }
 
 .item-alarm {
@@ -39,6 +38,7 @@
 .item-step {
     display: inline-block;
     width: 100%;
+    margin-top: 5px;
 }
 
 .item-unit {
