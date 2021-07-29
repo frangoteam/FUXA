@@ -30,9 +30,6 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
 
     static getSignals(pro: any) {
         let res: string[] = [];
-        if (pro.variableId) {
-            res.push(pro.variableId);
-        }
         if (pro.actions && pro.actions.length) {
             pro.actions.forEach(act => {
                 res.push(act.variableId);
@@ -47,6 +44,9 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
                     res.push(range['fractionDigitsId']);
                 }
             })
+        }
+        if (pro.variableId) {
+            res.push(pro.variableId);
         }
         return res;
     }

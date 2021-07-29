@@ -361,6 +361,8 @@ export class HmiService {
      * @param fulltext
      */
     getMappedVariable(sigid: string, fulltext: boolean): Variable {
+        if (!this.variables[sigid]) return null;
+        
         if (this.variables[sigid]) {
             let result = this.variables[sigid];
             if (fulltext) {

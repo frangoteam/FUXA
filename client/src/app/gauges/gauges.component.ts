@@ -26,6 +26,7 @@ import { SliderComponent } from './controls/slider/slider.component';
 
 import { WindowRef } from '../_helpers/windowref';
 import { Dictionary } from '../_helpers/dictionary';
+import { Utils } from '../_helpers/utils';
 import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
@@ -387,6 +388,21 @@ export class GaugesManager {
         return null;
     }
 
+
+    getBindSignalsValue(ga: GaugeSettings): Variable[]  {
+        let signals = this.getBindSignals(ga);
+        let result = [];
+        if (signals) {
+            signals.forEach(sigId => {
+                let variable = this.hmiService.getMappedVariable(sigId, false);
+                if (variable && !Utils.isNullOrUndefined(variable.value)) {
+                    result.push(variable);
+                }                
+            });
+        }
+        return result;
+    }
+
     /**
      * return all events binded to the gauge with click event
      * @param ga
@@ -438,6 +454,7 @@ export class GaugesManager {
 	 * @param sig
 	 */
     processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
+        gaugeStatus.variablesValue[sig.id] = sig.value;
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {

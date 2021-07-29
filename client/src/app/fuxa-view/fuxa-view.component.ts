@@ -149,7 +149,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
      * load all gauge settings, bind gauge with signals, bind gauge event
      * @param view
      */
-    private loadWatch(view: View) {
+     private loadWatch(view: View) {
         if (view && view.items) {
             let items = this.applyVariableMapping(view.items);
             // this.gaugesManager.initGaugesMap();
@@ -166,19 +166,32 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                         (gatobindhtmlevent) => {
                             this.onBindHtmlEvent(gatobindhtmlevent);
                         });
-                    if (items[key].property && items[key].property.variableValue) {
+                    if (items[key].property) {
                         let gaugeSetting = items[key];
                         let gaugeStatus = this.getGaugeStatus(gaugeSetting);
-                        let sig: Variable = <Variable>{ id: gaugeSetting.property.variableId, value: gaugeSetting.property.variableValue };
-                        if (this.checkStatusValue(gaugeSetting.id, gaugeStatus, sig)) {
+                        let variables = [];
+                        // prepare the start value to precess
+                        if (items[key].property.variableValue && gaugeSetting.property.variableId) {
+                            let variable: Variable = <Variable>{ id: gaugeSetting.property.variableId, value: gaugeSetting.property.variableValue };
+                            if (this.checkStatusValue(gaugeSetting.id, gaugeStatus, variable)) {
+                                variables = [variable];
+                            }
+                        }
+                        // get the the last signal value in memory of gauge, is important that last one is the value (variableId)
+                        variables = variables.concat(this.gaugesManager.getBindSignalsValue(items[key]));
+                        if (variables.length) {
                             let svgeles = FuxaViewComponent.getSvgElements(gaugeSetting.id);
                             for (let y = 0; y < svgeles.length; y++) {
-                                this.gaugesManager.processValue(gaugeSetting, svgeles[y], sig, gaugeStatus);
+                                variables.forEach(variable => {
+                                    this.gaugesManager.processValue(gaugeSetting, svgeles[y], variable, gaugeStatus);                                    
+                                });
                             }
                         }
                     }
+
+    
                 } catch (err) {
-                    console.log('loadWatch: ' + err);
+                    console.error('loadWatch: ' + err);
                 }    
             }
             if (!this.subscriptionOnChange) {

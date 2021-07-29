@@ -6,7 +6,7 @@ import { Text } from './text';
 import { Utils } from '../_helpers/utils';
 
 export class ProjectData {
-    version: string = "1.00";
+    version: string = "1.01";
     /** FUXA Server */
     server: Device = new Device(Utils.getGUID(DEVICE_PREFIX));
     /** Hmi resource, layout, SVG, etc. */
