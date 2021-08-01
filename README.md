@@ -31,6 +31,13 @@ cd ./server
 npm install
 npm start
 ```
+
+Or in linux running from docker (third option)
+```
+docker pull frangoteam/fuxa:1.1.0
+docker run -d -p 1881:1881 frangoteam/fuxa:1.1.0
+```
+
 Open up a browser (better Chrome) and navigate to http://localhost:1881
 
 ## Usage
