@@ -86,10 +86,5 @@ Please ensure you follow the coding standards used through-out the existing code
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.
 
-## Donation
-If you find this project useful, please donate and help to support it! you can offer me a espresso (cup of coffee) :)
-
-[![paypal](https://frangoteam.github.io/assets/images/donate.svg)](https://www.paypal.com/donate?hosted_button_id=SXVWLHBVN7D6Y)
-
 ## License
 MIT.
