@@ -358,8 +358,8 @@ export class DeviceListComponent implements OnInit {
 
     private addTopicSubscription(topics: Tag[]) {
         if (topics) {
-            topics.forEach((tag: Tag) => {
-                this.checkToAdd(tag, this.deviceSelected);
+            topics.forEach((topic: Tag) => {
+                this.checkToAddAddress(topic, this.deviceSelected);
             });
             this.projectService.setDeviceTags(this.deviceSelected);
         }

@@ -39,7 +39,7 @@ export class Tag {
     divisor: number;
     /** not used yet */
     access: string;
-    /** Options, used for WebAPI */
+    /** Options, used for WebAPI and MQTT */
     options: any;
     /** not used yet */
     format: any;

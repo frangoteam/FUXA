@@ -6,25 +6,25 @@
         <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
         <mat-tab-group style="width: 100%; height: 100%" #grptabs>
             <mat-tab label="{{'device.browsetopics-property-sub' | translate}}" #tabsub>
-                <div style="display: block; margin-bottom: 10px;margin-top: 10px">
+                <div style="display: block; margin-bottom: 5px;margin-top: 10px">
                     <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
                         <span>{{'device.discovery-topics' | translate}}</span>
-                        <input [(ngModel)]="topicSource" style="width: 400px" type="text">
+                        <input [(ngModel)]="topicSource" style="width: 400px" type="text" [disabled]="isSubscriptionEdit()">
                     </div>
-                    <button mat-icon-button (click)="onDiscoveryTopics(topicSource)" style="display:inline-block;" *ngIf="!discoveryWait">
+                    <button mat-icon-button (click)="onDiscoveryTopics(topicSource)" style="display:inline-block;" *ngIf="!discoveryWait" [disabled]="isSubscriptionEdit()">
                         <mat-icon>search</mat-icon>
                     </button>
                     <div style="display:inline-block; margin-left: 10px;width: 30px; vertical-align: middle;" *ngIf="discoveryWait">
                         <mat-spinner diameter="20"></mat-spinner>
                     </div>
-                    <button mat-icon-button (click)="onClearDiscovery()" style="display:inline-block;">
+                    <button mat-icon-button (click)="onClearDiscovery()" style="display:inline-block;" [disabled]="isSubscriptionEdit()">
                         <mat-icon>delete_outline</mat-icon>
                     </button>
                     <div *ngIf="discoveryError" style="display: block; color: red;">
                         {{discoveryError}}
                     </div>
                 </div>
-                <div style="overflow-y: auto; overflow-x: hidden; height: 230px;">
+                <div style="height: 240px; border: 1px solid rgb(204, 204, 204); padding: 5px 5px 3px 8px; overflow: auto;">
                     <div *ngFor="let topic of topicsList | keyvalue">
                         <div class="topic" (click)="selectTopic(topic);" [ngClass]="{'topic-active': isTopicSelected(topic)}">
                             <div class="topic-text">
@@ -36,8 +36,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="separator-line"></div>
-                <div style="margin-top: 5px; display: block;">
+                <div style="margin-top: 10px; display: block;">
                     <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
                         <span>{{'device.topic-selected' | translate}}</span>
                         <input [(ngModel)]="selectedTopic.key" class="my-form-readonly-input" style="width: 400px;" type="text" [readonly]="true">
@@ -50,24 +49,27 @@
                         {{'device.topic-subscribe' | translate}}
                     </button>
                 </div>
-                <div style="overflow-y: auto; overflow-x: hidden; height: 160px; width: 100%; padding-top: 12px;">
-                    <div *ngFor="let tcontent of topicContent">
-                        <div class="topic">
-                            <div class="topic-text">
-                                {{tcontent.key}}
-                            </div>
-                            <div class="topic-value">
-                                {{tcontent.value}}
-                            </div>
-                            <div class="topic-check">
-                                <mat-checkbox [(ngModel)]="tcontent.checked" value="true"></mat-checkbox>
+                <div class="my-form-field" style="margin-top:10px;width: 100%;overflow-x: hidden;">
+                    <span>{{'device.topic-subscription-content' | translate}}</span>
+                    <div class="topic-subscription-result">
+                        <div *ngFor="let tcontent of topicContent">
+                            <div class="topic">
+                                <div class="topic-text">
+                                    {{tcontent.key}}
+                                </div>
+                                <div class="topic-value">
+                                    {{tcontent.value}}
+                                </div>
+                                <!-- <div class="topic-check">
+                                    <mat-checkbox [(ngModel)]="tcontent.checked" value="true"></mat-checkbox>
+                                </div> -->
                             </div>
                         </div>
                     </div>
                 </div>
             </mat-tab>
             <mat-tab label="{{'device.browsetopics-property-pub' | translate}}" #tabpub>
-                <div style="display: block; margin-bottom: 10px;margin-top: 10px">
+                <div style="display: block;margin-top: 10px">
                     <div class="my-form-field" style="display:block; margin-right: 10px;margin-bottom: 10px;">
                         <span>{{'device.topic-publish-name' | translate}}</span>
                         <input [(ngModel)]="publishTopicName" style="width: 400px;" type="text">
@@ -108,15 +110,15 @@
                                     </div>
                                     <div *ngSwitchCase="itemTimestamp" class="my-form-field" style="margin-bottom: 5px;">
                                         <span>{{'device.topic-publish-timestamp' | translate}}</span>
-                                        <input [(ngModel)]="item.value" style="width: 360px;" type="text" [disabled]="true">
+                                        <input [(ngModel)]="item.value" style="width: 478px;" type="text" [disabled]="true">
                                     </div>
                                     <div *ngSwitchCase="itemValue" class="my-form-field" style="margin-bottom: 5px;">
                                         <span>{{'device.topic-publish-value' | translate}}</span>
-                                        <input [(ngModel)]="item.value" style="width: 360px;" type="text" [disabled]="true">
+                                        <input [(ngModel)]="item.value" style="width: 478px;" type="text" [disabled]="true">
                                     </div>
                                     <div *ngSwitchCase="itemStatic" class="my-form-field" style="margin-bottom: 5px;">
                                         <span>{{'device.topic-publish-static' | translate}}</span>
-                                        <input [(ngModel)]="item.value" (keyup)="stringifyPublishItem()" style="width: 360px;" type="text">
+                                        <input [(ngModel)]="item.value" (keyup)="stringifyPublishItem()" style="width: 478px;" type="text">
                                     </div>                                    
                                 </div>
                                 <div style="float: right;padding-top: 5px;">

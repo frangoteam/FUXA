@@ -20,6 +20,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
 
     private subscriptionBrowse: Subscription;
 
+    editMode = false;
     topicSource = '#';
     topicsList = {};
     topicContent = [];
@@ -73,20 +74,30 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
             this.translateService.get(this.itemType[key]).subscribe((txt: string) => { this.itemType[key] = txt });
         });
 
+        // check if edit the topic
         if (this.data.topic) {
             let tag = <Tag>this.data.topic;
             if (tag.options) {
-                this.grptabs.selectedIndex = 1;
-                this.tabsub.disabled = true;
-                this.publishTopicPath = tag.address;
-                this.publishTopicName = tag.name;
-                this.topicSelectedPubType = tag.type;
-                if (tag.options.items) {
-                    this.pubPayload.items = tag.options.items;
+                if (tag.options.subs) {
+                    // sure a subscription
+                    this.grptabs.selectedIndex = 0;
+                    this.tabpub.disabled = true;
+                    this.topicSelectedSubType = tag.type;
+                    // this.selectedTopic.value
+                    this.editMode = true;
+                    this.selectTopic({ key: tag.address, value: tag.options.subs });
+                } else {
+                    // publish topic 
+                    this.grptabs.selectedIndex = 1;
+                    this.tabsub.disabled = true;
+                    this.publishTopicPath = tag.address;
+                    this.publishTopicName = tag.name;
+                    this.topicSelectedPubType = tag.type;
+                    if (tag.options.items) {
+                        // sure publish
+                        this.pubPayload.items = tag.options.items;
+                    }
                 }
-            } else {
-                this.grptabs.selectedIndex = 0;
-                this.tabpub.disabled = true;
             }
         }
         this.loadSelectedSubTopic();
@@ -161,21 +172,25 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
         return (this.selectedTopic === topic.key) ? true : false;
     }
 
+    isSubscriptionEdit() {
+        return this.editMode;
+    }
+
     isSubscriptionValid() {
         return (this.topicContent && this.topicContent.length) ? true : false;
     }
 
     onAddToSubscribe() {
         if (this.topicContent && this.topicContent.length && this.invokeSubscribe) {
-            let topics = this.topicContent.filter(t => t.checked);
-            let tags = topics.map(t => {
-                let tag = new Tag(Utils.getGUID(TAG_PREFIX));
-                tag.name = t.key;
-                tag.type = t.type;
-                tag.address = this.selectedTopic.key;
-                return tag;
-            })
-            this.invokeSubscribe(tags);
+            let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+            if (this.data.topic) {
+                tag = new Tag(this.data.topic.id);
+            }
+            tag.name = this.selectedTopic.key;
+            tag.type = this.topicSelectedSubType;
+            tag.address = this.selectedTopic.key;
+            tag.options = { subs: this.selectedTopic.value };
+            this.invokeSubscribe([tag]);
         }
     }
     //#endregion
