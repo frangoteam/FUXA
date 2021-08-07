@@ -20,7 +20,8 @@ function MQTTclient(_data, _logger, _events) {
     var client = null;
     var browser = null;
     var timeoutBrowser;
-    var topicsMap = {};
+    var topicsMap = {};                 // Map the topic subscribed, to check by on.message
+    var refTopicsToPublish = new Map(); // Map the topic with ref to other device tag to publish
 
     /**
      * Connect the mqtt client to broker
@@ -33,7 +34,7 @@ function MQTTclient(_data, _logger, _events) {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         options = getConnectionOptions(data.property)
-                        options.connectTimeout = 5 * 1000;
+                        options.connectTimeout = 10 * 1000;
                         if (getProperty) {
                             var result = await getProperty({query: 'security', name: data.id});
                             if (result && result.value && result.value !== 'null') {
@@ -56,6 +57,7 @@ function MQTTclient(_data, _logger, _events) {
                                 reject(err);
                                 _checkWorking(false);
                             });
+                            _createRefPublishReceiver();
                         });
                         client.on("offline", function () {
                             logger.warn(`'${data.name}' client offline ${data.property.address}`, true);
@@ -130,6 +132,7 @@ function MQTTclient(_data, _logger, _events) {
                     var varsValueChanged = _clearVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
+                    _publishValues(varsValue);
 
                     if (this.addDaq) {
                         var current = new Date().getTime();
@@ -226,6 +229,21 @@ function MQTTclient(_data, _logger, _events) {
         data = JSON.parse(JSON.stringify(_data));
         try {
             var count = Object.keys(data.tags).length;
+            // map depending tag ids
+            for (var key in data.tags) {
+                if (data.tags[key].options && data.tags[key].options.items) {
+                    data.tags[key].options.items.forEach(item => {
+                        if (item.type === 'tag' && item.value) {
+                            if (!refTopicsToPublish.has(item.value)) {
+                                refTopicsToPublish.set(item.value, null);
+                                events.emit('tag-change:subscription', item.value);
+                            }
+                        } else if (item.type === 'value') {
+                            item.value = '';
+                        }
+                    });
+                }
+            }
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
             logger.error(`'${data.name}' load error! ${err}`);
@@ -254,7 +272,20 @@ function MQTTclient(_data, _logger, _events) {
      */
     this.setValue = function (sigid, value) {
         if (client && client.connected) {
-            client.publish(sigid, value);
+            var tag = data.tags[sigid];
+            if (tag) {
+                if (tag.options) {
+                    tag.options.items.forEach(item => {
+                        if (item.type === 'value') {
+                            item.value = value;
+                        }
+                    })
+                }
+                if (tag.type === 'raw') {
+                    tag['value'] = value;
+                }
+                _publishValues([tag]);
+            }
         }
     }
 
@@ -308,6 +339,20 @@ function MQTTclient(_data, _logger, _events) {
         });   
     }
 
+    /**
+     * Create the receiver of change tag value for the dependency in payload
+     */
+    var _createRefPublishReceiver = function() {
+        events.on('tag-value:changed', function(event) {
+            try {
+                if (refTopicsToPublish.has(event.id)) {
+                    refTopicsToPublish.set(event.id, event.value);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    }
     /**
      * Map the topics to address (path)
      * @param {*} topics 
@@ -380,7 +425,7 @@ function MQTTclient(_data, _logger, _events) {
                 try {
                     if (client) client.end(true);
                 } catch (e) {
-                    console.log(e);
+                    console.error(e);
                 }
             } else {
                 return false;
@@ -403,6 +448,52 @@ function MQTTclient(_data, _logger, _events) {
                 browser.end(true);
             }
         }, 15000);
+    }
+
+    /**
+     * Publish the tags, called from polling and setValues (input in frontend)
+     * @param {*} tags 
+     */
+    var _publishValues = function (tags) {
+        Object.keys(tags).forEach(key => {
+            try {
+                if (tags[key].options && tags[key].options.items && tags[key].options.items.length) {
+                    var topicTopuplish = {};
+                    tags[key].options.items.forEach(item => {
+                        var value = '';
+                        if (item.type === 'tag' && item.value) {
+                            if (refTopicsToPublish.has(item.value)) {
+                                value = refTopicsToPublish.get(item.value);
+                            }
+                        } else if (item.type === 'timestamp') {
+                            value = new Date().toISOString();
+                        } else if (item.type === 'value') {
+                            value = item.value;
+                        } else {    // item.type === 'static'
+                            value = item.value;
+                        }
+                        if (tags[key].type === 'json') {
+                            topicTopuplish[item.key] = value;
+                        } else {    // payloand with row data, item.key is ''
+                            if (topicTopuplish[0]) {
+                                value = topicTopuplish[0] + ';' + value;
+                            } 
+                            topicTopuplish[0] = value;
+                        }
+                    });
+                    // payloand
+                    if (tags[key].type === 'json') {
+                        client.publish(tags[key].address, JSON.stringify(topicTopuplish));
+                    } else { // payloand with row data
+                        client.publish(tags[key].address, Object.values(topicTopuplish)[0].toString());
+                    }
+                } else if (tags[key].value) {   // whitout payload
+                    client.publish(tags[key].address, tags[key].value.toString());
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        })
     }
 }
 

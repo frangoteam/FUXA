@@ -165,7 +165,11 @@ export class DeviceListComponent implements OnInit {
     }
 
     onEditRow(row) {
-        this.editTag(row, false);
+        if (this.deviceSelected.type === DeviceType.MQTTclient) {
+            this.editTopics(row);
+        } else {
+            this.editTag(row, false);
+        }
     }
 
     onAddTag() {
@@ -238,7 +242,7 @@ export class DeviceListComponent implements OnInit {
 
     isToEdit(type) {
         return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio ||
-                type === DeviceType.internal);
+                type === DeviceType.internal || type === DeviceType.MQTTclient);
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
@@ -273,13 +277,23 @@ export class DeviceListComponent implements OnInit {
                         delete result.device.tags[oldtag];
                         this.checkToAdd(tag, result.device);
                     }
+                    if (result.unit) {
+                        let utag = new Tag(Utils.getGUID(TAG_PREFIX));
+                        utag.address = result.unit;
+                        this.checkToAddAddress(utag, result.device);
+                    }
+                    if (result.digits) {
+                        let dtag = new Tag(Utils.getGUID(TAG_PREFIX));
+                        dtag.address = result.digits;
+                        this.checkToAddAddress(dtag, result.device);
+                    }
                     this.projectService.setDeviceTags(this.deviceSelected);
                 }
             }
         });
     }
 
-    checkToAdd(tag: Tag, device: Device) {
+    checkToAdd(tag: Tag, device: Device, overwrite: boolean = false) {
         let exist = false;
         Object.keys(device.tags).forEach((key) => {
             if (device.tags[key].id) {
@@ -290,10 +304,24 @@ export class DeviceListComponent implements OnInit {
                 exist = true;
             }
         })
-        if (!exist) {
+        if (!exist || overwrite) {
             device.tags[tag.id] = tag;
         }
         this.tagsMap[tag.id] = tag;
+        this.bindToTable(this.deviceSelected.tags);
+    }
+
+    checkToAddAddress(tag: Tag, device: Device) {
+        let exist = false;
+        Object.keys(device.tags).forEach((key) => {
+            if (device.tags[key].address === tag.address && device.tags[key].id != tag.id) {
+                exist = true;
+            }
+        })
+        if (!exist) {
+            device.tags[tag.id] = tag;
+            this.tagsMap[tag.id] = tag;
+        }
         this.bindToTable(this.deviceSelected.tags);
     }
 
@@ -316,13 +344,14 @@ export class DeviceListComponent implements OnInit {
     /**
      * to add MQTT topic for subscription or publish
      */
-     editTopics() {
+     editTopics(topic: Tag = null) {
         let dialogRef = this.dialog.open(TopicPropertyComponent, {
             panelClass: 'dialog-property',
-            data: { device: this.deviceSelected, devices: this.devices },
+            data: { device: this.deviceSelected, devices: Object.values(this.devices), topic: topic },
             position: { top: '60px' }
         });
         dialogRef.componentInstance.invokeSubscribe = (topics) => this.addTopicSubscription(topics);
+        dialogRef.componentInstance.invokePuplish = (newtopic) => this.addTopicToPublish(newtopic);
         dialogRef.afterClosed().subscribe(result => {
         });
     }
@@ -336,6 +365,12 @@ export class DeviceListComponent implements OnInit {
         }
     }
 
+    private addTopicToPublish(topic: Tag) {
+        if (topic) {
+            this.checkToAddAddress(topic, this.deviceSelected);
+            this.projectService.setDeviceTags(this.deviceSelected);
+        }
+    }
 
 }
 

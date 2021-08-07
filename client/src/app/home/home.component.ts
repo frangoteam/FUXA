@@ -126,6 +126,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.changeDetector.detectChanges();
 			this.setBackground();
 			if (this.homeView.type !== this.cardViewType) {
+				this.fuxaview.hmi.layout = this.hmi.layout;
 				this.fuxaview.loadHmi(this.homeView);
 			}
 		}
@@ -265,6 +266,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		}
 		if (this.homeView && this.fuxaview) {
+			this.fuxaview.hmi.layout = this.hmi.layout;
 			this.fuxaview.loadHmi(this.homeView);
 		}
 		this.isLoading = false;

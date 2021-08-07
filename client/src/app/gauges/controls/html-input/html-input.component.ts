@@ -101,6 +101,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                 let input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
                     input.value = '';
+                    input.setAttribute('autocomplete', 'off');
                 }
             }
         }

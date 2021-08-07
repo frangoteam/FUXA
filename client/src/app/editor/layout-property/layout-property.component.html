@@ -21,7 +21,7 @@
                     <mat-slide-toggle color="primary" [(ngModel)]="data.layout.showdev"></mat-slide-toggle>
                 </div>
             </div>
-            <div style="display: block;">
+            <div style="display: block;margin-bottom: 25px">
                 <div class="my-form-field" style="display: inline-block;margin-top: 5px;">
                     <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
                     <mat-select [(value)]="data.layout.zoom" style="width: 400px">
@@ -31,6 +31,16 @@
                     </mat-select>
                 </div>
             </div>
+            <div style="display: block;">
+                <div class="my-form-field" style="display: inline-block;margin-top: 5px;">
+                    <span>{{'dlg.layout-input-dialog' | translate}}</span>
+                    <mat-select [(value)]="data.layout.inputdialog" style="width: 400px">
+                        <mat-option *ngFor="let type of inputMode | enumToArray" [value]="type.key">
+                            {{ type.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>            
         </mat-tab>
         <mat-tab label="{{'dlg.layout-navigation' | translate}}">
             <div style="display: inline-block;margin-top: 10px;width:100%; min-height: 500px; overflow-y: auto; height: 620px">

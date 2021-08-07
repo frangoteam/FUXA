@@ -75,10 +75,10 @@
             </div>
         </div>
         <div *ngIf="isWithUnit()" class="item-unit">
-            <flex-variable [data]="data" (onchange)="onUnitChanged(item, $event)" [variableId]="item.textId" [variableValue]="item.text"
+            <flex-variable #unit [data]="data" (onchange)="onUnitChanged(item, $event)" [variableId]="item.textId" [variableValue]="item.text"
                 [variableLabel]="'gauges.property-input-unit'">
             </flex-variable>
-            <flex-variable [data]="data" (onchange)="onFormatDigitChanged(item, $event)" [variableId]="item.fractionDigitsId" [variableValue]="item.fractionDigits"
+            <flex-variable #digits [data]="data" (onchange)="onFormatDigitChanged(item, $event)" [variableId]="item.fractionDigitsId" [variableValue]="item.fractionDigits"
                 [variableLabel]="'gauges.property-format-digits'">
             </flex-variable>
         </div>

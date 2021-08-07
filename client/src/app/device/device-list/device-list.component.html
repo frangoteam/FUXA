@@ -78,7 +78,7 @@
         <!-- Warning Column -->
         <ng-container matColumnDef="warning">
             <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
-            <mat-cell *matCellDef="let element">
+            <mat-cell *matCellDef="let element" [matTooltip]="element.error ? element.error : null" matTooltipPosition="left">
                 <button mat-icon-button *ngIf="element.error" class="warning">
                     <mat-icon>warning_amber</mat-icon>
                 </button>

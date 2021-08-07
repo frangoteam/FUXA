@@ -429,6 +429,9 @@ app-root {
     top: 0px;
     left: 3px;
     opacity: 0.5;
+    overflow: hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
 }
 
 .my-form-field input, mat-select {

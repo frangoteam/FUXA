@@ -41,6 +41,8 @@ export class LayoutSettings {
     showdev: boolean = true;
     /** Enable zoom in view */
     zoom: ZoomModeType;
+    /** Show input dialog for input field */
+    inputdialog: string = 'false';
 }
 
 export class NavigationSettings {
@@ -99,6 +101,11 @@ export enum NotificationModeType {
 export enum ZoomModeType {
     disabled = 'item.zoommode-disabled',
     enabled = 'item.zoommode-enabled',
+}
+
+export enum InputModeType {
+    false = 'item.inputmode-disabled',
+    true = 'item.inputmode-enabled',
 }
 
 export class DocProfile {

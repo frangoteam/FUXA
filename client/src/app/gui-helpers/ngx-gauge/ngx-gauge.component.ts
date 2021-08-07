@@ -22,6 +22,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     gauge: any;
     type = GaugeType.Gauge;
     defOptions = new GaugeOptions();
+    initialized = false;
 
     constructor() { }
 
@@ -52,8 +53,13 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         let h = canvas.parentNode.clientHeight;// - (canvas.parentNode.clientHeight / 4);
         if (w < h) h = w;
         this.canvas.nativeElement.height = h;
-        this.canvas.nativeElement.width = w;        
-        this.init(this.type);
+        this.canvas.nativeElement.width = w;
+        if (this.gauge) {
+            this.gauge.render();
+        }
+        if (!this.initialized) {
+            this.init(this.type);
+        }
     }
 
     resize(height?, width?) {
@@ -110,5 +116,6 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         }
         this.setOptions(this.options);
         this.gauge.set(this.value);
+        this.initialized = true;
     }
 }

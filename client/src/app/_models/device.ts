@@ -185,4 +185,8 @@ export class DevicesUtils {
         }
         return null;
     }
+
+    static getTagFromTagAddress (device: Device, address: string): Tag {
+        return <Tag>Object.values(device.tags).find((tag: Tag) => tag.address === address);
+    }
 }

@@ -86,7 +86,7 @@
                 {{'device.tag-property-title' | translate}}
             </h1>
             <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
-            <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden;">
+            <div style="max-height: 540px; overflow: hidden;">
                 <div style="display: block;">
                     <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                         <span>{{'device.tag-property-device' | translate}}</span>
@@ -102,7 +102,21 @@
                     </div>
                     <div class="my-form-field" style="display: block;margin-bottom: 10px;" *ngIf="!isInternal()">
                         <span>{{'device.tag-property-path' | translate}}</span>
-                        <input [(ngModel)]="data.tag.address" style="width: 550px" type="text" (input)="onCheckValue($event)">
+                        <input [(ngModel)]="data.tag.address" autocomplete="off" style="width: 550px" type="text" (input)="onCheckValue($event)">
+                    </div>
+                    <div style="display: block;margin-bottom: 10px;" *ngIf="isExternal()">
+                        <div class="my-form-field" style="display:inline-block; margin-left: 20px;">
+                            <span>{{'device.tag-property-unit' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="unit.enabled">
+                                <span>{{unit.extension}}</span>
+                            </mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field" style="display:inline-block; margin-left: 100px;">
+                            <span>{{'device.tag-property-digits' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="digits.enabled">
+                                <span>{{digits.extension}}</span>
+                            </mat-slide-toggle>
+                        </div>
                     </div>
                 </div>
                 <div class="error" *ngIf="error" style="display: block; color: red;">

@@ -40,6 +40,17 @@
     /* display: inline-block; */
 }
 
+.topic-publish-result {
+    height: 160px;
+    width: 100%;
+    background-color: rgb(241 243 244);
+    padding: 5px 5px 3px 8px;
+    overflow: auto;
+    white-space: pre;
+    font-family: monospace;
+    font-size: 12px;
+}
+
 .separator-line {
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     height: 1px;

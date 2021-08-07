@@ -18,6 +18,7 @@ var settings
 var logger;
 var io;
 var alarmsMgr;
+var tagsSubscription = new Map();
 
 function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
@@ -67,6 +68,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('device-value:changed', updateDeviceValues);
     events.on('device-status:changed', updateDeviceStatus);
     events.on('alarms-status:changed', updateAlarmsStatus);
+    events.on('tag-change:subscription', subscriptionTagChange);
 
     io.on('connection', (socket) => {
         logger.info('socket.io client connected');
@@ -337,10 +339,21 @@ function updateDevice(event) {
  * @param {*} event
  */
 function updateDeviceValues(event) {
-    // console.log('emit updateDeviceValues: ' + event);
     try {
         let values = Object.values(event.values);
         io.emit('device-values', { id: event.id, values: values });
+        tagsSubscription.forEach((key, value) => {
+            if (event.values[value]) {
+                events.emit('tag-value:changed', event.values[value]);
+            }
+        });
+    } catch (err) {
+    }
+}
+
+function subscriptionTagChange(tagid) {
+    try {
+        tagsSubscription.set(tagid, true);
     } catch (err) {
     }
 }

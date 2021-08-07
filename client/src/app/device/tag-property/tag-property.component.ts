@@ -24,6 +24,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     config = { width: '100%', height: '600px', type: '' };
     memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
 
+    unit = { extension: 'OpcEngUnit', enabled: false };
+    digits = { extension: 'DecimalPlaces', enabled: false };
+
     private subscriptionBrowse: Subscription;
     private subscriptionNodeAttribute: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
@@ -44,6 +47,17 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.config.type = (this.isWebApi()) ? 'todefine' : '';
         } else if (this.isExternal()) {
             this.dialogType = EditTagDialogType.Simple;
+            if (this.data.tag && this.data.tag.address) {
+                Object.keys(this.data.device.tags).forEach((key) => {
+                    let tag: Tag = this.data.device.tags[key];
+                    if (tag.address === this.data.tag.address + this.unit.extension) {
+                        this.unit.enabled = true;
+                    }
+                    if (tag.address === this.data.tag.address + this.digits.extension) {
+                        this.digits.enabled = true;
+                    }
+                });
+            }
         } else if (this.isInternal()) {
             this.dialogType = EditTagDialogType.Simple;
         } else {
@@ -151,6 +165,12 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     this.translateService.get('msg.device-tag-exist').subscribe((txt: string) => { this.error = txt });                    
                     return;
                 }
+            }
+            if (this.unit.enabled) {
+                this.data['unit'] = this.data.tag.address + this.unit.extension;
+            }
+            if (this.digits.enabled) {
+                this.data['digits'] = this.data.tag.address + this.digits.extension;
             }
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
