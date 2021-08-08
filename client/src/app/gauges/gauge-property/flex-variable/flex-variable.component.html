@@ -4,7 +4,7 @@
         <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 100px" type="text">
     </div>
     <div class="my-form-field" style="display:inline-block;">
-        <span>Tag</span>
+        <span>{{tagLabel | translate}}</span>
         <div style="position:absolute; bottom: 0px; right: 0px; height: 28px; background-color:rgb(241,243,244); width: 28px; border-radius: 2px 0px 0px 2px;"></div>
         <button mat-icon-button (click)="onBindTag()" style="line-height: 28px;height:28px; width:28px; vertical-align: middle;">
             <mat-icon>link</mat-icon>
@@ -12,6 +12,7 @@
     </div>
     <div class="my-form-field" style="margin-left: 0px;">
         <span>{{getDeviceName(variableId)}}</span>
-        <input style="font-size: 13px;min-width: 450px" value="{{getVariableName(variableId)}}" readonly="true" [disabled]="true">
+        <input style="font-size: 13px;min-width: 450px" value="{{getVariableName(variableId)}}" readonly="true" [disabled]="true" 
+            title="{{tagTitle | translate}}" placeholder="{{tagTitle | translate}}">
     </div>
 </div>

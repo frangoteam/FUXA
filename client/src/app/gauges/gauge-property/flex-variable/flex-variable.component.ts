@@ -28,6 +28,8 @@ export class FlexVariableComponent implements OnInit {
     @Input() variableValue: string;
     @Input() variableLabel: string = 'gauges.property-variable-value';
     @Input() withStaticValue: boolean = true;
+    @Input() tagLabel: string = 'gauges.property-tag-label';
+    @Input() tagTitle: string = '';
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
@@ -45,6 +47,8 @@ export class FlexVariableComponent implements OnInit {
             this.value = {
                 variableId: this.variableId
             }
+        } else if (this.value.variableId) {
+            this.variableId = this.value.variableId;
         }
     }
 

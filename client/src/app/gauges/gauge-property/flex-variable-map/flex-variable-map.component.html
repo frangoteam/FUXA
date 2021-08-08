@@ -6,8 +6,10 @@
         </mat-select>
     </div> -->
     <div style="display: inline-block;">
-        <flex-variable style="display: block" [data]="data" [(value)]="value.from" (valueChange)="onValueChange()" [allowManualEdit]="true"></flex-variable>
-        <flex-variable style="display: block" [data]="data" [(value)]="value.to" (valueChange)="onValueChange()" [allowManualEdit]="false"></flex-variable>
+        <flex-variable style="display: block" [data]="data" [(value)]="value.from" (valueChange)="onValueChange()" [allowManualEdit]="true"
+         [withStaticValue]="false" [tagTitle]="'gauges.property-tag-internal-title'"></flex-variable>
+        <flex-variable style="display: block" [data]="data" [(value)]="value.to" (valueChange)="onValueChange()" [allowManualEdit]="false"
+         [withStaticValue]="false"></flex-variable>
     </div>
     <div style="display: inline-block;">
         <div style="display: inline-block; margin-bottom: 2px; width: 12px; border-radius: 2px; height: 45px; 
