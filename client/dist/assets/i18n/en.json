@@ -560,6 +560,8 @@
     "gauges.property-head-remove-mapvariable": "Remove the bind",
     "gauges.property-tooltip-add-event": "Add event",
     "gauges.property-interval-msec": "Interval (msec.)",
+    "gauges.property-tag-label": "Tag",
+    "gauges.property-tag-internal-title": "Set a Tag of internal device",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
