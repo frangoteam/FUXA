@@ -395,7 +395,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
                         console.log('top:', inputRect.top, '  left:', inputRect.left);
                         self.toggleShowInputDialog(true, inputRect.left, inputRect.top, htmlevent);
-                        self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 170) ? -((170 - inputRect.width) / 2) : 0), inputRect.top, htmlevent);
+                        self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0), inputRect.top - 5, htmlevent);
                         for (let i = 0; i < ev.currentTarget.attributes.length; i++)  {
                             if (ev.currentTarget.attributes['style']) {
                                 self.setInputDialogStyle(self.inputDialogRef.nativeElement, ev.currentTarget.attributes['style'].textContent, inputRect);
@@ -433,7 +433,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 el.setAttribute('style', style);
             }
         }
-
+        element.style.backgroundColor = this.view.profile.bkcolor;
     }
 
     private getView(viewref: string): View {

@@ -31,7 +31,11 @@
 <div #inputDialogRef [style.display]="(inputDialog.show) ? 'inline-block' : 'none'" class="dialog-input" [style.top.px]="inputDialog.y" [style.left.px]="inputDialog.x">
     <input matInput #inputValueRef [(ngModel)]="gaugeInput" autocomplete="off" type="text" (focus)="toggleShowInputDialog(true)" (focusout)="toggleShowInputDialog(false)">
     <div style="display: block; padding-top: 5px;">
-        <button mat-raised-button (click)="onNoClick()" style="float: left;">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button (click)="onOkClick(gaugeInput)" style="float: right;" color="primary" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button (click)="onOkClick(gaugeInput)" style="float: right;min-width: 16px;padding-left: 4px;padding-right: 4px;margin-left: 5px;" color="primary" cdkFocusInitial>
+            <mat-icon>done</mat-icon>
+        </button>
+        <button mat-raised-button (click)="onNoClick()" style="float: right; min-width:16px;padding-left: 4px;padding-right: 4px;">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
 </div>

@@ -109,7 +109,7 @@
     position: absolute;
     padding: 5px;
     background-color: #fff;
-    min-width: 170px;
+    min-width: 80px;
 }
 
 .dialog-input input {
