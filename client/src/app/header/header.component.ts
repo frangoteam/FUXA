@@ -8,6 +8,8 @@ import { environment } from '../../environments/environment';
 import { SetupComponent } from '../editor/setup/setup.component';
 
 import { ProjectService, SaveMode } from '../_services/project.service';
+import { ThemeService } from '../_services/theme.service';
+
 import { HelpData } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,6 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     @ViewChild('tutorial') tutorial: TutorialComponent;
     @ViewChild('fileImportInput') fileImportInput: any;
 
+    darkTheme = false;
     ineditor = false;
     savededitor = false;
     private subscriptionShowHelp: Subscription;
@@ -31,6 +34,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     constructor(private router: Router,
                 public dialog: MatDialog,
                 private translateService: TranslateService,
+                private themeService: ThemeService,
                 private projectService: ProjectService){
 
         this.router.events.subscribe(()=> {
@@ -39,6 +43,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 || 
                                 this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0) ? true : false;
         });
+        this.themeService.setTheme('default');
     }
 
     ngOnInit() {
@@ -90,6 +95,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     goTo(destination:string) {
         this.router.navigate([destination]);//, this.ID]);
+    }
+
+    onChangeTheme() {
+        this.darkTheme = !this.darkTheme;
+        if (this.darkTheme) {
+            this.themeService.setTheme('dark');
+        } else {
+            this.themeService.setTheme('default');
+        }
     }
 
     //#region Project Events

@@ -1,4 +1,4 @@
-<div style="background-color: white; width: 750px;height: 810px; position: relative" class="dialog-mdsd-v">
+<div style="width: 750px;height: 810px; position: relative" class="dialog-mdsd-v">
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-bag-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div style="display: block; width: 660px">
@@ -9,7 +9,7 @@
             </div>
             <div class="my-form-field" style="vertical-align: bottom; margin-left: 13px;">
                 <span>{{'gauges.property-permission' | translate}}</span>
-                <div style="width:80px;height:30px;background-color:#f1f3f4;text-align:center;cursor:pointer;" (click)="onEditPermission()">
+                <div style="text-align:center;cursor:pointer;" class="my-form-field-permission" (click)="onEditPermission()">
                     <mat-icon class="header-icon" style="line-height: 30px;" *ngIf="!property || !property.permission">lock_open</mat-icon>
                     <mat-icon class="header-icon" style="line-height: 30px;" *ngIf="property && property.permission">lock</mat-icon>
                 </div>
@@ -24,11 +24,11 @@
             <div class="gauge">
                 <div class="gauge-select">
                     <div (click)="onGaugeChange(gaugeTypeEnum.Gauge)" class="btn-gauge btn-gauge-mat"
-                        [ngStyle]="{'border-bottom-color': gaugeType == gaugeTypeEnum.Gauge ? 'white' : ''}"></div>
+                        [ngStyle]="{'background-color': gaugeType === gaugeTypeEnum.Gauge ? 'transparent' : 'rgba(0,0,0,0.1)'}"></div>
                     <div (click)="onGaugeChange(gaugeTypeEnum.Donut)" class="btn-gauge btn-gauge-donut"
-                        [ngStyle]="{'border-bottom-color': gaugeType == gaugeTypeEnum.Donut ? 'white' : ''}"></div>
+                        [ngStyle]="{'background-color': gaugeType === gaugeTypeEnum.Donut ? 'transparent' : 'rgba(0,0,0,0.1)'}"></div>
                     <div (click)="onGaugeChange(gaugeTypeEnum.Zones)" class="btn-gauge btn-gauge-zone"
-                        [ngStyle]="{'border-bottom-color': gaugeType == gaugeTypeEnum.Zones ? 'white' : ''}"></div>
+                        [ngStyle]="{'background-color': gaugeType === gaugeTypeEnum.Zones ? 'transparent' : 'rgba(0,0,0,0.1)'}"></div>
                 </div>
                 <div class="gauge-view">
                     <ngx-gauge [options]="options" #ngauge [value]="gauge.value"></ngx-gauge>
@@ -89,14 +89,14 @@
                         <input [disabled]="!optcfg.ticksEnabled" [(colorPicker)]="optcfg.renderTicks.divColor" [cpAlphaChannel]="'always'" class="input-color"
                             [style.background]="optcfg.renderTicks.divColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                             [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                            style="padding: 8px 0 0 0; width: 126px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('divColor', $event)" />
+                            style="width: 121px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('divColor', $event)" />
                     </div>
                     <div class="my-form-field slider-field color-field" style="padding-left: 12px;">
                         <span>{{'bag.property-subdivisions-color' | translate}}</span>
                         <input [disabled]="!optcfg.ticksEnabled" [(colorPicker)]="optcfg.renderTicks.subColor" [cpAlphaChannel]="'always'" class="input-color"
                             [style.background]="optcfg.renderTicks.subColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                             [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                            style="padding: 8px 0 0 0; width: 126px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('subColor', $event)" />
+                            style="width: 121px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('subColor', $event)" />
                     </div>
                 </div>
                 <div class="field-row">
@@ -111,7 +111,7 @@
                         <input [(colorPicker)]="optcfg.staticFontColor" [cpDisabled]="!optcfg.ticksEnabled" [cpAlphaChannel]="'always'" class="input-color"
                             [style.background]="optcfg.staticFontColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                             [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                            style="padding: 8px 0 0 0; width: 126px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsLabels('labelsColor', $event)" />
+                            style="width: 121px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsLabels('labelsColor', $event)" />
                     </div>
                 </div>
                 <div class="field-row">
@@ -132,12 +132,12 @@
                             (input)="onChangeValue($event.value)">
                         </mat-slider>
                     </div>
-                    <div class="my-form-field slider-field" style="padding-left: 11px">
+                    <div class="my-form-field slider-field" style="padding-left: 12px">
                         <span>{{'bag.property-min' | translate}}</span>
                         <input numberOnly [(ngModel)]="optcfg.minValue" (change)="onChangeOptions('minValue', optcfg.minValue)"
                             style="width: 50px;text-align: center;display:inline-block;" type="text">
                     </div>
-                    <div class="my-form-field slider-field" style="padding-left: 12px">
+                    <div class="my-form-field slider-field" style="padding-left: 14px">
                         <span>{{'bag.property-max' | translate}}</span>
                         <input numberOnly [(ngModel)]="optcfg.maxValue" (change)="onChangeOptions('maxValue', optcfg.maxValue)"
                             style="width: 50px;text-align: center;display:inline-block;" type="text">
@@ -206,7 +206,7 @@
                         <span>{{'bag.property-pointer-color' | translate}}</span>
                         <input [(colorPicker)]="optcfg.pointer.color" [cpAlphaChannel]="'always'" [style.background]="optcfg.pointer.color" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px"
                             [cpPosition]="'top'" (colorPickerChange)="onChangeOptionsPointer('color', $event)" />
                     </div>
                 </div>
@@ -215,21 +215,21 @@
                         <span>{{'bag.property-color-start' | translate}}</span>
                         <input [(colorPicker)]="optcfg.colorStart" [style.background]="optcfg.colorStart" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px"
                             [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('colorStart', $event)" />
                     </div>
                     <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                         <span>{{'bag.property-color-stop' | translate}}</span>
                         <input [(colorPicker)]="optcfg.colorStop" [style.background]="optcfg.colorStop" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px"
                             [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('colorStop', $event)" />
                     </div>
                     <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                         <span>{{'bag.property-background' | translate}}</span>
                         <input [(colorPicker)]="optcfg.strokeColor" [style.background]="optcfg.strokeColor" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 126px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px"
                             [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('strokeColor', $event)" />
                     </div>
                 </div>
@@ -270,7 +270,7 @@
                             <input [cpDialogDisplay]="'popup'" [(colorPicker)]="item.strokeStyle" [cpAlphaChannel]="'always'" class="input-color"
                                 [style.background]="item.strokeStyle" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                                 [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                style="padding: 8px 0 0 0; width: 58px" [cpPosition]="'top'" (colorPickerChange)="onChangeStaticZones()" />
+                                style="width: 58px" [cpPosition]="'top'" (colorPickerChange)="onChangeStaticZones()" />
                         </div>
                         <div class="my-form-field" style="line-height: 40px;">
                             <button mat-icon-button (click)="onRemoveZone(i)" class="remove">

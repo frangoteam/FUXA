@@ -42,7 +42,7 @@
 .topic-publish-result {
     height: 160px;
     width: 100%;
-    background-color: rgb(241 243 244);
+    background-color: var(--formInputBackground);
     padding: 5px 5px 3px 8px;
     overflow: auto;
     white-space: pre;
@@ -52,7 +52,7 @@
 
 .topic-subscription-result {
     height: 160px;
-    background-color: rgb(241 243 244);
+    background-color: var(--formInputBackground);
     padding: 5px 5px 3px 8px;
     overflow: auto;
     white-space: pre;

@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType } from '../_models/hmi';
@@ -26,34 +27,19 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
     widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
 
-    constructor() { 
-        this.gridOptions = {
-            gridType: GridType.Fixed,
-            compactType: CompactType.None,
-            maxCols: 100,
-            maxRows: 100,
-            fixedColWidth: 35,
-            fixedRowHeight: 35,
-            margin: 10,
-            disableWarnings: true,
-            draggable: {
-                enabled: true,
-            },
-            resizable: {
-                enabled: true,
-            },
-            itemChangeCallback: this.itemChange,
-            itemResizeCallback: this.itemChange,
-        };
+    constructor(private changeDetector: ChangeDetectorRef) { 
+        this.gridOptions = <GridsterConfig> new GridOptions();
+        this.gridOptions.itemChangeCallback = this.itemChange;
+        this.gridOptions.itemResizeCallback = this.itemChange;
     }
 
     ngOnInit() {
+        this.gridOptions = { ...this.gridOptions, ...this.options };
     }
 
     ngAfterViewInit() {
-        this.gridOptions = { ...this.gridOptions, ...this.options };
         setTimeout(() => {
-            this.initCardsEditor(this.view.svgcontent);
+            this.reload();
         }, 200);
     }
 
@@ -96,14 +82,18 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         let item: GridsterItem = { x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background };
         item.initCallback = () => {
             if (card) {
-                let views = this.hmi.views.filter((v) => v.name === card.data);
-                if (views && views.length) {
-                    if (views[0].svgcontent) {
-                        item.content = views[0];//.svgcontent.replace('<title>Layer 1</title>', '');
+                if (card.type === this.widgetView) {
+                    let views = this.hmi.views.filter((v) => v.name === card.data);
+                    if (views && views.length) {
+                        if (views[0].svgcontent) {
+                            item.content = views[0];//.svgcontent.replace('<title>Layer 1</title>', '');
+                        }
+                        if (views[0].profile.bkcolor) {
+                            item.background = views[0].profile.bkcolor;
+                        }
                     }
-                    if (views[0].profile.bkcolor) {
-                        item.background = views[0].profile.bkcolor;
-                    }
+                } else if (card.type === this.widgetAlarms) {
+                    item.background = '#CCCCCC';
                 }
             }
         }
@@ -131,3 +121,28 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         }
     }
 }
+
+export class NgxNouisliderOptions {
+    orientation = 'vertical';//'horizontal';
+    direction = 'ltr';
+    fontFamily = 'Sans-serif';
+    shape = { baseColor: '#dcdcdc', connectColor: '#49b2ff', handleColor: '#018ef5' };
+    marker = { color: '#000', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
+    range = { min: 0, max: 100 };
+    step = 1;
+    pips = { mode: 'values', values: [0, 50, 100], density: 4 };
+    tooltip = { type: 'none', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 }
+}
+
+export class GridOptions {
+    gridType = GridType.Fixed;
+    compactType = CompactType.None;
+    maxCols = 100;
+    maxRows = 100;
+    fixedColWidth = 35;
+    fixedRowHeight = 35;
+    margin = 10;
+    disableWarnings = true;
+    draggable = { enabled: true };
+    resizable = { enabled: true };
+};

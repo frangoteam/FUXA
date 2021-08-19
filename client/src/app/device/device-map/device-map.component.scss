@@ -1,10 +1,10 @@
 $main-backcolor: rgb(12, 101, 189);
-$main-bordercolor: #3C3C3C;//rgb(5, 65, 123);
+$main-bordercolor: var(--mapBorderColor);//rgb(5, 65, 123);
 $device-color: rgb(79, 86, 93);
-$line-color:   #3C3C3C;
+$line-color:   var(--mapBorderColor);
 $flow-backcolor: rgb(218, 218, 218);
-$flow-bordercolor: #3C3C3C;//rgb(117, 117, 117);
-$flowline-color: #3C3C3C;//rgb(117, 117, 117);
+$flow-bordercolor: var(--mapBorderColor);//rgb(117, 117, 117);
+$flowline-color: var(--mapBorderColor);//rgb(117, 117, 117);
 $internal-backcolor: rgb(114,120,125);
 
 .main-device {

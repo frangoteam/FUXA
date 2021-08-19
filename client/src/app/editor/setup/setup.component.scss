@@ -17,18 +17,15 @@
 }
 
 .separator-line {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--setupSeparatorColor);
     height: 1px;
-    width: 100%;
+    width: 35%;
 }
 .separator-text {
-    background: #FFF;
     left: 50%;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    padding-left: 10px;
-    padding-right: 10px;
     font-size: 13px;
 }
 

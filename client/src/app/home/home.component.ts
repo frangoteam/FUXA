@@ -16,6 +16,7 @@ import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, 
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
+import { GridOptions } from '../cards-view/cards-view.component';
 
 import { GridsterConfig, GridType, CompactType } from 'angular-gridster2';
 
@@ -53,21 +54,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 	layoutHeader = new HeaderSettings();
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
-    gridOptions: GridsterConfig = {
-        gridType: GridType.Fixed,
-        compactType: CompactType.None,
-        maxCols: 20,
-        maxRows: 20,
-        fixedColWidth: 95,
-        fixedRowHeight: 95,
-        disableWarnings: true,
-        draggable: {
-            enabled: false,
-        },
-        resizable: {
-            enabled: false,
-        }
-    };
+    gridOptions = <GridsterConfig> new GridOptions();
 
 	private subscriptionLoad: Subscription;
 	private subscriptionAlarmsStatus: Subscription;
@@ -78,7 +65,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private router: Router,
 		private hmiService: HmiService,
 		private authService: AuthService,
-		private gaugesManager: GaugesManager) { }
+		private gaugesManager: GaugesManager) { 
+			this.gridOptions.draggable = { enabled: false };
+			this.gridOptions.resizable = { enabled: false };
+		}
 
 	ngOnInit() {
 	}

@@ -33,3 +33,14 @@ $my-slider-accent: mat-palette($mat-green, 600);
 $my-slider-warn: mat-palette($mat-red, 600);
 $my-slider-theme:  mat-light-theme($my-slider-primary, $my-slider-primary, $my-slider-warn);
 @include mat-slider-theme($my-slider-theme);
+
+// Define an dark theme.
+$dark-primary: mat-palette($mat-blue);
+$dark-accent:  mat-palette($mat-amber, A200, A100, A400);
+$dark-warn:    mat-palette($mat-deep-orange);
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+
+// themes will be switched based on class names, angular will switch classes which will trigger the theme change
+.dark-theme {
+  @include angular-material-theme($dark-theme);
+}

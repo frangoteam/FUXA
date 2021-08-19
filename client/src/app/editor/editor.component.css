@@ -1,9 +1,4 @@
 #svg_editor_container {
-    /* position: absolute; */
-    /* bottom: 0px; */
-    /* left: 0px; */
-    /* right: 0px; */
-    /* display: block; */
     background: #aaa;
     height: 100%;
     width: 100%;
@@ -20,39 +15,29 @@
 }
 .svg-workarea-leftbar-p {
     box-shadow: none !important;
-    background-color: rgba(33, 33, 33, 1);
+    background-color: var(--toolboxBackground);
+    color: var(--toolboxColor);
 }
 
 .svg-workarea-leftbar-h {
-    max-height: 26px;
+    max-height: 23px;
     text-align: center;
     vertical-align: middle;
     padding-left: 0px;
     padding-right: 0px;
-    background-color: rgba(33, 33, 33, 1) !important;
-    color: rgba(255, 255, 255, 1);
-    /* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */
-}
-
-.svg-workarea-leftbar-h mat-icon {
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+    border-top: 1px solid var(--toolboxBorder);
+    margin-bottom: 0px;
+    box-shadow: 0px 1px 3px 0px #000;
 }
 
 .svg-workarea-leftbar-h span {
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
     padding-top: 5px !important;
     padding-left: 3px;
     font-size: 11px;
 }
 
-/* .svg-workarea-leftbar-h:hover {
-} */
-
-.svg-workarea-leftbar-h:enabled .svg-workarea-leftbar-h::selection {
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+.svg-workarea-leftbar-h:active {
+    /* margin-bottom: 4px; */
 }
 
 /* .mat-expansion-panel-content {
@@ -60,24 +45,16 @@
 } */
 
 .svg-workarea-flybar-h {
-    max-height: 26px;
+    max-height: 23px;
     text-align: center;
     vertical-align: middle;
     padding-left: 0px;
     padding-right: 0px;
-    background-color: rgba(33,33,33,1);
-    color: rgba(255,255,255,1);
-    /* border-bottom: solid 1px rgba(0, 0, 0, 0.07); */
- }
-
- .svg-workarea-flybar-h mat-icon {
-     background-color: rgba(33,33,33,1);
-     color: rgba(255,255,255,1);
+    border-top: 1px solid var(--toolboxBorder);
+    box-shadow: 0px 1px 3px 0px #000;
  }
 
  .svg-workarea-flybar-h span {
-     background-color: rgba(33,33,33,1);
-     color: rgba(255,255,255,1);
      padding-top: 5px !important;
      padding-left: 3px;
      font-size: 11px;
@@ -87,13 +64,13 @@
  } */
 
  .svg-workarea-flybar-h:enabled .svg-workarea-flybar-h::selection{
-     background-color: rgba(33,33,33,1);
      color: rgba(255,255,255,1);
  }
 
 .svg-workarea-fly-p {
     box-shadow: none !important;
-    background-color: rgba(33, 33, 33, 1);
+    background-color: var(--toolboxBackground);
+    color: var(--toolboxColor);
     width: 200px;
     padding-left: 0px;
     padding-right: 0px;
@@ -122,12 +99,7 @@
 }
 
 .svg-property {
-    /* display: block; */
-    color: rgba(255, 255, 255, 0.75);
-    /* position: relative; */
-    /* left: 5px; */
-    /* right: 5px; */
-    /* width: 100%; */
+    color: var(--toolboxFlyColor);
 }
 
 .svg-property span {
@@ -147,18 +119,38 @@
     border: unset;
     background-color: inherit;
     color: inherit;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.75);
+    border-bottom: 1px solid var(--toolboxFlyColor);
 }
 
 .svg-workarea-container {
-    /* position: relative; */
     display: block;
     height: 100%;
-    /* height: calc(100% - 46px);  */
-    /* bottom: 0px; */
-    /* top: 0px; */
-    /* left: 0px; */
-    /* right: 0px; */
+}
+
+#rulers > div {
+    background-color: var(--svgEditRulersBackground) !important;
+    color: var(--svgEditRulersColor) !important;
+}
+
+#svgcanvas {
+    background-color: var(--svgEditWorkareaBackground) !important;
+}
+
+.contextMenu {
+    background-color: var(--svgEditWorkareaContextMenu) !important;
+}
+
+.contextMenu A {
+    color: var(--svgEditWorkareaContextColor) !important;
+}
+
+.contextMenu LI:not(.disabled) A:hover {
+    color: var(--toolboxItemActiveColor) !important;
+}
+
+.contextMenu LI.separator {
+    margin-top: 0px !important;
+    border-color: var(--svgEditWorkareaContextBorder) !important;
 }
 
 .svg-tools-fly {
@@ -166,8 +158,9 @@
     position: absolute;
     right: 25px;
     top: 55px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     max-height: calc(100% - 75px);
+    box-shadow: 0px 0px 5px rgb(0 0 0);
 }
 
 .svg-tool-button {
@@ -179,14 +172,13 @@
     width: 30px;
     border-radius: 50%;
     margin: 2px 2px 2px 2px;
+    background-color: var(--toolboxButton);
     /* padding-top: 5px; */
 }
 
 .svg-tool-button span {
     display: block;
     margin: auto;
-    /* height: 30px; */
-    /* width: 30px; */
 }
 
 .svg-tool-button:hover {
@@ -194,7 +186,6 @@
 }
 
 .svg-tool-active, .svg-tool-active:active, .svg-tool-active:hover {
-    /* border: 1px solid #000000; */
     background-color: rgba(48,89,175,1);
 }
 
@@ -206,13 +197,13 @@
     min-width: 160px;
     max-width: 200px;
     width: 200px;
-    background: rgba(33, 33, 33, 1);
+    background: var(--sidenavBackgroung);
 }
 
 /* tool bar top */
 .tools_panel {
-    background-color: rgba(33, 33, 33, 0.92);
-    color: rgba(255, 255, 255, 1);
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
 }
 .main-btn {
     height: 34px;
@@ -231,24 +222,18 @@
 }
 
 .main-btn .to-top {
-    background: url("/assets/images/to-top.svg") no-repeat center center;
-    background-size: contain;
-    display: inline-block;
+    display: inline-block;    ;
     height: 34px;
-    width: 34px;
+    width: 34px;    
 }
 
-.main-btn .to-bottom {
-    background: url("/assets/images/to-bottom.svg") no-repeat center center;
-    background-size: contain;
+.main-btn .to-bottom  {
     display: inline-block;
     height: 34px;
     width: 34px;
 }
 
 .main-btn .to-path {
-    background: url("/assets/images/to-path.svg") no-repeat center center;
-    background-size: contain;
     display: inline-block;
     height: 34px;
     width: 34px;
@@ -295,26 +280,23 @@
 }
 
 .leftbar-panel {
+    margin-top: 4px;
     padding: 0px 0px 0px 0px;
     font-size: 11px;
-    /* background-color: rgb(34, 107, 241); */
-    background-color: rgba(47, 47, 47, 1);
+    background-color: var(--toolboxPanelBackgroung);
+    color: var(--toolboxColor);
     overflow: auto;
     max-height: 200px;
 }
 
 .leftbar-item {
-    /* padding-top: 6px; */
-    /* padding-bottom: 6px; */
-    /* width: 100%; */
     padding: 3px 0px 1px 0px;
     display: flow-root;
-    color: rgba(255, 255, 255, 1);
 }
 
 .leftbar-item-active {
-    /* font-weight: 600; */
-    background-color: rgba(48, 89, 175, 1);
+    background-color: var(--toolboxItemActiveBackgroung);
+    color: var(--toolboxItemActiveColor);
 }
 
 .leftbar-item span {
@@ -324,11 +306,6 @@
 .leftbar-item mat-icon {
     float: right;
     font-size: 18px;
-    /* color: rgba(0, 0, 0, 0.4); */
-}
-
-::ng-deep .leftbar-item-menu {
-    background-color: rgba(47, 47, 47, 1);
 }
 
 ::ng-deep .svg-workarea-leftbar-p .mat-expansion-panel-body {
@@ -343,22 +320,18 @@
     padding: 0px 0px 0px 0px !important;
     /* padding-left: 10px !important; */
     flex-wrap: wrap !important;
-    background-color: rgba(47, 47, 47, 1);
 }
 
 ::ng-deep .mat-menu-item {
     font-size: 11px;
-    color: rgba(255, 255, 255, 1);
     height: 30px !important;
     line-height: unset !important;
 }
 
 .rightbar-panel {
-    /* padding: 0px 0px 0px 0px; */
-    /* font-size: 11px; */
-    /* background-color: rgb(34, 107, 241); */
-    background-color: rgba(47, 47, 47, 1);
-    /* overflow: auto; */
+    margin-top: 4px;
+    background-color: var(--toolboxPanelBackgroung);
+    color: var(--toolboxColor);
 }
 
 .mat-expansion-panel-header-title span {
@@ -384,8 +357,6 @@
 }
 
 .zoom-value {
-    background-color: inherit;
-    color: rgba(255, 255, 255, 1);
     border: unset;
     display: inline-block;
 }
@@ -396,35 +367,25 @@
 }
 .zoom-value span {
     display: inline-block;
-    /* position: absolute; */
-    /* top: 5px; */
-    /* left: 5px; */
-    /* height: 10px; */
-    /* width: 10px; */
 }
 
 .zoom-value .selection,
 button {
     display: inline-block;
-    /* height: 10px; */
-    /* width: 10px; */
-    /* position: absolute; */
-    /* top: 3px; */
-    /* left: 55px; */
 }
 .zoom-value button {
     /* width: unset; */
     z-index: 9999;
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+    background-color: var(--footZoomBackground);
+    color: var(--footZoomColor);
     border: unset;
 }
 
 .zoom-value ul,
 li {
     /* width: unset; */
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+    background-color: var(--footZoomBackground);
+    color: var(--footZoomColor);
     border: unset;
 }
 
@@ -433,7 +394,7 @@ li {
 }
 
 .zoom-value li:hover {
-    background-color: rgb(22, 22, 22);
+    background-color: var(--footZoomBackgroundHover);
 }
 
 .colors {

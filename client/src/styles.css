@@ -445,20 +445,20 @@ app-root {
 
 .my-form-field input {
     padding: 6px 3px 7px 4px;
-    background-color: #f1f3f4;
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
     /* background-color: rgba(68,138,255,0.01) */
 }
 
 .my-form-field input:focus {
-    padding: 4px 1px 5px 2px;
-    border: 2px solid #ccc;
-    background-color: white;
+    padding: 5px 2px 6px 3px;
+    border: 1px solid var(--formInputBorderFocus);
+    background-color: var(--formInputBackgroundFocus);
 }
 
 .my-form-field mat-select {
     padding: 6px 3px 7px 4px;
-    background-color: #f1f3f4;
-    /* background-color: rgba(0,0,0,0.01) */
+    background-color: var(--formInputBackground);
 }
 
 .my-form-field-info {
@@ -473,8 +473,26 @@ app-root {
 
 .my-form-readonly-input {
     padding: 6px 3px 7px 4px !important;
-    background-color: #f1f3f4 !important;
+    background-color: var(--formInputReadonlyBackground) !important;
     border: unset !important;
+}
+
+.my-form-field-permission {
+    width:80px;
+    height:30px;
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
+}
+
+.my-form-field-link {
+    position:absolute; 
+    bottom: 0px; 
+    right: 0px; 
+    height: 28px; 
+    width: 28px; 
+    border-radius: 2px 0px 0px 2px;
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
 }
 
 /*
@@ -718,14 +736,14 @@ mat-toolbar-row {
     cursor: pointer;
     border: 1px solid rgba(0, 0, 0, 0.1) !important;
     font-size: 13px;
-    padding: 6px 3px 7px 4px;
+    padding: 5px 2px 6px 3px !important;    
     color:gray;
 }
 
 .input-color input:focus {
-    padding: 4px 1px 5px 2px;
-    border: 2px solid #ccc;
-    background-color: white;
+    padding: 5px 2px 6px 3px !important;    
+    /* background-color: white; */
+    border: 1px solid var(--formInputBorderFocus);
 }
 
 /* NgxUplot */
@@ -775,4 +793,29 @@ mat-toolbar-row {
     bottom: 2px;
     right: 4px;
     position: absolute;
+}
+
+/* Color picker */
+.color-picker .hue-alpha {
+    padding: 0 !important;
+    height: 50px;
+}
+
+.color-picker .hue {
+    margin-bottom: 4px !important;
+}
+
+.color-picker .type-policy {
+    top: 185px !important;
+}
+.color-picker > .hex-text, .rgba-text, .hsla-text {
+    padding: 0px 8px !important;
+}
+
+.color-picker .preset-area {
+    padding: 0px 8px !important;
+}
+
+.color-picker .hex-text .box input, .color-picker input {
+    background-color: #ffffff !important;
 }

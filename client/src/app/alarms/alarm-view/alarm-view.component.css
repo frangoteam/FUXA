@@ -3,21 +3,22 @@
     position: fixed;
     top: 0px;
     left: 0px;
-    background-color: rgba(33,33,33,1);
-    /* background-color: rgba(33,33,33,0.92); */
-    color: rgba(255,255,255,1);
-    height: 40px;
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
+    height: 36px;
     width: 100%;
     text-align: center;
-    line-height: 40px;
+    line-height: 36px;
+    border-bottom: 1px solid var(--headerBorder);
 }
 
 .work-panel {
     position: absolute;
-    top: 40px;
+    top: 37px;
     left: 0px;
     right: 0px;
     bottom: 0px;
+    background-color: var(--workPanelBackground);
 }
 
 .filter {
@@ -43,23 +44,22 @@
 }
   
 .mat-header-cell.mat-sort-header-sorted {
-    color: black;
+    /* color: black; */
 }
 
 .mat-header-row {
     top: 0;
     position: relative;
     z-index: 1;
-    background-color: rgba(76,76,76,1);
-    color: white;
+    /* background-color: rgba(76,76,76,1); */
+    /* color: white; */
     min-height: 35px;
 }
 .mat-header-cell {
-    color: white;
     font-size: 14px;
 }
 .mat-row {
-    min-height: 35px;
+    min-height: 34px;
 }
 .mat-column-ontime {
     flex: 0 0 160px;

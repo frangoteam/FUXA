@@ -7,6 +7,6 @@
 }
 
 .slider-field mat-slider {
-    background-color: #f1f3f4;
+    background-color: var(--formSliderBackground);
     height: 30px;
 }

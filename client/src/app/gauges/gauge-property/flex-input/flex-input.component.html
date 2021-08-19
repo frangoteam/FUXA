@@ -48,11 +48,11 @@
                     <!-- <span>Unit</span>
                     <input [(ngModel)]="item.text" type="text" style="width: 60px;text-align: center !important"> -->
                 </div>
-                <div class="my-form-field" style="width: 60px;padding-left: 20px; top: 4px;">
+                <div class="my-form-field" style="width: 60px;margin-left: 20px;">
                     <span>{{'gauges.property-input-color' | translate}}</span>
                     <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                         [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                        class="input-color" style="padding: 8px 0 0 0;height:20px;width:58px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
+                        class="input-color" style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
                 </div>
                 <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 30px" [(ngModel)]="withLabel">Range</mat-checkbox> -->
                 <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 20px" [(ngModel)]="withValue">Value</mat-checkbox> -->

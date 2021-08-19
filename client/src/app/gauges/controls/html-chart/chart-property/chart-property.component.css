@@ -26,16 +26,11 @@
 }
 
 ::ng-deep .slider-field mat-slider {
-    background-color: #f1f3f4;
+    background-color: var(--formSliderBackground);
     height: 30px;
     width: 100px;
 }
 
 ::ng-deep .mat-tab-label {
     height: 34px !important;
-}
-
-.color-field input {
-    padding: 0 !important;
-    height: 29px;
 }

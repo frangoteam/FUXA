@@ -1,25 +1,38 @@
 
 .header-panel {
-    z-index: 1000 !important;
+    z-index: 99 !important;
     position: fixed;
     top: 0px;
     left: 0px;
-    background-color: rgba(33,33,33,0.92);
-    color: rgba(255,255,255,1);
-    height: 40px;
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
+    height: 36px;
     width: 200px;
 }
 
-.header-help {
-    z-index: 9999 !important;
+.header-right {
+    z-index: 99 !important;
     position: fixed;
     top: 0px;
-    right: 25px;
-    /* background-color: rgba(33,33,33,0.92); */
-    color: rgba(255,255,255,1);
+    right: 0px;
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
+    height: 36px;
+    width: 120px;
+}
+
+.header-help {
+    float: right;
     height: 36px;
     width: 36px;
+    margin-right: 20px;
+}
 
+.header-theme {
+    float: right;
+    height: 36px;
+    width: 36px;
+    margin-right: 5px;
 }
 
 .main-btn {
@@ -47,15 +60,11 @@
 }
 
 .menu-separator {
-    border-top-color: rgba(0,0,0,1);
+    border-top-color: rgba(0,0,0,0.2);
 }
 
-::ng-deep .leftbar-item-menu {
-    background-color: rgba(47,47,47,1);
-}
 ::ng-deep .mat-menu-item {
     font-size: 11px;
-    color: rgba(255,255,255,1);
     height: 30px !important;
     line-height: unset !important;
   }

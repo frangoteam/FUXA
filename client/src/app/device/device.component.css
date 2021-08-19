@@ -2,13 +2,13 @@
     /* z-index: 9999 !important; */
     top: 0px;
     left: 0px;
-    background-color: rgba(33,33,33,1);
-    /* background-color: rgba(33,33,33,0.92); */
-    color: rgba(255,255,255,1);
-    height: 40px;
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
+    height: 36px;
     width: 100%;
     text-align: center;
-    line-height: 40px;
+    line-height: 36px;
+    border-bottom: 1px solid var(--headerBorder);
 }
 
 .device-btn {
@@ -30,11 +30,12 @@
 
 .work-panel {
     position: absolute;
-    top: 40px;
+    top: 37px;
     left: 0px;
     right: 0px;
     bottom: 0px;
     overflow: auto;
+    background-color: var(--workPanelBackground);
 }
 
 .mat-table {
@@ -113,9 +114,16 @@
     display: block; 
     margin-top: 4px;
     margin-bottom: 6px;
-    background-color: rgba(241,243,244);
     /* color: white; */
-    border: 0px solid rgba(51, 51, 51);
     padding: 3px 1px 3px 2px;
     border-radius: 2px;
+    border: 1px solid var(--formInputBackground);
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
+}
+
+.my-header-filter-input:focus {
+    padding: 3px 1px 3px 2px;
+    border: 1px solid var(--formInputBorderFocus);
+    background-color: var(--formInputBackgroundFocus);
 }

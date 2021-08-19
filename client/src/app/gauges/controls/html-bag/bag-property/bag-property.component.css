@@ -21,7 +21,7 @@
 }
 
 .gauge-view {
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--formSeparatorColor);
     width: 280px; 
     height: 220px;
     margin-top: -5px;
@@ -33,27 +33,26 @@
     display: inline-block;
     width: 50px;
     height:38px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--formSeparatorColor);
 }
 
 .btn-gauge-mat {
     background: url('/assets/images/gauge-mat.png') no-repeat center center;
+    background-size: 45px 30px;
 }
 
 .btn-gauge-donut {
     background: url('/assets/images/gauge-donut.png') no-repeat center center;
+    background-size: 52px 28px;
 } 
 
 .btn-gauge-zone {
     background: url('/assets/images/gauge-zone.png') no-repeat center center;
+    background-size: 45px 30px;
 }
 
 .toolbox {
-    /* display: inline-block; */
-    /* width: 460px; */
     position: absolute;
-    /* bottom: 0px; */
-    /* left: 0px; */
     width: 100%;
     height: 310px;
 }
@@ -90,16 +89,11 @@
 }
 
 .slider-field mat-slider {
-    background-color: #f1f3f4;
+    background-color: var(--formSliderBackground);
     height: 30px;
 }
 
 .field-row {
     display: block;
     margin-bottom: 5px;
-}
-
-.color-field input {
-    padding: 0 !important;
-    height: 29px;
 }

@@ -2,7 +2,7 @@
 	<mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
 	</mat-progress-bar>
 </div>
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="sidenav-container" [hasBackdrop]="false">
 	<mat-sidenav #matsidenav *ngIf="showSidenav" class="sidenav" [mode]="showSidenav">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>

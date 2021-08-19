@@ -4,11 +4,6 @@
     margin-bottom: 5px;
 }
 
-.color-field input {
-    padding: 0 !important;
-    height: 29px;
-}
-
 .slider-field span {
     padding-left: 2px;
     text-overflow: clip;
@@ -18,7 +13,7 @@
 }
 
 .slider-field mat-slider {
-    background-color: #f1f3f4;
+    background-color: var(--formSliderBackground);
     height: 29px;
 }
 

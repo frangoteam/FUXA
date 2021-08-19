@@ -77,11 +77,11 @@
                                     <span style="display: inline-block">{{item.text}}</span>
                                 </div>
                             </button>
-                            <div style="padding-left:15px;padding-top: 3px;color:black;display: block;width: 50px;">
+                            <div style="padding-left:15px;padding-top: 3px;display: block;width: 50px;">
                                 <mat-icon (click)="onMoveMenuItem(i, 'top')"  class="layout-menu-item-icon" style="display: block;">arrow_upward</mat-icon>
                                 <mat-icon (click)="onMoveMenuItem(i, 'bottom')" class="layout-menu-item-icon" style="display: block;">arrow_downward</mat-icon>
                             </div>
-                            <div style="padding-left:15px; color:black">
+                            <div style="padding-left:15px;">
                                 <div style="display: block;width: 50px;">
                                     <mat-icon (click)="onAddMenuItem(item)" class="layout-menu-item-icon layout-menu-item-edit">edit</mat-icon>
                                     <mat-icon (click)="onRemoveMenuItem(i, item)" class="layout-menu-item-icon layout-menu-item-delete">clear</mat-icon>
@@ -113,14 +113,14 @@
                             <span>{{'dlg.layout-nav-bkcolor' | translate}}</span>
                             <input [(colorPicker)]="data.layout.navigation.bkcolor" [style.background]="data.layout.navigation.bkcolor" [cpAlphaChannel]="'always'" class="input-color"
                                 [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0;width:126px;height:20px !important"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;"
                                 [cpPosition]="'bottom'"/>
                         </div>
                         <div class="my-form-field" style="float:right">
                             <span>{{'dlg.layout-nav-fgcolor' | translate}}</span>
                             <input [(colorPicker)]="data.layout.navigation.fgcolor" [style.background]="data.layout.navigation.fgcolor" [cpAlphaChannel]="'always'" class="input-color"
                                 [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0;width:126px;height:20px !important"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;"
                                 [cpPosition]="'bottom'"/>
                         </div>
                     </div>
@@ -163,14 +163,14 @@
                                 <span>{{'dlg.layout-header-bkcolor' | translate}}</span>
                                 <input [(colorPicker)]="data.layout.header.bkcolor" [style.background]="data.layout.header.bkcolor" [cpAlphaChannel]="'always'" class="input-color"
                                     [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0;width:126px;height:20px !important"
+                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;"
                                     [cpPosition]="'bottom'"/>
                             </div>
                             <div class="my-form-field" style="float: right;">
                                 <span>{{'dlg.layout-header-fgcolor' | translate}}</span>
                                 <input [(colorPicker)]="data.layout.header.fgcolor" [style.background]="data.layout.header.fgcolor" [cpAlphaChannel]="'always'" class="input-color"
                                     [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0;width:126px;height:20px !important"
+                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;"
                                     [cpPosition]="'bottom'"/>
                             </div>
                         </div>

@@ -24,7 +24,7 @@
                         {{discoveryError}}
                     </div>
                 </div>
-                <div style="height: 240px; border: 1px solid rgb(204, 204, 204); padding: 5px 5px 3px 8px; overflow: auto;">
+                <div style="height: 240px; border: 1px solid var(--formBorder); padding: 5px 5px 3px 8px; overflow: auto;">
                     <div *ngFor="let topic of topicsList | keyvalue">
                         <div class="topic" (click)="selectTopic(topic);" [ngClass]="{'topic-active': isTopicSelected(topic)}">
                             <div class="topic-text">
@@ -89,7 +89,7 @@
                             <mat-icon>add_circle_outline</mat-icon>
                             {{'device.topic-publish-add-item' | translate}}
                         </button>
-                        <div style="height: 200px; border: 1px solid rgb(204, 204, 204); padding: 5px 5px 3px 8px; overflow: auto;margin-bottom: 10px;">
+                        <div style="height: 200px; border: 1px solid var(--formBorder); padding: 5px 5px 3px 8px; overflow: auto;margin-bottom: 10px;">
                             <div *ngFor="let item of pubPayload.items; index as i" class="item">
                                 <div class="my-form-field" style="margin-right: 10px;">
                                     <span>{{'device.topic-publish-key' | translate}}</span>

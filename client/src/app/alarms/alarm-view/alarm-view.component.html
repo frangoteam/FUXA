@@ -1,7 +1,7 @@
 <div class="header-panel" *ngIf="fullview">
     {{'alarms.view-title' | translate}}
 </div>
-<div class="work-panel" [ngStyle]="{'top': fullview ? '40px' : '0px'}">
+<div class="work-panel" [ngStyle]="{'top': fullview ? '37px' : '0px'}">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ontime">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>

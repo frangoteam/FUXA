@@ -1050,9 +1050,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
- * open Project event file loaded
- * @param event file resource
- */
+     * open Project event file loaded
+     * @param event file resource
+     */
     onViewFileChangeListener(event) {
         let text = [];
         let files = event.srcElement.files;
