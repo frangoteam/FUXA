@@ -298,7 +298,21 @@ export class ProjectService {
 
     setLayout(layout: LayoutSettings) {
         this.projectData.hmi.layout = layout;
-        this.storage.setServerProjectData(ProjectDataCmdType.HmiLayout, layout, this.projectData).subscribe(result => {
+        this.saveLayout();
+    }
+
+    
+    setLayoutTheme(theme: string) {
+        this.projectData.hmi.layout.theme = theme;
+        this.saveLayout();
+    }
+
+    getLayoutTheme() {
+        return this.projectData.hmi.layout.theme;
+    }
+
+    saveLayout() {
+        this.storage.setServerProjectData(ProjectDataCmdType.HmiLayout, this.projectData.hmi.layout, this.projectData).subscribe(result => {
         }, err => {
             console.log(err);
             this.notifySaveError(err);

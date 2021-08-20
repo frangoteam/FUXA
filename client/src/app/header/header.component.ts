@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, Inject, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from "rxjs";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -20,16 +20,17 @@ import { TranslateService } from '@ngx-translate/core';
     templateUrl: 'header.component.html',
     styleUrls: ['header.component.css']
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('sidenav')sidenav: any; 
     @ViewChild('tutorial') tutorial: TutorialComponent;
     @ViewChild('fileImportInput') fileImportInput: any;
 
-    darkTheme = false;
+    darkTheme = true;
     ineditor = false;
     savededitor = false;
     private subscriptionShowHelp: Subscription;
+    private subscriptionLoad: Subscription;
     
     constructor(private router: Router,
                 public dialog: MatDialog,
@@ -43,17 +44,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
             this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 || 
                                 this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0) ? true : false;
         });
-        this.themeService.setTheme('default');
+        this.themeService.setTheme(this.projectService.getLayoutTheme());
     }
 
     ngOnInit() {
     }
 
+    ngAfterViewInit() {
+        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+            let theme = this.projectService.getLayoutTheme();
+            this.darkTheme = (theme !== ThemeService.ThemeType.Default);
+            this.themeService.setTheme(this.projectService.getLayoutTheme());
+        }, error => {
+            console.log('Error loadHMI');
+        });
+    }
+
     ngOnDestroy() {
         try {
-          if (this.subscriptionShowHelp) {
-            this.subscriptionShowHelp.unsubscribe();
-          } 
+            if (this.subscriptionShowHelp) {
+                this.subscriptionShowHelp.unsubscribe();
+            } 
+            if (this.subscriptionLoad) {
+                this.subscriptionLoad.unsubscribe();
+            }
         } catch (e) {
         }
       }
@@ -99,11 +113,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     onChangeTheme() {
         this.darkTheme = !this.darkTheme;
+        let theme = ThemeService.ThemeType.Default;
         if (this.darkTheme) {
-            this.themeService.setTheme('dark');
-        } else {
-            this.themeService.setTheme('default');
+            theme = ThemeService.ThemeType.Dark;
         }
+        this.themeService.setTheme(theme);
+        this.projectService.setLayoutTheme(theme);
     }
 
     //#region Project Events

@@ -43,6 +43,8 @@ export class LayoutSettings {
     zoom: ZoomModeType;
     /** Show input dialog for input field */
     inputdialog: string = 'false';
+    /** GUI Theme */
+    theme = '';
 }
 
 export class NavigationSettings {

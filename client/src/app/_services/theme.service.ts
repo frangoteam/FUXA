@@ -8,7 +8,12 @@ import { THEMES } from '../_config/theme.config';
 export class ThemeService {
     constructor(@Inject(DOCUMENT) private document: Document) { }
 
-    setTheme(name = 'default') {
+    static ThemeType = { Dark: 'dark', Default: 'default' };
+
+    setTheme(name = ThemeService.ThemeType.Dark) {
+        if (!THEMES[name]) {
+            name = ThemeService.ThemeType.Dark;
+        }
         const theme = THEMES[name];
         Object.keys(theme).forEach((key) => {
             this.document.documentElement.style.setProperty(`--${key}`, theme[key]);
@@ -16,7 +21,7 @@ export class ThemeService {
 
         const body = document.getElementsByTagName('body')[0];
         body.classList.remove('dark-theme');
-        if (name === 'dark') {
+        if (name === ThemeService.ThemeType.Dark) {
             body.classList.add('dark-theme');
         }
     }
