@@ -1298,9 +1298,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 })
 export class DialogNewDoc {
     docType = ViewType;
-    constructor(
-        public dialogRef: MatDialogRef<DialogNewDoc>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+    constructor(public dialogRef: MatDialogRef<DialogNewDoc>,
+        private translateService: TranslateService,
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+        Object.keys(this.docType).forEach(key => {
+            this.translateService.get(this.docType[key]).subscribe((txt: string) => {this.docType[key] = txt});
+        });
+    }
 
     onNoClick(): void {
         this.dialogRef.close();

@@ -26,8 +26,8 @@ export class View {
 }
 
 export enum ViewType {
-    svg = 'SVG',
-    cards ='CARDS'
+    svg = 'editor.view-svg',
+    cards ='editor.view-cards'
 } 
 
 export class LayoutSettings {
@@ -306,6 +306,7 @@ export enum TimeFormatType {
 export class CardWidget {
     data: string;
     type: string;
+    zoom: number = 1;
     constructor(type: string, data: string) {
         this.type = type;
         this.data = data;

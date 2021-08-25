@@ -6,9 +6,10 @@
 	<mat-sidenav #matsidenav *ngIf="showSidenav" class="sidenav" [mode]="showSidenav">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>
-	<mat-sidenav-content [style.background-color]="backgroudColor">
+	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
 		<div class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
-			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" (click)="(matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
+			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" 
+				(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
 				<mat-icon aria-label="Menu">menu</mat-icon>
 			</button>
 			<div class="header-title">
@@ -34,9 +35,9 @@
 				</div>
 			</div>
 		</div>
-		<div id="container"  class="home-container" #container>
-			<app-cards-view *ngIf="homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-cards-view>
-			<app-fuxa-view *ngIf="homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+		<div id="container"  class="home-container" #container (click)="checkToCloseSideNav()">
+			<app-cards-view *ngIf="!showHomeLink && homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-cards-view>
+			<app-fuxa-view *ngIf="!showHomeLink && homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
 			<app-iframe *ngIf="showHomeLink" [hidden]="isLoading || !showHomeLink" #iframeview [link]="homeLink" class="home-body" style="width:100%; height:100%"></app-iframe>
 			<!-- <div [style.display]="(homeView.type === cardViewType || showHomeLink) ? 'none' : 'block' " class="home-body home-info">
 				<p>

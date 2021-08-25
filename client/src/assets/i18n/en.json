@@ -173,6 +173,8 @@
     "chart.labels-time": "Time",
     "chart.labels-title": "Title",
 
+    "editor.view-svg": "Canvas/SVG",
+    "editor.view-cards": "Multi views container",
     "editor.views": "Views",
     "editor.view-delete": "Delete",
     "editor.view-rename": "Rename",
@@ -636,6 +638,7 @@
     "card.widget-view": "View",
     "card.widget-alarms": "Alarms",
     "card.widget-table": "Table",
+    "card.style-zoom": "Zoom",
 
     "texts.list-title": "Texts settings",
     "texts.list-filter": "Filter",

@@ -59,8 +59,8 @@
                     <mat-list class="dndList"
                         style="padding-top: 10px;">
                         <mat-list-item *ngFor="let item of draggableListLeft; let i = index"
-                            [ngClass]="'menu-item-' + data.layout.navigation.type" [style.color]="data.layout.navigation.fgcolor">
-                            <button type="button" mat-button class="sidenav-btn" [ngSwitch]="data.layout.navigation.type">
+                            [ngClass]="'menu-item-' + data.layout.navigation.type">
+                            <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
                                 <!-- <mat-icon *ngIf="mode.value === navMode.icon || mode.value === navMode.block">{{item.icon}}</mat-icon> -->
                                 <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                                     <mat-icon>{{item.icon}}</mat-icon>

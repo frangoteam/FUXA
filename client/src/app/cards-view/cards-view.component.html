@@ -1,7 +1,7 @@
 <gridster [options]="gridOptions">
     <gridster-item [item]="item" *ngFor="let item of dashboard">
-        <div *ngIf="item.content" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;">
-            <div [ngSwitch]="item.card.type">
+        <div *ngIf="item.content" class="card-content">
+            <div [ngSwitch]="item.card.type"  [style.transform]="'scale(' + item.card.zoom + ')'">
                 <div *ngSwitchCase="widgetView">
                     <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
                 </div>
@@ -9,14 +9,17 @@
                     <app-alarm-view #alarmsview [fullview]="true" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
                 </div>
             </div>
-            <div *ngIf="edit" style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;background-color:rgba(87, 87, 87, 0.4) !important;"></div>
         </div>
-        <div *ngIf="edit" style="position:absolute;top: 50%;left: 50%;transform:translate(-50%, -50%); width: 100px">
-            <button mat-mini-fab color="white" style="float: left;" (click)="onEditCard(item)">
+        <div *ngIf="edit" class="card-tool">
+            {{'card.style-zoom' | translate}} 
+            <mat-slider max="2" min="0.1" [step]="0.02" [(ngModel)]="item.card.zoom" (input)="onZoomChanged(item, $event)"
+                style="min-width: 80px" thumbLabel="true" (mousedown)="$event.stopPropagation()">
+            </mat-slider>
+            <button mat-icon-button (click)="onEditCard(item)" (mousedown)="$event.stopPropagation()">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button mat-mini-fab color="white" style="float: right;" (click)="onRemoveCard(item)">
-                <mat-icon>delete</mat-icon>
+            <button mat-icon-button (click)="onRemoveCard(item)" (mousedown)="$event.stopPropagation()">
+                <mat-icon>close</mat-icon>
             </button>
         </div>
     </gridster-item>

@@ -1,0 +1,21 @@
+.card-content {
+    margin: 0 auto;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: fit-content;
+}
+
+.card-tool {
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    position:absolute;
+    bottom: -15px;
+    padding-left: 10px;
+    font-size: 11px;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    width: 194px;
+    border-radius: 2px;
+}

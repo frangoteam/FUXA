@@ -76,7 +76,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         this.view.svgcontent = JSON.stringify(this.dashboard);
     }
 
-    addCardsWidget(x: number = 0, y: number = 0, cols: number = 10, rows: number = 8, card: CardWidget = <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view) }) {
+    addCardsWidget(x: number = 0, y: number = 0, cols: number = 10, rows: number = 8, card: CardWidget = <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view), zoom: 1 }) {
         let content: any = null;
         let background = '';
         let item: GridsterItem = { x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background };
@@ -112,6 +112,10 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         let widgetType = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
         let viewsName = this.dashboard.filter((c) => c.card.type === widgetType && c.card.data).map((c) => { return c.card.data })
         return viewsName;
+    }
+
+    onZoomChanged(item: GridsterItem, $event) {
+        item.card.zoom = $event.value;
     }
 
     private itemChange(item, itemComponent) {
