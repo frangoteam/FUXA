@@ -5,7 +5,7 @@
         <div class="my-form-field" style="margin-bottom: 10px;">
             <span>{{'card.config-content-type' | translate}}</span>
             <mat-select [(value)]="card.type" style="width: 320px;">
-                <mat-option *ngFor="let type of cardType | enumToArray" [value]="type.key">
+                <mat-option *ngFor="let type of cardType | enumToArray" [value]="type.key" [disabled]="type.key !== widgetView">
                     {{ type.value }}
                 </mat-option>
             </mat-select>
