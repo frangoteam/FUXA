@@ -55,7 +55,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         this.canvas.nativeElement.height = h;
         this.canvas.nativeElement.width = w;
         if (this.gauge) {
-            this.gauge.render();
+            this.render();
         }
         if (!this.initialized) {
             this.init(this.type);
@@ -64,6 +64,12 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
 
     resize(height?, width?) {
         this.onResize(null);
+    }
+
+    private render() {
+        this.gauge.setOptions(this.options);
+        this.gauge.ctx.clearRect(0, 0, this.gauge.ctx.canvas.width, this.gauge.ctx.canvas.height);
+        this.gauge.render();
     }
 
     setValue(value) {
@@ -93,9 +99,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
             this.gaugetext.nativeElement.style.color = options.pointer.color;
         }
         this.gaugetext.nativeElement.style.top = options.textFilePosition + '%';
-        this.gauge.setOptions(options);
-        this.gauge.ctx.clearRect(0, 0, this.gauge.ctx.canvas.width, this.gauge.ctx.canvas.height);
-        this.gauge.render();
+        this.render();
     }
 
     getOptions() {
