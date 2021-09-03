@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatTable, MatTableDataSource, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,6 +46,7 @@ export class DeviceListComponent implements OnInit {
     @ViewChild(MatTable) table: MatTable<any>;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+	@ViewChild(MatPaginator) paginator: MatPaginator;
 
     constructor(private dialog: MatDialog,
         private hmiService: HmiService,
@@ -70,6 +71,7 @@ export class DeviceListComponent implements OnInit {
         if (this.deviceSelected) {
             this.bindToTable(this.deviceSelected.tags);
         }
+		this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.table.renderRows();
     }

@@ -102,4 +102,5 @@
         <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
     </mat-table>
+    <mat-paginator [pageSizeOptions]="[25, 100]" style="position: relative; right: 100px;"></mat-paginator>
 </div>

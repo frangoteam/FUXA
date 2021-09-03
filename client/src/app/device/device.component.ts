@@ -124,15 +124,7 @@ export class DeviceTagDialog implements OnInit {
 	@ViewChild(MatSort) sort: MatSort;
 	@ViewChild(MatPaginator) paginator: MatPaginator;
 
-	ELEMENT_DATA: TagElement[] = [
-		{ id: '1', name: 'Hydrogen', address: '1.0079', device: 'H', checked: false, error: null },
-		{ id: '2', name: 'Helium', address: '4.0026', device: 'He', checked: false, error: null },
-		{ id: '3', name: 'Lithium', address: '6.941', device: 'Li', checked: false, error: null },
-		{ id: '4', name: 'Beryllium', address: '9.0122', device: 'Be', checked: false, error: null },
-		{ id: '5', name: 'Boron', address: '10.811', device: 'B', checked: false, error: null }
-	];
-
-	dataSource = new MatTableDataSource(this.ELEMENT_DATA);//[]);
+	dataSource = new MatTableDataSource([]);
 	nameFilter = new FormControl();
 	addressFilter = new FormControl();
 	deviceFilter = new FormControl();
