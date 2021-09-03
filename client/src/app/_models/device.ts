@@ -95,6 +95,7 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     WebStudio = 'WebStudio',
     internal = 'internal'
+    // Template: 'template'
 }
 
 export enum TagType {
