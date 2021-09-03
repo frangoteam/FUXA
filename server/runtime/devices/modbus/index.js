@@ -5,7 +5,7 @@
 'use strict';
 var ModbusRTU;
 const datatypes = require('./datatypes');
-const TOKEN_LIMIT = 1000;
+const TOKEN_LIMIT = 100;
 
 function MODBUSclient(_data, _logger, _events) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
