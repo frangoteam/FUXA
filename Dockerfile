@@ -1,15 +1,17 @@
 FROM node:14
 
-# Create app directory
-WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/app/FUXA/server
 
-RUN git clone https://github.com/frangoteam/FUXA.git
-WORKDIR /usr/src/app/FUXA
+ADD server/package.json /usr/src/app/FUXA/server
 
-# Install server
 WORKDIR /usr/src/app/FUXA/server
+
 RUN npm install
 
+ADD . /usr/src/app/FUXA
+
 WORKDIR /usr/src/app/FUXA/server
+
 EXPOSE 1881
+
 CMD [ "npm", "start" ]
