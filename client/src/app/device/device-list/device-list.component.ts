@@ -238,13 +238,25 @@ export class DeviceListComponent implements OnInit {
                 return tag.address + ' / ' + tag.options.selval;
             }
             return tag.address;
+        } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
+            if (tag.options.subs && tag.type === 'json') {
+                return tag.address + '[' + tag.memaddress + ']';
+            }
+            return tag.address;
         }
         return tag.address;
     }
 
-    isToEdit(type) {
-        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio ||
-                type === DeviceType.internal || type === DeviceType.MQTTclient);
+    isToEdit(type, tag: Tag) {
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || 
+            type === DeviceType.WebStudio || type === DeviceType.internal) {
+                return true;
+        } else if (type === DeviceType.MQTTclient) {
+            if (tag && tag.options && (tag.options.pubs || tag.options.subs && tag.type !== 'json')) {
+                return true;
+            }
+        }
+        return false;
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
@@ -316,7 +328,7 @@ export class DeviceListComponent implements OnInit {
     checkToAddAddress(tag: Tag, device: Device) {
         let exist = false;
         Object.keys(device.tags).forEach((key) => {
-            if (device.tags[key].address === tag.address && device.tags[key].id != tag.id) {
+            if (device.tags[key].address === tag.address && device.tags[key].memaddress === tag.memaddress && device.tags[key].id != tag.id) {
                 exist = true;
             }
         })

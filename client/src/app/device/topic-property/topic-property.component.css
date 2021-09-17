@@ -34,9 +34,7 @@
 
 .topic-check {
     float: right;
-    margin-right: 20px;
-    line-height: 26px;
-    /* display: inline-block; */
+    margin-right: 4px;
 }
 
 .topic-publish-result {

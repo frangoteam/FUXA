@@ -308,7 +308,10 @@ export class ProjectService {
     }
 
     getLayoutTheme() {
-        return this.projectData.hmi.layout.theme;
+        if (this.projectData.hmi.layout) {
+            return this.projectData.hmi.layout.theme;
+        }
+        return null;
     }
 
     saveLayout() {

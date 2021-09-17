@@ -10,23 +10,28 @@ function MQTTclient(_data, _logger, _events) {
     var working = false;                // Working flag to manage overloading polling and connection
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last connections status
-    var varsValue = [];                 // Signale to send to frontend { id, type, value }
+    var varsValue = [];                 // Tags to send to frontend { id, type, value }
     var overloading = 0;                // Overloading counter to mange the break connection
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of asked values
     var getProperty = null;             // Function to ask property (security)
-    var options = {};
-    var client = null;
-    var browser = null;
-    var timeoutBrowser;
+    var options = {};                   // MQTT client Connection options
+    var client = null;                  // MQTT client head
+    var browser = null;                 // MQTT client for browser subscription topics
+    var timeoutBrowser;                 // Timeout to manage break the browsing
     var topicsMap = {};                 // Map the topic subscribed, to check by on.message
-    var refTopicsToPublish = new Map(); // Map the topic with ref to other device tag to publish
+    var memoryTagToPublish = new Map(); // Map tag to publish, content in topics as 'tag'
+    var refTagToTopics = {};            // Map of Tag to Topic (with ref to other device tag)
+
+    /**
+     * Tag with options 'pubs' for publish and 'subs' for subscription
+     */
 
     /**
      * Connect the mqtt client to broker
      * Emit connection status, Clear the memory Topics value
-     */    
+     */
     this.connect = function () {
         return new Promise(async function (resolve, reject) {
             if (data.property && data.property.address) {
@@ -36,7 +41,7 @@ function MQTTclient(_data, _logger, _events) {
                         options = getConnectionOptions(data.property)
                         options.connectTimeout = 10 * 1000;
                         if (getProperty) {
-                            var result = await getProperty({query: 'security', name: data.id});
+                            var result = await getProperty({ query: 'security', name: data.id });
                             if (result && result.value && result.value !== 'null') {
                                 // property security mode
                                 var property = JSON.parse(result.value);
@@ -95,7 +100,7 @@ function MQTTclient(_data, _logger, _events) {
                 _clearVarsValue();
                 reject();
             }
-        });        
+        });
     }
 
     /**
@@ -124,7 +129,7 @@ function MQTTclient(_data, _logger, _events) {
     /**
      * Take the current Topics value (only changed), emit Topics value
      * Save DAQ value
-     */    
+     */
     this.polling = function () {
         if (_checkWorking(true)) {
             if (client) {
@@ -132,7 +137,6 @@ function MQTTclient(_data, _logger, _events) {
                     var varsValueChanged = _clearVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
-                    _publishValues(varsValue);
 
                     if (this.addDaq) {
                         var current = new Date().getTime();
@@ -163,7 +167,7 @@ function MQTTclient(_data, _logger, _events) {
                 if (!browser || !browser.connected) {
                     let options = getConnectionOptions(data.property);
                     if (getProperty) {
-                        var result = await getProperty({query: 'security', name: data.id});
+                        var result = await getProperty({ query: 'security', name: data.id });
                         if (result && result.value && result.value !== 'null') {
                             // property security mode
                             var property = JSON.parse(result.value);
@@ -176,7 +180,7 @@ function MQTTclient(_data, _logger, _events) {
                     browser.on('connect', function () {
                         resolve('ok');
                     });
-                    browser.on('message', function(topic, msg, pkt) {
+                    browser.on('message', function (topic, msg, pkt) {
                         if (callback) {
                             callback({ topic: topic, msg: msg.toString() });
                         }
@@ -186,11 +190,11 @@ function MQTTclient(_data, _logger, _events) {
                     });
                     client.on("close", function (err) {
                         console.log('mqtt browser closed');
-                    });                    
+                    });
                 } else {
                     resolve('ok');
                 }
-                browser.subscribe(topic, function() {
+                browser.subscribe(topic, function () {
                 });
             } catch (err) {
                 reject('browse-error: ' + err);
@@ -212,8 +216,8 @@ function MQTTclient(_data, _logger, _events) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
         daqInterval = intervalToSave;
     }
-    this.addDaq = null;      
-    
+    this.addDaq = null;
+
     /**
      * Set function to ask property (security)
      */
@@ -222,23 +226,30 @@ function MQTTclient(_data, _logger, _events) {
     }
 
     /**
-     * Load Topics attribute to read with polling
+     * Load Topics attribute and map tags to publish
      */
     this.load = function (_data) {
         varsValue = [];
+        refTagToTopics = {};
         data = JSON.parse(JSON.stringify(_data));
         try {
             var count = Object.keys(data.tags).length;
             // map depending tag ids
             for (var key in data.tags) {
-                if (data.tags[key].options && data.tags[key].options.items) {
-                    data.tags[key].options.items.forEach(item => {
+                if (data.tags[key].options && data.tags[key].options.pubs) {
+                    data.tags[key].options.pubs.forEach(item => {
                         if (item.type === 'tag' && item.value) {
-                            if (!refTopicsToPublish.has(item.value)) {
-                                refTopicsToPublish.set(item.value, null);
+                            // topic with json data with value from other device tags 
+                            if (!memoryTagToPublish.has(item.value)) {
+                                memoryTagToPublish.set(item.value, null);
                                 events.emit('tag-change:subscription', item.value);
                             }
+                            if (!refTagToTopics[item.value]) {
+                                refTagToTopics[item.value] = { value: null, topics: [] };
+                            }
+                            refTagToTopics[item.value].topics.push(data.tags[key]);
                         } else if (item.type === 'value') {
+                            // raw data (not depending from other tag)
                             item.value = '';
                         }
                     });
@@ -268,14 +279,14 @@ function MQTTclient(_data, _logger, _events) {
     }
 
     /**
-     * Set the Topic value, publish to broker
+     * Set the Topic value, publish to broker (coming from frontend)
      */
-    this.setValue = function (sigid, value) {
+    this.setValue = function (tagid, value) {
         if (client && client.connected) {
-            var tag = data.tags[sigid];
+            var tag = data.tags[tagid];
             if (tag) {
                 if (tag.options) {
-                    tag.options.items.forEach(item => {
+                    tag.options.pubs.forEach(item => {
                         if (item.type === 'value') {
                             item.value = value;
                         }
@@ -284,6 +295,7 @@ function MQTTclient(_data, _logger, _events) {
                 if (tag.type === 'raw') {
                     tag['value'] = value;
                 }
+                tag.changed = true;
                 _publishValues([tag]);
             }
         }
@@ -305,7 +317,7 @@ function MQTTclient(_data, _logger, _events) {
             return prop;
         } else {
             return null;
-        }        
+        }
     }
 
     /**
@@ -320,13 +332,23 @@ function MQTTclient(_data, _logger, _events) {
                     if (err) {
                         reject(err);
                     } else {
-                        client.on('message', function(topicAddr, msg, pkt) {   
+                        client.on('message', function (topicAddr, msg, pkt) {
                             if (topicsMap[topicAddr]) {
                                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
                                     var id = topicsMap[topicAddr][i].id;
                                     data.tags[id].value = msg.toString();
                                     data.tags[id].timestamp = new Date().getTime();
                                     data.tags[id].changed = true;
+                                    if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
+                                        try {
+                                            var subitems = JSON.parse(data.tags[id].value);
+                                            if (subitems[data.tags[id].memaddress]) {
+                                                data.tags[id].value = subitems[data.tags[id].memaddress];
+                                            }
+                                        } catch (err) {
+                                            console.error(err);
+                                        }
+                                    }
                                 }
                             }
                         });
@@ -336,17 +358,28 @@ function MQTTclient(_data, _logger, _events) {
             } else {
                 resolve();
             }
-        });   
+        });
     }
 
     /**
      * Create the receiver of change tag value for the dependency in payload
      */
-    var _createRefPublishReceiver = function() {
-        events.on('tag-value:changed', function(event) {
+    var _createRefPublishReceiver = function () {
+        events.on('tag-value:changed', function (event) {
             try {
-                if (refTopicsToPublish.has(event.id)) {
-                    refTopicsToPublish.set(event.id, event.value);
+                if (memoryTagToPublish.has(event.id)) {
+                    // for topic with raw data (not depending from other tag)
+                    var oldValue = memoryTagToPublish.get(event.id);
+                    memoryTagToPublish.set(event.id, event.value);
+                    if (oldValue !== event.value && refTagToTopics[event.id]) {
+                        if (refTagToTopics[event.id].topics.length) {
+                            // for topic with json data with value from other device tags
+                            // set the tag value in memory and publish the topic
+                            for (var i = 0; i < refTagToTopics[event.id].topics.length; i++) {
+                                _publishValues([refTagToTopics[event.id].topics[i]]);
+                            }
+                        }
+                    }
                 }
             } catch (err) {
                 console.error(err);
@@ -379,9 +412,9 @@ function MQTTclient(_data, _logger, _events) {
         _emitValues(varsValue);
     }
 
-    
+
     /**
-     * Return the Topics that have value changed and clear value changed flag of all Topics 
+     * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
      */
     var _clearVarsChanged = function () {
         var result = {};
@@ -405,7 +438,7 @@ function MQTTclient(_data, _logger, _events) {
     }
 
     /**
-     * Emit the http Topics values array { id: <name>, value: <value>, type: <type> }
+     * Emit the mqtt Topics values array { id: <name>, value: <value>, type: <type> }
      * @param {*} values 
      */
     var _emitValues = function (values) {
@@ -438,11 +471,11 @@ function MQTTclient(_data, _logger, _events) {
 
     /**
      * Reset the timeout by browse the Topics, 10 seconds to receive published Topics
-     */    
+     */
     var _resetBrowserTimeout = function () {
         if (timeoutBrowser) {
             clearTimeout(timeoutBrowser);
-        }        
+        }
         timeoutBrowser = setTimeout(() => {
             if (browser && browser.connected) {
                 browser.end(true);
@@ -452,22 +485,24 @@ function MQTTclient(_data, _logger, _events) {
 
     /**
      * Publish the tags, called from polling and setValues (input in frontend)
+     * to publish are only tags from other devices or topics created in mqtt device (by publish section)
      * @param {*} tags 
      */
     var _publishValues = function (tags) {
         Object.keys(tags).forEach(key => {
             try {
-                if (tags[key].options && tags[key].options.items && tags[key].options.items.length) {
+                // publish only tags with pubs and value changed
+                if (tags[key].options && tags[key].options.pubs && tags[key].options.pubs.length) {
                     var topicTopuplish = {};
-                    tags[key].options.items.forEach(item => {
+                    tags[key].options.pubs.forEach(item => {
                         var value = '';
-                        if (item.type === 'tag' && item.value) {
-                            if (refTopicsToPublish.has(item.value)) {
-                                value = refTopicsToPublish.get(item.value);
+                        if (item.type === 'tag' && item.value) {        // tag from other devices
+                            if (memoryTagToPublish.has(item.value)) {
+                                value = memoryTagToPublish.get(item.value);
                             }
-                        } else if (item.type === 'timestamp') {
+                        } else if (item.type === 'timestamp') {         // timestamp to add in tag with value
                             value = new Date().toISOString();
-                        } else if (item.type === 'value') {
+                        } else if (item.type === 'value') {             // tag created in mqtt device as value
                             value = item.value;
                         } else {    // item.type === 'static'
                             value = item.value;
@@ -477,7 +512,7 @@ function MQTTclient(_data, _logger, _events) {
                         } else {    // payloand with row data, item.key is ''
                             if (topicTopuplish[0]) {
                                 value = topicTopuplish[0] + ';' + value;
-                            } 
+                            }
                             topicTopuplish[0] = value;
                         }
                     });
@@ -489,6 +524,7 @@ function MQTTclient(_data, _logger, _events) {
                     }
                 } else if (tags[key].value) {   // whitout payload
                     client.publish(tags[key].address, tags[key].value.toString());
+                    tags[key].value = null;
                 }
             } catch (err) {
                 console.error(err);
@@ -501,7 +537,7 @@ function MQTTclient(_data, _logger, _events) {
  * Return connection option from device property
  * @param {*} property 
  */
-function getConnectionOptions (property) {
+function getConnectionOptions(property) {
     return {
         url: property.address,
         username: property.username,
@@ -509,13 +545,13 @@ function getConnectionOptions (property) {
         keepalive: 60,
         connectTimeout: 1 * 1000,
         reconnectPeriod: 0
-    //   tls: options.encryption,
-    //   clientId: options.clientId,
-    //   certValidation: options.certValidation,
-    //   subscriptions: options.subscriptions,
-    //   certificateAuthority: options.selfSignedCertificate ? options.selfSignedCertificate.data : undefined,
-    //   clientCertificate: options.clientCertificate ? options.clientCertificate.data : undefined,
-    //   clientKey: options.clientKey ? options.clientKey.data : undefined,
+        //   tls: options.encryption,
+        //   clientId: options.clientId,
+        //   certValidation: options.certValidation,
+        //   subscriptions: options.subscriptions,
+        //   certificateAuthority: options.selfSignedCertificate ? options.selfSignedCertificate.data : undefined,
+        //   clientCertificate: options.clientCertificate ? options.clientCertificate.data : undefined,
+        //   clientKey: options.clientKey ? options.clientKey.data : undefined,
     }
 }
 

@@ -28,7 +28,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
     discoveryError = '';
     discoveryWait = false;
     discoveryTimer = null;
-    selectedTopic = { key: '', value: null };
+    selectedTopic = { key: '', value: null, subs: null };
     topicToAdd = {};
     invokeSubscribe = null;
 
@@ -65,7 +65,8 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
                         checked = true;
                         enabled = false;
                     }
-                    this.topicsList[value.topic] = { name: value.topic, value: value.msg, checked: checked, enabled: enabled };
+                    // key => value
+                    this.topicsList[value.topic] = { name: value.topic, content: value.msg, checked: checked, enabled: enabled };
                 }
             }
         });
@@ -83,9 +84,8 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
                     this.grptabs.selectedIndex = 0;
                     this.tabpub.disabled = true;
                     this.topicSelectedSubType = tag.type;
-                    // this.selectedTopic.value
                     this.editMode = true;
-                    this.selectTopic({ key: tag.address, value: tag.options.subs });
+                    this.selectTopic({ key: tag.address, value: { content: tag.value }, subs: tag.options.subs });
                 } else {
                     // publish topic 
                     this.grptabs.selectedIndex = 1;
@@ -93,9 +93,9 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
                     this.publishTopicPath = tag.address;
                     this.publishTopicName = tag.name;
                     this.topicSelectedPubType = tag.type;
-                    if (tag.options.items) {
+                    if (tag.options.pubs) {
                         // sure publish
-                        this.pubPayload.items = tag.options.items;
+                        this.pubPayload.items = tag.options.pubs;
                     }
                 }
             }
@@ -154,13 +154,17 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
 
     private loadSelectedSubTopic() {
         this.topicContent =  [];
-        if (this.topicSelectedSubType === 'json') {//Utils.isJson(this.selectedTopic.value.value)) {
-            let obj = JSON.parse(this.selectedTopic.value.value);
+        if (this.topicSelectedSubType === 'json') {
+            let obj = JSON.parse(this.selectedTopic.value.content);
             Object.keys(obj).forEach(key => {
-                this.topicContent.push({ key: key, value: obj[key], checked: true, type: this.topicSelectedSubType });
+                let checked = (this.selectedTopic.subs) ? false : true;
+                if (this.selectedTopic.subs && this.selectedTopic.subs.indexOf(key) !== -1) {
+                    checked = true;
+                }
+                this.topicContent.push({ key: key, value: obj[key], checked: checked, type: this.topicSelectedSubType });
             });
-        } else if (this.selectedTopic.value) {
-            this.topicContent =  [{ key: this.selectedTopic.key, value: this.selectedTopic.value.value, checked: true, type: this.topicSelectedSubType }];
+        } else if (this.selectedTopic.value && this.selectedTopic.value.content) {
+            this.topicContent =  [{ key: this.selectedTopic.key, value: this.selectedTopic.value.content, checked: true, type: this.topicSelectedSubType }];
         }
     }
 
@@ -177,27 +181,49 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     isSubscriptionValid() {
-        return (this.topicContent && this.topicContent.length) ? true : false;
+        if (this.topicContent && this.topicContent.length) {
+            let onechecked = false;
+            for (let i = 0; i < this.topicContent.length; i++) {
+                if (this.topicContent[i].checked) {
+                    onechecked = true;
+                }
+            }
+            return onechecked;
+        }
+        return false;
     }
 
     onAddToSubscribe() {
         if (this.topicContent && this.topicContent.length && this.invokeSubscribe) {
-            let tag = new Tag(Utils.getGUID(TAG_PREFIX));
-            if (this.data.topic) {
-                tag = new Tag(this.data.topic.id);
+            // let items = [];
+            for (let i = 0; i < this.topicContent.length; i++) {
+                if (this.topicContent[i].checked) {
+                    // items.push(this.topicContent[i].key);
+                    let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                    if (this.data.topic) {
+                        tag = new Tag(this.data.topic.id);
+                    }
+                    tag.type = this.topicSelectedSubType;
+                    tag.address = this.selectedTopic.key;
+                    tag.memaddress = this.topicContent[i].key;
+                    tag.options = { subs: this.topicContent.map((tcnt) => { return tcnt.key }) };
+                    tag.name = this.selectedTopic.key;
+                    if (tag.type === 'json') {
+                        tag.name += '[' + tag.memaddress + ']';
+                    }
+                    this.invokeSubscribe([tag]);
+                }
             }
-            tag.name = this.selectedTopic.key;
-            tag.type = this.topicSelectedSubType;
-            tag.address = this.selectedTopic.key;
-            tag.options = { subs: this.selectedTopic.value };
-            this.invokeSubscribe([tag]);
         }
     }
     //#endregion
 
     //#region  Publish
-    isPublishTypeToEnable() {
-        return (this.pubPayload.items && this.pubPayload.items.length) ? true : false;
+    isPublishTypeToEnable(type: string) {
+        if (type === 'raw' || (this.pubPayload.items && this.pubPayload.items.length)) {
+            return true;
+        }
+        return false;
     }
 
     onAddToPuplish() {
@@ -209,7 +235,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
             tag.name = this.publishTopicName;
             tag.address = this.publishTopicPath;
             tag.type = this.topicSelectedPubType;
-            tag.options = this.pubPayload;
+            tag.options = { pubs: this.pubPayload.items };
             this.invokePuplish(tag);
         }
     }
