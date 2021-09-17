@@ -556,7 +556,7 @@ function _filterProjectGroups(groups) {
                         var enabled = (mask) ? mask & groups : 1;
                         if (!show) {
                             var position = view.svgcontent.indexOf(item.id);
-                            if (position) {
+                            if (position >= 0) {
                                 position += item.id.length + 1;
                                 var hidetext = ' visibility="hidden" ';
                                 view.svgcontent = view.svgcontent.slice(0, position) + hidetext + view.svgcontent.slice(position);
