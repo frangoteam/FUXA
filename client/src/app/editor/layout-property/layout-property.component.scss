@@ -42,6 +42,10 @@
 
 .header-login {
     float: right;
+    line-height: 46px;
+    border-left-width: 1px;
+    border-left-style: solid;
+    padding-left: 10px;
 }
 
 .header-button {  
@@ -51,9 +55,8 @@
     text-align: right;
     margin-right: 10px;
     padding-right: 50px;
-    border-right-width: 1px;
-    border-right-style: solid;
 }
+
 .header-button mat-icon {
     font-size: 28px;
     width: 28px;

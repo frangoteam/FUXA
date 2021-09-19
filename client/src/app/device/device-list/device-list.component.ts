@@ -291,16 +291,6 @@ export class DeviceListComponent implements OnInit {
                         delete result.device.tags[oldtag];
                         this.checkToAdd(tag, result.device);
                     }
-                    if (result.unit) {
-                        let utag = new Tag(Utils.getGUID(TAG_PREFIX));
-                        utag.address = result.unit;
-                        this.checkToAddAddress(utag, result.device);
-                    }
-                    if (result.digits) {
-                        let dtag = new Tag(Utils.getGUID(TAG_PREFIX));
-                        dtag.address = result.digits;
-                        this.checkToAddAddress(dtag, result.device);
-                    }
                     this.projectService.setDeviceTags(this.deviceSelected);
                 }
             }
