@@ -519,7 +519,7 @@ function MQTTclient(_data, _logger, _events) {
                     // payloand
                     if (tags[key].type === 'json') {
                         client.publish(tags[key].address, JSON.stringify(topicTopuplish));
-                    } else { // payloand with row data
+                    } else if (topicTopuplish[0]) { // payloand with row data
                         client.publish(tags[key].address, Object.values(topicTopuplish)[0].toString());
                     }
                 } else if (tags[key].value) {   // whitout payload

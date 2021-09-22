@@ -71,7 +71,7 @@ export class HmiService {
                 if (device.type === DeviceType.internal) {
                     this.setSignalValue(this.variables[sigId]);
                 } else {
-                    this.socket.emit('device-values', { cmd: 'set', var: this.variables[sigId] });
+                    this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId] });
                 }
             } else if (this.bridge) {
                 this.bridge.setDeviceValue(this.variables[sigId]);
@@ -126,7 +126,7 @@ export class HmiService {
         if (!this.socket) {
             this.socket = io(this.endPointConfig);
             // devicse status
-            this.socket.on('device-status', (message) => {
+            this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
                 this.onDeviceChanged.emit(message);
                 if (message.status === 'connect-error') {
                     let name = message.id;
@@ -142,11 +142,11 @@ export class HmiService {
                 }
             });
             // device property
-            this.socket.on('device-property', (message) => {
+            this.socket.on(IoEventTypes.DEVICE_PROPERTY, (message) => {
                 this.onDeviceProperty.emit(message);
             });
             // devices values
-            this.socket.on('device-values', (message) => {
+            this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
                 for (let idx = 0; idx < message.values.length; idx++) {
                     let varid = message.values[idx].id;
                     if (!this.variables[varid]) {
@@ -157,25 +157,25 @@ export class HmiService {
                 }
             });
             // device browse
-            this.socket.on('device-browse', (message) => {
+            this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
                 this.onDeviceBrowse.emit(message);
             });
             // device node attribute
-            this.socket.on('device-node-attribute', (message) => {
+            this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
                 this.onDeviceNodeAttribute.emit(message);
             });
             // daq values
-            this.socket.on('daq-result', (message) => {
+            this.socket.on(IoEventTypes.DAQ_RESULT, (message) => {
                 this.onDaqResult.emit(message);
             });
             // alarms status
-            this.socket.on('alarms-status', (alarmsstatus) => {
+            this.socket.on(IoEventTypes.ALARMS_STATUS, (alarmsstatus) => {
                 this.onAlarmsStatus.emit(alarmsstatus);
             });
-            this.socket.on('host-interfaces', (message) => {
+            this.socket.on(IoEventTypes.HOST_INTERFACES, (message) => {
                 this.onHostInterfaces.emit(message);
             });
-            this.socket.on('device-webapi-request', (message) => {
+            this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
                 this.onDeviceWebApiRequest.emit(message);
             });
 
@@ -199,7 +199,7 @@ export class HmiService {
     public askDeviceProperty(endpoint, type) {
         if (this.socket) {
             let msg = { endpoint: endpoint, type: type };
-            this.socket.emit('device-property', msg);
+            this.socket.emit(IoEventTypes.DEVICE_PROPERTY, msg);
         }
     }
 
@@ -209,7 +209,7 @@ export class HmiService {
     public askWebApiProperty(property) {
         if (this.socket) {
             let msg = { property: property };
-            this.socket.emit('device-webapi-request', msg);
+            this.socket.emit(IoEventTypes.DEVICE_WEBAPI_REQUEST, msg);
         }
     }
 
@@ -218,7 +218,7 @@ export class HmiService {
      */
     public askHostInterface() {
         if (this.socket) {
-            this.socket.emit('host-interfaces', 'get');
+            this.socket.emit(IoEventTypes.HOST_INTERFACES, 'get');
         }
     }
 
@@ -227,7 +227,7 @@ export class HmiService {
      */
     public askDeviceValues() {
         if (this.socket) {
-            this.socket.emit('device-values', 'get');
+            this.socket.emit(IoEventTypes.DEVICE_VALUES, 'get');
         } else if (this.bridge) {
             this.bridge.getDeviceValues(null);
         }
@@ -238,7 +238,7 @@ export class HmiService {
      */
     public askAlarmsStatus() {
         if (this.socket) {
-            this.socket.emit('alarms-status', 'get');
+            this.socket.emit(IoEventTypes.ALARMS_STATUS, 'get');
         }
     }
 
@@ -257,7 +257,7 @@ export class HmiService {
     public askDeviceBrowse(deviceId: string, node: any) {
         if (this.socket) {
             let msg = { device: deviceId, node: node };
-            this.socket.emit('device-browse', msg);
+            this.socket.emit(IoEventTypes.DEVICE_BROWSE, msg);
         }
     }
 
@@ -267,13 +267,13 @@ export class HmiService {
     public askNodeAttributes(deviceId: string, node: any) {
         if (this.socket) {
             let msg = { device: deviceId, node: node };
-            this.socket.emit('device-node-attribute', msg);
+            this.socket.emit(IoEventTypes.DEVICE_NODE_ATTRIBUTE, msg);
         }
     }
 
     public queryDaqValues(msg: DaqQuery) {
         if (this.socket) {
-            this.socket.emit('daq-query', msg);
+            this.socket.emit(IoEventTypes.DAQ_QUERY, msg);
         }
     }
 
@@ -467,4 +467,18 @@ class ViewSignalGaugeMap {
         });
         return result;
     }
+}
+
+export enum IoEventTypes {
+    DEVICE_STATUS = 'device-status',
+    DEVICE_PROPERTY = 'device-property',
+    DEVICE_VALUES = 'device-values',
+    DEVICE_BROWSE = 'device-browse',
+    DEVICE_NODE_ATTRIBUTE = 'device-node-attribute',
+    DEVICE_WEBAPI_REQUEST = 'device-webapi-request',
+    DAQ_QUERY = 'daq-query',
+    DAQ_RESULT = 'daq-result',
+    DAQ_ERROR = 'daq-error',
+    ALARMS_STATUS = 'alarms-status',
+    HOST_INTERFACES = 'host-interfaces'
 }

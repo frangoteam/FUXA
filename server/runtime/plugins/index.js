@@ -7,7 +7,7 @@ var fs = require('fs');
 const path = require('path');
 var device = require('../devices/device');
 const PluginManager = require('live-plugin-manager');
-var events = require("../events");
+var events = require("../events").create();
 
 var settings;                   // Application settings
 var logger;                     // Application logger

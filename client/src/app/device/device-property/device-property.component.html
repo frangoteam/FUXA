@@ -60,7 +60,7 @@
                                     <mat-radio-button style="display:block;padding-left:10px;padding-bottom:2px;font-size: 13px;" *ngFor="let sec of securityMode;"
                                         [value]="sec.value">{{sec.text}}</mat-radio-button>
                                 </mat-radio-group>
-                                <div style="display: block;margin: 5px 10px 0px 10px;">
+                                <div *ngIf="!propertyError" style="display: block;margin: 5px 10px 0px 10px;">
                                     <div class="my-form-field">
                                         <span>{{'general.username' | translate}}</span>
                                         <input [(ngModel)]="security.username" style="width: 315px;background-color:var(--formInputExtBackground)" type="text">
@@ -70,6 +70,9 @@
                                         <input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 315px;background-color:var(--formInputExtBackground)">
                                         <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
                                     </div>
+                                </div>
+                                <div *ngIf="propertyError" style="display: block;margin: 5px 10px 0px 10px;width: 315px; color: red;">
+                                    <span>{{propertyError}}</span>
                                 </div>
                             </div>
                         </mat-expansion-panel>
