@@ -98,8 +98,8 @@ export class FlexVariableComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.variableId = result.variableId;
+                this.onChanged();
             }
-            this.onChanged();
         });
     }
 

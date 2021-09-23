@@ -7,7 +7,6 @@ import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { t } from '@angular/core/src/render3';
 
 @Component({
     selector: 'app-tag-property',

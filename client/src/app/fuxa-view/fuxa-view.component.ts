@@ -438,7 +438,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     private getView(viewref: string): View {
         let view: View;
-        for (let i = 0; this.hmi.views.length; i++) {
+        for (let i = 0; i < this.hmi.views.length; i++) {
             if (this.hmi.views[i] && this.hmi.views[i].id === viewref) {
                 view = this.hmi.views[i];
                 break;
