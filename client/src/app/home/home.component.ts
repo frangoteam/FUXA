@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
                 this.loadHmi();
             }, error => {
-                console.log('Error loadHMI');
+                console.error('Error loadHMI');
             });
             this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
                 this.setAlarmsStatus(event);
@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.changeDetector.detectChanges();
         }
         catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -131,7 +131,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
         } else {
             this.router.navigate([event]).then(data => {
-                console.log('Route ' + event + ' exists, redirection is done');
             }).catch(err => {
                 console.error('Route ' + event + '  not found, redirection stopped with no error raised');
                 // try iframe link

@@ -44,12 +44,12 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
                 this.loadHmi();
             }, error => {
-                console.log('Error loadHMI');
+                console.error('Error loadHMI');
             });
             this.changeDetector.detectChanges();
         }
         catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

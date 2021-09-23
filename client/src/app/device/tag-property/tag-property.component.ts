@@ -230,7 +230,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             node.expanded = true;
             node.class = NodeType.Object;
             this.treetable.addNode(node, parent, true);
-            // console.log(`o: ${nodeId} ${nodeName}`);
             for(var n in nodes) {
                 this.addTreeNodes(nodes[n], n, node);
                 if (parent) {
@@ -252,8 +251,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     node.parent.parent.todefine.value = this.data.device.tags[nodeId].options.selval;
                 }  
             } else if (selected) {
-
-                // console.log(`f: ${nodeId} ${nodeName}`);
                 enabled = false;
             }
             this.treetable.addNode(node, parent, enabled);
@@ -264,13 +261,11 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         let result = [];
         for (let key in nodes) {
             let n: Node = nodes[key];
-            // console.log(`id:${n.id} (childs:${n.childs.length})`);
             if (n.class === NodeType.Array && n.todefine && n.todefine.id && n.todefine.value) {
                 let arrayResult = this.getSelectedTreeNodes(n.childs, n.todefine);
                 for (let ak in arrayResult) {
                     result.push(arrayResult[ak]);
                 }
-                // console.log(`id:${n.id} childs:${n.childs.length}`);
             } else if (n.class === NodeType.Object && defined && defined.id && defined.value) {
                 // search defined attributes
                 let childId = null, childValue = null;
@@ -293,7 +288,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     objNode.enabled = n.enabled;
                     result.push(objNode);
                 }
-                // console.log(`id:${n.id} childs:${n.childs.length}`);
             } else if (n.class === NodeType.Variable && n.checked) {
                 // let objNode = new Node(n.id.split('>').join(''), n.text);
                 let objNode = new Node(n.id, n.text);

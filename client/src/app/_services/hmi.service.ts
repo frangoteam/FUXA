@@ -94,7 +94,6 @@ export class HmiService {
      * @returns 
      */
     initClient(bridge?: any) {
-        console.log('FUXA init client bridge: ', (bridge) ? true : false);
         if (!bridge) return false;
         this.bridge = bridge;
         if (this.bridge) {
@@ -106,7 +105,6 @@ export class HmiService {
     }
 
     private onDeviceValues(tags: Variable[]) {
-        // console.log('FUXA onDeviceValues: ', tags);
         for (let idx = 0; idx < tags.length; idx++) {
             let varid = tags[idx].id;
             if (!this.variables[varid]) {

@@ -48,7 +48,7 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
                     this.loadHmi();
                 }, error => {
-                    console.log('Error loadHMI');
+                    console.error('Error loadHMI');
                 });
             } else {
                 this.loadHmi();
@@ -56,7 +56,7 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
             this.changeDetector.detectChanges();
         }
         catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

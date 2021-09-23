@@ -33,7 +33,7 @@ v
                     observer.next();
                     this.onPluginsChanged.emit();
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                     observer.error(err);
                 });                
             } else {
@@ -50,7 +50,7 @@ v
                     observer.next();
                     this.onPluginsChanged.emit();
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                     observer.error(err);
                 });                
             } else {
@@ -58,56 +58,4 @@ v
             }
         });
     }
-
-    // getUsers(user: any): Observable<any> {
-    //     let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-    //     let params = user;
-    //     return this.http.get<any>(this.endPointConfig + '/api/users', { headers: header, params: params });
-    // }
-
-    // setUser(user: User) {
-    //     return new Observable((observer) => {
-    //         if (environment.serverEnabled) {
-    //             let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-    //             this.http.post<any>(this.endPointConfig + '/api/users', { headers: header, params: user }).subscribe(result => {
-    //                 observer.next();
-    //             }, err => {
-    //                 console.log(err);
-    //                 this.notifySaveError();
-    //                 observer.error(err);
-    //             });                
-    //         } else {
-    //             observer.next();
-    //         }
-    //     });
-    // }
-
-    // removeUser(user: User) {
-    //     return new Observable((observer) => {
-    //         if (environment.serverEnabled) {
-    //             let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-    //             this.http.delete<any>(this.endPointConfig + '/api/users', { headers: header, params: {param: user.username} }).subscribe(result => {
-    //                 observer.next();
-    //             }, err => {
-    //                 console.log(err);
-    //                 this.notifySaveError();
-    //                 observer.error(err);
-    //             });                
-    //         } else {
-    //             observer.next();
-    //         }
-    //     });
-    // }
-
-    //#region Notify
-    // private notifySaveError() {
-    //     let msg = '';
-    //     this.translateService.get('msg.users-save-error').subscribe((txt: string) => { msg = txt });
-    //     this.toastr.error(msg, '', {
-    //         timeOut: 3000,
-    //         closeButton: true,
-    //         disableTimeOut: true
-    //     });
-    // }
-    //#endregion
 }

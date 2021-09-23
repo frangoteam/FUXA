@@ -56,7 +56,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             this.darkTheme = (theme !== ThemeService.ThemeType.Default);
             this.themeService.setTheme(this.projectService.getLayoutTheme());
         }, error => {
-            console.log('Error loadHMI');
+            console.error('Error loadHMI');
         });
     }
 

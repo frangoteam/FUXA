@@ -106,7 +106,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onAckAlarm(alarm: any) {
         this.hmiService.setAlarmAck(alarm.name).subscribe(result => {
         }, error => {
-            console.log('Error setAlarmAck');
+            console.error('Error setAlarmAck');
         });
     }
 

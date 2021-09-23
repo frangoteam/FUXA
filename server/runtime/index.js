@@ -164,7 +164,6 @@ function init(_io, _api, _settings, _log, eventsMain) {
         socket.on(Events.IoEventTypes.DAQ_QUERY, (msg) => {
             try {
                 if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
-                    console.log('>' + new Date(msg.from).toString() + ' ' + new Date(msg.to).toString());
                     var dbfncs = [];
                     for (let i = 0; i < msg.sids.length; i++) {
                         dbfncs.push(daqstorage.getNodeValues(msg.sids[i], msg.from, msg.to));

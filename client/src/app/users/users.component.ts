@@ -66,7 +66,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 			});
 			this.bindToTable(this.users);
 		}, err => {
-			console.log('get Users err: ' + err);
+			console.error('get Users err: ' + err);
 		});
 	}
 

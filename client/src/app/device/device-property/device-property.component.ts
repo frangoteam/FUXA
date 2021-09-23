@@ -155,7 +155,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 		});
 		this.subscriptionDeviceWebApiRequest = this.hmiService.onDeviceWebApiRequest.subscribe(res => {
-			console.log(res);
 			if (res.result) {
 				this.result = JSON.stringify(res.result);
 			}

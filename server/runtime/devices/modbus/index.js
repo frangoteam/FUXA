@@ -151,7 +151,7 @@ function MODBUSclient(_data, _logger, _events) {
                         }
                     }
                 } else {
-        //             // console.log('then error');
+                    // console.error('then error');
                 }
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');                    
@@ -411,7 +411,7 @@ function MODBUSclient(_data, _logger, _events) {
                                 }
                                 v.value = value;    
                             } catch (err) {
-                                console.log(err);
+                                console.error(err);
                             }
                         });
                     }
@@ -435,7 +435,7 @@ function MODBUSclient(_data, _logger, _events) {
                     }
                     resolve(changed);
                 }, reason => {
-                    console.log(reason);
+                    console.error(reason);
                     reject(reason);
                 });
             } else {
@@ -456,7 +456,7 @@ function MODBUSclient(_data, _logger, _events) {
                 client.writeCoil(start, value).then(res => {
                     resolve();
                 }, reason => {
-                    console.log(reason);
+                    console.error(reason);
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.DigitalInputs) {           // Digital Inputs (Read 100001-165536)
@@ -467,7 +467,7 @@ function MODBUSclient(_data, _logger, _events) {
                 client.writeRegisters(start, value).then(res => {
                     resolve();
                 }, reason => {
-                    console.log(reason);
+                    console.error(reason);
                     reject(reason);
                 });
             } else {
@@ -599,7 +599,7 @@ function MODBUSclient(_data, _logger, _events) {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
         return value;
     }

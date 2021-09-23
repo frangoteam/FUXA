@@ -189,7 +189,7 @@ function MQTTclient(_data, _logger, _events) {
                         reject(err);
                     });
                     client.on("close", function (err) {
-                        console.log('mqtt browser closed');
+                        // console.info('mqtt browser closed');
                     });
                 } else {
                     resolve('ok');
