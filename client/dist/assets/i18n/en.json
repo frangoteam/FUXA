@@ -73,6 +73,9 @@
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",
 
+    "dlg.tagname-title": "Tag name",
+    "dlg.tagname-name": "Name",
+
     "dlg.linkproperty-title": "Make Hyperlink",
     "dlg.linkproperty-url": "Hyperlink URL",
 
@@ -486,6 +489,8 @@
     "device.topic-publish": "Publish",
     "device.topic-subscribe": "Subscribe",
     "device.topic-subscription-content": "Content",
+    "device.topic-subscription-name": "Name",
+    "device.topic-subscription-address": "Address",
     "device.topic-publish-add-item": "Add attribute to payload",
     "device.topic-publish-key": "Key",
     "device.topic-publish-type": "Type",
@@ -497,7 +502,10 @@
     "device.topic-type-timestamp": "Timestamp",
     "device.topic-type-value": "Value (of Topic)",
     "device.topic-type-static": "Static",
-
+    "device.topic-name-exist": "The Topic name '{{value}}' already exist",
+    "device.topic-subs-address-exist": "The Topic to subscribe with address '{{value}}' already exist",
+    "device.topic-pubs-address-exist": "The Topic to publish with address '{{value}}' already exist",
+    
     "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",
