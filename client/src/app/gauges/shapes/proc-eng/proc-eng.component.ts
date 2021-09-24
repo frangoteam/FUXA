@@ -87,7 +87,7 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

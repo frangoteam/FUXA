@@ -29,7 +29,6 @@ export class ResClientService implements ResourceStorageService {
     }
 
     private bindBridge(bridge?: any): boolean {
-        console.log('FUXA bindBridge: ', (bridge) ? true : false);
         if (!bridge) return false;
         this.bridge = bridge;
         if (this.bridge) {
@@ -48,7 +47,6 @@ export class ResClientService implements ResourceStorageService {
             if (this.bridge) {
                 let sprj = this.bridge.loadProject();
                 let prj = ResourceStorageService.defileProject(sprj);
-                console.log('FUXA bridge.loadProject (getStorageProject): ', prj);
                 observer.next(prj);
             } else {
                 let prj = localStorage.getItem(this.getAppId());
@@ -67,7 +65,6 @@ export class ResClientService implements ResourceStorageService {
                 observer.next(); 
             } else if (this.bridge) {
                 let sprj = ResourceStorageService.sanitizeProject(prj);
-                console.log('FUXA bridge.saveProject (setServerProject): ', sprj);
                 if (this.bridge.saveProject(sprj, true)) {
                     observer.next(); 
                 } else {
@@ -86,7 +83,6 @@ export class ResClientService implements ResourceStorageService {
                 observer.next(); 
             } else if (this.bridge) {
                 let sprj = ResourceStorageService.sanitizeProject(prj);
-                console.log('FUXA bridge.saveProject (setServerProjectData): ', sprj);
                 if (this.bridge.saveProject(sprj, false)) {
                     // if (this.isDataCmdForDevice(cmd)) {
                     //     let sdevice = ResourceStorageService.sanitizeDevice(data);

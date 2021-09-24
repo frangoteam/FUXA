@@ -32,7 +32,6 @@ module.exports = {
          * Sign In with User credential
          */
         authApp.post('/api/signin', function (req, res, next) {
-            console.log(req.body.params)
             runtime.users.findOne(req.body).then(function (userInfo) {
                 if (userInfo && userInfo.length && userInfo[0].password) {
                     if (bcrypt.compareSync(req.body.password, userInfo[0].password)) {

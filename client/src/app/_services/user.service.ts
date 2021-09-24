@@ -32,7 +32,7 @@ export class UserService {
                 this.http.post<any>(this.endPointConfig + '/api/users', { headers: header, params: user }).subscribe(result => {
                     observer.next();
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                     this.notifySaveError();
                     observer.error(err);
                 });                
@@ -49,7 +49,7 @@ export class UserService {
                 this.http.delete<any>(this.endPointConfig + '/api/users', { headers: header, params: {param: user.username} }).subscribe(result => {
                     observer.next();
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                     this.notifySaveError();
                     observer.error(err);
                 });                

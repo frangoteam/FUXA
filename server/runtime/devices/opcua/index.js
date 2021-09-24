@@ -195,7 +195,6 @@ function OpcUAclient(_data, _logger, _events) {
                     if (!err) {
                         let opcNodes = [];
                         browseResult.references.forEach(function (reference) {
-                            // console.log(reference.browseName.toString());
                             let node = new OpcNode(reference.browseName.toString());
                             if (reference.displayName) {
                                 node.name = reference.displayName.text;
@@ -242,7 +241,6 @@ function OpcUAclient(_data, _logger, _events) {
                     if (response.results && response.results[0]) {
                         let browseResult = response.results[0];
                         browseResult.references.forEach(function (reference) {
-                            // console.log(reference.browseName.toString());
                             let node = new OpcNode(reference.browseName.toString());
                             if (reference.displayName) {
                                 node.name = reference.displayName.text;
@@ -397,7 +395,6 @@ function OpcUAclient(_data, _logger, _events) {
      */
     this.setValue = function (sigid, value) {
         if (the_session && data.tags[sigid]) {
-            console.log(sigid);
             let opctype = _toDataType(data.tags[sigid].type);
             let valtosend = _toValue(opctype, value);
             var nodesToWrite = [

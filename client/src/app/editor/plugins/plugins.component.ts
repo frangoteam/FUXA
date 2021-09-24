@@ -38,7 +38,7 @@ export class PluginsComponent implements OnInit {
         this.pluginService.getPlugins().subscribe(plugins => {
             this.plugins = plugins;
         }, error => {
-            console.log('Error getPlugin');
+            console.error('Error getPlugin');
         });
     }
 

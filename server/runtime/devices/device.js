@@ -10,6 +10,7 @@ var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var INMATIONclient = require('./inmation');
+// var TEMPLATEclient = require('./template');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -65,6 +66,12 @@ function Device(data, runtime) {
         }
         comm = INMATIONclient.create(data, logger, events, manager);     
     }
+    // else if (data.type === DeviceEnum.Template) {
+    //     if (!TEMPLATEclient) {
+    //         return null;
+    //     }
+    //     comm = TEMPLATEclient.create(data, logger, events, manager);        
+    // }
     if (!comm) {
         return null;
     }
@@ -357,6 +364,7 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     inmation: 'inmation'
+    // Template: 'template'
 }
 
 /**

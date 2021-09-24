@@ -116,7 +116,7 @@ export class GaugeBaseComponent implements OnInit {
                 if (dom) gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color };
                 else gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke') };
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
             gaugeStatus.actionRef.timer = setInterval(() => {
                 blinkStatus = (blinkStatus) ? false : true;
@@ -139,7 +139,7 @@ export class GaugeBaseComponent implements OnInit {
                         }
                     }
                 } catch (err) {
-                    console.log(err);
+                    console.error(err);
                 }
             }, options.interval);
         } else if (!toEnable) {
@@ -159,7 +159,7 @@ export class GaugeBaseComponent implements OnInit {
                     }
                 }
             } catch (err) { 
-                console.log(err);
+                console.error(err);
             }
         }
     }

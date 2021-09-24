@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
 				this.checkSettings();
 			}, error => {
-				console.log('Error loadHMI');
+				console.error('Error loadHMI');
 			});
 			// define user groups text
 			this.translateService.get('general.usergroups').subscribe((txt: string) => {
@@ -59,7 +59,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 		}
 		catch (err) {
-			console.log(err);
+			console.error(err);
 		}
 	}
 

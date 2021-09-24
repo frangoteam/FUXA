@@ -27,7 +27,6 @@ export class ResDemoService implements ResourceStorageService {
             let prj = localStorage.getItem(this.getAppId());
             if (prj) {
                 observer.next(JSON.parse(prj));
-                console.log('get localStorage');
             } else {
                 // try root path
                 this.getDemoProject().subscribe(demo => {

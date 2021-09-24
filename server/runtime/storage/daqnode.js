@@ -553,7 +553,7 @@ function DaqNode(_settings, _log, _id) {
             var sql = "SELECT dt FROM data ORDER BY dt DESC LIMIT 1";
             db.get(sql, [], function (err, row) {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                     reject(err);
                 } else {
                     resolve(row);
@@ -582,7 +582,7 @@ function DaqNode(_settings, _log, _id) {
             var sql = "SELECT dt, value FROM data WHERE id = ? AND dt BETWEEN ? and ? ORDER BY dt ASC";
             db.all(sql, [id, fromts, tots], function (err, rows) {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                     reject(err);
                 } else {
                     resolve(rows);

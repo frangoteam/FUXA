@@ -75,7 +75,7 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

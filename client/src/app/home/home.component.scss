@@ -39,6 +39,15 @@
     text-align: right;
     line-height: 46px
 }
+
+.header-login {
+    float: right; 
+    line-height: 46px;
+    border-left-width: 1px;
+    border-left-style: solid;
+    padding-left: 10px;
+}
+
 .header-button {  
     float: right;
     width: 30%;
@@ -46,9 +55,8 @@
     text-align: right;
     margin-right: 10px;
     padding-right: 50px;
-    border-right-width: 1px;
-    border-right-style: solid;
 }
+
 .header-button mat-icon {
     font-size: 28px;
     width: 28px;

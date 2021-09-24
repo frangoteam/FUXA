@@ -65,17 +65,32 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
                 let g = svgele.node.children[0];
                 let val: any = parseFloat(sig.value);
                 let isString = false;
-                if (Number.isNaN(val)) {
-                    // maybe boolean
-                    val = Number(sig.value);
-                    // maybe string
-                    if (Number.isNaN(val)) {
+                switch(typeof(sig.value)){
+                    case "undefined":
+                        break;
+                    case "boolean":
+                        val = Number(sig.value);
+                        break;
+                    case "number":
+                        val = parseFloat(val.toFixed(5));
+                        break;
+                    case "string":
                         val = sig.value;
                         isString = true;
-                    }
-                } else {
-                    val = parseFloat(val.toFixed(5));
+                        break;
+                    default: break;
                 }
+                // if (Number.isNaN(val)) {
+                //     // maybe boolean
+                //     val = Number(sig.value);
+                //     // maybe string
+                //     if (Number.isNaN(val)) {
+                //         val = sig.value;
+                //         isString = true;
+                //     }
+                // } else {
+                //     val = parseFloat(val.toFixed(5));
+                // }
                 if (ga.property) {
                     let unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
                     let digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
@@ -100,7 +115,7 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

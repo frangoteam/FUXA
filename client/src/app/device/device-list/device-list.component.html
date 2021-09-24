@@ -27,7 +27,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
                 <button mat-icon-button (click)="onEditRow(element)" class="remove"
-                    *ngIf="isToEdit(deviceSelected.type)">
+                    *ngIf="isToEdit(deviceSelected.type, element)">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-cell>
@@ -102,4 +102,5 @@
         <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
     </mat-table>
+    <mat-paginator [pageSizeOptions]="[25, 100]" style="position: relative; right: 100px;"></mat-paginator>
 </div>

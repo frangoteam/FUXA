@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatTable, MatTableDataSource, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatDialog } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,6 +46,7 @@ export class DeviceListComponent implements OnInit {
     @ViewChild(MatTable) table: MatTable<any>;
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+	@ViewChild(MatPaginator) paginator: MatPaginator;
 
     constructor(private dialog: MatDialog,
         private hmiService: HmiService,
@@ -70,6 +71,7 @@ export class DeviceListComponent implements OnInit {
         if (this.deviceSelected) {
             this.bindToTable(this.deviceSelected.tags);
         }
+		this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.table.renderRows();
     }
@@ -236,13 +238,25 @@ export class DeviceListComponent implements OnInit {
                 return tag.address + ' / ' + tag.options.selval;
             }
             return tag.address;
+        } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
+            if (tag.options.subs && tag.type === 'json') {
+                return tag.address + '[' + tag.memaddress + ']';
+            }
+            return tag.address;
         }
         return tag.address;
     }
 
-    isToEdit(type) {
-        return (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio ||
-                type === DeviceType.internal || type === DeviceType.MQTTclient);
+    isToEdit(type, tag: Tag) {
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || 
+            type === DeviceType.WebStudio || type === DeviceType.internal) {
+                return true;
+        } else if (type === DeviceType.MQTTclient) {
+            if (tag && tag.options && (tag.options.pubs || tag.options.subs && tag.type !== 'json')) {
+                return true;
+            }
+        }
+        return false;
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
@@ -277,16 +291,6 @@ export class DeviceListComponent implements OnInit {
                         delete result.device.tags[oldtag];
                         this.checkToAdd(tag, result.device);
                     }
-                    if (result.unit) {
-                        let utag = new Tag(Utils.getGUID(TAG_PREFIX));
-                        utag.address = result.unit;
-                        this.checkToAddAddress(utag, result.device);
-                    }
-                    if (result.digits) {
-                        let dtag = new Tag(Utils.getGUID(TAG_PREFIX));
-                        dtag.address = result.digits;
-                        this.checkToAddAddress(dtag, result.device);
-                    }
                     this.projectService.setDeviceTags(this.deviceSelected);
                 }
             }
@@ -314,7 +318,7 @@ export class DeviceListComponent implements OnInit {
     checkToAddAddress(tag: Tag, device: Device) {
         let exist = false;
         Object.keys(device.tags).forEach((key) => {
-            if (device.tags[key].address === tag.address && device.tags[key].id != tag.id) {
+            if (device.tags[key].address === tag.address && device.tags[key].memaddress === tag.memaddress && device.tags[key].id != tag.id) {
                 exist = true;
             }
         })

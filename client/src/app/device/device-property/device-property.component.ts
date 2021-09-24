@@ -34,6 +34,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	isFuxaServer = false;
 	isWithPolling = true;
 	isToRemove = false;
+	propertyError = '';
 	propertyExpanded: boolean;
 	propertyLoading: boolean;
 	securityMode: any = [];
@@ -114,8 +115,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 							this.securityRadio = sec;
 						}
 					}
+					this.propertyError = '';
 				} else if (res.error) {
-
+					this.propertyError = res.error;
 				}
 			} else if (res.type === DeviceType.BACnet) {
 			}
@@ -125,7 +127,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		// check security
 		if (this.data.device.id && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient)) {
 			this.projectService.getDeviceSecurity(this.data.device.id).subscribe(result => {
-				this.setSecurity(result.value);
+				if (result) {
+					this.setSecurity(result.value);
+				}
 			}, err => {
 				console.error('get Device Security err: ' + err);
 			});
@@ -151,7 +155,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 		});
 		this.subscriptionDeviceWebApiRequest = this.hmiService.onDeviceWebApiRequest.subscribe(res => {
-			console.log(res);
 			if (res.result) {
 				this.result = JSON.stringify(res.result);
 			}
@@ -187,6 +190,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	onCheckOpcUaServer() {
 		this.propertyLoading = true;
+        this.propertyError = '';
 		this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
 	}
 

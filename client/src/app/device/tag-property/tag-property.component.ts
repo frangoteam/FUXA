@@ -7,7 +7,6 @@ import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { t } from '@angular/core/src/render3';
 
 @Component({
     selector: 'app-tag-property',
@@ -23,9 +22,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 	dialogType = EditTagDialogType.Standard;
     config = { width: '100%', height: '600px', type: '' };
     memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
-
-    unit = { extension: 'OpcEngUnit', enabled: false };
-    digits = { extension: 'DecimalPlaces', enabled: false };
 
     private subscriptionBrowse: Subscription;
     private subscriptionNodeAttribute: Subscription;
@@ -47,17 +43,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.config.type = (this.isWebApi()) ? 'todefine' : '';
         } else if (this.isExternal()) {
             this.dialogType = EditTagDialogType.Simple;
-            if (this.data.tag && this.data.tag.address) {
-                Object.keys(this.data.device.tags).forEach((key) => {
-                    let tag: Tag = this.data.device.tags[key];
-                    if (tag.address === this.data.tag.address + this.unit.extension) {
-                        this.unit.enabled = true;
-                    }
-                    if (tag.address === this.data.tag.address + this.digits.extension) {
-                        this.digits.enabled = true;
-                    }
-                });
-            }
         } else if (this.isInternal()) {
             this.dialogType = EditTagDialogType.Simple;
         } else {
@@ -166,12 +151,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     return;
                 }
             }
-            if (this.unit.enabled) {
-                this.data['unit'] = this.data.tag.address + this.unit.extension;
-            }
-            if (this.digits.enabled) {
-                this.data['digits'] = this.data.tag.address + this.digits.extension;
-            }
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
@@ -251,7 +230,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             node.expanded = true;
             node.class = NodeType.Object;
             this.treetable.addNode(node, parent, true);
-            // console.log(`o: ${nodeId} ${nodeName}`);
             for(var n in nodes) {
                 this.addTreeNodes(nodes[n], n, node);
                 if (parent) {
@@ -273,8 +251,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     node.parent.parent.todefine.value = this.data.device.tags[nodeId].options.selval;
                 }  
             } else if (selected) {
-
-                // console.log(`f: ${nodeId} ${nodeName}`);
                 enabled = false;
             }
             this.treetable.addNode(node, parent, enabled);
@@ -285,13 +261,11 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         let result = [];
         for (let key in nodes) {
             let n: Node = nodes[key];
-            // console.log(`id:${n.id} (childs:${n.childs.length})`);
             if (n.class === NodeType.Array && n.todefine && n.todefine.id && n.todefine.value) {
                 let arrayResult = this.getSelectedTreeNodes(n.childs, n.todefine);
                 for (let ak in arrayResult) {
                     result.push(arrayResult[ak]);
                 }
-                // console.log(`id:${n.id} childs:${n.childs.length}`);
             } else if (n.class === NodeType.Object && defined && defined.id && defined.value) {
                 // search defined attributes
                 let childId = null, childValue = null;
@@ -314,7 +288,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     objNode.enabled = n.enabled;
                     result.push(objNode);
                 }
-                // console.log(`id:${n.id} childs:${n.childs.length}`);
             } else if (n.class === NodeType.Variable && n.checked) {
                 // let objNode = new Node(n.id.split('>').join(''), n.text);
                 let objNode = new Node(n.id, n.text);

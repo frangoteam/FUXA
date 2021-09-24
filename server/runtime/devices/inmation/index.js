@@ -63,25 +63,7 @@ function INMATIONclient(_data, _logger, _events) {
                             }
                         }, options);
                         client.onWSConnectionChanged((connectionInfo) => {
-                            // const webAPIStatusInfo = connectionInfo.webapi_status || {};
-                            // const webAPIStatus = webAPIStatusInfo.status || 'unknown'
-                            // console.log(`Connection state: ${connectionInfo.state}, ${connectionInfo.stateString}, Authenticated: ${connectionInfo.authenticated}, Web API Status: ${webAPIStatus}`);
-                            // const auditTrail = webAPIStatusInfo.audit_trail
-                            // if (auditTrail) {
-                            //     console.log(`Audit Trail enabled: ${auditTrail.enabled}, user_comment_mandatory: ${auditTrail.user_comment_mandatory}`);
-                            // }
-                            // const tokenResponse = connectionInfo.token_response
-                            // if (tokenResponse) {
-                            //     console.log(`Token response token_type: ${tokenResponse.token_type}, expires_in: ${tokenResponse.expires_in} seconds`);
-                            //     console.log(`Token response access_token: ${tokenResponse.access_token}`);
-                            // }
                         });
-                        // client.on("disconnect", function () {
-                        //     logger.warn(`'${data.name}' client disconnect ${data.property.address}`, true);
-                        // });
-                        // client.on("close", function (err) {
-                        //     logger.warn(`'${data.name}' client close ${data.property.address}`, true);
-                        // });
                         client.onError(function (err) {
                             logger.error(`'${data.name}' try to connect error! ${err}`);
                             _checkWorking(false);
@@ -159,50 +141,6 @@ function INMATIONclient(_data, _logger, _events) {
             }
         }
     }
-
-    /**
-     * Return the result of inmation browsing by configure it
-     */
-    // this.browse = function (topic, callback) {
-    //     return new Promise(function (resolve, reject) {
-    //         try {
-    //             _resetBrowserTimeout();
-    //             if (!browser.connected) {
-    //                 browser.client.connectWS(options.url, function (err) {
-    //                     if (err) {
-    //                         browser.connected = false;
-    //                         reject(err);
-    //                     } else {
-    //                         browser.connected = true;
-    //                         resolve('ok');
-    //                     }
-    //                 }, options);
-    //                 browser.client.onDataChanged((err, items) => {
-    //                     if (err) console.log(err.message);
-    //                     for (const item of items) {
-    //                         if (callback) {
-    //                             callback({ topic: item.p, msg: item.v.toString() });
-    //                         }
-    //                         console.log(`Path: ${item.p} value: ${item.v}`);
-    //                     }
-    //                 });
-    //                 browser.client.onError((err) => {
-    //                     reject(err);
-    //                 });
-    //                 client.on("close", function (err) {
-    //                     console.log('mqtt browser closed');
-    //                 });                    
-    //             } else {
-    //                 resolve('ok');
-    //             }
-    //             const items = [new model.Item(topic)];
-    //             browser.client.subscribeToDataChanges(items, function() {
-    //             });
-    //         } catch (err) {
-    //             reject('browse-error: ' + err);
-    //         }
-    //     });
-    // }
 
     /**
      * Return if INMATION client is connected
@@ -325,10 +263,9 @@ function INMATIONclient(_data, _logger, _events) {
                                     data.tags[tagname].timestamp = new Date().getTime();
                                     data.tags[tagname].changed = true;
                                 } catch (error) {
-                                    console.log(error);
+                                    console.error(error);
                                 }
                             }
-                            // console.log(`Path: ${item.p} value: ${item.v}`);
                         }                
                     });
                     resolve();

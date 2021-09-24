@@ -38,7 +38,7 @@ export class HtmlBagComponent extends GaugeBaseComponent implements OnInit {
         try {
             gauge.setValue(sig.value);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

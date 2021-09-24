@@ -97,7 +97,6 @@ export class GaugesManager {
     }
 
     ngOnDestroy() {
-        console.log('GaugesManager destroy');
     }
 
     createSettings(id: string, type: string) {
@@ -291,7 +290,7 @@ export class GaugesManager {
                                 delete this.mapGauges[g.id];
                             }
                         } catch (err) {
-                            console.log(err);
+                            console.error(err);
                         }
                     }
                 }

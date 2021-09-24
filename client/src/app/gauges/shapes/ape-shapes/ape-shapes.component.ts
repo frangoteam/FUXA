@@ -85,7 +85,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -139,12 +139,10 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     }
 
     static firstAnimation(element, moveto, movefrom) {
-        console.log('a');
         // element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y).after(function () {
         //     ApeShapesComponent.firstAnimation(element, moveto, movefrom);
         // });
         element.animate({duration: 1000, delay: 6000, wait: 6000 }).move(moveto.x, moveto.y).after(function () {
-            console.log('a');
         // element.animate(1000).move(movefrom.x, movefrom.y);
         }).loop();//ApeShapesComponent.secondAnimation(element, moveto, movefrom));
     }

@@ -30,7 +30,7 @@ export class AuthService {
 					}
 					observer.next();
 				}, err => {
-					console.log(err);
+					console.error(err);
 					observer.error(err);
 				});
 			} else {

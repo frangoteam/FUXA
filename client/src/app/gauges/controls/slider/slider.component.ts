@@ -60,7 +60,7 @@ export class SliderComponent {
                 slider.setValue(val);
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

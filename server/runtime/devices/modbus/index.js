@@ -5,7 +5,7 @@
 'use strict';
 var ModbusRTU;
 const datatypes = require('./datatypes');
-const TOKEN_LIMIT = 1000;
+const TOKEN_LIMIT = 100;
 
 function MODBUSclient(_data, _logger, _events) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
@@ -119,7 +119,7 @@ function MODBUSclient(_data, _logger, _events) {
                     var tokenizedAddress = parseAddress(memaddr);
                     try {
                         readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
-                        readVarsfnc.push(await delay(100));
+                        readVarsfnc.push(await delay(10));
                     } catch (err) {
                         logger.error(`'${data.name}' _readMemory error! ${err}`);
                     }
@@ -128,7 +128,7 @@ function MODBUSclient(_data, _logger, _events) {
                 for (var memaddr in mixItemsMap) {
                     try {
                         readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
-                        readVarsfnc.push(await delay(100));
+                        readVarsfnc.push(await delay(10));
                     } catch (err) {
                         logger.error(`'${data.name}' _readMemory error! ${err}`);
                     }
@@ -151,7 +151,7 @@ function MODBUSclient(_data, _logger, _events) {
                         }
                     }
                 } else {
-        //             // console.log('then error');
+                    // console.error('then error');
                 }
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');                    
@@ -411,7 +411,7 @@ function MODBUSclient(_data, _logger, _events) {
                                 }
                                 v.value = value;    
                             } catch (err) {
-                                console.log(err);
+                                console.error(err);
                             }
                         });
                     }
@@ -435,7 +435,7 @@ function MODBUSclient(_data, _logger, _events) {
                     }
                     resolve(changed);
                 }, reason => {
-                    console.log(reason);
+                    console.error(reason);
                     reject(reason);
                 });
             } else {
@@ -456,7 +456,7 @@ function MODBUSclient(_data, _logger, _events) {
                 client.writeCoil(start, value).then(res => {
                     resolve();
                 }, reason => {
-                    console.log(reason);
+                    console.error(reason);
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.DigitalInputs) {           // Digital Inputs (Read 100001-165536)
@@ -467,7 +467,7 @@ function MODBUSclient(_data, _logger, _events) {
                 client.writeRegisters(start, value).then(res => {
                     resolve();
                 }, reason => {
-                    console.log(reason);
+                    console.error(reason);
                     reject(reason);
                 });
             } else {
@@ -599,7 +599,7 @@ function MODBUSclient(_data, _logger, _events) {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
         return value;
     }

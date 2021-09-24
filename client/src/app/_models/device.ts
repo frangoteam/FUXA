@@ -95,6 +95,7 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     WebStudio = 'WebStudio',
     internal = 'internal'
+    // Template: 'template'
 }
 
 export enum TagType {
@@ -114,7 +115,13 @@ export enum ModbusTagType {
     Int32 = 'Int32',
     UInt32 = 'UInt32',
     Float32 = 'Float32',
-    Float64 = 'Float64'
+    Float64 = 'Float64',
+    Int16LE = 'Int16LE',
+    UInt16LE = 'UInt16LE',
+    Int32LE = 'Int32LE',
+    UInt32LE = 'UInt32LE',
+    Float32LE = 'Float32LE',
+    Float64LE = 'Float64LE'
     // String = 'String'
 }
 

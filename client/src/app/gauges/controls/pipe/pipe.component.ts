@@ -65,7 +65,7 @@ export class PipeComponent {
                 }
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

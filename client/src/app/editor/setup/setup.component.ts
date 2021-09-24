@@ -72,7 +72,7 @@ export class SetupComponent implements OnInit, AfterViewInit {
 		}
         let dialogRef = this.dialog.open(LayoutPropertyComponent, {
             position: { top: '60px' },
-            data: { layout: templayout, views: hmi.views }
+            data: { layout: templayout, views: hmi.views, securityEnabled: this.projectService.isSecurityEnabled() }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

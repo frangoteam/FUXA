@@ -10,7 +10,7 @@ const nopt = require("nopt");
 const paths = require('./paths');
 const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
-var events = require("./runtime/events");
+var events = require("./runtime/events").create();
 
 const FUXA = require('./fuxa.js');
 

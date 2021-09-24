@@ -34,7 +34,7 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
         try {
             gauge.addValue(sig.id, new Date().getTime() / 1000, sig.value);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

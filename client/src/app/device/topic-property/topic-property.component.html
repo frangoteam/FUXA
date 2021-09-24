@@ -31,7 +31,7 @@
                                 {{topic.key}}
                             </div>
                             <div class="topic-value">
-                                {{topic.value.value}}
+                                {{topic.value.content}}
                             </div>
                         </div>
                     </div>
@@ -60,9 +60,9 @@
                                 <div class="topic-value">
                                     {{tcontent.value}}
                                 </div>
-                                <!-- <div class="topic-check">
-                                    <mat-checkbox [(ngModel)]="tcontent.checked" value="true"></mat-checkbox>
-                                </div> -->
+                                <div class="topic-check">
+                                    <mat-checkbox [(ngModel)]="tcontent.checked" (change)="isSubscriptionValid()" value="true"></mat-checkbox>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -79,8 +79,8 @@
                         <input [(ngModel)]="publishTopicPath" (keyup)="stringifyPublishItem()" style="width: 400px;" type="text">
                     </div>
                     <mat-button-toggle-group [(ngModel)]="topicSelectedPubType" (change)="onPubTopicValChange($event.value)">
-                        <mat-button-toggle class="mytoogle" value="raw" [disabled]="!isPublishTypeToEnable()">{{'device.topic-raw' | translate}}</mat-button-toggle>
-                        <mat-button-toggle class="mytoogle" value="json" [disabled]="!isPublishTypeToEnable()">{{'device.topic-json' | translate}}</mat-button-toggle>
+                        <mat-button-toggle class="mytoogle" value="raw" [disabled]="!isPublishTypeToEnable('raw')">{{'device.topic-raw' | translate}}</mat-button-toggle>
+                        <mat-button-toggle class="mytoogle" value="json" [disabled]="!isPublishTypeToEnable('json')">{{'device.topic-json' | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
                     <button style="margin-left: 20px" mat-raised-button (click)="onAddToPuplish()" [disabled]="!isPublishValid()" color="primary">{{'device.topic-publish' |
                         translate}}</button>

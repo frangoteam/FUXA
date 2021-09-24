@@ -4,10 +4,11 @@
  */
 
 var Promise = require('bluebird');
+var Events = require('./events');
+var events = Events.create();
 var devices = require('./devices');
 var project = require('./project');
 var users = require('./users');
-var events = require('./events');
 var alarms = require('./alarms');
 var plugins = require('./plugins');
 var utils = require('./utils');
@@ -74,7 +75,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.info('socket.io client connected');
 
         // client ask device status
-        socket.on('device-status', (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_STATUS, (message) => {
             if (message === 'get') {
                 var adevs = devices.getDevicesStatus();
                 for (var id in adevs) {
@@ -85,28 +86,28 @@ function init(_io, _api, _settings, _log, eventsMain) {
             }
         });
         // client ask device property
-        socket.on('device-property', (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_PROPERTY, (message) => {
             try {
                 if (message && message.endpoint && message.type) {
                     devices.getSupportedProperty(message.endpoint, message.type).then(result => {
                         message.result = result;
-                        io.emit('device-property', message);
+                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     }).catch(function (err) {
-                        logger.error('socket.on.device-property: ' + err);
+                        logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
                         message.error = err;
-                        io.emit('device-property', message);
+                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     });
                 } else {
-                    logger.error('socket.on.device-property: wrong message');
+                    logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: wrong message`);
                     message.error = 'wrong message';
-                    io.emit('device-property', message);
+                    io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                 }
             } catch (err) {
-                logger.error('socket.on.device-property: ' + err);
+                logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
             }
         });
         // client ask device values
-        socket.on('device-values', (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_VALUES, (message) => {
             try {
                 if (message === 'get') {
                     var adevs = devices.getDevicesValues();
@@ -117,120 +118,119 @@ function init(_io, _api, _settings, _log, eventsMain) {
                     devices.setDeviceValue(message.var.source, message.var.id, message.var.value)
                 }
             } catch (err) {
-                logger.error('socket.on.device-values: ' + err);
+                logger.error(`${Events.IoEventTypes.DEVICE_VALUES}: ${err}`);
             }
         });
         // client ask device browse
-        socket.on('device-browse', (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_BROWSE, (message) => {
             try {
                 if (message) {
                     if (message.device) {
                         devices.browseDevice(message.device, message.node, function (nodes) { 
-                            io.emit('device-browse', nodes);
+                            io.emit(Events.IoEventTypes.DEVICE_BROWSE, nodes);
                         }).then(result => {
                             message.result = result;
-                            io.emit('device-browse', message);
+                            io.emit(Events.IoEventTypes.DEVICE_BROWSE, message);
                         }).catch(function (err) {
-                            logger.error('socket.on.device-browse: ' + err);
+                            logger.error(`${Events.IoEventTypes.DEVICE_BROWSE}: ${err}`);
                             message.error = err;
-                            io.emit('device-browse', message);
+                            io.emit(Events.IoEventTypes.DEVICE_BROWSE, message);
                         });
                     }
                 }
             } catch (err) {
-                logger.error('socket.on.device-browse: ' + err);
+                logger.error(`${Events.IoEventTypes.DEVICE_BROWSE}: ${err}`);
             }
         });
         // client ask device node attribute
-        socket.on('device-node-attribute', (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
             try {
                 if (message) {
                     if (message.device) {
                         devices.readNodeAttribute(message.device, message.node).then(result => {
-                            io.emit('device-node-attribute', message);
+                            io.emit(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, message);
                         }).catch(function (err) {
-                            logger.error('socket.on.read-node-attribute: ' + err);
+                            logger.error(`${Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE}: ${err}`);
                             message.error = err;
-                            io.emit('device-node-attribute', message);
+                            io.emit(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, message);
                         });
                     }
                 }
             } catch (err) {
-                logger.error('socket.on.device-node-attribute: ' + err);
+                logger.error(`${Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE}: ${err}`);
             }
         });
         // client query DAQ values
-        socket.on('daq-query', (msg) => {
+        socket.on(Events.IoEventTypes.DAQ_QUERY, (msg) => {
             try {
                 if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
-                    console.log('>' + new Date(msg.from).toString() + ' ' + new Date(msg.to).toString());
                     var dbfncs = [];
                     for (let i = 0; i < msg.sids.length; i++) {
                         dbfncs.push(daqstorage.getNodeValues(msg.sids[i], msg.from, msg.to));
                     }
                     var result = {};
                     Promise.all(dbfncs).then(values => {
-                        io.emit('daq-result', {gid: msg.gid, values: values });
+                        io.emit(Events.IoEventTypes.DAQ_RESULT, { gid: msg.gid, values: values });
                     }, reason => {
                         if (reason && reason.stack) {
-                            logger.error('socket.on.daq-query: ' + reason.stack);
+                            logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${reason.stack}`);
                         } else {
-                            logger.error('socket.on.daq-query: ' + reason);
+                            logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${reason}`);
                         }
-                        io.emit('daq-error', { gid: msg.gid, error: reason });
+                        io.emit(Events.IoEventTypes.DAQ_ERROR, { gid: msg.gid, error: reason });
                     });
                 }
             } catch (err) {
-                logger.error('socket.on.daq-query: ' + err);
+                logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${err}`);
             }
         });
         // client ask alarms status
-        socket.on('alarms-status', (message) => {
+        socket.on(Events.IoEventTypes.ALARMS_STATUS, (message) => {
             if (message === 'get') {
                 updateAlarmsStatus();
             }
         });
         // client ask host interfaces
-        socket.on('host-interfaces', (message) => {
+        socket.on(Events.IoEventTypes.HOST_INTERFACES, (message) => {
             try {
                 if (message === 'get') {
                     message = {};
                     utils.getHostInterfaces().then(result => {
                         message.result = result;
-                        io.emit('host-interfaces', message);
+                        io.emit(Events.IoEventTypes.HOST_INTERFACES, message);
                     }).catch(function (err) {
-                        logger.error('socket.on.host-interfaces: ' + err);
+                        logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: ${err}`);
                         message.error = err;
-                        io.emit('host-interfaces', message);
+                        io.emit(Events.IoEventTypes.HOST_INTERFACES, message);
                     });
                 } else {
-                    logger.error('socket.on.host-interfaces: wrong message');
+                    logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: wrong message`);
                     message.error = 'wrong message';
-                    io.emit('host-interfaces', message);
+                    io.emit(Events.IoEventTypes.HOST_INTERFACES, message);
                 }
             } catch (err) {
-                logger.error('socket.on.host-interfaces: ' + err);
+                logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: ${err}`);
             }
         });
         // client ask device webapi request and return result
-        socket.on('device-webapi-request', (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
             try {
                 if (message && message.property) {
                     devices.getRequestResult(message.property).then(result => {
                         message.result = result;
-                        io.emit('device-webapi-request', message);
+                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     }).catch(function (err) {
-                        logger.error('socket.on.device-property: ' + err);
+                        logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
                         message.error = err;
-                        io.emit('device-webapi-request', message);
+                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     });
                 } else {
-                    logger.error('socket.on.device-webapi-request: wrong message');
+                    logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: wrong message`);
                     message.error = 'wrong message';
-                    io.emit('device-webapi-request', message);
+                    io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                 }
             } catch (err) {
-                logger.error('socket.on.device-webapi-request: ' + err);
+                logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
             }
         });
     });
@@ -341,7 +341,7 @@ function updateDevice(event) {
 function updateDeviceValues(event) {
     try {
         let values = Object.values(event.values);
-        io.emit('device-values', { id: event.id, values: values });
+        io.emit(Events.IoEventTypes.DEVICE_VALUES, { id: event.id, values: values });
         tagsSubscription.forEach((key, value) => {
             if (event.values[value]) {
                 events.emit('tag-value:changed', event.values[value]);
@@ -364,7 +364,7 @@ function subscriptionTagChange(tagid) {
  */
 function updateDeviceStatus(event) {
     try {
-        io.emit('device-status', event);
+        io.emit(Events.IoEventTypes.DEVICE_STATUS, event);
     } catch (err) {
     }
 }
@@ -375,7 +375,7 @@ function updateDeviceStatus(event) {
 function updateAlarmsStatus() {
     try {
         alarmsMgr.getAlarmsStatus().then(function (result) {
-            io.emit('alarms-status', result);
+            io.emit(Events.IoEventTypes.ALARMS_STATUS, result);
         }).catch(function (err) {
             logger.error('runtime.failed-to-update-alarms: ' + err);
         });

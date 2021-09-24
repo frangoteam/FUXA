@@ -110,7 +110,6 @@ module.exports = {
          * Take the project demo file from server folder 
          */
         prjApp.get("/api/projectdemo", secureFnc, function (req, res) {
-            console.log('/api/projectdemo');
             const data = runtime.project.getProjectDemo();
             // res.header("Access-Control-Allow-Origin", "*");
             // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

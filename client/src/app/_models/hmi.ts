@@ -90,8 +90,8 @@ export class HeaderSettings {
     title: string;
     alarms: NotificationModeType;
     infos: NotificationModeType;
-    bkcolor: string;
-    fgcolor: string;
+    bkcolor: string = '#ffffff';
+    fgcolor: string = '#000000';
 }
 
 export enum NotificationModeType {

@@ -477,10 +477,9 @@ function BACNETclient(_data, _logger, _events) {
             client.writeProperty(ipAddress, bacobj, bacnet.enum.PropertyIdentifier.PRESENT_VALUE, [tvalue], { priority: 16 }, (err, result) => {
                 if (err) {
                     reject(err);
-                    console.log('value: ', err);
+                    console.error('value: ', err);
                 } else {
                     resolve();
-                    // console.log('value: ', result);
                 }
             });
         });

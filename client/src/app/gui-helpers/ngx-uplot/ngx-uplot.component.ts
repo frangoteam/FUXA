@@ -149,7 +149,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             this.uplot.destroy();
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     }
 

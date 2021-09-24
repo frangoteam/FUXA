@@ -118,7 +118,7 @@ function S7client(_data, _logger, _events) {
                         }
                     }
                 } else {
-                    // console.log('not');
+                    // console.error('not');
                 }
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');

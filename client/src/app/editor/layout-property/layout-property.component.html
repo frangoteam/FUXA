@@ -138,8 +138,8 @@
                     <div class="header-title">
                         {{data.layout.header.title}}
                     </div>
-                    <div style="float: right; line-height: 46px;">
-                        <button mat-icon-button class="header-login">
+                    <div *ngIf="data.securityEnabled" class="header-login">
+                        <button mat-icon-button>
                             <mat-icon aria-label="Login">account_circle</mat-icon>
                         </button>
                     </div>

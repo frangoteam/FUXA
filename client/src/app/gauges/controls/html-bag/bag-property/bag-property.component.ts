@@ -96,7 +96,6 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
 	}
 
     ngOnChanges(changes: SimpleChanges) {
-        console.log('changes');
     }
 
     onGaugeChange(type: GaugeType) {
