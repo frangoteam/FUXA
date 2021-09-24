@@ -28,11 +28,11 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
     discoveryError = '';
     discoveryWait = false;
     discoveryTimer = null;
-    selectedTopic = { key: '', value: null, subs: null };
+    selectedTopic = { name: '', key: '', value: null, subs: null };
     topicToAdd = {};
     invokeSubscribe = null;
 
-    invokePuplish = null;
+    invokePublish = null;
     topicSelectedPubType = 'raw';
     publishTopicName: string;
     publishTopicPath: string;
@@ -85,7 +85,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
                     this.tabpub.disabled = true;
                     this.topicSelectedSubType = tag.type;
                     this.editMode = true;
-                    this.selectTopic({ key: tag.address, value: { content: tag.value }, subs: tag.options.subs });
+                    this.selectTopic({ name: tag.name, key: tag.address, value: { content: tag.value }, subs: tag.options.subs });
                 } else {
                     // publish topic 
                     this.grptabs.selectedIndex = 1;
@@ -164,7 +164,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
                 this.topicContent.push({ key: key, value: obj[key], checked: checked, type: this.topicSelectedSubType });
             });
         } else if (this.selectedTopic.value && this.selectedTopic.value.content) {
-            this.topicContent =  [{ key: this.selectedTopic.key, value: this.selectedTopic.value.content, checked: true, type: this.topicSelectedSubType }];
+            this.topicContent =  [{ name: this.selectedTopic.name, key: this.selectedTopic.key, value: this.selectedTopic.value.content, checked: true, type: this.topicSelectedSubType }];
         }
     }
 
@@ -207,11 +207,15 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
                     tag.address = this.selectedTopic.key;
                     tag.memaddress = this.topicContent[i].key;
                     tag.options = { subs: this.topicContent.map((tcnt) => { return tcnt.key }) };
-                    tag.name = this.selectedTopic.key;
-                    if (tag.type === 'json') {
-                        tag.name += '[' + tag.memaddress + ']';
+                    if (this.topicContent[i].name) {
+                        tag.name = this.topicContent[i].name;
+                    } else {
+                        tag.name = this.selectedTopic.key;
+                        if (tag.type === 'json') {
+                            tag.name += '[' + tag.memaddress + ']';
+                        }
                     }
-                    this.invokeSubscribe([tag]);
+                    this.invokeSubscribe(this.data.topic, [tag]);
                 }
             }
         }
@@ -227,7 +231,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     onAddToPuplish() {
-        if (this.publishTopicPath && this.invokePuplish) {
+        if (this.publishTopicPath && this.invokePublish) {
             let tag = new Tag(Utils.getGUID(TAG_PREFIX));
             if (this.data.topic) {
                 tag = new Tag(this.data.topic.id);
@@ -236,7 +240,7 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
             tag.address = this.publishTopicPath;
             tag.type = this.topicSelectedPubType;
             tag.options = { pubs: this.pubPayload.items };
-            this.invokePuplish(tag);
+            this.invokePublish(this.data.topic, tag);
         }
     }
 

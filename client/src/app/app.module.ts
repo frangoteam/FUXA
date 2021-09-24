@@ -41,7 +41,7 @@ import { DeviceComponent, DeviceTagDialog } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
 import { TagPropertyComponent } from './device/tag-property/tag-property.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
-import { DeviceListComponent } from './device/device-list/device-list.component';
+import { DeviceListComponent, DialogTagName } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
@@ -148,6 +148,7 @@ export function createTranslateLoader(http: HttpClient) {
         SetupComponent,
         DialogMenuItem,
         DeviceListComponent,
+        DialogTagName,
         DeviceMapComponent,
         FuxaViewComponent,
         DialogDocProperty,
@@ -273,6 +274,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogDocProperty,
         DialogDocName,
         DialogNewDoc,
+        DialogTagName,
         DialogLinkProperty,
         DialogInfo,
         DeviceTagDialog,

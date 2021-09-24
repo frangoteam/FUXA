@@ -53,7 +53,7 @@ function MQTTclient(_data, _logger, _events) {
                         client = mqtt.connect(options.url, options);
                         _clearVarsValue();
                         client.on('connect', function () {
-                            logger.info(`'${data.name}' connected!`, true);
+                            logger.info(`'${data.name}' connected!`);
                             _emitStatus('connect-ok');
                             _createSubscription().then(() => {
                                 resolve();

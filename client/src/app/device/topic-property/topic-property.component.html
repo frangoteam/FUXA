@@ -50,10 +50,14 @@
                     </button>
                 </div>
                 <div class="my-form-field" style="margin-top:10px;width: 100%;overflow-x: hidden;">
-                    <span>{{'device.topic-subscription-content' | translate}}</span>
+                    <span style="display:inline-block; width:230px">{{'device.topic-subscription-name' | translate}}</span>
+                    <span style="display:inline-block">{{'device.topic-subscription-address' | translate}}</span>
                     <div class="topic-subscription-result">
                         <div *ngFor="let tcontent of topicContent">
                             <div class="topic">
+                                <div class="topic-name">
+                                    <input [(ngModel)]="tcontent.name" type="text">
+                                </div>     
                                 <div class="topic-text">
                                     {{tcontent.key}}
                                 </div>
