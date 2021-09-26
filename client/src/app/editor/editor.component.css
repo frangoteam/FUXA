@@ -300,9 +300,17 @@
 }
 
 .leftbar-item span {
-    padding-left: 15px;
     float: left;
 }
+
+.leftbar-item .leftbar-item-type {
+    float: left;
+    padding-left: 4px;
+    font-size: 16px;
+    line-height: 20px;
+    opacity:0.5;
+}
+
 .leftbar-item mat-icon {
     float: right;
     font-size: 18px;
@@ -413,22 +421,22 @@ li {
 
 .color-fill {
     position: relative;
-    top: 3px;
-    left: 10px;
+    top: 4px;
+    left: 12px;
     cursor: pointer;
-    width: 14px;
-    height: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.75);
+    width: 13px;
+    height: 13px;
+    border: 1px solid rgba(71, 71, 71, 1);
 }
 
 .color-stroke {
     position: absolute;
-    top: 3px;
+    top: 4px;
     left: 30px;
     cursor: pointer;
-    width: 14px;
-    height: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.75);
+    width: 13px;
+    height: 13px;
+    border: 1px solid rgba(71, 71, 71, 1);
 }
 
 .style-stroke {
