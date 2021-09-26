@@ -52,6 +52,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     headerButtonMode = NotificationModeType;
     alarmsPanelOpen = false;
     layoutHeader = new HeaderSettings();
+	showNavigation = true;
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
@@ -141,7 +142,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     checkToCloseSideNav() {
         let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
-        if (this.hmi.layout && nvoid !== NaviModeType.fix) {
+        if (this.hmi.layout && nvoid !== NaviModeType.fix && this.matsidenav) {
             this.matsidenav.close();
         }
     }
@@ -226,13 +227,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             // check sidenav
             this.showSidenav = null;
             if (this.hmi.layout) {
+                if (Utils.Boolify(this.hmi.layout.hidenavigation)) {
+					this.showNavigation = false;
+				}
                 let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
                 if (this.hmi.layout && nvoid !== NaviModeType.void) {
                     if (nvoid === NaviModeType.over) {
                         this.showSidenav = 'over';
                     } else if (nvoid === NaviModeType.fix) {
                         this.showSidenav = 'side';
-                        this.matsidenav.open();
+                        if (this.matsidenav) this.matsidenav.open();
                     } else if (nvoid === NaviModeType.push) {
                         this.showSidenav = 'push';
                     }

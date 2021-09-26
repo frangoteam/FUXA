@@ -34,13 +34,14 @@
     "dlg.layout-general": "General",
     "dlg.layout-lbl-sview": "Start View",
     "dlg.layout-lbl-zoom": "Zoom",
+    "dlg.layout-navigation-mode": "Show Navigation",
     "dlg.layout-show-dev": "Show button",
-    "dlg.layout-navigation": "Navigation (Side Menu)",
+    "dlg.layout-navigation": "Navigation Side Menu",
     "dlg.layout-nav-bkcolor": "Background Color",
     "dlg.layout-nav-fgcolor": "Color",
     "dlg.layout-lbl-smode": "Side Mode",
     "dlg.layout-lbl-type": "Type",
-    "dlg.layout-header": "Header",
+    "dlg.layout-header": "Header Navigation Bar",
     "dlg.layout-header-bkcolor": "Background Color",
     "dlg.layout-header-fgcolor": "Color",
     "dlg.layout-lbl-title": "Title",
@@ -125,6 +126,9 @@
 
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Enabled",
+
+    "item.headerbarmode-hide": "Hide",
+    "item.headerbarmode-show": "Show",
 
     "dlg.layout-input-dialog": "Dialog Mode of input field",
     "item.inputmode-disabled": "Disabled",
