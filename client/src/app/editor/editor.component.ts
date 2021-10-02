@@ -105,6 +105,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     dashboard: Array<GridsterItem>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+    svgViewType = Utils.getEnumKey(ViewType, ViewType.svg);
 
     shapesGrps = [];
     private gaugesRef = [];

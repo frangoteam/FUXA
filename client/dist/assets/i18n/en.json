@@ -34,13 +34,14 @@
     "dlg.layout-general": "General",
     "dlg.layout-lbl-sview": "Start View",
     "dlg.layout-lbl-zoom": "Zoom",
+    "dlg.layout-navigation-mode": "Show Navigation",
     "dlg.layout-show-dev": "Show button",
-    "dlg.layout-navigation": "Navigation (Side Menu)",
+    "dlg.layout-navigation": "Navigation Side Menu",
     "dlg.layout-nav-bkcolor": "Background Color",
     "dlg.layout-nav-fgcolor": "Color",
     "dlg.layout-lbl-smode": "Side Mode",
     "dlg.layout-lbl-type": "Type",
-    "dlg.layout-header": "Header",
+    "dlg.layout-header": "Header Navigation Bar",
     "dlg.layout-header-bkcolor": "Background Color",
     "dlg.layout-header-fgcolor": "Color",
     "dlg.layout-lbl-title": "Title",
@@ -72,6 +73,9 @@
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",
+
+    "dlg.tagname-title": "Tag name",
+    "dlg.tagname-name": "Name",
 
     "dlg.linkproperty-title": "Make Hyperlink",
     "dlg.linkproperty-url": "Hyperlink URL",
@@ -122,6 +126,9 @@
 
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Enabled",
+
+    "item.headerbarmode-hide": "Hide",
+    "item.headerbarmode-show": "Show",
 
     "dlg.layout-input-dialog": "Dialog Mode of input field",
     "item.inputmode-disabled": "Disabled",
@@ -486,6 +493,8 @@
     "device.topic-publish": "Publish",
     "device.topic-subscribe": "Subscribe",
     "device.topic-subscription-content": "Content",
+    "device.topic-subscription-name": "Name",
+    "device.topic-subscription-address": "Address",
     "device.topic-publish-add-item": "Add attribute to payload",
     "device.topic-publish-key": "Key",
     "device.topic-publish-type": "Type",
@@ -497,7 +506,10 @@
     "device.topic-type-timestamp": "Timestamp",
     "device.topic-type-value": "Value (of Topic)",
     "device.topic-type-static": "Static",
-
+    "device.topic-name-exist": "The Topic name '{{value}}' already exist",
+    "device.topic-subs-address-exist": "The Topic to subscribe with address '{{value}}' already exist",
+    "device.topic-pubs-address-exist": "The Topic to publish with address '{{value}}' already exist",
+    
     "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",

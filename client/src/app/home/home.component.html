@@ -3,11 +3,11 @@
 	</mat-progress-bar>
 </div>
 <mat-sidenav-container class="sidenav-container" [hasBackdrop]="false">
-	<mat-sidenav #matsidenav *ngIf="showSidenav" class="sidenav" [mode]="showSidenav">
+	<mat-sidenav #matsidenav *ngIf="showNavigation && showSidenav" class="sidenav" [mode]="showSidenav">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>
 	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
-		<div class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
+		<div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
 			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" 
 				(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
 				<mat-icon aria-label="Menu">menu</mat-icon>

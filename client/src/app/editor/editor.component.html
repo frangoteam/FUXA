@@ -15,9 +15,9 @@
                             <mat-icon aria-label="Select" *ngIf="!panelsState.panelView">expand_more</mat-icon>
                             <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->
                         </mat-panel-title>
-                        <mat-icon aria-label="Add" title="Add View" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddDoc();$event.stopPropagation()">add
+                        <mat-icon aria-label="Add" matTooltip="Add View" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddDoc();$event.stopPropagation()">add
                         </mat-icon>
-                        <mat-icon aria-label="Import" title="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn"
+                        <mat-icon aria-label="Import" matTooltip="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn"
                             (click)="onImportView($event);$event.stopPropagation()">system_update_alt</mat-icon>
                         <input type="file" #viewFileImportInput style="display: none" id="viewFileUpload" (click)="$event.stopPropagation()"
                             (change)="onViewFileChangeListener($event)" accept=".fuxav" />
@@ -28,8 +28,14 @@
                         </div>
                         <div *ngFor="let item of getViewsSorted()" (click)="onSelectView(item)" [ngClass]="{'leftbar-item-active': isViewActive(item)}"
                             class="leftbar-item mycursor-pointer">
+                            <mat-icon *ngIf="!item.type || item.type === svgViewType" matTooltip="{{'editor.view-svg' | translate}}" class="leftbar-item-type">
+                                insert_drive_file
+                            </mat-icon>
+                            <mat-icon *ngIf="item.type === cardViewType" matTooltip="{{'editor.view-cards' | translate}}" class="leftbar-item-type">
+                                dashboard
+                            </mat-icon>
                             <span>{{item.name}}</span>
-                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuview" class="">more_vert</mat-icon>
+                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuview">more_vert</mat-icon>
                             <mat-menu #menuview="matMenu" class="leftbar-item-menu">
                                 <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
                                 <button mat-menu-item (click)="onRenameView(item)">{{'editor.view-rename' | translate}}</button>
@@ -97,47 +103,47 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <div id="__tools_left" class="leftbar-panel">
-                            <div class="svg-tool-button" title="{{'editor.controls-input' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_input')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-input' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_input')}"
                                 (click)="setMode('html_input')">
                                 <span class="icon-tool icon-editvalue"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-output' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('value')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-output' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('value')}"
                                 (click)="setMode('value')">
                                 <span class="icon-tool icon-value"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-button' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_button')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-button' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_button')}"
                                 (click)="setMode('html_button')">
                                 <span class="icon-tool icon-button"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-select' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_select')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-select' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_select')}"
                                 (click)="setMode('html_select')">
                                 <span class="icon-tool icon-selectvalue"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-progress' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('gauge_progress')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-progress' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('gauge_progress')}"
                                 (click)="setMode('gauge_progress')">
                                 <span class="icon-tool icon-progress-v"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-semaphore' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('gauge_semaphore')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-semaphore' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('gauge_semaphore')}"
                                 (click)="setMode('gauge_semaphore')">
                                 <span class="icon-tool icon-semaphore"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-chart' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_chart')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-chart' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_chart')}"
                                 (click)="setMode('html_chart')">
                                 <span class="icon-tool icon-chart"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-bag' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_bag')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-bag' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_bag')}"
                                 (click)="setMode('html_bag')">
                                 <span class="icon-tool icon-bag"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-pipe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('pipe')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-pipe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('pipe')}"
                                 (click)="setMode('pipe')">
                                 <span class="icon-tool icon-pipe"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-slider' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_slider')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-slider' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_slider')}"
                                 (click)="setMode('html_slider')">
                                 <span class="icon-tool icon-slider"></span>
                             </div>
-                            <div class="svg-tool-button" title="{{'editor.controls-switch' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_switch')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-switch' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_switch')}"
                                 (click)="setMode('html_switch')">
                                 <span class="icon-tool icon-switch"></span>
                             </div>
@@ -181,11 +187,11 @@
                         </mat-expansion-panel-header>
                         <div id="_selected_panel">
                             <div class="_toolset">
-                                <label id="idLabel" title="{{'editor.interactivity-id-title' | translate}}" class="svg-property">
+                                <label id="idLabel" matTooltip="{{'editor.interactivity-id-title' | translate}}" class="svg-property">
                                     <span>{{'editor.interactivity-id' | translate}}</span>
                                     <input id="elem_id" #selid class="attr_changer" data-attr="id" type="text" />
                                 </label>
-                                <label id="classLabel" title="{{'editor.interactivity-class-title' | translate}}" class="svg-property">
+                                <label id="classLabel" matTooltip="{{'editor.interactivity-class-title' | translate}}" class="svg-property">
                                     <span>{{'editor.interactivity-class' | translate}}</span>
                                     <input id="elem_class" class="attr_changer" data-attr="class" type="text" />
                                 </label>
@@ -207,11 +213,11 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x' | translate}}</span>
-                                            <input id="selected_x" class="attr_changer" title="{{'editor.transform-x-title' | translate}}" size="4" data-attr="x" />
+                                            <input id="selected_x" class="attr_changer" matTooltip="{{'editor.transform-x-title' | translate}}" size="4" data-attr="x" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-y' | translate}}</span>
-                                            <input id="selected_y" class="attr_changer" title="{{'editor.transform-y-title' | translate}}" size="4" data-attr="y" />
+                                            <input id="selected_y" class="attr_changer" matTooltip="{{'editor.transform-y-title' | translate}}" size="4" data-attr="y" />
                                         </div>
                                     </div>
                                 </div>
@@ -219,37 +225,37 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x1' | translate}}</span>
-                                            <input id="line_x1" class="attr_changer" title="{{'editor.transform-x1-title' | translate}}" size="4" data-attr="x1" />
+                                            <input id="line_x1" class="attr_changer" matTooltip="{{'editor.transform-x1-title' | translate}}" size="4" data-attr="x1" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-y1' | translate}}</span>
-                                            <input id="line_y1" class="attr_changer" title="{{'editor.transform-y1-title' | translate}}" size="4" data-attr="y1" />
+                                            <input id="line_y1" class="attr_changer" matTooltip="{{'editor.transform-y1-title' | translate}}" size="4" data-attr="y1" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x2' | translate}}</span>
-                                            <input id="line_x2" class="attr_changer" title="{{'editor.transform-x2-title' | translate}}" size="4" data-attr="x2" />
+                                            <input id="line_x2" class="attr_changer" matTooltip="{{'editor.transform-x2-title' | translate}}" size="4" data-attr="x2" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-y2' | translate}}</span>
-                                            <input id="line_y2" class="attr_changer" title="{{'editor.transform-y2-title' | translate}}" size="4" data-attr="y2" />
+                                            <input id="line_y2" class="attr_changer" matTooltip="{{'editor.transform-y2-title' | translate}}" size="4" data-attr="y2" />
                                         </div>
                                     </div>
                                 </div>
                                 <div id="rect_panel">
                                     <div class="svg-property-split2">
-                                        <div class="svg-property" title="{{'editor.transform-rect-width-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-width-title' | translate}}">
                                             <span>{{'editor.transform-width' | translate}}</span>
                                             <input id="rect_width" class="attr_changer" size="4" data-attr="width" />
                                         </div>
-                                        <div class="svg-property" title="{{'editor.transform-rect-height-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-height-title' | translate}}">
                                             <span>{{'editor.transform-height' | translate}}</span>
                                             <input id="rect_height" class="attr_changer" size="4" data-attr="height" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
-                                        <div class="svg-property" title="{{'editor.transform-rect-radius-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-radius-title' | translate}}">
                                             <span>{{'editor.transform-radiuscorner' | translate}}</span>
                                             <input id="rect_rx" size="4" value="0" type="text" data-attr="Corner Radius" />
                                         </div>
@@ -257,11 +263,11 @@
                                 </div>
                                 <div id="htmlctrl_panel">
                                     <div class="svg-property-split2">
-                                        <div class="svg-property" title="{{'editor.transform-rect-width-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-width-title' | translate}}">
                                             <span>{{'editor.transform-width' | translate}}</span>
                                             <input id="htmlctrl_width" class="attr_changer" size="4" data-attr="width" />
                                         </div>
-                                        <div class="svg-property" title="{{'editor.transform-rect-height-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-height-title' | translate}}">
                                             <span>{{'editor.transform-height' | translate}}</span>
                                             <input id="htmlctrl_height" class="attr_changer" size="4" data-attr="height" />
                                         </div>
@@ -269,11 +275,11 @@
                                 </div>
                                 <div id="shape_panel">
                                     <div class="svg-property-split2">
-                                        <div class="svg-property" title="{{'editor.transform-rect-width-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-width-title' | translate}}">
                                             <span>{{'editor.transform-width' | translate}}</span>
                                             <input id="shape_width" class="attr_changer" size="4" data-attr="width" />
                                         </div>
-                                        <div class="svg-property" title="{{'editor.transform-rect-height-title' | translate}}">
+                                        <div class="svg-property" matTooltip="{{'editor.transform-rect-height-title' | translate}}">
                                             <span>{{'editor.transform-height' | translate}}</span>
                                             <input id="shape_height" class="attr_changer" size="4" data-attr="height" />
                                         </div>
@@ -283,17 +289,17 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-circlecx' | translate}}</span>
-                                            <input id="circle_cx" class="attr_changer" title="{{'editor.transform-circlecx-title' | translate}}" size="4" data-attr="cx" />
+                                            <input id="circle_cx" class="attr_changer" matTooltip="{{'editor.transform-circlecx-title' | translate}}" size="4" data-attr="cx" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-circlecy' | translate}}</span>
-                                            <input id="circle_cy" class="attr_changer" title="{{'editor.transform-circlecy-title' | translate}}" size="4" data-attr="cy" />
+                                            <input id="circle_cy" class="attr_changer" matTooltip="{{'editor.transform-circlecy-title' | translate}}" size="4" data-attr="cy" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-circler' | translate}}</span>
-                                            <input id="circle_r" class="attr_changer" title="{{'editor.transform-circler-title' | translate}}" size="4" data-attr="r" />
+                                            <input id="circle_r" class="attr_changer" matTooltip="{{'editor.transform-circler-title' | translate}}" size="4" data-attr="r" />
                                         </div>
                                     </div>
                                 </div>
@@ -301,21 +307,21 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipsecx' | translate}}</span>
-                                            <input id="ellipse_cx" class="attr_changer" title="{{'editor.transform-ellipsecx-title' | translate}}" size="4" data-attr="cx" />
+                                            <input id="ellipse_cx" class="attr_changer" matTooltip="{{'editor.transform-ellipsecx-title' | translate}}" size="4" data-attr="cx" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipsecy' | translate}}</span>
-                                            <input id="ellipse_cy" class="attr_changer" title="{{'editor.transform-ellipsecy-title' | translate}}" size="4" data-attr="cy" />
+                                            <input id="ellipse_cy" class="attr_changer" matTooltip="{{'editor.transform-ellipsecy-title' | translate}}" size="4" data-attr="cy" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipserx' | translate}}</span>
-                                            <input id="ellipse_rx" class="attr_changer" title="{{'editor.transform-ellipserx-title' | translate}}" size="4" data-attr="rx" />
+                                            <input id="ellipse_rx" class="attr_changer" matTooltip="{{'editor.transform-ellipserx-title' | translate}}" size="4" data-attr="rx" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipsery' | translate}}</span>
-                                            <input id="ellipse_ry" class="attr_changer" title="{{'editor.transform-ellipsery-title' | translate}}" size="4" data-attr="ry" />
+                                            <input id="ellipse_ry" class="attr_changer" matTooltip="{{'editor.transform-ellipsery-title' | translate}}" size="4" data-attr="ry" />
                                         </div>
                                     </div>
                                 </div>
@@ -330,7 +336,7 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-fontsize' | translate}}</span>
-                                            <input id="font_size" size="4" value="0" class="attr_changer" title="{{'editor.transform-fontsize-title' | translate}}" />
+                                            <input id="font_size" size="4" value="0" class="attr_changer" matTooltip="{{'editor.transform-fontsize-title' | translate}}" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-textalign' | translate}}</span>
@@ -349,38 +355,38 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-width' | translate}}</span>
-                                            <input id="image_width" class="attr_changer" title="{{'editor.transform-image-width-title' | translate}}" size="4" data-attr="width" />
+                                            <input id="image_width" class="attr_changer" matTooltip="{{'editor.transform-image-width-title' | translate}}" size="4" data-attr="width" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-height' | translate}}</span>
-                                            <input id="image_height" class="attr_changer" title="{{'editor.transform-image-height-title' | translate}}" size="4"
+                                            <input id="image_height" class="attr_changer" matTooltip="{{'editor.transform-image-height-title' | translate}}" size="4"
                                                 data-attr="height" />
                                         </div>
                                     </div>
                                     <div class="svg-property" style="display: none;">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-url' | translate}}</span>
-                                            <input id="image_url" class="attr_changer" type="text" title="{{'editor.transform-image-url-title' | translate}}" />
+                                            <input id="image_url" class="attr_changer" type="text" matTooltip="{{'editor.transform-image-url-title' | translate}}" />
                                         </div>
                                         <div class="svg-property">
                                             <div class="svg-property">
                                                 <button id="change_image_url" style="display:none;">{{'editor.transform-change-image' | translate}}</button>
-                                                <span id="url_notice" title="{{'editor.transform-change-image-title' | translate}}"></span>
+                                                <span id="url_notice" matTooltip="{{'editor.transform-change-image-title' | translate}}"></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="tool_angle" title="{{'editor.transform-angle-title' | translate}}" class="svg-property">
+                                <div id="tool_angle" matTooltip="{{'editor.transform-angle-title' | translate}}" class="svg-property">
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-angle' | translate}}</span>
                                             <input id="angle" size="4" value="0" type="text" />
                                         </div>
                                         <div class="svg-property">
-                                            <!-- <div class="svg-tool-button" (click)="flipSelected('vertical')" title="Flip vertically">
+                                            <!-- <div class="svg-tool-button" (click)="flipSelected('vertical')" matTooltip="Flip vertically">
                                         <span class="icon-flip-vertical"></span>
                                         </div>
-                                        <div class="svg-tool-button" (click)="flipSelected('orizontal')" title="Flip orizontally">
+                                        <div class="svg-tool-button" (click)="flipSelected('orizontal')" matTooltip="Flip orizontally">
                                         <span class="icon-flip-orizontal"></span>
                                         </div> -->
                                         </div>
@@ -398,22 +404,22 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <div id="align_panel" class="rightbar_panel">
-                            <div class="svg-tool-button" (click)="onAlignSelected('left')" title="{{'editor.align-left-title' | translate}}">
+                            <div class="svg-tool-button" (click)="onAlignSelected('left')" matTooltip="{{'editor.align-left-title' | translate}}">
                                 <span class="icon-align-left"></span>
                             </div>
-                            <div class="svg-tool-button" (click)="onAlignSelected('center')" title="{{'editor.align-center-title' | translate}}Align Center">
+                            <div class="svg-tool-button" (click)="onAlignSelected('center')" matTooltip="{{'editor.align-center-title' | translate}}Align Center">
                                 <span class="icon-align-center"></span>
                             </div>
-                            <div class="svg-tool-button" (click)="onAlignSelected('right')" title="{{'editor.align-right-title' | translate}}Align Right">
+                            <div class="svg-tool-button" (click)="onAlignSelected('right')" matTooltip="{{'editor.align-right-title' | translate}}Align Right">
                                 <span class="icon-align-right"></span>
                             </div>
-                            <div class="svg-tool-button" (click)="onAlignSelected('top')" title="{{'editor.align-top-title' | translate}}Align Top">
+                            <div class="svg-tool-button" (click)="onAlignSelected('top')" matTooltip="{{'editor.align-top-title' | translate}}Align Top">
                                 <span class="icon-align-top"></span>
                             </div>
-                            <div class="svg-tool-button" (click)="onAlignSelected('middle')" title="{{'editor.align-middle-title' | translate}}Align Middle">
+                            <div class="svg-tool-button" (click)="onAlignSelected('middle')" matTooltip="{{'editor.align-middle-title' | translate}}Align Middle">
                                 <span class="icon-align-middle"></span>
                             </div>
-                            <div class="svg-tool-button" (click)="onAlignSelected('bottom')" title="{{'editor.align-bottom-title' | translate}}Align Bottom">
+                            <div class="svg-tool-button" (click)="onAlignSelected('bottom')" matTooltip="{{'editor.align-bottom-title' | translate}}Align Bottom">
                                 <span class="icon-align-bottom"></span>
                             </div>
                         </div>
@@ -431,11 +437,11 @@
                                 <div class="svg-property-split2">
                                     <div class="svg-property">
                                         <span>{{'editor.stroke-width' | translate}}</span>
-                                        <input id="stroke_width" title="{{'editor.stroke-width-title' | translate}}" size="4" value="1" type="text" data-attr="Stroke Width" />
+                                        <input id="stroke_width" matTooltip="{{'editor.stroke-width-title' | translate}}" size="4" value="1" type="text" data-attr="Stroke Width" />
                                     </div>
                                     <div class="svg-property">
                                         <span>{{'editor.stroke-style' | translate}}</span>
-                                        <select id="stroke_style" class="style-stroke" title="{{'editor.stroke-style-title' | translate}}">
+                                        <select id="stroke_style" class="style-stroke" matTooltip="{{'editor.stroke-style-title' | translate}}">
                                             <option selected="selected" value="none">&#8212;</option>
                                             <option value="2,2">...</option>
                                             <option value="5,5">- -</option>
@@ -446,36 +452,36 @@
                                 </div>
                                 <div class="svg-property">
                                     <div class="svg-tool-button" id="linejoin_miter" #linejoinmiter (click)="onSetStrokeOption(linejoinmiter)"
-                                        title="{{'editor.stroke-joinmiter-title' | translate}}">
+                                        matTooltip="{{'editor.stroke-joinmiter-title' | translate}}">
                                         <span class="icon-linejoin-miter"></span>
                                     </div>
                                     <div class="svg-tool-button" id="linejoin_round" #linejoinround (click)="onSetStrokeOption(linejoinround)"
-                                        title="{{'editor.stroke-joinround-title' | translate}}">
+                                        matTooltip="{{'editor.stroke-joinround-title' | translate}}">
                                         <span class="icon-linejoin-round"></span>
                                     </div>
                                     <div class="svg-tool-button" id="linejoin_bevel" #linejoinbevel (click)="onSetStrokeOption(linejoinbevel)"
-                                        title="{{'editor.stroke-joinbevel-title' | translate}}">
+                                        matTooltip="{{'editor.stroke-joinbevel-title' | translate}}">
                                         <span class="icon-linejoin-bevel"></span>
                                     </div>
                                 </div>
                                 <div class="svg-property">
                                     <div class="svg-tool-button" id="linecap_butt" #linecapbutt (click)="onSetStrokeOption(linecapbutt)"
-                                        title="{{'editor.stroke-capbutt-title' | translate}}">
+                                        matTooltip="{{'editor.stroke-capbutt-title' | translate}}">
                                         <span class="icon-linecap-butt"></span>
                                     </div>
                                     <div class="svg-tool-button" id="linecap_square" #linecapsquare (click)="onSetStrokeOption(linecapsquare)"
-                                        title="{{'editor.stroke-capsquare-title' | translate}}">
+                                        matTooltip="{{'editor.stroke-capsquare-title' | translate}}">
                                         <span class="icon-linecap-square"></span>
                                     </div>
                                     <div class="svg-tool-button" id="linecap_round" #linecapround (click)="onSetStrokeOption(linecapround)"
-                                        title="{{'editor.stroke-capround-title' | translate}}">
+                                        matTooltip="{{'editor.stroke-capround-title' | translate}}">
                                         <span class="icon-linecap-round"></span>
                                     </div>
                                 </div>
                                 <div class="svg-property-split2" style="display: none">
                                     <div class="svg-property">
                                         <span for="class_shadow">{{'editor.stroke-shadow' | translate}}</span>
-                                        <input type="checkbox" id="class_shadow" name="class_shadow" class="attr_changer" title="{{'editor.stroke-shadow-title' | translate}}"
+                                        <input type="checkbox" id="class_shadow" name="class_shadow" class="attr_changer" matTooltip="{{'editor.stroke-shadow-title' | translate}}"
                                             (change)="onSetShadowOption($event.target.checked)" label="shadow" />
                                     </div>
                                     <div class="svg-property">
@@ -497,19 +503,19 @@
                             <div class="svg-property-split3">
                                 <div class="svg-property">
                                     <span>{{'editor.marker-start' | translate}}</span>
-                                    <select id="start_marker" #smarker class="style-stroke" title="{{'editor.marker-start-title' | translate}}"
+                                    <select id="start_marker" #smarker class="style-stroke" matTooltip="{{'editor.marker-start-title' | translate}}"
                                         (click)="onSetMarker('start_marker', smarker.selectedIndex);" onfocus="this.selectedIndex=-1;this.blur();">
                                     </select>
                                 </div>
                                 <div class="svg-property">
                                     <span>{{'editor.marker-middle' | translate}}</span>
-                                    <select id="mid_marker" #mmarker class="style-stroke" title="{{'editor.marker-middle-title' | translate}}"
+                                    <select id="mid_marker" #mmarker class="style-stroke" matTooltip="{{'editor.marker-middle-title' | translate}}"
                                         (click)="onSetMarker('mid_marker', mmarker.selectedIndex);" onfocus="this.selectedIndex=-1;this.blur();">
                                     </select>
                                 </div>
                                 <div class="svg-property">
                                     <span>{{'editor.marker-end' | translate}}</span>
-                                    <select id="end_marker" #emarker class="style-stroke" title="{{'editor.marker-end-title' | translate}}"
+                                    <select id="end_marker" #emarker class="style-stroke" matTooltip="{{'editor.marker-end-title' | translate}}"
                                         (click)="onSetMarker('end_marker', emarker.selectedIndex);" onfocus="this.selectedIndex=-1;this.blur();">
                                     </select>
                                 </div>
@@ -574,87 +580,87 @@
                     <div id="tools_top" class="tools_panel">
                         <div id="editor_panel">
                             <div class="main-btn-sep"></div>
-                            <button mat-button title="{{'editor.tools-launch-title' | translate}}" class="main-btn" (click)="onStartCurrent()">
+                            <button mat-button matTooltip="{{'editor.tools-launch-title' | translate}}" class="main-btn" (click)="onStartCurrent()">
                                 <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
                             </button>
                             <div class="main-btn-sep"></div>
-                            <button mat-button title="{{'editor.tools-zoom-title' | translate}}" class="main-btn" (click)="onZoomSelect()">
+                            <button mat-button matTooltip="{{'editor.tools-zoom-title' | translate}}" class="main-btn" (click)="onZoomSelect()">
                                 <mat-icon aria-label="Zoom Tool [Ctrl+Up/Down]">zoom_in</mat-icon>
                             </button>
-                            <button mat-button title="{{'editor.tools-grid-title' | translate}}" class="main-btn" (click)="onShowGrid()">
+                            <button mat-button matTooltip="{{'editor.tools-grid-title' | translate}}" class="main-btn" (click)="onShowGrid()">
                                 <mat-icon aria-label="Show Hide Grid" *ngIf="!gridOn">grid_on</mat-icon>
                                 <mat-icon aria-label="Show Hide Grid" *ngIf="gridOn">grid_off</mat-icon>
                             </button>
                             <div id="history_panel">
-                                <button mat-button id="tool_undo" title="{{'editor.tools-undo-title' | translate}}" class="main-btn">
+                                <button mat-button id="tool_undo" matTooltip="{{'editor.tools-undo-title' | translate}}" class="main-btn">
                                     <mat-icon aria-label="Undo [Z]">undo</mat-icon>
                                 </button>
-                                <button mat-button id="tool_redo" title="{{'editor.tools-redo-title' | translate}}" class="main-btn">
+                                <button mat-button id="tool_redo" matTooltip="{{'editor.tools-redo-title' | translate}}" class="main-btn">
                                     <mat-icon aria-label="Redo [Y]">redo</mat-icon>
                                 </button>
                             </div>
                         </div>
                         <div id="selected_panel">
                             <div class="main-btn-sep"></div>
-                            <button mat-button id="tool_clone" title="{{'editor.tools-clone-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_clone" matTooltip="{{'editor.tools-clone-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Duplicate Element [D]">content_copy</mat-icon>
                             </button>
-                            <button mat-button id="tool_delete" title="{{'editor.tools-delete-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_delete" matTooltip="{{'editor.tools-delete-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Delete Element [Delete/Backspace]">content_cut</mat-icon>
                             </button>
-                            <button mat-button id="tool_move_bottom" title="{{'editor.tools-movebottom-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_move_bottom" matTooltip="{{'editor.tools-movebottom-title' | translate}}" class="main-btn">
                                 <mat-icon style="font-size: 28px;">low_priority</mat-icon>
                             </button>
-                            <button mat-button id="tool_move_top" title="{{'editor.tools-movetop-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_move_top" matTooltip="{{'editor.tools-movetop-title' | translate}}" class="main-btn">
                                 <mat-icon style="font-size: 28px;transform: scaleX(-1) scaleY(-1) translateX(-28px) translateY(-27px);">low_priority</mat-icon>
                             </button>
-                            <button mat-button id="tool_topath" title="{{'editor.tools-topath-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_topath" matTooltip="{{'editor.tools-topath-title' | translate}}" class="main-btn">
                                 <mat-icon>linear_scale</mat-icon>
                             </button>
-                            <button mat-button id="tool_make_link" title="{{'editor.tools-hyperlink-title' | translate}}" class="main-btn" (click)="onMakeHyperlink()">
+                            <button mat-button id="tool_make_link" matTooltip="{{'editor.tools-hyperlink-title' | translate}}" class="main-btn" (click)="onMakeHyperlink()">
                                 <mat-icon style="font-size: 28px;">link</mat-icon>
                             </button>
                         </div>
                         <div id="multiselected_panel">
                             <div class="main-btn-sep"></div>
-                            <button mat-button id="tool_clone_multi" title="{{'editor.tools-clonemulti-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_clone_multi" matTooltip="{{'editor.tools-clonemulti-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Clone Elements [C]">content_copy</mat-icon>
                             </button>
-                            <button mat-button id="tool_delete_multi" title="{{'editor.tools-deletemulti-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_delete_multi" matTooltip="{{'editor.tools-deletemulti-title' | translate}}" class="main-btn">
                                 <mat-icon aria-label="Delete Selected Elements [Delete/Backspace]">content_cut</mat-icon>
                             </button>
-                            <button mat-button id="tool_group_elements" title="{{'editor.tools-group-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_group_elements" matTooltip="{{'editor.tools-group-title' | translate}}" class="main-btn">
                                 <span class="group"></span>
                             </button>
-                            <button mat-button id="tool_alignleft" title="{{'editor.tools-alignleft-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_alignleft" matTooltip="{{'editor.tools-alignleft-title' | translate}}" class="main-btn">
                                 <mat-icon>format_align_left</mat-icon>
                             </button>
-                            <button mat-button id="tool_aligncenter" title="{{'editor.tools-aligncenter-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_aligncenter" matTooltip="{{'editor.tools-aligncenter-title' | translate}}" class="main-btn">
                                 <mat-icon>format_align_center</mat-icon>
                             </button>
-                            <button mat-button id="tool_alignright" title="{{'editor.tools-alignright-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_alignright" matTooltip="{{'editor.tools-alignright-title' | translate}}" class="main-btn">
                                 <mat-icon>format_align_right</mat-icon>
                             </button>
-                            <button mat-button id="tool_aligntop" title="{{'editor.tools-aligntop-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_aligntop" matTooltip="{{'editor.tools-aligntop-title' | translate}}" class="main-btn">
                                 <mat-icon>vertical_align_top</mat-icon>
                             </button>
-                            <button mat-button id="tool_alignmiddle" title="{{'editor.tools-alignmiddle-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_alignmiddle" matTooltip="{{'editor.tools-alignmiddle-title' | translate}}" class="main-btn">
                                 <mat-icon>vertical_align_center</mat-icon>
                             </button>
-                            <button mat-button id="tool_alignbottom" title="{{'editor.tools-alignbottom-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_alignbottom" matTooltip="{{'editor.tools-alignbottom-title' | translate}}" class="main-btn">
                                 <mat-icon>vertical_align_bottom</mat-icon>
                             </button>
                         </div>
                         <div id="threemoreselected_panel">
-                            <button mat-button id="tool_dividevertical" title="{{'editor.tools-dividevertical-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_dividevertical" matTooltip="{{'editor.tools-dividevertical-title' | translate}}" class="main-btn">
                                 <mat-icon>format_line_spacing</mat-icon>
                             </button>
-                            <button mat-button id="tool_dividehorizontal" title="{{'editor.tools-dividehorizontal-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_dividehorizontal" matTooltip="{{'editor.tools-dividehorizontal-title' | translate}}" class="main-btn">
                                 <mat-icon style="transform-origin: center center;transform: rotate(90deg);">format_line_spacing</mat-icon>
                             </button>
                         </div>
                         <div id="g_panel">
-                            <button mat-button id="tool_ungroup" title="{{'editor.tools-ungroup-title' | translate}}" class="main-btn">
+                            <button mat-button id="tool_ungroup" matTooltip="{{'editor.tools-ungroup-title' | translate}}" class="main-btn">
                                 <span class="ungroup"></span>
                             </button>
                         </div>
@@ -667,7 +673,7 @@
                     <!-- tool bottom -->
                     <div class="bottom-bar tools_panel">
                         <!-- Zoom buttons -->
-                        <div class="zoom-menu" title="{{'editor.tools-zoomlevel-title' | translate}}">
+                        <div class="zoom-menu" matTooltip="{{'editor.tools-zoomlevel-title' | translate}}">
                             <div class="zoom-value">
                                 <input id="zoom" size="3" value="100" type="text" #zoomValue hidden />
                                 <div id="zoom_dropdown" class="dropdown selection" style="margin-top: 0px; margin-bottom: 0px;margin-right: 0px;">
@@ -691,44 +697,44 @@
                         </div>
 
                         <div id="tools_bottom_2" class="colors">
-                            <input readonly [(colorPicker)]="colorFill" class="color-fill" title="{{'editor.tools-fillcolor-title' | translate}}" [style.background]="colorFill"
+                            <input readonly [(colorPicker)]="colorFill" class="color-fill" matTooltip="{{'editor.tools-fillcolor-title' | translate}}" [style.background]="colorFill"
                                 [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeFillColor($event)" [cpPresetColors]="defaultColor"
                                 [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'"
                                 [cpOKButtonClass]="'cpOKButtonClass'" />
-                            <input readonly [(colorPicker)]="colorStroke" class="color-stroke" title="{{'editor.tools-strokecolor-title' | translate}}"
+                            <input readonly [(colorPicker)]="colorStroke" class="color-stroke" matTooltip="{{'editor.tools-strokecolor-title' | translate}}"
                                 [style.background]="colorStroke" [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeStrokeColor($event)"
                                 [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
                                 [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
                             <div class="color_tool" id="tool_fill" hidden>
-                                <label class="icon_label" for="fill_color" title="{{'editor.tools-fillcolor-title' | translate}}"></label>
+                                <label class="icon_label" for="fill_color" matTooltip="{{'editor.tools-fillcolor-title' | translate}}"></label>
                                 <div class="color_block">
                                     <div id="fill_color" class="color_block" [style.border-color]="colorFill"></div>
                                 </div>
                             </div>
                             <div class="color_tool" id="tool_stroke" hidden>
-                                <label class="icon_label" title="Change stroke color"></label>
+                                <label class="icon_label" matTooltip="Change stroke color"></label>
                                 <div class="color_block">
                                     <div id="stroke_bg"></div>
-                                    <div id="stroke_color" class="color_block" title="{{'editor.tools-strokecolor-title' | translate}}" [style.border-color]="colorStroke"></div>
+                                    <div id="stroke_color" class="color_block" matTooltip="{{'editor.tools-strokecolor-title' | translate}}" [style.border-color]="colorStroke"></div>
                                 </div>
                             </div>
                         </div>
 
                         <div id="tools_bottom_3" class="colors-palette">
                             <div id="palette_holder">
-                                <div id="palette" title="{{'editor.tools-palettecolor-title' | translate}}"></div>
+                                <div id="palette" matTooltip="{{'editor.tools-palettecolor-title' | translate}}"></div>
                             </div>
                         </div>
                     </div>
 
                     <div id="option_lists" class="dropdown">
                         <ul id="position_opts" class="optcols3">
-                            <li class="push_button" id="tool_posleft" title="Align Left"></li>
-                            <li class="push_button" id="tool_poscenter" title="Align Center"></li>
-                            <li class="push_button" id="tool_posright" title="Align Right"></li>
-                            <li class="push_button" id="tool_postop" title="Align Top"></li>
-                            <li class="push_button" id="tool_posmiddle" title="Align Middle"></li>
-                            <li class="push_button" id="tool_posbottom" title="Align Bottom"></li>
+                            <li class="push_button" id="tool_posleft" matTooltip="Align Left"></li>
+                            <li class="push_button" id="tool_poscenter" matTooltip="Align Center"></li>
+                            <li class="push_button" id="tool_posright" matTooltip="Align Right"></li>
+                            <li class="push_button" id="tool_postop" matTooltip="Align Top"></li>
+                            <li class="push_button" id="tool_posmiddle" matTooltip="Align Middle"></li>
+                            <li class="push_button" id="tool_posbottom" matTooltip="Align Bottom"></li>
                         </ul>
                     </div>
                 </div>
@@ -736,7 +742,7 @@
             <div *ngIf="editorMode === editorModeType.CARDS" style="width:100%; height:100%">
                 <div class="tools_panel" style="display: inline-flex; width: 100%; height: 37px;">
                     <div class="main-btn-sep" style="display: inline-block;"></div>
-                    <button mat-button class="main-btn" style="display: inline-block;" title="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
+                    <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
                         <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
                     </button>
                 </div>

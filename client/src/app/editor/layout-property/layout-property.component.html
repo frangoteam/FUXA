@@ -12,17 +12,18 @@
                         </mat-option>
                     </mat-select>
                 </div>
-                <div class="my-form-field" style="display: inline-block;margin-bottom: 25px;margin-left: 180px;">
-                    <ngx-fab-button #fabmenu icon="menu" iconOpen="menu" color="rgba(68,138,255, 1)" style="color: rgba(255,255,255,1);background-color: rgba(68,138,255, 0);">
-                    </ngx-fab-button>
+                <div style="display: inline-block;margin-left: 180px;">
+                    <button mat-icon-button style="color: rgba(255,255,255,1);background-color: rgba(68,138,255, 1);">
+                        <mat-icon>menu</mat-icon>
+                    </button>
                 </div>
-                <div class="my-form-field" style="display: inline-block;margin-bottom: 25px;margin-left: 60px;">
+                <div class="my-form-field" style="display: inline-block;margin-left: 30px;">
                     <span>{{'dlg.layout-show-dev' | translate}}</span>
                     <mat-slide-toggle color="primary" [(ngModel)]="data.layout.showdev"></mat-slide-toggle>
                 </div>
             </div>
-            <div style="display: block;margin-bottom: 25px">
-                <div class="my-form-field" style="display: inline-block;margin-top: 5px;">
+            <div style="display: block;margin-top: 5px;">
+                <div class="my-form-field" style="display: inline-block">
                     <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
                     <mat-select [(value)]="data.layout.zoom" style="width: 400px">
                         <mat-option *ngFor="let type of zoomMode | enumToArray" [value]="type.key">
@@ -31,8 +32,8 @@
                     </mat-select>
                 </div>
             </div>
-            <div style="display: block;">
-                <div class="my-form-field" style="display: inline-block;margin-top: 5px;">
+            <div style="display: block;margin-top: 10px;">
+                <div class="my-form-field" style="display: inline-block">
                     <span>{{'dlg.layout-input-dialog' | translate}}</span>
                     <mat-select [(value)]="data.layout.inputdialog" style="width: 400px">
                         <mat-option *ngFor="let type of inputMode | enumToArray" [value]="type.key">
@@ -40,9 +41,19 @@
                         </mat-option>
                     </mat-select>
                 </div>
-            </div>            
+            </div>
+            <div style="display: block;margin-top: 10px;">
+                <div class="my-form-field" style="display: inline-block">
+                    <span>{{'dlg.layout-navigation-mode' | translate}}</span>
+                    <mat-select [(value)]="data.layout.hidenavigation" style="width: 400px">
+                        <mat-option *ngFor="let type of headerMode | enumToArray" [value]="type.key">
+                            {{ type.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div> 
         </mat-tab>
-        <mat-tab label="{{'dlg.layout-navigation' | translate}}">
+        <mat-tab label="{{'dlg.layout-navigation' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
             <div style="display: inline-block;margin-top: 10px;width:100%; min-height: 500px; overflow-y: auto; height: 620px">
                 <div [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                     <button mat-icon-button>
@@ -127,7 +138,7 @@
                 </div>                
             </div>
         </mat-tab>
-        <mat-tab label="{{'dlg.layout-header' | translate}}">
+        <mat-tab label="{{'dlg.layout-header' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
             <div style="overflow-y: hidden; overflow-x: hidden; margin-top: 10px; min-height: 500px;">
                 <div class="header-layout" [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                     <div class="header-menu">

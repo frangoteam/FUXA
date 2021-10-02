@@ -173,7 +173,6 @@ function clearAll() {
         var sql = "DELETE FROM general;";
         sql += "DELETE FROM views;";
         sql += "DELETE FROM devices;";
-        sql += "DELETE FROM devicesSecurity;";
         sql += "DELETE FROM texts;";
         sql += "DELETE FROM alarms;";
         db_prj.exec(sql, function (err) {

@@ -43,6 +43,8 @@ export class LayoutSettings {
     zoom: ZoomModeType;
     /** Show input dialog for input field */
     inputdialog: string = 'false';
+    /** Hide navigation Header and sidebarmenu */
+    hidenavigation: boolean = false;
     /** GUI Theme */
     theme = '';
 }
@@ -108,6 +110,11 @@ export enum ZoomModeType {
 export enum InputModeType {
     false = 'item.inputmode-disabled',
     true = 'item.inputmode-enabled',
+}
+
+export enum HeaderBarModeType {
+    true = 'item.headerbarmode-hide',
+    false = 'item.headerbarmode-show',
 }
 
 export class DocProfile {

@@ -507,6 +507,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         card = new CardModel(id);
         card.x = event.clientX;
         card.y = event.clientY;
+        if (this.hmi.layout.hidenavigation) {
+            card.y -= 48;
+        }
         card.width = view.profile.width;
         card.height = view.profile.height;
         card.view = view;
