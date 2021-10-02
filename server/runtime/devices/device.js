@@ -9,6 +9,7 @@ var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
+var AzIoTclient = require('./azure');
 var INMATIONclient = require('./inmation');
 // var TEMPLATEclient = require('./template');
 
@@ -60,6 +61,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = MQTTclient.create(data, logger, events, manager);        
+    } else if (data.type === DeviceEnum.AzIoTclient) {
+        if (!AzIoTclient) {
+            return null;
+        }
+        comm = AzIoTclient.create(data, logger, events, manager);        
     } else if (data.type === DeviceEnum.inmation) {
         if (!INMATIONclient) {
             return null;
@@ -225,6 +231,12 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            } else if (data.type === DeviceEnum.AzIoTclient) {
+                comm.browse(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
             } else if (data.type === DeviceEnum.inmation) {
                 comm.browse(path, callback).then(function (result) {
                     resolve(result);
@@ -335,6 +347,8 @@ function loadPlugin(type, module) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
+    } else if (type === DeviceEnum.AzIoTclient) {
+        AzIoTclient = require(module);
     } else if (type === DeviceEnum.inmation) {
         INMATIONclient = require(module);
     }
@@ -363,6 +377,7 @@ var DeviceEnum = {
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
+    AzIoTclient: 'AzIoTclient',
     inmation: 'inmation'
     // Template: 'template'
 }
