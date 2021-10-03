@@ -11,7 +11,8 @@
       "moduleId": "bakeAgent",
       "plcName": "meter1",
       "appName": "modbusMaster",
-      "hubConnStr": "Endpoint=sb://iothub-ns-devcompany-14661902-219a136ed9.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=mZvbBoE+fUWQu/uDaNkfiFDIzzlCTXN2Vqe5QLIzmZY=;EntityPath=devcompany-iothub;",
+      "hubConnStr": "HostName=DevCompany-IoThub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=mZvbBoE+fUWQu/uDaNkfiFDIzzlCTXN2Vqe5QLIzmZY=",
+      "eventHubConnStr": "Endpoint=sb://iothub-ns-devcompany-14661902-219a136ed9.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=mZvbBoE+fUWQu/uDaNkfiFDIzzlCTXN2Vqe5QLIzmZY=;EntityPath=devcompany-iothub;",
       "hubName": "devcompany-iothub",
       "hubConsumerGroup": "$default"
     },
