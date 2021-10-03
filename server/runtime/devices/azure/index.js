@@ -2,7 +2,7 @@
  * 'azure': az iothub client to manage iotedge devices
  */
 'use strict';
-const iothub = require('azure-iothub');
+const iothub = require('azure-iothub').Client;
 const { EventHubConsumerClient } = require("@azure/event-hubs");
 
 function AzIoTclient(_data, _logger, _events) {
@@ -18,7 +18,8 @@ function AzIoTclient(_data, _logger, _events) {
     var lastTimestampValue;             // Last Timestamp of asked values
     var options = {};
     var eventHubOptions = {};
-    var azCli = null;                   
+    var eventCli = null;
+    var iotHubCli = null;
     var topicsMap = {};                 // Map the topic subscribed, to check by on.message
     var memoryTagToPublish = new Map(); // Map tag to publish, content in topics as 'tag'
     var refTagToTopics = {};            // Map of Tag to Topic (with ref to other device tag)
@@ -37,8 +38,9 @@ function AzIoTclient(_data, _logger, _events) {
                 if (_checkWorking(true)) {
                     logger.info(`'${data.name}' try to connect`, true);
                     options = getConnectionOptions(data.property)
-                    azCli = new EventHubConsumerClient(options.hubConsumerGroup, options.hubConnStr, eventHubOptions);
-                    azCli.subscribe({
+                    iotHubCli = iothub.fromConnectionString(options.hubConnStr);
+                    eventCli = new EventHubConsumerClient(options.hubConsumerGroup, options.eventHubConnStr, eventHubOptions);
+                    eventCli.subscribe({
                       processEvents: onMessages,
                       processError: onError,
                     });
@@ -57,8 +59,8 @@ function AzIoTclient(_data, _logger, _events) {
                 _emitStatus('connect-error');
                 _clearVarsValue();
                 reject();
-                if (azCli) {
-                    azCli.close();
+                if (eventCli) {
+                    eventCli.close();
                 }
             }
         });
@@ -94,8 +96,8 @@ function AzIoTclient(_data, _logger, _events) {
      */
     this.disconnect = function () {
         return new Promise(function (resolve, reject) {
-            if (azCli) {
-                azCli.close();
+            if (eventCli) {
+                eventCli.close();
                 _checkWorking(false);
                 _emitStatus('connect-off');
                 _clearVarsValue();
@@ -113,7 +115,7 @@ function AzIoTclient(_data, _logger, _events) {
      */
     this.polling = function () {
         if (_checkWorking(true)) {
-            if (azCli) {
+            if (eventCli) {
                 try {
                     var varsValueChanged = _clearVarsChanged();
                     lastTimestampValue = new Date().getTime();
@@ -143,11 +145,6 @@ function AzIoTclient(_data, _logger, _events) {
      */
     this.browse = function (topic, callback) {
         return new Promise(async function (resolve, reject) {
-            // TBD if (callback) {
-            // TBD     callback({ topic: 'di0', msg: `{ "value": 0}` });
-            // TBD     callback({ topic: 'di1', msg: `{ "value": 0}` });
-            // TBD     callback({ topic: 'di2', msg: `{ "value": 0}` });
-            // TBD }
         });
     }
 
@@ -156,7 +153,6 @@ function AzIoTclient(_data, _logger, _events) {
      */
     this.isConnected = function () {
         return true;
-        // todo return (client) ? client.connected : false;
     }
 
     /**
@@ -225,23 +221,30 @@ function AzIoTclient(_data, _logger, _events) {
      * Set the Topic value, publish to broker (coming from frontend)
      */
     this.setValue = function (tagid, value) {
-        // todo if (client && client.connected) {
-        // todo     var tag = data.tags[tagid];
-        // todo     if (tag) {
-        // todo         if (tag.options) {
-        // todo             tag.options.pubs.forEach(item => {
-        // todo                 if (item.type === 'value') {
-        // todo                     item.value = value;
-        // todo                 }
-        // todo             })
-        // todo         }
-        // todo         if (tag.type === 'raw') {
-        // todo             tag['value'] = value;
-        // todo         }
-        // todo         tag.changed = true;
-        // todo         _publishValues([tag]);
-        // todo     }
-        // todo }
+        return new Promise((resolve, reject) => {
+            var methodParams = {
+                methodName: 'writePoint',
+                payload: {
+                    appName: options.appName,
+                    plcName: options.plcName,
+                    pointName: data.tags[tagid]['address'],
+                    value: value
+                },
+                responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
+              };
+            iotHubCli.invokeDeviceMethod(options.deviceId, options.moduleId, methodParams, function (err, result) {
+              if (err) {
+                console.error('Failed to invoke method \'' + methodParams.methodName + '\': ' + err.message);
+              } else {
+                console.log(methodParams.methodName + ' on ' + options.deviceId + ':');
+                console.log(JSON.stringify(result, null, 2));
+                data.tags[tagid].value = value;
+                data.tags[tagid].timestamp = new Date().getTime();
+                data.tags[tagid].changed = true;
+                resolve(result);
+              }
+            });
+          });
     }
 
     /**
@@ -359,7 +362,7 @@ function AzIoTclient(_data, _logger, _events) {
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 try {
-                    azCli.close();
+                    eventCli.close();
                 } catch (e) {
                     console.error(e);
                 }
@@ -433,6 +436,7 @@ function getConnectionOptions(property) {
         plcName: property.plcName,
         appName: property.appName,
         hubConnStr: property.hubConnStr,
+        eventHubConnStr: property.eventHubConnStr,
         hubName: property.hubName,
         hubConsumerGroup: property.hubConsumerGroup
     }
