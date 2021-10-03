@@ -7,7 +7,7 @@ import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus } from '../_models/hmi';
+import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -30,7 +30,6 @@ import { Utils } from '../_helpers/utils';
 import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
-import { forEach } from '@angular/router/src/utils/collection';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 
 @Injectable()
@@ -320,10 +319,15 @@ export class GaugesManager {
         return null;
     }
 
-    checkElementToResize(ga: GaugeSettings, res: any, ref: any) {
+    checkElementToResize(ga: GaugeSettings, res: any, ref: any, size: Size) {
         if (ga && this.mapGauges[ga.id]) {
             if (typeof this.mapGauges[ga.id]['resize'] === 'function') {
-                this.mapGauges[ga.id]['resize']();
+                let height, width;
+                if (size) {
+                    height = size.height;
+                    width = size.width;
+                }
+                this.mapGauges[ga.id]['resize'](height, width);
             } else {
                 for (let i = 0; i < GaugesManager.Gauges.length; i++) {
                     if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
@@ -591,14 +595,16 @@ export class GaugesManager {
         var elems = elements.filter(function(el) { return el; });
         for (let i = 0; i < elems.length; i++) {
             let type = elems[i].getAttribute('type');
-            if (type.startsWith(GaugeProgressComponent.TypeTag)) {
-                GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
-            } else if (type.startsWith(HtmlButtonComponent.TypeTag)) {
-                HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
-            } else if (type.startsWith(HtmlInputComponent.TypeTag)) {
-                HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
-            } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
-                HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
+            if (type) {
+                if (type.startsWith(GaugeProgressComponent.TypeTag)) {
+                    GaugeProgressComponent.initElementColor(bkcolor, color, elems[i]);
+                } else if (type.startsWith(HtmlButtonComponent.TypeTag)) {
+                    HtmlButtonComponent.initElementColor(bkcolor, color, elems[i]);
+                } else if (type.startsWith(HtmlInputComponent.TypeTag)) {
+                    HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
+                } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
+                    HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
+                }
             }
         }
     }

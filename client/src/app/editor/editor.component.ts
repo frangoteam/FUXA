@@ -222,7 +222,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     let ga: GaugeSettings = this.getGaugeSettings(eleadded);
                     this.checkGaugeAdded(ga);
                     setTimeout(() => {
-                        this.setMode('select');
+                        this.setMode('select', false);
                     }, 700);
                     // this.hmiService.addGauge(this.hmi, eleadded);
                 },
@@ -232,7 +232,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 (eleresized) => {
                     if (eleresized && eleresized.id) {
                         let ga: GaugeSettings = this.getGaugeSettings(eleresized);
-                        this.gaugesManager.checkElementToResize(ga, this.resolver, this.viewContainerRef);
+                        this.gaugesManager.checkElementToResize(ga, this.resolver, this.viewContainerRef, eleresized.size);
                     }
                 },
                 (copiedpasted) => {
@@ -536,10 +536,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * set the mode to svg-editor (line,text,...)
      * @param mode mode to set
      */
-    setMode(mode: string) {
+    setMode(mode: string, clearSelection: boolean = true) {
         this.currentMode = mode;
-        this.clearSelection();
-        this.checkFillAndStrokeColor();
+        if (clearSelection) {
+            this.clearSelection();
+            this.checkFillAndStrokeColor();
+        }
         this.winRef.nativeWindow.svgEditor.clickToSetMode(mode);
     }
 

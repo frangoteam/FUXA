@@ -213,11 +213,13 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x' | translate}}</span>
-                                            <input id="selected_x" class="attr_changer" matTooltip="{{'editor.transform-x-title' | translate}}" size="4" data-attr="x" />
+                                            <input numberOnly id="selected_x" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x-title' | translate}}" 
+                                                    size="4" data-attr="x" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-y' | translate}}</span>
-                                            <input id="selected_y" class="attr_changer" matTooltip="{{'editor.transform-y-title' | translate}}" size="4" data-attr="y" />
+                                            <input numberOnly id="selected_y" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-y-title' | translate}}"
+                                                    size="4" data-attr="y" />
                                         </div>
                                     </div>
                                 </div>
@@ -225,21 +227,25 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x1' | translate}}</span>
-                                            <input id="line_x1" class="attr_changer" matTooltip="{{'editor.transform-x1-title' | translate}}" size="4" data-attr="x1" />
+                                            <input numberOnly id="line_x1" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x1-title' | translate}}"
+                                                    size="4" data-attr="x1" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-y1' | translate}}</span>
-                                            <input id="line_y1" class="attr_changer" matTooltip="{{'editor.transform-y1-title' | translate}}" size="4" data-attr="y1" />
+                                            <input numberOnly id="line_y1" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-y1-title' | translate}}"
+                                                    size="4" data-attr="y1" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x2' | translate}}</span>
-                                            <input id="line_x2" class="attr_changer" matTooltip="{{'editor.transform-x2-title' | translate}}" size="4" data-attr="x2" />
+                                            <input numberOnly id="line_x2" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x2-title' | translate}}"
+                                                    size="4" data-attr="x2" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-y2' | translate}}</span>
-                                            <input id="line_y2" class="attr_changer" matTooltip="{{'editor.transform-y2-title' | translate}}" size="4" data-attr="y2" />
+                                            <input numberOnly id="line_y2" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-y2-title' | translate}}"
+                                                    size="4" data-attr="y2" />
                                         </div>
                                     </div>
                                 </div>
@@ -247,17 +253,17 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-width-title' | translate}}">
                                             <span>{{'editor.transform-width' | translate}}</span>
-                                            <input id="rect_width" class="attr_changer" size="4" data-attr="width" />
+                                            <input numberOnly id="rect_width" class="attr_changer rightbar-input" type="number" size="4" data-attr="width" />
                                         </div>
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-height-title' | translate}}">
                                             <span>{{'editor.transform-height' | translate}}</span>
-                                            <input id="rect_height" class="attr_changer" size="4" data-attr="height" />
+                                            <input numberOnly id="rect_height" class="attr_changer rightbar-input" type="number" size="4" data-attr="height" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-radius-title' | translate}}">
                                             <span>{{'editor.transform-radiuscorner' | translate}}</span>
-                                            <input id="rect_rx" size="4" value="0" type="text" data-attr="Corner Radius" />
+                                            <input numberOnly id="rect_rx" size="4" value="0" type="number" class="rightbar-input" data-attr="Corner Radius" />
                                         </div>
                                     </div>
                                 </div>
@@ -265,11 +271,11 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-width-title' | translate}}">
                                             <span>{{'editor.transform-width' | translate}}</span>
-                                            <input id="htmlctrl_width" class="attr_changer" size="4" data-attr="width" />
+                                            <input numberOnly id="htmlctrl_width" type="number" class="attr_changer rightbar-input" size="4" data-attr="width" />
                                         </div>
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-height-title' | translate}}">
                                             <span>{{'editor.transform-height' | translate}}</span>
-                                            <input id="htmlctrl_height" class="attr_changer" size="4" data-attr="height" />
+                                            <input numberOnly id="htmlctrl_height" type="number" class="attr_changer rightbar-input" size="4" data-attr="height" />
                                         </div>
                                     </div>
                                 </div>
@@ -277,11 +283,11 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-width-title' | translate}}">
                                             <span>{{'editor.transform-width' | translate}}</span>
-                                            <input id="shape_width" class="attr_changer" size="4" data-attr="width" />
+                                            <input numberOnly id="shape_width" type="number" class="attr_changer rightbar-input" size="4" data-attr="width" />
                                         </div>
                                         <div class="svg-property" matTooltip="{{'editor.transform-rect-height-title' | translate}}">
                                             <span>{{'editor.transform-height' | translate}}</span>
-                                            <input id="shape_height" class="attr_changer" size="4" data-attr="height" />
+                                            <input numberOnly id="shape_height" type="number" class="attr_changer rightbar-input" size="4" data-attr="height" />
                                         </div>
                                     </div>
                                 </div>
@@ -289,17 +295,20 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-circlecx' | translate}}</span>
-                                            <input id="circle_cx" class="attr_changer" matTooltip="{{'editor.transform-circlecx-title' | translate}}" size="4" data-attr="cx" />
+                                            <input numberOnly id="circle_cx" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-circlecx-title' | translate}}"
+                                                    size="4" data-attr="cx" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-circlecy' | translate}}</span>
-                                            <input id="circle_cy" class="attr_changer" matTooltip="{{'editor.transform-circlecy-title' | translate}}" size="4" data-attr="cy" />
+                                            <input numberOnly id="circle_cy" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-circlecy-title' | translate}}"
+                                                    size="4" data-attr="cy" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-circler' | translate}}</span>
-                                            <input id="circle_r" class="attr_changer" matTooltip="{{'editor.transform-circler-title' | translate}}" size="4" data-attr="r" />
+                                            <input numberOnly id="circle_r" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-circler-title' | translate}}"
+                                                    size="4" data-attr="r" />
                                         </div>
                                     </div>
                                 </div>
@@ -307,21 +316,25 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipsecx' | translate}}</span>
-                                            <input id="ellipse_cx" class="attr_changer" matTooltip="{{'editor.transform-ellipsecx-title' | translate}}" size="4" data-attr="cx" />
+                                            <input numberOnly id="ellipse_cx" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-ellipsecx-title' | translate}}"
+                                                    size="4" data-attr="cx" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipsecy' | translate}}</span>
-                                            <input id="ellipse_cy" class="attr_changer" matTooltip="{{'editor.transform-ellipsecy-title' | translate}}" size="4" data-attr="cy" />
+                                            <input numberOnly id="ellipse_cy" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-ellipsecy-title' | translate}}"
+                                                    size="4" data-attr="cy" />
                                         </div>
                                     </div>
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipserx' | translate}}</span>
-                                            <input id="ellipse_rx" class="attr_changer" matTooltip="{{'editor.transform-ellipserx-title' | translate}}" size="4" data-attr="rx" />
+                                            <input numberOnly id="ellipse_rx" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-ellipserx-title' | translate}}"
+                                                    size="4" data-attr="rx" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-ellipsery' | translate}}</span>
-                                            <input id="ellipse_ry" class="attr_changer" matTooltip="{{'editor.transform-ellipsery-title' | translate}}" size="4" data-attr="ry" />
+                                            <input numberOnly id="ellipse_ry" type="number" class="attr_changer rightbar-input" matTooltip="{{'editor.transform-ellipsery-title' | translate}}"
+                                                    size="4" data-attr="ry" />
                                         </div>
                                     </div>
                                 </div>
@@ -332,11 +345,10 @@
                                             <option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">{{font}}</option>
                                         </select>
                                     </div>
-
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-fontsize' | translate}}</span>
-                                            <input id="font_size" size="4" value="0" class="attr_changer" matTooltip="{{'editor.transform-fontsize-title' | translate}}" />
+                                            <input numberOnly id="font_size" size="4" value="0" type="number" class="rightbar-input" matTooltip="{{'editor.transform-fontsize-title' | translate}}" />
                                         </div>
                                         <div class="svg-property">
                                             <span>{{'editor.transform-textalign' | translate}}</span>
@@ -380,7 +392,7 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-angle' | translate}}</span>
-                                            <input id="angle" size="4" value="0" type="text" />
+                                            <input numberOnly id="angle" size="4" value="0" type="number" class="rightbar-input"/>
                                         </div>
                                         <div class="svg-property">
                                             <!-- <div class="svg-tool-button" (click)="flipSelected('vertical')" matTooltip="Flip vertically">
@@ -437,7 +449,8 @@
                                 <div class="svg-property-split2">
                                     <div class="svg-property">
                                         <span>{{'editor.stroke-width' | translate}}</span>
-                                        <input id="stroke_width" matTooltip="{{'editor.stroke-width-title' | translate}}" size="4" value="1" type="text" data-attr="Stroke Width" />
+                                        <input numberOnly id="stroke_width" type="number" class="rightbar-input" matTooltip="{{'editor.stroke-width-title' | translate}}"
+                                                size="4" value="1" data-attr="Stroke Width" />
                                     </div>
                                     <div class="svg-property">
                                         <span>{{'editor.stroke-style' | translate}}</span>

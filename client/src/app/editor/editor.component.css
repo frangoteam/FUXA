@@ -160,7 +160,8 @@
     top: 55px;
     /* overflow-y: auto; */
     max-height: calc(100% - 75px);
-    box-shadow: 0px 0px 5px rgb(0 0 0);
+    background-color: var(--toolboxBackground);
+    box-shadow: 0px 1px 4px 0px #000;
 }
 
 .svg-tool-button {
@@ -342,6 +343,10 @@
     color: var(--toolboxColor);
 }
 
+.rightbar-input {
+    width: 70px;
+}
+
 .mat-expansion-panel-header-title span {
     padding-top: 3px;
 }
@@ -444,11 +449,13 @@ li {
     margin: 0px 10px 12px 10px;
     background-color: inherit;
     color: inherit;
+    background-color: var(--toolboxPanelBackgroung);
+    color: var(--toolboxColor);
 }
 
 .style-stroke option {
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+    background-color: var(--toolboxPanelBackgroung);
+    color: var(--toolboxColor);
 }
 
 .font-family {
@@ -456,11 +463,12 @@ li {
     margin: 0px 10px 12px 10px;
     background-color: inherit;
     color: inherit;
+    width: 174px;
 }
 
 .font-family option {
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+    background-color: var(--toolboxPanelBackgroung);
+    color: var(--toolboxColor);
 }
 
 .text-align {
@@ -468,11 +476,12 @@ li {
     margin: 0px 10px 12px 10px;
     background-color: inherit;
     color: inherit;
+    width: 75px;
 }
 
 .text-align option {
-    background-color: rgba(33, 33, 33, 1);
-    color: rgba(255, 255, 255, 1);
+    background-color: var(--toolboxPanelBackgroung);
+    color: var(--toolboxColor);
 }
 
 select#start_marker option[value="A"] {
