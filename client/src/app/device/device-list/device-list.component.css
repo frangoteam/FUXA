@@ -71,8 +71,16 @@
     flex: 0 0 180px;
 }
 
+.mat-column-logger {
+    flex: 0 0 30px;
+}
+
+.mat-column-graph {
+    flex: 0 0 30px;
+}
+
 .mat-column-warning {
-    flex: 0 0 60px;
+    flex: 0 0 30px;
 }
 
 .mat-column-min {

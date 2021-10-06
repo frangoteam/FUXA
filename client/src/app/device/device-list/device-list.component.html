@@ -75,6 +75,22 @@
             <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
         </ng-container>
 
+        <!-- Logger Column -->
+        <ng-container matColumnDef="logger">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-icon>storage</mat-icon>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Graph Column -->
+        <ng-container matColumnDef="graph">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-icon>multiline_chart</mat-icon>
+            </mat-cell>
+        </ng-container>
+
         <!-- Warning Column -->
         <ng-container matColumnDef="warning">
             <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
