@@ -177,6 +177,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.subscriptionLoad.unsubscribe();
             }
         } catch (e) {
+            console.error(e);
         }
         this.onSaveProject();
     }
@@ -627,6 +628,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             for (let i = 0; i < ele.length; i++) {
                 if (this.currentView.items[ele[i].id]) {
                     delete this.currentView.items[ele[i].id];
+                    if (this.gaugesRef.indexOf(ele[i].id) === -1) {
+                        if (this.gaugesRef[ele[i].id].ref && this.gaugesRef[ele[i].id].ref['ngOnDestroy']) {
+                            try {
+                                this.gaugesRef[ele[i].id].ref['ngOnDestroy']();
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -706,14 +716,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.imagefile.split('.').pop().toLowerCase() === 'svg') {
                 let reader = new FileReader();
                 reader.onloadend = function (e: any) {
-                    self.winRef.nativeWindow.svgEditor.setSvgImageToAdd(e.target.result);
+                    if (self.winRef.nativeWindow.svgEditor.setSvgImageToAdd) {
+                        self.winRef.nativeWindow.svgEditor.setSvgImageToAdd(e.target.result);
+                    }
                     self.setMode('svg-image');
                 };
                 reader.readAsText(event.target.files[0]);
             } else {
                 this.getBase64Image(event.target.files[0], function (imgdata) {
-                    let data = imgdata;
-                    self.winRef.nativeWindow.svgEditor.promptImgURLcallback = data;
+                    if (self.winRef.nativeWindow.svgEditor.setUrlImageToAdd) {
+                        self.winRef.nativeWindow.svgEditor.setUrlImageToAdd(imgdata);
+                    }
                     self.setMode('image');
                 });
             }
