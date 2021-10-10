@@ -344,6 +344,8 @@ function MQTTclient(_data, _logger, _events) {
                                             var subitems = JSON.parse(data.tags[id].value);
                                             if (subitems[data.tags[id].memaddress]) {
                                                 data.tags[id].value = subitems[data.tags[id].memaddress];
+                                            } else {
+                                                data.tags[id].value = '';
                                             }
                                         } catch (err) {
                                             console.error(err);
