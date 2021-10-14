@@ -139,7 +139,7 @@ export class GaugesManager {
             for (let i = 0; i < GaugesManager.GaugeWithActions.length; i++) {
                 if (type.startsWith(GaugesManager.GaugeWithActions[i].TypeTag)) {
                     if (typeof GaugesManager.GaugeWithActions[i]['getActions'] === 'function') {
-                        return GaugesManager.GaugeWithActions[i]['getActions']();
+                        return GaugesManager.GaugeWithActions[i]['getActions'](type);
                     }
                 }
             }

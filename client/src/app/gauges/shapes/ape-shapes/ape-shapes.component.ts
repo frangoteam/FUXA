@@ -20,6 +20,8 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     static TypeId = 'ape';
     static TypeTag = 'svg-ext-' + ApeShapesComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'AnimProcEng';
+    static EliType = ApeShapesComponent.TypeTag + '-eli';
+    static PistonType = ApeShapesComponent.TypeTag + '-piston';
 
     static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, downup: GaugeActionsType.downup,
         hide: GaugeActionsType.hide, show: GaugeActionsType.show };
@@ -44,8 +46,15 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         return res;
     }
 
-    static getActions() {
-        return this.actionsType;
+    static getActions(type: string) {
+        let actions = Object.assign({}, ApeShapesComponent.actionsType);
+        if (type === ApeShapesComponent.EliType) {
+            delete actions.downup;
+        } else if (type === ApeShapesComponent.PistonType) {
+            delete actions.anticlockwise;
+            delete actions.clockwise;
+        }
+        return actions;
     }
 
     static getDialogType(): GaugeDialogType {
@@ -114,15 +123,15 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
+        if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+            return;
+        }
         element.stop(true);
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.anticlockwise) {
             gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.downup) {
-            if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
-                return;
-            }
             let eletoanim = Utils.searchTreeStartWith(element.node, 'pm');
             if (eletoanim) {
                 element = SVG.adopt(eletoanim);
@@ -136,22 +145,13 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                 gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
             }
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.stop) {
-            if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
-                clearTimeout(gaugeStatus.actionRef.timer);
-                gaugeStatus.actionRef.timer = null;
+            if (gaugeStatus.actionRef) {
+                if (gaugeStatus.actionRef.timer) {
+                    clearTimeout(gaugeStatus.actionRef.timer);
+                    gaugeStatus.actionRef.timer = null;
+                }
+                gaugeStatus.actionRef.type = type;
             }
         }
-    }
-
-    static firstAnimation(element, moveto, movefrom) {
-        // element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y).after(function () {
-        //     ApeShapesComponent.firstAnimation(element, moveto, movefrom);
-        // });
-        element.animate({duration: 1000, delay: 6000, wait: 6000 }).move(moveto.x, moveto.y).after(function () {
-        // element.animate(1000).move(movefrom.x, movefrom.y);
-        }).loop();//ApeShapesComponent.secondAnimation(element, moveto, movefrom));
-    }
-    static secondAnimation(element, movefrom, moveto) {
-        // element.animate(1000).move(moveto.x, moveto.y).after(ApeShapesComponent.firstAnimation(element, moveto, movefrom));
     }
 }

@@ -46,7 +46,7 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
         return res;
     }
 
-    static getActions() {
+    static getActions(type: string) {
         return this.actionsType;
     }
 

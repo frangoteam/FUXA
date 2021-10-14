@@ -1,6 +1,6 @@
 <div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type"
                         [style.background-color]="layoutNavigation.bkcolor" [style.color]="layoutNavigation.fgcolor">
-    <mat-list>
+    <mat-list style="background-color: inherit;">
         <mat-list-item style="height: 35px; font-weight: bold; padding-left: 10px;padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="layoutNavigation.fgcolor">
             {{'sidenav.title' | translate}}
         </mat-list-item>

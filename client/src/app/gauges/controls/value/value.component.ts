@@ -55,7 +55,7 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.ValueAndUnit;
     }
 
-    static getActions() {
+    static getActions(type: string) {
         return this.actionsType;
     }
     

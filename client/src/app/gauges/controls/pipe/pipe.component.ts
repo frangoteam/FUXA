@@ -34,7 +34,7 @@ export class PipeComponent {
         return res;
     }
 
-    static getActions() {
+    static getActions(type: string) {
         return this.actionsType;
     }
 

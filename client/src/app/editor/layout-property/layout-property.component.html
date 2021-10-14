@@ -67,8 +67,7 @@
                 </div>
                 <div class="sidenav-menu" [style.background-color]="data.layout.navigation.bkcolor" [style.color]="data.layout.navigation.fgcolor"
                     style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
-                    <mat-list class="dndList"
-                        style="padding-top: 10px;">
+                    <mat-list class="dndList" style="padding-top: 10px; background-color: inherit;">
                         <mat-list-item *ngFor="let item of draggableListLeft; let i = index" [ngClass]="'menu-item-' + data.layout.navigation.type" style="width: unset">
                             <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
                                 <!-- <mat-icon *ngIf="mode.value === navMode.icon || mode.value === navMode.block">{{item.icon}}</mat-icon> -->
