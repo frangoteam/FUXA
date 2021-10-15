@@ -107,6 +107,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
                 let element = SVG.adopt(svgele.node);
+                ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 this.runActionHide(element, act.type, gaugeStatus);
             }
         } else if (this.actionsType[act.type] === this.actionsType.show) {
@@ -135,23 +136,30 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             let eletoanim = Utils.searchTreeStartWith(element.node, 'pm');
             if (eletoanim) {
                 element = SVG.adopt(eletoanim);
-                let elebox = eletoanim.getBBox();
+                let elebox = eletoanim.getBBox();                
 				var movefrom = { x: elebox.x, y: elebox.y };
+                if (gaugeStatus.actionRef && gaugeStatus.actionRef.spool) {
+                    movefrom = gaugeStatus.actionRef.spool;
+                }
                 var moveto = { x: elebox.x, y: elebox.y  - 25 };
-                
+                ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 let timeout = setInterval(() => {
                     element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y);
                 }, 2000);
-                gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
+                gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout, spool: movefrom };
             }
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.stop) {
             if (gaugeStatus.actionRef) {
-                if (gaugeStatus.actionRef.timer) {
-                    clearTimeout(gaugeStatus.actionRef.timer);
-                    gaugeStatus.actionRef.timer = null;
-                }
+                ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 gaugeStatus.actionRef.type = type;
             }
+        }
+    }
+
+    static clearAnimationTimer(actref: any) {
+        if (actref && actref.timer) {
+            clearTimeout(actref.timer);
+            actref.timer = null;
         }
     }
 }
