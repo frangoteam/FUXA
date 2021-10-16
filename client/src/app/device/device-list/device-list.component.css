@@ -72,7 +72,13 @@
 }
 
 .mat-column-logger {
-    flex: 0 0 30px;
+    flex: 0 0 80px;
+    font-size: 10px;
+}
+
+.mat-column-logger mat-icon {
+    font-size: 20px;
+    height: 20px;
 }
 
 .mat-column-graph {
@@ -81,6 +87,10 @@
 
 .mat-column-warning {
     flex: 0 0 30px;
+}
+
+.mat-column-options {
+    flex: 0 0 60px;
 }
 
 .mat-column-min {

@@ -444,6 +444,11 @@
     "device.list-min": "Min",
     "device.list-max": "Max",
     "device.list-value": "Value",
+    "device.list-edit": "Edit Tag",
+    "device.list-add": "Add Tag",
+    "device.list-remove": "Remove Tag",
+    "device.list-remove-all": "Remove all Tags",
+    "device.list-options": "Tag options",
 
     "device.property-client": "Device Property",
     "device.property-server": "FUXA Server Property",
@@ -529,6 +534,11 @@
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
+
+    "device.tag-options-title": "Tag Options",
+    "device.tag-daq-enabled": "Registration Enabled",
+    "device.tag-daq-changed": "Save value if changed",
+    "device.tag-daq-interval": "Save value interval (sec.)",
 
     "users.list-title": "Users settings",
     "users.list-name": "Username",

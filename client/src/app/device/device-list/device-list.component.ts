@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { TagPropertyComponent } from './../tag-property/tag-property.component';
+import { TagOptionsComponent } from './../tag-options/tag-options.component';
 import { TopicPropertyComponent } from './../topic-property/topic-property.component';
 import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
@@ -23,9 +24,9 @@ import { Utils } from '../../_helpers/utils';
 
 export class DeviceListComponent implements OnInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'logger', 'options', 'remove'];
     readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
-    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'remove'];
+    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -168,12 +169,18 @@ export class DeviceListComponent implements OnInit {
         this.dataSource.filter = filterValue;
     }
 
+    /** Edit the tag */
     onEditRow(row) {
         if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics(row);
         } else {
             this.editTag(row, false);
         }
+    }
+
+    /** Edit tag options like DAQ settings */
+    onEditOptions(row) {
+        this.editTagOptions([row]);
     }
 
     onAddTag() {
@@ -295,6 +302,21 @@ export class DeviceListComponent implements OnInit {
                     }
                     this.projectService.setDeviceTags(this.deviceSelected);
                 }
+            }
+        });
+    }
+
+    editTagOptions(tags: Tag[]) {
+        let dialogRef = this.dialog.open(TagOptionsComponent, {
+            data: { device: this.deviceSelected, tags: tags },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                for (let i = 0; i < tags.length; i++) {
+                    tags[i].daq = result;
+                }
+                this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
     }

@@ -185,6 +185,9 @@ function DaqNode(_settings, _log, _id) {
                 var addDaqfnc = [];
                 // prepare functions
                 for (var tagid in tags) {
+                    if (tags[tagid].daq && !tags[tagid].daq.enabled) {
+                        continue;
+                    }
                     if (!daqTagsMap[tagid]) {
                         var prop = fncGetTagProp(tagid);
                         if (prop) {
@@ -211,7 +214,7 @@ function DaqNode(_settings, _log, _id) {
                         } else {
                             logger.error(`daqstorage.add-daq-value _insertTagToMap failed! '${id}' ${reason}`);
                         }
-                        _checkWorking(false);
+                        _checkDataWorking(false);
                     });
                 } 
                 // check function to add daq data            
@@ -403,28 +406,33 @@ function DaqNode(_settings, _log, _id) {
      * @param {*} dbfile 
      */
     function _checkToArchiveDBfile(dbfile) {
-        _bindDaqData(dbfile).then(result => {
-            logger.info(`daqstorage.check-to-archive-db-file '${dbfile}'`, true);
-            _getLastTagValue(result).then(lastrow => {
-                result.close(function () {
-                    // rename and move to archive
-                    if (lastrow) {
-                        var filearchived = _archiveDBfile(dbfile, lastrow.dt);
-                        logger.info(`daqstorage.check-to-archive-db-file '${filearchived}'`, true);
-                    } else {
-                        // delete void db
-                        try {
-                            fs.unlinkSync(dbfile);
-                            logger.info(`daqstorage.check-to-archive-db-file '${dbfile}' database deleted!`, true);
-                        } catch (e) { }
-                    }
+        if (dbfile.indexOf('-journal') !== -1) {
+            // delete pending db journal
+            fs.unlinkSync(dbfile);
+        } else {
+            _bindDaqData(dbfile).then(result => {
+                logger.info(`daqstorage.check-to-archive-db-file '${dbfile}'`, true);
+                _getLastTagValue(result).then(lastrow => {
+                    result.close(function () {
+                        // rename and move to archive
+                        if (lastrow) {
+                            var filearchived = _archiveDBfile(dbfile, lastrow.dt);
+                            logger.info(`daqstorage.check-to-archive-db-file '${filearchived}'`, true);
+                        } else {
+                            // delete void db
+                            try {
+                                fs.unlinkSync(dbfile);
+                                logger.info(`daqstorage.check-to-archive-db-file '${dbfile}' database deleted!`, true);
+                            } catch (e) { }
+                        }
+                    });
+                }).catch(function (err) {
+                    logger.error(`daqstorage.check-to-archive-db-file error! '${id}' ${err}`);
                 });
             }).catch(function (err) {
                 logger.error(`daqstorage.check-to-archive-db-file error! '${id}' ${err}`);
             });
-        }).catch(function (err) {
-            logger.error(`daqstorage.check-to-archive-db-file error! '${id}' ${err}`);
-        });
+        }
     }
 
     function _getArchiveFiles(id, fromts, tots) {

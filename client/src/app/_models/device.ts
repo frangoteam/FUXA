@@ -43,9 +43,27 @@ export class Tag {
     options: any;
     /** not used yet */
     format: any;
+    /** Daq settings */
+    daq: TagDaq;
 
     constructor(_id: string) {
         this.id = _id;
+        this.daq = new TagDaq(false, true, 60);
+    }
+}
+
+export class TagDaq {
+    /** DAQ data acquisition is enabled */
+    enabled: boolean;
+    /** Fix interval to save the current value in seconds*/
+    interval: number;
+    /** Save if the value was changed, the check is in device polling interval */
+    changed: boolean;
+    
+    constructor(_enabled: boolean, _changed: boolean, _interval: number) {
+        this.enabled = _enabled;
+        this.changed = _changed;
+        this.interval = _interval;
     }
 }
 
