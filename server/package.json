@@ -23,6 +23,7 @@
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "express": "4.16.4",
+    "express-rate-limit": "^5.5.0",
     "fs-extra": "^7.0.1",
     "ip": "^1.1.5",
     "jsonwebtoken": "^8.5.1",
