@@ -17,6 +17,16 @@
       "hubConsumerGroup": "$default"
     },
     "tags": {
+      "t_1-0": {
+        "id": "t_1-0",
+        "type": "json",
+        "address": "$status",
+        "memaddress": "value",
+        "options": {
+          "subs": ["value"]
+        },
+        "name": "$status[value]"
+      },
       "t_1-1": {
         "id": "t_1-1",
         "type": "json",
