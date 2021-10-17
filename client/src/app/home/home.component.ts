@@ -215,14 +215,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.hmi = hmi;
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
-            if (this.hmi.layout && this.hmi.layout.start) {
-                const startView = this.hmi.views.find(x => x.id === this.hmi.layout.start);
-                if (startView) {
-                    this.homeView = startView;
-                }
-            } else {
-                this.homeView = this.hmi.views[0];
-            }
+			let viewToShow = null;
+			if (this.hmi.layout && this.hmi.layout.start) {
+				viewToShow = this.hmi.views.find(x => x.id === this.hmi.layout.start);
+			}
+			if (!viewToShow) {
+				viewToShow = this.hmi.views[0];
+			}
+			this.homeView = viewToShow;
             this.setBackground();
             // check sidenav
             this.showSidenav = null;

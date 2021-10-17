@@ -586,7 +586,7 @@ mat-toolbar-row {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: rgba(108, 108, 108, 0.3);
+    background: rgba(77, 77, 77, 0.3);
 }
 
 /* Color Picker */

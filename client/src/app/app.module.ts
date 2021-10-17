@@ -40,6 +40,7 @@ import { LabComponent } from './lab/lab.component';
 import { DeviceComponent, DeviceTagDialog } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
 import { TagPropertyComponent } from './device/tag-property/tag-property.component';
+import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
 import { DeviceListComponent, DialogTagName } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
@@ -140,6 +141,7 @@ export function createTranslateLoader(http: HttpClient) {
         DeviceComponent,
         DeviceTagDialog,
         TagPropertyComponent,
+        TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
         LayoutPropertyComponent,
@@ -287,6 +289,7 @@ export function createTranslateLoader(http: HttpClient) {
         PipePropertyComponent,
         SliderPropertyComponent,
         HtmlSwitchPropertyComponent,
+        TagOptionsComponent,
         DevicePropertyComponent,
         TagPropertyComponent,
         TopicPropertyComponent,
