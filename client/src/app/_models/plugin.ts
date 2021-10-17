@@ -13,5 +13,6 @@ export enum PluginType {
     BACnet = 'BACnet',
     Modbus = 'Modbus',
     Raspberry = 'Raspberry',
-    SiemensS7 = 'SiemensS7'
+    SiemensS7 = 'SiemensS7',
+    EthernetIP = 'EthernetIP'
 }

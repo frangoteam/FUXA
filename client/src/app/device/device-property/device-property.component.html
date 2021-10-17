@@ -248,6 +248,22 @@
                         </mat-expansion-panel>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.EthernetIP">
+                    <div class="my-form-field" style="display: inline-block; margin-bottom: 10px;">
+                        <span>{{'device.property-address-port' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div style="display: block; height: 45px;">
+                        <div class="my-form-field" style="display: inline-block; text-align: center;width: 80px;">
+                            <span>{{'device.property-routing' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field" style="display: inline-block; margin-left: 10px;" *ngIf="data.device.property.options">
+                            <input numberOnly [(ngModel)]="data.device.property.rack" style="width: 20px;" type="text">
+                            <input numberOnly [(ngModel)]="data.device.property.slot" style="width: 20px; margin-left: 5px;" type="text">
+                        </div>
+                    </div>
+                </div>                
             </div>
         </div>
     </div>
