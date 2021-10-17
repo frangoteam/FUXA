@@ -20,6 +20,8 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     static TypeId = 'ape';
     static TypeTag = 'svg-ext-' + ApeShapesComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'AnimProcEng';
+    static EliType = ApeShapesComponent.TypeTag + '-eli';
+    static PistonType = ApeShapesComponent.TypeTag + '-piston';
 
     static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, downup: GaugeActionsType.downup,
         hide: GaugeActionsType.hide, show: GaugeActionsType.show };
@@ -44,8 +46,15 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         return res;
     }
 
-    static getActions() {
-        return this.actionsType;
+    static getActions(type: string) {
+        let actions = Object.assign({}, ApeShapesComponent.actionsType);
+        if (type === ApeShapesComponent.EliType) {
+            delete actions.downup;
+        } else if (type === ApeShapesComponent.PistonType) {
+            delete actions.anticlockwise;
+            delete actions.clockwise;
+        }
+        return actions;
     }
 
     static getDialogType(): GaugeDialogType {
@@ -55,7 +64,6 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
-                let clr = '';
                 let value = parseFloat(sig.value);
                 if (Number.isNaN(value)) {
                     // maybe boolean
@@ -65,13 +73,19 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                 }
                 if (ga.property) {
                     if (ga.property.variableId === sig.id && ga.property.ranges) {
+                        let fill = null;
+                        let stroke = null;
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
-                                clr = ga.property.ranges[idx].color;
+                                fill = ga.property.ranges[idx].color;
+                                stroke = ga.property.ranges[idx].stroke;
                             }
                         }
-                        if (clr) {
-                            svgele.node.setAttribute('fill', clr);
+                        if (fill) {
+                            svgele.node.setAttribute('fill', fill);
+                        }
+                        if (stroke) {
+                            svgele.node.setAttribute('stroke', stroke);
                         }
                     }
                     // check actions
@@ -93,6 +107,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
                 let element = SVG.adopt(svgele.node);
+                ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 this.runActionHide(element, act.type, gaugeStatus);
             }
         } else if (this.actionsType[act.type] === this.actionsType.show) {
@@ -109,44 +124,42 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
+        if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+            return;
+        }
         element.stop(true);
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.anticlockwise) {
             gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.downup) {
-            if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
-                return;
-            }
             let eletoanim = Utils.searchTreeStartWith(element.node, 'pm');
             if (eletoanim) {
                 element = SVG.adopt(eletoanim);
-                let elebox = eletoanim.getBBox();
+                let elebox = eletoanim.getBBox();                
 				var movefrom = { x: elebox.x, y: elebox.y };
+                if (gaugeStatus.actionRef && gaugeStatus.actionRef.spool) {
+                    movefrom = gaugeStatus.actionRef.spool;
+                }
                 var moveto = { x: elebox.x, y: elebox.y  - 25 };
-                
+                ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 let timeout = setInterval(() => {
                     element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y);
                 }, 2000);
-                gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
+                gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout, spool: movefrom };
             }
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.stop) {
-            if (gaugeStatus.actionRef && gaugeStatus.actionRef.timer) {
-                clearTimeout(gaugeStatus.actionRef.timer);
-                gaugeStatus.actionRef.timer = null;
+            if (gaugeStatus.actionRef) {
+                ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
+                gaugeStatus.actionRef.type = type;
             }
         }
     }
 
-    static firstAnimation(element, moveto, movefrom) {
-        // element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y).after(function () {
-        //     ApeShapesComponent.firstAnimation(element, moveto, movefrom);
-        // });
-        element.animate({duration: 1000, delay: 6000, wait: 6000 }).move(moveto.x, moveto.y).after(function () {
-        // element.animate(1000).move(movefrom.x, movefrom.y);
-        }).loop();//ApeShapesComponent.secondAnimation(element, moveto, movefrom));
-    }
-    static secondAnimation(element, movefrom, moveto) {
-        // element.animate(1000).move(moveto.x, moveto.y).after(ApeShapesComponent.firstAnimation(element, moveto, movefrom));
+    static clearAnimationTimer(actref: any) {
+        if (actref && actref.timer) {
+            clearTimeout(actref.timer);
+            actref.timer = null;
+        }
     }
 }

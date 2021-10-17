@@ -71,7 +71,25 @@
     flex: 0 0 180px;
 }
 
+.mat-column-logger {
+    flex: 0 0 80px;
+    font-size: 10px;
+}
+
+.mat-column-logger mat-icon {
+    font-size: 20px;
+    height: 20px;
+}
+
+.mat-column-graph {
+    flex: 0 0 30px;
+}
+
 .mat-column-warning {
+    flex: 0 0 30px;
+}
+
+.mat-column-options {
     flex: 0 0 60px;
 }
 

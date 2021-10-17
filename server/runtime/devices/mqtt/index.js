@@ -336,6 +336,7 @@ function MQTTclient(_data, _logger, _events) {
                             if (topicsMap[topicAddr]) {
                                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
                                     var id = topicsMap[topicAddr][i].id;
+                                    var oldvalue = data.tags[id].value;
                                     data.tags[id].value = msg.toString();
                                     data.tags[id].timestamp = new Date().getTime();
                                     data.tags[id].changed = true;
@@ -344,6 +345,8 @@ function MQTTclient(_data, _logger, _events) {
                                             var subitems = JSON.parse(data.tags[id].value);
                                             if (subitems[data.tags[id].memaddress]) {
                                                 data.tags[id].value = subitems[data.tags[id].memaddress];
+                                            } else {
+                                                data.tags[id].value = oldvalue;
                                             }
                                         } catch (err) {
                                             console.error(err);

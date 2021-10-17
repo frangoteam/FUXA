@@ -45,7 +45,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.Step;
     }
 
-    static getActions() {
+    static getActions(type: string) {
         return this.actionsType;
     }
 

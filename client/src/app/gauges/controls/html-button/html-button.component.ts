@@ -47,7 +47,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.Range;
     }
 
-    static getActions() {
+    static getActions(type: string) {
         return this.actionsType;
     }
 

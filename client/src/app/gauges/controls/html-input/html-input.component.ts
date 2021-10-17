@@ -45,7 +45,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
         return GaugeDialogType.OnlyValue;
     }
 
-    static getActions() {
+    static getActions(type: string) {
         return this.actionsType;
     }
 

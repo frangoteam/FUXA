@@ -6,6 +6,7 @@ const fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var authJwt = require('./jwt-helper');
+const rateLimit = require("express-rate-limit");
 
 var prjApi = require('./projects');
 var authApi = require('./auth');
@@ -39,6 +40,14 @@ function init(_server, _runtime) {
             apiApp.use(authApi.app());
             pluginsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(pluginsApi.app());
+
+            const limiter = rateLimit({
+                windowMs: 5 * 60 * 1000, // 5 minutes
+                max: 100 // limit each IP to 100 requests per windowMs
+            });
+              
+            //  apply to all requests
+            apiApp.use(limiter);
 
             /**
              * GET Server setting data

@@ -21,12 +21,12 @@
         <!-- Checkbox Column -->
         <ng-container matColumnDef="select">
             <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onAddTag()" class="remove">
+                <button mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
                     <mat-icon>add</mat-icon>
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onEditRow(element)" class="remove"
+                <button mat-icon-button (click)="onEditRow(element)" class="remove" matTooltip="{{'device.list-edit' | translate}}"
                     *ngIf="isToEdit(deviceSelected.type, element)">
                     <mat-icon>edit</mat-icon>
                 </button>
@@ -75,6 +75,27 @@
             <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
         </ng-container>
 
+        <!-- Logger Column -->
+        <ng-container matColumnDef="logger">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <div *ngIf="element.daq && element.daq.enabled">
+                    <mat-icon>storage</mat-icon>
+                    <span *ngIf="element.daq.interval" style="display: inline-block;vertical-align: super;">
+                        {{element.daq.interval}} s
+                    </span>
+                </div>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Graph Column -->
+        <ng-container matColumnDef="graph">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-icon>multiline_chart</mat-icon>
+            </mat-cell>
+        </ng-container>
+
         <!-- Warning Column -->
         <ng-container matColumnDef="warning">
             <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
@@ -85,15 +106,29 @@
             </mat-cell>
         </ng-container>
 
+        <!-- Button edit options row -->
+        <ng-container matColumnDef="options">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <!-- <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" (click)="$event.stopPropagation();editOptions(element)" class="options" -->
+                <button mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'device.list-options' | translate}}">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <!-- <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="editOptions(element)" style="font-size: 14px;">{{'device.list-options' | translate}}</button>
+                </mat-menu>-->
+            </mat-cell>
+        </ng-container>
+
         <!-- Button remove Column -->
         <ng-container matColumnDef="remove">
             <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onRemoveAll()" class="remove">
+                <button mat-icon-button (click)="onRemoveAll()" class="remove" matTooltip="{{'device.list-remove-all' | translate}}">
                     <mat-icon>clear</mat-icon>
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove">
+                <button mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove" matTooltip="{{'device.list-remove' | translate}}">
                     <mat-icon>clear</mat-icon>
                 </button>
             </mat-cell>

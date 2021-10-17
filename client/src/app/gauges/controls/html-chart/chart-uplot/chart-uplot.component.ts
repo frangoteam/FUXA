@@ -45,6 +45,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy() {
         try {
             delete this.chartPanel;
+            if (this.nguplot) {
+                this.nguplot.ngOnDestroy();
+            }
             delete this.nguplot;
         } catch (e) {
             console.error(e);

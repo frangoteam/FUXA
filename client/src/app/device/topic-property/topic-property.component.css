@@ -86,6 +86,7 @@
     width: 100%;
 }
 
-::ng-deep .mytoogle .mat-button-toggle-label-content {
-    line-height: 28px;
-}
+.mytoggle-group {
+    height: 29px;
+    align-items: center;
+  }

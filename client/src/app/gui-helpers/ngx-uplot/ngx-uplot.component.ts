@@ -17,6 +17,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() public options: NgxOptions;
     @ViewChild('graph') public graph: ElementRef;
 
+    overlay: any;
     uplot: any;
     data: number[][];
     xtime = [new Date().getTime() / 1000 - 1, new Date().getTime() / 1000];     // start and sample x time
@@ -148,6 +149,9 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy() {
         try {
             this.uplot.destroy();
+            if (this.overlay.parentNode) {
+                this.overlay.parentNode.removeChild(this.overlay);
+            }
         } catch (e) {
             console.error(e);
         }
@@ -273,7 +277,8 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             bTop = bbox.top;
         }
 
-        const overlay = document.createElement("div");
+        this.overlay = document.createElement("div");
+        let overlay = this.overlay;
         overlay.id = "overlay";
         overlay.style.display = "none";
         overlay.style.position = "absolute";
