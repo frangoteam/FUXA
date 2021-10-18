@@ -20,7 +20,7 @@ const Datatypes = {
         bytes: 1,
         // parser: (v, bit = 0) => v >> bit & 1 === 1,
         parser: (buffer, offset = 0, bit = 0) => +buffer.readUInt8(offset) >> bit & 1 === 1,
-        formatter: v => (v === '1' || v === true) ? 1 : 0,
+        formatter: v => (v === '1' || v === 1 || v === true) ? 1 : 0,
         WordLen: 1
     },
     /**
