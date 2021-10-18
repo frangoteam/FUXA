@@ -141,9 +141,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     checkToCloseSideNav() {
-        let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
-        if (this.hmi.layout && nvoid !== NaviModeType.fix && this.matsidenav) {
-            this.matsidenav.close();
+        if (this.hmi.layout) {
+            let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
+            if (nvoid !== NaviModeType.fix && this.matsidenav) {
+                this.matsidenav.close();
+            }
         }
     }
 
