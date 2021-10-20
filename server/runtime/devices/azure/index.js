@@ -82,6 +82,9 @@ function AzIoTclient(_data, _logger, _events) {
                 if (point["plcName"] !== options.plcName) {
                     continue;
                 }
+                if (typeof topicsMap[point["pointName"]] === 'undefined') {
+                    continue;
+                }
                 var id = topicsMap[point["pointName"]][0].id;
                 data.tags[id].value = point["value"];
                 data.tags[id].timestamp = new Date().getTime();
