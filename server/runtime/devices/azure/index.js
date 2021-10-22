@@ -225,23 +225,36 @@ function AzIoTclient(_data, _logger, _events) {
      */
     this.setValue = function (tagid, value) {
         return new Promise((resolve, reject) => {
-            var methodParams = {
-                methodName: 'writePoint',
-                payload: {
-                    appName: options.appName,
-                    plcName: options.plcName,
-                    pointName: data.tags[tagid]['address'],
-                    value: value
-                },
-                responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
-              };
+            var methodParams = {};
+            var updateValue = 0;
+            if (data.tags[tagid]['address'] === "$status") {
+                return
+            } else if (data.tags[tagid]['address'] === "$rebirth") {
+                methodParams = {
+                    methodName: 'rebirth',
+                    payload: {},
+                    responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
+                  };
+            } else {
+                methodParams = {
+                    methodName: 'writePoint',
+                    payload: {
+                        appName: options.appName,
+                        plcName: options.plcName,
+                        pointName: data.tags[tagid]['address'],
+                        value: value
+                    },
+                    responseTimeoutInSeconds: 15 // set response timeout as 15 seconds
+                  };
+                updateValue = value
+            }
             iotHubCli.invokeDeviceMethod(options.deviceId, options.moduleId, methodParams, function (err, result) {
               if (err) {
                 console.error('Failed to invoke method \'' + methodParams.methodName + '\': ' + err.message);
               } else {
                 console.log(methodParams.methodName + ' on ' + options.deviceId + ':');
                 console.log(JSON.stringify(result, null, 2));
-                data.tags[tagid].value = value;
+                data.tags[tagid].value = updateValue;
                 data.tags[tagid].timestamp = new Date().getTime();
                 data.tags[tagid].changed = true;
                 resolve(result);
