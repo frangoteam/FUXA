@@ -1,0 +1,50 @@
+{
+  "bakeAgent": {
+    "messages": [
+      {
+        "onChange": true,
+        "minPublishInterval": 0,
+        "outputTopic": "project1",
+        "pollingInterval": 0,
+        "properties": [],
+        "samplingMode": "allValues",
+        "enable": true,
+        "sendOutThreshold": {
+          "mode": "immediately",
+          "size": 0,
+          "time": 5
+        },
+        "tags": {}
+      }
+    ]
+  },
+  "apps": {
+    "modbusMaster": {
+      "plcs": [
+        {
+          "name": "meter1",
+          "ip": "10.123.12.136",
+          "port": 504,
+          "unitID": 1,
+          "uploadInterval": 1,
+          "points": [
+            {
+              "name": "di0",
+              "funCode": 3,
+              "addr": 0,
+              "quantity": 1,
+              "type": "int"
+            },
+            {
+              "name": "di1",
+              "funCode": 3,
+              "addr": 1,
+              "quantity": 1,
+              "type": "int"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

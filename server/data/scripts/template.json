@@ -5,7 +5,7 @@
     "enabled": true,
     "name": "meter1",
     "type": "AzIoTclient",
-    "polling": 3000,
+    "polling": 1000,
     "property": {
       "deviceId": "edge2",
       "moduleId": "bakeAgent",
@@ -17,15 +17,29 @@
       "hubConsumerGroup": "$default"
     },
     "tags": {
-      "t_1-0": {
-        "id": "t_1-0",
+      "t_1-00": {
+        "id": "t_1-00",
         "type": "json",
         "address": "$status",
         "memaddress": "value",
         "options": {
-          "subs": ["value"]
+          "subs": [
+            "value"
+          ]
         },
         "name": "$status[value]"
+      },
+      "t_1-01": {
+        "id": "t_1-01",
+        "type": "json",
+        "address": "$rebirth",
+        "memaddress": "value",
+        "options": {
+          "subs": [
+            "value"
+          ]
+        },
+        "name": "$rebirth[value]"
       },
       "t_1-1": {
         "id": "t_1-1",
@@ -33,7 +47,9 @@
         "address": "di0",
         "memaddress": "value",
         "options": {
-          "subs": ["value"]
+          "subs": [
+            "value"
+          ]
         },
         "name": "di0[value]"
       },
@@ -43,19 +59,11 @@
         "address": "di1",
         "memaddress": "value",
         "options": {
-          "subs": ["value"]
+          "subs": [
+            "value"
+          ]
         },
         "name": "di1[value]"
-      },
-      "t_1-3": {
-        "id": "t_1-3",
-        "type": "json",
-        "address": "di2",
-        "memaddress": "value",
-        "options": {
-          "subs": ["value"]
-        },
-        "name": "di2[value]"
       }
     }
   }
