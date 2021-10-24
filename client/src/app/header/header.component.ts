@@ -10,7 +10,7 @@ import { SetupComponent } from '../editor/setup/setup.component';
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { ThemeService } from '../_services/theme.service';
 
-import { HelpData } from '../_models/hmi';
+import { HelpData, DEVICE_READONLY } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -43,6 +43,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             this.router.url.indexOf('users') >= 0 || this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0) ? true : false;
             this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 || 
                                 this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0) ? true : false;
+
+            if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
+                this.ineditor = false;
+            }
         });
         this.themeService.setTheme(this.projectService.getLayoutTheme());
     }

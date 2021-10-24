@@ -334,3 +334,5 @@ export enum CardWidgetType {
     alarms = 'card.widget-alarms',
     table = 'card.widget-table',
 }
+
+export const DEVICE_READONLY = 'rodevice';

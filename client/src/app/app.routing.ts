@@ -11,6 +11,7 @@ import { ViewComponent } from './view/view.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { TextListComponent } from './text-list/text-list.component';
+import { DEVICE_READONLY } from './_models/hmi';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -18,6 +19,7 @@ const appRoutes: Routes = [
     { path: 'editor', component: EditorComponent, canActivate: [AuthGuard]},
     { path: 'lab', component: LabComponent, canActivate: [AuthGuard] },
     { path: 'device', component: DeviceComponent, canActivate: [AuthGuard] },
+    { path: DEVICE_READONLY, component: DeviceComponent, canActivate: [AuthGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'alarms', component: AlarmViewComponent, canActivate: [AuthGuard] },
     { path: 'messages', component: AlarmListComponent, canActivate: [AuthGuard] },

@@ -28,9 +28,9 @@
         <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
         <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(flow) }}</span>
         <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
-        <mat-icon (click)="onListDevice(flow)" class="device-icon device-list">list_alt</mat-icon>
-        <mat-icon (click)="onEditDevice(flow)" class="device-icon device-edit">edit</mat-icon>
-        <mat-icon (click)="onRemoveDevice(flow)" class="device-icon device-delete">clear</mat-icon>
+        <mat-icon (click)="onListDevice(flow)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28">list_alt</mat-icon>
+        <mat-icon (click)="onEditDevice(flow)" class="device-icon device-edit" *ngIf="!readonly">edit</mat-icon>
+        <mat-icon (click)="onRemoveDevice(flow)" class="device-icon device-delete" *ngIf="!readonly">clear</mat-icon>
     </div>
 
     <div *ngFor="let device of devicesValue(); index as i" [ngClass]="getNodeClass(device)" [style.color]="(device.enabled) ? '#FFFFFF' : '#C5C5C5'" [style.left.px]="getDeviceLeftPosition(i)"
@@ -39,8 +39,8 @@
         <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
         <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
         <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
-        <mat-icon (click)="onListDevice(device)" class="device-icon device-list">list_alt</mat-icon>
-        <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit">edit</mat-icon>
-        <mat-icon (click)="onRemoveDevice(device)" class="device-icon device-delete">clear</mat-icon>
+        <mat-icon (click)="onListDevice(device)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28">list_alt</mat-icon>
+        <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit" *ngIf="!readonly">edit</mat-icon>
+        <mat-icon (click)="onRemoveDevice(device)" class="device-icon device-delete" *ngIf="!readonly">clear</mat-icon>
     </div>
 </div>
