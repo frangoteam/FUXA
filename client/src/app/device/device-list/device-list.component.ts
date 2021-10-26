@@ -66,18 +66,21 @@ export class DeviceListComponent implements OnInit {
         if (!this.deviceSelected && this.devices) {
             this.deviceSelected = this.devices[0];
         }
-        Object.values(this.devices).forEach(d => {
-            Object.values(d.tags).forEach((t: Tag) => {
-                this.tagsMap[t.id] = t;
-            })
-        });
-
+        this.mapTags();
         if (this.deviceSelected) {
             this.bindToTable(this.deviceSelected.tags);
         }
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.table.renderRows();
+    }
+
+    mapTags() {
+        Object.values(this.devices).forEach(d => {
+            Object.values(d.tags).forEach((t: Tag) => {
+                this.tagsMap[t.id] = t;
+            })
+        });
     }
 
     private bindToTable(tags) {
