@@ -2,12 +2,12 @@
     <div class="header-panel">
         {{'device.list-title' | translate}}
     </div>
-    <diV class="work-panel">
-        <app-device-list [hidden]="showMode === 'map'" #devicelist (goto)="gotoMap()"></app-device-list>
-        <app-device-map [hidden]="showMode === 'tags'" #devicemap (goto)="gotoList($event)"></app-device-map>
-    </diV>
+    <div class="work-panel">
+        <app-device-list [hidden]="showMode === 'map'" #devicelist (goto)="gotoMap()" [readonly]="readonly"></app-device-list>
+        <app-device-map [hidden]="showMode === 'tags'" #devicemap (goto)="gotoList($event)" [readonly]="readonly"></app-device-map>
+    </div>
 </div>
 
-<button mat-fab color="primary" (click)="addItem()" class="fab-add">
+<button *ngIf="!readonly" mat-fab color="primary" (click)="addItem()" class="fab-add">
     <mat-icon class="">add</mat-icon>
 </button>

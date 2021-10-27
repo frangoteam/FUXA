@@ -42,6 +42,7 @@ export class DeviceListComponent implements OnInit {
     tagsMap = {};
 
     @Input() deviceSelected: Device;
+	@Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
 
