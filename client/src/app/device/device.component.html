@@ -7,7 +7,7 @@
         <app-device-map [hidden]="showMode === 'tags'" #devicemap (goto)="gotoList($event)" [readonly]="readonly"></app-device-map>
     </div>
 </div>
-<button *ngIf="readonly" mat-icon-button (click)="onReload(item)" class="fab-reload" [ngClass]="{'fab-reload-active': reloadActive}">
+<button mat-icon-button (click)="onReload()" class="fab-reload" [ngClass]="{'fab-reload-active': reloadActive}">
     <mat-icon>autorenew</mat-icon>
 </button>
 <button *ngIf="!readonly" mat-fab color="primary" (click)="addItem()" class="fab-add">
