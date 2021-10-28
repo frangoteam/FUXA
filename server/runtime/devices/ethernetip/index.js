@@ -19,6 +19,8 @@ function EthernetIPclient(_data, _logger, _events) {
     var doneWriting = false;
     var overloading = 0;                // Overloading counter to mange the break connection
     var connected = false;              // Connected flag
+    var itemsMap = {};                  // Items Mapped Tag name with Item path to find for set value
+    var varsValue = [];                 // Signale to send to frontend { id, type, value }
 
     /**
      * initialize the device type 
@@ -41,12 +43,11 @@ function EthernetIPclient(_data, _logger, _events) {
                             if (err) {
                                 logger.error(`'${data.name}' connect failed! ${err}`);
                                 _emitStatus('connect-error');
-                                // _clearVarsValue();
+                                _clearVarsValue();
                                 reject();
                             } else {
                                 connected = true;
-                                // set a timout for requests default is null (no timeout)
-                                // client.setTimeout(2000);
+                                conn.addItems(Object.keys(itemsMap));
                                 logger.info(`'${data.name}' connected!`, true);
                                 _emitStatus('connect-ok');
                                 resolve();
@@ -61,13 +62,13 @@ function EthernetIPclient(_data, _logger, _events) {
                     logger.error(`'${data.name}' try to connect error! ${err}`);
                     _checkWorking(false);
                     _emitStatus('connect-error');
-                    // _clearVarsValue();
+                    _clearVarsValue();
                     reject();
                 }
             } else {
                 logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
-                // _clearVarsValue();
+                _clearVarsValue();
                 reject();
             }
         });
@@ -101,7 +102,7 @@ function EthernetIPclient(_data, _logger, _events) {
             connected = false;
             _checkWorking(false);
             _emitStatus('connect-off');
-            // _clearVarsValue();
+            _clearVarsValue();
         });
     }
 
@@ -110,50 +111,114 @@ function EthernetIPclient(_data, _logger, _events) {
      * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
      */
     this.polling = async function () {
-        console.error('Not supported!');
-        // events.emit('device-value:changed', { id: data.name, values: values });
+        if (_checkWorking(true)) {
+            if (client) {
+                try {
+                    _readValues().then(result => {
+                        _checkWorking(false);
+                        if (result.length) {
+                            let varsValueChanged = _updateVarsValue(result);
+                            lastTimestampValue = new Date().getTime();
+                            _emitValues(varsValue);
+                            if (this.addDaq) {
+                                var current = new Date().getTime();
+                                if (current - daqInterval > lastDaqInterval) {
+                                    this.addDaq(varsValue);
+                                    lastDaqInterval = current;
+                                } else if (varsValueChanged) {
+                                    this.addDaq(varsValueChanged);
+                                }
+                            }
+                        } else {
+                            // console.error('then error');
+                        }                        
+                    }, reason => {
+                        logger.error(`'${data.name}' _readValues error! ${reason}`);
+                        _checkWorking(false);
+                    });
+                } catch (err) {
+                    logger.error(`'${data.name}' polling error: ${err}`);
+                    _checkWorking(false);
+                }
+            } else {
+                _checkWorking(false);
+            }
+        }
     }
 
     /**
      * Load Tags attribute to read with polling
      */
     this.load = function (_data) {
-        console.error('Not supported!');
+        varsValue = [];
+        data = JSON.parse(JSON.stringify(_data));
+        try {
+            itemsMap = {};
+            var count = Object.keys(data.tags).length;
+            for (var id in data.tags) {
+                itemsMap[data.tags[id].address] = data.tags[id];
+                // if (!itemsMap[data.tags[id].address]) {
+                //     itemsMap[data.tags[id].address] = [data.tags[id]];
+                // } else {
+                //     itemsMap[data.tags[id].address].push(data.tags[id]);   
+                // }
+            }
+            logger.info(`'${data.name}' data loaded (${count})`, true);
+        } catch (err) {
+            logger.error(`'${data.name}' load error! ${err}`);
+        }     
     }
 
     /**
      * Return Tags values array { id: <name>, value: <value> }
      */
     this.getValues = function () {
-        console.error('Not supported!');
+        return varsValue;
     }
 
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
     this.getValue = function (tagid) {
-        console.error('Not supported!');
+        if (varsValue[id]) {
+            return { id: id, value: varsValue[id].value, ts: lastTimestampValue };
+        }
+        return null;
     }
 
     /**
      * Return connection status 'connect-off', 'connect-ok', 'connect-error', 'connect-busy'
      */
     this.getStatus = function () {
-        console.error('Not supported!');
+        return lastStatus;
     }
 
     /**
      * Return Tag property to show in frontend
      */
     this.getTagProperty = function (tagid) {
-        console.error('Not supported!');
+        if (data.tags[tagid]) {
+            let prop = { id: tagid, name: data.tags[tagid].name, type: data.tags[tagid].type };
+            return prop;
+        } else {
+            return null;
+        }
     }
 
     /**
      * Set the Tag value to device
+     * take the address from
      */
     this.setValue = function (tagid, value) {
-        console.error('Not supported!');
+        if (data.tags[tagid]) {
+            conn.writeItems([data.tags[tagid].address], [value], (error) => {
+                if (error) {
+                    logger.error(`'${data.name}' setValue error! ${error}`);
+                } else {
+                    logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
+                }
+            });
+        }
     }
 
     /**
@@ -171,6 +236,50 @@ function EthernetIPclient(_data, _logger, _events) {
         daqInterval = intervalToSave;
     }
     this.addDaq = null;
+
+    /**
+     * Clear local Items value by set all to null
+     */
+    var _clearVarsValue = function () {
+        for (var id in varsValue) {
+            varsValue[id].value = null;
+        }
+        _emitValues(varsValue);
+    }
+
+    /**
+     * Read all values
+     */
+    var _readValues = function () {
+        return new Promise((resolve, reject) => {
+            conn.readAllItems((err, items) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(items);
+            });
+        });
+    }
+
+    /**
+     * Update the Tags values read
+     * @param {*} vars 
+     */
+     var _updateVarsValue = function (vars) {
+        var changed = [];
+        Object.keys(vars).forEach(key => {
+            if (itemsMap[key]) {
+                var id = itemsMap[key].id;
+                var diff = (itemsMap[key].value != vars[key].value);
+                itemsMap[key].value = vars[key].value;
+                varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type };
+                if (diff) {
+                    changed[id] = result[id];
+                }
+            }
+        });
+        return changed;
+    }
 
     /**
      * Connect with RTU or TCP

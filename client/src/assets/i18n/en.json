@@ -523,6 +523,7 @@
     "device.tag-property-register": "Register",
     "device.tag-property-type": "Type",
     "device.tag-property-address": "Address (ex. db5.dbb3 db4.dbx2.0 MB7)",
+    "device.tag-property-address-sample": "Address",
     "device.tag-property-min": "Min",
     "device.tag-property-max": "Max",
     "device.tag-property-divisor": "Divisor",
