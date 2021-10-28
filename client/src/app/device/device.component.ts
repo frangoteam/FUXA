@@ -31,6 +31,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     readonly = false;
     reloadActive = false;
 
+
     constructor(private router: Router,
         private projectService: ProjectService,
         private hmiService: HmiService) {
