@@ -44,6 +44,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
             this.deviceMap.loadCurrentProject();
             this.deviceList.mapTags();
+
         });
         this.subscriptionDeviceChange = this.hmiService.onDeviceChanged.subscribe(event => {
             this.deviceMap.setDeviceStatus(event);
@@ -121,7 +122,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
             this.deviceMap.addDevice();
         }
     }
-
+  
     onReload() {
         this.projectService.onRefreshProject();
         this.reloadActive = true;
