@@ -15,10 +15,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild('chartPanel') public chartPanel: ElementRef;
     @ViewChild('nguplot') public nguplot: NgxUplotComponent;
-    
+
     @Input() options: ChartOptions;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
-    
+
     public id: string;
     public withToolbar = false;
     public isEditor = false;
@@ -27,7 +27,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
 
-    constructor(private translateService: TranslateService) { 
+    constructor(private translateService: TranslateService) {
     }
 
     ngOnInit() {
@@ -63,14 +63,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         msg.event = ev;
         if (ev === 'B') {           // back
             this.range.to = new Date(this.range.from).getTime();
-            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));    
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));
         } else if (ev === 'F') {    // forward
             this.range.from = new Date(this.range.to).getTime();
-            this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));    
+            this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));
         }
         msg.sids = Object.keys(this.mapData);
         msg.from = this.range.from;
-        msg.to = this.range.to;        
+        msg.to = this.range.to;
         this.onTimeRange.emit(msg);
     }
 
@@ -105,7 +105,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.panel.width = width;
             this.options.width = width;
             this.options.panel.height = height;
-            this.options.height = height;  
+            this.options.height = height;
             this.options.height -= 40;      // legend
             if (this.withToolbar) {
                 this.options.height -= 34;  // toolbar
@@ -148,7 +148,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.redraw();
     }
 
-    public addLine(id: string, name:string, color: string, label: string, yaxis: number) {
+    public addLine(id: string, name: string, color: string, label: string, yaxis: number) {
         if (!this.mapData[id]) {
             const linelabel = label || name;
             let serie = <NgxSeries>{ label: linelabel, stroke: color, spanGaps: true };
@@ -157,8 +157,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 serie.scale = '1';
             }
-            this.mapData[id] = { index: Object.keys(this.mapData).length + 1, 
-                                 attribute: serie };
+            this.mapData[id] = {
+                index: Object.keys(this.mapData).length + 1,
+                attribute: serie
+            };
             this.nguplot.addSerie(this.mapData[id].index, this.mapData[id].attribute);
         }
         if (this.isEditor) {
@@ -199,7 +201,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 xmap[t][i] = values[i][x].value;
             }
         }
-        result[0].sort(function(a, b){return a-b});
+        result[0].sort(function (a, b) { return a - b });
         for (var i = 0; i < result[0].length; i++) {
             let t = result[0][i];
             for (var x = 1; x < result.length; x++) {
@@ -219,20 +221,22 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public static DefaultOptions() {
-        return <ChartOptions>{ title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(0,0,0,0)', legendBackground: 'rgba(0,0,0,0)', 
-        titleHeight: 18, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
+        return <ChartOptions>{
+            title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(0,0,0,0)', legendBackground: 'rgba(0,0,0,0)',
+            titleHeight: 18, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
             legendMode: 'always', series: [], width: 360, height: 200, decimalsPrecision: 2, realtime: 60,
             dateFormat: Utils.getEnumKey(DateFormatType, DateFormatType.MM_DD_YYYY),
-            timeFormat: Utils.getEnumKey(TimeFormatType, TimeFormatType.hh_mm_ss_AA)};
+            timeFormat: Utils.getEnumKey(TimeFormatType, TimeFormatType.hh_mm_ss_AA)
+        };
     }
 
     private updateCanvasOptions(ngup: NgxUplotComponent) {
-        if (!this.options.axes) { 
-            this.options.axes = [{ label: 'Time', grid: { show: true, width: 1 / devicePixelRatio }, ticks: { } }];
-            this.options.axes.push({ grid: { show: true, width: 1 / devicePixelRatio }, ticks: { }, scale: '1'});
-            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: { }, side: 1, scale: '2' });
-            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: { }, side: 3, scale: '3' });
-            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: { }, side: 1, scale: '4' });
+        if (!this.options.axes) {
+            this.options.axes = [{ label: 'Time', grid: { show: true, width: 1 / devicePixelRatio }, ticks: {} }];
+            this.options.axes.push({ grid: { show: true, width: 1 / devicePixelRatio }, ticks: {}, scale: '1' });
+            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: {}, side: 1, scale: '2' });
+            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: {}, side: 3, scale: '3' });
+            this.options.axes.push({ grid: { show: false, width: 1 / devicePixelRatio }, ticks: {}, side: 1, scale: '4' });
         }
         for (let i = 0; i < this.options.axes.length; i++) {
             let font = '';
@@ -269,11 +273,16 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 title.style.display = 'none';
             }
         }
+        let legend = this.chartPanel.nativeElement.querySelector('.u-legend');
+        if (legend) {
+            if (this.options.axisLabelColor) legend.style.color = this.options.axisLabelColor;
+            legend.style.lineHeight = 0;
+        }
         this.chartPanel.nativeElement.style.backgroundColor = this.options.colorBackground;
     }
 }
 
-export interface ChartOptions extends NgxOptions  {
+export interface ChartOptions extends NgxOptions {
     /** chart panel size, with from toolbar to legend */
     panel?: { height: number, width: number };
     /** when true, null data values will not cause line breaks, Series.spanGaps */
