@@ -275,10 +275,10 @@ app-root {
 .logo {
     display: block;
     text-indent: -9999px;
-    width: 30px;
-    height: 30px;
-    background: url(assets/images/logo.svg);
-    background-size: 30px 30px;
+    /* width: 30px; */
+    /* height: 30px; */
+    background: url(assets/images/logo.png);
+    /* background-size: 30px 30px; */
 }
 
 /* Menu */

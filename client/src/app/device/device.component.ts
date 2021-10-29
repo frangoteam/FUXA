@@ -29,6 +29,8 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     private askStatusTimer;
     showMode: string = 'map';
     readonly = false;
+    reloadActive = false;
+
 
     constructor(private router: Router,
         private projectService: ProjectService,
@@ -41,7 +43,8 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     ngOnInit() {
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
             this.deviceMap.loadCurrentProject();
-            // this.deviceList.loadCurrentProject();
+            this.deviceList.mapTags();
+
         });
         this.subscriptionDeviceChange = this.hmiService.onDeviceChanged.subscribe(event => {
             this.deviceMap.setDeviceStatus(event);
@@ -118,6 +121,14 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
         } else if (this.showMode === 'map') {
             this.deviceMap.addDevice();
         }
+    }
+  
+    onReload() {
+        this.projectService.onRefreshProject();
+        this.reloadActive = true;
+        setTimeout(() => {
+            this.reloadActive = false;
+        }, 1000);
     }
 }
 

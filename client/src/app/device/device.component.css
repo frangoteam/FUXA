@@ -127,3 +127,19 @@
     border: 1px solid var(--formInputBorderFocus);
     background-color: var(--formInputBackgroundFocus);
 }
+
+.fab-reload {
+    position: fixed !important;
+    right: 10px !important;
+    top: 40px !important;
+    z-index: 9999 !important;
+    color: var(--headerColor);
+}
+
+.fab-reload-active {
+    transform: rotate(360deg);
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}

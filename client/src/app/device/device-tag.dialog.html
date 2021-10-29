@@ -54,7 +54,7 @@
         <mat-header-row *matHeaderRowDef="defColumns" style="min-height: 30px;"></mat-header-row>
         <mat-row *matRowDef="let row; columns: defColumns;"></mat-row>
     </mat-table>
-    <mat-paginator [pageSizeOptions]="[25, 100]" style="float: left;"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="float: left;"></mat-paginator>
 
     <div mat-dialog-actions class="dialog-action" style="padding-top: 30px;">
         <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>
