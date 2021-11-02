@@ -6,7 +6,7 @@ import * as io from 'socket.io-client';
 import { environment } from '../../environments/environment';
 import { Device, Tag, DeviceType } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
-import { AlarmEvent } from '../_models/alarm';
+import { AlarmEvent, AlarmQuery } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
@@ -409,10 +409,13 @@ export class HmiService {
         return this.projectService.getAlarmsValues();
     }
 
+    getAlarmsHistory(query: AlarmQuery) {
+        return this.projectService.getAlarmsHistory(query);
+    }
+
     setAlarmAck(alarmName: string) {
         return this.projectService.setAlarmAck(alarmName);
     }
-
     //#endregion
 
     //#region My Static functions

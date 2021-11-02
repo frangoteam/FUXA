@@ -40,3 +40,8 @@ export class AlarmEvent {
     status: string;
     toack: boolean;
 }
+
+export class AlarmQuery {
+    from: string;
+    to: string;
+}

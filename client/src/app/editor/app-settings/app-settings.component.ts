@@ -58,4 +58,8 @@ export class AppSettingsComponent implements OnInit {
     onLanguageChange(language) {
         this.settings.language = language;
     }
+
+    onAlarmsClear() {
+        this.settingsService.clearAlarms(true);
+    }
 }

@@ -1,7 +1,12 @@
-<div class="header-panel" *ngIf="fullview">
-    {{'alarms.view-title' | translate}}
+<div class="header-panel" *ngIf="fullview || currentShowMode === 'expand'">
+    <div *ngIf="showType === alarmShowType.alarms">
+        {{'alarms.view-title' | translate}}
+    </div>
+    <div *ngIf="showType === alarmShowType.history">
+        {{'alarms.history-title' | translate}}
+    </div>
 </div>
-<div class="work-panel" [ngStyle]="{'top': fullview ? '37px' : '0px'}">
+<div class="work-panel" [ngStyle]="{'top': (fullview || currentShowMode === 'expand') ? '37px' : '0px'}">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ontime">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>
@@ -23,28 +28,51 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-status' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.status}} </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="offtime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-offtime' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.offtime) ? (element.offtime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="acktime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-acktime' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.acktime) ? (element.acktime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="ack">
-            <mat-header-cell *matHeaderCellDef>
-                <div class="header-tools" *ngIf="!fullview">
-                    <div (click)="$event.stopPropagation();onShowMode('expand')" *ngIf="currentShowMode === 'collapse'" style="cursor: pointer;">
-                        <mat-icon>vertical_align_top</mat-icon>
-                    </div>
-                    <div (click)="$event.stopPropagation();onShowMode('collapse')" *ngIf="currentShowMode === 'expand'" style="cursor: pointer;">
-                        <mat-icon>vertical_align_bottom</mat-icon>
-                    </div>
-                    <div (click)="onClose();$event.stopPropagation()" style="cursor: pointer;">
-                        <mat-icon>clear</mat-icon>
-                    </div>
-                </div>
-            </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color">
                 <button mat-icon-button (click)="onAckAlarm(element)" *ngIf="element.toack >= 0" [disabled]="element.toack == 0" class="remove">
                     <mat-icon>check_circle_outline</mat-icon>
                 </button>
             </mat-cell>
         </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let element; columns: displayedColumns;" class="my-mat-row" 
-                        [style.background-color]="element.bkcolor"></mat-row>
+        <ng-container matColumnDef="userack">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-userack' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.userack}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="history">
+            <mat-header-cell *matHeaderCellDef>
+                <div class="header-tools" *ngIf="!fullview">
+                    <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="header-tools-options">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #optionsgMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onShowAlarms()" style="font-size: 14px;">{{'alarms.show-current' | translate}}</button>
+                        <button mat-menu-item (click)="onShowAlarmsHistory()" style="font-size: 14px;">{{'alarms.show-history' | translate}}</button>
+                    </mat-menu>
+                    <button mat-icon-button (click)="$event.stopPropagation();onShowMode('expand')" *ngIf="currentShowMode === 'collapse'" class="header-tools-options">
+                        <mat-icon>fullscreen</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="$event.stopPropagation();onShowMode('collapse')" *ngIf="currentShowMode === 'expand'" class="header-tools-options">
+                        <mat-icon>fullscreen_exit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="onClose();$event.stopPropagation()" class="header-tools-options">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </div>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color"></mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let element; columns: displayColumns;" class="my-mat-row" [style.background-color]="element.bkcolor"></mat-row>
+        <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="position: relative; right: 100px;"></mat-paginator>
     </mat-table>
 </div>

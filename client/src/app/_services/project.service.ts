@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType } from '../_models/project';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
-import { Alarm } from '../_models/alarm';
+import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
@@ -423,6 +423,10 @@ export class ProjectService {
         return this.storage.getAlarmsValues();
     }
     
+    getAlarmsHistory(query: AlarmQuery): Observable<any> {
+        return this.storage.getAlarmsHistory(query);
+    }
+
     setAlarmAck(name: string): Observable<any> {
         return this.storage.setAlarmAck(name);
     }

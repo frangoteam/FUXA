@@ -646,14 +646,21 @@
     "alarm.ack-float": "Floating",
     "alarm.ack-active": "Ack by active Alarm allowed",
     "alarm.ack-passive": "Ack only by passive Alarm",
+    "alarms.view-title": "Alarms",
+    "alarms.history-title": "History Alarms",
     "alarms.view-ontime": "Date/Time",
     "alarms.view-text": "Text",
     "alarms.view-group": "Group",
     "alarms.view-status": "Status",
     "alarms.view-type": "Priority",
+    "alarms.view-offtime": "OFF Date/Time",
+    "alarms.view-acktime": "ACK Date/Time",
+    "alarms.view-userack": "ACK User",
     "alarm.status-active": "Active",
     "alarm.status-passive": "Passive",
     "alarm.status-active-ack": "Active-ACK",
+    "alarms.show-current": "Alarms",
+    "alarms.show-history": "History Alarms",
 
     "card.config-title": "Card settings",
     "card.config-content-type": "Content type",
@@ -709,6 +716,7 @@
     "dlg.app-language-pt": "Portuguese",
     "dlg.app-language-tr": "Turkish",
     "dlg.app-settings-server-port": "Server is listening on port",
+    "dlg.app-settings-alarms-clear": "Clear all alarms and history",
     "dlg.app-settings-auth-token": "Authentication with Token",
     "dlg.app-auth-disabled": "Disabled",
     "dlg.app-auth-expiration-15m": "Enabled with token expiration in 15 min.",
@@ -745,5 +753,6 @@
     "msg.login-password-required": "Enter a password",
     "msg.signin-failed": "Unauthorized",
     "msg.get-project-void": "Project not found!",
-    "msg.editor-mode-locked": "The editor is already open!"
+    "msg.editor-mode-locked": "The editor is already open!",
+    "msg.alarms-clear-success": "All alarms have been cancelled!"
 }

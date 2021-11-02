@@ -377,7 +377,9 @@ function updateAlarmsStatus() {
         alarmsMgr.getAlarmsStatus().then(function (result) {
             io.emit(Events.IoEventTypes.ALARMS_STATUS, result);
         }).catch(function (err) {
-            logger.error('runtime.failed-to-update-alarms: ' + err);
+            if (err) {
+                logger.error('runtime.failed-to-update-alarms: ' + err);
+            }
         });
     } catch (err) {
     }

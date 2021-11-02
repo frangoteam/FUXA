@@ -72,6 +72,20 @@ export class SettingsService {
         }
     }
 
+    clearAlarms(all: boolean) {
+        if (environment.serverEnabled) {
+            let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+            this.http.post<any>(this.endPointConfig + '/api/alarmsClear', { headers: header, params: all }).subscribe(result => {
+                var msg = '';
+                this.translateService.get('msg.alarms-clear-success').subscribe((txt: string) => { msg = txt });
+                this.toastr.success(msg);
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+            });
+        }
+    }
+
     private notifySaveError(err: any) {
         let msg = '';
         this.translateService.get('msg.settings-save-error').subscribe((txt: string) => { msg = txt });

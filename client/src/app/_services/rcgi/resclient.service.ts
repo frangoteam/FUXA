@@ -7,6 +7,7 @@ import { ProjectData, ProjectDataCmdType } from '../../_models/project';
 import { Device } from '../../_models/device';
 import { ResourceStorageService } from './resource-storage.service';
 import { Utils } from '../../_helpers/utils';
+import { AlarmQuery } from '../../_models/alarm';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -126,7 +127,13 @@ export class ResClientService implements ResourceStorageService {
             observer.error('Not supported!');
         });
     }
-    
+   
+    getAlarmsHistory(query: AlarmQuery): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
     setAlarmAck(name: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
