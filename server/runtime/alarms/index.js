@@ -19,6 +19,7 @@ function AlarmsManager(_runtime) {
     var alarmsLoading = false;          // Flag to check if loading
     var working = false;                // Working flag to manage overloading of check alarms status
     var alarms = {};                    // Alarms matrix, grupped by variable to check, [variable][...AlarmSubProperty + permission]
+    var alarmsProperty = {};            // Alarms property list, key = alarm name + ^~^ + type
     var status = AlarmsStatusEnum.INIT; // Current status (StateMachine)
     var clearAlarms = false;            // Flag to clear current alarms from DB
     /**
@@ -116,6 +117,11 @@ function AlarmsManager(_runtime) {
                     alr.group = result[i].grp;
                     if (alr.ontime) {
                         history.push(alr);
+                    }
+                    // add defined colors
+                    if (alarmsProperty[alr.name] && alarmsProperty[alr.name][alr.type]) {
+                        alr.bkcolor = alarmsProperty[alr.name][alr.type].bkcolor;
+                        alr.color = alarmsProperty[alr.name][alr.type].color;
                     }
                 }
                 resolve(history);
@@ -263,6 +269,7 @@ function AlarmsManager(_runtime) {
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
             alarms = {};
+            alarmsProperty = {};
             runtime.project.getAlarms().then(function (result) {
                 var alarmsFound = 0;
                 if (result) {
@@ -296,6 +303,7 @@ function AlarmsManager(_runtime) {
                                 alarms[alr.property.variableId].push(alarm);
                                 alarmsFound++;
                             }
+                            alarmsProperty[alr.name] = alr;
                         }
                     });
                 }

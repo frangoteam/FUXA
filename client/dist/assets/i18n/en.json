@@ -450,6 +450,8 @@
     "device.list-remove-all": "Remove all Tags",
     "device.list-options": "Tag options",
 
+    "devices.export": "Export devices",
+    "devices.import": "Import devices",
     "device.property-client": "Device Property",
     "device.property-server": "FUXA Server Property",
     "device.property-name": "Name",

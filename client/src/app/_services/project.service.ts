@@ -157,6 +157,22 @@ export class ProjectService {
         FileSaver.saveAs(blob, filename);
     }
 
+    exportDevices() {
+        let filename = 'fuxa-devices.json';
+        let devices = Object.values(this.convertToSave(this.getDevices()));
+        let content = JSON.stringify(devices, null, 2);
+        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, filename);
+    }
+
+    importDevices(devices: Device[]) {
+        devices.forEach(device => {
+            if (device.id && device.name) {
+                this.setDevice(device, null, null);
+            }
+        })
+    }
+
     reload() {
         this.load();
     }
