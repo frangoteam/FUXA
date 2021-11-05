@@ -282,6 +282,25 @@ export class ProjectService {
     }
 
     /**
+     * 
+     * @returns 
+     */
+    getViews(): View[] {
+        return (this.projectData) ? this.projectData.hmi.views : [];
+    }
+
+
+    getViewId(name) {
+        let views = this.getViews();
+        for (var i = 0; i < views.length; i++) {
+            if (views[i].name === name) {
+                return views[i].id;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Remove the View from Project
      * Delete from Server
      * @param view
@@ -391,6 +410,7 @@ export class ProjectService {
                 exist.high = alarm.high;
                 exist.low = alarm.low;
                 exist.info = alarm.info;
+                exist.actions = alarm.actions;
                 exist.value = alarm.value;
             } else {
                 this.projectData.alarms.push(alarm);

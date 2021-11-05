@@ -96,7 +96,9 @@
 .mat-column-info {
     flex: 0 0 140px;
 }
-
+.mat-column-actions {
+    flex: 0 0 140px;
+}
 .mat-column-value {
     flex: 0 0 800px;
 }

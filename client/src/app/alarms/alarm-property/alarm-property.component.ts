@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { FlexHeadComponent } from '../../gauges/gauge-property/flex-head/flex-head.component';
 import { FlexAuthComponent } from '../../gauges/gauge-property/flex-auth/flex-auth.component';
 import { TranslateService } from '@ngx-translate/core';
-import { AlarmProperty, AlarmAckMode, AlarmSubProperty } from '../../_models/alarm';
+import { AlarmProperty, AlarmAckMode, AlarmSubProperty, AlarmSubActions, AlarmAction, AlarmActionsType } from '../../_models/alarm';
 
 @Component({
     selector: 'app-alarm-property',
@@ -18,6 +18,11 @@ export class AlarmPropertyComponent implements OnInit {
 
     property: AlarmProperty;
     ackMode = AlarmAckMode;
+    actionsType = AlarmActionsType;
+    actionPopup = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.popup);
+    actionSetValue = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.setValue);
+    actionSendMsg = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.sendMsg);
+
     errorExist = false;
     errorMissingValue = false;
     existnames = [];
@@ -37,14 +42,14 @@ export class AlarmPropertyComponent implements OnInit {
             this.data.alarm.highhigh = new AlarmSubProperty();
             this.data.alarm.highhigh.bkcolor = "#FF4848";
             this.data.alarm.highhigh.color = "#FFF";
-            this.data.alarm.highhigh.enabled = true;
+            this.data.alarm.highhigh.enabled = false;
             this.data.alarm.highhigh.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
         }
         if (!this.data.alarm.high) {
             this.data.alarm.high = new AlarmSubProperty();
             this.data.alarm.high.bkcolor = "#F9CF59";
             this.data.alarm.high.color = "#000";
-            this.data.alarm.high.enabled = true;
+            this.data.alarm.high.enabled = false;
             this.data.alarm.high.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
             // this.data.alarm.info = new AlarmSubProperty();
         }
@@ -52,19 +57,26 @@ export class AlarmPropertyComponent implements OnInit {
             this.data.alarm.low = new AlarmSubProperty();
             this.data.alarm.low.bkcolor = "#E5E5E5";
             this.data.alarm.low.color = "#000";
-            this.data.alarm.low.enabled = true;
+            this.data.alarm.low.enabled = false;
             this.data.alarm.low.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
         }
         if (!this.data.alarm.info) {
             this.data.alarm.info = new AlarmSubProperty();
             this.data.alarm.info.bkcolor = "#22A7F2";
             this.data.alarm.info.color = "#FFF";
-            this.data.alarm.info.enabled = true;
+            this.data.alarm.info.enabled = false;
             this.data.alarm.info.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)];
+        }
+        if (!this.data.alarm.actions) {
+            this.data.alarm.actions = new AlarmSubActions();
+            this.data.alarm.actions.enabled = false;
         }
 
         Object.keys(this.ackMode).forEach(key => {
             this.translateService.get(this.ackMode[key]).subscribe((txt: string) => { this.ackMode[key] = txt });
+        });
+        Object.keys(this.actionsType).forEach(key => {
+            this.translateService.get(this.actionsType[key]).subscribe((txt: string) => { this.actionsType[key] = txt });
         });
         if (data.alarms) {
             this.existnames = data.alarms.filter(a => a.name !== data.alarm.name);
@@ -104,5 +116,22 @@ export class AlarmPropertyComponent implements OnInit {
         this.errorMissingValue = !this.flexAuth.name;
         this.errorExist = (this.existnames.find((a) => a.name === this.flexAuth.name)) ? true : false;
         return !(this.errorMissingValue || this.errorExist);
+    }
+
+    onAddAction() {
+        let act = new AlarmAction();
+        this.data.alarm.actions.values.push(act);
+    }
+
+    onAlarmAction(index: number) {
+        this.data.alarm.actions.values.splice(index, 1);
+    }
+
+    onCheckActionType() {
+        // console.error('Not supported!');
+    }
+
+    setActionVariable(action: AlarmAction, event) {
+        action.variableId = event.variableId;
     }
 }
