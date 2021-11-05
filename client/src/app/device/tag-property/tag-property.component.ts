@@ -95,6 +95,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     }
                 });
         		this.hmiService.askWebApiProperty(this.data.device.property);
+                return;
             }
             this.queryNext(null);
         }
