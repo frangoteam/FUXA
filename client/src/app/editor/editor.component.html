@@ -147,6 +147,14 @@
                                 (click)="setMode('html_switch')">
                                 <span class="icon-tool icon-switch"></span>
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-graphbar' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-bar')}"
+                                (click)="setMode('html_graph-bar')">
+                                <span class="icon-tool icon-graphbar"></span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
+                                (click)="setMode('html_graph-pie')">
+                                <span class="icon-tool icon-graphpie"></span>
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->

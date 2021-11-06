@@ -700,3 +700,9 @@ select#start_marker option[value="D"] {
 .icon-slider {
     background: url("/assets/images/slider.svg") no-repeat center center;
 }
+.icon-graphbar {
+    background: url("/assets/images/graphbar.svg") no-repeat center center;
+}
+.icon-graphpie {
+    background: url("/assets/images/graphpie.svg") no-repeat center center;
+}
