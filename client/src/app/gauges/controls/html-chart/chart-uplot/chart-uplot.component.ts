@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxOptions, NgxSeries } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
@@ -148,15 +148,19 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.redraw();
     }
 
-    public addLine(id: string, name: string, color: string, label: string, yaxis: number) {
+    public addLine(id: string, name: string, line: ChartLine) {
         if (!this.mapData[id]) {
-            const linelabel = label || name;
-            let serie = <NgxSeries>{ label: linelabel, stroke: color, spanGaps: true };
-            if (yaxis > 1) {
-                serie.scale = yaxis.toString();
+            const linelabel = line.label || name;
+            let serie = <NgxSeries>{ label: linelabel, stroke: line.color, spanGaps: true };
+            if (line.yaxis > 1) {
+                serie.scale = line.yaxis.toString();
             } else {
                 serie.scale = '1';
             }
+            if (line.fill) {
+                serie.fill = line.fill;
+            }
+            serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = {
                 index: Object.keys(this.mapData).length + 1,
                 attribute: serie

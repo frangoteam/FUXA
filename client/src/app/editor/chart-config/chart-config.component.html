@@ -6,11 +6,11 @@
             <mat-grid-list cols="3" rowHeight="100%">
                 <mat-grid-tile class="chart-list">
                     <mat-list class="list" >
-                        <mat-list-item class="list-item list-header">
+                        <mat-list-item class="list-item list-header list-item-sel">
                             <span>{{'chart.config-charts' | translate}}</span>
                             <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart(null)">add</mat-icon>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let chart of data.charts" matTooltip="{{chart.name}}" class="list-item list-item-text" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
+                        <mat-list-item *ngFor="let chart of data.charts" class="list-item list-item-text list-item-sel" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
                             <span>{{chart.name}}</span>
                             <mat-icon [matMenuTriggerFor]="configMenu" style="position: absolute; right: 10px;cursor:pointer;color:gray;">more_vert</mat-icon>
                             <mat-menu #configMenu [overlapTrigger]="false" style="color:#000000">
@@ -22,17 +22,17 @@
                 </mat-grid-tile>
                 <mat-grid-tile class="device-list">
                     <mat-list class="list">
-                        <mat-list-item class="list-item list-header">
+                        <mat-list-item class="list-item list-header list-item-sel">
                             <span>{{'chart.config-devices' | translate}}</span>
                         </mat-list-item>
-                        <mat-list-item *ngFor="let device of data.devices;" matTooltip="{{device.name}}" class="list-item list-item-text" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
+                        <mat-list-item *ngFor="let device of data.devices;" class="list-item list-item-text list-item-sel" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
                             <span>{{device.name}}</span>
                         </mat-list-item>
                     </mat-list>
                 </mat-grid-tile>
                 <mat-grid-tile class="tag-list">
                     <mat-list class="list">
-                        <mat-list-item class="list-item list-header">
+                        <mat-list-item class="list-item list-header list-item-sel">
                             <span>{{'chart.config-tags' | translate}}</span>
                         </mat-list-item>
                         <mat-selection-list #selTags [(ngModel)]="selectedTags" [disabled]="(selectedChart.id)?false:true" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
@@ -47,12 +47,16 @@
         <div class="panelBottom">
             <mat-list class="list">
                 <mat-list-item class="list-item list-header">
+                    <span style="width: 25px;"></span>
                     <span style="width: 30%;max-width: 30%;">{{'chart.config-line-name' | translate}}</span>
                     <span style="width: 25%;max-width: 25%;">{{'chart.config-line-label' | translate}}</span>
-                    <span style="width: 25%;max-width: 25%;">{{'chart.config-devices' | translate}}</span>
-                    <span style="width: 10%;max-width: 10%;">{{'chart.config-line-yaxis' | translate}}</span>
+                    <span style="width: 25%;max-width: 20%;">{{'chart.config-devices' | translate}}</span>
+                    <span style="width: 10%;max-width: 5%;">{{'chart.config-line-yaxis' | translate}}</span>
+                    <span style="width: 10%;max-width: 10%;">{{'chart.config-line-interpolation' | translate}}</span>
+                    <span style="width: 10%;max-width: 5%;">{{'chart.config-line-color' | translate}}</span>
+                    <span style="width: 10%;max-width: 5%;">{{'chart.config-line-fill' | translate}}</span>
                 </mat-list-item>
-                <div style="height: calc(100% - 36px); overflow-y: auto">
+                <div style="height: calc(100% - 36px); overflow-y: hidden">
                     <mat-list-item *ngFor="let line of selectedChart.lines" class="list-item list-item-hover" (click)="editChartLine(line)">
                         <mat-icon (click)="$event.stopPropagation();removeChartLine(line)" style="color:gray;font-size: 20px">delete</mat-icon>
                         <div class="list-item-text" style="width: 30%;max-width: 30%;">
@@ -61,13 +65,17 @@
                         <div class="list-item-text" style="width: 25%;max-width: 25%;">
                             <span>{{line.label}}</span>
                         </div>                        
-                        <div class="list-item-text" style="width: 25%;max-width: 25%;">
+                        <div class="list-item-text" style="width: 25%;max-width: 20%;">
                             <span>{{line.device}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 10%;max-width: 10%;">
+                        <div class="list-item-text" style="width: 10%;max-width: 5%;">
                             <span>{{line.yaxis}}</span>
-                        </div>                        
-                        <div [style.background-color]="line.color" style="height:20px; width:30px"></div>
+                        </div>
+                        <div class="list-item-text" style="width: 10%;max-width: 10%;">
+                            <span>{{getLineInterpolationName(line)}}</span>
+                        </div>
+                        <div [style.background-color]="line.color" style="height:20px; width:5%"></div>
+                        <div [style.background-color]="line.fill" style="height:20px; width:5%"></div>
                     </mat-list-item>
                 </div>
             </mat-list>

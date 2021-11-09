@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSelectionList } from '@angular/material';
 
+import { TranslateService } from '@ngx-translate/core';
+
 import { Utils } from '../../_helpers/utils';
 import { Device } from '../../_models/device';
 import { Chart, ChartLine } from '../../_models/chart';
@@ -21,9 +23,13 @@ export class ChartConfigComponent implements OnInit {
     defaultColor = Utils.defaultColor;
     lineColor = Utils.lineColor;
 
+    lineInterpolationType = [{ text: 'chart.config-interpo-linear', value: 0 }, { text: 'chart.config-interpo-stepAfter', value: 1 }, 
+    { text: 'chart.config-interpo-stepBefore', value: 2 }, { text: 'chart.config-interpo-spline', value: 3 }];
+
     constructor(
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<ChartConfigComponent>,
+        private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) public param: any) {
             this.data.charts = param.charts;
             Object.values(param.devices).forEach(device => {
@@ -34,6 +40,9 @@ export class ChartConfigComponent implements OnInit {
         }
 
     ngOnInit() {
+        for (let i = 0; i < this.lineInterpolationType.length; i++) {
+            this.translateService.get(this.lineInterpolationType[i].text).subscribe((txt: string) => { this.lineInterpolationType[i].text = txt });
+        }
     }
 
     onNoClick(): void {
@@ -156,13 +165,16 @@ export class ChartConfigComponent implements OnInit {
     editChartLine(line: ChartLine) {
         let dialogRef = this.dialog.open(DialogChartLine, {
             position: { top: '60px' },
-            data: <ChartLine>{ id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis }
+            data: <ChartLine>{ id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis, 
+                lineInterpolation: line.lineInterpolation, fill: line.fill, lineInterpolationType: this.lineInterpolationType }
         });
         dialogRef.afterClosed().subscribe((result: ChartLine) => {
             if (result) {
                 line.label = result.label;
                 line.color = result.color;
                 line.yaxis = result.yaxis;
+                line.lineInterpolation = result.lineInterpolation;
+                line.fill = result.fill;
             }
         });
     }
@@ -232,6 +244,14 @@ export class ChartConfigComponent implements OnInit {
         }
         return Utils.lineColor[0];
     }
+
+    getLineInterpolationName(line: ChartLine) {
+        let type = this.lineInterpolationType.find((type) => type.value === line.lineInterpolation);
+        if (type) {
+            return type.text;
+        }
+        return '';
+    }
 }
 
 @Component({
@@ -261,9 +281,11 @@ export class DialogListItem {
 export class DialogChartLine {
     defaultColor = Utils.defaultColor;
     chartAxesType = [1, 2, 3, 4];
+
     constructor(
         public dialogRef: MatDialogRef<DialogChartLine>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+    }
 
     onNoClick(): void {
         this.dialogRef.close();

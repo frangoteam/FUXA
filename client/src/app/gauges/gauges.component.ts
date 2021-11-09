@@ -742,7 +742,7 @@ export class GaugesManager {
                         let sigid = line.id;
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line.color, line.label, line.yaxis);
+                            gauge.addLine(sigid, sigProperty.name, line);
                         }
                     }
                     gauge.redraw();

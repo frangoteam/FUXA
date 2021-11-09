@@ -33,7 +33,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     ngAfterViewInit() {
         setTimeout(() => {
             this.onResize(null);
-        }, 500);
+        }, 100);
     }
 
     ngOnChanges(changes: SimpleChanges) {
