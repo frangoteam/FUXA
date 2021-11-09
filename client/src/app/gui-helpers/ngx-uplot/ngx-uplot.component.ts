@@ -1,7 +1,7 @@
 import { isNull } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
 
-import { Series, Options, Legend, paths } from './uPlot';
+import { Series, Options, Legend } from './uPlot';
 
 declare const uPlot: any;
 declare const placement: any;
