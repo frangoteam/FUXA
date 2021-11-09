@@ -1,7 +1,7 @@
 import { isNull } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
 
-import { Series, Options, Legend } from './uPlot';
+import { Series, Options, Legend, paths } from './uPlot';
 
 declare const uPlot: any;
 declare const placement: any;
@@ -16,6 +16,14 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() public id: string;
     @Input() public options: NgxOptions;
     @ViewChild('graph') public graph: ElementRef;
+
+
+    readonly lineInterpolations = {
+        linear: 0,
+        stepAfter: 1,
+        stepBefore: 2,
+        spline: 3,
+    };
 
     overlay: any;
     uplot: any;
@@ -221,6 +229,13 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     addSerie(index: string, attribute: Series) {
         this.data.push([null,null]);
+        if (attribute.lineInterpolation === this.lineInterpolations.stepAfter) {
+            attribute.paths = uPlot.paths.stepped({ align: 1 });
+        } else if (attribute.lineInterpolation === this.lineInterpolations.stepBefore) {
+            attribute.paths = uPlot.paths.stepped({ align: -1 });
+        } else if (attribute.lineInterpolation === this.lineInterpolations.spline) {
+            attribute.paths = uPlot.paths.spline();
+        }
         this.uplot.addSeries(attribute, index);
         this.uplot.setData(this.data);
     }

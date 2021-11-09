@@ -211,7 +211,7 @@
       } else {
         devicePixelRatio = window.devicePixelRatio || 1;
         backingStorePixelRatio = this.ctx.webkitBackingStorePixelRatio || this.ctx.mozBackingStorePixelRatio || this.ctx.msBackingStorePixelRatio || this.ctx.oBackingStorePixelRatio || this.ctx.backingStorePixelRatio || 1;
-        this.displayScale = devicePixelRatio / backingStorePixelRatio;
+        this.displayScale = 1;  //devicePixelRatio / backingStorePixelRatio;
       }
       if (this.displayScale !== prevDisplayScale) {
         width = this.canvas.G__width || this.canvas.width;

@@ -14,6 +14,7 @@ import { HtmlInputComponent } from './controls/html-input/html-input.component';
 import { HtmlButtonComponent } from './controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './controls/html-select/html-select.component';
 import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
+import { HtmlGraphComponent } from './controls/html-graph/html-graph.component';
 import { HtmlBagComponent } from './controls/html-bag/html-bag.component';
 import { HtmlSwitchComponent } from './controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress.component';
@@ -31,6 +32,7 @@ import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-u
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
+import { NgxChartjsComponent } from '../gui-helpers/ngx-chartjs/ngx-chartjs.component';
 
 @Injectable()
 export class GaugesManager {
@@ -64,7 +66,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -114,7 +116,7 @@ export class GaugesManager {
 
 	createGaugeStatus(ga: GaugeSettings) : GaugeStatus {
         let result = new GaugeStatus();
-        if (!ga.type.startsWith(HtmlChartComponent.TypeTag)) {
+        if (!ga.type.startsWith(HtmlChartComponent.TypeTag) && !ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
             result.onlyChange = true;
         }
         if (ga.type.startsWith(SliderComponent.TypeTag)) {
@@ -174,6 +176,11 @@ export class GaugesManager {
             delete this.mapGauges[ga.id];
             let gauge = HtmlChartComponent.detectChange(ga, res, ref);
             this.setChartPropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
+        } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlGraphComponent.detectChange(ga, res, ref);
+            this.setGraphPropety(gauge, ga.property);
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
@@ -380,6 +387,9 @@ export class GaugesManager {
                     if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
                         let sigs = this.hmiService.getChartSignal(ga.property.id)
                         return sigs;
+                    } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
+                        let sigs = this.hmiService.getGraphSignal(ga.property.id)
+                        return sigs;
                     } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
                         return GaugesManager.Gauges[i]['getSignals'](ga.property);
                     } else {
@@ -465,6 +475,15 @@ export class GaugesManager {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id && this.mapGauges[k]) {
                                 HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                            }
+                        });
+                    }
+                    break;
+                } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
+                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                            if (k === ga.id && this.mapGauges[k]) {
+                                HtmlGraphComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
                             }
                         });
                     }
@@ -631,6 +650,8 @@ export class GaugesManager {
             return 'pipe_';
         } else if (type.startsWith(HtmlChartComponent.TypeTag)) {
             return 'chart_';
+        } else if (type.startsWith(HtmlGraphComponent.TypeTag)) {
+            return 'graph_';
         } else if (type.startsWith(HtmlBagComponent.TypeTag)) {
             return 'gauge_';
         } else if (type.startsWith(HtmlSwitchComponent.TypeTag)) {
@@ -677,6 +698,10 @@ export class GaugesManager {
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;
+        } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
+            let gauge = HtmlGraphComponent.initElement(ga, res, ref, isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge;            
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
@@ -717,7 +742,7 @@ export class GaugesManager {
                         let sigid = line.id;
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line.color, line.label, line.yaxis);
+                            gauge.addLine(sigid, sigProperty.name, line);
                         }
                     }
                     gauge.redraw();
@@ -726,6 +751,9 @@ export class GaugesManager {
                 gauge.setOptions(property.options, true);  
             }
         }
+    }
+
+    private setGraphPropety(gauge: any, property: any) {
     }
 
 	/**

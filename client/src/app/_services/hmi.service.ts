@@ -387,7 +387,7 @@ export class HmiService {
 
     //#endregion
 
-    //#region Chart functions
+    //#region Chart and Graph functions
     getChart(id: string) {
         return this.projectService.getChart(id);
     }
@@ -401,6 +401,10 @@ export class HmiService {
             });
             return varsId;
         }
+    }
+
+    getGraphSignal(id: string) {
+
     }
     //#endregion
 

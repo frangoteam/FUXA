@@ -1,11 +1,12 @@
-
 .panelTop {
     display: block;
     width: 100%;
     height: 480px;
 }
 
-.panelTop .chart-list, .device-list, .tag-list {
+.panelTop .chart-list,
+.device-list,
+.tag-list {
     height: 480px;
 }
 
@@ -16,17 +17,17 @@
 }
 
 .list {
-    width: 100% !important; 
-    height: 100% !important; 
-    font-size: 16px !important; 
+    width: 100% !important;
+    height: 100% !important;
+    font-size: 16px !important;
     padding-top: 0px !important;
 }
 
-.list > span  {
+.list > span {
     padding-left: 10px;
 }
 
-.list mat-list-option  {
+.list mat-list-option {
     padding-left: 10px;
 }
 
@@ -64,7 +65,11 @@
 }
 
 .list-item-selected {
-  background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.list-item-sel {
+    padding-left: 5px !important;
 }
 
 .list-header {
@@ -86,7 +91,7 @@
 .color-line {
     width: 30px;
     border: unset;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 2px;
     opacity: 1;
     background-color: #f1f3f4;

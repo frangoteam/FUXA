@@ -725,6 +725,9 @@ declare namespace uPlot {
 
 		/** current max rendered value */
 		max?: number;
+
+        drawStyle?: number;
+        lineInterpolation?: number;
 	}
 
 	export namespace Band {
