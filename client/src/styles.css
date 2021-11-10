@@ -581,12 +581,12 @@ mat-toolbar-row {
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: rgba(47, 47, 47, 0.1);
+    background: var(--scrollbarTrack);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: rgba(77, 77, 77, 0.3);
+    background: var(--scrollbarThumb);
 }
 
 /* Color Picker */
@@ -693,17 +693,13 @@ mat-toolbar-row {
 }
 
 @media screen and (max-height: 920px) {
-    .dialog-mdsd-v {
-        height: 700px !important;
+    .dialog-mdsd-content {
+        height: 605px !important;
         overflow-y: scroll;
         overflow-x: hidden;
     }
-    .dialog-mdsd-vh {
+    .dialog-mdsd-main {
         height: 700px !important;
-        max-width: 960px !important;
-        width: 960px !important;
-        overflow-y: scroll;
-        overflow-x: auto;
     }
 }
 

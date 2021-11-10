@@ -34,6 +34,8 @@ export const THEMES = {
         mapBorderColor: '#3C3C3C',
         formExtBackground: '#f1f3f4',
         formInputExtBackground: '#FFFFFF',
+        scrollbarTrack: '#D9D9D9',
+        scrollbarThumb: '#BEBEBE'
     },
     dark: {
         headerBackground: '#333333',
@@ -70,5 +72,7 @@ export const THEMES = {
         mapBorderColor: '#333333',
         formExtBackground: '#37373D',
         formInputExtBackground: '#424242',
+        scrollbarTrack: '#414142',
+        scrollbarThumb: '#545454'
     }
 };
