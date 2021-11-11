@@ -574,7 +574,7 @@ export class ProjectService {
     setNewProject() {
         this.projectData = new ProjectData();
         let server = new Device(Utils.getGUID(DEVICE_PREFIX));
-        server.name = 'FUXA';
+        server.name = 'BakeBytes';
         server.id = '0';
         server.type = DeviceType.FuxaServer;
         server.property = new DeviceNetProperty();

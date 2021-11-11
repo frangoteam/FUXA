@@ -18,17 +18,17 @@
     "header.edit-users": "Users settings",
     "header.edit-alarms": "Alarms settings",
     "header.edit-texts": "Texts settings",
-    "header.help": "FUXA Help",
+    "header.help": "SCADA Help",
     "header.help-tutorial": "Tutorial",
     "header.help-info": "About",
     "header.info-version": "Version ",
     "header.theme": "Theme light/dark",
 
-    "sidenav.title": "FUXA",
+    "sidenav.title": "SCADA",
 
-    "tutorial.title": "FUXA Tutorial",
+    "tutorial.title": "SCADA Tutorial",
 
-    "dlg.info-title": "FUXA",
+    "dlg.info-title": "SCADA",
 
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
@@ -459,7 +459,7 @@
     "devices.export": "Export devices",
     "devices.import": "Import devices",
     "device.property-client": "Device Property",
-    "device.property-server": "FUXA Server Property",
+    "device.property-server": "BakeBytes Server Property",
     "device.property-name": "Name",
     "device.property-type": "Type",
     "device.property-polling": "Polling",

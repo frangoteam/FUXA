@@ -1,0 +1,70 @@
+{
+  "cmd": "set-device",
+  "data": {
+    "id": "d_12345670-12345670",
+    "enabled": true,
+    "name": "meter1",
+    "type": "AzIoTclient",
+    "polling": 1000,
+    "property": {
+      "deviceId": "edge2",
+      "moduleId": "bakeAgent",
+      "plcName": "meter1",
+      "appName": "modbusMaster",
+      "hubConnStr": "HostName=DevCompany-IoThub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=mZvbBoE+fUWQu/uDaNkfiFDIzzlCTXN2Vqe5QLIzmZY=",
+      "eventHubConnStr": "Endpoint=sb://iothub-ns-devcompany-14661902-219a136ed9.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=mZvbBoE+fUWQu/uDaNkfiFDIzzlCTXN2Vqe5QLIzmZY=;EntityPath=devcompany-iothub;",
+      "hubName": "devcompany-iothub",
+      "hubConsumerGroup": "$default"
+    },
+    "tags": {
+      "t_1-00": {
+        "id": "t_1-00",
+        "type": "json",
+        "address": "$status",
+        "memaddress": "value",
+        "options": {
+          "subs": [
+            "value"
+          ]
+        },
+        "name": "$status[value]"
+      },
+      "t_1-01": {
+        "id": "t_1-01",
+        "type": "json",
+        "address": "$rebirth",
+        "memaddress": "value",
+        "options": {
+          "subs": [
+            "value"
+          ]
+        },
+        "name": "$rebirth[value]"
+      },
+      "t_1-1": {
+        "id": "t_1-1",
+        "type": "json",
+        "address": "di0",
+        "memaddress": "value",
+        "options": {
+          "subs": [
+            "value"
+          ]
+        },
+        "name": "di0[value]"
+      },
+      "t_1-2": {
+        "id": "t_1-2",
+        "type": "json",
+        "address": "di1",
+        "memaddress": "value",
+        "options": {
+          "subs": [
+            "value"
+          ]
+        },
+        "name": "di1[value]"
+      }
+    }
+  }
+}
