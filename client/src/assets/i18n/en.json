@@ -731,6 +731,7 @@
     "dlg.app-language-zh-cn": "Chinese",
     "dlg.app-language-pt": "Portuguese",
     "dlg.app-language-tr": "Turkish",
+    "dlg.app-language-ko": "Korean",
     "dlg.app-settings-server-port": "Server is listening on port",
     "dlg.app-settings-alarms-clear": "Clear all alarms and history",
     "dlg.app-settings-auth-token": "Authentication with Token",
