@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { EndPointApi } from '../../_helpers/endpointapi';
 import { ProjectData, ProjectDataCmdType } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
+import { AlarmQuery } from '../../_models/alarm';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -58,6 +59,12 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/alarms', {});
     }
     
+    getAlarmsHistory(query: AlarmQuery): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: JSON.stringify(query) };        
+        return this.http.get<any>(this.endPointConfig + '/api/alarmsHistory', { headers: header, params: params });
+    }
+
     setAlarmAck(name: string): Observable<any> {
         return new Observable((observer) => {
             let header = new HttpHeaders({ 'Content-Type': 'application/json' });

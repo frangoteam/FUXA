@@ -97,6 +97,7 @@ import { HtmlInputComponent } from './gauges/controls/html-input/html-input.comp
 import { HtmlButtonComponent } from './gauges/controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.component';
 import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
+import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
@@ -124,6 +125,9 @@ import { GridsterModule } from 'angular-gridster2';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 import { environment } from '../environments/environment';
+import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-bar.component';
+import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
+import { NgxChartjsComponent } from './gui-helpers/ngx-chartjs/ngx-chartjs.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -164,6 +168,7 @@ export function createTranslateLoader(http: HttpClient) {
         HtmlButtonComponent,
         HtmlSelectComponent,
         HtmlChartComponent,
+        HtmlGraphComponent,
         HtmlBagComponent,
         GaugeProgressComponent,
         GaugeSemaphoreComponent,
@@ -216,8 +221,11 @@ export function createTranslateLoader(http: HttpClient) {
         ViewComponent,
         DialogItemText,
         NgxUplotComponent,
+        NgxChartjsComponent,
         ChartUplotComponent,
-        CardsViewComponent
+        CardsViewComponent,
+        GraphBarComponent,
+        GraphPieComponent
    ],
     imports: [
         BrowserModule,
@@ -313,7 +321,10 @@ export function createTranslateLoader(http: HttpClient) {
         DialogUserInfo,
         DialogItemText,
         ChartUplotComponent,
-        NgxUplotComponent
+        NgxUplotComponent,
+        NgxChartjsComponent,
+        GraphBarComponent,
+        GraphPieComponent
     ],
     bootstrap: [AppComponent]
 })

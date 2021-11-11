@@ -19,8 +19,11 @@ function AlarmsManager(_runtime) {
     var alarmsLoading = false;          // Flag to check if loading
     var working = false;                // Working flag to manage overloading of check alarms status
     var alarms = {};                    // Alarms matrix, grupped by variable to check, [variable][...AlarmSubProperty + permission]
+    var alarmsProperty = {};            // Alarms property list, key = alarm name + ^~^ + type
     var status = AlarmsStatusEnum.INIT; // Current status (StateMachine)
     var clearAlarms = false;            // Flag to clear current alarms from DB
+    var actionsProperty = {};           // Actions property list, key = alarm name + ^~^ + type
+
     /**
      * Start TimerInterval to check Alarms
      */
@@ -64,11 +67,17 @@ function AlarmsManager(_runtime) {
      */
     this.getAlarmsStatus = function () {
         return new Promise(function (resolve, reject) {
-            alarmstorage.getAlarms().then(function (alarms) {
-                var result = { highhigh: 0, high: 0, low: 0, info: 0 };
-                if (alarms) {
-                    Object.values(alarms).forEach(alr => {
+            alarmstorage.getAlarms().then(function (alrs) {
+                var result = { highhigh: 0, high: 0, low: 0, info: 0, actions: [] };
+                if (alrs) {
+                    Object.values(alrs).forEach(alr => {
                         result[alr.type]++;
+                        if (alr.type === AlarmsTypes.ACTION && !alr.offtime) {
+                            var action = actionsProperty[alr.nametype];
+                            if (action.subproperty && action.subproperty.type === ActionsTypes.POPUP) {
+                                result.actions.push({ type: action.subproperty.type, params: action.subproperty.actparam })
+                            }
+                        }
                     });
                 }
                 resolve(result);
@@ -86,7 +95,7 @@ function AlarmsManager(_runtime) {
             var result = [];
             Object.keys(alarms).forEach(alrkey => {
                 alarms[alrkey].forEach(alr => {
-                    if (alr.status) {
+                    if (alr.status && alr.type !== AlarmsTypes.ACTION) {
                         var alritem = { name: alr.getId(), type: alr.type, ontime: alr.ontime, offtime: alr.offtime, acktime: alr.acktime, 
                             status: alr.status, text: alr.subproperty.text, group: alr.subproperty.group, 
                             bkcolor: alr.subproperty.bkcolor, color: alr.subproperty.color, toack: alr.isToAck() };
@@ -98,6 +107,47 @@ function AlarmsManager(_runtime) {
         });
     }
 
+    /**
+     * Return the alarms hitory
+     */
+    this.getAlarmsHistory = function (from, to) {
+        return new Promise(function (resolve, reject) {
+            var history = [];
+            alarmstorage.getAlarmsHistory(from, to).then(result => {
+                for (var i = 0; i < result.length; i++) {
+                    var alr = new AlarmHistory(result[i].nametype);
+                    alr.status = result[i].status;
+                    alr.text = result[i].text;
+                    alr.ontime = result[i].ontime;
+                    alr.offtime = result[i].offtime;
+                    alr.acktime = result[i].acktime;
+                    alr.userack = result[i].userack;
+                    alr.group = result[i].grp;
+                    if (alr.ontime) {
+                        history.push(alr);
+                    }
+                    // add action or defined colors
+                    if (alr.type === AlarmsTypes.ACTION) {
+                        alr.text = `${alr.name}`;
+                        alr.group = `Actions`;
+                    } else if (alarmsProperty[alr.name] && alarmsProperty[alr.name][alr.type]) {
+                        alr.bkcolor = alarmsProperty[alr.name][alr.type].bkcolor;
+                        alr.color = alarmsProperty[alr.name][alr.type].color;
+                    }
+                }
+                resolve(history);
+            }).catch(function (err) {
+                logger.error('alarms.load-current.failed: ' + err);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * Set Ack to alarm
+     * @param {*} alarmname 
+     * @returns 
+     */
     this.setAlarmAck = function (alarmname) {
         return new Promise(function (resolve, reject) {
             var changed = [];
@@ -118,6 +168,16 @@ function AlarmsManager(_runtime) {
             } else {
                 resolve(false);
             }
+        });
+    }
+
+    this.clearAlarms = function (all) {
+        return new Promise(function (resolve, reject) {
+            alarmstorage.clearAlarms(all).then((result) => {
+                resolve(true);
+            }).catch(function (err) {
+                reject(err);
+            });
         });
     }
 
@@ -176,17 +236,19 @@ function AlarmsManager(_runtime) {
                 if (tag !== null) {
                     groupalarms.forEach(alr => {
                         if (alr.check(time, tag.ts, Number(tag.value))) {
-                            // changed
-                            // console.log('ALR: ' + alr.getId() + ' s:' + alr.status + ' on:' + _formatDateTime(alr.ontime) + ' off:' + _formatDateTime(alr.offtime) + 
-                            //             ' ack:' + _formatDateTime(alr.acktime) + ' ' + alr.toremove);
                             changed.push(alr);
                         }
                     });
                 }
             });
-            var end = new Date().getTime() - time;
             if (changed.length) {
+                _checkActions(changed);
                 alarmstorage.setAlarms(changed).then(function (result) {
+                    changed.forEach(alr => {
+                        if (alr.toremove) {
+                            alr.init();
+                        }
+                    });
                     resolve(true);
                 }).catch(function (err) {
                     reject(err);
@@ -218,6 +280,7 @@ function AlarmsManager(_runtime) {
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
             alarms = {};
+            alarmsProperty = {};
             runtime.project.getAlarms().then(function (result) {
                 var alarmsFound = 0;
                 if (result) {
@@ -232,25 +295,37 @@ function AlarmsManager(_runtime) {
                                 }
                             }
                             if (_isAlarmEnabled(alr.highhigh)) {
-                                var alarm = new Alarm(alr.name, 'highhigh', alr.highhigh, alr.property);
+                                var alarm = new Alarm(alr.name, AlarmsTypes.HIGH_HIGH, alr.highhigh, alr.property);
                                 alarms[alr.property.variableId].push(alarm);
                                 alarmsFound++;
                             } 
                             if (_isAlarmEnabled(alr.high)) {
-                                var alarm = new Alarm(alr.name, 'high', alr.high, alr.property);
+                                var alarm = new Alarm(alr.name, AlarmsTypes.HIGH, alr.high, alr.property);
                                 alarms[alr.property.variableId].push(alarm);
                                 alarmsFound++;
                             }
                             if (_isAlarmEnabled(alr.low)) {
-                                var alarm = new Alarm(alr.name, 'low', alr.low, alr.property);
+                                var alarm = new Alarm(alr.name, AlarmsTypes.LOW, alr.low, alr.property);
                                 alarms[alr.property.variableId].push(alarm);
                                 alarmsFound++;
                             }
                             if (_isAlarmEnabled(alr.info)) {
-                                var alarm = new Alarm(alr.name, 'info', alr.info, alr.property);
+                                var alarm = new Alarm(alr.name, AlarmsTypes.LOW, alr.info, alr.property);
                                 alarms[alr.property.variableId].push(alarm);
                                 alarmsFound++;
                             }
+                            if (_isAlarmActionsEnabled(alr.actions)) {
+                                for (var i = 0; i < alr.actions.values.length; i++) {
+                                    if (_isActionsValid(alr.actions.values[i])) {
+                                        var alarm = new Alarm(`${alr.name} - ${i}`, AlarmsTypes.ACTION, alr.actions.values[i], alr.property);
+                                        alarms[alr.property.variableId].push(alarm);
+                                        alarmsFound++;
+                                        actionsProperty[alarm.getId()] = alarm;
+                                    }
+
+                                }
+                            }
+                            alarmsProperty[alr.name] = alr;
                         }
                     });
                 }
@@ -298,6 +373,21 @@ function AlarmsManager(_runtime) {
         });
     }
 
+    var _checkActions = function (alarms) {
+        for (var i = 0; i < alarms.length; i++) {
+            if (alarms[i].type === AlarmsTypes.ACTION && alarms[i].subproperty && !alarms[i].offtime) {
+                if (alarms[i].subproperty.type === ActionsTypes.SET_VALUE) {
+                    var deviceId = devices.getDeviceIdForomTag(alarms[i].subproperty.variableId);
+                    if (deviceId) {
+                        devices.setDeviceValue(deviceId, alarms[i].subproperty.variableId, alarms[i].subproperty.actparam);
+                    } else {
+                        logger.error(`alarms.action.deviceId not found: ${alarms[i].name}`);
+                    }
+                }
+            }
+        }
+    }
+    
     var _checkWorking = function (check) {
         if (check && working) {
             logger.warn('alarms working (check) overload!');
@@ -308,7 +398,21 @@ function AlarmsManager(_runtime) {
     }
 
     var _isAlarmEnabled = function (alarm) {
-        if (alarm && alarm.enabled && alarm.checkdelay > 0) {
+        if (alarm && alarm.enabled && alarm.checkdelay > 0 && alarm.min && alarm.max && alarm.timedelay) {
+            return true;
+        }
+        return false;
+    }
+
+    var _isAlarmActionsEnabled = function (alarm) {
+        if (alarm && alarm.enabled && alarm.values && alarm.values.length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    var _isActionsValid = function (action) {
+        if (action && action.checkdelay > 0 && action.min && action.max && action.timedelay) {
             return true;
         }
         return false;
@@ -350,6 +454,7 @@ function Alarm(name, type, subprop, tagprop) {
     this.status = AlarmStatusEnum.VOID;
     this.lastcheck = 0;
     this.toremove = false;
+    this.userack;
 
     this.getId = function () {
         return this.name + '^~^' + this.type;
@@ -399,10 +504,11 @@ function Alarm(name, type, subprop, tagprop) {
                     this.status = AlarmStatusEnum.ON;
                     this.acktime = 0;
 					this.offtime = 0;
+                    this.ontime = time;
                     return true;
                 }
                 // remove if acknowledged
-                if (this.acktime) {
+                if (this.acktime || this.type === AlarmsTypes.ACTION) {
                     this.toRemove();
                     return true;
                 }
@@ -416,17 +522,21 @@ function Alarm(name, type, subprop, tagprop) {
                     this.status = AlarmStatusEnum.ON;
                     return true;
                 }
-                return false;                
+                return false;
         }
     }
 
-    this.toRemove = function () {
-        this.toremove = true;
+    this.init = function () {
+        this.toremove = false;
         this.ontime = 0;
         this.offtime = 0;
         this.acktime = 0;
         this.status = AlarmStatusEnum.VOID;
         this.lastcheck = 0;
+    }
+
+    this.toRemove = function () {
+        this.toremove = true;
     }
 
     this.setAck = function () {
@@ -445,6 +555,21 @@ function Alarm(name, type, subprop, tagprop) {
     }
 }
 
+function AlarmHistory(id) {
+    this.name;
+    this.type;
+    this.laststatus;
+    this.alarmtext;
+    this.ontime = 0;
+    this.offtime = 0;
+    this.acktime = 0;
+    this.userack;
+
+    var ids = id.split('^~^');
+    this.name = ids[0];
+    this.type = ids[1];
+}
+
 var AlarmStatusEnum = {
     VOID: '',
     ON: 'N',
@@ -456,4 +581,18 @@ var AlarmAckModeEnum = {
     float: 'float',
     ackactive: 'ackactive',
     ackpassive: 'ackpassive'
+}
+
+const AlarmsTypes = {
+    HIGH_HIGH: 'highhigh',
+    HIGH: 'high',
+    LOW: 'low',
+    INFO: 'info',
+    ACTION: 'action'
+}
+
+const ActionsTypes = {
+    POPUP: 'popup',
+    SET_VALUE: 'setValue',
+    SEND_MSG: 'sendMsg'
 }

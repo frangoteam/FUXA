@@ -17,6 +17,7 @@ import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
 import { GridOptions } from '../cards-view/cards-view.component';
+import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 
 import { GridsterConfig, GridType, CompactType } from 'angular-gridster2';
 
@@ -299,14 +300,24 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private setAlarmsStatus(status: any) {
+    private setAlarmsStatus(status: AlarmStatus) {
         if (status) {
             this.alarms.count = status.highhigh + status.high + status.low;
             this.infos.count = status.info;
             this.checkHeaderButton();
+            this.checkActions(status.actions);
         }
     }
 
+    private checkActions(actions: any[]) {
+        if (actions) {
+            actions.forEach(act => {
+                if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.popup)) {
+                    this.fuxaview.openDialog(null, act.params, {});
+                }
+            });
+        }
+    }
 }
 
 @Component({

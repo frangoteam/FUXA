@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ResWebApiService } from './reswebapi.service';
 import { Device } from '../../_models/device';
 import { ProjectData, ProjectDataCmdType } from '../../_models/project';
+import { AlarmQuery } from '../../_models/alarm';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -28,6 +29,8 @@ export abstract class ResourceStorageService {
     public abstract setDeviceSecurity(id: string, value: string): Observable<any>;
 
     public abstract getAlarmsValues(): Observable<any>;
+
+    public abstract getAlarmsHistory(query: AlarmQuery): Observable<any>;
     
     public abstract setAlarmAck(name: string): Observable<any>;
 

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 
 import { ProjectData, ProjectDataCmdType } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
+import { AlarmQuery } from '../../_models/alarm';
 
 @Injectable()
 export class ResDemoService implements ResourceStorageService {
@@ -69,6 +70,12 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
     
+    getAlarmsHistory(query: AlarmQuery): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
     setAlarmAck(name: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');

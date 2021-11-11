@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType } from '../_models/project';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
-import { Alarm } from '../_models/alarm';
+import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
@@ -157,6 +157,22 @@ export class ProjectService {
         FileSaver.saveAs(blob, filename);
     }
 
+    exportDevices() {
+        let filename = 'fuxa-devices.json';
+        let devices = Object.values(this.convertToSave(this.getDevices()));
+        let content = JSON.stringify(devices, null, 2);
+        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, filename);
+    }
+
+    importDevices(devices: Device[]) {
+        devices.forEach(device => {
+            if (device.id && device.name) {
+                this.setDevice(device, null, null);
+            }
+        })
+    }
+
     reload() {
         this.load();
     }
@@ -263,6 +279,25 @@ export class ProjectService {
             console.error(err);
             this.notifySaveError(err);
         });
+    }
+
+    /**
+     * 
+     * @returns 
+     */
+    getViews(): View[] {
+        return (this.projectData) ? this.projectData.hmi.views : [];
+    }
+
+
+    getViewId(name) {
+        let views = this.getViews();
+        for (var i = 0; i < views.length; i++) {
+            if (views[i].name === name) {
+                return views[i].id;
+            }
+        }
+        return null;
     }
 
     /**
@@ -375,6 +410,7 @@ export class ProjectService {
                 exist.high = alarm.high;
                 exist.low = alarm.low;
                 exist.info = alarm.info;
+                exist.actions = alarm.actions;
                 exist.value = alarm.value;
             } else {
                 this.projectData.alarms.push(alarm);
@@ -423,6 +459,10 @@ export class ProjectService {
         return this.storage.getAlarmsValues();
     }
     
+    getAlarmsHistory(query: AlarmQuery): Observable<any> {
+        return this.storage.getAlarmsHistory(query);
+    }
+
     setAlarmAck(name: string): Observable<any> {
         return this.storage.setAlarmAck(name);
     }

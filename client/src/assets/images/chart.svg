@@ -1,99 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="21"
-   height="21"
-   version="1.1"
-   id="svg16"
-   sodipodi:docname="chart.svg"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
-  <defs
-     id="defs20">
-    <inkscape:path-effect
-       effect="bspline"
-       id="path-effect832"
-       is_visible="true"
-       weight="33.333333"
-       steps="2"
-       helper_size="0"
-       apply_no_weight="true"
-       apply_with_weight="true"
-       only_selected="false" />
-    <inkscape:path-effect
-       effect="bspline"
-       id="path-effect828"
-       is_visible="true"
-       weight="33.333333"
-       steps="2"
-       helper_size="0"
-       apply_no_weight="true"
-       apply_with_weight="true"
-       only_selected="false" />
-    <inkscape:path-effect
-       effect="bspline"
-       id="path-effect820"
-       is_visible="true"
-       weight="33.333333"
-       steps="2"
-       helper_size="0"
-       apply_no_weight="true"
-       apply_with_weight="true"
-       only_selected="false" />
-  </defs>
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1412"
-     inkscape:window-height="899"
-     id="namedview18"
-     showgrid="false"
-     inkscape:zoom="15.733333"
-     inkscape:cx="20.116288"
-     inkscape:cy="10.382613"
-     inkscape:window-x="240"
-     inkscape:window-y="29"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg16" />
-  <metadata
-     id="metadata2">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <path
-     style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 1.5889831,2.3771182 V 16.932204 H 20.72034"
-     id="path812"
-     inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;stroke:#ffffff;stroke-width:1.15951169px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 1.6112967,14.905593 6.799779,9.3648161 10.477691,13.086235 19.409761,4.7337211"
-     id="path822"
-     inkscape:connector-curvature="0" />
-  <path
-     style="fill:none;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 1.7796611,6.7627116 C 6.1663409,6.3388778 10.551934,5.9151489 13.502985,7.6214069 c 2.95105,1.7062579 4.484097,5.5814611 6.009727,9.4379151"
-     id="path830"
-     inkscape:connector-curvature="0"
-     inkscape:path-effect="#path-effect832"
-     inkscape:original-d="M 1.7796611,6.7627116 C 6.1662544,6.3379827 10.551848,5.9142539 14.936441,5.4915251 16.462487,9.324321 17.988289,13.20239 19.512712,17.059322"
-     transform="translate(0.06355932,-0.44491526)" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21" height="21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g fill="none" stroke="#fff">
+  <path d="m1.589 2.3771v14.555h19.131" stroke-width="1.2"/>
+  <path d="m3.5479 14.365 4.6329-5.2644 3.2841 3.5358 7.9757-7.9359" stroke-width="1.368"/>
+  <path d="m3.2988 5.5309c4.0057-0.38103 8.0104-0.76197 10.705 0.77202s4.0946 5.0178 5.4877 8.4848" stroke-width="1.206"/>
+ </g>
 </svg>

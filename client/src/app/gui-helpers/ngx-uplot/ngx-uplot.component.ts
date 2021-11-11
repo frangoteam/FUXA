@@ -17,6 +17,14 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() public options: NgxOptions;
     @ViewChild('graph') public graph: ElementRef;
 
+
+    readonly lineInterpolations = {
+        linear: 0,
+        stepAfter: 1,
+        stepBefore: 2,
+        spline: 3,
+    };
+
     overlay: any;
     uplot: any;
     data: number[][];
@@ -134,6 +142,11 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             },
         },
         series: this.sampleSerie,
+        cursor: {
+            dataIdx: (self, seriesIdx, hoveredIdx, cursorXVal) => { 
+                return this._proximityIndex(self, seriesIdx, hoveredIdx, cursorXVal);
+            },
+        },
     };
     languageLabels = { time: 'Time', serie: 'Serie', title: 'Title' };
     constructor() { }
@@ -182,6 +195,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
         let opt = this.options || this.defOptions;
+        opt.cursor = this.defOptions.cursor;
         if (this.uplot) {
             this.uplot.destroy();
         }
@@ -215,6 +229,13 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     addSerie(index: string, attribute: Series) {
         this.data.push([null,null]);
+        if (attribute.lineInterpolation === this.lineInterpolations.stepAfter) {
+            attribute.paths = uPlot.paths.stepped({ align: 1 });
+        } else if (attribute.lineInterpolation === this.lineInterpolations.stepBefore) {
+            attribute.paths = uPlot.paths.stepped({ align: -1 });
+        } else if (attribute.lineInterpolation === this.lineInterpolations.spline) {
+            attribute.paths = uPlot.paths.spline();
+        }
         this.uplot.addSeries(attribute, index);
         this.uplot.setData(this.data);
     }
@@ -313,11 +334,12 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                     for (let i = 1; i < u.series.length; i++) {
                         let value = '';
                         try {
-                            if (!isNaN(u.data[i][idx])) {
-                                if (u.data[i][idx].toString().indexOf('.') != -1) {
-                                    value = u.data[i][idx].toFixed(this.options.decimalsPrecision);
+                            var ydx = this._proximityIndex(u, i, idx, x);
+                            if (!isNaN(u.data[i][ydx])) {
+                                if (u.data[i][ydx].toString().indexOf('.') != -1) {
+                                    value = u.data[i][ydx].toFixed(this.options.decimalsPrecision);
                                 } else {
-                                    value = u.data[i][idx];
+                                    value = u.data[i][ydx];
                                 }
                             }
                         } catch { }
@@ -328,6 +350,48 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         };
+    }
+
+    _proximityIndex(self, seriesIdx, hoveredIdx, cursorXVal) {
+        let hoverProximityPx = 30;
+        let seriesData = self.data[seriesIdx];
+        if (seriesData[hoveredIdx] == null) {
+            let nonNullLft = null,
+                nonNullRgt = null,
+                i;
+
+            i = hoveredIdx;
+            while (nonNullLft == null && i-- > 0) {
+                if (seriesData[i] != null)
+                    nonNullLft = i;
+            }
+
+            i = hoveredIdx;
+            while (nonNullRgt == null && i++ < seriesData.length) {
+                if (seriesData[i] != null)
+                    nonNullRgt = i;
+            }
+
+            let xVals = self.data[0];
+
+            let curPos = self.valToPos(cursorXVal, 'x');
+            let rgtPos = nonNullRgt == null ?  Infinity : self.valToPos(xVals[nonNullRgt], 'x');
+            let lftPos = nonNullLft == null ? -Infinity : self.valToPos(xVals[nonNullLft], 'x');
+
+            let lftDelta = curPos - lftPos;
+            let rgtDelta = rgtPos - curPos;
+
+            if (lftDelta <= rgtDelta) {
+                if (lftDelta <= hoverProximityPx)
+                    hoveredIdx = nonNullLft;
+            }
+            else {
+                if (rgtDelta <= hoverProximityPx)
+                    hoveredIdx = nonNullRgt;
+            }
+        }
+
+        return hoveredIdx;
     }
 }
 

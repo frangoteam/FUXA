@@ -117,7 +117,7 @@
                     <div style="display: block;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-text' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.high.text" [matAutocomplete]="textAuto" style="width: 400px" type="text">                    
+                            <input [(ngModel)]="data.alarm.high.text" [matAutocomplete]="textAuto" style="width: 400px" type="text">
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
@@ -238,6 +238,78 @@
                         </div>
                         <div class="alarm-sample" style="display: inline-block;width: 240px;line-height: 35px">
                             <span>{{data.alarm.info.group}}</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'alarm.property-action' | translate}}">
+                <div style="overflow: hidden; padding-top: 25px;">
+                    <div style="display: block;">
+                        <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;margin-left: 20px;">
+                            <span>{{'alarm.property-enabled' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.alarm.actions.enabled"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field" style="margin-bottom: 10px; float:right">
+                            <button mat-icon-button (click)="onAddAction()">
+                                <mat-icon>add_circle_outline</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="max-height: 150px; overflow: auto; width:100%">
+                        <div *ngFor="let item of data.alarm.actions.values; index as i" class="action-item">
+                            <div style="display: inline-table;;margin-bottom: 10px;">
+                                <div class="my-form-field" style="display: inline-block;padding-right: 13px;">
+                                    <span>{{'alarm.property-checkdelay' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="item.checkdelay" style="width: 145px" type="text">
+                                </div>
+                                <div class="my-form-field" style="display: inline-block;padding-right: 13px;">
+                                    <span>{{'alarm.property-min' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="item.min" style="width: 145px" type="text">
+                                </div>
+                                <div class="my-form-field" style="display: inline-block;padding-right: 13px;">
+                                    <span>{{'alarm.property-max' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="item.max" style="width: 145px" type="text">
+                                </div>
+                                <div class="my-form-field" style="display: inline-block;">
+                                    <span>{{'alarm.property-timedelay' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="item.timedelay" style="width: 145px" type="text">
+                                </div>
+                            </div>
+                                <div style="display: block; padding-bottom: 5px;">
+                                    <div class="my-form-field" style="width: 300px;">
+                                        <span>{{'alarm.property-action-type' | translate}}</span>
+                                        <mat-select [(value)]="item.type" (selectionChange)="onCheckActionType(item.type, item)">
+                                            <mat-option *ngFor="let ev of actionsType | enumToArray" [value]="ev.key">
+                                                {{ ev.value }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <div style="display: inline-block" *ngIf="item.type === actionSetValue">
+                                        <div class="my-form-field" style="padding-left: 20px;">
+                                            <span>{{'alarm.property-action-value' | translate}}</span>
+                                            <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
+                                        </div>
+                                    </div>
+                                    <div style="display: inline-block" *ngIf="item.type === actionPopup">
+                                        <div class="my-form-field" style="padding-left: 20px; width: 260px;">
+                                            <span>{{'alarm.property-action-destination' | translate}}</span>
+                                            <mat-select [(value)]="item.actparam">
+                                                <mat-option *ngFor="let v of data.views; index as i" [value]="v.id">{{v.name}}</mat-option>
+                                            </mat-select>
+                                        </div>
+                                    </div>
+                                    <div style="float:right">
+                                        <button mat-icon-button (click)="onAlarmAction(i)">
+                                            <mat-icon>clear</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div style="display: block" *ngIf="item.type === actionSetValue">
+                                    <div style="display: block;padding-left: 25px;">
+                                        <flex-variable style="display: block" [data]="data" (onchange)="setActionVariable(item, $event)" [variableId]="item.variableId"
+                                            [withStaticValue]="false"></flex-variable>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 </div>

@@ -131,6 +131,13 @@ export class Utils {
             return (arg == true || arg == 'true' || arg == 1) ? true : false;
         }
     }
+
+    static arrayToObject = (array, keyField) => {
+        array.reduce((obj, item) => {
+            obj[item[keyField]] = item
+            return obj
+        }, {});
+    }
 }
 
 @Pipe({

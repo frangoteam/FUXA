@@ -11,7 +11,7 @@ $multiple-check-width: 33px;
     top: 0;
     width: calc(100% + #{2 * $mat-menu-side-padding - $scrollbar-width});
     border-bottom: 1px solid #cccccc;
-    background: white;
+    background-color: var(--workPanelBackground);
     z-index: 100;
     &.mat-select-search-inner-multiple {
         width: calc(
@@ -33,14 +33,18 @@ $multiple-check-width: 33px;
     box-sizing: border-box;
     font-size: 15px;
     border: none;
+    background-color: var(--workPanelBackground);
+    color: var(--formInputColor);
 }
 .mat-select-search-no-entries-found {
     padding: $mat-menu-side-padding;
+    color: var(--formInputColor);
 }
 .mat-select-search-clear {
     position: absolute;
     right: 0;
     top: 4px;
+    color: var(--formInputColor);
 }
 ::ng-deep .cdk-overlay-pane-select-search {
     /* correct offsetY so that the selected option is at the position of the select box when opening */
