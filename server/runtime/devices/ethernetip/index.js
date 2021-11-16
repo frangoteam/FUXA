@@ -112,12 +112,12 @@
       */
      this.polling = async function () {
          if (_checkWorking(true)) {
-             if (client) {
+             if (conn && connected) {
                  try {
                      _readValues().then(result => {
                          _checkWorking(false);
-                         if (result.length) {
-                             let varsValueChanged = _updateVarsValue(result);
+                         if (result) {                             
+                             let varsValueChanged = _updateVarsValue(JSON.parse(result));
                              lastTimestampValue = new Date().getTime();
                              _emitValues(varsValue);
                              if (this.addDaq) {
