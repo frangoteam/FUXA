@@ -102,7 +102,10 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
             return '';
         }
         let device = this.projectService.getDeviceFromTagId(varProp.variableId);
-        return device.name + ' - ' + device.tags[varProp.variableId].name;
+        if (device) {
+            return device.name + ' - ' + device.tags[varProp.variableId].name;
+        }
+        return '';
     }
 
     private loadAlarms() {
