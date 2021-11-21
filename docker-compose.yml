@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  fuxa:
+    image: bakebytes/fuxa:latest
+    build: .
+    restart: always
+    ports:
+    - "1881"
+    volumes:
+    - ./app/_appdata:/usr/src/app/FUXA/server/_appdata
+    - ./app/_db:/usr/src/app/FUXA/server/_db
+    - ./app/_logs:/usr/src/app/FUXA/server/_logs
+    - ./app/_pkg:/usr/src/app/FUXA/server/_pkg
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.web-company-dev.rule=Host(`company-dev.tenant.bakebytes.io`)"
+    - "traefik.http.routers.web-company-dev.entrypoints=websecure"
+    - "traefik.http.routers.web-company-dev.tls.certresolver=letsresolver"
+    - "traefik.http.services.web-company-dev.loadbalancer.server.port=1881"
+
+networks:
+  default:
+    external: true
+    name: traefik_default

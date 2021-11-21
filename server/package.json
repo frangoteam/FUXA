@@ -14,6 +14,10 @@
     "url": "https://github.com/frangoteam/FUXA.git"
   },
   "dependencies": {
+    "@azure/event-hubs": ">=5.0.2",
+    "azure-iothub": "^1.9.9",
+    "azure-keyvault": "^3.0.4",
+    "ms-rest-azure": "^2.6.0",
     "@inmation/inmation-api-client": "^1.7.11",
     "@types/socket.io": "^2.1.2",
     "app-root-path": "^2.1.0",
