@@ -5,7 +5,7 @@ import { Subscription } from "rxjs";
 import { ProjectService } from '../../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
 import {AlarmPropertyComponent } from '..//alarm-property/alarm-property.component';
-import { Alarm, AlarmSubProperty } from '../../_models/alarm';
+import { Alarm, AlarmSubProperty, AlarmSubActions } from '../../_models/alarm';
 
 @Component({
     selector: 'app-alarm-list',
@@ -14,7 +14,7 @@ import { Alarm, AlarmSubProperty } from '../../_models/alarm';
 })
 export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'device', 'highhigh', 'high', 'low', 'info', 'remove'];
+    displayedColumns = ['select', 'name', 'device', 'highhigh', 'high', 'low', 'info', 'actions', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     private subscriptionLoad: Subscription;
@@ -65,7 +65,7 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
 		let malarm: Text = JSON.parse(JSON.stringify(alarm));
         let dialogRef = this.dialog.open(AlarmPropertyComponent, {
             data: { alarm: malarm, editmode: toAdd, alarms: this.dataSource.data,
-                devices: Object.values(this.projectService.getDevices()) },
+                devices: Object.values(this.projectService.getDevices()), views: this.projectService.getViews() },
             position: { top: '80px' }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -84,7 +84,14 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getSubProperty(alrSubPro: AlarmSubProperty) {
-        if (alrSubPro && alrSubPro.enabled && alrSubPro.checkdelay > 0) {
+        if (alrSubPro && alrSubPro.enabled && AlarmSubProperty.isValid(alrSubPro)) {
+            return this.enabledText;
+        }
+        return "";
+    }
+
+    getSubActionsProperty(alrSubAct: AlarmSubActions) {
+        if (alrSubAct && alrSubAct.enabled && AlarmSubActions.isValid(alrSubAct)) {
             return this.enabledText;
         }
         return "";
@@ -95,7 +102,10 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
             return '';
         }
         let device = this.projectService.getDeviceFromTagId(varProp.variableId);
-        return device.name + ' - ' + device.tags[varProp.variableId].name;
+        if (device) {
+            return device.name + ' - ' + device.tags[varProp.variableId].name;
+        }
+        return '';
     }
 
     private loadAlarms() {

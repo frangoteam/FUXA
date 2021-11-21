@@ -115,7 +115,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                         updateDeviceValues({ id: id, values: adevs[id] });
                     }
                 } else if (message.cmd === 'set' && message.var) {
-                    devices.setDeviceValue(message.var.source, message.var.id, message.var.value)
+                    devices.setDeviceValue(message.var.source, message.var.id, message.var.value);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_VALUES}: ${err}`);
@@ -377,7 +377,9 @@ function updateAlarmsStatus() {
         alarmsMgr.getAlarmsStatus().then(function (result) {
             io.emit(Events.IoEventTypes.ALARMS_STATUS, result);
         }).catch(function (err) {
-            logger.error('runtime.failed-to-update-alarms: ' + err);
+            if (err) {
+                logger.error('runtime.failed-to-update-alarms: ' + err);
+            }
         });
     } catch (err) {
     }

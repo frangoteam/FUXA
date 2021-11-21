@@ -62,6 +62,11 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-info' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{getSubProperty(element.info)}} </mat-cell>
             </ng-container>
+            <!-- Action Column -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.list-actions' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getSubActionsProperty(element.actions)}} </mat-cell>
+            </ng-container>
 
             <!-- Button remove Column -->
             <ng-container matColumnDef="remove">

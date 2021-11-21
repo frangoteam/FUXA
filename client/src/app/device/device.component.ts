@@ -21,6 +21,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
 
     @ViewChild('devicelist') deviceList: DeviceListComponent;
     @ViewChild('devicemap') deviceMap: DeviceMapComponent;
+    @ViewChild('fileImportInput') fileImportInput: any;
 
     private subscriptionLoad: Subscription;
     private subscriptionDeviceChange: Subscription;
@@ -30,7 +31,6 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     showMode: string = 'map';
     readonly = false;
     reloadActive = false;
-
 
     constructor(private router: Router,
         private projectService: ProjectService,
@@ -44,7 +44,6 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
             this.deviceMap.loadCurrentProject();
             this.deviceList.mapTags();
-
         });
         this.subscriptionDeviceChange = this.hmiService.onDeviceChanged.subscribe(event => {
             this.deviceMap.setDeviceStatus(event);
@@ -122,13 +121,49 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
             this.deviceMap.addDevice();
         }
     }
-  
+
     onReload() {
         this.projectService.onRefreshProject();
         this.reloadActive = true;
         setTimeout(() => {
             this.reloadActive = false;
         }, 1000);
+    }
+
+    onExport() {
+        try {
+            this.projectService.exportDevices();
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    onImport() {
+        let ele = document.getElementById('devicesConfigFileUpload') as HTMLElement;
+        ele.click();
+    }
+
+    /**
+     * open Project event file loaded 
+     * @param event file resource
+     */
+    onFileChangeListener(event) {
+        let files = event.srcElement.files;
+        let input = event.target;
+        let reader = new FileReader();
+        reader.onload = (data) => {
+            let devices = JSON.parse(reader.result.toString());
+            this.projectService.importDevices(devices);
+            this.projectService.onRefreshProject();
+        }
+
+        reader.onerror = function () {
+            let msg = 'Unable to read ' + input.files[0];
+            // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
+            alert(msg);
+        };
+        reader.readAsText(input.files[0]);
+        this.fileImportInput.nativeElement.value = null;
     }
 }
 

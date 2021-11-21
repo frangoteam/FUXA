@@ -11,7 +11,9 @@ export class ChartLine {
     name: string;
     label: string;
     color: string;
+    fill?: string;
     yaxis: number;
+    lineInterpolation?: number;
 }
 
 export enum ChartViewType {

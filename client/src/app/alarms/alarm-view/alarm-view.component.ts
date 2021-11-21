@@ -1,12 +1,12 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogRef, MatTable, MatTableDataSource, MAT_DIALOG_DATA, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatMenuTrigger } from '@angular/material';
+import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Subject, timer, Observable, empty } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';
-import { ProjectService } from '../../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Alarm, AlarmSubProperty } from '../../_models/alarm';
+import { AlarmQuery } from '../../_models/alarm';
 
 @Component({
     selector: 'app-alarm-view',
@@ -15,19 +15,26 @@ import { Alarm, AlarmSubProperty } from '../../_models/alarm';
 })
 export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['ontime', 'text', 'type', 'group', 'status', 'ack'];
-    dataSource = new MatTableDataSource([]);
+    alarmsColumns = ['ontime', 'text', 'type', 'group', 'status', 'ack', 'history'];
+    historyColumns = ['ontime', 'text', 'type', 'group', 'status', 'offtime', 'acktime', 'userack', 'history'];
+    displayColumns = this.alarmsColumns;
+
     showheader = false;
     currentShowMode = 'collapse';
     alarmsPolling: any;
     statusText = AlarmStatus;
     priorityText = AlarmPriority;
+    alarmShowType = AlarmShowType;
+    showType = AlarmShowType.alarms;
+    history = [];
 
     @Input() fullview = true;
     @Output() showMode:EventEmitter<string> = new EventEmitter();
 
+    dataSource = new MatTableDataSource([]);
     @ViewChild(MatTable) table: MatTable<any>;
     @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
 
     private rxjsPollingTimer = timer(0, 2000);
     private destroy = new Subject();
@@ -45,7 +52,10 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        this.displayColumns = this.alarmsColumns;
+        this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.table.renderRows();
     }
 
     ngOnDestroy() {
@@ -88,11 +98,13 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     updateAlarmsList(alr: any[]) {
-        alr.forEach(alr => {
-            alr.status = this.getStatus(alr.status);
-            alr.type = this.getPriority(alr.type);
-        })
-        this.dataSource.data = alr;
+        if (this.showType === AlarmShowType.alarms) {
+            alr.forEach(alr => {
+                alr.status = this.getStatus(alr.status);
+                alr.type = this.getPriority(alr.type);
+            })
+            this.dataSource.data = alr;
+        }
     }
 
     getStatus(status: string) {
@@ -120,6 +132,28 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.showMode.emit('close');
         this.stopAskAlarmsValues();
     }
+
+    onShowAlarms() {
+        this.showType = AlarmShowType.alarms;
+        this.displayColumns = this.alarmsColumns;
+    }
+
+    onShowAlarmsHistory() {
+        this.showType = AlarmShowType.history;
+        this.displayColumns = this.historyColumns;
+        let query: AlarmQuery = <AlarmQuery>{ from: 'a', to: 'b' };
+        this.hmiService.getAlarmsHistory(query).subscribe(result => {
+            if (result) {
+                result.forEach(alr => {
+                    alr.status = this.getStatus(alr.status);
+                    alr.type = this.getPriority(alr.type);
+                })
+                this.dataSource.data = result;
+            }
+        }, err => {
+            console.error('get Alarms history err: ' + err);
+        });
+    }
 }
 
 export enum AlarmStatus {
@@ -133,4 +167,9 @@ export enum AlarmPriority {
     high = 'alarm.property-high',
     low = 'alarm.property-low',
     info = 'alarm.property-info'
+}
+
+export enum AlarmShowType {
+    alarms,
+    history
 }

@@ -25,12 +25,15 @@
                         <div class="my-form-field">
                             <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
                             <mat-icon class="my-form-field-info" style="display: block;" matTooltip="{{authenticationTooltip}}">info</mat-icon>
-                            <mat-select [(value)]="authentication" style="width: 320px">
+                            <mat-select [(value)]="authentication" style="width: 320px; display: block;">
                                 <mat-option *ngFor="let auth of authType" [value]="auth.value">
                                     {{ auth.text }}
                                 </mat-option>
                             </mat-select>
                         </div>
+                    </div>
+                    <div style="display: block; margin-top: 20px; margin-bottom: 20px;">
+                        <button mat-raised-button color="basic" (click)="onAlarmsClear()">{{'dlg.app-settings-alarms-clear' | translate}}</button>
                     </div>
                 </div>
             </mat-tab>

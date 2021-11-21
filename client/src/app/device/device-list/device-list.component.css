@@ -47,20 +47,20 @@
 
 .mat-column-select {
     overflow: visible;
-    flex: 0 0 100px;
+    flex: 0 0 80px;
 }
 
 .mat-column-name {
-    flex: 0 0 180px;
+    flex: 1 1 100px;
 }
 
 
 .mat-column-address {
-    flex: 0 0 360px;
+    flex: 2 1 300px;
 }
 
 .mat-column-device {
-    flex: 0 0 180px;
+    flex: 1 1 140px;
 }
 
 .mat-column-type {

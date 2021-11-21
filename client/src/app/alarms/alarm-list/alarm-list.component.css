@@ -71,32 +71,34 @@
 
 .mat-column-select {
     overflow: visible;
-    flex: 0 0 100px;
+    flex: 0 0 80px;
 }
 
 .mat-column-name {
-    flex: 0 0 200px;
+    flex: 1 1 200px;
 }
 
 
 .mat-column-device {
-    flex: 0 0 350px;
+    flex: 2 1 350px;
 }
 
 .mat-column-highhigh {
-    flex: 0 0 200px;
+    flex: 0 0 140px;
 }
 
 .mat-column-high {
-    flex: 0 0 200px;
+    flex: 0 0 140px;
 }
 .mat-column-low {
-    flex: 0 0 200px;
+    flex: 0 0 140px;
 }
 .mat-column-info {
-    flex: 0 0 200px;
+    flex: 0 0 140px;
 }
-
+.mat-column-actions {
+    flex: 0 0 140px;
+}
 .mat-column-value {
     flex: 0 0 800px;
 }
