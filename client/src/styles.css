@@ -117,19 +117,20 @@ html {
     position: relative;
     /*min-height: 100%;*/
     background-color: #ffffff;
-    font-family: "Roboto-Regular", "Helvetica Neue", sans-serif;
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
     font-weight: 300;
 }
 
 body {
     height: 100%;
     margin: 0px;
-    font-family: "Roboto-Regular", "Helvetica Neue", sans-serif;
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
     font-weight: 300;
     background-color: white;
 }
 
 * {
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
     text-decoration: none;
     scrollbar-width: thin;
 }
@@ -515,7 +516,7 @@ mat-toolbar,
 mat-toolbar-row {
     /* min-height: 44px !important; */
     height: 46px !important;
-    font-family: "Open Sans", sans-serif !important;
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif !important;
     font-weight: 300 !important;
     font-size: 22px !important;
     padding-left: 2px !important;
@@ -544,7 +545,7 @@ mat-toolbar,
 mat-toolbar-row {
     /* min-height: 44px !important; */
     height: 46px !important;
-    font-family: "Open Sans", sans-serif !important;
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif !important;
     font-weight: 300 !important;
     font-size: 22px !important;
     padding-left: 2px !important;

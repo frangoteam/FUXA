@@ -21,7 +21,7 @@
     font-size: 18px; 
     font-weight: bold;
     color: black; 
-    font-family: 'Amaranth', sans-serif;
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif !important;
     position: absolute; 
     top: 5px; 
     left: 0; 

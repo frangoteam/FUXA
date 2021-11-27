@@ -244,6 +244,9 @@ export class DeviceListComponent implements OnInit {
     }
 
     getAddress(tag: Tag) {
+        if (!tag.address) {
+            return '';
+        }
         if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
             return parseInt(tag.address) + parseInt(tag.memaddress);
         } else if (this.deviceSelected.type === DeviceType.WebAPI) {
@@ -252,7 +255,7 @@ export class DeviceListComponent implements OnInit {
             }
             return tag.address;
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
-            if (tag.options.subs && tag.type === 'json') {
+            if (tag.options && tag.options.subs && tag.type === 'json') {
                 return DeviceListComponent.formatAddress(tag.address, tag.memaddress);
             }
             return tag.address;

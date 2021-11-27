@@ -484,6 +484,7 @@
     "device.property-parity": "Parity",
     "device.property-method": "Method",
     "device.property-format": "Format",
+    "device.property-internal": "Frontend only",
     "device.property-url": "URL (http://[server]:[port])",
     "device.property-webapi-result": "Result of request",
     "device.not-webapi-result": "Configure WebAPI result",
