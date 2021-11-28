@@ -42,7 +42,7 @@
     <div style="display: inline-block" *ngIf="withSetValue(item.action)">
         <div class="my-form-field" style="padding-left: 20px;">
             <span>{{'gauges.property-event-value' | translate}}</span>
-            <input numberOnly [(ngModel)]="item.actparam" type="text" style="width: 260px">
+            <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
         </div>
     </div>
     <div style="display: block; padding-top: 5px;padding-left: 25px;"
