@@ -21,7 +21,8 @@ function EthernetIPclient(_data, _logger, _events) {
     var connected = false;              // Connected flag
     var itemsMap = {};                  // Items Mapped Tag name with Item path to find for set value
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-
+    var lastTimestampValue;             // Last Timestamp of asked values
+    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     /**
      * initialize the device type 
      */
@@ -117,7 +118,7 @@ function EthernetIPclient(_data, _logger, _events) {
                     _readValues().then(result => {
                         _checkWorking(false);
                         if (result) {
-                            let varsValueChanged = _updateVarsValue(JSON.parse(result));
+                            let varsValueChanged = _updateVarsValue(result);
                             lastTimestampValue = new Date().getTime();
                             _emitValues(varsValue);
                             if (this.addDaq) {
@@ -211,11 +212,11 @@ function EthernetIPclient(_data, _logger, _events) {
      */
     this.setValue = function (tagid, value) {
         if (data.tags[tagid]) {
-            conn.writeItems([data.tags[tagid].address], [value], (error) => {
+            conn.writeItems([data.tags[tagid].address], [parseFloat(value)], (error) => {
                 if (error) {
-                    logger.error(`'${data.name}' setValue error! ${error}`);
+                    logger.error(`'${data.tags[tagid].name}' setValue error! ${error}`);
                 } else {
-                    logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
+                    logger.info(`'${data.tags[tagid].name}' setValue(${tagid}, ${value})`, true);
                 }
             });
         }
@@ -269,14 +270,14 @@ function EthernetIPclient(_data, _logger, _events) {
      */
     var _updateVarsValue = function (vars) {
         var changed = [];
-        Object.keys(vars).forEach(key => {
-            if (itemsMap[key]) {
+        Object.keys(itemsMap).forEach(key => {
+            if (vars[key]) {
                 var id = itemsMap[key].id;
-                var diff = (itemsMap[key].value != vars[key].value);
-                itemsMap[key].value = vars[key].value;
+                var diff = (itemsMap[key].value != vars[key]);
+                itemsMap[key].value = vars[key];
                 varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type };
                 if (diff) {
-                    changed[id] = result[id];
+                    changed[id] = varsValue[id];
                 }
             }
         });
@@ -296,7 +297,7 @@ function EthernetIPclient(_data, _logger, _events) {
                 port = parseInt(temp);
             }
             if (data.property.options) {
-                conn.initiateConnection({ port: port, host: addr, routing: [0x01,0x00, data.property.rack, data.property.slot] }, callback);
+                conn.initiateConnection({ port: port, host: addr, routing: [0x01, 0x00, data.property.rack, data.property.slot] }, callback);
             } else {
                 conn.initiateConnection({ port: port, host: addr /* , routing: [0x01,0x00,0x01,0x00] */ }, callback);
             }
@@ -312,6 +313,14 @@ function EthernetIPclient(_data, _logger, _events) {
     var _emitStatus = function (status) {
         lastStatus = status;
         events.emit('device-status:changed', { id: data.id, status: status });
+    }
+    
+    /**
+     * Emit the webapi Tags values array { id: <name>, value: <value>, type: <type> }
+     * @param {*} values 
+     */
+    var _emitValues = function (values) {
+        events.emit('device-value:changed', { id: data.id, values: values });
     }
 
     /**
