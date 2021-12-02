@@ -94,5 +94,5 @@ export class AlarmQuery {
 export enum AlarmActionsType {
     popup = 'alarm.action-popup',
     setValue = 'alarm.action-onsetvalue',
-    sendMsg = 'alarm.action-onsendmsg',
+    // sendMsg = 'alarm.action-onsendmsg',
 }

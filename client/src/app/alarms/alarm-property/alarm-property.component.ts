@@ -21,7 +21,7 @@ export class AlarmPropertyComponent implements OnInit {
     actionsType = AlarmActionsType;
     actionPopup = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.popup);
     actionSetValue = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.setValue);
-    actionSendMsg = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.sendMsg);
+    // actionSendMsg = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.sendMsg);
 
     errorExist = false;
     errorMissingValue = false;

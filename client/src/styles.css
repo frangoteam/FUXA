@@ -130,7 +130,7 @@ body {
 }
 
 * {
-    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
+    /* font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif; */
     text-decoration: none;
     scrollbar-width: thin;
 }
