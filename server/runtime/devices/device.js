@@ -10,6 +10,7 @@ var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var INMATIONclient = require('./inmation');
+var EthernetIPclient = require('./ethernetip');
 // var TEMPLATEclient = require('./template');
 
 var deviceCloseTimeout = 1000;
@@ -65,6 +66,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = INMATIONclient.create(data, logger, events, manager);     
+    } else if (data.type === DeviceEnum.EthernetIP) {
+        if (!EthernetIPclient) {
+            return null;
+        }
+        comm = EthernetIPclient.create(data, logger, events, manager);     
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -337,6 +343,8 @@ function loadPlugin(type, module) {
         MQTTclient = require(module);
     } else if (type === DeviceEnum.inmation) {
         INMATIONclient = require(module);
+    } else if (type === DeviceEnum.EthernetIP) {
+        EthernetIPclient = require(module);
     }
 }
 
@@ -363,7 +371,8 @@ var DeviceEnum = {
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
-    inmation: 'inmation'
+    inmation: 'inmation',
+    EthernetIP: 'EthernetIP'
     // Template: 'template'
 }
 
