@@ -10,9 +10,46 @@
     margin: 0 auto;
 }
 
-.mychar-toolbar {
+.mychart-toolbar {
     display: block;
     height: 34px !important;
     width: 100% !important;
     background-color: transparent;
+}
+
+.mychart-toolbar-editor {
+    margin-left:5px;
+    border: 0px;
+    height: 28px;
+    width: 200px;
+    vertical-align: middle;
+    line-height: 20px;
+    box-shadow: 1px 1px 3px -1px #888;
+}
+
+.mychart-toolbar-srange {
+    width: 200px; 
+    background-color: inherit !important;
+    /* border: 0.5px solid #888; */
+    box-shadow: 1px 1px 3px -1px #888;
+}
+
+::ng-deep .mychart-toolbar-srange .mat-select-value {
+    color: inherit !important;
+}
+
+::ng-deep .mychart-toolbar-srange .mat-select-arrow {
+    color: inherit !important;
+}
+
+.mychart-toolbar-step {
+    margin-left:5px;
+    border: 0px;
+    height: 28px;
+    width: 40px;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 20px;
+    /* border: 0.5px solid #888; */
+    box-shadow: 1px 1px 3px -1px #888 !important;
 }

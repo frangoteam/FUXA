@@ -73,6 +73,7 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
+        this.chartuplot.isEditor = true;
         this.chartuplot.withToolbar = false;
         this.chartuplot.setOptions(this.options);
     }
@@ -121,6 +122,7 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     }
 
     onTabChanged() {
+        this.chartuplot.withToolbar = (this.chartViewValue !== this.chartViewRealtime);
     }
 
     private loadChart(toset?: string) {

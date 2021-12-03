@@ -1,19 +1,33 @@
 <div class="mychart-panel" #chartPanel>
-    <div class="mychar-toolbar" *ngIf="withToolbar">
+    <div class="mychart-toolbar" *ngIf="withToolbar">
         <div style="display: block; padding-right: 5px;text-align: center;" class="my-form-field">
-            <button *ngIf="isEditor" style="margin-left:5px; border: 0px; height: 28px; width: 200px; cursor: pointer; vertical-align: middle;">
-            </button>
-            <mat-select *ngIf="!isEditor" [(value)]="rangeTypeValue" style="width: 200px" (selectionChange)="onRangeChanged($event.source.value)">
-                <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key">
-                    {{ ev.value }}
-                </mat-option>
-            </mat-select>
-            <button style="margin-left:5px; border: 0px; height: 28px; width: 40px; cursor: pointer; vertical-align: middle;" (click)="onClick('B')">
-				<mat-icon aria-label="<<">skip_previous</mat-icon>
-            </button>
-            <button style="margin-left:5px; border: 0px; height: 28px; width: 40px; cursor: pointer; vertical-align: middle;" (click)="onClick('F')">
-				<mat-icon aria-label=">>">skip_next</mat-icon>
-            </button>
+            <div *ngIf="isEditor" >
+                <button class="mychart-toolbar-editor" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                </button>
+                <button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                    <mat-icon aria-label="<<">skip_previous</mat-icon>
+                </button>
+                <button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                    <mat-icon aria-label=">>">skip_next</mat-icon>
+                </button>                
+            </div>
+            <div *ngIf="!isEditor" >
+                <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-srange" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                    (selectionChange)="onRangeChanged($event.source.value)">
+                    <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key" [style.color]="options.axisLabelColor" 
+                        [style.background-color]="options.colorBackground">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                    (click)="onClick('B')">
+                    <mat-icon aria-label="<<">skip_previous</mat-icon>
+                </button>
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                    (click)="onClick('F')">
+                    <mat-icon aria-label=">>">skip_next</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
     <ngx-uplot class="mychart-graph" #nguplot></ngx-uplot>
