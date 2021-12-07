@@ -109,5 +109,22 @@
                 </button>
             </div>                
         </div>
+        <div class="separator">
+            <div class="separator-line" style="position:absolute;left: 0px"></div>
+            <div class="separator-text">
+                {{'dlg.setup-system' | translate}}
+            </div>
+            <div class="separator-line" style="position:absolute;right: 0px"></div>
+        </div>
+        <div class="btn-cards">
+            <div class="btn-card">
+                <button mat-button (click)="goTo('/events')" class="card-btn" [disabled]="isToDisable('events')">
+                    <div class="card-btn-content">
+                        <mat-icon>warning</mat-icon>
+                        <span>{{'dlg.setup-alarms' | translate}}</span>
+                    </div>
+                </button>
+            </div>
+        </div>
     </div>
 </div>

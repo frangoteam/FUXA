@@ -1,0 +1,30 @@
+<div class="header-panel">
+      {{'events.view-title' | translate}}
+</div>
+<div class="work-panel" style="height: calc(100% - 83px)">
+  <mat-table #table [dataSource]="dataSource" matSort>
+      <ng-container matColumnDef="ontime">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.ontime | date: 'yyyy.MM.dd HH:mm:ss'}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="text">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-text' | translate}} </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.text}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="type">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-type' | translate}} </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.type}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="group">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-group' | translate}} </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.group}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-status' | translate}} </mat-header-cell>
+          <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.status}} </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let element; columns: displayColumns;" class="my-mat-row" [style.background-color]="element.bkcolor"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="table-pagination"></mat-paginator>
+</div>

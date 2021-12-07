@@ -24,6 +24,7 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
+import { EventsViewComponent } from './events-view/events-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
@@ -210,6 +211,7 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmViewComponent,
         AlarmPropertyComponent,
         TextListComponent,
+        EventsViewComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,
         DialogListItem,
