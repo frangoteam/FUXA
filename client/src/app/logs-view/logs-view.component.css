@@ -1,0 +1,95 @@
+.header-panel {
+    /* z-index: 9999 !important; */
+    /* position: fixed; */
+    /* top: 0px; */
+    /* left: 0px; */
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
+    height: 36px;
+    width: 100%;
+    text-align: center;
+    line-height: 32px;
+    /* border-top: 1px solid var(--headerBorder); */
+    border-bottom: 1px solid var(--headerBorder);
+}
+
+.work-panel {
+    position: absolute;
+    top: 37px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: var(--workPanelBackground);
+    min-width: 930px;
+}
+
+.text-content {
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.mat-row {
+    min-height: 34px;
+    height: 34px;
+    border-bottom-color: rgba(0,0,0,0.06);
+}
+
+.mat-cell {
+    font-size: 13px;
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+}
+.mat-header-cell {
+    font-size: 13px;
+}
+
+.my-header-filter /deep/ .mat-sort-header-button {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+}
+
+.my-header-filter /deep/ .mat-sort-header-arrow {
+    /* color: white; */
+    top: -12px;
+    right: 20px;
+}
+
+.my-header-filter-input {
+    display: block; 
+    margin-top: 4px;
+    margin-bottom: 6px;
+    /* color: white; */
+    padding: 3px 1px 3px 2px;
+    border-radius: 2px;
+    border: 1px solid var(--formInputBackground);
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
+}
+
+.my-header-filter-input:focus {
+    padding: 3px 1px 3px 2px;
+    border: 1px solid var(--formInputBorderFocus);
+    background-color: var(--formInputBackgroundFocus);
+}
+
+.mat-column-ontime {
+    overflow: visible;
+    flex: 0 0 160px;
+}
+
+.mat-column-type {
+    flex: 0 0 100px;
+}
+
+.mat-column-source {
+    flex: 1 1 300px;
+}
+
+.mat-column-text {
+    flex: 3 1 400px;
+}

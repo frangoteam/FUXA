@@ -24,7 +24,7 @@ import { HomeComponent } from './home/home.component';
 import { HeaderComponent, DialogInfo } from './header/header.component';
 import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
-import { EventsViewComponent } from './events-view/events-view.component';
+import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
@@ -54,6 +54,7 @@ import { UserService } from './_services/user.service';
 import { SettingsService } from './_services/settings.service';
 import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
+import { DiagnoseService } from './_services/diagnose.service';
 import { ResWebApiService } from './_services/rcgi/reswebapi.service';
 import { ResDemoService } from './_services/rcgi/resdemo.service';
 import { ResClientService } from './_services/rcgi/resclient.service';
@@ -211,7 +212,7 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmViewComponent,
         AlarmPropertyComponent,
         TextListComponent,
-        EventsViewComponent,
+        LogsViewComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,
         DialogListItem,
@@ -264,6 +265,7 @@ export function createTranslateLoader(http: HttpClient) {
         AppService,
         ProjectService,
         UserService,
+        DiagnoseService,
         PluginService,
         SettingsService,
         TesterService,

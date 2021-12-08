@@ -13,6 +13,7 @@ var authApi = require('./auth');
 var usersApi = require('./users');
 var alarmsApi = require('./alarms');
 var pluginsApi = require('./plugins');
+var diagnoseApi = require('./diagnose');
 
 var apiApp;
 var server;
@@ -40,6 +41,8 @@ function init(_server, _runtime) {
             apiApp.use(authApi.app());
             pluginsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(pluginsApi.app());
+            diagnoseApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(diagnoseApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes

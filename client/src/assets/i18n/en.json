@@ -681,6 +681,11 @@
     "alarm.property-action-value": "Value to set",
     "alarm.property-action-destination": "View to show",
     
+    "events.view-ontime": "Date/Time",
+    "events.view-type": "Type",
+    "events.view-source": "Source",
+    "events.view-text": "Text",
+
     "card.config-title": "Card settings",
     "card.config-content-type": "Content type",
     "card.config-content-view": "Content View",
