@@ -681,6 +681,9 @@
     "alarm.property-action-value": "Value to set",
     "alarm.property-action-destination": "View to show",
     
+    "logs.view-title": "System Logs",
+    "logs.view-files": "Logs files",
+
     "events.view-ontime": "Date/Time",
     "events.view-type": "Type",
     "events.view-source": "Source",
@@ -720,6 +723,7 @@
     "dlg.setup-gui": "User Interface",
     "dlg.setup-diverse": "Misc",
     "dlg.setup-logic": "Logic",
+    "dlg.setup-system": "System",
     "dlg.setup-views": "Views",
     "dlg.setup-connections": "Connections",
     "dlg.setup-users": "Users",
@@ -730,6 +734,7 @@
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
     "dlg.setup-settings": "Settings",
+    "dlg.setup-logs": "Logs",
     "dlg.app-settings-title": "Settings",
     "dlg.app-settings-system": "System",
     "dlg.app-settings-language": "Language",

@@ -16,13 +16,18 @@ export class DiagnoseService {
     constructor(private http: HttpClient) {
     }
 
-    getLogs(logReq: any): Observable<any> {
+    getLogsDir() {
+        return this.http.get<string[]>(this.endPointConfig + '/api/logsdir');
+    }
+
+    getLogs(logReq: LogsRequest): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         const requestOptions: Object = {
             /* other options here */
-            responseType: 'text', 
-            headers: header, 
-            params: logReq
+            responseType: 'text',
+            headers: header,
+            params: logReq,
+            observe: 'response'
         }
         return this.http.get<any>(this.endPointConfig + '/api/logs', requestOptions);
     }

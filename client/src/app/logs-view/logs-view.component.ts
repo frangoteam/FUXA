@@ -30,6 +30,7 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
     readonly displayColumns = ['ontime', 'type', 'source', 'text'];
     tableView = false;
     content = '';
+    logs = { selected: 'fuxa.log', files: [] };
 
     constructor(private diagnoseService: DiagnoseService) { }
 
@@ -37,14 +38,20 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.loadLogs();
+        this.diagnoseService.getLogsDir().subscribe(result => {
+            this.logs.files = result;
+        }, err => {
+            console.error('get Logs err: ' + err);
+        });
+
+        this.loadLogs(this.logs.selected);
     }
 
-    private loadLogs() {
-		this.diagnoseService.getLogs(<LogsRequest>{ type: 'err', index: 0 }).subscribe(result => {
-            this.content = result.replace(new RegExp('\n', 'g'), "<br />");
-		}, err => {
-			console.error('get Logs err: ' + err);
-		});
-	}
+    private loadLogs(logfile: string) {
+        this.diagnoseService.getLogs(<LogsRequest>{ file: logfile }).subscribe(result => {
+            this.content = result.body.replace(new RegExp('\n', 'g'), "<br />");
+        }, err => {
+            console.error('get Logs err: ' + err);
+        });
+    }
 }

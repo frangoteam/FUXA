@@ -1,32 +1,32 @@
 <div class="header-panel">
-    {{'events.view-title' | translate}}
+    {{'logs.view-title' | translate}}
 </div>
 <div class="work-panel" *ngIf="tableView">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ontime">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
-                {{'events.view-ontime' | translate}}
+                {{'logs.view-ontime' | translate}}
                 <input (click)="$event.stopPropagation()" [formControl]="ontimeFilter" style="width: 140px;" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.ontime | date: 'yyyy.MM.dd HH:mm:ss'}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="type">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
-                {{'events.view-type' | translate}}
+                {{'logs.view-type' | translate}}
                 <input (click)="$event.stopPropagation()" [formControl]="typeFilter" style="width: 80px;" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.type}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="source">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
-                {{'events.view-source' | translate}}
+                {{'logs.view-source' | translate}}
                 <input (click)="$event.stopPropagation()" [formControl]="sourceFilter" style="width: 200px;" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.group}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="text">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
-                {{'events.view-text' | translate}}
+                {{'logs.view-text' | translate}}
                 <input (click)="$event.stopPropagation()" [formControl]="textFilter" style="width: 200px;" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.text}} </mat-cell>
@@ -37,5 +37,12 @@
     <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="table-pagination"></mat-paginator>
 </div>
 <div class="work-panel text-content" *ngIf="!tableView" [innerHTML]="content">
-    <!-- {{content}} -->
+</div>
+<div class="logs-selector" *ngIf="!tableView">
+    <div class="my-form-field">
+        <span>{{'logs.view-files' | translate}}</span>
+        <mat-select [(value)]="logs.selected" style="width: 200px;" (selectionChange)="loadLogs(logs.selected)">
+            <mat-option *ngFor="let file of logs.files" [value]="file">{{file}}</mat-option>
+        </mat-select>
+    </div>
 </div>

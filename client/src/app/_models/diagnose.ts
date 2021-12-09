@@ -1,4 +1,4 @@
 export class LogsRequest {
     type: string;
-	index: number;
+    file: string;
 }

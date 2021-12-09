@@ -26,12 +26,16 @@
 .text-content {
     overflow-y: auto;
     overflow-x: auto;
+    padding-left: 10px;
+    color: rgb(172, 172, 172);
+    font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
+    font-size: 12px;
 }
 
 .mat-row {
     min-height: 34px;
     height: 34px;
-    border-bottom-color: rgba(0,0,0,0.06);
+    border-bottom-color: rgba(0, 0, 0, 0.06);
 }
 
 .mat-cell {
@@ -60,7 +64,7 @@
 }
 
 .my-header-filter-input {
-    display: block; 
+    display: block;
     margin-top: 4px;
     margin-bottom: 6px;
     /* color: white; */
@@ -92,4 +96,15 @@
 
 .mat-column-text {
     flex: 3 1 400px;
+}
+
+.logs-selector {
+    position: absolute;
+    top: 50px;
+    right: 40px;
+    z-index: 999;
+    padding: 5px 7px;
+    background-color: var(--toolboxBackground);
+    color: var(--toolboxColor);
+    box-shadow: 0px 1px 3px 0px #000;
 }
