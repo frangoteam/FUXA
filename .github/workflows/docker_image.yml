@@ -10,11 +10,10 @@ env:
   # eg the ubuntu image doesn't include linux/arm/v6.
   platforms: linux/amd64,linux/arm64,linux/arm/v7
 
-on:
-  push:
-    branches:
-      [main]
-  pull_request:
+on: workflow_dispatch
+  #push:
+  #  branches:
+  #    - master
 
 jobs:
   build-container:
