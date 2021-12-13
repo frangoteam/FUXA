@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 import { DiagnoseService } from '../_services/diagnose.service';
+import { AppService } from '../_services/app.service';
 import { LogsRequest } from '../_models/diagnose';
 
 @Component({
@@ -32,7 +33,8 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
     content = '';
     logs = { selected: 'fuxa.log', files: [] };
 
-    constructor(private diagnoseService: DiagnoseService) { }
+    constructor(private diagnoseService: DiagnoseService,
+                private appService: AppService) { }
 
     ngOnInit() {
     }
@@ -48,9 +50,12 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
     }
 
     private loadLogs(logfile: string) {
+        this.appService.showLoading(true);
         this.diagnoseService.getLogs(<LogsRequest>{ file: logfile }).subscribe(result => {
             this.content = result.body.replace(new RegExp('\n', 'g'), "<br />");
+            this.appService.showLoading(false);
         }, err => {
+            this.appService.showLoading(false);
             console.error('get Logs err: ' + err);
         });
     }

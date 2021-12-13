@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewContainerRe
 import { Subscription } from "rxjs";
 
 import { ProjectService } from '../_services/project.service';
+import { AppService } from '../_services/app.service';
 import { Hmi, View, GaugeSettings } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { TesterService } from '../tester/tester.service';
@@ -21,7 +22,6 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('messagecontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
     @ViewChild('tester') tester: TesterComponent;
 
-    isLoading = true;
     currentView: View = new View();
     hmi: Hmi = new Hmi();
     svgMain: any;
@@ -32,6 +32,7 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscriptionLoad: Subscription;
 
     constructor(private projectService: ProjectService,
+        private appService: AppService,
         private gaugesManager: GaugesManager,
         private changeDetector: ChangeDetectorRef,        
         private testerService: TesterService) {
@@ -43,19 +44,24 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         try {
+            this.appService.showLoading(true);
             let hmi = this.projectService.getHmi();
             if (!hmi) {
                 this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
+                    this.appService.showLoading(false);
                     this.loadHmi();
                 }, error => {
+                    this.appService.showLoading(false);
                     console.error('Error loadHMI');
                 });
             } else {
+                this.appService.showLoading(false);
                 this.loadHmi();
             }
             this.changeDetector.detectChanges();
         }
         catch (err) {
+            this.appService.showLoading(false);
             console.error(err);
         }
     }
@@ -90,7 +96,6 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        this.isLoading = false;
     }
 
     private setBackground() {

@@ -7,6 +7,7 @@ import { SettingsService } from './settings.service';
 export class AppService {
 
     @Output() onShowModeChanged: EventEmitter<string> = new EventEmitter();
+    @Output() onShowLoading: EventEmitter<boolean> = new EventEmitter();
 
     private static APP_DEMO = 'demo';
     private static APP_CLIENT = 'client';
@@ -33,6 +34,10 @@ export class AppService {
 
     unlockEditMode() {
         this.settingsService.unlockEditMode();
+    }
+
+    showLoading(show: boolean) {
+        this.onShowLoading.emit(show);
     }
 
     get isDemoApp() {

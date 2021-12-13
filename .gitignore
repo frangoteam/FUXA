@@ -60,6 +60,9 @@ typings/
 # next.js build output
 .next
 
+# workspace
+*.code-workspace
+
 #appdata
 _appdata/
 

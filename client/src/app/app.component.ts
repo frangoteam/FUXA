@@ -9,6 +9,7 @@ import { environment } from '../environments/environment';
 import { ProjectService } from './_services/project.service';
 import { SettingsService } from './_services/settings.service';
 import { UserGroups } from './_models/user';
+import { AppService } from './_services/app.service';
 
 @Component({
 	selector: 'app-root',
@@ -20,11 +21,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	title = 'app';
 	location: Location;
 	showdev = false;
+	isLoading = false;
 
 	@ViewChild('fabmenu') fabmenu: any;
 	private subscriptionLoad: Subscription;
+	private subscriptionShowLoading: Subscription;
 
 	constructor(private router: Router,
+		private appService: AppService,
 		private projectService: ProjectService,
 		private settingsService: SettingsService,
 		private translateService: TranslateService,
@@ -57,6 +61,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				}
 			});
+			// show loading manager
+			this.subscriptionShowLoading = this.appService.onShowLoading.subscribe(show => {
+				this.isLoading = show;
+			}, error => {
+				this.isLoading = false;
+				console.error('Error lto show loading');
+			});
 		}
 		catch (err) {
 			console.error(err);
@@ -67,6 +78,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		try {
 			if (this.subscriptionLoad) {
 				this.subscriptionLoad.unsubscribe();
+			}
+			if (this.subscriptionShowLoading) {
+				this.subscriptionShowLoading.unsubscribe();
 			}
 		} catch (e) {
 		}

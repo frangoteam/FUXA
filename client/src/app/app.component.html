@@ -1,4 +1,6 @@
 <div id="main-container" class="container">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
+    </mat-progress-bar>
     <app-header class="header" [hidden]="isHidden()"></app-header>
     <div [ngClass]="getClass()">
         <router-outlet></router-outlet>
