@@ -41,4 +41,4 @@ jobs:
           context: .
           push: true
           platforms: ${{ env.platforms }}
-          tags: unocelli/${{ env.app }}:${{ env.version }}
+          tags: frangoteam/${{ env.app }}:${{ env.version }}
