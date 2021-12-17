@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
     GaugeEvent,
     GaugeEventActionType,
+    GaugeEventSetValueType,
     GaugeEventType,
     GaugeProperty,
     GaugeSettings,
@@ -25,6 +26,7 @@ export class FlexEventComponent implements OnInit {
 
     events: GaugeEvent[];
     eventType: any;
+    setValueType = GaugeEventSetValueType;
     actionType: any;
 
     constructor(private translateService: TranslateService) {
@@ -39,6 +41,9 @@ export class FlexEventComponent implements OnInit {
         });
         Object.keys(this.actionType).forEach(key => {
             this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt });
+        });
+        Object.keys(this.setValueType).forEach(key => {
+            this.translateService.get(this.setValueType[key]).subscribe((txt: string) => { this.setValueType[key] = txt });
         });
 
         if (this.property) {

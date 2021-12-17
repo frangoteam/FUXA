@@ -212,6 +212,11 @@ export enum GaugeEventActionType {
     onclose = 'shapes.event-onclose',
 }
 
+export enum GaugeEventSetValueType {
+    set = 'shapes.event-setvalue-set',
+    add = 'shapes.event-setvalue-add',
+    remove = 'shapes.event-setvalue-remove',
+}
 export class GaugeRangeProperty {
     min: number;
     max: number;
