@@ -104,41 +104,35 @@
                         <div class="field-row">
                             <div class="my-form-field slider-field">
                                 <span>{{'slider.property-font-size' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="50" [min]="6" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.fontSize"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.marker.fontSize" (change)="setSliderOptions()" max="50" min="6" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field" style="padding-left: 10px">
                                 <span>{{'slider.property-divisions-height' | translate}}</span>
-                                <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.divHeight"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.marker.divHeight" (change)="setSliderOptions()" max="15" min="0" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field" style="padding-left: 10px">
                                 <span>{{'slider.property-divisions-width' | translate}}</span>
-                                <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.divWidth"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.marker.divWidth" (change)="setSliderOptions()" max="15" min="0" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                         </div>
                         <div class="field-row">
                             <div class="my-form-field slider-field">
                                 <span>{{'slider.property-subdivisions' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="50" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.pips.density"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.pips.density" (change)="setSliderOptions()" max="50" min="0" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field" style="padding-left: 10px">
                                 <span>{{'slider.property-subdivisions-height' | translate}}</span>
-                                <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.subHeight"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.marker.subHeight" (change)="setSliderOptions()" max="15" min="0" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field" style="padding-left: 10px">
                                 <span>{{'slider.property-subdivisions-width' | translate}}</span>
-                                <mat-slider style="display:inline-block;min-width: 60px;" [max]="15" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.marker.subWidth"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.marker.subWidth" (change)="setSliderOptions()" max="15" min="0" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                         </div>
                         <div class="field-row" style="margin-top: 20px;">
@@ -168,15 +162,13 @@
                         <div class="field-row">
                             <div class="my-form-field slider-field">
                                 <span>{{'slider.property-tooltip-font-size' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="50" [min]="6" [step]="1" [thumbLabel]="true" [(ngModel)]="options.tooltip.fontSize"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.tooltip.fontSize" (change)="setSliderOptions()" max="50" min="6" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field" style="padding-left: 10px">
                                 <span>{{'slider.property-tooltip-decimals' | translate}}</span>
-                                <mat-slider style="display:inline-block;min-width: 60px;" [max]="3" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.tooltip.decimals"
-                                    (change)="setSliderOptions()">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.tooltip.decimals" (change)="setSliderOptions()" max="3" min="0" step="1" 
+                                    style="width: 60px;text-align: center;display:inline-block;" type="number">
                             </div>
                         </div>
                     </div>
