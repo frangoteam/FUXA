@@ -224,9 +224,9 @@ function isWoking() {
  * @param {*} sigid 
  * @param {*} value 
  */
-function setDeviceValue(deviceid, sigid, value) {
+function setDeviceValue(deviceid, sigid, value, fnc) {
     if (activeDevices[deviceid]) {
-        activeDevices[deviceid].setValue(sigid, value);
+        activeDevices[deviceid].setValue(sigid, value, fnc);
     }
 }
 

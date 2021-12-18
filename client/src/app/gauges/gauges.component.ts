@@ -553,8 +553,8 @@ export class GaugesManager {
      * @param sigid
      * @param val
      */
-    putSignalValue(sigid: string, val: string) {
-        this.hmiService.putSignalValue(sigid, val);
+    putSignalValue(sigid: string, val: string, fnc: string = null) {
+        this.hmiService.putSignalValue(sigid, val, fnc);
     }
 
     static getEditDialogTypeToUse(type: string): GaugeDialogType {

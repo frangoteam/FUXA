@@ -5,10 +5,11 @@ import * as io from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
 import { Device, Tag, DeviceType } from '../_models/device';
-import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult } from '../_models/hmi';
+import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult, GaugeEventSetValueType } from '../_models/hmi';
 import { AlarmEvent, AlarmQuery } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
+import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -33,6 +34,9 @@ export class HmiService {
     private socket;
     private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
     private bridge: any = null;     
+
+    private addFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.add);
+    private removeFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.remove);
 
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
@@ -60,9 +64,9 @@ export class HmiService {
      * @param sigId
      * @param value
      */
-    putSignalValue(sigId: string, value: string) {
+    putSignalValue(sigId: string, value: string, fnc: string = null) {
         if (this.variables[sigId]) {
-            this.variables[sigId].value = value;
+            this.variables[sigId].value = this.getValueInFunction(this.variables[sigId].value, value, fnc);
             if (this.socket) {
                 let device = this.projectService.getDeviceFromTagId(sigId);
                 if (device) {
@@ -71,11 +75,11 @@ export class HmiService {
                 if (device.type === DeviceType.internal) {
                     this.setSignalValue(this.variables[sigId]);
                 } else {
-                    this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId] });
+                    this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
                 }
             } else if (this.bridge) {
-                this.bridge.setDeviceValue(this.variables[sigId]);
-                this.setSignalValue(this.variables[sigId]);
+                this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
+                // this.setSignalValue(this.variables[sigId], fnc);
             } else if (!environment.serverEnabled) {
                 // for demo, only frontend
                 this.setSignalValue(this.variables[sigId]);
@@ -85,6 +89,28 @@ export class HmiService {
 
     public getAllSignals() {
         return this.variables;
+    }
+
+    /**
+     * return the value calculated with the function if defined
+     * @param value 
+     * @param fnc 
+     */
+    private getValueInFunction(current: any, value: string, fnc: string) {
+        try {
+            if (!fnc) return value;
+            if (!current) {
+                current = 0;
+            }
+            if (fnc === this.addFunctionType) {
+                return parseFloat(current) + parseFloat(value);
+            } else if (fnc === this.removeFunctionType) {
+                return parseFloat(current) - parseFloat(value);
+            }     
+        } catch (err) {
+            console.error(err);
+        }
+        return value;
     }
 
     //#region Communication Socket.io and Bridge

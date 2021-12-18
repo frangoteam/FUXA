@@ -600,8 +600,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     onSetValue(ga: GaugeSettings, event: GaugeEvent) {
         if (event.actparam) {
-            let variableId = this.fetchVariableId(event) || ga.property.variableId
-            this.gaugesManager.putSignalValue(variableId, event.actparam);
+            let variableId = this.fetchVariableId(event) || ga.property.variableId;
+            let fnc = this.fetchFunction(event);
+            this.gaugesManager.putSignalValue(variableId, event.actparam, fnc);
         }
     }
 
@@ -632,7 +633,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         if (!event.actoptions) {
             return null;
         }
-
         if (Utils.isObject(event.actoptions['variable']) && event.actoptions['variable']['variableId']) {
             return event.actoptions['variable']['variableId'];
         }
@@ -644,6 +644,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         return null;
     }
 
+    private fetchFunction(event) {
+        if (event.actoptions && event.actoptions.function) {
+            return event.actoptions.function;
+        }
+        return null;
+    }
     
     toggleShowInputDialog(show: boolean, x: number = -1, y: number = -1, htmlev: Event = null) {
         if (show) {

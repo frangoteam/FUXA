@@ -376,6 +376,9 @@
     "shapes.event-ontogglevalue": "Toggle Value",
     "shapes.event-onsetinput": "Set from Input",
     "shapes.event-onclose": "Close",
+    "shapes.event-setvalue-set": "set",
+    "shapes.event-setvalue-add": "add",
+    "shapes.event-setvalue-remove": "remove",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",

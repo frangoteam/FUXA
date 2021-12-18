@@ -204,7 +204,8 @@ function Device(data, runtime) {
     /**
      * Call Device to set Tag value
      */
-    this.setValue = function (id, value) {
+    this.setValue = function (id, value, fnc) {
+        var fncvalue = this.getValueInFunction(this.getValue(id), value, fnc);
         return comm.setValue(id, value);
     }
 
@@ -282,6 +283,26 @@ function Device(data, runtime) {
         if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient || data.type === DeviceEnum.inmation) {
             comm.bindGetProperty(fnc);
         }
+    }
+
+    /**
+     * return the value calculated with the function if defined
+     */
+    this.getValueInFunction = function (current, value, fnc) {
+        try {
+            if (!fnc || fnc.length < 2) return value;
+            if (!current) {
+                current = 0;
+            }
+            if (fnc[0] === 'add') {
+                return parseFloat(current) + parseFloat(fnc[1]);
+            } else if (fnc[0] === 'remove') {
+                return parseFloat(current) - parseFloat(fnc[1]);
+            }     
+        } catch (err) {
+            console.error(err);
+        }
+        return value;
     }
 
     this.load(data);
