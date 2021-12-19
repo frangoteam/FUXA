@@ -1,9 +1,14 @@
-<div class="dialog-mdsd-main" style="width: 1090px;">
+<div>
     <h1 mat-dialog-title style="display:inline-block;cursor: move" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div class="dialog-mdsd-content" style="display: inline-block; width: 100%">
+    <div style="display: inline-block; width: 100%">
         <div class="panelTop">
-            <mat-grid-list cols="3" rowHeight="100%">
+            <div class="toolbox-toadd">
+                <button mat-icon-button (click)="onAddInput()">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+            <!-- <mat-grid-list cols="3" rowHeight="100%">
                 <mat-grid-tile class="chart-list">
                     <mat-list class="list" >
                         <mat-list-item class="list-item list-header list-item-sel">
@@ -42,7 +47,7 @@
                         </mat-selection-list>
                     </mat-list>
                 </mat-grid-tile>
-            </mat-grid-list>
+            </mat-grid-list> -->
         </div>
         <div class="panelBottom">
             <mat-list class="list">
@@ -56,7 +61,7 @@
                     <span style="width: 10%;max-width: 5%;">{{'chart.config-line-color' | translate}}</span>
                     <span style="width: 10%;max-width: 5%;">{{'chart.config-line-fill' | translate}}</span>
                 </mat-list-item>
-                <div style="height: calc(100% - 36px); overflow-x: hidden">
+                <div class="list-panel">
                     <mat-list-item *ngFor="let line of selectedChart.lines" class="list-item list-item-hover" (click)="editChartLine(line)">
                         <mat-icon (click)="$event.stopPropagation();removeChartLine(line)" style="color:gray;font-size: 20px">delete</mat-icon>
                         <div class="list-item-text" style="width: 30%;max-width: 30%;">

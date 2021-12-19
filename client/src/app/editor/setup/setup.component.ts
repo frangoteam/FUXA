@@ -47,6 +47,7 @@ export class SetupComponent implements OnInit, AfterViewInit {
         let devices = this.projectService.getDevices();
         let dialogRef = this.dialog.open(ChartConfigComponent, {
             position: { top: '60px' },
+            minWidth: '1090px', width: '1090px',
             data: { charts: chartscopy, devices: devices }
         });
 
