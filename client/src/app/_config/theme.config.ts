@@ -35,7 +35,10 @@ export const THEMES = {
         formExtBackground: '#f1f3f4',
         formInputExtBackground: '#FFFFFF',
         scrollbarTrack: '#D9D9D9',
-        scrollbarThumb: '#BEBEBE'
+        scrollbarThumb: '#BEBEBE',
+        chipsBackground: '#F1F1F1',
+        chipSelectedBackground: '#3059AF',
+        chipSelectedColor: '#FFFFFF',
     },
     dark: {
         headerBackground: '#333333',
@@ -73,6 +76,9 @@ export const THEMES = {
         formExtBackground: '#37373D',
         formInputExtBackground: '#424242',
         scrollbarTrack: '#414142',
-        scrollbarThumb: '#545454'
+        scrollbarThumb: '#545454',
+        chipsBackground: '#242424',
+        chipSelectedBackground: '#3059AF',
+        chipSelectedColor: '#FFFFFF',
     }
 };

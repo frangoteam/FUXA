@@ -53,6 +53,22 @@ export class ChartConfigComponent implements OnInit {
         this.dialogRef.close({ charts: this.data.charts });
     }
 
+    onRemoveChart(index: number) {
+        this.data.charts.splice(index, 1);
+        this.selectedChart = { id: null, name: null, lines: [] };
+    }
+
+    onSelectChart(item: Chart) {
+        this.selectedChart = item;
+        // this.loadDeviceConfig();
+    }
+
+    isChartSelected(item: Chart) {
+        if (item === this.selectedChart) {
+            return 'mychips-selected';
+        }
+    }
+
     editChart(chart) {
         let dialogRef = this.dialog.open(DialogListItem, {
             position: { top: '60px' },
@@ -70,18 +86,18 @@ export class ChartConfigComponent implements OnInit {
         });
     }
 
-    deleteChart(chart) {
-        let found = -1;
-        for (let i = 0; i < this.data.charts.length; i++) {
-            if (chart.id === this.data.charts[i].id) {
-                found = i;
-            }
-        }
-        if (found >= 0) {
-            this.data.charts.splice(found, 1);
-            this.selectedChart = { id: null, name: null, lines: [] };
-        }
-    }
+    // deleteChart(chart) {
+    //     let found = -1;
+    //     for (let i = 0; i < this.data.charts.length; i++) {
+    //         if (chart.id === this.data.charts[i].id) {
+    //             found = i;
+    //         }
+    //     }
+    //     if (found >= 0) {
+    //         this.data.charts.splice(found, 1);
+    //         this.selectedChart = { id: null, name: null, lines: [] };
+    //     }
+    // }
 
     selectDevice(device) {
         this.selectedDevice = JSON.parse(JSON.stringify(device));
@@ -195,11 +211,11 @@ export class ChartConfigComponent implements OnInit {
         this.loadDeviceConfig();
     }
 
-    isChartSelected(chart) {
-        if (chart === this.selectedChart) {
-            return 'list-item-selected';
-        }
-    }
+    // isChartSelected(chart) {
+    //     if (chart === this.selectedChart) {
+    //         return 'list-item-selected';
+    //     }
+    // }
 
     isDeviceSelected(device) {
         if (device && device.name === this.selectedDevice.name) {

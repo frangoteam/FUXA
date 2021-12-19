@@ -8,6 +8,13 @@
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
             </div>
+            <div *ngFor="let chart of data.charts; index as i" class="mychips" (click)="onSelectChart(chart)" [ngClass]="isChartSelected(chart)">
+                <mat-icon (click)="$event.stopPropagation();onEditChartName(chart)">edit</mat-icon>
+                <span>
+                    {{chart.name}}
+                </span>
+                <mat-icon (click)="$event.stopPropagation();onRemoveChart(i)">cancel</mat-icon>
+            </div>
             <!-- <mat-grid-list cols="3" rowHeight="100%">
                 <mat-grid-tile class="chart-list">
                     <mat-list class="list" >

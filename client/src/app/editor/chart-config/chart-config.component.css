@@ -6,6 +6,36 @@
     position: relative;
 }
 
+.mychips {
+    display: inline-block;
+    font-size: 14px;
+    height: 32px;
+    border-radius: 20px;
+    background-color: var(--chipsBackground);
+    cursor: pointer;
+    margin: 2px 2px;
+}
+
+.mychips mat-icon {
+    margin: 5px 5px;
+    opacity: 0.5;
+    font-size: 22px;
+}
+
+.mychips span {
+    padding-left: 3px;
+    padding-right: 3px;
+    vertical-align: super;
+}
+.mychips:hover {
+    opacity: 0.9;
+}
+
+.mychips-selected {
+    background-color: var(--chipSelectedBackground);
+    color: var(--chipSelectedColor);
+}
+
 .toolbox-toadd {
     position: absolute;
     right: 50px;
