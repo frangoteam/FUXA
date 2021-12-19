@@ -376,6 +376,9 @@
     "shapes.event-ontogglevalue": "Toggle Value",
     "shapes.event-onsetinput": "Set from Input",
     "shapes.event-onclose": "Close",
+    "shapes.event-setvalue-set": "set",
+    "shapes.event-setvalue-add": "increase",
+    "shapes.event-setvalue-remove": "decrease",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
@@ -566,6 +569,7 @@
     "gauges.property-event-action": "Action",
     "gauges.property-event-destination": "Destination",
     "gauges.property-event-value": "Value",
+    "gauges.property-event-function": "Function",
     "gauges.property-event-input": "Input (only input with name)",
     "gauges.property-event-address": "Link",
     "gauges.property-event-width": "Width",
