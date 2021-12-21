@@ -83,8 +83,6 @@ THE SOFTWARE.
 
 @angular/material/form-field
 
-@angular/material/grid-list
-
 @angular/material/icon
 
 @angular/material/list

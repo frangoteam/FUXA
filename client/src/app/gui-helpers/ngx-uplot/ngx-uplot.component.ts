@@ -211,7 +211,11 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.series[0].label = this.languageLabels.time;
         }
         if (this.options.axes.length > 0) {
-            this.options.axes[0].label = this.languageLabels.time;
+            if (this.options.axes[0].label) {
+                this.options.series[0].label = this.options.axes[0].label;
+            } else {
+                this.options.axes[0].label = this.languageLabels.time;
+            }
         }
         if (!this.options.title) {
             this.options.title = this.languageLabels.title;

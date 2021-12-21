@@ -263,6 +263,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         let follow = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.follow);
         this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), width: 1 };
         this.options.tooltip = { show: (this.options.legendMode === always || this.options.legendMode === follow) };
+        // Axes label
+        if (this.options.axisLabelX) this.options.axes[0].label = this.options.axisLabelX;
+        if (this.options.axisLabelY1) this.options.axes[1].label = this.options.axisLabelY1;
+        if (this.options.axisLabelY2) this.options.axes[2].label = this.options.axisLabelY2;
+        if (this.options.axisLabelY3) this.options.axes[3].label = this.options.axisLabelY3;
+        if (this.options.axisLabelY4) this.options.axes[4].label = this.options.axisLabelY4;
     }
 
     private updateDomOptions(ngup: NgxUplotComponent) {
@@ -299,6 +305,11 @@ export interface ChartOptions extends NgxOptions {
     axisLineColor?: string;
     axisLabelColor?: string;
     gridLineColor?: string;
+    axisLabelX?: string;
+    axisLabelY1?: string;
+    axisLabelY2?: string;
+    axisLabelY3?: string;
+    axisLabelY4?: string;
 
     fontFamily?: string;
     legendFontSize?: number;

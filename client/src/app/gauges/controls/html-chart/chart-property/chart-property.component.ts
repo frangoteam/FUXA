@@ -117,6 +117,7 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
             this.options.dateFormat = value;
         } else if (option === 'time') {
             this.options.timeFormat = value;
+        } else if (option === 'axisLabel') {
         }
         this.chartuplot.setOptions(this.options);
     }

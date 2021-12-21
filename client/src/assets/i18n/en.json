@@ -173,6 +173,11 @@
     "chart.property-legend.mode": "Legend show mode",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
+    "chart.property-axis-x": "X Axis label",
+    "chart.property-axis-y1": "Y1 Axis label",
+    "chart.property-axis-y2": "Y2 Axis label",
+    "chart.property-axis-y3": "Y3 Axis label",
+    "chart.property-axis-y4": "Y4 Axis label",
 
     "chart.rangetype-last8h": "Last 8 hours",
     "chart.rangetype-last1d": "Last day",
