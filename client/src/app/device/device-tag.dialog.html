@@ -3,7 +3,7 @@
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">
         clear
     </mat-icon>
-    <mat-table #table [dataSource]="dataSource" matSort style="height:620px">
+    <mat-table #table [dataSource]="dataSource" matSort style="height:620px" class="dialog-mdsd-table">
         <!-- Checkbox Column -->
         <ng-container matColumnDef="toogle">
             <mat-header-cell *matHeaderCellDef style="padding-left: 5px;padding-right: 10px;">

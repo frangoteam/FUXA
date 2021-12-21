@@ -702,6 +702,9 @@ mat-toolbar-row {
     .dialog-mdsd-main {
         height: 700px !important;
     }
+    .dialog-mdsd-table {
+        height: 500px !important;
+    }
 }
 
 /* Dialog */

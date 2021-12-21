@@ -10,6 +10,7 @@
     display: inline-block;
     font-size: 14px;
     height: 32px;
+    line-height: 30px;
     border-radius: 20px;
     background-color: var(--chipsBackground);
     cursor: pointer;
@@ -17,9 +18,10 @@
 }
 
 .mychips mat-icon {
-    margin: 5px 5px;
+    margin: 5px 5px 5px 5px;
     opacity: 0.5;
-    font-size: 22px;
+    font-size: 20px;
+    text-align: center;
 }
 
 .mychips span {

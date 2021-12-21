@@ -4,16 +4,20 @@
     <div style="display: inline-block; width: 100%">
         <div class="panelTop">
             <div class="toolbox-toadd">
-                <button mat-icon-button (click)="onAddInput()">
+                <button mat-icon-button (click)="onEditChart(null)">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
             </div>
             <div *ngFor="let chart of data.charts; index as i" class="mychips" (click)="onSelectChart(chart)" [ngClass]="isChartSelected(chart)">
-                <mat-icon (click)="$event.stopPropagation();onEditChartName(chart)">edit</mat-icon>
+                <mat-icon (click)="onSelectChart(chart)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
+                <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="onAddChartLine(chart)" style="font-size: 14px;">{{'chart.config-addline' | translate}}</button>
+                    <button mat-menu-item (click)="onEditChart(chart)" style="font-size: 14px;">{{'chart.config-rename' | translate}}</button>
+                </mat-menu>
                 <span>
                     {{chart.name}}
                 </span>
-                <mat-icon (click)="$event.stopPropagation();onRemoveChart(i)">cancel</mat-icon>
+                <mat-icon (click)="onSelectChart(chart);onRemoveChart(i)">cancel</mat-icon>
             </div>
             <!-- <mat-grid-list cols="3" rowHeight="100%">
                 <mat-grid-tile class="chart-list">

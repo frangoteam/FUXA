@@ -242,7 +242,7 @@ export class DeviceTagDialog implements OnInit {
     }
 
     onToogle(element: TagElement) {
-        if (element.checked) {
+        if (element.checked && !this.data.multiSelection) {
             this.dataSource.data.forEach(e => {
                 if (e.id !== element.id) {
                     e.checked = false;
@@ -263,9 +263,11 @@ export class DeviceTagDialog implements OnInit {
 
     onOkClick(): void {
         this.data.variableId = null;
+        this.data.variablesId = [];
         this.dataSource.data.forEach(e => {
             if (e.checked) {
                 this.data.variableId = e.id;
+                this.data.variablesId.push(e.id);
             }
         });
         this.dialogRef.close(this.data);

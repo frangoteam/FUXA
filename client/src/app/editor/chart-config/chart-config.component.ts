@@ -4,8 +4,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSelectionList } from '@ang
 import { TranslateService } from '@ngx-translate/core';
 
 import { Utils } from '../../_helpers/utils';
-import { Device } from '../../_models/device';
+import { Device, DevicesUtils, Tag } from '../../_models/device';
 import { Chart, ChartLine } from '../../_models/chart';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
+import { DeviceTagDialog } from '../../device/device.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -24,7 +26,7 @@ export class ChartConfigComponent implements OnInit {
     lineColor = Utils.lineColor;
 
     lineInterpolationType = [{ text: 'chart.config-interpo-linear', value: 0 }, { text: 'chart.config-interpo-stepAfter', value: 1 }, 
-    { text: 'chart.config-interpo-stepBefore', value: 2 }, { text: 'chart.config-interpo-spline', value: 3 }];
+                    { text: 'chart.config-interpo-stepBefore', value: 2 }, { text: 'chart.config-interpo-spline', value: 3 }];
 
     constructor(
         public dialog: MatDialog,
@@ -34,10 +36,10 @@ export class ChartConfigComponent implements OnInit {
             this.data.charts = param.charts;
             Object.values(param.devices).forEach(device => {
                 let devicobj = Object.assign({}, <Device>device);
-                devicobj.tags = Object.values((<Device>device).tags);
+                devicobj.tags = (<Device>device).tags;
                 this.data.devices.push(devicobj);
             });
-        }
+    }
 
     ngOnInit() {
         for (let i = 0; i < this.lineInterpolationType.length; i++) {
@@ -54,13 +56,22 @@ export class ChartConfigComponent implements OnInit {
     }
 
     onRemoveChart(index: number) {
-        this.data.charts.splice(index, 1);
-        this.selectedChart = { id: null, name: null, lines: [] };
+        let msg = '';
+        this.translateService.get('msg.chart-remove', { value: this.data.charts[index].name }).subscribe((txt: string) => { msg = txt });
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: { msg: msg },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.data.charts.splice(index, 1);
+                this.selectedChart = { id: null, name: null, lines: [] };
+            }
+        });
     }
 
     onSelectChart(item: Chart) {
         this.selectedChart = item;
-        // this.loadDeviceConfig();
     }
 
     isChartSelected(item: Chart) {
@@ -69,7 +80,7 @@ export class ChartConfigComponent implements OnInit {
         }
     }
 
-    editChart(chart) {
+    onEditChart(chart) {
         let dialogRef = this.dialog.open(DialogListItem, {
             position: { top: '60px' },
             data: { name: (chart) ? chart.name : '' }
@@ -80,102 +91,42 @@ export class ChartConfigComponent implements OnInit {
                 if (chart) {
                     chart.name = result.name;
                 } else {
-                    this.data.charts.push({ id: Utils.getShortGUID(), name: result.name, lines: [] });
+                    let chart = <Chart>{ id: Utils.getShortGUID(), name: result.name, lines: [] };
+                    this.data.charts.push(chart);
+                    this.onSelectChart(chart);
                 }
             }
         });
     }
 
-    // deleteChart(chart) {
-    //     let found = -1;
-    //     for (let i = 0; i < this.data.charts.length; i++) {
-    //         if (chart.id === this.data.charts[i].id) {
-    //             found = i;
-    //         }
-    //     }
-    //     if (found >= 0) {
-    //         this.data.charts.splice(found, 1);
-    //         this.selectedChart = { id: null, name: null, lines: [] };
-    //     }
-    // }
+    onAddChartLine(chart: Chart) {
+        let dialogRef = this.dialog.open(DeviceTagDialog, {
+            position: { top: '60px' },
+            data: { variableId: null, devices: this.data.devices, multiSelection: true }
+        });
 
-    selectDevice(device) {
-        this.selectedDevice = JSON.parse(JSON.stringify(device));
-        this.loadDeviceConfig();
-    }
-
-    loadChartConfig() {
-        this.selectedDevice = { id: null, name: null, tags: [] };
-        this.loadDeviceConfig();
-    }
-
-    loadDeviceConfig() {
-        if (this.selectedChart && this.selectedChart.lines && this.selectedDevice && this.selectedDevice.name) {
-            this.selectedDevice.tags.forEach(tag => {
-                tag.selected = false;
-                this.selectedChart.lines.forEach(line => {
-                    if (line.device === this.selectedDevice.name && line.id === tag.id) {
-                        tag.selected = true;
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                let tagsId = [];
+                if (result.variablesId) {
+                    tagsId = result.variablesId;
+                } else if (result.variableId) {
+                    tagsId.push(result.variableId);
+                }
+                tagsId.forEach(id => {
+                    let device = DevicesUtils.getDeviceFromTagId(this.data.devices, id);
+                    let tag = DevicesUtils.getTagFromTagId([device], id);
+                    if (tag) {
+                        let exist = chart.lines.find(line => line.id === tag.id)
+                        if (!exist) {
+                            const myCopiedObject: ChartLine = {id: tag.id, name: this.getTagLabel(tag), device: device.name, color: this.getNextColor(), 
+                                label: this.getTagLabel(tag), yaxis: 1 };
+                            chart.lines.push(myCopiedObject);
+                        }
                     }
                 });
-            });
-        }
-    }
-
-    /**
-     * add or remove the selected device tags to the selected chart in char-line list
-     * @param chart
-     * @param device
-     * @param tags
-     */
-    checkChartTags(chart:Chart, device, tags) {
-        if (chart && chart.id) {
-            let toremove = [];
-            // check to remove
-            if (chart.lines) {
-                for (let i = 0; i < chart.lines.length; i++) {
-                    if (chart.lines[i].device === device.name) {
-                        let found = -1;
-                        for (let x = 0; x < tags.length; x++) {
-                            if (chart.lines[i].id === tags[x].id) {
-                                found = i;
-                                break;
-                            }
-                        }
-                        if (found < 0) {
-                            toremove.push(i);
-                        }
-                        // if (tags.map(x => x.id).indexOf(chart.lines[i].id) === -1) {
-                        //     toremove.push(i);
-                        // }
-                    }
-                }
             }
-            // remove
-            for (let i = 0; i < toremove.length; i++) {
-                chart.lines.splice(toremove[i], 1);
-            }
-            // add if not exist
-            for (let x = 0; x < tags.length; x++) {
-                let found = false;
-                if (chart.lines) {
-                    for (let i = 0; i < chart.lines.length; i++) {
-                        if (chart.lines[i].device === device.name && chart.lines[i].id === tags[x].id) {
-                            found = true;
-                        }
-                    }
-                }
-                if (!found) {
-                    const myCopiedObject: ChartLine = {id: tags[x].id, name: this.getTagLabel(tags[x]), device: device.name, color: this.getNextColor(), 
-                        label: this.getTagLabel(tags[x]), yaxis: 1 };
-                    chart.lines.push(myCopiedObject);
-                }
-            }
-        }
-    }
-
-    tagSelectionChanged(event) {
-        this.checkChartTags(this.selectedChart, this.selectedDevice, this.selectedTags);
+        });
     }
 
     editChartLine(line: ChartLine) {
@@ -208,14 +159,7 @@ export class ChartConfigComponent implements OnInit {
                 break;
             }
         }
-        this.loadDeviceConfig();
     }
-
-    // isChartSelected(chart) {
-    //     if (chart === this.selectedChart) {
-    //         return 'list-item-selected';
-    //     }
-    // }
 
     isDeviceSelected(device) {
         if (device && device.name === this.selectedDevice.name) {
@@ -234,7 +178,7 @@ export class ChartConfigComponent implements OnInit {
     getDeviceTagName(line: ChartLine) {
         let devices = this.data.devices.filter(x => x.name === line.device);
         if (devices && devices.length > 0) {
-            let tags = devices[0].tags;
+            let tags = Object.values<Tag>(devices[0].tags);
             for (let i = 0; i < tags.length; i++) {
                 if (line.id === tags[i].id) {
                     return this.getTagLabel(tags[i]);
