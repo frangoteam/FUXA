@@ -8,15 +8,14 @@
                     <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
                 </div>
                 <div mat-dialog-content style="overflow: hidden; width:100%;padding-top: 20px;">
-                    <div id="pipe" style="width: 200px; height: 240px;margin-left: 20px;"></div>
+                    <div id="pipe" style="width: 200px; height: 240px;margin-left: 60px;"></div>
                     <!-- <flex-head [data]="data" [property]="property" #flexhead></flex-head> -->
                     <div class="toolbox-right">
                         <div class="field-row">
                             <div class="my-form-field slider-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-border-width' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.borderWidth"
-                                    (input)="onChangeValue('borderWidth', $event.value)">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.borderWidth" (change)="onChangeValue('borderWidth', options.borderWidth)" max="100" min="0" step="1" 
+                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-border-color' | translate}}</span>
@@ -29,9 +28,8 @@
                         <div class="field-row">
                             <div class="my-form-field slider-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-pipe-width' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.pipeWidth"
-                                    (input)="onChangeValue('pipeWidth', $event.value)">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.pipeWidth" (change)="onChangeValue('pipeWidth', options.pipeWidth)" max="100" min="0" step="1" 
+                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-pipe-color' | translate}}</span>
@@ -44,9 +42,8 @@
                         <div class="field-row">
                             <div class="my-form-field slider-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-content-width' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.contentWidth"
-                                    (input)="onChangeValue('contentWidth', $event.value)">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.contentWidth" (change)="onChangeValue('contentWidth', options.contentWidth)" max="100" min="0" step="1"
+                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-content-color' | translate}}</span>
@@ -59,9 +56,8 @@
                         <div class="field-row">
                             <div class="my-form-field slider-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-content-space' | translate}}</span>
-                                <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.contentSpace"
-                                    (input)="onChangeValue('contentSpace', $event.value)">
-                                </mat-slider>
+                                <input numberOnly [(ngModel)]="options.contentSpace" (change)="onChangeValue('contentSpace', options.contentSpace)" max="100" min="0" step="1"
+                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
                             </div>
                         </div>
                     </div>
