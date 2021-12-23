@@ -131,7 +131,7 @@ export class MyItem {
 export class GaugeSettings {
     name: string = '';
     property: any = null;   // set to GaugeProperty after upgrate
-    label: string = '';
+    label: string = '';     // Gauge type label
     constructor(public id: string, public type: string) {
     }
 }
@@ -145,6 +145,7 @@ export class GaugeProperty {
     actions: GaugeAction[] = [];
     options: any;
     readonly: boolean;
+    text: string;           // Text property (used by button)
 }
 
 export class GaugeEvent {

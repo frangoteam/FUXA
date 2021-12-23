@@ -44,7 +44,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static getDialogType(): GaugeDialogType {
-        return GaugeDialogType.Range;
+        return GaugeDialogType.RangeAndText;
     }
 
     static getActions(type: string) {
@@ -56,7 +56,8 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
         if (ele && gab.property) {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                htmlButton.innerHTML = (gab.name) ? gab.name : '<span>&nbsp;</span>';
+                let text = gab.property.text || gab.name;
+                htmlButton.innerHTML = (text) ? text : '<span>&nbsp;</span>';
             }
         }
     }

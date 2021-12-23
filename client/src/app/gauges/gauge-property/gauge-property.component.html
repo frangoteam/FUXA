@@ -12,10 +12,14 @@
 					<div class="my-form-field" style="vertical-align: bottom; margin-left: 13px;">
 						<span>{{'gauges.property-permission' | translate}}</span>
 						<div style="text-align:center;cursor:pointer;" class="my-form-field-permission" (click)="onEditPermission()">
-							<mat-icon class="header-icon" style="line-height: 30px;" *ngIf="!property || !property.permission">lock_open</mat-icon>
-							<mat-icon class="header-icon" style="line-height: 30px;" *ngIf="property && property.permission">lock</mat-icon>
+							<mat-icon class="header-icon" style="line-height: 28px;" *ngIf="!property || !property.permission">lock_open</mat-icon>
+							<mat-icon class="header-icon" style="line-height: 28px;" *ngIf="property && property.permission">lock</mat-icon>
 						</div>
 					</div>
+					<div class="my-form-field" style="padding-left: 56px" *ngIf="isTextToShow()">
+						<span>{{'gauges.property-text' | translate}}</span>
+						<input [(ngModel)]="property.text" style="width: 220px" type="text" placeholder="{{data.settings.name}}">
+					</div>					
 					<div class="my-form-field" style="padding-left: 100px" *ngIf="isReadonlyToShow()">
 						<span>{{'gauges.property-readonly' | translate}}</span>
 						<mat-slide-toggle color="primary" [(ngModel)]="property.readonly"></mat-slide-toggle>

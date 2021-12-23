@@ -480,7 +480,7 @@ app-root {
 
 .my-form-field-permission {
     width:80px;
-    height:30px;
+    height:28px;
     background-color: var(--formInputBackground);
     color: var(--formInputColor);
 }

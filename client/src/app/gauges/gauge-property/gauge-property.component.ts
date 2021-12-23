@@ -108,14 +108,22 @@ export class GaugePropertyComponent implements OnInit {
     }
 
     isToolboxToShow() {
-        if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range || this.dialogType === GaugeDialogType.Step) {
+        if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range || this.dialogType === GaugeDialogType.Step || 
+            this.dialogType === GaugeDialogType.RangeAndText) {
             return true;
         }
         return false;
     }
 
     isRangeToShow() {
-        if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range) {
+        if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range || this.dialogType === GaugeDialogType.RangeAndText) {
+            return true;
+        }
+        return false;
+    }
+
+    isTextToShow() {
+        if (this.dialogType === GaugeDialogType.RangeAndText) {
             return true;
         }
         return false;
@@ -152,6 +160,7 @@ export class GaugePropertyComponent implements OnInit {
 
 export enum GaugeDialogType {
     Range,
+    RangeAndText,
     RangeWithAlarm,
     OnlyValue,
     ValueAndUnit,

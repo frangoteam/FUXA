@@ -569,6 +569,7 @@
     "gauges.property-events": "Events",
     "gauges.property-title": "Property",
     "gauges.property-name": "Name",
+    "gauges.property-text": "Text",
     "gauges.property-permission": "Authorization",
     "gauges.property-readonly": "Readonly",
     "gauges.property-event-type": "Type",
