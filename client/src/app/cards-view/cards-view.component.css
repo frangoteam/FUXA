@@ -1,3 +1,8 @@
+.card-html .card-content {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .card-content {
     margin: 0 auto;
     position: absolute;
@@ -5,6 +10,11 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: fit-content;
+}
+
+.card-content div {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .card-tool {

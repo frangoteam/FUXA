@@ -94,7 +94,9 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                     }
                 } else if (card.type === this.widgetAlarms) {
                     item.background = '#CCCCCC';
+                    item.content = ' ';
                 }
+                this.changeDetector.detectChanges();
             }
         }
         this.dashboard.push(item);
@@ -120,8 +122,14 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
 
     private itemChange(item, itemComponent) {
         // console.info('itemResized', item, itemComponent);
-        if (item.background && itemComponent.el) {
-            itemComponent.el.style.backgroundColor = item.background;
+        if (itemComponent.el) {
+            if (item.background) {
+                itemComponent.el.style.backgroundColor = item.background;
+            }
+            let widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
+            if (item.card.type === widgetAlarms) {
+                itemComponent.el.classList.add("card-html");
+            }
         }
     }
 }

@@ -28,6 +28,8 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     showType = AlarmShowType.alarms;
     history = [];
 
+    @Input() autostart = false;
+    @Input() showInContainer = false;
     @Input() fullview = true;
     @Output() showMode:EventEmitter<string> = new EventEmitter();
 
@@ -56,6 +58,9 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.table.renderRows();
+        if (this.autostart) {
+            this.startAskAlarmsValues();
+        }
     }
 
     ngOnDestroy() {

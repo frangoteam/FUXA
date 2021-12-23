@@ -6,7 +6,7 @@
                     <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
                 </div>
                 <div *ngSwitchCase="widgetAlarms">
-                    <app-alarm-view #alarmsview [fullview]="true" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
+                    <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
                 </div>
             </div>
         </div>

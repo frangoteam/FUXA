@@ -1,4 +1,4 @@
-<div class="header-panel" *ngIf="fullview || currentShowMode === 'expand'">
+<div class="header-panel">
     <div *ngIf="showType === alarmShowType.alarms">
         {{'alarms.view-title' | translate}}
     </div>
@@ -6,7 +6,7 @@
         {{'alarms.history-title' | translate}}
     </div>
 </div>
-<div class="work-panel" [ngStyle]="{'height': (fullview || currentShowMode === 'expand') ? 'calc(100% - 83px)' : 'calc(100% - 37px)'}">
+<div class="work-panel" [ngStyle]="{'height': (!showInContainer && (fullview || currentShowMode === 'expand')) ? 'calc(100% - 83px)' : 'calc(100% - 37px)'}">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ontime">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>
@@ -49,8 +49,8 @@
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.userack}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="history">
-            <mat-header-cell *matHeaderCellDef>
-                <div class="header-tools" *ngIf="!fullview">
+            <mat-header-cell *matHeaderCellDef [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 90px'">
+                <div class="header-tools" *ngIf="!fullview || showInContainer">
                     <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="header-tools-options">
                         <mat-icon>more_vert</mat-icon>
                     </button>
@@ -58,18 +58,20 @@
                         <button mat-menu-item (click)="onShowAlarms()" style="font-size: 14px;">{{'alarms.show-current' | translate}}</button>
                         <button mat-menu-item (click)="onShowAlarmsHistory()" style="font-size: 14px;">{{'alarms.show-history' | translate}}</button>
                     </mat-menu>
-                    <button mat-icon-button (click)="$event.stopPropagation();onShowMode('expand')" *ngIf="currentShowMode === 'collapse'" class="header-tools-options">
-                        <mat-icon>fullscreen</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="$event.stopPropagation();onShowMode('collapse')" *ngIf="currentShowMode === 'expand'" class="header-tools-options">
-                        <mat-icon>fullscreen_exit</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="onClose();$event.stopPropagation()" class="header-tools-options">
-                        <mat-icon>clear</mat-icon>
-                    </button>
+                    <div style="display: inline-block;padding-left: unset;" *ngIf="!showInContainer">
+                        <button mat-icon-button (click)="$event.stopPropagation();onShowMode('expand')" *ngIf="currentShowMode === 'collapse'" class="header-tools-options">
+                            <mat-icon>fullscreen</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="$event.stopPropagation();onShowMode('collapse')" *ngIf="currentShowMode === 'expand'" class="header-tools-options">
+                            <mat-icon>fullscreen_exit</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="onClose();$event.stopPropagation()" class="header-tools-options">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </div>
                 </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"></mat-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color" [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 90px'"></mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></mat-header-row>
         <mat-row *matRowDef="let element; columns: displayColumns;" class="my-mat-row" [style.background-color]="element.bkcolor"></mat-row>
