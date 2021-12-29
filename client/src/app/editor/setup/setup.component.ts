@@ -43,19 +43,11 @@ export class SetupComponent implements OnInit, AfterViewInit {
      */
     onChartConfig() {
         this.onNoClick();
-        let chartscopy = JSON.parse(JSON.stringify(this.projectService.getCharts()));
-        let devices = this.projectService.getDevices();
         let dialogRef = this.dialog.open(ChartConfigComponent, {
             position: { top: '60px' },
-            minWidth: '1090px', width: '1090px',
-            data: { charts: chartscopy, devices: devices }
+            minWidth: '1090px', width: '1090px'
         });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.projectService.setCharts(result.charts);
-            }
-        });
+        dialogRef.afterClosed().subscribe();
     }
 
     /**

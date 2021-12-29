@@ -717,8 +717,14 @@ mat-toolbar-row {
     padding-top: 0px;
 }
 
+.dialog-title {
+    display:inline-block; 
+    cursor:move;
+    display: unset !important;
+}
+
 .dialog-close-btn {
-    float: right;
+    float: right !important;
     margin-right: -10px;
     margin-top: -10px;
     color: gray;

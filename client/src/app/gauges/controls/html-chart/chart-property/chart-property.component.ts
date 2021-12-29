@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GaugeChartProperty, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Chart, ChartViewType, ChartLegendMode } from '../../../../_models/chart';
 import { ChartOptions, ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
+import { ChartConfigComponent } from '../../../../editor/chart-config/chart-config.component';
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
 
@@ -43,6 +44,7 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
     private _onDestroy = new Subject<void>();
 
     constructor(
+        public dialog: MatDialog,
         public dialogRef: MatDialogRef<ChartPropertyComponent>,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) public data: any) { }
@@ -124,6 +126,20 @@ export class ChartPropertyComponent implements OnInit, AfterViewInit {
 
     onTabChanged() {
         this.chartuplot.withToolbar = (this.chartViewValue !== this.chartViewRealtime);
+    }
+
+    
+    onEditNewChart() {
+        let dialogRef = this.dialog.open(ChartConfigComponent, {
+            position: { top: '60px' },
+            minWidth: '1090px', width: '1090px'
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.data.charts = result;
+                this.loadChart();
+            }
+        });
     }
 
     private loadChart(toset?: string) {

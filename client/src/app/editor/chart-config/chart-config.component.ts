@@ -2,12 +2,14 @@ import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSelectionList } from '@angular/material';
 
 import { TranslateService } from '@ngx-translate/core';
+import { ProjectService } from '../../_services/project.service';
 
 import { Utils } from '../../_helpers/utils';
 import { Device, DevicesUtils, Tag } from '../../_models/device';
 import { Chart, ChartLine } from '../../_models/chart';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { DeviceTagDialog } from '../../device/device.component';
+import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -20,7 +22,6 @@ export class ChartConfigComponent implements OnInit {
 
     selectedChart = <Chart>{ id: null, name: null, lines: [] };
     selectedDevice = { id: null, name: null, tags: []};
-    selectedTags = [];
     data = { charts: [], devices: [] };
     defaultColor = Utils.defaultColor;
     lineColor = Utils.lineColor;
@@ -32,13 +33,8 @@ export class ChartConfigComponent implements OnInit {
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<ChartConfigComponent>,
         private translateService: TranslateService,
-        @Inject(MAT_DIALOG_DATA) public param: any) {
-            this.data.charts = param.charts;
-            Object.values(param.devices).forEach(device => {
-                let devicobj = Object.assign({}, <Device>device);
-                devicobj.tags = (<Device>device).tags;
-                this.data.devices.push(devicobj);
-            });
+        private projectService: ProjectService) {
+            this.loadData();
     }
 
     ngOnInit() {
@@ -47,12 +43,24 @@ export class ChartConfigComponent implements OnInit {
         }
     }
 
+    loadData() {
+        this.data.charts = JSON.parse(JSON.stringify(this.projectService.getCharts()));
+        this.data.devices = [];
+        let devices = this.projectService.getDevices();
+        Object.values(devices).forEach(device => {
+            let devicobj = Object.assign({}, <Device>device);
+            devicobj.tags = (<Device>device).tags;
+            this.data.devices.push(devicobj);
+        });
+    }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
 
     onOkClick(): void {
-        this.dialogRef.close({ charts: this.data.charts });
+        this.projectService.setCharts(this.data.charts);
+        this.dialogRef.close(this.data.charts);
     }
 
     onRemoveChart(index: number) {
@@ -81,13 +89,16 @@ export class ChartConfigComponent implements OnInit {
     }
 
     onEditChart(chart) {
-        let dialogRef = this.dialog.open(DialogListItem, {
+        let title = 'dlg.item-title';
+        let label = 'dlg.item-name';
+        this.translateService.get(title).subscribe((txt: string) => { title = txt });
+        this.translateService.get(label).subscribe((txt: string) => { label = txt });
+        let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
-            data: { name: (chart) ? chart.name : '' }
+            data: { name: (chart) ? chart.name : '', title: title, label: label }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name && result.name.length > 0) {
-                // this.dirty = true;
                 if (chart) {
                     chart.name = result.name;
                 } else {
@@ -147,23 +158,11 @@ export class ChartConfigComponent implements OnInit {
     }
 
     removeChartLine(tag) {
-        for (let i = 0; i < this.selectedTags.length; i++) {
-            if (tag.id === this.selectedTags[i].id) {
-                this.selectedTags.splice(i, 1)
-                break;
-            }
-        }
         for (let i = 0; i < this.selectedChart.lines.length; i++) {
             if (this.selectedChart.lines[i].id === tag.id) {
                 this.selectedChart.lines.splice(i, 1);
                 break;
             }
-        }
-    }
-
-    isDeviceSelected(device) {
-        if (device && device.name === this.selectedDevice.name) {
-            return 'list-item-selected';
         }
     }
 
@@ -211,25 +210,6 @@ export class ChartConfigComponent implements OnInit {
             return type.text;
         }
         return '';
-    }
-}
-
-@Component({
-    selector: 'dialog-list-item',
-    templateUrl: './list-item.dialog.html',
-})
-export class DialogListItem {
-    // defaultColor = Utils.defaultColor;
-    constructor(
-        public dialogRef: MatDialogRef<DialogListItem>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.dialogRef.close(true);
     }
 }
 

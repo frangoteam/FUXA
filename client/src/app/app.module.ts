@@ -31,7 +31,7 @@ import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-propert
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
-import { ChartConfigComponent, DialogListItem, DialogChartLine } from './editor/chart-config/chart-config.component';
+import { ChartConfigComponent, DialogChartLine } from './editor/chart-config/chart-config.component';
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
@@ -73,6 +73,7 @@ import { TreetableComponent } from './gui-helpers/treetable/treetable.component'
 import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dialog.component';
 import { SelOptionsComponent } from './gui-helpers/sel-options/sel-options.component';
 import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.component';
+import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -163,6 +164,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogDocName,
         DialogNewDoc,
         DialogLinkProperty,
+        EditNameComponent,
         ConfirmDialogComponent,
         DialogInfo,
         GaugeBaseComponent,
@@ -215,7 +217,6 @@ export function createTranslateLoader(http: HttpClient) {
         LogsViewComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,
-        DialogListItem,
         DialogChartLine,
         UsersComponent,
         DialogUser,
@@ -306,6 +307,7 @@ export function createTranslateLoader(http: HttpClient) {
         TagPropertyComponent,
         TopicPropertyComponent,
         ConfirmDialogComponent,
+        EditNameComponent,
         LayoutPropertyComponent,
         PluginsComponent,
         AppSettingsComponent,
@@ -318,7 +320,6 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmViewComponent,
         AlarmPropertyComponent,
         TextListComponent,
-        DialogListItem,
         DialogChartLine,
         DialogUser,
         LoginComponent,

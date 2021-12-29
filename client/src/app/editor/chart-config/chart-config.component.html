@@ -1,6 +1,6 @@
 <div>
     <h1 mat-dialog-title style="display:inline-block;cursor: move" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div style="display: inline-block; width: 100%">
         <div class="panelTop">
             <div class="toolbox-toadd">
@@ -19,46 +19,6 @@
                 </span>
                 <mat-icon (click)="onSelectChart(chart);onRemoveChart(i)">cancel</mat-icon>
             </div>
-            <!-- <mat-grid-list cols="3" rowHeight="100%">
-                <mat-grid-tile class="chart-list">
-                    <mat-list class="list" >
-                        <mat-list-item class="list-item list-header list-item-sel">
-                            <span>{{'chart.config-charts' | translate}}</span>
-                            <mat-icon style="position: absolute; right: 10px;cursor:pointer;color:rgba(255, 255, 255, 0.9);" (click)="editChart(null)">add</mat-icon>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let chart of data.charts" class="list-item list-item-text list-item-sel" [ngClass]="isChartSelected(chart)" (click)="selectedChart = chart;loadChartConfig();">
-                            <span>{{chart.name}}</span>
-                            <mat-icon [matMenuTriggerFor]="configMenu" style="position: absolute; right: 10px;cursor:pointer;color:gray;">more_vert</mat-icon>
-                            <mat-menu #configMenu [overlapTrigger]="false" style="color:#000000">
-                                <button mat-menu-item (click)="editChart(chart)" style="color:#000000;font-size: 14px;">{{'chart.config-rename' | translate}}</button>
-                                <button mat-menu-item (click)="deleteChart(chart)" style="color:#000000;font-size: 14px;">{{'chart.config-delete' | translate}}</button>
-                            </mat-menu>
-                        </mat-list-item>
-                    </mat-list>
-                </mat-grid-tile>
-                <mat-grid-tile class="device-list">
-                    <mat-list class="list">
-                        <mat-list-item class="list-item list-header list-item-sel">
-                            <span>{{'chart.config-devices' | translate}}</span>
-                        </mat-list-item>
-                        <mat-list-item *ngFor="let device of data.devices;" class="list-item list-item-text list-item-sel" [ngClass]="isDeviceSelected(device)" (click)="selectDevice(device);">
-                            <span>{{device.name}}</span>
-                        </mat-list-item>
-                    </mat-list>
-                </mat-grid-tile>
-                <mat-grid-tile class="tag-list">
-                    <mat-list class="list">
-                        <mat-list-item class="list-item list-header list-item-sel">
-                            <span>{{'chart.config-tags' | translate}}</span>
-                        </mat-list-item>
-                        <mat-selection-list #selTags [(ngModel)]="selectedTags" [disabled]="(selectedChart.id)?false:true" (selectionChange)="tagSelectionChanged($event)" style="padding-top: 0px;">
-                            <mat-list-option *ngFor="let tag of selectedDevice.tags" matTooltip="{{getTagLabel(tag)}}" [selected]="tag.selected" [value]="tag" class="list-item list-item-text" checkboxPosition="before">
-                                {{getTagLabel(tag)}}
-                            </mat-list-option>
-                        </mat-selection-list>
-                    </mat-list>
-                </mat-grid-tile>
-            </mat-grid-list> -->
         </div>
         <div class="panelBottom">
             <mat-list class="list">
@@ -99,6 +59,6 @@
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>
