@@ -119,6 +119,9 @@ try {
             settings.secureEnabled = mysettings.secureEnabled;
             settings.tokenExpiresIn = mysettings.tokenExpiresIn;
         }
+        if (mysettings.smtp) {
+            settings.smtp = mysettings.smtp;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)

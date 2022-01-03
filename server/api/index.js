@@ -59,6 +59,9 @@ function init(_server, _runtime) {
                 if (runtime.settings) {
                     let tosend = JSON.parse(JSON.stringify(runtime.settings));
                     delete tosend.secretCode;
+                    if (tosend.smtp) {
+                        delete tosend.smtp.password;
+                    }
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");                    
                     res.json(tosend);
@@ -80,6 +83,9 @@ function init(_server, _runtime) {
                     runtime.logger.error("api post settings: Unauthorized");
                 } else {
                     try {
+                        if (req.body.smtp && !req.body.smtp.password && runtime.settings.smtp && runtime.settings.smtp.password) {
+                            req.body.smtp.password = runtime.settings.smtp.password;
+                        }
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
                         res.end();
@@ -107,6 +113,9 @@ function mergeUserSettings(settings) {
     runtime.settings.secureEnabled = settings.secureEnabled;
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
+    }
+    if (settings.smtp) {
+        runtime.settings.smtp = settings.smtp;
     }
 }
 

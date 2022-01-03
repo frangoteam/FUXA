@@ -1,6 +1,6 @@
 <div>
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.app-settings-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;color:gray;cursor:pointer;">clear</mat-icon>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn" >clear</mat-icon>
     <div mat-dialog-content>
         <mat-tab-group style="height: 500px; width: 620px;">
             <mat-tab label="{{'dlg.app-settings-system' | translate}}">
@@ -34,6 +34,39 @@
                     </div>
                     <div style="display: block; margin-top: 20px; margin-bottom: 20px;">
                         <button mat-raised-button color="basic" (click)="onAlarmsClear()">{{'dlg.app-settings-alarms-clear' | translate}}</button>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'dlg.app-settings-smtp' | translate}}">
+                <div style="display: block; margin-top: 20px">
+                    <div class="my-form-field">
+                        <span>{{'dlg.app-settings-smtp-host' | translate}}</span>
+                        <input [(ngModel)]="settings.smtp.host" placeholder="smtp.example.com" style="width: 320px" type="text">
+                    </div>
+                    <div class="my-form-field" style="display: inline-block; padding-left: 10px;">
+                        <span>{{'dlg.app-settings-smtp-port' | translate}}</span>
+                        <input numberOnly [(ngModel)]="settings.smtp.port" style="width: 80px" type="text">
+                    </div>                    
+                </div>
+                <div style="display: block; margin-top: 20px">
+                    <div class="my-form-field">
+                        <span>{{'dlg.app-settings-smtp-user' | translate}}</span>
+                        <input [(ngModel)]="settings.smtp.username" placeholder="fuxa@example.com" style="width: 320px" type="text">
+                    </div>
+                </div>
+                <div style="display: block; margin-top: 20px">
+                    <div class="my-form-field">
+                        <span>{{'dlg.app-settings-smtp-password' | translate}}</span>
+                        <input [(ngModel)]="settings.smtp.password" autocomplete="off" placeholder="**********" style="width: 320px" type="password">
+                    </div>
+                </div>
+                <div style="display: block; margin-top: 20px; margin-bottom: 20px;">
+                    <div class="my-form-field">
+                        <span>{{'dlg.app-settings-smtp-testaddress' | translate}}</span>
+                        <input [(ngModel)]="smtpTestAddress" style="width: 320px" type="text">
+                    </div>
+                    <div class="my-form-field" style="display: inline-block; padding-left: 10px;">
+                        <button mat-raised-button color="basic" (click)="onSmtpTest()" [disabled]="!isSmtpTestReady()">{{'dlg.app-settings-smtp-test' | translate}}</button>
                     </div>
                 </div>
             </mat-tab>

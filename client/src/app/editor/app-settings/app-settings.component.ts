@@ -2,9 +2,11 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { SettingsService } from '../../_services/settings.service';
+import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
-import { AppSettings } from '../../_models/settings';
+import { AppSettings, MailMessage, SmtpSettings } from '../../_models/settings';
 
 @Component({
     selector: 'app-app-settings',
@@ -23,9 +25,13 @@ export class AppSettingsComponent implements OnInit {
     settings = new AppSettings();
     authentication = '';
     authenticationTooltip = '';
+    smtpTesting = false;
+    smtpTestAddress = '';
 
     constructor(private settingsService: SettingsService,
+        private diagnoseService: DiagnoseService,
         private translateService: TranslateService,
+        private toastr: ToastrService,
         public dialogRef: MatDialogRef<AppSettingsComponent>) { }
 
     ngOnInit() {
@@ -40,6 +46,9 @@ export class AppSettingsComponent implements OnInit {
 
         if (this.settings.secureEnabled) {
             this.authentication = this.settings.tokenExpiresIn;
+        }
+        if (!this.settings.smtp) {
+            this.settings.smtp = new SmtpSettings();
         }
     }
 
@@ -62,5 +71,49 @@ export class AppSettingsComponent implements OnInit {
 
     onAlarmsClear() {
         this.settingsService.clearAlarms(true);
+    }
+
+    onSmtpTest() {
+        this.smtpTesting = true;
+        let msg = <MailMessage>{ from: this.settings.smtp.username, to: this.smtpTestAddress, subject: 'FUXA', text: 'TEST' };
+        this.diagnoseService.sendMail(msg, this.settings.smtp).subscribe(() => {
+            this.smtpTesting = false;
+            var msg = '';
+            this.translateService.get('msg.sendmail-success').subscribe((txt: string) => { msg = txt });
+            this.toastr.success(msg);
+        }, error => {
+            this.smtpTesting = false;
+            if (error.message) {
+                this.notifyError(error.message);
+            } else {
+                var msg = '';
+                this.translateService.get('msg.sendmail-error').subscribe((txt: string) => { msg = txt });
+                this.notifyError(msg);
+            }
+        });
+    }
+
+    isSmtpTestReady() {
+        if (this.smtpTesting) {
+            return false;
+        }
+        if (!this.settings.smtp.host || !this.settings.smtp.host.length) {
+            return false;
+        }
+        if (!this.settings.smtp.username || !this.settings.smtp.username.length) {
+            return false;
+        } 
+        if (!this.smtpTestAddress || !this.smtpTestAddress.length) {
+            return false;
+        }       
+        return true;
+    }
+
+    private notifyError(error: string) {
+        this.toastr.error(error, '', {
+            timeOut: 3000,
+            closeButton: true
+            // disableTimeOut: true
+        });
     }
 }

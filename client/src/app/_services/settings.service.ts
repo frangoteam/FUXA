@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
-import { AppSettings } from '../_models/settings';
+import { AppSettings, SmtpSettings } from '../_models/settings';
 
 @Injectable({
     providedIn: 'root'
@@ -57,6 +57,12 @@ export class SettingsService {
         if (settings.secureEnabled != this.appSettings.secureEnabled || settings.tokenExpiresIn != this.appSettings.tokenExpiresIn) {
             this.appSettings.secureEnabled = settings.secureEnabled;
             this.appSettings.tokenExpiresIn = settings.tokenExpiresIn;
+            dirty = true;
+        }
+        if (settings.smtp && !(settings.smtp.host === this.appSettings.smtp.host && settings.smtp.port === this.appSettings.smtp.port && 
+                settings.smtp.mailsender === this.appSettings.smtp.mailsender && settings.smtp.username === this.appSettings.smtp.username && 
+                settings.smtp.password === this.appSettings.smtp.password)) {
+            this.appSettings.smtp = new SmtpSettings(settings.smtp);
             dirty = true;
         }
         return dirty;

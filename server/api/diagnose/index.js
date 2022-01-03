@@ -93,6 +93,35 @@ module.exports = {
                 }
             }
         });
+
+        /**
+         * POST testmail
+         * Test SMTP send mail
+         */
+        diagnoseApp.post("/api/sendmail", secureFnc, function (req, res, next) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post sendmail: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post sendmail: Unauthorized");
+            } else {
+                if (req.body.params.smtp && !req.body.params.smtp.password && runtime.settings.smtp && runtime.settings.smtp.password) {
+                    req.body.params.smtp.password = runtime.settings.smtp.password;
+                }                
+                runtime.notificatorMgr.sendMail(req.body.params.msg, req.body.params.smtp).then(function() {
+                    res.end();
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api post sendmail: " + err.message);
+                });
+            }
+        });
+
         return diagnoseApp;
     }
 }
