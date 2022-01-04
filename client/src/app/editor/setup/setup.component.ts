@@ -106,6 +106,8 @@ export class SetupComponent implements OnInit, AfterViewInit {
             return this.appService.isClientApp;
         } else if (section === 'plugins') {
             return this.appService.isClientApp;
+        } else if (section === 'notifications') {
+            return this.appService.isClientApp;
         }
         return false;
     }

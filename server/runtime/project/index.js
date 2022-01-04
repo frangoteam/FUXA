@@ -99,6 +99,16 @@ function load() {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.ALARMS}' ${err}`);
                                 callback(err);
                             }); 
+                        },
+                        // step 3 get notifications
+                        function (callback) {
+                            getNotifications().then(notifications => {
+                                data.notifications = notifications;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.NOTIFICATIONS}' ${err}`);
+                                callback(err);
+                            }); 
                         }
                     ],
                     function (err) {
@@ -174,6 +184,14 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.ALARMS;
                 section.name = value.name;
                 toremove = removeAlarm(value);
+            } else if (cmd === ProjectDataCmdType.SetNotification) {
+                section.table = prjstorage.TableType.NOTIFICATIONS;
+                section.name = value.id;
+                setNotification(value);
+            } else if (cmd === ProjectDataCmdType.DelNotification) {
+                section.table = prjstorage.TableType.NOTIFICATIONS;
+                section.name = value.id;
+                toremove = removeNotification(value);
             }
             else {
                 logger.error(`prjstorage.setdata failed! '${section.table}'`);
@@ -343,6 +361,44 @@ function removeAlarm(alarm) {
 }
 
 /**
+ * Set or add if not exist (check with notification.id) the Notification in Project
+ * @param {*} notification 
+ */
+ function setNotification(notification) {
+    if (!data.notifications) {
+        data.notifications = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.notifications.length; i++) {
+        if (data.notifications[i].id === notification.id) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.notifications[pos] = notification;
+    } else {
+        data.notifications.push(notification);
+    }
+}
+
+/**
+ * Remove the Notification from Project
+ * @param {*} notification 
+ */
+function removeNotification(notification) {
+    if (data.notifications) {
+        var pos = -1;
+        for (var i = 0; i < data.notifications.length; i++) {
+            if (data.notifications[i].id === notification.id) {
+                data.notifications.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the project data in accordance with autorization
  */
 function getProject(userId, userGroups) {
@@ -406,6 +462,14 @@ function setProject(prjcontent) {
                         if (alarms && alarms.length) {
                             for (var i = 0; i < alarms.length; i++) {
                                 scs.push({ table: prjstorage.TableType.ALARMS, name: alarms[i].name, value: alarms[i] });
+                            }
+                        }
+                    } else if (key === 'notifications') {
+                        // notifications
+                        var notifications = prjcontent[key];
+                        if (notifications && notifications.length) {
+                            for (var i = 0; i < notifications.length; i++) {
+                                scs.push({ table: prjstorage.TableType.NOTIFICATIONS, name: notifications[i].id, value: notifications[i] });
                             }
                         }                        
                     } else {
@@ -503,6 +567,28 @@ function getAlarms() {
 }
 
 /**
+ * Get the notifications 
+ */
+function getNotifications() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.NOTIFICATIONS).then(drows => {
+            if (drows.length > 0) {
+                var notifications = []
+                for (var id = 0; id < drows.length; id++) {
+                    notifications.push(JSON.parse(drows[id].value));
+                }
+                resolve(notifications);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error(`project.prjstorage.get-notifications failed! '${prjstorage.TableType.NOTIFICATIONS} ${err}'`);
+            reject(err);
+        });
+    });
+}
+
+/**
  * Set the device property
  */
 function setDeviceProperty(query) {
@@ -588,8 +674,8 @@ const ProjectDataCmdType = {
     SetText: 'set-text',
     SetText: 'set-text',
     DelText: 'del-text',
-    SetAlarm: 'set-alarm',
-    DelAlarm: 'del-alarm',
+    SetNotification: 'set-notification',
+    DelNotification: 'del-notification',
 }
 
 module.exports = {

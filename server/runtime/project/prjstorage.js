@@ -46,6 +46,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists devicesSecurity (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists texts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists alarms (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists notifications (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.bind failed! ${err}`);
@@ -175,6 +176,7 @@ function clearAll() {
         sql += "DELETE FROM devices;";
         sql += "DELETE FROM texts;";
         sql += "DELETE FROM alarms;";
+        sql += "DELETE FROM notifications;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.clear failed! ${err}`);
@@ -196,6 +198,7 @@ const TableType = {
     DEVICESSECURITY: 'devicesSecurity',
     TEXTS: 'texts',
     ALARMS: 'alarms',
+    NOTIFICATIONS: 'notifications',
 }
 
 module.exports = {

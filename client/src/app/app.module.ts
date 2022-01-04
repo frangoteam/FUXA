@@ -36,6 +36,8 @@ import { CardConfigComponent } from './editor/card-config/card-config.component'
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
+import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
+import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent, DeviceTagDialog } from './device/device.component';
@@ -213,6 +215,8 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmListComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,
+        NotificationListComponent,
+        NotificationPropertyComponent,
         TextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
@@ -319,6 +323,8 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmListComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,
+        NotificationListComponent,
+        NotificationPropertyComponent,
         TextListComponent,
         DialogChartLine,
         DialogUser,

@@ -11,6 +11,13 @@ export class Alarm {
     value: string;
 }
 
+export enum AlarmsType {
+    HIGH_HIGH = 'highhigh',
+    HIGH = 'high',
+    LOW = 'low',
+    INFO = 'info'
+}
+
 export class AlarmProperty {
     variableId: string;
     permission: number;

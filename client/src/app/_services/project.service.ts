@@ -8,6 +8,7 @@ import { ProjectData, ProjectDataCmdType } from '../_models/project';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Alarm, AlarmQuery } from '../_models/alarm';
+import { Notification } from '../_models/notification';
 import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
@@ -396,7 +397,6 @@ export class ProjectService {
 
     /**
      * save the alarm to project
-     * @param text
      */
     setAlarm(alarm: Alarm, old: Alarm) {
         return new Observable((observer) => {
@@ -432,8 +432,7 @@ export class ProjectService {
     }
 
     /**
-     * remove the text from project
-     * @param text 
+     * remove the alarm from project
      */
     removeAlarm(alarm: Alarm) {
         return new Observable((observer) => {
@@ -465,6 +464,75 @@ export class ProjectService {
 
     setAlarmAck(name: string): Observable<any> {
         return this.storage.setAlarmAck(name);
+    }
+    //#endregion
+
+    //#region Notifications resource    
+    /**
+     * get notifications resource
+     */
+    getNotifications() {
+        return (this.projectData) ? (this.projectData.notifications) ? this.projectData.notifications : [] : null;
+    }
+
+    /**
+     * save the notification to project
+     */
+    setNotification(notification: Notification, old: Notification) {
+        return new Observable((observer) => {
+            if (!this.projectData.notifications) {
+                this.projectData.notifications = [];
+            }
+            let exist = this.projectData.notifications.find(tx => tx.id === notification.id);
+            if (exist) {
+                exist.name = notification.name;
+                exist.delay = notification.delay;
+                exist.options = notification.options;
+                exist.receiver = notification.receiver;
+                exist.enabled = notification.enabled;
+                exist.subscriptions = notification.subscriptions;
+                exist.text = notification.text;
+                exist.type = notification.type;
+            } else {
+                this.projectData.notifications.push(notification);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetNotification, notification, this.projectData).subscribe(result => {
+                if (old && old.id && old.id !== notification.id) {
+                    this.removeNotification(old).subscribe(result => {
+                        observer.next();
+                    });
+                } else {
+                    observer.next();
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    /**
+     * remove the notification from project
+     */
+     removeNotification(notification: Notification) {
+        return new Observable((observer) => {
+            if (this.projectData.notifications) {
+                for (let i = 0; i < this.projectData.notifications.length; i++) {
+                    if (this.projectData.notifications[i].id === notification.id) {
+                        this.projectData.notifications.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.DelNotification, notification, this.projectData).subscribe(result => {
+                observer.next();
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
     }
     //#endregion
 

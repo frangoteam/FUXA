@@ -1,5 +1,5 @@
 /**
- *  Module to manage the alarms in a database
+ *  Module to manage the notifications in a database
  *  Table: 'alarms', 'chronicle'
  */
 
@@ -9,9 +9,9 @@ const fs = require('fs');
 const path = require('path');
 var sqlite3 = require('sqlite3').verbose();
 
-var settings        // Application settings
-var logger;         // Application logger
-var db_alarms;      // Database of alarms
+var settings            // Application settings
+var logger;             // Application logger
+var db_notifications;   // Database of notifications
 
 /**
  * Init and bind the database resource
@@ -30,22 +30,22 @@ function init(_settings, _log) {
  */
 function _bind() {
     return new Promise(function (resolve, reject) {
-        var dbfile = path.join(settings.workDir, 'alarms.fuxap.db');
+        var dbfile = path.join(settings.workDir, 'notifications.fuxap.db');
         var dbfileExist = fs.existsSync(dbfile);
 
-        db_alarms = new sqlite3.Database(dbfile, function (err) {
+        db_notifications = new sqlite3.Database(dbfile, function (err) {
             if (err) {
-                logger.error('alarmsstorage.failed-to-bind: ' + err);
+                logger.error('notifystorage.failed-to-bind: ' + err);
                 reject();
             }
-            logger.info('alarmsstorage.connected-to ' + dbfile + ' database.', true);
+            logger.info('notifystorage.connected-to ' + dbfile + ' database.', true);
         });
         // prepare query
-        var sql = "CREATE TABLE if not exists alarms (nametype TEXT PRIMARY KEY, type TEXT, status TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER);";
-        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, nametype TEXT, type TEXT, status TEXT, text TEXT, grp TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER, userack TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
-        db_alarms.exec(sql, function (err) {
+        var sql = "CREATE TABLE if not exists notifications (nametype TEXT PRIMARY KEY, type TEXT, status TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER);";
+        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, id TEXT, name TEXT, type TEXT, status TEXT, text TEXT, grp TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER, userack TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
+        db_notifications.exec(sql, function (err) {
             if (err) {
-                logger.error('alarmsstorage.failed-to-bind: ' + err);
+                logger.error('notifystorage.failed-to-bind: ' + err);
                 reject();
             } else {
                 resolve(dbfileExist);
@@ -55,15 +55,15 @@ function _bind() {
 }
 
 /**
- * Clear all Alarms from table
+ * Clear all Notifications from table
  */
-function clearAlarms(all) {
+function clearNotifications(all) {
     return new Promise(function (resolve, reject) {
-        var sql = "DELETE FROM alarms;";
+        var sql = "DELETE FROM notifications;";
         if (all) {
             sql += "DELETE FROM chronicle;";
         }
-        db_alarms.exec(sql, function (err, rows) {
+        db_notifications.exec(sql, function (err, rows) {
             if (err) {
                 reject(err);
             } else {
@@ -74,15 +74,15 @@ function clearAlarms(all) {
 }
 
 /**
- * Return the Alarms list
+ * Return the Notifications list
  */
-function getAlarms() {
+function getNotifications() {
     return new Promise(function (resolve, reject) {
-        if (!db_alarms) {
+        if (!db_notifications) {
             reject(false);
         } else {
-            var sql = "SELECT * FROM alarms";
-            db_alarms.all(sql, function (err, rows) {
+            var sql = "SELECT * FROM notifications";
+            db_notifications.all(sql, function (err, rows) {
                 if (err) {
                     reject(err);
                 } else {
@@ -94,17 +94,17 @@ function getAlarms() {
 }
 
 /**
- * Return the Alarms history
+ * Return the Notifications history
  */
- function getAlarmsHistory(from, to) {
+ function getNotificationsHistory(from, to) {
     return new Promise(function (resolve, reject) {
-        if (!db_alarms) {
+        if (!db_notifications) {
             reject(false);
         } else {
             // var sql = "SELECT * FROM history WHERE dt BETWEEN ? and ? ORDER BY dt ASC";
-            // db_alarms.all(sql, [from, to], function (err, rows) {
+            // db_notifications.all(sql, [from, to], function (err, rows) {
             var sql = "SELECT * FROM chronicle ORDER BY ontime DESC";
-            db_alarms.all(sql, function (err, rows) {
+            db_notifications.all(sql, function (err, rows) {
                 if (err) {
                     reject(err);
                 } else {
@@ -116,31 +116,31 @@ function getAlarms() {
 }
 
 /**
- * Set alarm value in database
+ * Set Notifications value in database
  */
-function setAlarms(alarms) {
+function setNotifications(notifications) {
     return new Promise(function (resolve, reject) {
         // prepare query
-        if (alarms && alarms.length) {
+        if (notifications && notifications.length) {
             var sql = "";
-            alarms.forEach(alr => {
+            notifications.forEach(alr => {
                 let grp = alr.subproperty.group || '';
                 let status = alr.status || '';
                 let userack = alr.userack || '';
                 //is alarm condition is changed (if it is occured or acknowledged) insert or update record
-                sql += "INSERT OR REPLACE INTO alarms (nametype, type, status, ontime, offtime, acktime) VALUES('" +
+                sql += "INSERT OR REPLACE INTO notifications (nametype, type, status, ontime, offtime, acktime) VALUES('" +
                     alr.getId() + "','" + alr.type + "','" + status + "','" + alr.ontime + "','" + alr.offtime + "','" + alr.acktime + "');" +
                     "INSERT OR REPLACE INTO chronicle (Sn, nametype, type, status, text, grp, ontime, offtime,  acktime, userack)" +
                     " VALUES ((SELECT Sn from chronicle WHERE ontime='" + alr.ontime + "' AND nametype='" + alr.getId() + "'),'" +
                     alr.getId() + "','" + alr.type + "','" + status + "','" + alr.subproperty.text + "','" + grp + "','" + alr.ontime + "','" + alr.offtime + "','" + alr.acktime + "','" + userack + "');";
                 if (alr.toremove) {
                     //is alarm to be removed (if it is ok) delete it from db
-                    sql += "DELETE FROM alarms WHERE nametype = '" + alr.getId() + "';";
+                    sql += "DELETE FROM notifications WHERE nametype = '" + alr.getId() + "';";
                 }
             });
-            db_alarms.exec(sql, function (err) {
+            db_notifications.exec(sql, function (err) {
                 if (err) {
-                    logger.error('alarmsstorage.failed-to-set: ' + err);
+                    logger.error('notifystorage.failed-to-set: ' + err);
                     reject();
                 } else {
                     resolve();
@@ -151,15 +151,24 @@ function setAlarms(alarms) {
 }
 
 /**
- * Remove alarm from database
+ * Close the database
  */
-function removeAlarm(alarm) {
+function close() {
+    if (db_notifications) {
+        db_notifications.close();
+    }
+}
+
+/**
+ * Remove Notification from database
+ */
+ function removeNotification(notification) {
     return new Promise(function (resolve, reject) {
         // prepare query
-        var sql = "DELETE FROM alarms WHERE nametype = '" + alarm.getId() + "'";
-        db_alarms.exec(sql, function (err) {
+        var sql = "DELETE FROM notifications WHERE id = '" + notification.id + "'";
+        db_notifications.exec(sql, function (err) {
             if (err) {
-                logger.error('alarmsstorage.failed-to-remove: ' + err);
+                logger.error('notificationsstorage.failed-to-remove: ' + err);
                 reject();
             } else {
                 resolve();
@@ -168,21 +177,12 @@ function removeAlarm(alarm) {
     });
 }
 
-/**
- * Close the database
- */
-function close() {
-    if (db_alarms) {
-        db_alarms.close();
-    }
-}
-
 module.exports = {
     init: init,
     close: close,
-    getAlarms: getAlarms,
-    getAlarmsHistory: getAlarmsHistory,
-    setAlarms: setAlarms,
-    clearAlarms: clearAlarms,
-    removeAlarm: removeAlarm
+    getNotifications: getNotifications,
+    getNotificationsHistory: getNotificationsHistory,
+    setNotifications: setNotifications,
+    clearNotifications: clearNotifications,
+    removeNotification: removeNotification
 };

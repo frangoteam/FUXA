@@ -695,6 +695,23 @@
     "alarm.property-action-value": "Value to set",
     "alarm.property-action-destination": "View to show",
     
+    "notifications.list-title": "Notifications settings",
+    "notifications.list-name": "Name",
+    "notifications.list-receiver": "Receivers",
+    "notifications.list-delay": "Delay",
+    "notifications.list-type": "Type",
+    "notifications.list-enabled": "Enabled",
+    "notifications.list-subscriptions": "Subscriptions",
+    "notification.property-title": "Notification",
+    "notification.property-name": "Name",
+    "notification.property-receiver": "Receivers (Mail address ';')",
+    "notification.property-type": "Type",
+    "notification.property-delay": "Delay",
+    "notification.property-enabled": "Enbled",
+    "notification.property-priority": "Priority",
+    "notification.type-alarm": "Alarms",
+    "notification.type-trigger": "Trigger",
+
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
 
@@ -787,6 +804,7 @@
     "msg.device-remove": "Would you like to remove Device ",
     "msg.device-tag-remove": "Would you like to remove Tag ",
     "msg.device-tag-exist": "Tag name exist!",
+    "msg.notification-property-missing-value": "Some values are missing!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.project-load-error": "Unable to read '{{value}}'",

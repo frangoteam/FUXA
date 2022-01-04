@@ -11,6 +11,7 @@ import { ViewComponent } from './view/view.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
+import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { TextListComponent } from './text-list/text-list.component';
 import { DEVICE_READONLY } from './_models/hmi';
 
@@ -24,6 +25,7 @@ const appRoutes: Routes = [
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'alarms', component: AlarmViewComponent, canActivate: [AuthGuard] },
     { path: 'messages', component: AlarmListComponent, canActivate: [AuthGuard] },
+    { path: 'notifications', component: NotificationListComponent, canActivate: [AuthGuard] },
     { path: 'text', component: TextListComponent, canActivate: [AuthGuard] },
     { path: 'events', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'view', component: ViewComponent },

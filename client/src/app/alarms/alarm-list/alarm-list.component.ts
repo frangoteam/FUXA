@@ -4,7 +4,7 @@ import { Subscription } from "rxjs";
 
 import { ProjectService } from '../../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
-import {AlarmPropertyComponent } from '..//alarm-property/alarm-property.component';
+import { AlarmPropertyComponent } from '../alarm-property/alarm-property.component';
 import { Alarm, AlarmSubProperty, AlarmSubActions } from '../../_models/alarm';
 
 @Component({

@@ -2,6 +2,7 @@ import { Device, DEVICE_PREFIX } from './device';
 import { Hmi } from './hmi';
 import { Chart } from './chart';
 import { Alarm } from './alarm';
+import { Notification } from './notification';
 import { Text } from './text';
 import { Utils } from '../_helpers/utils';
 
@@ -17,6 +18,8 @@ export class ProjectData {
     charts: Chart[] = [];
     /** Alarms, Tags, logic, level, colors, etc.  */
     alarms: Alarm[] = [];
+    /** Notifications  */
+    notifications: Notification[] = [];    
     /** not used yet */
     texts: Text[] = [];
     /** Plugins, name, version */
@@ -34,4 +37,6 @@ export enum ProjectDataCmdType {
     DelText = 'del-text',
     SetAlarm = 'set-alarm',
     DelAlarm = 'del-alarm',
+    SetNotification = 'set-notification',
+    DelNotification = 'del-notification',
 }

@@ -41,10 +41,11 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
         this.router.events.subscribe(()=> {
             this.ineditor = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0 ||
                                 this.router.url.indexOf('users') >= 0 || this.router.url.indexOf('text') >= 0 || 
-                                this.router.url.indexOf('messages') >= 0 || this.router.url.indexOf('events') >= 0) ? true : false;
+                                this.router.url.indexOf('messages') >= 0 || this.router.url.indexOf('events') >= 0 ||
+                                this.router.url.indexOf('notifications') >= 0) ? true : false;
             this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 || 
                                 this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0 ||
-                                this.router.url.indexOf('events') >= 0) ? true : false;
+                                this.router.url.indexOf('events') >= 0 || this.router.url.indexOf('notifications') >= 0) ? true : false;
 
             if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
                 this.ineditor = false;
