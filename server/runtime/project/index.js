@@ -674,6 +674,8 @@ const ProjectDataCmdType = {
     SetText: 'set-text',
     SetText: 'set-text',
     DelText: 'del-text',
+    SetAlarm: 'set-alarm',
+    DelAlarm: 'del-alarm',
     SetNotification: 'set-notification',
     DelNotification: 'del-notification',
 }
