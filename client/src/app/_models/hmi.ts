@@ -197,8 +197,11 @@ export class GaugeActionStatus {
     }
 }
 
+/** Gouges and Shapes mouse events */
 export enum GaugeEventType {
     click = 'shapes.event-click',
+    mousedown = 'shapes.event-mousedown',
+    mouseup = 'shapes.event-mouseup',
 }
 
 export enum GaugeEventActionType {

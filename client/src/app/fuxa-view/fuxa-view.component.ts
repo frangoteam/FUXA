@@ -13,7 +13,7 @@ import {
 import { Subscription } from "rxjs";
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
@@ -164,8 +164,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 try {
                     let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true);
                     this.gaugesManager.bindGauge(gauge, this.id, items[key],
-                        (gatobindclick) => {
-                            this.onBindClick(gatobindclick);
+                        (gaToBindMouseEvents) => {
+                            this.onBindMouseEvents(gaToBindMouseEvents);
                         },
                         (gatobindhtmlevent) => {
                             this.onBindHtmlEvent(gatobindhtmlevent);
@@ -326,41 +326,57 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     }
 
     /**
-     * bind the gauge svg element with click event
+     * bind the gauge svg element with mouse events
      * @param ga
      */
-    private onBindClick(ga: GaugeSettings) {
+    private onBindMouseEvents(ga: GaugeSettings) {
         let self = this;
         let svgele = FuxaViewComponent.getSvgElement(ga.id);
         if (svgele) {
-            svgele.click(function (ev) {
-                let event = self.gaugesManager.getBindClick(ga);
-                if (event && event.length > 0) {
-                    for (let i = 0; i < event.length; i++) {
-                        let actindex = Object.keys(GaugeEventActionType).indexOf(event[i].action);
-                        let eventTypes = Object.values(GaugeEventActionType);
-                        if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
-                            self.loadPage(ev, event[i].actparam);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
-                            self.onOpenCard(ga.id, ev, event[i].actparam, event[i].actoptions);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
-                            self.openDialog(ev, event[i].actparam, event[i].actoptions);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onSetValue) === actindex) {
-                            self.onSetValue(ga, event[i]);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onToggleValue) === actindex) {
-                            self.onToggleValue(ga, event[i]);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onSetInput) === actindex) {
-                            self.onSetInput(ga, event[i]);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.oniframe) === actindex) {
-                            self.openIframe(ga.id, ev, event[i].actparam, event[i].actoptions);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.oncard) === actindex) {
-                            self.openWindow(ga.id, ev, event[i].actparam, event[i].actoptions);
-                        } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
-                            self.onClose(ev);
-                        }
-                    }
-                }
-            });
+            let clickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
+            if (clickEvents && clickEvents.length > 0) {
+                svgele.click(function (ev) {
+                    self.runEvents(self, ga, ev, clickEvents);
+                });
+            }
+            let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
+            if (mouseDownEvents && mouseDownEvents.length > 0) {
+                svgele.mousedown(function (ev) {
+                    self.runEvents(self, ga, ev, mouseDownEvents);
+                });
+            }
+            let mouseUpEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
+            if (mouseUpEvents && mouseUpEvents.length > 0) {
+                svgele.mouseup(function (ev) {
+                    self.runEvents(self, ga, ev, mouseUpEvents);
+                });
+            }
+        }
+    }
+
+    private runEvents(self: any, ga: GaugeSettings, ev: any, events: any) {
+        for (let i = 0; i < events.length; i++) {
+            let actindex = Object.keys(GaugeEventActionType).indexOf(events[i].action);
+            let eventTypes = Object.values(GaugeEventActionType);
+            if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
+                self.loadPage(ev, events[i].actparam);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
+                self.onOpenCard(ga.id, ev, events[i].actparam, events[i].actoptions);
+            } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
+                self.openDialog(ev, events[i].actparam, events[i].actoptions);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onSetValue) === actindex) {
+                self.onSetValue(ga, events[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onToggleValue) === actindex) {
+                self.onToggleValue(ga, events[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onSetInput) === actindex) {
+                self.onSetInput(ga, events[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.oniframe) === actindex) {
+                self.openIframe(ga.id, ev, events[i].actparam, events[i].actoptions);
+            } else if (eventTypes.indexOf(GaugeEventActionType.oncard) === actindex) {
+                self.openWindow(ga.id, ev, events[i].actparam, events[i].actoptions);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
+                self.onClose(ev);
+            }
         }
     }
 

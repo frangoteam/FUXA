@@ -376,6 +376,8 @@
     "shapes.action-anticlockwise": "Turn anticlockwise",
     "shapes.action-downup": "Up and down",
     "shapes.event-click": "Click",
+    "shapes.event-mouseup": "MouseUp",
+    "shapes.event-mousedown": "MouseDown",
     "shapes.event-onpage": "Open Page",
     "shapes.event-onwindow": "Open Card",
     "shapes.event-ondialog": "Open Dialog",

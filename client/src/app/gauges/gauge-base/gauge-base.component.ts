@@ -53,7 +53,7 @@ export class GaugeBaseComponent implements OnInit {
         }
         let idxtype = Object.values(GaugeEventType).indexOf(type);
         pro.events.forEach(ev => {
-            if (Object.keys(GaugeEventType).indexOf(ev.type) === idxtype) {
+            if (idxtype < 0 || Object.keys(GaugeEventType).indexOf(ev.type) === idxtype) {
                 res.push(ev);
             }
         });

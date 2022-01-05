@@ -227,7 +227,7 @@ export class GaugesManager {
      * @param bindclick
      * @param bindhtmlevent
      */
-    bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, bindclick: any, bindhtmlevent: any) {
+    bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, bindMouseEvent: any, bindhtmlevent: any) {
         let sigsid: string[] = this.getBindSignals(ga);
         if (sigsid) {
             for (let i = 0; i < sigsid.length; i++) {
@@ -243,23 +243,22 @@ export class GaugesManager {
                 }
             }
         }
-        let clicks: GaugeEvent[] = this.getBindClick(ga);
-        if (clicks && clicks.length > 0) { // && !this.eventGauge[ga.id]) {
+        let mouseEvents: GaugeEvent[] = this.getBindMouseEvent(ga, null);
+        if (mouseEvents && mouseEvents.length > 0) {
             this.eventGauge[ga.id] = ga;
             if (!this.mapGaugeView[ga.id]) {
                 this.mapGaugeView[ga.id] = {};
                 this.mapGaugeView[ga.id][domViewId] = ga;
-                bindclick(ga);
+                bindMouseEvent(ga);
             } else if (!this.mapGaugeView[ga.id][domViewId]) {
                 this.mapGaugeView[ga.id][domViewId] = ga;
-                bindclick(ga);
+                bindMouseEvent(ga);
             }
             // add pointer
             let ele = document.getElementById(ga.id);
             if (ele) {
                 ele.style.cursor = "pointer";
             }
-            // bindclick(ga);
         }
         let htmlEvents = this.getHtmlEvents(ga);
         if (htmlEvents) {
@@ -417,14 +416,14 @@ export class GaugesManager {
     }
 
     /**
-     * return all events binded to the gauge with click event
+     * return all events binded to the gauge with mouse event
      * @param ga
      */
-    getBindClick(ga: GaugeSettings) {
+     getBindMouseEvent(ga: GaugeSettings, evType: GaugeEventType) {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (typeof GaugesManager.Gauges[i]['getEvents'] === 'function') {
-                    return GaugesManager.Gauges[i]['getEvents'](ga.property, GaugeEventType.click);
+                    return GaugesManager.Gauges[i]['getEvents'](ga.property, evType);
                 } else {
                     return null;
                 }
