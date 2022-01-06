@@ -163,4 +163,11 @@ export class GaugeBaseComponent implements OnInit {
             }
         }
     }
+
+    static clearAnimationTimer(actref: any) {
+        if (actref && actref.timer) {
+            clearTimeout(actref.timer);
+            actref.timer = null;
+        }
+    }    
 }

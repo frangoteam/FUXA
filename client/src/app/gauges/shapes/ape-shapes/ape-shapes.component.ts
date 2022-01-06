@@ -155,11 +155,4 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             }
         }
     }
-
-    static clearAnimationTimer(actref: any) {
-        if (actref && actref.timer) {
-            clearTimeout(actref.timer);
-            actref.timer = null;
-        }
-    }
 }

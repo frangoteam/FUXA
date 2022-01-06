@@ -21,7 +21,8 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
     static TypeTag = 'svg-ext-' + ProcEngComponent.TypeId;
     static LabelTag = 'Proc-Eng';
 
-    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink };
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop, 
+        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
 
     constructor() {
         super();
@@ -106,6 +107,28 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= value && act.range.max >= value);
             this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false);
+        } else {
+            if (act.range.min <= value && act.range.max >= value) {
+                var element = SVG.adopt(svgele.node);
+                ProcEngComponent.runMyAction(element, act.type, gaugeStatus);
+            }    
+        }
+    }
+
+    static runMyAction(element, type, gaugeStatus: GaugeStatus) {
+        if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+            return;
+        }
+        element.stop(true);
+        if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.clockwise) {
+            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
+        } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.anticlockwise) {
+            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
+        } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.stop) {
+            if (gaugeStatus.actionRef) {
+                ProcEngComponent.clearAnimationTimer(gaugeStatus.actionRef);
+                gaugeStatus.actionRef.type = type;
+            }
         }
     }
 }

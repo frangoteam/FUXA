@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../gauge-base/gauge-base.component'
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType } from '../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';
 
 declare var SVG: any;
@@ -12,11 +12,12 @@ declare var SVG: any;
 })
 export class ShapesComponent extends GaugeBaseComponent implements OnInit {
 
-    static TypeId = 'shapes';
-    static TypeTag = 'svg-ext-' + ShapesComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
+    static TypeId = 'shapes';                                   // Standard shapes (General, Shapes)
+    static TypeTag = 'svg-ext-' + ShapesComponent.TypeId;       // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'Shapes';
 
-    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink };
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop, 
+                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
 
     constructor() {
         super();
@@ -109,6 +110,28 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= value && act.range.max >= value);
             this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false);
+        } else {
+            if (act.range.min <= value && act.range.max >= value) {
+                var element = SVG.adopt(svgele.node);
+                ShapesComponent.runMyAction(element, act.type, gaugeStatus);
+            }    
+        }
+    }
+
+    static runMyAction(element, type, gaugeStatus: GaugeStatus) {
+        if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+            return;
+        }
+        element.stop(true);
+        if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.clockwise) {
+            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
+        } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.anticlockwise) {
+            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
+        } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.stop) {
+            if (gaugeStatus.actionRef) {
+                ShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
+                gaugeStatus.actionRef.type = type;
+            }
         }
     }
 }
