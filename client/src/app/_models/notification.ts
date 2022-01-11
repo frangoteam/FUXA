@@ -4,6 +4,7 @@ export class Notification {
     name: string;
     receiver: string;
     delay: number = 1;
+    interval: number = 0;
     enabled: boolean = true;
     text: string;
     type: string;

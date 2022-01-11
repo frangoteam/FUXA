@@ -29,7 +29,7 @@ function AlarmsManager(_runtime) {
      */
     this.start = function () {
         return new Promise(function (resolve, reject) {
-            var self = this;
+            logger.info('alarms check start', true);
             alarmsCheckStatus = setInterval(function () {
                 _checkStatus();
             }, ALARMS_CHECK_STATUS_INTERVAL);
@@ -37,7 +37,7 @@ function AlarmsManager(_runtime) {
     }
 
     /**
-     * Stop StateMachine, Close Device connection, break all TimerInterval (Device status/polling)
+     * Stop StateMachine, break TimerInterval (_checkStatus)
      */
     this.stop = function () {
         return new Promise(function (resolve, reject) {

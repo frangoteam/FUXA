@@ -16,7 +16,7 @@ import { Utils } from '../../_helpers/utils';
 })
 export class NotificationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'receiver', 'delay', 'type', 'enabled', 'subscriptions', 'remove'];
+    displayedColumns = ['select', 'name', 'receiver', 'delay', 'interval', 'type', 'enabled', 'subscriptions', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     notificationAlarm = Object.keys(NotificationsType).find(key => NotificationsType[key] === NotificationsType.alarms);

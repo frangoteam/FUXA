@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType } from '../_models/project';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
+import { Graph } from '../_models/graph';
 import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Text } from '../_models/text';
@@ -387,6 +388,29 @@ export class ProjectService {
     }
     //#endregion
 
+    //#region Graph resource
+    /**
+     * get graphs list
+     * @returns 
+     */
+    getGraphs(): Graph[] {
+        return (this.projectData) ? (this.projectData.graphs) ? this.projectData.graphs : [] : null;
+    }
+
+    /**
+     * save the graphs to project
+     * @param graphs
+     */
+    setGraphs(graphs: Graph[]) {
+        this.projectData.graphs = graphs;
+        this.storage.setServerProjectData(ProjectDataCmdType.Graphs, graphs, this.projectData).subscribe(result => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
     //#region Alarms resource    
     /**
      * get alarms resource
@@ -397,6 +421,7 @@ export class ProjectService {
 
     /**
      * save the alarm to project
+     * @param text
      */
     setAlarm(alarm: Alarm, old: Alarm) {
         return new Observable((observer) => {
@@ -471,7 +496,7 @@ export class ProjectService {
     /**
      * get notifications resource
      */
-    getNotifications() {
+     getNotifications() {
         return (this.projectData) ? (this.projectData.notifications) ? this.projectData.notifications : [] : null;
     }
 
@@ -487,6 +512,7 @@ export class ProjectService {
             if (exist) {
                 exist.name = notification.name;
                 exist.delay = notification.delay;
+                exist.interval = notification.interval;
                 exist.options = notification.options;
                 exist.receiver = notification.receiver;
                 exist.enabled = notification.enabled;

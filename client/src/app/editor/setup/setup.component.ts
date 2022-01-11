@@ -6,6 +6,7 @@ import { ProjectService } from '../../_services/project.service';
 import { AppService } from '../../_services/app.service';
 
 import { ChartConfigComponent } from '../../editor/chart-config/chart-config.component';
+import { GraphConfigComponent } from '../../editor/graph-config/graph-config.component';
 import { LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
@@ -33,7 +34,7 @@ export class SetupComponent implements OnInit, AfterViewInit {
         this.dialogRef.close();
     }
 
-    goTo(destination:string) {
+    goTo(destination: string) {
         this.onNoClick();
         this.router.navigate([destination]);
     }
@@ -51,6 +52,20 @@ export class SetupComponent implements OnInit, AfterViewInit {
     }
 
     /**
+     * edit the graph configuration, bar and pie
+     * @param type 
+     */
+    onGraphConfig(type: string) {
+        this.onNoClick();
+        let dialogRef = this.dialog.open(GraphConfigComponent, {
+            position: { top: '60px' },
+            minWidth: '1090px', width: '1090px',
+            data: { type: type }
+        });
+        dialogRef.afterClosed().subscribe();
+    }
+
+    /**
      * edit the layout property of views: menu, header
      */
     onLayoutConfig() {
@@ -61,8 +76,8 @@ export class SetupComponent implements OnInit, AfterViewInit {
             templayout = JSON.parse(JSON.stringify(hmi.layout));
         }
         if (templayout && templayout.showdev !== false) {
-			templayout.showdev = true;
-		}
+            templayout.showdev = true;
+        }
         let dialogRef = this.dialog.open(LayoutPropertyComponent, {
             position: { top: '60px' },
             data: { layout: templayout, views: hmi.views, securityEnabled: this.projectService.isSecurityEnabled() }

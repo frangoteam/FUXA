@@ -1,6 +1,7 @@
 import { Device, DEVICE_PREFIX } from './device';
 import { Hmi } from './hmi';
 import { Chart } from './chart';
+import { Graph } from './graph';
 import { Alarm } from './alarm';
 import { Notification } from './notification';
 import { Text } from './text';
@@ -16,10 +17,12 @@ export class ProjectData {
     devices = {};
     /** Charts, Tags, colors, etc. */
     charts: Chart[] = [];
+    /** Graphs, Bar, Pie */
+    graphs: Graph[] = [];
     /** Alarms, Tags, logic, level, colors, etc.  */
     alarms: Alarm[] = [];
     /** Notifications  */
-    notifications: Notification[] = [];    
+    notifications: Notification[] = [];
     /** not used yet */
     texts: Text[] = [];
     /** Plugins, name, version */
@@ -33,6 +36,7 @@ export enum ProjectDataCmdType {
     DelView = 'del-view',
     HmiLayout = 'layout',
     Charts = 'charts',
+    Graphs = 'graphs',
     SetText = 'set-text',
     DelText = 'del-text',
     SetAlarm = 'set-alarm',

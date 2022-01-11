@@ -258,6 +258,13 @@ function start() {
                 logger.error('runtime.failed-to-start-alarms: ' + err);
                 reject();
             });
+            // start notificator manager
+            // notificatorMgr.start().then(function () {
+            //     resolve(true);
+            // }).catch(function (err) {
+            //     logger.error('runtime.failed-to-start-notificator: ' + err);
+            //     reject();
+            // });
         }).catch(function (err) {
             logger.error('runtime.failed-to-start: ' + err);
             reject();
@@ -290,6 +297,7 @@ function update(cmd, data) {
                 alarmsMgr.reset();
             } else if (cmd === project.ProjectDataCmdType.SetAlarm || cmd === project.ProjectDataCmdType.DelAlarm) {
                 alarmsMgr.reset();
+                notificatorMgr.reset();
             }
             resolve(true);
         } catch (err) {

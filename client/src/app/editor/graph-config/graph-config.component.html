@@ -1,0 +1,52 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'graph.config-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div style="display: inline-block; width: 100%">
+        <div class="panelTop">
+            <div class="toolbox-toadd">
+                <button mat-icon-button (click)="onEditGraph(null)">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+            <div *ngFor="let graph of data.graphs; index as i" class="mychips" (click)="onSelectGraph(graph)" [ngClass]="isGraphSelected(graph)">
+                <mat-icon (click)="onSelectGraph(graph)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
+                <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="onAddGraphSource(graph)" style="font-size: 14px;">{{'graph.config-addsource' | translate}}</button>
+                    <button mat-menu-item (click)="onEditGraph(graph)" style="font-size: 14px;">{{'graph.config-rename' | translate}}</button>
+                </mat-menu>
+                <span>
+                    {{graph.name}}
+                </span>
+                <mat-icon (click)="onSelectGraph(graph);onRemoveGraph(i)">cancel</mat-icon>
+            </div>
+        </div>
+        <div class="panelBottom">
+            <mat-list class="list">
+                <mat-list-item class="list-item list-header">
+                    <span style="width: 25px;"></span>
+                    <span style="width: 40%;max-width: 40%;">{{'graph.config-source-name' | translate}}</span>
+                    <span style="width: 30%;max-width: 30%;">{{'graph.config-source-label' | translate}}</span>
+                    <span style="width: 30%;max-width: 30%;">{{'graph.config-devices' | translate}}</span>
+                </mat-list-item>
+                <div class="list-panel">
+                    <mat-list-item *ngFor="let source of selectedGraph.sources" class="list-item list-item-hover">
+                        <mat-icon (click)="$event.stopPropagation();removeGraphSource(source)" style="color:gray;font-size: 20px">delete</mat-icon>
+                        <div class="list-item-text" style="width: 40%;max-width: 40%;">
+                            <span>{{getDeviceTagName(source)}}</span>
+                        </div>
+                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                            <span>{{source.label}}</span>
+                        </div>                        
+                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                            <span>{{source.device}}</span>
+                        </div>
+                    </mat-list-item>
+                </div>
+            </mat-list>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

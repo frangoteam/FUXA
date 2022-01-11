@@ -20,7 +20,7 @@
         <div style="display: block; margin-top: 10px">
             <div class="my-form-field">
                 <span>{{'notification.property-type' | translate}}</span>
-                <mat-select [(value)]="data.notification.type" style="width: 230px" (selectionChange)="onTypeChanged(data.notification.type)">
+                <mat-select [(value)]="data.notification.type" style="width: 207px" (selectionChange)="onTypeChanged(data.notification.type)">
                     <mat-option *ngFor="let ev of notificationsType | enumToArray" [value]="ev.key" [disabled]="ev.key === notificationTrigger">
                         {{ ev.value }}
                     </mat-option>
@@ -30,7 +30,13 @@
                 <span>{{'notification.property-delay' | translate}}</span>
                 <input numberOnly [(ngModel)]="data.notification.delay" type="number" max="60" min="1" step="1" style="width:80px">
             </div>
-            <div class="my-form-field" style="margin-left: 20px;">
+            <div class="my-form-field" style="margin-left: 16px; max-width:80px">
+                <span>{{'notification.property-interval' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.notification.interval" type="number" max="60" min="1" step="1" style="width:80px">
+            </div>
+        </div>
+        <div style="display: block; margin-top: 10px">
+            <div class="my-form-field" style="float: right; margin-right: 30px;">
                 <span>{{'notification.property-enabled' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="data.notification.enabled" style="vertical-align: middle;"></mat-slide-toggle>
             </div>

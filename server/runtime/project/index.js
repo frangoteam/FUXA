@@ -98,7 +98,7 @@ function load() {
                             }).catch(function (err) {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.ALARMS}' ${err}`);
                                 callback(err);
-                            }); 
+                            });
                         },
                         // step 3 get notifications
                         function (callback) {
@@ -168,6 +168,10 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setCharts(value);
+            } else if (cmd === ProjectDataCmdType.Graphs) {
+                section.table = prjstorage.TableType.GENERAL;
+                section.name = cmd;
+                setGraphs(value);
             } else if (cmd === ProjectDataCmdType.SetText) {
                 section.table = prjstorage.TableType.TEXTS;
                 section.name = value.name;
@@ -282,6 +286,14 @@ function setHmiLayout(layout) {
  */
 function setCharts(charts) {
     data.charts = charts;
+}
+
+/**
+ * Set Graphs  
+ * @param {*} graphs 
+ */
+ function setGraphs(graphs) {
+    data.graphs = graphs;
 }
 
 /**
@@ -471,9 +483,9 @@ function setProject(prjcontent) {
                             for (var i = 0; i < notifications.length; i++) {
                                 scs.push({ table: prjstorage.TableType.NOTIFICATIONS, name: notifications[i].id, value: notifications[i] });
                             }
-                        }                        
+                        }     
                     } else {
-                        // charts, version
+                        // charts, graphs, version
                         scs.push({ table: prjstorage.TableType.GENERAL, name: key, value: prjcontent[key] });
                     }
                 });
@@ -569,7 +581,7 @@ function getAlarms() {
 /**
  * Get the notifications 
  */
-function getNotifications() {
+ function getNotifications() {
     return new Promise(function (resolve, reject) {
         prjstorage.getSection(prjstorage.TableType.NOTIFICATIONS).then(drows => {
             if (drows.length > 0) {
@@ -671,6 +683,7 @@ const ProjectDataCmdType = {
     DelView: 'del-view',
     HmiLayout: 'layout',
     Charts: 'charts',
+    Graphs: 'graphs',
     SetText: 'set-text',
     SetText: 'set-text',
     DelText: 'del-text',

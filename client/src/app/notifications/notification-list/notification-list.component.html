@@ -33,6 +33,11 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-delay' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.delay}} </mat-cell>
             </ng-container>
+            <!-- Interval Column -->
+            <ng-container matColumnDef="interval">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-interval' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.interval}} </mat-cell>
+            </ng-container>            
             <!-- Type Column -->
             <ng-container matColumnDef="type">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-type' | translate}} </mat-header-cell>
