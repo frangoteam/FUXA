@@ -29,7 +29,8 @@ module.exports = {
          */
         alarmsApp.get("/api/alarms", secureFnc, function(req, res) {
             var groups = checkGroupsFnc(req);
-            runtime.alarmsMgr.getAlarmsValues(req.query, groups).then(result => {
+            try {
+                var result = runtime.alarmsMgr.getAlarmsValues(req.query, groups);
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
@@ -37,14 +38,14 @@ module.exports = {
                 } else {
                     res.end();
                 }
-            }).catch(function(err) {
+            } catch (err) {
                 if (err.code) {
                     res.status(400).json({error:err.code, message: err.message});
                 } else {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }
                 runtime.logger.error("api get alarms: " + err.message);
-            });                
+            }                
         });
 
                 /**

@@ -541,7 +541,7 @@ function getTexts() {
     return new Promise(function (resolve, reject) {
         prjstorage.getSection(prjstorage.TableType.TEXTS).then(drows => {
             if (drows.length > 0) {
-                var texts = []
+                var texts = [];
                 for (var id = 0; id < drows.length; id++) {
                     texts.push(JSON.parse(drows[id].value));
                 }
@@ -563,7 +563,7 @@ function getAlarms() {
     return new Promise(function (resolve, reject) {
         prjstorage.getSection(prjstorage.TableType.ALARMS).then(drows => {
             if (drows.length > 0) {
-                var alarms = []
+                var alarms = [];
                 for (var id = 0; id < drows.length; id++) {
                     alarms.push(JSON.parse(drows[id].value));
                 }
@@ -585,7 +585,7 @@ function getAlarms() {
     return new Promise(function (resolve, reject) {
         prjstorage.getSection(prjstorage.TableType.NOTIFICATIONS).then(drows => {
             if (drows.length > 0) {
-                var notifications = []
+                var notifications = [];
                 for (var id = 0; id < drows.length; id++) {
                     notifications.push(JSON.parse(drows[id].value));
                 }
@@ -698,6 +698,7 @@ module.exports = {
     load: load,
     getDevices: getDevices,
     getAlarms: getAlarms,
+    getNotifications: getNotifications,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,

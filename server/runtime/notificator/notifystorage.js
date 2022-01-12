@@ -41,8 +41,8 @@ function _bind() {
             logger.info('notifystorage.connected-to ' + dbfile + ' database.', true);
         });
         // prepare query
-        var sql = "CREATE TABLE if not exists notifications (nametype TEXT PRIMARY KEY, type TEXT, status TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER);";
-        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, id TEXT, name TEXT, type TEXT, status TEXT, text TEXT, grp TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER, userack TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
+        var sql = "CREATE TABLE if not exists notifications (id TEXT PRIMARY KEY, name TEXT, type TEXT, ontime INTEGER, notifytime INTEGER, notifytype TEXT);";
+        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, id TEXT, name TEXT, type TEXT, receiver TEXT, text TEXT, notifytime INTEGER, notifytype TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
         db_notifications.exec(sql, function (err) {
             if (err) {
                 logger.error('notifystorage.failed-to-bind: ' + err);
@@ -118,26 +118,22 @@ function getNotifications() {
 /**
  * Set Notifications value in database
  */
-function setNotifications(notifications) {
+function setNotification(notification) {
     return new Promise(function (resolve, reject) {
         // prepare query
-        if (notifications && notifications.length) {
+        if (notification) {
             var sql = "";
-            notifications.forEach(alr => {
-                let grp = alr.subproperty.group || '';
-                let status = alr.status || '';
-                let userack = alr.userack || '';
-                //is alarm condition is changed (if it is occured or acknowledged) insert or update record
-                sql += "INSERT OR REPLACE INTO notifications (nametype, type, status, ontime, offtime, acktime) VALUES('" +
-                    alr.getId() + "','" + alr.type + "','" + status + "','" + alr.ontime + "','" + alr.offtime + "','" + alr.acktime + "');" +
-                    "INSERT OR REPLACE INTO chronicle (Sn, nametype, type, status, text, grp, ontime, offtime,  acktime, userack)" +
-                    " VALUES ((SELECT Sn from chronicle WHERE ontime='" + alr.ontime + "' AND nametype='" + alr.getId() + "'),'" +
-                    alr.getId() + "','" + alr.type + "','" + status + "','" + alr.subproperty.text + "','" + grp + "','" + alr.ontime + "','" + alr.offtime + "','" + alr.acktime + "','" + userack + "');";
-                if (alr.toremove) {
-                    //is alarm to be removed (if it is ok) delete it from db
-                    sql += "DELETE FROM notifications WHERE nametype = '" + alr.getId() + "';";
-                }
-            });
+            let grp = alr.subproperty.group || '';
+            let status = alr.status || '';
+            let userack = alr.userack || '';
+            //is notification is changed insert or update record
+            sql += "INSERT OR REPLACE INTO notifications (id, name, type, ontime, notifytime) VALUES('" +
+                notification.id + "','" + notification.type + "','" + notification.name + "','" + notification.ontime + "','" + notification.notifytime + "');";
+            if (notification.notifytime) {
+                sql += "INSERT OR REPLACE INTO chronicle (id, name, type, receiver, text, notifytime) VALUES('" + 
+                    notification.id + "','" + notification.name + "','" + notification.type + "','" + notification.receiver + "','" + 
+                    notification.text + "','" + notification.notifytime + "');";
+            }
             db_notifications.exec(sql, function (err) {
                 if (err) {
                     logger.error('notifystorage.failed-to-set: ' + err);
@@ -182,7 +178,7 @@ module.exports = {
     close: close,
     getNotifications: getNotifications,
     getNotificationsHistory: getNotificationsHistory,
-    setNotifications: setNotifications,
+    setNotification: setNotification,
     clearNotifications: clearNotifications,
     removeNotification: removeNotification
 };

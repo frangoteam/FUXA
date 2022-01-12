@@ -91,20 +91,18 @@ function AlarmsManager(_runtime) {
      * Return the alarms value (active/passive alarms count), { highhigh: <count>, high: <count>, low: <count>, info: <count> } 
      */
     this.getAlarmsValues = function () {
-        return new Promise(function (resolve, reject) {
-            var result = [];
-            Object.keys(alarms).forEach(alrkey => {
-                alarms[alrkey].forEach(alr => {
-                    if (alr.status && alr.type !== AlarmsTypes.ACTION) {
-                        var alritem = { name: alr.getId(), type: alr.type, ontime: alr.ontime, offtime: alr.offtime, acktime: alr.acktime, 
-                            status: alr.status, text: alr.subproperty.text, group: alr.subproperty.group, 
-                            bkcolor: alr.subproperty.bkcolor, color: alr.subproperty.color, toack: alr.isToAck() };
-                        result.push(alritem);
-                    }
-                });
+        var result = [];
+        Object.keys(alarms).forEach(alrkey => {
+            alarms[alrkey].forEach(alr => {
+                if (alr.status && alr.type !== AlarmsTypes.ACTION) {
+                    var alritem = { name: alr.getId(), type: alr.type, ontime: alr.ontime, offtime: alr.offtime, acktime: alr.acktime, 
+                        status: alr.status, text: alr.subproperty.text, group: alr.subproperty.group, 
+                        bkcolor: alr.subproperty.bkcolor, color: alr.subproperty.color, toack: alr.isToAck() };
+                    result.push(alritem);
+                }
             });
-            resolve(result);
         });
+        return result;
     }
 
     /**
