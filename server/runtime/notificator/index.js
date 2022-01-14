@@ -4,9 +4,10 @@
 
 'use strict';
 const nodemailer = require('nodemailer');
-const notifystorage = require('./notifystorage');
+// const notifystorage = require('./notifystorage');
 
-var NOTIFY_CHECK_STATUS_INTERVAL = 1000 * 6;
+var NOTIFY_CHECK_STATUS_INTERVAL = 1000 * 60;
+var MILLI_MINUTE = 60000;
 
 function NotificatorManager(_runtime) {
     var runtime = _runtime;
@@ -16,11 +17,12 @@ function NotificatorManager(_runtime) {
     var notifyCheckStatus = null;       // TimerInterval to check Notificator status
     var working = false;                // Working flag to manage overloading of check notificator status
     var notificationsSubsctiption = {}; // Notifications matrix, grupped by subscriptions type
-    var notificationsProperty = {};     // Notifications property property list, key = notification.id
     var status = NotifyStatusEnum.INIT; // Current status (StateMachine)
     var clearNotifications = false;     // Flag to clear current notifications from DB
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
-    var subscription
+    var subscriptionStatus = {};        // Status of subscription, to check if there are some change
+    var notificationsFound = 0;         // Notifications found to check 
+
     /**
      * Start TimerInterval to check Notifications
      */
@@ -28,8 +30,8 @@ function NotificatorManager(_runtime) {
         return new Promise(function (resolve, reject) {
             logger.info('notificator check start', true);
             notifyCheckStatus = setInterval(function () {
-                _checkStatus();
-            }, 10000);
+                _checkStatus();     // check in 20 seconds interval
+            }, 20000);
         });
     }
 
@@ -60,12 +62,18 @@ function NotificatorManager(_runtime) {
 
     this.clearNotifications = function (all) {
         return new Promise(function (resolve, reject) {
-            notifystorage.clearNotifications(all).then((result) => {
-                resolve(true);
-            }).catch(function (err) {
-                reject(err);
-            });
+            resolve();
+            // notifystorage.clearNotifications(all).then((result) => {
+            //     resolve(true);
+            // }).catch(function (err) {
+            //     reject(err);
+            // });
         });
+    }
+
+    this.forceCheck = function () {
+        lastCheck = 0;
+        _checkStatus();
     }
 
     /**
@@ -95,15 +103,17 @@ function NotificatorManager(_runtime) {
                 });
             }
         } else if (status === NotifyStatusEnum.IDLE) {
-            var current = new Date().getTime();
-            if (current - lastCheck > NOTIFY_CHECK_STATUS_INTERVAL) {
-                lastCheck = current;
-                if (_checkWorking(true)) {
-                    _checkNotifications().then(function () {
-                        _checkWorking(false);
-                    }).catch(function (err) {
-                        _checkWorking(false);
-                    });
+            if (notificationsFound) {
+                var current = new Date().getTime();
+                if (current - lastCheck > NOTIFY_CHECK_STATUS_INTERVAL) {
+                    lastCheck = current;
+                    if (_checkWorking(true)) {
+                        _checkNotifications().then(function () {
+                            _checkWorking(false);
+                        }).catch(function (err) {
+                            _checkWorking(false);
+                        });
+                    }
                 }
             }
         }        
@@ -114,13 +124,14 @@ function NotificatorManager(_runtime) {
      */
      var _init = function () {
         return new Promise(function (resolve, reject) {
-            notifystorage.init(settings, logger).then(result => {
-                logger.info('notificator.notifystorage-init-successful!', true);
-                resolve();
-            }).catch(function (err) {
-                logger.error('notificator.notifystorage.failed-to-init: ' + err);
-                reject(err);
-            });
+            resolve();
+            // notifystorage.init(settings, logger).then(result => {
+            //     logger.info('notificator.notifystorage-init-successful!', true);
+            //     resolve();
+            // }).catch(function (err) {
+            //     logger.error('notificator.notifystorage.failed-to-init: ' + err);
+            //     reject(err);
+            // });
         });
     }
 
@@ -139,9 +150,8 @@ function NotificatorManager(_runtime) {
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
             notificationsSubsctiption = {};
-            notificationsProperty = {};
+            notificationsFound = 0;
             runtime.project.getNotifications().then(function (result) {
-                var notificationsFound = 0;
                 if (result) {
                     result.forEach(notification => {
                         if (notification.enabled) {
@@ -150,7 +160,16 @@ function NotificatorManager(_runtime) {
                                     if (!notificationsSubsctiption[sub]) {
                                         notificationsSubsctiption[sub] = [];
                                     }
-                                    notificationsSubsctiption[sub].push(notification);
+                                    var temp = new Notification(notification.id, notification.name, notification.type);
+                                    temp.receiver = notification.receiver;
+                                    temp.delay = notification.delay;
+                                    temp.interval = notification.interval;
+                                    temp.enabled = notification.enabled;
+                                    temp.text = notification.text;
+                                    temp.subscriptions = notification.subscriptions;
+                                    temp.options = notification.options;
+                                    notificationsSubsctiption[sub].push(temp);
+                                    notificationsFound++;
                                 }
                             });
                         }
@@ -169,31 +188,32 @@ function NotificatorManager(_runtime) {
      */
     var _loadNotifications = function () {
         return new Promise(function (resolve, reject) {
-            if (clearNotifications) {
-                notifystorage.clearNotifications().then(result => {
-                    resolve();
-                    clearNotifications = false;
-                }).catch(function (err) {
-                    logger.error('notificator.clear-current.failed: ' + err);
-                    reject(err);
-                });
-            } else {
-                notifystorage.getNotifications().then(result => {
-                    Object.keys(notificationsSubsctiption).forEach(subkey => {
-                        notificationsSubsctiption[subkey].forEach(notification => {
-                            var currentNotify = result.find(currentNotify => currentNotify.id === notification.id);
-                            if (currentNotify) {
-                                notification.ontime = currentNotify.ontime;
-                                notification.notifytime = currentNotify.notifytime;
-                            }
-                        });
-                    });
-                    resolve();
-                }).catch(function (err) {
-                    logger.error('notificator.load-current.failed: ' + err);
-                    reject(err);
-                });
-            }
+            resolve();
+            // if (clearNotifications) {
+            //     notifystorage.clearNotifications().then(result => {
+            //         resolve();
+            //         clearNotifications = false;
+            //     }).catch(function (err) {
+            //         logger.error('notificator.clear-current.failed: ' + err);
+            //         reject(err);
+            //     });
+            // } else {
+            //     notifystorage.getNotifications().then(result => {
+            //         Object.keys(notificationsSubsctiption).forEach(subkey => {
+            //             notificationsSubsctiption[subkey].forEach(notification => {
+            //                 var currentNotify = result.find(currentNotify => currentNotify.id === notification.id);
+            //                 if (currentNotify) {
+            //                     notification.ontime = currentNotify.ontime;
+            //                     notification.notifytime = currentNotify.notifytime;
+            //                 }
+            //             });
+            //         });
+            //         resolve();
+            //     }).catch(function (err) {
+            //         logger.error('notificator.load-current.failed: ' + err);
+            //         reject(err);
+            //     });
+            // }
         });
     }
 
@@ -202,15 +222,41 @@ function NotificatorManager(_runtime) {
      */
      var _checkNotifications = function () {
         return new Promise(function (resolve, reject) {
-
             var time = new Date().getTime();
-            var changed = [];
+            // check alarms categorie subscriptions
             runtime.alarmsMgr.getAlarmsStatus().then(alarmsStatus => {
                 Object.keys(alarmsStatus).forEach(stkey => {
-                    console.log(stkey);
-                    if (alarmsStatus[stkey] && notificationsSubsctiption[stkey]) {
-
+                    if (alarmsStatus[stkey]) {
+                        if ((notificationsSubsctiption[stkey] && notificationsSubsctiption[stkey].length)) {
+                            var statusChanged = !subscriptionStatus[stkey] || subscriptionStatus[stkey] < alarmsStatus[stkey];
+                            for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
+                                var notification = notificationsSubsctiption[stkey][i];
+                                if (notification.checkToNotify(time, statusChanged)) {
+                                    try {
+                                        // get alarms summary in text format
+                                        var alarmsSummary = runtime.alarmsMgr.getAlarmsString(stkey) || 'FUXA Alarms Error!';
+                                        var mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
+                                        runtime.notificatorMgr.sendMail(mail, null).then(function() {
+                                            notification.setNotify(time, stkey);
+                                            logger.info(`notificator.notify.successful: ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                        }).catch(function(senderr) {
+                                            logger.error(`notificator.notify.send.failed: ${senderr}`);
+                                        });
+                                    } catch (e) {
+                                        logger.error(`notificator.notify.failed: ${err}`);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (subscriptionStatus[stkey]) {
+                        // to reset 
+                        for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
+                            var notification = notificationsSubsctiption[stkey][i];
+                            notification.reset();
+                            logger.info(`notificator.notify.toreset: ${notification.name} ${stkey}`);
+                        }
                     }
+                    subscriptionStatus[stkey] = alarmsStatus[stkey];
                 });
                 resolve(true);
             }).catch(function (err) {
@@ -229,7 +275,7 @@ function NotificatorManager(_runtime) {
                 var smtpServer = smtp || settings.smtp;
                 if (smtpServer && smtpServer.host && smtpServer.port && smtpServer.username && smtpServer.password) {
                     const transporter = nodemailer.createTransport({ 
-                        host: smtp.host, 
+                        host: smtpServer.host, 
                         port: smtpServer.port,
                         secure: (smtpServer.port === 465) ? true : false, // true for 465, false for other ports
                         auth: {
@@ -237,6 +283,9 @@ function NotificatorManager(_runtime) {
                             pass: smtpServer.password
                         }
                     });
+                    if (!msg.from) {
+                        msg.from = smtpServer.username;
+                    }
                     let info = await transporter.sendMail(msg);
                     console.log(info.messageId);
                     resolve(`Message sent: ${info.messageId}`);
@@ -248,6 +297,8 @@ function NotificatorManager(_runtime) {
             }
         });
     }
+    // check if alarms status chenaged
+    events.on('alarms-status:changed', this.forceCheck);
 }
 
 module.exports = {
@@ -274,6 +325,7 @@ function Notification(id, name, type) {
     this.interval = 0;
     this.ontime = 0;
     this.notifytime = 0;
+    this.notifytype = '';
     this.enabled = true;
     this.text;
     this.subscriptions = {};
@@ -281,6 +333,34 @@ function Notification(id, name, type) {
 
     this.hasSubscriptions = function () {
         return Object.keys(this.subscriptions).length ? true : false;
+    }
+
+    this.checkToNotify = function (time, changed) {
+        if (!this.ontime) {
+            this.ontime = time;
+            return false;
+        }
+        var result = true;
+        if (this.ontime + (this.delay * MILLI_MINUTE) > time) {
+            result = false;
+        } else if (this.notifytime && (this.interval <= 0 || this.notifytime + (this.interval * MILLI_MINUTE) > time)) {
+            result = false;
+        } else if (changed) { // !this.notifytime
+            this.ontime = time;
+            result = true;
+        }
+        return result;
+    }
+
+    this.setNotify = function (time, type) {
+        this.notifytime = time;
+        this.notifytype = type;
+    }
+
+    this.reset = function () {
+        this.ontime = 0;
+        this.notifytime = 0;
+        this.notifytype = '';
     }
 }
 

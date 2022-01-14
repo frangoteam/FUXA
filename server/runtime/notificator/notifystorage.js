@@ -41,8 +41,8 @@ function _bind() {
             logger.info('notifystorage.connected-to ' + dbfile + ' database.', true);
         });
         // prepare query
-        var sql = "CREATE TABLE if not exists notifications (id TEXT PRIMARY KEY, name TEXT, type TEXT, ontime INTEGER, notifytime INTEGER, notifytype TEXT);";
-        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, id TEXT, name TEXT, type TEXT, receiver TEXT, text TEXT, notifytime INTEGER, notifytype TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
+        // var sql = "CREATE TABLE if not exists notifications (id TEXT PRIMARY KEY, name TEXT, type TEXT, ontime INTEGER, notifytime INTEGER, notifytype TEXT, options TEXT);";
+        var sql = "CREATE TABLE if not exists chronicle (Sn INTEGER, id TEXT, name TEXT, type TEXT, receiver TEXT, text TEXT, notifytime INTEGER, notifytype TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
         db_notifications.exec(sql, function (err) {
             if (err) {
                 logger.error('notifystorage.failed-to-bind: ' + err);
@@ -123,17 +123,12 @@ function setNotification(notification) {
         // prepare query
         if (notification) {
             var sql = "";
-            let grp = alr.subproperty.group || '';
-            let status = alr.status || '';
-            let userack = alr.userack || '';
             //is notification is changed insert or update record
-            sql += "INSERT OR REPLACE INTO notifications (id, name, type, ontime, notifytime) VALUES('" +
-                notification.id + "','" + notification.type + "','" + notification.name + "','" + notification.ontime + "','" + notification.notifytime + "');";
-            if (notification.notifytime) {
-                sql += "INSERT OR REPLACE INTO chronicle (id, name, type, receiver, text, notifytime) VALUES('" + 
-                    notification.id + "','" + notification.name + "','" + notification.type + "','" + notification.receiver + "','" + 
-                    notification.text + "','" + notification.notifytime + "');";
-            }
+            // sql += "INSERT OR REPLACE INTO notifications (id, name, type, ontime, notifytime, notifytype) VALUES('" + notification.id + "','" + 
+            //         notification.type + "','" + notification.name + "','" + notification.ontime + "','" + notification.notifytime + "','" + notification.notifytype + "');";
+            sql += "INSERT OR REPLACE INTO chronicle (id, name, type, receiver, text, notifytime, notifytype) VALUES('" +
+                notification.id + "','" + notification.name + "','" + notification.type + "','" + notification.receiver + "','" + 
+                notification.text + "','" + notification.notifytime + "','" + notification.notifytype + "');";
             db_notifications.exec(sql, function (err) {
                 if (err) {
                     logger.error('notifystorage.failed-to-set: ' + err);

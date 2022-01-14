@@ -88,7 +88,7 @@ function AlarmsManager(_runtime) {
     }
 
     /**
-     * Return the alarms value (active/passive alarms count), { highhigh: <count>, high: <count>, low: <count>, info: <count> } 
+     * Return the current active alarms values
      */
     this.getAlarmsValues = function () {
         var result = [];
@@ -105,8 +105,21 @@ function AlarmsManager(_runtime) {
         return result;
     }
 
+    this.getAlarmsString = function (type) {
+        var result = '';
+        Object.keys(alarms).forEach(alrkey => {
+            alarms[alrkey].forEach(alr => {
+                if (alr.status && alr.type === type && alr.ontime) {
+                    var ontime = new Date(alr.ontime);
+                    result += `${ontime.toLocaleString()} - ${alr.type} - ${alr.subproperty.text || ''} - ${alr.status} - ${alr.subproperty.group || ''}\n`;
+                }
+            });
+        });
+        return result;
+    }
+
     /**
-     * Return the alarms hitory
+     * Return the alarms history
      */
     this.getAlarmsHistory = function (from, to) {
         return new Promise(function (resolve, reject) {
@@ -211,7 +224,7 @@ function AlarmsManager(_runtime) {
             if (_checkWorking(true)) {
                 _checkAlarms().then(function (changed) {
                     if (changed) {
-                        _emitAlarmsChanged();
+                        _emitAlarmsChanged(true);
                     }
                     _checkWorking(false);
                 }).catch(function (err) {

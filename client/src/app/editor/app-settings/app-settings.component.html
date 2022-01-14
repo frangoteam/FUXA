@@ -57,7 +57,8 @@
                 <div style="display: block; margin-top: 20px">
                     <div class="my-form-field">
                         <span>{{'dlg.app-settings-smtp-password' | translate}}</span>
-                        <input [(ngModel)]="settings.smtp.password" autocomplete="off" placeholder="**********" style="width: 320px" type="password">
+                        <input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="settings.smtp.password" style="width: 320px;">
+                        <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
                     </div>
                 </div>
                 <div style="display: block; margin-top: 20px; margin-bottom: 20px;">

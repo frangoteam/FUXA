@@ -27,7 +27,8 @@ export class AppSettingsComponent implements OnInit {
     authenticationTooltip = '';
     smtpTesting = false;
     smtpTestAddress = '';
-
+    showPassword = false;
+    
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,
         private translateService: TranslateService,
