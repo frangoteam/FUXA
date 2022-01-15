@@ -110,6 +110,10 @@ export class AppSettingsComponent implements OnInit {
         return true;
     }
 
+    keyDownStopPropagation(event) {
+        event.stopPropagation();
+    }
+
     private notifyError(error: string) {
         this.toastr.error(error, '', {
             timeOut: 3000,

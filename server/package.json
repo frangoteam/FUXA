@@ -1,7 +1,7 @@
 {
   "name": "fuxa-server",
-  "version": "1.1.4-584",
-  "description": "Web-based Process Visualization (SCADA/HMI) software",
+  "version": "1.1.4-585",
+  "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
