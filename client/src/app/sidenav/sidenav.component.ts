@@ -15,6 +15,9 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     @Output() goToPage: EventEmitter<string> = new EventEmitter();
     @Output() goToLink: EventEmitter<string> = new EventEmitter();
 
+    viewAsLink = '[link]';
+    viewAsAlarms = '[alarms]';
+
     layout = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
@@ -31,10 +34,10 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     }
 
     onGoTo(item: NaviItem) {
-        if (item.view) {
-            this.goToPage.emit(item.view);
-        } else if (item.link) {
+        if (item.link && item.view === this.viewAsLink) {
             this.goToLink.emit(item.link);
+        } else if (item.view ) {
+            this.goToPage.emit(item.view);
         }
     }
 

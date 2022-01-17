@@ -23,11 +23,14 @@
                 <mat-option *ngFor="let view of data.views" [value]="view.id">
                     {{ view.name }}
                 </mat-option>
+                <mat-option [value]="'[link]'">[{{'dlg.menuitem-link' | translate}}]</mat-option>
+                <mat-option [value]="'[alarms]'">[{{'dlg.menuitem-alarms' | translate}}]</mat-option>
+                <!-- <mat-option [value]="events">[{{'dlg.menuitem-events' | translate}}]</mat-option> -->
             </mat-select>
         </div>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-            <span>{{'dlg.menuitem-link' | translate}}</span>
-            <input [(ngModel)]="data.item.link" type="text" style="width: 300px" [readonly]="data.item.view">
+        <div *ngIf="data.item.view === '[link]'" class="my-form-field" style="display: block;margin-bottom: 10px;">
+            <span>{{'dlg.menuitem-address' | translate}}</span>
+            <input [(ngModel)]="data.item.link" type="text" style="width: 300px">
         </div>    
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.useraccess-groups' | translate}}</span>

@@ -91,9 +91,6 @@ export class LayoutPropertyComponent implements OnInit {
                     item.view = result.item.view;
                     item.link = result.item.link;
                     item.permission = result.permission; 
-                    if (item.view) {
-                        item.link = '';
-                    }
                 } else {
                     let nitem = new NaviItem();
                     nitem.icon = result.item.icon;
@@ -101,9 +98,6 @@ export class LayoutPropertyComponent implements OnInit {
                     nitem.view = result.item.view;
                     nitem.link = result.item.link;
                     nitem.permission = result.permission; 
-                    if (nitem.view) {
-                        nitem.link = '';
-                    }
                     this.draggableListLeft.push(nitem);
                 }
             }
