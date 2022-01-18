@@ -504,8 +504,8 @@ function OpcUAclient(_data, _logger, _events) {
                         opcua.TimestampsToReturn.Both
                     );
                     monitoredItem.on('changed', _monitorcallback(nodeId));
-                } catch (ex) {
-                    logger.error(`'${nodeId}' _startMonitor`);
+                } catch (err) {
+                    logger.error(`'${nodeId}' _startMonitor ${err}`);
                 }
             }
             callback(true);
