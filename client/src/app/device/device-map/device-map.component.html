@@ -31,8 +31,8 @@
             <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
             <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(flow) }}</span>
             <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
-            <mat-icon (click)="onListDevice(flow)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28">list_alt</mat-icon>
-            <mat-icon (click)="onEditDevice(flow)" class="device-icon device-edit" *ngIf="!readonly">edit</mat-icon>
+            <mat-icon (click)="onListDevice(flow)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28" matTooltip="{{'device.property-tags' | translate}}">list_alt</mat-icon>
+            <mat-icon (click)="onEditDevice(flow)" class="device-icon device-edit" *ngIf="!readonly" matTooltip="{{'device.property-edit' | translate}}">edit</mat-icon>
             <mat-icon (click)="onRemoveDevice(flow)" class="device-icon device-delete" *ngIf="!readonly">clear</mat-icon>
         </div>
 
@@ -43,33 +43,46 @@
             <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
             <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
             <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
-            <mat-icon (click)="onListDevice(device)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28">list_alt</mat-icon>
-            <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit" *ngIf="!readonly">edit</mat-icon>
+            <mat-icon (click)="onListDevice(device)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28" matTooltip="{{'device.property-tags' | translate}}">list_alt</mat-icon>
+            <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit" *ngIf="!readonly" matTooltip="{{'device.property-edit' | translate}}">edit</mat-icon>
             <mat-icon (click)="onRemoveDevice(device)" class="device-icon device-delete" *ngIf="!readonly">clear</mat-icon>
         </div>
     </div>
 </div>
-<div *ngIf="mode === devicesViewList">
+<div *ngIf="mode === devicesViewList" class="container">
     <mat-table #table [dataSource]="dataSource" matSort>
-        <!-- Checkbox Column -->
+        <!-- Edit Column -->
         <ng-container matColumnDef="select">
-            <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onEditRow(element)" class="remove" matTooltip="{{'device.list-edit' | translate}}" *ngIf="!readonly">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button mat-icon-button (click)="onListDevice(element)" class="remove" matTooltip="{{'device.property-tags' | translate}}" *ngIf="!readonly">
+                    <mat-icon>list_alt</mat-icon>
+                </button>
+                <button mat-icon-button (click)="onEditDevice(element)" class="remove" matTooltip="{{'device.property-edit' | translate}}" *ngIf="!readonly">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-cell>
         </ng-container>
-    
         <!-- Name Column -->
         <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-name' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element">{{element.name}} </mat-cell>
         </ng-container>
-
+        <!-- Address Column -->
+        <ng-container matColumnDef="address">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-address' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{getDeviceAddress(element)}} </mat-cell>
+        </ng-container>
+        <!-- Name Column -->
+        <ng-container matColumnDef="enabled">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-enabled' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element">{{element.enabled}} </mat-cell>
+        </ng-container>
         <!-- Button remove Column -->
         <ng-container matColumnDef="remove">
+            <mat-header-cell *matHeaderCellDef>&nbsp;</mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove" matTooltip="{{'device.list-remove' | translate}}">
+                <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation();onRemoveDevice(element)" class="remove" matTooltip="{{'device.property-remove' | translate}}">
                     <mat-icon>clear</mat-icon>
                 </button>
             </mat-cell>
@@ -78,5 +91,5 @@
         <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
     </mat-table>
-    <!-- <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="position: relative; right: 100px;"></mat-paginator> -->
+    <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="position: relative; right: 100px;"></mat-paginator>
 </div>

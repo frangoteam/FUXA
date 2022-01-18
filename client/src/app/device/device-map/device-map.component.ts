@@ -26,7 +26,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     devicesViewMap = DeviceViewModeType.map;
     devicesViewList = DeviceViewModeType.list;
 
-    displayedColumns = ['select', 'name', 'remove'];
+    displayedColumns = ['select', 'name', 'address', 'enabled', 'remove'];
     dataSource = new MatTableDataSource([]);
     tableWidth = 1200;
 
@@ -115,12 +115,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	checkLayout() {
-		if (this.devices)
-		{
+		if (this.devices) {
 			if (this.plcs().length && this.flows().length) {
-
 			}
 		}
+        this.dataSource.data = Object.values(this.devices);
 	}
 
 	loadAvailableType() {
@@ -367,6 +366,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	isClientDevice(device) {
         return (device.type === DeviceType.WebStudio && this.appService.isClientApp);
+	}
+
+	getDeviceAddress(device) {
+		if (device.property) {
+			return device.property.address;
+		}
+		return '';
 	}
 
 	getDevicePropertyToShow(device) {

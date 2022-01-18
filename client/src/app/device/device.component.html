@@ -20,8 +20,8 @@
     <mat-icon>autorenew</mat-icon>
 </button>
 <button mat-icon-button *ngIf="showMode.startsWith(devicesViewMode)" (click)="gotoDevices(true)" class="fab-reload" style="right: 90px !important">
-    <mat-icon *ngIf="showMode.startsWith(devicesViewList)">device_hub</mat-icon>
-    <mat-icon *ngIf="showMode.startsWith(devicesViewMap)">view_list</mat-icon>
+    <mat-icon *ngIf="showMode.startsWith(devicesViewList)" matTooltip="{{'devices.mode-map' | translate}}">device_hub</mat-icon>
+    <mat-icon *ngIf="showMode.startsWith(devicesViewMap)" matTooltip="{{'devices.mode-list' | translate}}">view_list</mat-icon>
 </button>
 <button *ngIf="!readonly" mat-fab color="primary" (click)="addItem()" class="fab-add">
     <mat-icon class="">add</mat-icon>

@@ -53,6 +53,7 @@
     "dlg.menuitem-text": "Text",
     "dlg.menuitem-view": "View by Click",
     "dlg.menuitem-link": "Link by Click",
+    "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
 
     "dlg.docproperty-title": "View properties",
@@ -486,6 +487,9 @@
     "device.property-device-port": "Device IP and Port (127.0.0.1:47808)",
     "device.property-address-port": "Slave IP and Port (127.0.0.1:502)",
     "device.property-security": "Security and encryption mode",
+    "device.property-tags": "Edit device tags",
+    "device.property-edit": "Edit device property",
+    "device.property-remove": "Remove device",
     "device.not-property-security": "Without Security and encryption mode",
     "device.property-port": "Port",
     "device.property-slave-id": "Slave ID",
@@ -565,6 +569,13 @@
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Save value if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
+    
+    "devices.mode-map": "Devices diagramm",
+    "devices.mode-list": "Devices list",
+    "devices.list-name": "Name",
+    "devices.list-address": "Address",
+    "devices.list-enabled": "Enabled",
+
 
     "users.list-title": "Users settings",
     "users.list-name": "Username",
