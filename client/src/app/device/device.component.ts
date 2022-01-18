@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 
 import { DeviceListComponent } from './device-list/device-list.component';
 import { DeviceMapComponent } from './device-map/device-map.component';
-import { Device, Tag } from './../_models/device';
+import { Device, Tag, DeviceViewModeType } from './../_models/device';
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { HmiService } from '../_services/hmi.service';
 import { DEVICE_READONLY } from '../_models/hmi';
@@ -28,7 +28,13 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     private subscriptionVariableChange: Subscription;
     private subscriptionSave: Subscription;
     private askStatusTimer;
-    showMode: string = 'map';
+
+    devicesViewMode = DeviceViewModeType.devices;
+    devicesViewMap = DeviceViewModeType.map;
+    devicesViewList = DeviceViewModeType.list;
+    tagsViewMode = DeviceViewModeType.tags;
+
+    showMode = <string>this.devicesViewMap;
     readonly = false;
     reloadActive = false;
 
@@ -65,7 +71,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.showMode = 'map';
+        this.showMode = this.devicesViewMap;
     }
 
     ngOnDestroy() {
@@ -94,7 +100,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     show(mode: string) {
         // this.checkToSave();
         this.showMode = mode;
-        if (this.showMode === 'tags') {
+        if (this.showMode === this.tagsViewMode) {
             this.deviceList.updateDeviceValue();
             try {
                 if (Object.values(this.deviceMap.devicesValue()).length > 0) {
@@ -102,22 +108,37 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
             } catch (e) {
             }
+        } else {
+            localStorage.setItem("@frango.devicesview", this.showMode);
         }
     }
 
-    gotoMap() {
-        this.show('map');
+    gotoDevices(flag: boolean) {
+        if (flag) {
+            if (this.showMode === this.devicesViewMap) {
+                this.show(this.devicesViewList);
+            } else {
+                this.show(this.devicesViewMap);
+            }
+            return;
+        }
+        let mode = localStorage.getItem("@frango.devicesview");
+        if (mode) {
+            this.show(mode);
+        } else {
+            this.show(this.devicesViewMap);
+        }
     }
 
     gotoList(device: Device) {
-        this.show('tags');
+        this.show(this.tagsViewMode);
         this.deviceList.setSelectedDevice(device);
     }
 
     addItem() {
-        if (this.showMode === 'tags') {
+        if (this.showMode === this.tagsViewMode) {
             this.deviceList.onAddTag();
-        } else if (this.showMode === 'map') {
+        } else if (this.showMode.startsWith(this.devicesViewMode)) {
             this.deviceMap.addDevice();
         }
     }

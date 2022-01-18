@@ -144,3 +144,46 @@ $internal-backcolor: rgb(114,120,125);
     height: 10px;
     border-radius: 4px;
 }
+
+// Table View Mode
+.mat-table {
+    overflow: auto;
+    /* min-width: 1500px; */
+    height: 100%;
+}
+
+.mat-row {
+    min-height: 40px;
+    height: 43px;
+}
+
+.mat-cell {
+    font-size: 13px;
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+}
+
+.mat-header-cell {
+    font-size: 15px;
+}
+
+.mat-column-select {
+    overflow: visible;
+    flex: 0 0 80px;
+}
+
+.mat-column-name {
+    flex: 1 1 100px;
+}
+
+.mat-column-remove {
+    flex: 0 0 60px;
+}
+
+.selectidthClass{
+    flex: 0 0 50px;
+ }

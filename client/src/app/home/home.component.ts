@@ -12,7 +12,7 @@ import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -54,6 +54,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     alarmsPanelOpen = false;
     layoutHeader = new HeaderSettings();
 	showNavigation = true;
+    viewAsAlarms = LinkType.alarms;
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
@@ -110,17 +111,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onGoToPage(event: string) {
-        const view = this.hmi.views.find(x => x.id === event);
-        this.showHomeLink = false;
-        this.changeDetector.detectChanges();
-        if (view) {
-            this.homeView = view;
+        if (event === this.viewAsAlarms) {
+            this.onAlarmsShowMode('expand');
+        } else {
+            const view = this.hmi.views.find(x => x.id === event);
+            this.showHomeLink = false;
             this.changeDetector.detectChanges();
-            this.setBackground();
-            if (this.homeView.type !== this.cardViewType) {
-                this.fuxaview.hmi.layout = this.hmi.layout;
-                this.fuxaview.loadHmi(this.homeView);
+            if (view) {
+                this.homeView = view;
+                this.changeDetector.detectChanges();
+                this.setBackground();
+                if (this.homeView.type !== this.cardViewType) {
+                    this.fuxaview.hmi.layout = this.hmi.layout;
+                    this.fuxaview.loadHmi(this.homeView);
+                }
             }
+            this.onAlarmsShowMode('close');
         }
         this.checkToCloseSideNav();
     }

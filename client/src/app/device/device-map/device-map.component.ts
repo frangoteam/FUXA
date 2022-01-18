@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef, Input, ViewChild } from '@angular/core';
 import { Subscription } from "rxjs";
 import { MatDialog } from '@angular/material';
+import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 import { DevicePropertyComponent } from './../device-property/device-property.component';
 import { ProjectService } from '../../_services/project.service';
 import { PluginService } from '../../_services/plugin.service';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from './../../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DeviceViewModeType } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { Plugin } from '../../_models/plugin';
 import { AppService } from '../../_services/app.service';
@@ -18,9 +19,20 @@ import { AppService } from '../../_services/app.service';
 export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	@Output() goto: EventEmitter<Device> = new EventEmitter();
-	@Input() readonly = false;
+    @Input() mode: string;
+    @Input() readonly = false;
 	private subscriptionPluginsChange: Subscription;
 
+    devicesViewMap = DeviceViewModeType.map;
+    devicesViewList = DeviceViewModeType.list;
+
+    displayedColumns = ['select', 'name', 'remove'];
+    dataSource = new MatTableDataSource([]);
+    tableWidth = 1200;
+
+    @ViewChild(MatTable) table: MatTable<any>;
+    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
 
 	flowBorder = 5;
 	flowWidth = 160;
@@ -72,6 +84,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.flowHeight = 0;
 			this.lineFlowHeight = 0;
 		}
+
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
 	}
 
 	ngOnDestroy() {
@@ -96,6 +111,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (prj && prj.devices) {
 			this.devices = prj.devices;
 		}
+        this.dataSource.data = Object.values(this.devices);
 	}
 
 	checkLayout() {

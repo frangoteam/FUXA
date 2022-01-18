@@ -216,3 +216,11 @@ export class DevicesUtils {
         return <Tag>Object.values(device.tags).find((tag: Tag) => tag.address === address);
     }
 }
+
+
+export enum DeviceViewModeType {
+    tags = 'tags',
+    devices = 'devices',
+    list = 'devices-list',
+    map = 'devices-map',
+}

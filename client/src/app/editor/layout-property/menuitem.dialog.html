@@ -23,8 +23,8 @@
                 <mat-option *ngFor="let view of data.views" [value]="view.id">
                     {{ view.name }}
                 </mat-option>
-                <mat-option [value]="'[link]'">[{{'dlg.menuitem-link' | translate}}]</mat-option>
-                <mat-option [value]="'[alarms]'">[{{'dlg.menuitem-alarms' | translate}}]</mat-option>
+                <mat-option [value]="linkAddress">[{{'dlg.menuitem-link' | translate}}]</mat-option>
+                <mat-option [value]="linkAlarms">[{{'dlg.menuitem-alarms' | translate}}]</mat-option>
                 <!-- <mat-option [value]="events">[{{'dlg.menuitem-events' | translate}}]</mat-option> -->
             </mat-select>
         </div>
