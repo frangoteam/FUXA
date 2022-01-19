@@ -490,6 +490,7 @@
     "device.property-tags": "Edit device tags",
     "device.property-edit": "Edit device property",
     "device.property-remove": "Remove device",
+    "device.property-add": "Add device",
     "device.not-property-security": "Without Security and encryption mode",
     "device.property-port": "Port",
     "device.property-slave-id": "Slave ID",
@@ -570,11 +571,20 @@
     "device.tag-daq-changed": "Save value if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
     
+    "device.connect-ok": "Ok",
+    "device.connect-error": "Error",
+    "device.connect-failed": "Failed",
+    "device.connect-off": "Off",
+    "device.connect-busy": "Busy",
+
     "devices.mode-map": "Devices diagramm",
     "devices.mode-list": "Devices list",
     "devices.list-name": "Name",
     "devices.list-address": "Address",
+    "devices.list-type": "Type",
+    "devices.list-polling": "Polling",
     "devices.list-enabled": "Enabled",
+    "devices.list-status": "Status",
 
 
     "users.list-title": "Users settings",

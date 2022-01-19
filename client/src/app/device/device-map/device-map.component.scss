@@ -191,8 +191,20 @@ $internal-backcolor: rgb(114,120,125);
     flex: 1 1 160px;
 }
 
+.mat-column-type {
+    flex: 0 0 150px;
+}
+
+.mat-column-polling {
+    flex: 0 0 100px;
+}
+
 .mat-column-address {
     flex: 2 1 300px;
+}
+
+.mat-column-status {
+    flex: 0 0 120px;
 }
 
 .mat-column-enabled {
@@ -203,6 +215,29 @@ $internal-backcolor: rgb(114,120,125);
     flex: 0 0 60px;
 }
 
-.selectidthClass{
-    flex: 0 0 50px;
+.selectWidthClass {
+    flex: 0 0 100px;
  }
+
+ .selectHideClass {
+    flex: 0 0 10px;
+ }
+
+ .my-header-filter /deep/ .mat-sort-header-button {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+}
+
+.my-header-filter /deep/ .mat-sort-header-arrow {
+    top: -12px;
+    right: 20px;
+}
+
+.my-header-filter-input {
+    display: block; 
+    margin-top: 4px;
+    margin-bottom: 6px;
+    padding: 3px 1px 3px 2px;
+    border-radius: 2px;
+}

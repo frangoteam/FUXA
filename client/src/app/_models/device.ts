@@ -224,3 +224,11 @@ export enum DeviceViewModeType {
     list = 'devices-list',
     map = 'devices-map',
 }
+
+export enum DeviceConnectionStatusType {
+    ok = 'device.connect-ok',
+    error = 'device.connect-error',
+    failed = 'device.connect-failed',
+    off = 'device.connect-off',
+    busy = 'device.connect-busy',
+}
