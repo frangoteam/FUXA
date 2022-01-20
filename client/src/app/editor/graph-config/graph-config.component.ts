@@ -52,6 +52,14 @@ export class GraphConfigComponent implements OnInit {
         this.dialogRef.close(this.data.graphs);
     }
 
+    onAddNewCategory() {
+
+    }
+
+    isSelection() {
+        return (this.selectedGraph && this.selectedGraph.id) ? true : false;
+    }
+
     onEditGraph(item: Graph) {
         let title = 'dlg.item-title';
         let label = 'dlg.item-name';
@@ -75,7 +83,7 @@ export class GraphConfigComponent implements OnInit {
     onAddGraphSource(graph: Graph) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
-            data: { variableId: null, devices: this.data.devices, multiSelection: true }
+            data: { variableId: null, devices: this.data.devices, multiSelection: false }
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -117,9 +125,28 @@ export class GraphConfigComponent implements OnInit {
         });
     }
 
-    removeGraphSource(tag) {
+    editGraphSource(line: GraphSource) {
+        // let dialogRef = this.dialog.open(DialogChartLine, {
+        //     position: { top: '60px' },
+        //     data: <ChartLine>{
+        //         id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis,
+        //         lineInterpolation: line.lineInterpolation, fill: line.fill, lineInterpolationType: this.lineInterpolationType
+        //     }
+        // });
+        // dialogRef.afterClosed().subscribe((result: ChartLine) => {
+        //     if (result) {
+        //         line.label = result.label;
+        //         line.color = result.color;
+        //         line.yaxis = result.yaxis;
+        //         line.lineInterpolation = result.lineInterpolation;
+        //         line.fill = result.fill;
+        //     }
+        // });
+    }
+
+    removeGraphSource(source: GraphSource) {
         for (let i = 0; i < this.selectedGraph.sources.length; i++) {
-            if (this.selectedGraph.sources[i].id === tag.id) {
+            if (this.selectedGraph.sources[i].id === source.id) {
                 this.selectedGraph.sources.splice(i, 1);
                 break;
             }
@@ -145,12 +172,12 @@ export class GraphConfigComponent implements OnInit {
         }
     }
 
-    getDeviceTagName(line: GraphSource) {
-        let devices = this.data.devices.filter(x => x.name === line.device);
+    getDeviceTagName(source: GraphSource) {
+        let devices = this.data.devices.filter(x => x.name === source.device);
         if (devices && devices.length > 0) {
             let tags = Object.values<Tag>(devices[0].tags);
             for (let i = 0; i < tags.length; i++) {
-                if (line.id === tags[i].id) {
+                if (source.id === tags[i].id) {
                     return this.getTagLabel(tags[i]);
                 }
             }

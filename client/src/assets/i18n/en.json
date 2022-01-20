@@ -198,6 +198,16 @@
     "chart.labels-time": "Time",
     "chart.labels-title": "Title",
 
+    "graph.config-title": "Graph settings",
+    "graph.config-rename": "Rename",
+    "graph.config-category-tag": "Add Tag Category",
+    "graph.config-source-name": "Name",
+    "graph.config-source-label": "Label",
+    "graph.config-category": "Category",
+    "graph.config-device": "Device",
+    "graph.config-bar-color": "Border",
+    "graph.config-bar-fill": "Fill",
+
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.views": "Views",

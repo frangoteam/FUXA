@@ -31,7 +31,7 @@
             <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
             <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(flow) }}</span>
             <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
-            <mat-icon (click)="onListDevice(flow)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28" matTooltip="{{'device.property-tags' | translate}}">list_alt</mat-icon>
+            <mat-icon (click)="onListDevice(flow)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28" matTooltip="{{'device.property-tags' | translate}}">link</mat-icon>
             <mat-icon (click)="onEditDevice(flow)" class="device-icon device-edit" *ngIf="!readonly" matTooltip="{{'device.property-edit' | translate}}">edit</mat-icon>
             <mat-icon (click)="onRemoveDevice(flow)" class="device-icon device-delete" *ngIf="!readonly" matTooltip="{{'device.property-remove' | translate}}">clear</mat-icon>
         </div>
@@ -43,13 +43,13 @@
             <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
             <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
             <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
-            <mat-icon (click)="onListDevice(device)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28" matTooltip="{{'device.property-tags' | translate}}">list_alt</mat-icon>
+            <mat-icon (click)="onListDevice(device)" class="device-icon device-list" [style.right.px]="(readonly) ? 2 : 28" matTooltip="{{'device.property-tags' | translate}}">link</mat-icon>
             <mat-icon (click)="onEditDevice(device)" class="device-icon device-edit" *ngIf="!readonly" matTooltip="{{'device.property-edit' | translate}}">edit</mat-icon>
             <mat-icon (click)="onRemoveDevice(device)" class="device-icon device-delete" *ngIf="!readonly" matTooltip="{{'device.property-remove' | translate}}">clear</mat-icon>
         </div>
     </div>
 </div>
-<div *ngIf="mode === devicesViewList" class="container">
+<div class="container" [ngClass]="mode === devicesViewList ? 'showTable' : 'hideTable'">
     <mat-table #table [dataSource]="dataSource" matSort>
         <!-- Edit Column -->
         <ng-container matColumnDef="select">
@@ -60,7 +60,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [ngClass]="!readonly ? 'selectWidthClass' : 'selectHideClass'">
                 <button mat-icon-button (click)="onListDevice(element)" class="remove" matTooltip="{{'device.property-tags' | translate}}" *ngIf="!readonly">
-                    <mat-icon>list_alt</mat-icon>
+                    <mat-icon>link</mat-icon>
                 </button>
                 <button mat-icon-button (click)="onEditDevice(element)" class="remove" matTooltip="{{'device.property-edit' | translate}}" *ngIf="!readonly">
                     <mat-icon>edit</mat-icon>

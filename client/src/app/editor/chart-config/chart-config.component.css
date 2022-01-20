@@ -90,7 +90,6 @@
 }
 
 .list-item span {
-    width: calc(100% - 26px);
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -117,6 +116,42 @@
     background-color: rgba(0, 0, 0, 0.8);
     color: #ffffff;
     line-height: 26px;
+    cursor: unset;
+}
+
+.list-item-remove {
+    width: 20px;
+    max-width: 20px;
+}
+
+.list-item-name {
+    width: 30%;
+    max-width: 30%;
+}
+
+.list-item-label {
+    width: 25%;
+    max-width: 25%;
+}
+
+.list-item-device {
+    width: 25%;
+    max-width: 25%;
+}
+
+.list-item-yaxis {
+    width: 10%;
+    max-width: 10%;
+}
+
+.list-item-interpolation {
+    width: 10%;
+    max-width: 10%;
+}
+
+.list-item-color {
+    width: 5%;
+    max-width: 5%;
 }
 
 .list-panel {

@@ -44,6 +44,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
             this.readonly = true;
         }
+        this.showMode = localStorage.getItem("@frango.devicesview") || this.devicesViewMap;
     }
 
     ngOnInit() {
@@ -71,7 +72,6 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.showMode = this.devicesViewMap;
     }
 
     ngOnDestroy() {
@@ -122,12 +122,8 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
             }
             return;
         }
-        let mode = localStorage.getItem("@frango.devicesview");
-        if (mode) {
-            this.show(mode);
-        } else {
-            this.show(this.devicesViewMap);
-        }
+        let mode = localStorage.getItem("@frango.devicesview") || this.devicesViewMap;
+        this.show(mode);
     }
 
     gotoList(device: Device) {

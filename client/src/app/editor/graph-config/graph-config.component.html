@@ -9,40 +9,63 @@
                 </button>
             </div>
             <div *ngFor="let graph of data.graphs; index as i" class="mychips" (click)="onSelectGraph(graph)" [ngClass]="isGraphSelected(graph)">
-                <mat-icon (click)="onSelectGraph(graph)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
-                <mat-menu #optionsgMenu [overlapTrigger]="false">
-                    <button mat-menu-item (click)="onAddGraphSource(graph)" style="font-size: 14px;">{{'graph.config-addsource' | translate}}</button>
-                    <button mat-menu-item (click)="onEditGraph(graph)" style="font-size: 14px;">{{'graph.config-rename' | translate}}</button>
-                </mat-menu>
+                <mat-icon (click)="onSelectGraph(graph);onRemoveGraph(i)">cancel</mat-icon>
                 <span>
                     {{graph.name}}
                 </span>
-                <mat-icon (click)="onSelectGraph(graph);onRemoveGraph(i)">cancel</mat-icon>
+                <mat-icon (click)="onSelectGraph(graph)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
+                <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="onAddGraphSource(graph)" style="font-size: 14px;">
+                        <mat-icon style="margin-right: unset">link</mat-icon>
+                        {{'graph.config-category-tag' | translate}}
+                    </button>
+                    <button mat-menu-item (click)="onEditGraph(graph)" style="font-size: 14px;">{{'graph.config-rename' | translate}}</button>
+                </mat-menu>
             </div>
         </div>
         <div class="panelBottom">
             <mat-list class="list">
                 <mat-list-item class="list-item list-header">
-                    <span style="width: 25px;"></span>
-                    <span style="width: 40%;max-width: 40%;">{{'graph.config-source-name' | translate}}</span>
-                    <span style="width: 30%;max-width: 30%;">{{'graph.config-source-label' | translate}}</span>
-                    <span style="width: 30%;max-width: 30%;">{{'graph.config-devices' | translate}}</span>
+                    <span class="list-item-remove">&nbsp;</span>
+                    <span class="list-item-name">{{'graph.config-source-name' | translate}}</span>
+                    <span class="list-item-label">{{'graph.config-source-label' | translate}}</span>
+                    <span class="list-item-category">{{'graph.config-category' | translate}}</span>
+                    <span class="list-item-device">{{'graph.config-device' | translate}}</span>
+                    <span class="list-item-color">{{'graph.config-bar-color' | translate}}</span>
+                    <span class="list-item-color">{{'graph.config-bar-fill' | translate}}</span>
                 </mat-list-item>
                 <div class="list-panel">
-                    <mat-list-item *ngFor="let source of selectedGraph.sources" class="list-item list-item-hover">
-                        <mat-icon (click)="$event.stopPropagation();removeGraphSource(source)" style="color:gray;font-size: 20px">delete</mat-icon>
-                        <div class="list-item-text" style="width: 40%;max-width: 40%;">
+                    <mat-list-item *ngFor="let source of selectedGraph.sources" class="list-item list-item-hover" (click)="editGraphSource(source)">
+                        <mat-icon (click)="$event.stopPropagation();removeGraphSource(source)" class="list-item-remove">delete</mat-icon>
+                        <div class="list-item-text list-item-name">
                             <span>{{getDeviceTagName(source)}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                        <div class="list-item-text list-item-label">
                             <span>{{source.label}}</span>
-                        </div>                        
-                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                        </div>
+                        <div class="list-item-text list-item-category">
+                            <span>{{source.category}}</span>
+                        </div>
+                        <div class="list-item-text list-item-device">
                             <span>{{source.device}}</span>
                         </div>
+                        <div [style.background-color]="source.color" class="list-item-color"></div>
+                        <div [style.background-color]="source.fill" class="list-item-color"></div>
                     </mat-list-item>
                 </div>
             </mat-list>
+            <!-- <div class="section-panel section-category">
+                <div [ngClass]="isSelection() ? 'showEditor' : 'hideEditor'">
+                    <div class="my-form-field section-header">
+                        <mat-select placeholder="{{'graph.config-category-add' | translate}}" value="">
+                            <mat-option (click)="onAddGraphSource('tag');">{{'graph.config-category-tag' | translate}}</mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="section-list">
+
+                    </div>
+                </div>
+            </div> -->
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

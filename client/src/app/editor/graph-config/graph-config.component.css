@@ -51,6 +51,7 @@
     margin-top: 10px;
 }
 
+
 .list {
     width: 100% !important;
     height: 100% !important;
@@ -80,7 +81,6 @@
 }
 
 .list-item span {
-    width: calc(100% - 26px);
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -107,6 +107,39 @@
     background-color: rgba(0, 0, 0, 0.8);
     color: #ffffff;
     line-height: 26px;
+    cursor: unset;
+}
+
+.list-item-remove {
+    width: 20px;
+    max-width: 20px;
+    color:gray;
+    font-size: 20px;
+}
+
+.list-item-name {
+    width: 25%;
+    max-width: 25%;
+}
+
+.list-item-label {
+    width: 25%;
+    max-width: 25%;
+}
+
+.list-item-category {
+    width: 20%;
+    max-width: 20%;
+}
+
+.list-item-device {
+    width: 20%;
+    max-width: 20%;
+}
+
+.list-item-color {
+    width: 5%;
+    max-width: 5%;
 }
 
 .list-panel {
@@ -132,3 +165,38 @@
     opacity: 1;
     background-color: #f1f3f4;
 }
+
+
+
+
+
+
+/* .showEditor {
+    display: block;
+}
+
+.hideEditor {
+    display: none;
+}
+
+.section-panel {
+    height: 100%;
+    display: grid;
+}
+
+.section-category {
+    width: 33%;
+}
+
+.section-header {
+    width: 100%;
+}
+
+.section-header mat-select {
+    width:calc(100% - 7px);
+}
+
+.section-list {
+    border: 1px solid var(--formBorder);
+    height: calc(100% - 30px);
+} */
