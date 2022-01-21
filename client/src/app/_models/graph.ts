@@ -10,8 +10,9 @@ export class GraphSource {
     id: string;
     name: string;
     label: string;
-    // color: string;
-    // fill?: string;
+    category: string;
+    color: string;
+    fill?: string;
 }
 
 export enum GraphType {

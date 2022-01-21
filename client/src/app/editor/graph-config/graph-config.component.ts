@@ -20,6 +20,7 @@ export class GraphConfigComponent implements OnInit {
 
     selectedGraph = <Graph>{ id: null, name: null, sources: [] };
     data = { graphs: [], devices: [] };
+    lineColor = Utils.lineColor;
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
@@ -100,7 +101,9 @@ export class GraphConfigComponent implements OnInit {
                     if (tag) {
                         let exist = graph.sources.find(source => source.id === tag.id)
                         if (!exist) {
-                            const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name, label: this.getTagLabel(tag) };
+                            let color = this.getNextColor();
+                            const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name, 
+                                label: this.getTagLabel(tag), category: '', color: color, fill: color };
                             graph.sources.push(myCopiedObject);
                         }
                     }
@@ -125,23 +128,21 @@ export class GraphConfigComponent implements OnInit {
         });
     }
 
-    editGraphSource(line: GraphSource) {
-        // let dialogRef = this.dialog.open(DialogChartLine, {
-        //     position: { top: '60px' },
-        //     data: <ChartLine>{
-        //         id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis,
-        //         lineInterpolation: line.lineInterpolation, fill: line.fill, lineInterpolationType: this.lineInterpolationType
-        //     }
-        // });
-        // dialogRef.afterClosed().subscribe((result: ChartLine) => {
-        //     if (result) {
-        //         line.label = result.label;
-        //         line.color = result.color;
-        //         line.yaxis = result.yaxis;
-        //         line.lineInterpolation = result.lineInterpolation;
-        //         line.fill = result.fill;
-        //     }
-        // });
+    editGraphSource(source: GraphSource) {
+        let dialogRef = this.dialog.open(DialogGraphSource, {
+            position: { top: '60px' },
+            data: <GraphSource>{
+                id: source.id, device: source.device, name: source.name, label: source.label, category: source.category,
+                color: source.color, fill: source.fill }
+        });
+        dialogRef.afterClosed().subscribe((result: GraphSource) => {
+            if (result) {
+                source.label = result.label;
+                source.category = result.category;
+                source.color = result.color;
+                source.fill = result.fill;
+            }
+        });
     }
 
     removeGraphSource(source: GraphSource) {
@@ -183,5 +184,45 @@ export class GraphConfigComponent implements OnInit {
             }
         }
         return '';
+    }
+
+    getNextColor() {
+        for (let x = 0; x < this.lineColor.length; x++) {
+            let found = false;
+            if (this.selectedGraph.sources) {
+                for (let i = 0; i < this.selectedGraph.sources.length; i++) {
+                    if (this.selectedGraph.sources[i].color === this.lineColor[x]) {
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                return this.lineColor[x];
+            }
+        }
+        return Utils.lineColor[0];
+    }
+}
+
+@Component({
+    selector: 'dialog-graph-source',
+    templateUrl: './graph-source.dialog.html',
+    styleUrls: ['./graph-config.component.css']
+})
+export class DialogGraphSource {
+    defaultColor = Utils.defaultColor;
+    chartAxesType = [1, 2, 3, 4];
+
+    constructor(
+        public dialogRef: MatDialogRef<DialogGraphSource>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    onOkClick(): void {
+        this.dialogRef.close(this.data);
     }
 }

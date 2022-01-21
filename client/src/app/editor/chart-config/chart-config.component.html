@@ -53,8 +53,12 @@
                         <div class="list-item-text list-item-interpolation">
                             <span>{{getLineInterpolationName(line)}}</span>
                         </div>
-                        <div [style.background-color]="line.color" class="list-item-color"></div>
-                        <div [style.background-color]="line.fill" class="list-item-color"></div>
+                        <div [style.background-color]="line.color" class="list-item-color">
+                            &nbsp;
+                        </div>
+                        <div [style.background-color]="line.fill" class="list-item-color">
+                            &nbsp;
+                        </div>
                     </mat-list-item>
                 </div>
             </mat-list>
