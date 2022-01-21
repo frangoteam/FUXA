@@ -15,7 +15,7 @@
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'general.password' | translate}}</span>
-            <input autocomplete="off" [(ngModel)]="data.user.password" [type]="showPassword ? 'text' : 'password'" placeholder="•••••••" style="width: 250px">
+            <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [(ngModel)]="data.user.password" [type]="showPassword ? 'text' : 'password'" placeholder="•••••••" style="width: 250px">
             <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
         </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">

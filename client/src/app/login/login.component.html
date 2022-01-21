@@ -10,7 +10,7 @@
 			</div>
 			<div class="my-form-field" style="display: block;margin-bottom: 10px;margin-right: 5px;">
 				<span>{{'general.password' | translate}}</span>
-				<input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [formControl]="password" style="width:100%;">
+				<input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" [formControl]="password" style="width:100%;">
 				<mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
 				<mat-error class="error" *ngIf="errorEnabled && password.errors && password.errors.required">{{'msg.login-password-required' | translate}}
 				</mat-error>

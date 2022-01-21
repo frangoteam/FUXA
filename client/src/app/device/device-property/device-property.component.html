@@ -70,7 +70,7 @@
                                     </div>
                                     <div class="my-form-field" style="margin-top: 5px;">
                                         <span>{{'general.password' | translate}}</span>
-                                        <input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 315px;background-color:var(--formInputExtBackground)">
+                                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 315px;background-color:var(--formInputExtBackground)">
                                         <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
                                     </div>
                                 </div>
@@ -240,7 +240,7 @@
                                     </div>
                                     <div class="my-form-field" style="display: block;margin-top: 5px;">
                                         <span>{{'general.password' | translate}}</span>
-                                        <input autocomplete="off" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 315px;background-color:var(--formInputExtBackground)">
+                                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 315px;background-color:var(--formInputExtBackground)">
                                         <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
                                     </div>
                                 </div>
