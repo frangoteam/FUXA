@@ -216,3 +216,19 @@ export class DevicesUtils {
         return <Tag>Object.values(device.tags).find((tag: Tag) => tag.address === address);
     }
 }
+
+
+export enum DeviceViewModeType {
+    tags = 'tags',
+    devices = 'devices',
+    list = 'devices-list',
+    map = 'devices-map',
+}
+
+export enum DeviceConnectionStatusType {
+    ok = 'device.connect-ok',
+    error = 'device.connect-error',
+    failed = 'device.connect-failed',
+    off = 'device.connect-off',
+    busy = 'device.connect-busy',
+}

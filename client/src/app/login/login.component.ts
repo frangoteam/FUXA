@@ -59,8 +59,4 @@ export class LoginComponent implements OnInit {
 			this.translateService.get('msg.signin-failed').subscribe((txt: string) => this.messageError = txt);
 		});
 	}
-
-	keyDownStopPropagation(event) {
-        event.stopPropagation();
-    }
 }

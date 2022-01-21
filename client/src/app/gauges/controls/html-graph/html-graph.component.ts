@@ -31,7 +31,7 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static getDialogType(): GaugeDialogType {
-        return GaugeDialogType.Chart;
+        return GaugeDialogType.Graph;
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, gauge?: any) {

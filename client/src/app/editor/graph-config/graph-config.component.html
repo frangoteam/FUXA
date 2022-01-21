@@ -9,43 +9,105 @@
                 </button>
             </div>
             <div *ngFor="let graph of data.graphs; index as i" class="mychips" (click)="onSelectGraph(graph)" [ngClass]="isGraphSelected(graph)">
-                <mat-icon (click)="onSelectGraph(graph)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
-                <mat-menu #optionsgMenu [overlapTrigger]="false">
-                    <button mat-menu-item (click)="onAddGraphSource(graph)" style="font-size: 14px;">{{'graph.config-addsource' | translate}}</button>
-                    <button mat-menu-item (click)="onEditGraph(graph)" style="font-size: 14px;">{{'graph.config-rename' | translate}}</button>
-                </mat-menu>
+                <mat-icon (click)="onSelectGraph(graph);onRemoveGraph(i)">cancel</mat-icon>
                 <span>
                     {{graph.name}}
                 </span>
-                <mat-icon (click)="onSelectGraph(graph);onRemoveGraph(i)">cancel</mat-icon>
+                <mat-icon (click)="onSelectGraph(graph)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
+                <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="onAddGraphSource(graph)" style="font-size: 14px;">
+                        <mat-icon style="margin-right: unset">link</mat-icon>
+                        {{'graph.config-source-tag' | translate}}
+                    </button>
+                    <button mat-menu-item (click)="onEditGraph(graph)" style="font-size: 14px;">{{'graph.config-rename' | translate}}</button>
+                </mat-menu>
             </div>
         </div>
         <div class="panelBottom">
-            <mat-list class="list">
+            <div class="section-panel section-category">
+                <div class="section-header">
+                    <span>{{'graph.property-xtype' | translate}}</span>
+                </div>
+                <div class="section-list">
+                    <div class="my-form-field section-item" *ngIf="isSelection()">
+                        <mat-select [(value)]="selectedGraph.property.xtype" (selectionChange)="onGraphXTypeChanged($event.value)"
+                            placeholder="{{'graph.property-xtype' | translate}}">
+                            <!-- <mat-option (click)="onAddGraphSource('tag');">{{'graph.config-category-tag' | translate}}</mat-option> -->
+                            <mat-option *ngFor="let ev of barXType | enumToArray" [value]="ev.key">
+                                {{ ev.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </div>
+            <div class="section-panel section-sources">
+                <div class="section-header">
+                    <span>{{'graph.property-sources' | translate}}</span>
+                    <!-- <span class="list-item-remove">&nbsp;</span>
+                    <span class="list-item-name">{{'graph.config-source-name' | translate}}</span>
+                    <span class="list-item-label">{{'graph.config-source-label' | translate}}</span>
+                    <span class="list-item-device">{{'graph.config-device' | translate}}</span>
+                    <span class="list-item-color">{{'graph.config-bar-color' | translate}}</span>
+                    <span class="list-item-color">{{'graph.config-bar-fill' | translate}}</span> -->
+                </div>
+                <div class="section-list">
+                    <mat-list class="list">
+                        <mat-list-item *ngFor="let source of selectedGraph.sources" class="list-item list-item-hover" (click)="editGraphSource(source)">
+                            <mat-icon (click)="$event.stopPropagation();removeGraphSource(source)" class="list-item-remove">delete</mat-icon>
+                            <div class="list-item-text list-item-name">
+                                <span>{{getDeviceTagName(source)}}</span>
+                            </div>
+                            <div class="list-item-text list-item-label">
+                                <span>{{source.label}}</span>
+                            </div>
+                            <div class="list-item-text list-item-device">
+                                <span>{{source.device}}</span>
+                            </div>
+                            <div [style.border-color]="source.color" [style.background-color]="source.fill" class="list-item-color">
+                                &nbsp;
+                            </div>
+                        </mat-list-item>
+                    </mat-list>
+                </div>
+            </div>
+
+            <!-- <mat-list class="list">
                 <mat-list-item class="list-item list-header">
-                    <span style="width: 25px;"></span>
-                    <span style="width: 40%;max-width: 40%;">{{'graph.config-source-name' | translate}}</span>
-                    <span style="width: 30%;max-width: 30%;">{{'graph.config-source-label' | translate}}</span>
-                    <span style="width: 30%;max-width: 30%;">{{'graph.config-devices' | translate}}</span>
+                    <span class="list-item-remove">&nbsp;</span>
+                    <span class="list-item-name">{{'graph.config-source-name' | translate}}</span>
+                    <span class="list-item-label">{{'graph.config-source-label' | translate}}</span>
+                    <span class="list-item-category">{{'graph.config-category' | translate}}</span>
+                    <span class="list-item-device">{{'graph.config-device' | translate}}</span>
+                    <span class="list-item-color">{{'graph.config-bar-color' | translate}}</span>
+                    <span class="list-item-color">{{'graph.config-bar-fill' | translate}}</span>
                 </mat-list-item>
                 <div class="list-panel">
-                    <mat-list-item *ngFor="let source of selectedGraph.sources" class="list-item list-item-hover">
-                        <mat-icon (click)="$event.stopPropagation();removeGraphSource(source)" style="color:gray;font-size: 20px">delete</mat-icon>
-                        <div class="list-item-text" style="width: 40%;max-width: 40%;">
+                    <mat-list-item *ngFor="let source of selectedGraph.sources" class="list-item list-item-hover" (click)="editGraphSource(source)">
+                        <mat-icon (click)="$event.stopPropagation();removeGraphSource(source)" class="list-item-remove">delete</mat-icon>
+                        <div class="list-item-text list-item-name">
                             <span>{{getDeviceTagName(source)}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                        <div class="list-item-text list-item-label">
                             <span>{{source.label}}</span>
-                        </div>                        
-                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                        </div>
+                        <div class="list-item-text list-item-category">
+                            <span>{{source.category}}</span>
+                        </div>
+                        <div class="list-item-text list-item-device">
                             <span>{{source.device}}</span>
+                        </div>
+                        <div [style.background-color]="source.color" class="list-item-color">
+                            &nbsp;
+                        </div>
+                        <div [style.background-color]="source.fill" class="list-item-color">
+                            &nbsp;
                         </div>
                     </mat-list-item>
                 </div>
-            </mat-list>
+            </mat-list> -->
         </div>
     </div>
-    <div mat-dialog-actions class="dialog-action">
+    <div mat-dialog-actions class="dialog-action" style="padding:unset">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>

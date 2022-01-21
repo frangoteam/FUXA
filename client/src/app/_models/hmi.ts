@@ -344,4 +344,9 @@ export enum CardWidgetType {
     table = 'card.widget-table',
 }
 
+export enum LinkType {
+    address = '[link]',
+    alarms = '[alarms]',
+}
+
 export const DEVICE_READONLY = 'rodevice';

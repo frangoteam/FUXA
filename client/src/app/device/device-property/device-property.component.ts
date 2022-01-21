@@ -269,10 +269,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	keyDownStopPropagation(event) {
-        event.stopPropagation();
-    }
-	
 	private securityModeToString(mode): string {
 		let secMode = MessageSecurityMode;
 		let result = '';

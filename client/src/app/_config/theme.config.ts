@@ -69,7 +69,7 @@ export const THEMES = {
         formInputBackgroundFocus: '#37373D',
         formSliderBackground: '#37373D',
         formSeparatorColor: '#37373D',
-        formBorder: 'rgba(33,33,33,0.92)',
+        formBorder: 'rgba(39,39,39,0.42)',
         setupSeparatorColor: '#808080',
         workPanelBackground: '#424242',
         mapBorderColor: '#333333',

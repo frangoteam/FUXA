@@ -12,6 +12,7 @@ import { WindowRef } from '../_helpers/windowref';
 import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
 import { ChartPropertyComponent } from '../gauges/controls/html-chart/chart-property/chart-property.component';
+import { GraphPropertyComponent } from '../gauges/controls/html-graph/graph-property/graph-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
@@ -1182,6 +1183,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let dialogRef: any;
         if (dlgType === GaugeDialogType.Chart) {
             dialogRef = this.dialog.open(ChartPropertyComponent, {
+                position: { top: '60px' },
+                data: {
+                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts(),
+                    names: names
+                }
+            });
+        } else if (dlgType === GaugeDialogType.Graph) {
+            dialogRef = this.dialog.open(GraphPropertyComponent, {
                 position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),

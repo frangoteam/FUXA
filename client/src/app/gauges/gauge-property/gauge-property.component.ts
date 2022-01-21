@@ -171,7 +171,8 @@ export enum GaugeDialogType {
     Gauge,
     Pipe,
     Slider,
-    Switch
+    Switch,
+    Graph
 }
 
 @Component({
