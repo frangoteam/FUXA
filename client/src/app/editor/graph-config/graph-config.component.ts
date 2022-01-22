@@ -160,7 +160,6 @@ export class GraphConfigComponent implements OnInit {
 
     onSelectGraph(item: Graph) {
         this.selectedGraph = item;
-        // this.loadDeviceConfig();
     }
 
     isGraphSelected(item: Graph) {

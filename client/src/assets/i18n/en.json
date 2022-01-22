@@ -212,6 +212,9 @@
     "graph.bar-xtype-value": "Values",
     "graph.bar-xtype-date": "Date and Time",
 
+    "graph.property-props": "Property",
+    "graph.property-layout": "Layout",
+
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.views": "Views",
@@ -249,6 +252,8 @@
     "editor.controls-shape-settings": "Shape settings",
     "editor.controls-html-switch-settings": "Switch settings",
 	"editor.controls-switch": "Switch",
+    "editor.controls-graph-bar-settings": "Graph Bar settings",
+    "editor.controls-graph-pie-settings": "Graph Pie settings",
 
     "editor.layout-settings": "Layout settings",
 

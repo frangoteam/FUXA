@@ -4,7 +4,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { NgxChartjsComponent } from './../../../../gui-helpers/ngx-chartjs/ngx-chartjs.component';
 
 @Component({
-    selector: 'app-graph-bar',
+    selector: 'graph-bar',
     templateUrl: './graph-bar.component.html',
     styleUrls: ['./graph-bar.component.css']
 })

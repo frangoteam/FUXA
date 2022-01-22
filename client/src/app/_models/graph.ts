@@ -10,7 +10,7 @@ export class Graph {
         this.id = _id;
         this.name = _name;
         if (this.type === GraphType.bar) {
-            this.property = new GraphBarProperty(<GraphBarXType>Object.keys(GraphBarXType).find(key => GraphBarXType[key] === GraphBarXType.value));
+            this.property = new GraphBarProperty();
         }
     } 
 }
@@ -18,8 +18,12 @@ export class Graph {
 export class GraphBarProperty {
     xtype: GraphBarXType;
     
-    constructor (_xtype: GraphBarXType) {
-        this.xtype = _xtype;
+    constructor (_xtype?: GraphBarXType) {
+        if (_xtype) {
+            this.xtype = _xtype;
+        } else {
+            this.xtype = <GraphBarXType>Object.keys(GraphBarXType).find(key => GraphBarXType[key] === GraphBarXType.value)
+        }
     }
 }
 

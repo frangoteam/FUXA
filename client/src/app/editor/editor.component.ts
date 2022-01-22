@@ -1195,7 +1195,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts(),
+                    views: hmi.views, dlgType: dlgType, graphs: this.projectService.getGraphs(),
                     names: names
                 }
             });
