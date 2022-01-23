@@ -2,14 +2,18 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { ChartData, ChartOptions } from 'chart.js';
 import { NgxChartjsComponent } from './../../../../gui-helpers/ngx-chartjs/ngx-chartjs.component';
+import { GraphBaseComponent } from '../graph-base/graph-base.component';
 
 @Component({
     selector: 'app-graph-pie',
     templateUrl: './graph-pie.component.html',
     styleUrls: ['./graph-pie.component.css']
 })
-export class GraphPieComponent implements OnInit, OnDestroy {
+export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnDestroy {
     @ViewChild('ngchart') public ngchart: NgxChartjsComponent;
+
+    id = '';
+    isEditor = false;
 
     data = {
         labels: ['Red', 'Green', 'Yellow'],
@@ -21,7 +25,9 @@ export class GraphPieComponent implements OnInit, OnDestroy {
             },
         ],
     };
-    constructor() { }
+    constructor() {
+        super();
+    }
 
     ngOnInit() {
     }
@@ -35,5 +41,17 @@ export class GraphPieComponent implements OnInit, OnDestroy {
         } catch (e) {
             console.error(e);
         }
+    }
+
+    init(property: any) {
+
+    }
+
+    addDataSet(sigid: string, signame: string, source: any) {
+        
+    }
+
+    setValue (sigid: string, timestamp: any, sigvalue: any) {
+        
     }
 }

@@ -134,6 +134,7 @@ import { environment } from '../environments/environment';
 import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-bar.component';
 import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
 import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';
+import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
 import { NgxChartjsComponent } from './gui-helpers/ngx-chartjs/ngx-chartjs.component';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -238,7 +239,8 @@ export function createTranslateLoader(http: HttpClient) {
         CardsViewComponent,
         GraphBarComponent,
         GraphPieComponent,
-        GraphPropertyComponent
+        GraphPropertyComponent,
+        GraphBaseComponent
    ],
     imports: [
         BrowserModule,
@@ -343,7 +345,7 @@ export function createTranslateLoader(http: HttpClient) {
         NgxChartjsComponent,
         GraphBarComponent,
         GraphPieComponent,
-        GraphPropertyComponent
+        GraphBaseComponent
     ],
     bootstrap: [AppComponent]
 })

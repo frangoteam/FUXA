@@ -1,6 +1,6 @@
 ﻿import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDrawer } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material';
 import { Subscription } from 'rxjs';
@@ -72,9 +72,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
     @ViewChild('viewFileImportInput') viewFileImportInput: any;
     @ViewChild('cardsview') cardsview: CardsViewComponent;
-    
-    readonly colorDefault = { fill: '#FFFFFF', stroke: '#000000' };
+    @ViewChild('sidePanel') sidePanel: MatDrawer;
 
+    gaugeDialogType = GaugeDialogType;
+    gaugeDialog = { type: null, data: null };
+    reloadGaugeDialog: boolean;
+
+    readonly colorDefault = { fill: '#FFFFFF', stroke: '#000000' };
     fonts = Define.fonts;
     isLoading = true;
     editorModeType = EditorModeType;
@@ -594,6 +598,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.checkColors(this.selectedElement);
                 this.checkGaugeInView(this.selectedElement);
             }
+        }
+        if (this.sidePanel.opened) {
+            this.sidePanel.toggle();
         }
     }
 
@@ -1179,7 +1186,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!tempsettings.name) {
             tempsettings.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(settings.type), names);
         }
-        // settings.property = JSON.parse(settings.property);
+        // settings.property = JSON.parse(settings.property);        
         let dialogRef: any;
         if (dlgType === GaugeDialogType.Chart) {
             dialogRef = this.dialog.open(ChartPropertyComponent, {
@@ -1191,14 +1198,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else if (dlgType === GaugeDialogType.Graph) {
-            dialogRef = this.dialog.open(GraphPropertyComponent, {
-                position: { top: '60px' },
-                data: {
-                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    views: hmi.views, dlgType: dlgType, graphs: this.projectService.getGraphs(),
-                    names: names
-                }
-            });
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                views: hmi.views, dlgType: dlgType, graphs: this.projectService.getGraphs(),
+                names: names
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else if (dlgType === GaugeDialogType.Gauge) {
             dialogRef = this.dialog.open(BagPropertyComponent, {
                 position: { top: '30px' },
@@ -1260,6 +1270,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         });
+    }
+
+    onGaugeDialogChanged(settings: any) {
+        if (settings) {
+            this.setGaugeSettings(settings);
+            this.saveView(this.currentView);
+            this.gaugesManager.initInEditor(settings, this.resolver, this.viewContainerRef);
+        }
     }
 
     private getGaugeTitle(type) {

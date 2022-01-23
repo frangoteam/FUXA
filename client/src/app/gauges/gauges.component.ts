@@ -33,6 +33,7 @@ import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component'
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { NgxChartjsComponent } from '../gui-helpers/ngx-chartjs/ngx-chartjs.component';
+import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 
 @Injectable()
 export class GaugesManager {
@@ -705,7 +706,10 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
             let gauge = HtmlGraphComponent.initElement(ga, res, ref, isview);
-            this.mapGauges[ga.id] = gauge;
+            if (gauge) {
+                this.setGraphPropety(gauge, ga.property);
+                this.mapGauges[ga.id] = gauge;
+            }
             return gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
@@ -758,7 +762,17 @@ export class GaugesManager {
         }
     }
 
-    private setGraphPropety(gauge: any, property: any) {
+    private setGraphPropety(gauge: GraphBaseComponent, property: any) {
+        if (property) {
+            if (property.id) {
+                let graph = this.hmiService.getGraph(property.id);
+                if (graph) {
+                    gauge.init(graph.property, graph.sources);
+                }
+            } else {
+                // gauge.setOptions(property.options, true);
+            }
+        }
     }
 
     /**

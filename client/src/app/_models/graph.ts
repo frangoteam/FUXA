@@ -32,7 +32,6 @@ export class GraphSource {
     id: string;
     name: string;
     label: string;
-    category: string;
     color: string;
     fill?: string;
 }

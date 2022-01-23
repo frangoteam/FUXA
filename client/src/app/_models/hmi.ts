@@ -238,6 +238,12 @@ export interface GaugeChartProperty {
     options: any;
 }
 
+export interface GaugeGraphProperty {
+    id: string;
+    type: string;
+    options: any;
+}
+
 export class Variable {
     id: string;
     name: string;

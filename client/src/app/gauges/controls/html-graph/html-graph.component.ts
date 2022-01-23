@@ -5,6 +5,7 @@ import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { GraphBarComponent } from './graph-bar/graph-bar.component';
 import { GraphPieComponent } from './graph-pie/graph-pie.component';
+import { GraphBaseComponent } from './graph-base/graph-base.component';
 
 
 @Component({
@@ -35,14 +36,19 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, gauge?: any) {
+        try {
+            gauge.setValue(sig.id, new Date().getTime() / 1000, sig.value);
+        } catch (err) {
+            console.error(err);
+        }
     }
 
-    static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean) {
+    static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean): GraphBaseComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
-            let htmlChart = Utils.searchTreeStartWith(ele, this.prefixD);
-            if (htmlChart) {
-                var factory;
+            let htmlGraph = Utils.searchTreeStartWith(ele, this.prefixD);
+            if (htmlGraph) {
+                let factory = resolver.resolveComponentFactory(GraphBaseComponent);
                 if (gab.type.endsWith(this.suffixBar)) {
                     factory = resolver.resolveComponentFactory(GraphBarComponent);
                 } else {
@@ -52,21 +58,32 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
                 // if (gab.property) {
                 //     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 // }
-                htmlChart.innerHTML = '';
-                // componentRef.instance.isEditor = !isview;
+                htmlGraph.innerHTML = '';
+                (<GraphBaseComponent>componentRef.instance).isEditor = !isview;
 
                 // componentRef.instance.rangeType = chartRange;
-                // componentRef.instance.id = gab.id;
+                (<GraphBaseComponent>componentRef.instance).id = gab.id;
 
                 componentRef.changeDetectorRef.detectChanges();
-                htmlChart.appendChild(componentRef.location.nativeElement);
-                // let opt = <ChartOptions>{ title: '', panel: { height: htmlChart.clientHeight, width: htmlChart.clientWidth } };
+                htmlGraph.appendChild(componentRef.location.nativeElement);
+                // let opt = <GraphOptions>{ title: '', panel: { height: htmlChart.clientHeight, width: htmlChart.clientWidth } };
                 // componentRef.instance.setOptions(opt);
 
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
             }
         }
+    }
+
+    static resize(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
+        // let ele = document.getElementById(gab.id);
+        // if (ele) {
+        //     let htmlGraph = Utils.searchTreeStartWith(ele, this.prefixD);
+        //     if (htmlGraph) {   
+
+        // componentRef.instance.resize(htmlBag.clientHeight, htmlBag.clientWidth);
+
+        console.log('asdf');
     }
 
     static detectChange(gab: GaugeSettings, res: any, ref: any) {

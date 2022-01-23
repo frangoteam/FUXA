@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, EventEmitter, OnInit, AfterViewInit, Input, ElementRef, ViewChild, Output } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, ReplaySubject } from 'rxjs';
@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType } from '../../../../_models/graph';
 import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
+import { GaugeGraphProperty } from '../../../../_models/hmi';
 
 @Component({
     selector: 'app-graph-property',
@@ -15,6 +16,12 @@ import { GraphConfigComponent } from '../../../../editor/graph-config/graph-conf
     styleUrls: ['./graph-property.component.css']
 })
 export class GraphPropertyComponent implements OnInit, AfterViewInit {
+
+    @Input() data: any;
+    @Output() change: EventEmitter<any> = new EventEmitter();
+    @Input('reload') set reload(b: any) { 
+        this._reload(); 
+    }
 
     graphBarType = GraphType.bar;
     graphType: GraphType = GraphType.pie;
@@ -27,20 +34,17 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
 
     constructor(
         public dialog: MatDialog,
-        public dialogRef: MatDialogRef<GraphPropertyComponent>,
-        private translateService: TranslateService,
-        @Inject(MAT_DIALOG_DATA) public data: any) { 
-            if (this.data.settings.type.endsWith('bar')) {
-                this.graphType = GraphType.bar;
-            }
+        private translateService: TranslateService) { 
         }
 
     ngOnInit() {
-        this.loadGraphs();
+        if (this.data.settings.type.endsWith('bar')) {
+            this.graphType = GraphType.bar;
+        }
+        this._reload();
     }
 
     ngAfterViewInit() {
-
     }
 
     ngOnDestroy() {
@@ -48,14 +52,26 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
         this._onDestroy.complete();
     }
 
-    onNoClick(): void {
-        this.dialogRef.close();
+    private _reload() {
+        this.loadGraphs();
+        let graph = null;
+        if (this.data.settings.property) {
+            graph = this.data.graphs.find(graph => graph.id === this.data.settings.property.id);
+        }
+        this.graphCtrl.setValue(graph);
     }
 
-    onOkClick(): void {
-    }
+    onGraphChanged() {
+        this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
+        if (this.graphCtrl.value) {
+            this.data.settings.name = this.graphCtrl.value.name;
+            this.data.settings.property.id = this.graphCtrl.value.id;
+            this.data.settings.property.type = this.graphCtrl.value.type;
+        } else {
+            this.data.settings.name = '';
+        }
 
-    onTabChanged() {
+        this.change.emit(this.data.settings);
     }
 
     onEditNewGraph() {

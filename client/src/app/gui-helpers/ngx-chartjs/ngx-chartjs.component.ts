@@ -46,14 +46,24 @@ export class NgxChartjsComponent implements AfterViewInit, OnChanges, OnDestroy 
         this.updateChart();
     }
 
-    updateChart() {
+    updateChart(mode?: string) {
         if (!this.chartInstance) {
             return;
         }
 
         this.chartInstance.data = this.data;
         this.chartInstance.options = this.options;
-        this.chartInstance.update(this.updateMode);
+        if (mode) {
+            this.chartInstance.update(mode);
+        } else {
+            this.chartInstance.update(this.updateMode);
+        }
+    }
+
+    resize(width, height) {
+        this.height = height;
+        this.width = width;
+        this.chartInstance.resize(width, height);
     }
 
     renderChart() {

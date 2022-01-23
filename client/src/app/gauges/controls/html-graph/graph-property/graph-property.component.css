@@ -1,0 +1,8 @@
+
+.section-item {
+    width: 100%;
+}
+
+.section-item mat-select, span {
+    width:calc(100% - 7px);
+}

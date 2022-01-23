@@ -212,8 +212,12 @@
     "graph.bar-xtype-value": "Values",
     "graph.bar-xtype-date": "Date and Time",
 
-    "graph.property-props": "Property",
+    "graph.property-data": "Data",
+    "graph.property-axis": "Axes",
     "graph.property-layout": "Layout",
+    "graph.property-graph": "Graph to show",
+    "graph.property-props": "Property",
+    "graph.property-newgraph": "New Graph...",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",

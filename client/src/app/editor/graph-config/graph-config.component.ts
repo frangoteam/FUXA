@@ -23,6 +23,7 @@ export class GraphConfigComponent implements OnInit {
     lineColor = Utils.lineColor;
 
     barXType = GraphBarXType;
+    xTypeValue = Utils.getEnumKey(GraphBarXType, GraphBarXType.value);
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
@@ -108,7 +109,7 @@ export class GraphConfigComponent implements OnInit {
                         if (!exist) {
                             let color = this.getNextColor();
                             const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name, 
-                                label: this.getTagLabel(tag), category: '', color: color, fill: color };
+                                label: this.getTagLabel(tag), color: color, fill: color };
                             graph.sources.push(myCopiedObject);
                         }
                     }
@@ -137,8 +138,7 @@ export class GraphConfigComponent implements OnInit {
         let dialogRef = this.dialog.open(DialogGraphSource, {
             position: { top: '60px' },
             data: <GraphSource>{
-                id: source.id, device: source.device, name: source.name, label: source.label, category: source.category,
-                color: source.color, fill: source.fill }
+                id: source.id, device: source.device, name: source.name, label: source.label, color: source.color, fill: source.fill }
         });
         dialogRef.afterClosed().subscribe((result: GraphSource) => {
             if (result) {
