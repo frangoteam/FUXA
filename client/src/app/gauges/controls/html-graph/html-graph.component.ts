@@ -75,17 +75,6 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
         }
     }
 
-    static resize(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
-        // let ele = document.getElementById(gab.id);
-        // if (ele) {
-        //     let htmlGraph = Utils.searchTreeStartWith(ele, this.prefixD);
-        //     if (htmlGraph) {   
-
-        // componentRef.instance.resize(htmlBag.clientHeight, htmlBag.clientWidth);
-
-        console.log('asdf');
-    }
-
     static detectChange(gab: GaugeSettings, res: any, ref: any) {
         return HtmlGraphComponent.initElement(gab, res, ref, false);
     }

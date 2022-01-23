@@ -218,6 +218,9 @@
     "graph.property-graph": "Graph to show",
     "graph.property-props": "Property",
     "graph.property-newgraph": "New Graph...",
+    "graph.property-yaxis-min": "Y Axis min",
+    "graph.property-yaxis-max": "Y Axis max",
+    "graph.property-yaxis-tickstep": "Y Axis tick",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",

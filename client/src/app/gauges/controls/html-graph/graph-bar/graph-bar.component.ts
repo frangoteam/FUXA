@@ -33,29 +33,16 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, OnD
 
     data: ChartData = this.datademo;
 
-    options: ChartOptions = {
-        // responsive: true,
-        // maintainAspectRatio: false,
-        scales: {  
-            yAxes: [{
-                display: true,
-                // stacked: true,
-                ticks: {
-                    // beginAtZero: true,
-                    suggestedMin: 0,
-                    // min: 0, // minimum value
-                    max: 260, // maximum value
-                    stepSize: 20,
-                },
-            }] 
-        },
-    };
+    options: GraphBarOptions;
 
     constructor() { 
         super();
     }
 
     ngOnInit() {
+        if (!this.options) {
+            this.options = GraphBarComponent.DefaultOptions();
+        }
         this.update();
     }
 
@@ -99,6 +86,10 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, OnD
         }
     }
 
+    setOptions(options: any): void {
+
+    }
+
     addDataSet(sigid: string, signame: string, source: any) {
         this.update();
     }
@@ -126,6 +117,27 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, OnD
             this.ngchart.updateChart();
         }
     }
+
+    public static DefaultOptions() {
+        let options = <GraphBarOptions>{
+            // responsive: true,
+            // maintainAspectRatio: false,
+            yAxes: { min: 0, max: 100 },
+            scales: {  
+                yAxes: [{
+                    display: true,
+                    // stacked: true,
+                    ticks: {
+                        // beginAtZero: true,
+                        suggestedMin: 0,
+                        // max: 260, // maximum value
+                        stepSize: 20,
+                    },
+                }] 
+            },
+        };
+        return options;
+    }
 }
 
 export class ChartData {
@@ -150,5 +162,12 @@ export class DataSet {
         this.data = data;
         this.backgroundColor = backgroundColor;
         this.borderColor = borderColor;
+    }
+}
+
+export interface GraphBarOptions extends ChartOptions {
+    yAxes: {
+        min: 0
+        max: 100,
     }
 }

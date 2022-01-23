@@ -8,7 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType } from '../../../../_models/graph';
 import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
+import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
+import { ChartOptions } from 'chart.js';
 
 @Component({
     selector: 'app-graph-property',
@@ -25,6 +27,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
 
     graphBarType = GraphType.bar;
     graphType: GraphType = GraphType.pie;
+    options: ChartOptions;
 
     graphCtrl: FormControl = new FormControl();
     graphFilterCtrl: FormControl = new FormControl();
@@ -40,6 +43,13 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         if (this.data.settings.type.endsWith('bar')) {
             this.graphType = GraphType.bar;
+            if (!this.data.settings.property) {
+                this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
+            } 
+            if (!this.data.settings.property.options) {
+                this.data.settings.property.options = GraphBarComponent.DefaultOptions();
+            }
+            this.options = this.data.settings.property.options;
         }
         this._reload();
     }
@@ -70,6 +80,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
         } else {
             this.data.settings.name = '';
         }
+        this.data.settings.property.options = this.options;
 
         this.change.emit(this.data.settings);
     }
