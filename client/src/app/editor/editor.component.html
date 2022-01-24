@@ -8,7 +8,7 @@
     </button>
     <div [ngSwitch]="gaugeDialog.type">
         <div *ngSwitchCase="gaugeDialogType.Graph">
-            <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (change)="onGaugeDialogChanged($event)"></app-graph-property>
+            <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-graph-property>
         </div>
     </div>
 </mat-drawer>

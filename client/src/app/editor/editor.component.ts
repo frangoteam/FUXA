@@ -385,7 +385,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ga GaugeSettings
      */
     private setGaugeSettings(ga) {
-        this.currentView.items[ga.id] = ga;
+        if (ga.id) {
+            this.currentView.items[ga.id] = ga;
+        } else {
+            console.error("DBG ", ga);
+        }
     }
 
     /**

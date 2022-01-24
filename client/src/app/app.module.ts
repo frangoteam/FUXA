@@ -135,7 +135,7 @@ import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-
 import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
 import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';
 import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
-import { NgxChartjsComponent } from './gui-helpers/ngx-chartjs/ngx-chartjs.component';
+import { ChartsModule } from 'ng2-charts';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -234,7 +234,6 @@ export function createTranslateLoader(http: HttpClient) {
         ViewComponent,
         DialogItemText,
         NgxUplotComponent,
-        NgxChartjsComponent,
         ChartUplotComponent,
         CardsViewComponent,
         GraphBarComponent,
@@ -266,7 +265,8 @@ export function createTranslateLoader(http: HttpClient) {
                 deps: [HttpClient]
             }
         }),
-        GridsterModule
+        GridsterModule,
+        ChartsModule
     ],
     providers: [
         // providersResourceService,
@@ -342,7 +342,6 @@ export function createTranslateLoader(http: HttpClient) {
         DialogItemText,
         ChartUplotComponent,
         NgxUplotComponent,
-        NgxChartjsComponent,
         GraphBarComponent,
         GraphPieComponent,
         GraphBaseComponent

@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 
 import { ChartData, ChartOptions } from 'chart.js';
-import { NgxChartjsComponent } from './../../../../gui-helpers/ngx-chartjs/ngx-chartjs.component';
 import { GraphBaseComponent } from '../graph-base/graph-base.component';
+import { Label, BaseChartDirective } from 'ng2-charts';
 
 @Component({
     selector: 'app-graph-pie',
@@ -10,7 +10,7 @@ import { GraphBaseComponent } from '../graph-base/graph-base.component';
     styleUrls: ['./graph-pie.component.css']
 })
 export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnDestroy {
-    @ViewChild('ngchart') public ngchart: NgxChartjsComponent;
+    @ViewChild('ngchart') public ngchart: BaseChartDirective;
 
     id = '';
     isEditor = false;

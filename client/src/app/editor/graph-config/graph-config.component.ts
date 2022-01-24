@@ -160,6 +160,12 @@ export class GraphConfigComponent implements OnInit {
 
     onSelectGraph(item: Graph) {
         this.selectedGraph = item;
+        if (!this.selectedGraph.type) {
+            this.selectedGraph.type = GraphType.bar;
+        }
+        if (!this.selectedGraph.property) {
+            this.selectedGraph.property = new GraphBarProperty();
+        }
     }
 
     isGraphSelected(item: Graph) {

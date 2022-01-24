@@ -5,7 +5,7 @@ import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { GraphBarComponent } from './graph-bar/graph-bar.component';
 import { GraphPieComponent } from './graph-pie/graph-pie.component';
-import { GraphBaseComponent } from './graph-base/graph-base.component';
+import { GraphBaseComponent, GraphOptions } from './graph-base/graph-base.component';
 
 
 @Component({
@@ -66,8 +66,8 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlGraph.appendChild(componentRef.location.nativeElement);
-                // let opt = <GraphOptions>{ title: '', panel: { height: htmlChart.clientHeight, width: htmlChart.clientWidth } };
-                // componentRef.instance.setOptions(opt);
+                let opt = <GraphOptions>{ title: '', panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
+                componentRef.instance.setOptions(opt);
 
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;

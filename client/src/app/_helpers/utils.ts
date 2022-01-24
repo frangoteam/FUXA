@@ -125,6 +125,10 @@ export class Utils {
         return false;
     }
 
+    static isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
     static Boolify(arg) {
         var BoolArray = [true, false, 'true', 'false', 1, 0];
         if (BoolArray.indexOf(arg) === -1) {

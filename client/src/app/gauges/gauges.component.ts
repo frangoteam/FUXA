@@ -32,7 +32,6 @@ import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-u
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
-import { NgxChartjsComponent } from '../gui-helpers/ngx-chartjs/ngx-chartjs.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 
 @Injectable()
@@ -675,7 +674,8 @@ export class GaugesManager {
      * @param isview in view or editor, in editor have to disable mouse activity
      */
     initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
-        if (!ga) {
+        if (!ga || !ga.type) {
+            console.error('!TOFIX', ga);
             return null;
         }
         // add variable
@@ -768,9 +768,10 @@ export class GaugesManager {
                 let graph = this.hmiService.getGraph(property.id);
                 if (graph) {
                     gauge.init(graph.property, graph.sources);
-                }
-            } else {
-                // gauge.setOptions(property.options, true);
+                }                
+            }
+            if (property.options) {
+                gauge.setOptions(property.options);
             }
         }
     }

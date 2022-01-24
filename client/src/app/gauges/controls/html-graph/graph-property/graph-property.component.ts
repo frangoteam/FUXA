@@ -20,7 +20,7 @@ import { ChartOptions } from 'chart.js';
 export class GraphPropertyComponent implements OnInit, AfterViewInit {
 
     @Input() data: any;
-    @Output() change: EventEmitter<any> = new EventEmitter();
+    @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
     @Input('reload') set reload(b: any) { 
         this._reload(); 
     }
@@ -81,8 +81,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             this.data.settings.name = '';
         }
         this.data.settings.property.options = this.options;
-
-        this.change.emit(this.data.settings);
+        this.onPropChanged.emit(this.data.settings);
     }
 
     onEditNewGraph() {

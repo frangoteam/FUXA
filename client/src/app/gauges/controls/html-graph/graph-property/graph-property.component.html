@@ -19,16 +19,17 @@
         <div class="element-property-header">
             <span>{{'graph.property-axis' | translate}}</span>
         </div>
-        <div class="my-form-field section-item">
+        <div class="my-form-field section-inline-number">
             <span>{{'graph.property-yaxis-min' | translate}}</span>
-            <input numberOnly [(ngModel)]="options.yAxes.min" (change)="onGraphChanged()"
-                style="width: 50px;text-align: center;display:inline-block;" type="text">
+            <input numberOnly [(ngModel)]="options.yAxes.min" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="text">
         </div>
-        <div class="my-form-field section-item">
+        <div class="section-inline-margin"></div>
+        <div class="my-form-field section-inline-number">
             <span>{{'graph.property-yaxis-max' | translate}}</span>
-            <input numberOnly [(ngModel)]="options.yAxes.max" (change)="onGraphChanged()"
-                style="width: 50px;text-align: center;display:inline-block;" type="text">
+            <input numberOnly [(ngModel)]="options.yAxes.max" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="text">
         </div>
+        <div class="section-inline-margin"></div>
+        
         <div class="element-property-header">
             <span>{{'graph.property-layout' | translate}}</span>
         </div>
