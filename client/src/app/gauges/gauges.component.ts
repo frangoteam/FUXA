@@ -767,7 +767,7 @@ export class GaugesManager {
             if (property.id) {
                 let graph = this.hmiService.getGraph(property.id);
                 if (graph) {
-                    gauge.init(graph.property, graph.sources);
+                    gauge.init(graph.name, graph.property, graph.sources);
                 }                
             }
             if (property.options) {

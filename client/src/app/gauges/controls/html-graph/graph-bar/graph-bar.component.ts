@@ -4,7 +4,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ElementRef, Inp
 import { GraphBaseComponent, GraphOptions } from '../graph-base/graph-base.component';
 import { GraphBarProperty, GraphBarXType, GraphSource } from '../../../../_models/graph';
 import { Utils } from '../../../../_helpers/utils';
-import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataSets, ChartTitleOptions } from 'chart.js';
 import { Label, BaseChartDirective } from 'ng2-charts';
 @Component({
     selector: 'graph-bar',
@@ -12,15 +12,19 @@ import { Label, BaseChartDirective } from 'ng2-charts';
     styleUrls: ['./graph-bar.component.css']
 })
 export class GraphBarComponent extends GraphBaseComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('ngchart') public ngchart: BaseChartDirective;
+    @ViewChild(BaseChartDirective) public chart?: BaseChartDirective;
     @Input() height = 240;
     @Input() width = 380;
 
     public barChartOptions: GraphOptions = {
-        // responsive: true,
+        responsive: true,
         maintainAspectRatio: false,
-        // panel: { height: 240, width: 380 }
+        title: {
+            display: true,
+            text: 'asdfasdf'
+        }
     };
+
     public barChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
     public barChartType: ChartType = 'bar';
     public barChartLegend = true;
@@ -31,24 +35,14 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
     ];
 
+    private VerticalType: ChartType = 'bar';
+
     id = '';
     isEditor = false;
     property: GraphBarProperty;
     sourceMap = {};
     sourceCount = 0;
     xTypeValue = Utils.getEnumKey(GraphBarXType, GraphBarXType.value);
-
-    datademo: ChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May'],
-        datasets: [new DataSet('A', [65, 35, 12, 33, 54],
-            ['rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-            ['rgb(255, 99, 132)', 'rgb(255, 99, 132)', 'rgb(255, 99, 132)', 'rgb(255, 99, 132)', 'rgb(255, 99, 132)']),
-        new DataSet('B', [59, 12, 80, 81, 56],
-            ['rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(54, 162, 235, 0.2)'],
-            ['rgb(54, 162, 235)', 'rgb(54, 162, 235)', 'rgb(54, 162, 235)', 'rgb(54, 162, 235)', 'rgb(54, 162, 235)'])]
-    };
-
-    data: ChartData = this.datademo;
 
     constructor() {
         super();
@@ -58,7 +52,6 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         if (!this.barChartOptions) {
             this.barChartOptions = GraphBarComponent.DefaultOptions();
         }
-        this.update();
     }
     
     ngAfterViewInit() {
@@ -69,31 +62,28 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
 
     ngOnDestroy() {
         try {
-            // if (this.ngchart) {
-            //     this.ngchart.ngOnDestroy();
-            // }
-            // delete this.ngchart;
         } catch (e) {
             console.error(e);
         }
     }
 
-    init(property: GraphBarProperty, sources?: GraphSource[]) {
+    init(title: string, property: GraphBarProperty, sources?: GraphSource[]) {
+        this.barChartPlugins[0] = { title: { text: title, display: true } };
         this.property = property;
         if (sources) {
             this.setSources(sources);
         }
-        this.update();
     }
 
     setSources(sources: GraphSource[]) {
         this.sourceMap = {};
         this.barChartData = [];
         for (let i = 0; i < sources.length; i++) {
-            let dataset = new DataSet(sources[i].label, [], [sources[i].fill], [sources[i].color]);
+            let dataset = <ChartDataSets>{ label: sources[i].label, data: [], backgroundColor: [sources[i].fill], borderColor: [sources[i].color],
+                hoverBackgroundColor: [sources[i].fill], hoverBorderColor: [sources[i].color] };
             if (this.isEditor) {
                 if (this.property.xtype === this.xTypeValue) {
-                    dataset.data.push(Utils.rand(10, 100));
+                    dataset.data = [Utils.rand(10, 100)];
                 }
             }
             this.sourceMap[sources[i].id] = dataset;
@@ -101,9 +91,9 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         }
         this.sourceCount = sources.length;
         if (this.property.xtype === this.xTypeValue) {
-            this.barChartLabels = [];
+            this.barChartLabels = [''];
         } else {
-            this.barChartLabels = this.data.datasets.map(ds => { return ds.label });
+            this.barChartLabels = this.barChartData.map(ds => { return ds.label });
         }
     }
 
@@ -112,30 +102,60 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             if (options.yAxes) {
                 if (Utils.isNumeric(options.yAxes.min)) {
                     options.scales.yAxes[0].ticks.min = parseFloat(options.yAxes.min);
+                    options.scales.xAxes[0].ticks.min = parseFloat(options.yAxes.min);
                 } else {
-                    delete options['scales']['yAxes'][0]['ticks'].min;
+                    delete options.scales.yAxes[0].ticks.min;
+                    delete options.scales.xAxes[0].ticks.min;
                 }
                 if (Utils.isNumeric(options.yAxes.max)) {
-                    options['scales']['yAxes'][0]['ticks'].max = parseFloat(options.yAxes.max);
+                    options.scales.yAxes[0].ticks.max = parseFloat(options.yAxes.max);
+                    options.scales.xAxes[0].ticks.max = parseFloat(options.yAxes.max);
                 } else {
-                    delete options['scales']['yAxes'][0]['ticks'].max;
+                    delete options.scales.yAxes[0].ticks.max;
+                    delete options.scales.xAxes[0].ticks.max;
                 }
+                if (Utils.isNumeric(options.yAxes.stepSize)) {
+                    options.scales.yAxes[0].ticks.stepSize = parseFloat(options.yAxes.stepSize);
+                    options.scales.xAxes[0].ticks.stepSize = parseFloat(options.yAxes.stepSize);
+                } else {
+                    delete options.scales.yAxes[0].ticks.stepSize;
+                    delete options.scales.xAxes[0].ticks.stepSize;
+                }
+                if (options.type === this.barChartType) {
+                    if (Utils.isNumeric(options.yAxes.fontSize)) {
+                        options.scales.yAxes[0].ticks.fontSize = parseInt(options.yAxes.fontSize);
+                    } else {
+                        delete options.scales.yAxes[0].ticks.fontSize;
+                    }
+                    if (Utils.isNumeric(options.xAxes.fontSize)) {
+                        options.scales.xAxes[0].ticks.fontSize = parseInt(options.xAxes.fontSize);
+                    } else {
+                        delete options.scales.xAxes[0].ticks.fontSize;
+                    }
+                } else if (options.type !== this.barChartType) {
+                    if (Utils.isNumeric(options.yAxes.fontSize)) {
+                        options.scales.xAxes[0].ticks.fontSize = parseInt(options.yAxes.fontSize);
+                    } else {
+                        delete options.scales.xAxes[0].ticks.fontSize;
+                    }
+                    if (Utils.isNumeric(options.xAxes.fontSize)) {
+                        options.scales.yAxes[0].ticks.fontSize = parseInt(options.xAxes.fontSize);
+                    } else {
+                        delete options.scales.yAxes[0].ticks.fontSize;
+                    }
+                }
+            }
+            if (options.type) {
+                this.barChartType = <ChartType>options.type;
             }
             this.barChartOptions = { ...this.barChartOptions, ...options };
             if (this.barChartOptions.panel) {
                 this.resize(this.barChartOptions.panel.height, this.barChartOptions.panel.width);
             }
+            // if (options.titleDisplay) {
+            // }
+            this.chart.update();
         }
-    }
-
-
-    addDataSet(sigid: string, signame: string, source: any) {
-        this.update();
-    }
-
-    update() {
-        // this.ngchart.data = this.data;
-        // this.ngchart.updateChart();
     }
 
     resize(height?, width?) {
@@ -157,53 +177,32 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             if (this.property.xtype === this.xTypeValue) {
                 dataset.data[0] = sigvalue;
             }
-            // this.ngchart.updateChart();
         }
     }
 
     public static DefaultOptions() {
         let options = <GraphOptions>{
+            type: 'bar',                                        // to set in property
             // responsive: true,
             maintainAspectRatio: false,
-            yAxes: { min: '0', max: '100' },
+            titleDisplay: true,
+            yAxes: { min: '0', max: '100', stepSize: '20' },    // to set in property
+            xAxes: { },
             scales: {
                 yAxes: [{
                     display: true,
                     // stacked: true,
                     ticks: {
-                        // beginAtZero: true,
                         suggestedMin: 0,
-                        // max: 260, // maximum value
-                        stepSize: 20,
-                    },
+                     },
+                }],
+                xAxes: [{
+                    display: true,
+                    // stacked: true,
+                    ticks: { },
                 }]
             },
         };
         return options;
-    }
-}
-
-export class ChartData {
-    labels: string[];
-    datasets: DataSet[];
-
-    constructor() {
-        this.labels = [];
-        this.datasets = [];
-    }
-}
-export class DataSet {
-    label: string;
-    data: number[];
-    fill?: boolean = true;
-    backgroundColor: string[];
-    borderColor?: string[];
-    borderWidth?: number = 1;
-
-    constructor(label: string, data: number[], backgroundColor: string[], borderColor: string[]) {
-        this.label = label;
-        this.data = data;
-        this.backgroundColor = backgroundColor;
-        this.borderColor = borderColor;
     }
 }

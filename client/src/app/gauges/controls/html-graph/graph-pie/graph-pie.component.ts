@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { GraphBaseComponent } from '../graph-base/graph-base.component';
 import { Label, BaseChartDirective } from 'ng2-charts';
+import { GraphType, GraphSource } from '../../../../_models/graph';
 
 @Component({
     selector: 'app-graph-pie',
@@ -43,12 +44,8 @@ export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnD
         }
     }
 
-    init(property: any) {
+    init(title: string, property: any, sources?: GraphSource[]) {
 
-    }
-
-    addDataSet(sigid: string, signame: string, source: any) {
-        
     }
 
     setValue (sigid: string, timestamp: any, sigvalue: any) {

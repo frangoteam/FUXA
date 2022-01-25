@@ -17,17 +17,46 @@
             </mat-select>
         </div>
         <div class="element-property-header">
-            <span>{{'graph.property-axis' | translate}}</span>
+            <span>{{'graph.property-title' | translate}}</span>
         </div>
         <div class="my-form-field section-inline-number">
+            <span>{{'graph.property-title-font' | translate}}</span>
+            <!-- <input numberOnly [(ngModel)]="options.title.fontSize" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number"> -->
+        </div>
+        <div class="element-property-header">
+            <span>{{'graph.property-axis' | translate}}</span>
+        </div>
+        <div class="my-form-field section-item">
+            <span>{{'graph.property-graph-oriantation' | translate}}</span>
+            <mat-select [(value)]="options.type" (selectionChange)="onGraphChanged()">
+                <mat-option value="bar">{{'graph.property-ori-vartical' | translate}}</mat-option>
+                <mat-option value="horizontalBar">{{'graph.property-ori-horizontal' | translate}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field section-inline-number section-newline">
             <span>{{'graph.property-yaxis-min' | translate}}</span>
-            <input numberOnly [(ngModel)]="options.yAxes.min" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="text">
+            <input numberOnly [(ngModel)]="options.yAxes.min" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
         </div>
         <div class="section-inline-margin"></div>
         <div class="my-form-field section-inline-number">
             <span>{{'graph.property-yaxis-max' | translate}}</span>
-            <input numberOnly [(ngModel)]="options.yAxes.max" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="text">
+            <input numberOnly [(ngModel)]="options.yAxes.max" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
         </div>
+        <div class="section-inline-margin"></div>
+        <div class="my-form-field section-inline-number">
+            <span>{{'graph.property-stepsize' | translate}}</span>
+            <input numberOnly [(ngModel)]="options.yAxes.stepSize" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+        </div>
+        <div class="section-inline-margin"></div>
+        <div class="my-form-field section-inline-number">
+            <span>{{'graph.property-yaxis-fontsize' | translate}}</span>
+            <input numberOnly [(ngModel)]="options.yAxes.fontSize" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+        </div>
+        <div class="my-form-field section-inline-number section-newline">
+            <span>{{'graph.property-xaxis-fontsize' | translate}}</span>
+            <input numberOnly [(ngModel)]="options.xAxes.fontSize" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+        </div>
+
         <div class="section-inline-margin"></div>
         
         <div class="element-property-header">

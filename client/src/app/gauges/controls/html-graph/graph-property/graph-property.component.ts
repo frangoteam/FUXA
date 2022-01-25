@@ -49,7 +49,6 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             if (!this.data.settings.property.options) {
                 this.data.settings.property.options = GraphBarComponent.DefaultOptions();
             }
-            this.options = this.data.settings.property.options;
         }
         this._reload();
     }
@@ -63,6 +62,18 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
     }
 
     private _reload() {
+        // check default value, undefined if new
+        if (this.data.settings.type.endsWith('bar')) {
+            this.graphType = GraphType.bar;
+            if (!this.data.settings.property) {
+                this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
+            }
+            if (!this.data.settings.property.options) {
+                this.data.settings.property.options = GraphBarComponent.DefaultOptions();
+            }
+        }
+        this.options = this.data.settings.property.options;
+        // load graphs list to choise
         this.loadGraphs();
         let graph = null;
         if (this.data.settings.property) {
@@ -80,7 +91,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
         } else {
             this.data.settings.name = '';
         }
-        this.data.settings.property.options = this.options;
+        this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
         this.onPropChanged.emit(this.data.settings);
     }
 

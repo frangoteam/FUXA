@@ -10,16 +10,22 @@ export class GraphBaseComponent {
     id: string;
     isEditor: boolean;
 
-    init? (property: any, sources?: GraphSource[]): void;
+    init? (title: string, property: any, sources?: GraphSource[]): void;
     setOptions? (options: any): void;
-    addDataSet? (sigid: string, signame: string, source: any): void;
     setValue? (sigid: string, timestamp: any, sigvalue: any): void;
 }
 
 export interface GraphOptions extends ChartOptions {
     panel?: { height: number, width: number };
+    titleDisplay?: boolean,
+    type?: string,
     yAxes?: {
-        min: '0'
-        max: '100',
+        min: string
+        max: string,
+        stepSize: string,
+        fontSize: string
+    },
+    xAxes?: {
+        fontSize: string
     }
 }

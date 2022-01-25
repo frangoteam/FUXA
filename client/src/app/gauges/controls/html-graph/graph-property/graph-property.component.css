@@ -21,3 +21,7 @@
     display: inline-block;
     width: 15px;
 }
+
+.section-newline {
+    margin-top: 5px;
+}
