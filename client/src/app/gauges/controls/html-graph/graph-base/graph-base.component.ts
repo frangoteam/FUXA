@@ -23,9 +23,21 @@ export interface GraphOptions extends ChartOptions {
         min: string
         max: string,
         stepSize: string,
-        fontSize: string
+        fontSize: string,
+        fontColor: string
     },
     xAxes?: {
-        fontSize: string
+        fontSize: string,
+        fontColor: string
+    },
+    gridLines?: {
+        display: boolean,
+        color: string,
+    },
+    legend?: {
+        display: boolean,
+        labels: {
+            fontColor: string
+        }
     }
 }

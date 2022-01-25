@@ -11,6 +11,7 @@ import { GraphConfigComponent } from '../../../../editor/graph-config/graph-conf
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
 import { ChartOptions } from 'chart.js';
+import { Utils } from '../../../../_helpers/utils';
 
 @Component({
     selector: 'app-graph-property',
@@ -28,6 +29,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
     graphBarType = GraphType.bar;
     graphType: GraphType = GraphType.pie;
     options: ChartOptions;
+    defaultColor = Utils.defaultColor;
 
     graphCtrl: FormControl = new FormControl();
     graphFilterCtrl: FormControl = new FormControl();

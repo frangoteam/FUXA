@@ -132,6 +132,14 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     } else {
                         delete options.scales.xAxes[0].ticks.fontSize;
                     }
+                    delete options.scales.yAxes[0].ticks.fontColor;
+                    if (options.yAxes.fontColor) {
+                        options.scales.yAxes[0].ticks.fontColor = options.yAxes.fontColor;
+                    }
+                    delete options.scales.xAxes[0].ticks.fontColor;
+                    if (options.xAxes.fontColor) {
+                        options.scales.xAxes[0].ticks.fontColor = options.xAxes.fontColor;
+                    }
                 } else if (options.type !== this.barChartType) {
                     if (Utils.isNumeric(options.yAxes.fontSize)) {
                         options.scales.xAxes[0].ticks.fontSize = parseInt(options.yAxes.fontSize);
@@ -142,6 +150,14 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                         options.scales.yAxes[0].ticks.fontSize = parseInt(options.xAxes.fontSize);
                     } else {
                         delete options.scales.yAxes[0].ticks.fontSize;
+                    }
+                    delete options.scales.xAxes[0].ticks.fontColor;
+                    if (options.yAxes.fontColor) {
+                        options.scales.xAxes[0].ticks.fontColor = options.yAxes.fontColor;
+                    }
+                    delete options.scales.yAxes[0].ticks.fontColor;
+                    if (options.xAxes.fontColor) {
+                        options.scales.yAxes[0].ticks.fontColor = options.xAxes.fontColor;
                     }
                 }
             }
@@ -202,6 +218,15 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     ticks: { },
                 }]
             },
+            gridLines: {
+                display: true
+            },
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: 'rgb(255, 99, 132)'
+                }
+            }
         };
         return options;
     }

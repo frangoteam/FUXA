@@ -17,6 +17,16 @@
     text-align: center;
 }
 
+.section-inline-color {
+    display: inline-block;
+    width: 65px;
+}
+
+.section-inline-color input {
+    width: 65px !important;
+    text-align: center;
+}
+
 .section-inline-margin {
     display: inline-block;
     width: 15px;
