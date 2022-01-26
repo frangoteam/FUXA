@@ -1,11 +1,13 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ElementRef, Input } from '@angular/core';
 
 // import { ChartOptions } from 'chart.js';
-import { GraphBaseComponent, GraphOptions } from '../graph-base/graph-base.component';
+import { GraphBaseComponent, GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GraphBarProperty, GraphBarXType, GraphSource } from '../../../../_models/graph';
 import { Utils } from '../../../../_helpers/utils';
-import { ChartOptions, ChartType, ChartDataSets, ChartTitleOptions } from 'chart.js';
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label, BaseChartDirective } from 'ng2-charts';
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+
 @Component({
     selector: 'graph-bar',
     templateUrl: './graph-bar.component.html',
@@ -19,26 +21,21 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     public barChartOptions: GraphOptions = {
         responsive: true,
         maintainAspectRatio: false,
-        title: {
-            display: true,
-            text: 'asdfasdf'
-        }
     };
 
     public barChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
     public barChartType: ChartType = 'bar';
     public barChartLegend = true;
-    public barChartPlugins = [];
+    public barChartPlugins = [pluginDataLabels];
 
     public barChartData: ChartDataSets[] = [
         { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
         { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
     ];
 
-    private VerticalType: ChartType = 'bar';
-
     id = '';
     isEditor = false;
+    title = '';
     property: GraphBarProperty;
     sourceMap = {};
     sourceCount = 0;
@@ -68,7 +65,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     }
 
     init(title: string, property: GraphBarProperty, sources?: GraphSource[]) {
-        this.barChartPlugins[0] = { title: { text: title, display: true } };
+        this.title = title;
         this.property = property;
         if (sources) {
             this.setSources(sources);
@@ -99,67 +96,14 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
 
     setOptions(options: GraphOptions): void {
         if (options) {
-            if (options.yAxes) {
-                if (Utils.isNumeric(options.yAxes.min)) {
-                    options.scales.yAxes[0].ticks.min = parseFloat(options.yAxes.min);
-                    options.scales.xAxes[0].ticks.min = parseFloat(options.yAxes.min);
-                } else {
-                    delete options.scales.yAxes[0].ticks.min;
-                    delete options.scales.xAxes[0].ticks.min;
-                }
-                if (Utils.isNumeric(options.yAxes.max)) {
-                    options.scales.yAxes[0].ticks.max = parseFloat(options.yAxes.max);
-                    options.scales.xAxes[0].ticks.max = parseFloat(options.yAxes.max);
-                } else {
-                    delete options.scales.yAxes[0].ticks.max;
-                    delete options.scales.xAxes[0].ticks.max;
-                }
-                if (Utils.isNumeric(options.yAxes.stepSize)) {
-                    options.scales.yAxes[0].ticks.stepSize = parseFloat(options.yAxes.stepSize);
-                    options.scales.xAxes[0].ticks.stepSize = parseFloat(options.yAxes.stepSize);
-                } else {
-                    delete options.scales.yAxes[0].ticks.stepSize;
-                    delete options.scales.xAxes[0].ticks.stepSize;
-                }
-                if (options.type === this.barChartType) {
-                    if (Utils.isNumeric(options.yAxes.fontSize)) {
-                        options.scales.yAxes[0].ticks.fontSize = parseInt(options.yAxes.fontSize);
-                    } else {
-                        delete options.scales.yAxes[0].ticks.fontSize;
-                    }
-                    if (Utils.isNumeric(options.xAxes.fontSize)) {
-                        options.scales.xAxes[0].ticks.fontSize = parseInt(options.xAxes.fontSize);
-                    } else {
-                        delete options.scales.xAxes[0].ticks.fontSize;
-                    }
-                    delete options.scales.yAxes[0].ticks.fontColor;
-                    if (options.yAxes.fontColor) {
-                        options.scales.yAxes[0].ticks.fontColor = options.yAxes.fontColor;
-                    }
-                    delete options.scales.xAxes[0].ticks.fontColor;
-                    if (options.xAxes.fontColor) {
-                        options.scales.xAxes[0].ticks.fontColor = options.xAxes.fontColor;
-                    }
-                } else if (options.type !== this.barChartType) {
-                    if (Utils.isNumeric(options.yAxes.fontSize)) {
-                        options.scales.xAxes[0].ticks.fontSize = parseInt(options.yAxes.fontSize);
-                    } else {
-                        delete options.scales.xAxes[0].ticks.fontSize;
-                    }
-                    if (Utils.isNumeric(options.xAxes.fontSize)) {
-                        options.scales.yAxes[0].ticks.fontSize = parseInt(options.xAxes.fontSize);
-                    } else {
-                        delete options.scales.yAxes[0].ticks.fontSize;
-                    }
-                    delete options.scales.xAxes[0].ticks.fontColor;
-                    if (options.yAxes.fontColor) {
-                        options.scales.xAxes[0].ticks.fontColor = options.yAxes.fontColor;
-                    }
-                    delete options.scales.yAxes[0].ticks.fontColor;
-                    if (options.xAxes.fontColor) {
-                        options.scales.yAxes[0].ticks.fontColor = options.xAxes.fontColor;
-                    }
-                }
+            options.scales.yAxes = [GraphBaseComponent.getAxes((options.type === this.barChartType) ? options.yAxes : options.xAxes)];
+            options.scales.xAxes = [GraphBaseComponent.getAxes((options.type === this.barChartType) ? options.xAxes : options.yAxes)];
+            // check axes grids property
+            for (let i = 0; i < options.scales.xAxes.length; i++) {
+                options.scales.xAxes[i].gridLines = GraphBaseComponent.getGridLines(options);
+            }
+            for (let i = 0; i < options.scales.yAxes.length; i++) {
+                options.scales.yAxes[i].gridLines = GraphBaseComponent.getGridLines(options);
             }
             if (options.type) {
                 this.barChartType = <ChartType>options.type;
@@ -168,8 +112,12 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             if (this.barChartOptions.panel) {
                 this.resize(this.barChartOptions.panel.height, this.barChartOptions.panel.width);
             }
-            // if (options.titleDisplay) {
-            // }
+            if (options.borderWidth) {
+                for (let i = 0; i < this.barChartData.length; i++) {
+                    this.barChartData[i].borderWidth = options.borderWidth;
+                }
+            }
+            this.barChartOptions.title = GraphBaseComponent.getTitle(options, this.title);
             this.chart.update();
         }
     }
@@ -180,8 +128,6 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             this.width = width;
             this.barChartOptions.panel.width = width;
             this.barChartOptions.panel.height = height;
-            // this.ngchart.nativeElement.clientHeight = height;
-            // this.ngchart.update();
         } else {
             // this.ngchart.updateChart('resize');
         }
@@ -192,6 +138,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             let dataset = this.sourceMap[sigid];
             if (this.property.xtype === this.xTypeValue) {
                 dataset.data[0] = sigvalue;
+                this.chart.update();
             }
         }
     }
@@ -199,17 +146,33 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     public static DefaultOptions() {
         let options = <GraphOptions>{
             type: 'bar',                                        // to set in property
-            // responsive: true,
+            theme: GraphThemeType.light,
+            responsive: true,
             maintainAspectRatio: false,
-            titleDisplay: true,
-            yAxes: { min: '0', max: '100', stepSize: '20' },    // to set in property
-            xAxes: { },
+            tooltips: { enabled: true },
+            title: {
+                display: true,
+                text: 'Title',
+                fontSize: 12,
+            },
+            gridLinesShow: true,                // to set in property
+            yAxes: {                            // to set in property
+                display: true,
+                min: '0', 
+                max: '100', 
+                stepSize: 20,
+                fontSize: 12,
+            },
+            xAxes: { 
+                display: true,
+                fontSize: 12,
+            },
             scales: {
                 yAxes: [{
                     display: true,
                     // stacked: true,
                     ticks: {
-                        suggestedMin: 0,
+                        // suggestedMin: 0
                      },
                 }],
                 xAxes: [{
@@ -218,13 +181,23 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     ticks: { },
                 }]
             },
-            gridLines: {
-                display: true
+            plugins: {
+                datalabels: {
+                    display: true,
+                    anchor: 'end',
+                    align: 'end',
+                    font: {
+                        size: 12,
+                    }
+                }
             },
             legend: {
                 display: true,
+                position: 'top',
+                align: 'center',
                 labels: {
-                    fontColor: 'rgb(255, 99, 132)'
+                    fontSize: 12,
+                    fontColor: ''
                 }
             }
         };

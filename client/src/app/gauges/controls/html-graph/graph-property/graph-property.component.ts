@@ -9,9 +9,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType } from '../../../../_models/graph';
 import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
+import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
 import { ChartOptions } from 'chart.js';
 import { Utils } from '../../../../_helpers/utils';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
     selector: 'app-graph-property',
@@ -26,9 +28,10 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
         this._reload(); 
     }
 
+    themeType = GraphThemeType;
     graphBarType = GraphType.bar;
     graphType: GraphType = GraphType.pie;
-    options: ChartOptions;
+    options: GraphOptions;
     defaultColor = Utils.defaultColor;
 
     graphCtrl: FormControl = new FormControl();
@@ -84,7 +87,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
         this.graphCtrl.setValue(graph);
     }
 
-    onGraphChanged() {
+    onGraphChanged(theme?: string) {
         this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
         if (this.graphCtrl.value) {
             this.data.settings.name = this.graphCtrl.value.name;
@@ -92,6 +95,20 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             this.data.settings.property.type = this.graphCtrl.value.type;
         } else {
             this.data.settings.name = '';
+        }
+        if (this.options.theme === this.themeType.light) {
+            this.options.yAxes.fontColor = '#666';
+            this.options.xAxes.fontColor = '#666';
+            this.options.gridLinesColor = 'rgba(0, 0, 0, 0.1)';
+            this.options.legend.labels.fontColor = '#666';
+            this.options.title.fontColor = '#666';
+        } else if (this.options.theme === this.themeType.dark) {
+            this.options.yAxes.fontColor = '#fff';
+            this.options.xAxes.fontColor = '#fff';
+            this.options.gridLinesColor = 'rgba(0, 0, 0, 0.1)';
+            this.options.legend.labels.fontColor = '#fff';
+            this.options.title.fontColor = '#fff';
+
         }
         this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
         this.onPropChanged.emit(this.data.settings);

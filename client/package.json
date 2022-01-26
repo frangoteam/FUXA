@@ -37,6 +37,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "chart.js": "^2.9.4",
+    "chartjs-plugin-datalabels": "1.0.0",
     "core-js": "^2.5.4",
     "file-saver": "2.0.5",
     "hammerjs": "^2.0.8",

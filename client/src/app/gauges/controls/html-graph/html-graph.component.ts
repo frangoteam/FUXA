@@ -66,7 +66,7 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlGraph.appendChild(componentRef.location.nativeElement);
-                let opt = <GraphOptions>{ title: '', panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
+                let opt = <GraphOptions>{ panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
                 opt = { ...GraphBarComponent.DefaultOptions(), ...opt };
                 componentRef.instance.setOptions(opt);
 
