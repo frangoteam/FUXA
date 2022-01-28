@@ -321,7 +321,7 @@ function AlarmsManager(_runtime) {
                                 alarmsFound++;
                             }
                             if (_isAlarmEnabled(alr.info)) {
-                                var alarm = new Alarm(alr.name, AlarmsTypes.LOW, alr.info, alr.property);
+                                var alarm = new Alarm(alr.name, AlarmsTypes.INFO, alr.info, alr.property);
                                 alarms[alr.property.variableId].push(alarm);
                                 alarmsFound++;
                             }
