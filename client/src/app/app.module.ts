@@ -81,7 +81,7 @@ import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
 import { DraggableDirective } from './_directives/ngx-draggable.directive';
-import { NumberOnlyDirective } from './_directives/number.directive';
+import { NumberOnlyDirective, NumberOrNullOnlyDirective } from './_directives/number.directive';
 import { LazyForDirective } from './_directives/lazyFor.directive';
 
 import { GaugesManager } from './gauges/gauges.component';
@@ -207,6 +207,7 @@ export function createTranslateLoader(http: HttpClient) {
         EscapeHtmlPipe,
         DraggableDirective,
         NumberOnlyDirective,
+        NumberOrNullOnlyDirective,
         NgxFabButtonComponent,
         NgxFabItemButtonComponent,
         TreetableComponent,

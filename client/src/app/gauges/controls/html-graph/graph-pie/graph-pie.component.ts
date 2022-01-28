@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input } from '@angular/core';
 
 import { ChartData, ChartOptions } from 'chart.js';
 import { GraphBaseComponent } from '../graph-base/graph-base.component';
@@ -11,7 +11,9 @@ import { GraphType, GraphSource } from '../../../../_models/graph';
     styleUrls: ['./graph-pie.component.css']
 })
 export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnDestroy {
-    @ViewChild('ngchart') public ngchart: BaseChartDirective;
+    @ViewChild(BaseChartDirective) public chart?: BaseChartDirective;
+    @Input() height = 240;
+    @Input() width = 380;
 
     id = '';
     isEditor = false;
@@ -35,10 +37,6 @@ export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnD
 
     ngOnDestroy() {
         try {
-            if (this.ngchart) {
-                this.ngchart.ngOnDestroy();
-            }
-            delete this.ngchart;
         } catch (e) {
             console.error(e);
         }

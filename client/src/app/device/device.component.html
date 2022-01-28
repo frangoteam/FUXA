@@ -3,7 +3,7 @@
         {{'device.list-title' | translate}}
     </div>
     <div class="work-panel">
-        <app-device-list [hidden]="!showMode.startsWith(tagsViewMode)" #devicelist (goto)="gotoDevices()" [readonly]="readonly"></app-device-list>
+        <app-device-list [hidden]="!showMode.startsWith(tagsViewMode)" #devicelist (goto)="gotoDevices(false)" [readonly]="readonly"></app-device-list>
         <app-device-map [hidden]="!showMode.startsWith(devicesViewMode)" #devicemap [mode]="showMode" (goto)="gotoList($event)" [readonly]="readonly"></app-device-map>
     </div>
 </div>

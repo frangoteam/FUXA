@@ -130,8 +130,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
         mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
         mdIconRegistry.addSvgIcon('to_top', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-top.svg'));
-
-        // this.gaugesManager.stopDemo();
     }
 
     //#region Implemented onInit / onAfterInit event
@@ -388,7 +386,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (ga.id) {
             this.currentView.items[ga.id] = ga;
         } else {
-            console.error("DBG ", ga);
+            console.error('!TOFIX', ga);
         }
     }
 

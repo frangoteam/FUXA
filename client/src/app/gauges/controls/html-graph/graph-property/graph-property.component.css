@@ -1,10 +1,21 @@
 
+.element-property {
+    display: block;
+}
+
+.graph-selection {
+    position: absolute;
+    top: 35px;
+    bottom: 0px;
+    overflow: auto;
+}
+
 .section-item {
     width: 100%;
 }
 
-.section-item mat-select, span {
-    width:calc(100% - 7px);
+.section-item-block mat-select, span {
+    width:calc(100% - 15px);
 }
 
 .section-inline-number {
@@ -22,8 +33,27 @@
     text-align: left;
 }
 
-.section-inline-number mat-slide-toggle {
+.section-inline-toggle {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+}
+
+.section-inline-toggle span {
+    width: inherit;
+}
+
+.section-inline-toggle mat-slide-toggle {
+    width: inherit;
     padding-left: 10px;
+}
+
+.section-inline-toggle-ext span {
+    width: 85px;
+}
+
+.section-inline-toggle-ext mat-slide-toggle {
+    padding-left: 20px;
 }
 
 .section-inline-color {

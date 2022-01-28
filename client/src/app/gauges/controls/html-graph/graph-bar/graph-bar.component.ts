@@ -1,6 +1,5 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input } from '@angular/core';
 
-// import { ChartOptions } from 'chart.js';
 import { GraphBaseComponent, GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GraphBarProperty, GraphBarXType, GraphSource } from '../../../../_models/graph';
 import { Utils } from '../../../../_helpers/utils';
@@ -128,8 +127,6 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             this.width = width;
             this.barChartOptions.panel.width = width;
             this.barChartOptions.panel.height = height;
-        } else {
-            // this.ngchart.updateChart('resize');
         }
     }
 
@@ -138,18 +135,18 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             let dataset = this.sourceMap[sigid];
             if (this.property.xtype === this.xTypeValue) {
                 dataset.data[0] = sigvalue;
-                this.chart.update();
+                this.chart.update(400);
             }
         }
     }
 
     public static DefaultOptions() {
         let options = <GraphOptions>{
-            type: 'bar',                                        // to set in property
+            type: 'bar',                        // to set in property
             theme: GraphThemeType.light,
             responsive: true,
             maintainAspectRatio: false,
-            tooltips: { enabled: true },
+            tooltips: { enabled: true, intersect: false, },
             title: {
                 display: true,
                 text: 'Title',
@@ -163,7 +160,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 stepSize: 20,
                 fontSize: 12,
             },
-            xAxes: { 
+            xAxes: {                            // to set in property
                 display: true,
                 fontSize: 12,
             },

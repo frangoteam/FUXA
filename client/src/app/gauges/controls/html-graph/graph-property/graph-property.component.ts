@@ -6,14 +6,12 @@ import { Subject, ReplaySubject } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType } from '../../../../_models/graph';
+import { Graph, GraphType } from '../../../../_models/graph';
 import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
-import { ChartOptions } from 'chart.js';
 import { Utils } from '../../../../_helpers/utils';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
     selector: 'app-graph-property',
