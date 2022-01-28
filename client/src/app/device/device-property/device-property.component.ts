@@ -269,7 +269,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	keyDownStopPropagation(event) {
+    keyDownStopPropagation(event) {
         event.stopPropagation();
     }
 	

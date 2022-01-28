@@ -238,6 +238,12 @@ export interface GaugeChartProperty {
     options: any;
 }
 
+export interface GaugeGraphProperty {
+    id: string;
+    type: string;
+    options: any;
+}
+
 export class Variable {
     id: string;
     name: string;
@@ -342,6 +348,11 @@ export enum CardWidgetType {
     view = 'card.widget-view',
     alarms = 'card.widget-alarms',
     table = 'card.widget-table',
+}
+
+export enum LinkType {
+    address = '[link]',
+    alarms = '[alarms]',
 }
 
 export const DEVICE_READONLY = 'rodevice';

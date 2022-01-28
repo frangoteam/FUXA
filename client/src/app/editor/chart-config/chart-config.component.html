@@ -9,49 +9,56 @@
                 </button>
             </div>
             <div *ngFor="let chart of data.charts; index as i" class="mychips" (click)="onSelectChart(chart)" [ngClass]="isChartSelected(chart)">
-                <mat-icon (click)="onSelectChart(chart)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
-                <mat-menu #optionsgMenu [overlapTrigger]="false">
-                    <button mat-menu-item (click)="onAddChartLine(chart)" style="font-size: 14px;">{{'chart.config-addline' | translate}}</button>
-                    <button mat-menu-item (click)="onEditChart(chart)" style="font-size: 14px;">{{'chart.config-rename' | translate}}</button>
-                </mat-menu>
+                <mat-icon (click)="onSelectChart(chart);onRemoveChart(i)">cancel</mat-icon>
                 <span>
                     {{chart.name}}
                 </span>
-                <mat-icon (click)="onSelectChart(chart);onRemoveChart(i)">cancel</mat-icon>
+                <mat-icon (click)="onSelectChart(chart)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
+                <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="onAddChartLine(chart)" style="font-size: 14px;">
+                        <mat-icon style="margin-right: unset">link</mat-icon>
+                        {{'chart.config-addline' | translate}}
+                    </button>
+                    <button mat-menu-item (click)="onEditChart(chart)" style="font-size: 14px;">{{'chart.config-rename' | translate}}</button>
+                </mat-menu>
             </div>
         </div>
         <div class="panelBottom">
             <mat-list class="list">
                 <mat-list-item class="list-item list-header">
-                    <span style="width: 25px;"></span>
-                    <span style="width: 30%;max-width: 30%;">{{'chart.config-line-name' | translate}}</span>
-                    <span style="width: 25%;max-width: 25%;">{{'chart.config-line-label' | translate}}</span>
-                    <span style="width: 25%;max-width: 20%;">{{'chart.config-devices' | translate}}</span>
-                    <span style="width: 10%;max-width: 5%;">{{'chart.config-line-yaxis' | translate}}</span>
-                    <span style="width: 10%;max-width: 10%;">{{'chart.config-line-interpolation' | translate}}</span>
-                    <span style="width: 10%;max-width: 5%;">{{'chart.config-line-color' | translate}}</span>
-                    <span style="width: 10%;max-width: 5%;">{{'chart.config-line-fill' | translate}}</span>
+                    <span class="list-item-remove"></span>
+                    <span class="list-item-name">{{'chart.config-line-name' | translate}}</span>
+                    <span class="list-item-label">{{'chart.config-line-label' | translate}}</span>
+                    <span class="list-item-device">{{'chart.config-devices' | translate}}</span>
+                    <span class="list-item-yaxis">{{'chart.config-line-yaxis' | translate}}</span>
+                    <span class="list-item-interpolation">{{'chart.config-line-interpolation' | translate}}</span>
+                    <span class="list-item-color">{{'chart.config-line-color' | translate}}</span>
+                    <span class="list-item-color">{{'chart.config-line-fill' | translate}}</span>
                 </mat-list-item>
                 <div class="list-panel">
                     <mat-list-item *ngFor="let line of selectedChart.lines" class="list-item list-item-hover" (click)="editChartLine(line)">
-                        <mat-icon (click)="$event.stopPropagation();removeChartLine(line)" style="color:gray;font-size: 20px">delete</mat-icon>
-                        <div class="list-item-text" style="width: 30%;max-width: 30%;">
+                        <mat-icon (click)="$event.stopPropagation();removeChartLine(line)" class="list-item-remove" style="color:gray;font-size: 20px">delete</mat-icon>
+                        <div class="list-item-text list-item-name">
                             <span>{{getDeviceTagName(line)}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 25%;max-width: 25%;">
+                        <div class="list-item-text list-item-label">
                             <span>{{line.label}}</span>
-                        </div>                        
-                        <div class="list-item-text" style="width: 25%;max-width: 20%;">
+                        </div>
+                        <div class="list-item-text list-item-device">
                             <span>{{line.device}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 10%;max-width: 5%;">
+                        <div class="list-item-text list-item-yaxis">
                             <span>{{line.yaxis}}</span>
                         </div>
-                        <div class="list-item-text" style="width: 10%;max-width: 10%;">
+                        <div class="list-item-text list-item-interpolation">
                             <span>{{getLineInterpolationName(line)}}</span>
                         </div>
-                        <div [style.background-color]="line.color" style="height:20px; width:5%"></div>
-                        <div [style.background-color]="line.fill" style="height:20px; width:5%"></div>
+                        <div [style.background-color]="line.color" class="list-item-color">
+                            &nbsp;
+                        </div>
+                        <div [style.background-color]="line.fill" class="list-item-color">
+                            &nbsp;
+                        </div>
                     </mat-list-item>
                 </div>
             </mat-list>

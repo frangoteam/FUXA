@@ -2,6 +2,16 @@
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
+<mat-drawer #sidePanel class="example-sidenav" mode="side" position="end" style="position:fixed;margin-top: 36px;height: calc(100% - 74px);padding: 7px; width:350px">
+    <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
+        <mat-icon>close</mat-icon>
+    </button>
+    <div [ngSwitch]="gaugeDialog.type">
+        <div *ngSwitchCase="gaugeDialogType.Graph">
+            <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-graph-property>
+        </div>
+    </div>
+</mat-drawer>
 <div id="svg_editor_container">
     <mat-drawer-container class="svg-workarea-container">
         <!-- LEFT BAR -->
@@ -147,11 +157,11 @@
                                 (click)="setMode('html_switch')">
                                 <span class="icon-tool icon-switch"></span>
                             </div>
-                            <!-- <div class="svg-tool-button" matTooltip="{{'editor.controls-graphbar' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-bar')}"
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-graphbar' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-bar')}"
                                 (click)="setMode('html_graph-bar')">
                                 <span class="icon-tool icon-graphbar"></span>
                             </div>
-                            <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
+                            <!-- <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
                                 (click)="setMode('html_graph-pie')">
                                 <span class="icon-tool icon-graphpie"></span>
                             </div> -->

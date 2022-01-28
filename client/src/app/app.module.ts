@@ -32,7 +32,7 @@ import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent, DialogChartLine } from './editor/chart-config/chart-config.component';
-import { GraphConfigComponent } from './editor/graph-config/graph-config.component';
+import { GraphConfigComponent, DialogGraphSource } from './editor/graph-config/graph-config.component';
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
@@ -81,7 +81,7 @@ import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
 import { DraggableDirective } from './_directives/ngx-draggable.directive';
-import { NumberOnlyDirective } from './_directives/number.directive';
+import { NumberOnlyDirective, NumberOrNullOnlyDirective } from './_directives/number.directive';
 import { LazyForDirective } from './_directives/lazyFor.directive';
 
 import { GaugesManager } from './gauges/gauges.component';
@@ -133,7 +133,9 @@ import { httpInterceptorProviders } from './_helpers/auth-interceptor';
 import { environment } from '../environments/environment';
 import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-bar.component';
 import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
-import { NgxChartjsComponent } from './gui-helpers/ngx-chartjs/ngx-chartjs.component';
+import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';
+import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
+import { ChartsModule } from 'ng2-charts';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -205,6 +207,7 @@ export function createTranslateLoader(http: HttpClient) {
         EscapeHtmlPipe,
         DraggableDirective,
         NumberOnlyDirective,
+        NumberOrNullOnlyDirective,
         NgxFabButtonComponent,
         NgxFabItemButtonComponent,
         TreetableComponent,
@@ -224,6 +227,7 @@ export function createTranslateLoader(http: HttpClient) {
         NgxGaugeComponent,
         NgxNouisliderComponent,
         DialogChartLine,
+        DialogGraphSource,
         UsersComponent,
         DialogUser,
         LoginComponent,
@@ -231,11 +235,12 @@ export function createTranslateLoader(http: HttpClient) {
         ViewComponent,
         DialogItemText,
         NgxUplotComponent,
-        NgxChartjsComponent,
         ChartUplotComponent,
         CardsViewComponent,
         GraphBarComponent,
-        GraphPieComponent
+        GraphPieComponent,
+        GraphPropertyComponent,
+        GraphBaseComponent
    ],
     imports: [
         BrowserModule,
@@ -261,7 +266,8 @@ export function createTranslateLoader(http: HttpClient) {
                 deps: [HttpClient]
             }
         }),
-        GridsterModule
+        GridsterModule,
+        ChartsModule
     ],
     providers: [
         // providersResourceService,
@@ -330,15 +336,16 @@ export function createTranslateLoader(http: HttpClient) {
         NotificationPropertyComponent,
         TextListComponent,
         DialogChartLine,
+        DialogGraphSource,
         DialogUser,
         LoginComponent,
         DialogUserInfo,
         DialogItemText,
         ChartUplotComponent,
         NgxUplotComponent,
-        NgxChartjsComponent,
         GraphBarComponent,
-        GraphPieComponent
+        GraphPieComponent,
+        GraphBaseComponent
     ],
     bootstrap: [AppComponent]
 })

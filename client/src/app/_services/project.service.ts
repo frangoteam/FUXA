@@ -398,6 +398,19 @@ export class ProjectService {
     }
 
     /**
+     * get the graph of id
+     * @param id 
+     * @returns 
+     */
+    getGraph(id: string) {
+        for (let i = 0; i < this.projectData.graphs.length; i++) {
+            if (this.projectData.graphs[i].id === id) {
+                return this.projectData.graphs[i];
+            }
+        }
+    }
+
+    /**
      * save the graphs to project
      * @param graphs
      */

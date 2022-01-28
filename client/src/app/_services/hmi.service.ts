@@ -429,8 +429,19 @@ export class HmiService {
         }
     }
 
-    getGraphSignal(id: string) {
+    getGraph(id: string) {
+        return this.projectService.getGraph(id);
+    }
 
+    getGraphSignal(id: string) {
+        let graph = this.projectService.getGraph(id);
+        if (graph) {
+            let varsId = [];
+            graph.sources.forEach(source => {
+                varsId.push(source.id);
+            });
+            return varsId;
+        }
     }
     //#endregion
 

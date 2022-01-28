@@ -6,7 +6,7 @@ import { ProjectService } from '../../_services/project.service';
 
 import { Utils } from '../../_helpers/utils';
 import { Device, DevicesUtils, Tag } from '../../_models/device';
-import { Graph, GraphSource } from '../../_models/graph';
+import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType } from '../../_models/graph';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { DeviceTagDialog } from '../../device/device.component';
@@ -18,8 +18,12 @@ import { DeviceTagDialog } from '../../device/device.component';
 })
 export class GraphConfigComponent implements OnInit {
 
-    selectedGraph = <Graph>{ id: null, name: null, sources: [] };
+    selectedGraph = new Graph(GraphType.bar);
     data = { graphs: [], devices: [] };
+    lineColor = Utils.lineColor;
+
+    barXType = GraphBarXType;
+    xTypeValue = Utils.getEnumKey(GraphBarXType, GraphBarXType.value);
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
@@ -30,6 +34,9 @@ export class GraphConfigComponent implements OnInit {
     }
 
     ngOnInit() {
+        Object.keys(this.barXType).forEach(key => {
+            this.translateService.get(this.barXType[key]).subscribe((txt: string) => { this.barXType[key] = txt });
+        });
     }
 
     loadData() {
@@ -52,6 +59,14 @@ export class GraphConfigComponent implements OnInit {
         this.dialogRef.close(this.data.graphs);
     }
 
+    onAddNewCategory() {
+
+    }
+
+    isSelection() {
+        return (this.selectedGraph && this.selectedGraph.id) ? true : false;
+    }
+
     onEditGraph(item: Graph) {
         let title = 'dlg.item-title';
         let label = 'dlg.item-name';
@@ -66,7 +81,7 @@ export class GraphConfigComponent implements OnInit {
                 if (item) {
                     item.name = result.name;
                 } else {
-                    this.data.graphs.push(<Graph>{ id: Utils.getShortGUID(), name: result.name, sources: [] });
+                    this.data.graphs.push(new Graph(GraphType.bar, Utils.getShortGUID(), result.name));
                 }
             }
         });
@@ -75,7 +90,7 @@ export class GraphConfigComponent implements OnInit {
     onAddGraphSource(graph: Graph) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
-            data: { variableId: null, devices: this.data.devices, multiSelection: true }
+            data: { variableId: null, devices: this.data.devices, multiSelection: false }
         });
 
         dialogRef.afterClosed().subscribe((result) => {
@@ -92,7 +107,9 @@ export class GraphConfigComponent implements OnInit {
                     if (tag) {
                         let exist = graph.sources.find(source => source.id === tag.id)
                         if (!exist) {
-                            const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name, label: this.getTagLabel(tag) };
+                            let color = this.getNextColor();
+                            const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name, 
+                                label: this.getTagLabel(tag), color: color, fill: color };
                             graph.sources.push(myCopiedObject);
                         }
                     }
@@ -117,9 +134,24 @@ export class GraphConfigComponent implements OnInit {
         });
     }
 
-    removeGraphSource(tag) {
+    editGraphSource(source: GraphSource) {
+        let dialogRef = this.dialog.open(DialogGraphSource, {
+            position: { top: '60px' },
+            data: <GraphSource>{
+                id: source.id, device: source.device, name: source.name, label: source.label, color: source.color, fill: source.fill }
+        });
+        dialogRef.afterClosed().subscribe((result: GraphSource) => {
+            if (result) {
+                source.label = result.label;
+                source.color = result.color;
+                source.fill = result.fill;
+            }
+        });
+    }
+
+    removeGraphSource(source: GraphSource) {
         for (let i = 0; i < this.selectedGraph.sources.length; i++) {
-            if (this.selectedGraph.sources[i].id === tag.id) {
+            if (this.selectedGraph.sources[i].id === source.id) {
                 this.selectedGraph.sources.splice(i, 1);
                 break;
             }
@@ -128,7 +160,12 @@ export class GraphConfigComponent implements OnInit {
 
     onSelectGraph(item: Graph) {
         this.selectedGraph = item;
-        // this.loadDeviceConfig();
+        if (!this.selectedGraph.type) {
+            this.selectedGraph.type = GraphType.bar;
+        }
+        if (!this.selectedGraph.property) {
+            this.selectedGraph.property = new GraphBarProperty();
+        }
     }
 
     isGraphSelected(item: Graph) {
@@ -136,6 +173,11 @@ export class GraphConfigComponent implements OnInit {
             return 'mychips-selected';
         }
     }
+
+    onGraphXTypeChanged(type: GraphBarXType) {
+        this.selectedGraph.property.xtype = type;
+    }
+
 
     getTagLabel(tag) {
         if (tag.label) {
@@ -145,16 +187,56 @@ export class GraphConfigComponent implements OnInit {
         }
     }
 
-    getDeviceTagName(line: GraphSource) {
-        let devices = this.data.devices.filter(x => x.name === line.device);
+    getDeviceTagName(source: GraphSource) {
+        let devices = this.data.devices.filter(x => x.name === source.device);
         if (devices && devices.length > 0) {
             let tags = Object.values<Tag>(devices[0].tags);
             for (let i = 0; i < tags.length; i++) {
-                if (line.id === tags[i].id) {
+                if (source.id === tags[i].id) {
                     return this.getTagLabel(tags[i]);
                 }
             }
         }
         return '';
+    }
+
+    getNextColor() {
+        for (let x = 0; x < this.lineColor.length; x++) {
+            let found = false;
+            if (this.selectedGraph.sources) {
+                for (let i = 0; i < this.selectedGraph.sources.length; i++) {
+                    if (this.selectedGraph.sources[i].color === this.lineColor[x]) {
+                        found = true;
+                    }
+                }
+            }
+            if (!found) {
+                return this.lineColor[x];
+            }
+        }
+        return Utils.lineColor[0];
+    }
+}
+
+@Component({
+    selector: 'dialog-graph-source',
+    templateUrl: './graph-source.dialog.html',
+    styleUrls: ['./graph-config.component.css']
+})
+export class DialogGraphSource {
+    defaultColor = Utils.defaultColor;
+    chartAxesType = [1, 2, 3, 4];
+
+    constructor(
+        public dialogRef: MatDialogRef<DialogGraphSource>,
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    onOkClick(): void {
+        this.dialogRef.close(this.data);
     }
 }

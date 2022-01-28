@@ -1,15 +1,22 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input } from '@angular/core';
 
 import { ChartData, ChartOptions } from 'chart.js';
-import { NgxChartjsComponent } from './../../../../gui-helpers/ngx-chartjs/ngx-chartjs.component';
+import { GraphBaseComponent } from '../graph-base/graph-base.component';
+import { Label, BaseChartDirective } from 'ng2-charts';
+import { GraphType, GraphSource } from '../../../../_models/graph';
 
 @Component({
     selector: 'app-graph-pie',
     templateUrl: './graph-pie.component.html',
     styleUrls: ['./graph-pie.component.css']
 })
-export class GraphPieComponent implements OnInit, OnDestroy {
-    @ViewChild('ngchart') public ngchart: NgxChartjsComponent;
+export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnDestroy {
+    @ViewChild(BaseChartDirective) public chart?: BaseChartDirective;
+    @Input() height = 240;
+    @Input() width = 380;
+
+    id = '';
+    isEditor = false;
 
     data = {
         labels: ['Red', 'Green', 'Yellow'],
@@ -21,19 +28,25 @@ export class GraphPieComponent implements OnInit, OnDestroy {
             },
         ],
     };
-    constructor() { }
+    constructor() {
+        super();
+    }
 
     ngOnInit() {
     }
 
     ngOnDestroy() {
         try {
-            if (this.ngchart) {
-                this.ngchart.ngOnDestroy();
-            }
-            delete this.ngchart;
         } catch (e) {
             console.error(e);
         }
+    }
+
+    init(title: string, property: any, sources?: GraphSource[]) {
+
+    }
+
+    setValue (sigid: string, timestamp: any, sigvalue: any) {
+        
     }
 }

@@ -148,8 +148,8 @@ export class DialogUser {
 			return false;
 		}
 	}
-	
-	keyDownStopPropagation(event) {
+
+    keyDownStopPropagation(event) {
         event.stopPropagation();
     }
 }

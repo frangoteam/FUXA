@@ -32,7 +32,7 @@ import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-u
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
-import { NgxChartjsComponent } from '../gui-helpers/ngx-chartjs/ngx-chartjs.component';
+import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 
 @Injectable()
 export class GaugesManager {
@@ -674,7 +674,8 @@ export class GaugesManager {
      * @param isview in view or editor, in editor have to disable mouse activity
      */
     initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
-        if (!ga) {
+        if (!ga || !ga.type) {
+            console.error('!TOFIX', ga);
             return null;
         }
         // add variable
@@ -705,7 +706,10 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
             let gauge = HtmlGraphComponent.initElement(ga, res, ref, isview);
-            this.mapGauges[ga.id] = gauge;
+            if (gauge) {
+                this.setGraphPropety(gauge, ga.property);
+                this.mapGauges[ga.id] = gauge;
+            }
             return gauge;
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             let gauge: NgxGaugeComponent = HtmlBagComponent.initElement(ga, res, ref, isview);
@@ -758,7 +762,18 @@ export class GaugesManager {
         }
     }
 
-    private setGraphPropety(gauge: any, property: any) {
+    private setGraphPropety(gauge: GraphBaseComponent, property: any) {
+        if (property) {
+            if (property.id) {
+                let graph = this.hmiService.getGraph(property.id);
+                if (graph) {
+                    gauge.init(graph.name, graph.property, graph.sources);
+                }                
+            }
+            if (property.options) {
+                gauge.setOptions(property.options);
+            }
+        }
     }
 
     /**

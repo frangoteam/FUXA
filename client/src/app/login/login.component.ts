@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
 		});
 	}
 
-	keyDownStopPropagation(event) {
+    keyDownStopPropagation(event) {
         event.stopPropagation();
     }
 }

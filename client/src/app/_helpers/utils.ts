@@ -4,6 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 @Injectable()
 export class Utils {
 
+    static _seed = Date.now();
+
     static defaultColor = ['#FFFFFF', '#000000', '#EEECE1', '#1F497D', '#4F81BD', '#C0504D', '#9BBB59', '#8064A2', '#4BACC6',
         '#F79646', '#C00000', '#FF0000', '#FFC000', '#FFD04A', '#FFFF00', '#92D050', '#0AC97D', '#00B050', '#00B0F0', '#4484EF', '#3358C0',
         '#002060', '#7030A0', '#D8D8D8', '#BFBFBF', '#A5A5A5', '#7F7F7F', '#595959', '#3F3F3F', '#262626'];
@@ -123,6 +125,10 @@ export class Utils {
         return false;
     }
 
+    static isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
     static Boolify(arg) {
         var BoolArray = [true, false, 'true', 'false', 1, 0];
         if (BoolArray.indexOf(arg) === -1) {
@@ -137,6 +143,21 @@ export class Utils {
             obj[item[keyField]] = item
             return obj
         }, {});
+    }
+
+    static rand(min, max) {
+        min = min || 0;
+        max = max || 0;
+        this._seed = (this._seed * 9301 + 49297) % 233280;
+        return Math.round(min + (this._seed / 233280) * (max - min));
+    }
+
+    static randNumbers(count, min, max) {
+        let result = [];
+        for (let i = 0; i < count; ++i) {
+            result.push(this.rand(min, max))
+        }
+        return result;
     }
 }
 

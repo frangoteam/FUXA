@@ -825,3 +825,14 @@ mat-toolbar-row {
 .color-picker .hex-text .box input, .color-picker input {
     background-color: #ffffff !important;
 }
+
+/* Element side property */
+.element-property-title {
+    line-height: 30px;
+    font-size: 17px;
+}
+
+.element-property-header {
+    font-size: 14px;
+    margin-top: 10px;
+}

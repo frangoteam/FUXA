@@ -51,6 +51,7 @@
     margin-top: 10px;
 }
 
+
 .list {
     width: 100% !important;
     height: 100% !important;
@@ -68,8 +69,9 @@
 
 .list-item {
     display: block;
-    font-size: 14px;
-    height: 26px !important;
+    font-size: 12px;
+    height: 28px !important;
+    line-height: 26px;
     cursor: pointer;
     overflow: hidden;
     padding-left: 10px;
@@ -80,7 +82,6 @@
 }
 
 .list-item span {
-    width: calc(100% - 26px);
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -95,18 +96,42 @@
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.list-item-selected {
-    background-color: rgba(0, 0, 0, 0.1);
-}
-
-.list-item-sel {
-    padding-left: 5px !important;
-}
 
 .list-header {
     background-color: rgba(0, 0, 0, 0.8);
     color: #ffffff;
     line-height: 26px;
+    cursor: unset;
+}
+
+/* Tags Table */
+.list-item-remove {
+    width: 20px;
+    max-width: 20px;
+    color:gray;
+}
+
+.list-item-name {
+    width: 30%;
+    max-width: 30%;
+}
+
+.list-item-label {
+    width: 30%;
+    max-width: 30%;
+}
+
+.list-item-device {
+    width: 30%;
+    max-width: 30%;
+}
+
+.list-item-color {
+    width: 5%;
+    max-width: 5%;
+    height: 14px;
+    border-style: solid;
+    border-width: 3px;
 }
 
 .list-panel {
@@ -132,3 +157,60 @@
     opacity: 1;
     background-color: #f1f3f4;
 }
+/* Tags Table */
+
+
+
+
+/* Tags Section */
+.showEditor {
+    display: block;
+}
+
+.hideEditor {
+    display: none;
+}
+
+.section-panel {
+    height: 100%;
+    font-size: 12px;
+}
+
+.section-category {
+    width: 25%;
+    display: inline-block;
+}
+
+.section-header {
+    width: 100%;
+    background-color: var(--chipsBackground);
+    color: #ffffff;
+    height: 26px;
+    line-height: 26px;
+}
+
+.section-header span {
+    padding-left: 5px;
+}
+
+.section-item {
+    width: 100%;
+}
+
+.section-item mat-select {
+    width:calc(100% - 7px);
+}
+
+.section-list {
+    border: 1px solid var(--formBorder);
+    height: calc(100% - 30px);
+    padding: 2px 2px 2px 2px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.section-sources {
+    width: 74%;
+    float: right;
+}
+/* Section */
