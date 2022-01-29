@@ -434,7 +434,6 @@ export class ProjectService {
 
     /**
      * save the alarm to project
-     * @param text
      */
     setAlarm(alarm: Alarm, old: Alarm) {
         return new Observable((observer) => {

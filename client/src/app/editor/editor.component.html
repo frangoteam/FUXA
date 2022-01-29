@@ -25,7 +25,7 @@
                             <mat-icon aria-label="Select" *ngIf="!panelsState.panelView">expand_more</mat-icon>
                             <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->
                         </mat-panel-title>
-                        <mat-icon aria-label="Add" matTooltip="Add View" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddDoc();$event.stopPropagation()">add
+                        <mat-icon aria-label="Add" matTooltip="{{'editor.view-add' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddDoc();$event.stopPropagation()">add
                         </mat-icon>
                         <mat-icon aria-label="Import" matTooltip="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn"
                             (click)="onImportView($event);$event.stopPropagation()">system_update_alt</mat-icon>
@@ -68,31 +68,31 @@
                         </mat-expansion-panel-header>
 
                         <div id="__tools_left" class="leftbar-panel">
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('select')}" (click)="setMode('select')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('select')}" matTooltip="{{'editor.tools-select' | translate}}" (click)="setMode('select')">
                                 <span class="icon-select"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('fhpath')}" (click)="setMode('fhpath')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('fhpath')}" matTooltip="{{'editor.tools-pencil' | translate}}" (click)="setMode('fhpath')">
                                 <span class="icon-pencil"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('line')}" (click)="setMode('line')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('line')}" matTooltip="{{'editor.tools-line' | translate}}" (click)="setMode('line')">
                                 <span class="icon-line"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('rect')}" (click)="setMode('rect')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('rect')}" matTooltip="{{'editor.tools-rectangle' | translate}}" (click)="setMode('rect')">
                                 <span class="icon-rect"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('circle')}" (click)="setMode('circle')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('circle')}" matTooltip="{{'editor.tools-circle' | translate}}" (click)="setMode('circle')">
                                 <span class="icon-circle"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('ellipse')}" (click)="setMode('ellipse')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('ellipse')}" matTooltip="{{'editor.tools-ellipse' | translate}}" (click)="setMode('ellipse')">
                                 <span class="icon-ellipse"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('path')}" (click)="setMode('path')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('path')}" matTooltip="{{'editor.tools-path' | translate}}" (click)="setMode('path')">
                                 <span class="icon-path"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('text')}" (click)="setMode('text')">
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('text')}" matTooltip="{{'editor.tools-text' | translate}}" (click)="setMode('text')">
                                 <span class="icon-text"></span>
                             </div>
-                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}"
+                            <div class="svg-tool-button" [ngClass]="{'svg-tool-active': (isModeActive('image') || isModeActive('svg-image'))}" matTooltip="{{'editor.tools-image' | translate}}"
                                 (click)="imagefile.value = '';imagefile.click();">
                                 <span class="icon-image"></span>
                                 <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
