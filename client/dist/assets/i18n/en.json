@@ -7,6 +7,7 @@
 
     "header.new-project": "New Project",
     "header.save-project": "Save Project",
+    "header.save-project-tooltip": "Save all outstanding project changes",
     "header.saveas-project": "Save Project As...",
     "header.open-project": "Open Project",
     "header.edit-project": "Edit Project",
@@ -272,6 +273,7 @@
     "editor.view-property": "Property",
     "editor.view-clone": "Clone",
     "editor.view-export": "Export",
+    "editor.view-add": "Add View",    
     "editor.view-import": "Import View",
     "editor.general": "General",
     "editor.shape": "Shape",
@@ -314,6 +316,7 @@
     "editor.interactivity-class-title": "Element class",
     "editor.interactivity-name": "name",
 
+    "editor.cmenu-property": "Property",
     "editor.cmenu-cut": "Cut",
     "editor.cmenu-copy": "Copy",
     "editor.cmenu-paste": "Paste",
@@ -418,6 +421,16 @@
     "editor.hyperlink-url": "url",
 
     "editor.tools-launch-title": "Launch Current View",
+    "editor.tools-select": "Select Tool",
+    "editor.tools-pencil": "Pencil Tool",
+    "editor.tools-line": "Line Tool",
+    "editor.tools-rectangle": "Rectangle Tool",
+    "editor.tools-circle": "Circle Tool",
+    "editor.tools-ellipse": "Ellipse Tool",
+    "editor.tools-path": "Path Tool",
+    "editor.tools-text": "Text Tool",
+    "editor.tools-image": "Image Tool",
+
     "editor.tools-zoom-title": "Zoom Tool [Ctrl+Up/Down]",
     "editor.tools-grid-title": "Show Hide Grid",
     "editor.tools-undo-title": "Undo [Z]",
@@ -655,7 +668,6 @@
     "devices.list-enabled": "Enabled",
     "devices.list-status": "Status",
 
-
     "users.list-title": "Users settings",
     "users.list-name": "Username",
 	"users.list-fullname": "Full Name",
@@ -787,7 +799,7 @@
     "alarm.property-action-type": "Action type",
     "alarm.property-action-value": "Value to set",
     "alarm.property-action-destination": "View to show",
-    
+
     "notifications.list-title": "Notifications settings",
     "notifications.list-name": "Name",
     "notifications.list-receiver": "Receivers",
