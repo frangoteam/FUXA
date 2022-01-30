@@ -24,6 +24,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     dashboard: Array<GridsterItem> = [];
 
     widgetView = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
+    widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
     widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
     widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
 
@@ -95,6 +96,8 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 } else if (card.type === this.widgetAlarms) {
                     item.background = '#CCCCCC';
                     item.content = ' ';
+                } else if (card.type === this.widgetIframe) {
+                    item.content = card.data;
                 }
                 this.changeDetector.detectChanges();
             }
@@ -127,7 +130,8 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 itemComponent.el.style.backgroundColor = item.background;
             }
             let widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
-            if (item.card.type === widgetAlarms) {
+            let widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
+            if (item.card.type === widgetAlarms || item.card.type === widgetIframe) {
                 itemComponent.el.classList.add("card-html");
             }
         }

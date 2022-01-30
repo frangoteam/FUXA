@@ -16,6 +16,7 @@ export class CardConfigComponent implements OnInit {
     card: any;
 
     widgetView = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
+    widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
     widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
     widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
 

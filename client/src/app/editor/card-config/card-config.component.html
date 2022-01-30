@@ -23,6 +23,12 @@
             </div>
             <div *ngSwitchCase="widgetAlarms">
             </div>
+            <div *ngSwitchCase="widgetIframe">
+                <div class="my-form-field" style="float: right;margin-bottom: 10px;">
+                    <span>{{'card.config-content-iframe' | translate}}</span>
+                    <input [(ngModel)]="card.data" type="text" style="width:300px">
+                </div>                
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

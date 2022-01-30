@@ -8,6 +8,11 @@
                 <div *ngSwitchCase="widgetAlarms">
                     <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
                 </div>
+                <div *ngSwitchCase="widgetIframe">
+                    <!-- <app-iframe [link]="item.card.data" [style.height]="iframe.height + 'px'" [style.transform]="'scale(' + iframe.scale + ')'" [style.width]="iframe.width + 'px'"
+                    [style.zoom]="1 / iframe.scale" class="iframe-class"></app-iframe> -->
+                    <app-iframe [link]="item.card.data" class="iframe-class"></app-iframe>
+                </div>
             </div>
         </div>
         <div *ngIf="edit" class="card-tool">

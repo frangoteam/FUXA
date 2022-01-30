@@ -348,6 +348,7 @@ export enum CardWidgetType {
     view = 'card.widget-view',
     alarms = 'card.widget-alarms',
     table = 'card.widget-table',
+    iframe = 'card.widget-iframe',
 }
 
 export enum LinkType {
