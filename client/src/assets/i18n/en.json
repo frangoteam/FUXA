@@ -819,6 +819,8 @@
     "notification.type-alarm": "Alarms",
     "notification.type-trigger": "Trigger",
 
+    "scripts.list-title": "Scripts settings",
+
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
 

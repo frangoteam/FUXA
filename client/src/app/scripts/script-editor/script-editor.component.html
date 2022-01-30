@@ -1,0 +1,11 @@
+<p>
+  script-editor works!
+</p>
+<ngx-codemirror
+  [(ngModel)]="content"
+  [options]="{
+    lineNumbers: true,
+    theme: 'material',
+    mode: 'javascript'
+  }"
+></ngx-codemirror>

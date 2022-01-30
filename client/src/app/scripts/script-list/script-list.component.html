@@ -1,6 +1,6 @@
 <div class="header-panel">
-    <mat-icon>notifications_none</mat-icon>
-    {{'notifications.list-title' | translate}}
+    <mat-icon>code</mat-icon>
+    {{'scripts.list-title' | translate}}
 </div>
 <div class="work-panel">
     <div class="container">
@@ -8,12 +8,12 @@
             <!-- Checkbox Column -->
             <ng-container matColumnDef="select">
                 <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                    <button mat-icon-button (click)="onAddNotification()" class="remove">
+                    <button mat-icon-button (click)="onAddScript()" class="remove">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
-                    <button mat-icon-button (click)="onEditNotification(element)" class="remove">
+                    <button mat-icon-button (click)="onEditScript(element)" class="remove">
                         <mat-icon>edit</mat-icon>
                     </button>
                 </mat-cell>
@@ -21,37 +21,37 @@
 
             <!-- Name Column -->
             <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-name' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-name' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
             </ng-container>
             <!-- Receiver Column -->
             <ng-container matColumnDef="receiver">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-receiver' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-receiver' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.receiver}} </mat-cell>
             </ng-container>
             <!-- Delay Column -->
             <ng-container matColumnDef="delay">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-delay' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-delay' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.delay}} </mat-cell>
             </ng-container>
             <!-- Interval Column -->
             <ng-container matColumnDef="interval">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-interval' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-interval' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.interval}} </mat-cell>
-            </ng-container>            
+            </ng-container>
             <!-- Type Column -->
             <ng-container matColumnDef="type">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-type' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-type' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
             </ng-container>
             <!-- Enabled Column -->
             <ng-container matColumnDef="enabled">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-enabled' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-enabled' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.enabled}} </mat-cell>
             </ng-container>
             <!-- Subscriptions Column -->
             <ng-container matColumnDef="subscriptions">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-subscriptions' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-subscriptions' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{getSubProperty(element)}} </mat-cell>
             </ng-container>
 
@@ -59,7 +59,7 @@
             <ng-container matColumnDef="remove">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveNotification(element)" class="remove">
+                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveScript(element)" class="remove">
                         <mat-icon>clear</mat-icon>
                     </button>
                 </mat-cell>
@@ -70,6 +70,6 @@
         </mat-table>
     </div>
 </div>
-<button mat-fab color="primary" (click)="onAddNotification()" class="fab-add">
+<button mat-fab color="primary" (click)="onAddScript()" class="fab-add">
     <mat-icon class="">add</mat-icon>
 </button>

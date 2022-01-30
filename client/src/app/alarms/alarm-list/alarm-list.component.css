@@ -11,6 +11,11 @@
     border-bottom: 1px solid var(--headerBorder);
 }
 
+.header-panel mat-icon {
+    display: inline-block;
+    vertical-align: text-top;
+}
+
 .work-panel {
     position: absolute;
     top: 37px;

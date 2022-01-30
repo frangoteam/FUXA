@@ -44,3 +44,6 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 .dark-theme {
   @include angular-material-theme($dark-theme);
 }
+
+@import '~codemirror/lib/codemirror';
+@import '~codemirror/theme/material';

@@ -15,6 +15,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { GestureConfig } from '@angular/material';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
@@ -39,6 +40,8 @@ import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
+import { ScriptListComponent } from './scripts/script-list/script-list.component';
+import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent, DeviceTagDialog } from './device/device.component';
@@ -222,6 +225,8 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmPropertyComponent,
         NotificationListComponent,
         NotificationPropertyComponent,
+        ScriptListComponent,
+        ScriptEditorComponent,
         TextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
@@ -267,7 +272,8 @@ export function createTranslateLoader(http: HttpClient) {
             }
         }),
         GridsterModule,
-        ChartsModule
+        ChartsModule,
+        CodemirrorModule
     ],
     providers: [
         // providersResourceService,
@@ -334,6 +340,8 @@ export function createTranslateLoader(http: HttpClient) {
         AlarmPropertyComponent,
         NotificationListComponent,
         NotificationPropertyComponent,
+        ScriptListComponent,
+        ScriptEditorComponent,
         TextListComponent,
         DialogChartLine,
         DialogGraphSource,
