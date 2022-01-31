@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
-import { CardWidgetType } from '../../_models/hmi';
+import { CardWidgetType, CardWidget } from '../../_models/hmi';
 import { Utils } from '../../_helpers/utils';
 
 @Component({
@@ -12,8 +12,8 @@ import { Utils } from '../../_helpers/utils';
 })
 export class CardConfigComponent implements OnInit {
 
-    cardType: any;
-    card: any;
+    cardType = CardWidgetType;
+    card: CardWidget;
 
     widgetView = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
     widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
@@ -23,11 +23,10 @@ export class CardConfigComponent implements OnInit {
     constructor(private translateService: TranslateService,
         public dialogRef: MatDialogRef<CardConfigComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any) { 
-            this.card = this.data.item.card;
+        this.card = this.data.item.card;
         }
 
     ngOnInit() {
-        this.cardType = CardWidgetType;
         Object.keys(this.cardType).forEach(key => {
             this.translateService.get(this.cardType[key]).subscribe((txt: string) => { this.cardType[key] = txt });
         });
@@ -38,6 +37,15 @@ export class CardConfigComponent implements OnInit {
     }
 
     onOkClick(): void {
-        this.dialogRef.close(this.card);
+        this.data.item.content = null;
+        if (this.card.type === this.widgetView) {
+            let view = this.data.views.find((v) => v.name === this.card.data);
+            if (view) {
+                this.data.item.content = view;
+            }
+        } else if (this.card.type === this.widgetIframe) {
+            this.data.item.content = this.card.data;
+        }
+        this.dialogRef.close(this.data.item);
     }
 }

@@ -517,16 +517,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let views = this.hmi.views.filter((v) => v.type !== cardType && exist.indexOf(v.name) < 0).map((v) => { return v.name })
         let dialogRef = this.dialog.open(CardConfigComponent, {
             position: { top: '60px' },
-            data: { item: item, views: views }
+            data: { item: JSON.parse(JSON.stringify(item)), views: views }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                let view = this.hmi.views.filter((v) => v.name === item.card.data);
-                if (view && view.length) {
-                    item.content = view[0];
-                } else {
-                    item.content = null;
-                }
+                item.card = result.card;
                 this.onSaveProject();
                 this.cardsview.render();
             }
@@ -538,7 +533,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     saveCards(dashboard) {
-        // this.dashboard.splice(this.dashboard.indexOf(item), 1);
     }
     // #region 
 

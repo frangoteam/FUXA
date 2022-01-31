@@ -10,24 +10,33 @@
                 </mat-option>
             </mat-select>
         </div>
-        <div class="my-form-field" *ngIf="card.type === widgetView" style="float: right; margin-bottom: 10px;">
-            <span>{{'card.config-content-view' | translate}}</span>
-            <mat-select [(value)]="card.data" style="width: 320px;">
-                <mat-option *ngFor="let view of data.views" [value]="view">
-                    {{ view }}
-                </mat-option>
-            </mat-select>
-        </div>
-        <div [ngSwitch]="card.type">
+        <div [ngSwitch]="card.type" style="float: right; margin-bottom: 10px;">
             <div *ngSwitchCase="widgetView">
+                <div class="my-form-field">
+                    <span>{{'card.config-content-view' | translate}}</span>
+                    <mat-select [(value)]="card.data" style="width: 320px;">
+                        <mat-option *ngFor="let view of data.views" [value]="view">
+                            {{ view }}
+                        </mat-option>
+                    </mat-select>
+                </div>
             </div>
             <div *ngSwitchCase="widgetAlarms">
             </div>
             <div *ngSwitchCase="widgetIframe">
                 <div class="my-form-field" style="float: right;margin-bottom: 10px;">
                     <span>{{'card.config-content-iframe' | translate}}</span>
-                    <input [(ngModel)]="card.data" type="text" style="width:300px">
-                </div>                
+                    <input [(ngModel)]="card.data" type="text" style="width:320px">
+                </div>
+            </div>
+        </div>
+
+        <div [ngSwitch]="card.type" style="display: inline-block">
+            <div *ngSwitchCase="widgetView">
+            </div>
+            <div *ngSwitchCase="widgetAlarms">
+            </div>
+            <div *ngSwitchCase="widgetIframe">
             </div>
         </div>
     </div>

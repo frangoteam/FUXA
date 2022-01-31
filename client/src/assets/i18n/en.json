@@ -832,9 +832,11 @@
     "card.config-title": "Card settings",
     "card.config-content-type": "Content type",
     "card.config-content-view": "Content View",
+    "card.config-content-iframe": "Link address",
     "card.widget-view": "View",
     "card.widget-alarms": "Alarms",
     "card.widget-table": "Table",
+    "card.widget-iframe": "Link",
     "card.style-zoom": "Zoom",
 
     "texts.list-title": "Texts settings",
