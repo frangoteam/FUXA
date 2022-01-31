@@ -664,6 +664,20 @@ export class ProjectService {
     }
     //#endregion
 
+    //#region Upload resource to server
+    uploadFile(file: any) {
+        return new Observable((observer) => {
+            this.storage.uploadFile(file).subscribe(result => {
+                observer.next();
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+    //#endregion
+
     /**
      * Set Project data and save resource to backend
      * Used from open and upload JSON Project file

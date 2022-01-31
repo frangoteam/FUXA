@@ -4,6 +4,9 @@
 
 var express = require("express");
 const authJwt = require('../jwt-helper');
+const fs = require('fs');
+const path = require('path');
+
 var runtime;
 var secureFnc;
 var checkGroupsFnc;
@@ -176,7 +179,36 @@ module.exports = {
                 });                
             }
         });
- 
+
+        /**
+         * POST Upload file resource
+         * images will be in media file saved
+         */
+        prjApp.post('/api/upload', function (req, res) {
+            const file = req.body;
+            try {
+                const base64data = file.data.replace(/^data:.*,/, '');
+                const filePath = path.join(runtime.settings.uploadFileDir, file.name);
+                fs.writeFile(filePath, base64data, 'base64', (err) => {
+                    if (err) {
+                        console.log(err);
+                        res.sendStatus(500);
+                    } else {
+                        res.set('Location', path.join(runtime.settings.httpUploadFileStatic, file.name));
+                        res.status(200).end();
+                        // res.send(file);
+                    }
+                });
+            } catch (err) {
+                if (err.code) {
+                    res.status(400).json({error: err.code, message: err.message});
+                } else {
+                    res.status(400).json({error:"unexpected_error", message: err.toString()});
+                }
+                runtime.logger.error("api upload: " + err.message);
+            }
+        });
+
         return prjApp;
     }
 }

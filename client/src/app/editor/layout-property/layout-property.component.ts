@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
+import { ProjectService } from '../../_services/project.service';
 
 import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
@@ -157,10 +158,11 @@ export class DialogMenuItem {
     icons = Define.materialIcons;
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
+    imagefile: string;
     
     @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
 
-    constructor(
+    constructor(public projectService: ProjectService,
         public dialogRef: MatDialogRef<DialogMenuItem>,
         @Inject(MAT_DIALOG_DATA) public data: any) { 
             this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
@@ -173,5 +175,33 @@ export class DialogMenuItem {
     onOkClick(): void {
 		this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
         this.dialogRef.close(this.data);
+    }
+
+    /**
+     * add image to view
+     * @param event selected file
+     */
+    onSetImage(event) {
+        if (event.target.files) {
+            this.imagefile = 'assets/images/' + event.target.files[0].name;
+            let fileToUpload = { type: this.imagefile.split('.').pop().toLowerCase(), name: this.imagefile.split('/').pop(), data: null };
+            let reader = new FileReader();
+            reader.onload = () => {
+                console.log(reader.result);
+                try {
+                    fileToUpload.data = reader.result;
+                    this.projectService.uploadFile(fileToUpload).subscribe((result) => {
+                        console.log('uploaded');
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            if (fileToUpload.type === 'svg') {
+                reader.readAsText(event.target.files[0]);
+            } else {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
     }
 }

@@ -52,6 +52,12 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
     
+    uploadFile(file: any) {
+        return new Observable((observer) => {
+            observer.next('Not supported!');
+        });
+    }
+
     getDeviceSecurity(id: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');

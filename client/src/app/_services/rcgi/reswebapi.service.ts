@@ -43,6 +43,12 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
     }
     
+    uploadFile(resource: any) {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = resource;
+        return this.http.post<any>(this.endPointConfig + '/api/upload', params, { headers: header });
+    }
+
     getDeviceSecurity(id: string): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = { query: 'security', name: id };

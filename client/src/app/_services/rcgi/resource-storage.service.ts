@@ -23,7 +23,9 @@ export abstract class ResourceStorageService {
     public abstract setServerProject(prj: ProjectData);
 
     public abstract setServerProjectData(cmd: ProjectDataCmdType, data: any, prj: ProjectData);
-    
+
+    public abstract uploadFile(file: any);
+
     public abstract getDeviceSecurity(id: string): Observable<any>;
 
     public abstract setDeviceSecurity(id: string, value: string): Observable<any>;

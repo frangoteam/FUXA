@@ -100,6 +100,12 @@ export class ResClientService implements ResourceStorageService {
         });
     }
     
+    uploadFile(file: any) {
+        return new Observable((observer) => {
+            observer.next('Not supported!');
+        });
+    }
+
     private isDataCmdForDevice(cmd: ProjectDataCmdType): boolean {
         return (cmd === ProjectDataCmdType.DelDevice || cmd === ProjectDataCmdType.SetDevice);
     }
