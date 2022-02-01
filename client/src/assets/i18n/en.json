@@ -50,6 +50,7 @@
     "dlg.layout-lbl-infos": "Info notification mode",
 
     "dlg.menuitem-title": "Menu Item",
+    "dlg.menuitem-image": "[My Image...]",
     "dlg.menuitem-icon": "Icon",
     "dlg.menuitem-text": "Text",
     "dlg.menuitem-view": "View by Click",

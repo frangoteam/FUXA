@@ -85,6 +85,7 @@ export class NaviItem {
     link: string;
     view: string;
     icon: string;
+    image: string;
     permission: number;
 }
 

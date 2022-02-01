@@ -43,14 +43,15 @@ module.exports = {
                     runtime.logger.error("api get project: Not Found!");
                 }
             }).catch(function(err) {
-                if (err.code) {
+                if (err && err.code) {
                     if (err.code !== 'ERR_HTTP_HEADERS_SENT') {
                         res.status(400).json({error:err.code, message: err.message});
+                        runtime.logger.error("api get project: " + err.message);
                     }
                 } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    res.status(400).json({error:"unexpected_error", message: err});
+                    runtime.logger.error("api get project: " + err);
                 }
-                runtime.logger.error("api get project: " + err.message);
             });
         });
 
@@ -71,12 +72,13 @@ module.exports = {
                         res.end();
                     });
                 }).catch(function(err) {
-                    if (err.code) {
+                    if (err && err.code) {
                         res.status(400).json({error:err.code, message: err.message});
+                        runtime.logger.error("api post project: " + err.message);
                     } else {
-                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                        res.status(400).json({error:"unexpected_error", message: err});
+                        runtime.logger.error("api post project: " + err);
                     }
-                    runtime.logger.error("api post project: " + err.message);
                 });
             }
         });
@@ -100,10 +102,11 @@ module.exports = {
                 }).catch(function(err) {
                     if (err && err.code) {
                         res.status(400).json({error:err.code, message: err.message});
+                        runtime.logger.error("api post projectData: " + err.message);
                     } else {
-                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                        res.status(400).json({error:"unexpected_error", message: err});
+                        runtime.logger.error("api post projectData: " + err);
                     }
-                    runtime.logger.error("api post projectData: " + err.message);
                 });
             }
         });
@@ -145,12 +148,13 @@ module.exports = {
                         res.end();
                     }
                 }).catch(function(err) {
-                    if (err.code) {
+                    if (err && err.code) {
                         res.status(400).json({error:err.code, message: err.message});
+                        runtime.logger.error("api get device: " + err.message);
                     } else {
-                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                        res.status(400).json({error:"unexpected_error", message: err});
+                        runtime.logger.error("api get device: " + err);
                     }
-                    runtime.logger.error("api get device: " + err.message);
                 });
             }
         });
@@ -170,12 +174,13 @@ module.exports = {
                 runtime.project.setDeviceProperty(req.body.params).then(function(data) {
                     res.end();
                 }).catch(function(err) {
-                    if (err.code) {
+                    if (err && err.code) {
                         res.status(400).json({error:err.code, message: err.message});
+                        runtime.logger.error("api post device: " + err.message);
                     } else {
-                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                        res.status(400).json({error:"unexpected_error", message: err});
+                        runtime.logger.error("api post device: " + err);
                     }
-                    runtime.logger.error("api post device: " + err.message);
                 });                
             }
         });
@@ -187,25 +192,26 @@ module.exports = {
         prjApp.post('/api/upload', function (req, res) {
             const file = req.body;
             try {
-                const base64data = file.data.replace(/^data:.*,/, '');
+                let basedata = file.data;
+                let encoding = {};
+                // let basedata = file.data.replace(/^data:.*,/, '');
+                // let basedata = file.data.replace(/^data:image\/png;base64,/, "");
                 const filePath = path.join(runtime.settings.uploadFileDir, file.name);
-                fs.writeFile(filePath, base64data, 'base64', (err) => {
-                    if (err) {
-                        console.log(err);
-                        res.sendStatus(500);
-                    } else {
-                        res.set('Location', path.join(runtime.settings.httpUploadFileStatic, file.name));
-                        res.status(200).end();
-                        // res.send(file);
-                    }
-                });
-            } catch (err) {
-                if (err.code) {
-                    res.status(400).json({error: err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message: err.toString()});
+                if (file.type !== 'svg') {
+                    basedata = file.data.replace(/^data:.*,/, '');
+                    encoding = {encoding: 'base64'};
                 }
-                runtime.logger.error("api upload: " + err.message);
+                fs.writeFileSync(filePath, basedata, encoding);
+                let result = {'location': runtime.settings.httpUploadFileStatic + '/' +file.name };
+                res.json(result);
+            } catch (err) {
+                if (err && err.code) {
+                    res.status(400).json({error: err.code, message: err.message});
+                    runtime.logger.error("api upload: " + err.message);
+                } else {
+                    res.status(400).json({error:"unexpected_error", message: err});
+                    runtime.logger.error("api upload: " + err);
+                }
             }
         });
 

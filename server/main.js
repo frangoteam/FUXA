@@ -157,7 +157,7 @@ if (!fs.existsSync(settings.packageDir)) {
     fs.mkdirSync(settings.packageDir);
 }
 // Check upload file folder
-settings.httpUploadFileStatic = settings.uploadFileDir;
+settings.httpUploadFileStatic = 'resources';
 settings.uploadFileDir = path.resolve(__dirname, settings.uploadFileDir);
 if (!fs.existsSync(settings.uploadFileDir)) {
     fs.mkdirSync(settings.uploadFileDir);
@@ -235,6 +235,7 @@ app.use('/device', express.static(settings.httpStatic));
 app.use('/rodevice', express.static(settings.httpStatic));
 app.use('/users', express.static(settings.httpStatic));
 app.use('/view', express.static(settings.httpStatic));
+app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', { stream: accessLogStream }));

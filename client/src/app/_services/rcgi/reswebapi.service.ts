@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { EndPointApi } from '../../_helpers/endpointapi';
-import { ProjectData, ProjectDataCmdType } from '../../_models/project';
+import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery } from '../../_models/alarm';
 
@@ -43,7 +43,7 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
     }
     
-    uploadFile(resource: any) {
+    uploadFile(resource: any): Observable<UploadFile> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = resource;
         return this.http.post<any>(this.endPointConfig + '/api/upload', params, { headers: header });

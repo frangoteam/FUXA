@@ -44,3 +44,8 @@ export enum ProjectDataCmdType {
     SetNotification = 'set-notification',
     DelNotification = 'del-notification',
 }
+
+
+export class UploadFile {
+    location: string;
+}

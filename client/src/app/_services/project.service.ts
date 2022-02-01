@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { ProjectData, ProjectDataCmdType } from '../_models/project';
+import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
 import { Hmi, View, LayoutSettings } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
@@ -665,16 +665,8 @@ export class ProjectService {
     //#endregion
 
     //#region Upload resource to server
-    uploadFile(file: any) {
-        return new Observable((observer) => {
-            this.storage.uploadFile(file).subscribe(result => {
-                observer.next();
-            }, err => {
-                console.error(err);
-                this.notifySaveError(err);
-                observer.error(err);
-            });
-        });
+    uploadFile(file: any): Observable<UploadFile> {
+        return this.storage.uploadFile(file);
     }
     //#endregion
 

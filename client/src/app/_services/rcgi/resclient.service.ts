@@ -3,7 +3,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { ProjectData, ProjectDataCmdType } from '../../_models/project';
+import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { Device } from '../../_models/device';
 import { ResourceStorageService } from './resource-storage.service';
 import { Utils } from '../../_helpers/utils';
@@ -100,9 +100,9 @@ export class ResClientService implements ResourceStorageService {
         });
     }
     
-    uploadFile(file: any) {
+    uploadFile(file: any): Observable<UploadFile> {
         return new Observable((observer) => {
-            observer.next('Not supported!');
+            observer.error('Not supported!');
         });
     }
 

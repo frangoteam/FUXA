@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { ResWebApiService } from './reswebapi.service';
 import { Device } from '../../_models/device';
-import { ProjectData, ProjectDataCmdType } from '../../_models/project';
+import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { AlarmQuery } from '../../_models/alarm';
 
 @Injectable()
@@ -24,7 +24,7 @@ export abstract class ResourceStorageService {
 
     public abstract setServerProjectData(cmd: ProjectDataCmdType, data: any, prj: ProjectData);
 
-    public abstract uploadFile(file: any);
+    public abstract uploadFile(file: any): Observable<UploadFile>;
 
     public abstract getDeviceSecurity(id: string): Observable<any>;
 

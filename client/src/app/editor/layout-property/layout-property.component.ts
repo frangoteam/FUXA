@@ -9,6 +9,7 @@ import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeT
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
+import { UploadFile } from '../../_models/project';
 
 @Component({
     selector: 'app-layout-property',
@@ -87,6 +88,7 @@ export class LayoutPropertyComponent implements OnInit {
             if (result) {
                 if (item) {
                     item.icon = result.item.icon;
+                    item.image = result.item.image;
                     item.text = result.item.text;
                     item.view = result.item.view;
                     item.link = result.item.link;
@@ -94,6 +96,7 @@ export class LayoutPropertyComponent implements OnInit {
                 } else {
                     let nitem = new NaviItem();
                     nitem.icon = result.item.icon;
+                    nitem.image = result.item.image;
                     nitem.text = result.item.text;
                     nitem.view = result.item.view;
                     nitem.link = result.item.link;
@@ -122,6 +125,7 @@ export class LayoutPropertyComponent implements OnInit {
         this.draggableListLeft.forEach(item => {
             let nitem = new NaviItem();
             nitem.icon = item.icon;
+            nitem.image = item.image;
             nitem.text = item.text;
             nitem.view = item.view;
             nitem.link = item.link;
@@ -158,7 +162,6 @@ export class DialogMenuItem {
     icons = Define.materialIcons;
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
-    imagefile: string;
     
     @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
 
@@ -183,15 +186,15 @@ export class DialogMenuItem {
      */
     onSetImage(event) {
         if (event.target.files) {
-            this.imagefile = 'assets/images/' + event.target.files[0].name;
-            let fileToUpload = { type: this.imagefile.split('.').pop().toLowerCase(), name: this.imagefile.split('/').pop(), data: null };
+            let filename = event.target.files[0].name;
+            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
             let reader = new FileReader();
             reader.onload = () => {
-                console.log(reader.result);
                 try {
                     fileToUpload.data = reader.result;
-                    this.projectService.uploadFile(fileToUpload).subscribe((result) => {
-                        console.log('uploaded');
+                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
+                        this.data.item.image = result.location;
+                        this.data.item.icon = null;
                     });
                 } catch (err) {
                     console.error(err);
