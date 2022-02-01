@@ -202,7 +202,7 @@ module.exports = {
                     encoding = {encoding: 'base64'};
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
-                let result = {'location': runtime.settings.httpUploadFileStatic + '/' +file.name };
+                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' +file.name };
                 res.json(result);
             } catch (err) {
                 if (err && err.code) {

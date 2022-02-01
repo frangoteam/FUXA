@@ -342,8 +342,14 @@ app-root {
     padding-top: 10px;
     padding-bottom: 5px;
 }
+
 .menu-item-content-icon .mat-icon {
     font-size: 32px;
+    height: 32px;
+    width: 32px;
+}
+
+.menu-item-content-image {
     height: 32px;
     width: 32px;
 }
@@ -351,6 +357,7 @@ app-root {
 .menu-item-content-text {
     padding: 10px 10px 10px 10px;
 }
+
 .menu-item-content-text span {
     text-align: left !important;
 }
@@ -361,12 +368,14 @@ app-root {
     text-align: -webkit-center;
     text-align: -moz-center;
 }
+
 .menu-item-content-block .mat-icon {
     display: block;
     font-size: 32px;
     height: 32px;
     width: 32px;
 }
+
 .menu-item-content-block span {
     display: block;
     font-size: 14px;
@@ -376,6 +385,7 @@ app-root {
     text-align: left;
     padding: 10px 10px 10px 10px;
 }
+
 .menu-item-content-inline .mat-icon {
     display: inline-block;
     font-size: 22px;
@@ -383,6 +393,14 @@ app-root {
     width: 22px;
     vertical-align: text-bottom;
 }
+
+.menu-item-content-inimage {
+    display: inline-block;
+    height: 22px;
+    width: 22px;
+    vertical-align: text-bottom;
+}
+
 .menu-item-content-inline span {
     padding-left: 5px;
     display: inline-block;

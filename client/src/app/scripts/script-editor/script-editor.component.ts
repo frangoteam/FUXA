@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ScriptEditorComponent implements OnInit {
 
+  content;
+  
   constructor() { }
 
   ngOnInit() {

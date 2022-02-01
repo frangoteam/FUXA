@@ -8,7 +8,7 @@
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>
                 </mat-select-trigger>
-                <mat-option [value]="image" (click)="imagefile.value = '';imagefile.click();">
+                <mat-option [value]="'image'" (click)="imagefile.value = '';imagefile.click();">
                     {{'dlg.menuitem-image' | translate}}
                     <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
                 </mat-option>

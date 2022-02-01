@@ -7,17 +7,20 @@
         <mat-list-item *ngFor="let item of layout.navigation.items; let i = index" [ngClass]="'menu-item-' + layout.navigation.type" style="width: unset" [style.color]="layoutNavigation.fgcolor">
             <button type="button" mat-button class="sidenav-btn" (click)="onGoTo(item)" [ngSwitch]="layout.navigation.type">
                 <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
-                    <mat-icon>{{item.icon}}</mat-icon>
+                    <img *ngIf="item.image" src="{{item.image}}">
+                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                 </div>
                 <div *ngSwitchCase="'text'" class="menu-item-content-text">
                     <span>{{item.text}}</span>
                 </div>
                 <div *ngSwitchCase="'block'" class="menu-item-content-block">
-                    <mat-icon style="display: block;">{{item.icon}}</mat-icon>
+                    <img *ngIf="item.image" style="display: block;" src="{{item.image}}">
+                    <mat-icon *ngIf="item.icon" style="display: block;">{{item.icon}}</mat-icon>
                     <span>{{item.text}}</span>
                 </div>
                 <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
-                    <mat-icon style="display: inline-block">{{item.icon}}</mat-icon>
+                    <img *ngIf="item.image" style="display: inline-block" src="{{item.image}}">
+                    <mat-icon *ngIf="item.icon" style="display: inline-block">{{item.icon}}</mat-icon>    
                     <span style="display: inline-block">{{item.text}}</span>
                 </div>
             </button>
