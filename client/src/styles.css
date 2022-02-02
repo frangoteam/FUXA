@@ -339,8 +339,11 @@ app-root {
 }
 
 .menu-item-content-icon {
-    padding-top: 10px;
-    padding-bottom: 5px;
+    height: 50px;
+    width: 55px;
+    display:table-cell;
+    vertical-align:middle;
+    padding-top: 4px;
 }
 
 .menu-item-content-icon .mat-icon {
@@ -349,9 +352,13 @@ app-root {
     width: 32px;
 }
 
-.menu-item-content-image {
-    height: 32px;
-    width: 32px;
+.menu-item-content-icon img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 35px;
+    max-width: 35px;
 }
 
 .menu-item-content-text {
@@ -376,6 +383,12 @@ app-root {
     width: 32px;
 }
 
+.menu-item-content-block img {
+    display: block;
+    max-height: 35px;
+    max-width: 35px;
+}
+
 .menu-item-content-block span {
     display: block;
     font-size: 14px;
@@ -391,14 +404,14 @@ app-root {
     font-size: 22px;
     height: 22px;
     width: 22px;
-    vertical-align: text-bottom;
+    vertical-align: middle;
 }
 
-.menu-item-content-inimage {
+.menu-item-content-inline img {
     display: inline-block;
-    height: 22px;
     width: 22px;
-    vertical-align: text-bottom;
+    height: 22px;
+    vertical-align: middle;
 }
 
 .menu-item-content-inline span {

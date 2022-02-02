@@ -65,6 +65,7 @@ export interface GraphOptions extends ChartOptions {
     panel?: { height: number, width: number };
     type?: ChartType,
     theme?: string,
+    offline?: boolean,
     borderWidth?: number,
     gridLinesShow?: boolean,
     gridLinesColor?: string,

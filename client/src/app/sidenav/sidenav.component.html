@@ -14,13 +14,13 @@
                     <span>{{item.text}}</span>
                 </div>
                 <div *ngSwitchCase="'block'" class="menu-item-content-block">
-                    <img *ngIf="item.image" style="display: block;" src="{{item.image}}">
-                    <mat-icon *ngIf="item.icon" style="display: block;">{{item.icon}}</mat-icon>
+                    <img *ngIf="item.image" src="{{item.image}}">
+                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                     <span>{{item.text}}</span>
                 </div>
                 <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
-                    <img *ngIf="item.image" style="display: inline-block" src="{{item.image}}">
-                    <mat-icon *ngIf="item.icon" style="display: inline-block">{{item.icon}}</mat-icon>    
+                    <img *ngIf="item.image" src="{{item.image}}">
+                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>    
                     <span style="display: inline-block">{{item.text}}</span>
                 </div>
             </button>

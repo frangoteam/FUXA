@@ -73,19 +73,19 @@
                                 <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
                                     <!-- <mat-icon *ngIf="mode.value === navMode.icon || mode.value === navMode.block">{{item.icon}}</mat-icon> -->
                                     <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
-                                        <img *ngIf="item.image" class="menu-item-content-image" src="{{item.image}}">
+                                        <img *ngIf="item.image" src="{{item.image}}">
                                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                                     </div>
                                     <div *ngSwitchCase="'text'" class="menu-item-content-text">
                                         <span>{{item.text}}</span>
                                     </div>
                                     <div *ngSwitchCase="'block'" class="menu-item-content-block">
-                                        <img *ngIf="item.image" class="menu-item-content-image" src="{{item.image}}">
+                                        <img *ngIf="item.image" src="{{item.image}}">
                                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                                         <span>{{item.text}}</span>
                                     </div>
                                     <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
-                                        <img *ngIf="item.image" class="menu-item-content-inimage" src="{{item.image}}">
+                                        <img *ngIf="item.image" src="{{item.image}}">
                                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>                                        
                                         <span style="display: inline-block">{{item.text}}</span>
                                     </div>

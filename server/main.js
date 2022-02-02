@@ -158,7 +158,7 @@ if (!fs.existsSync(settings.packageDir)) {
 }
 // Check upload file folder
 settings.httpUploadFileStatic = 'resources';
-settings.uploadFileDir = path.resolve(__dirname, settings.uploadFileDir);
+settings.uploadFileDir = path.resolve(workDir, settings.uploadFileDir);
 if (!fs.existsSync(settings.uploadFileDir)) {
     fs.mkdirSync(settings.uploadFileDir);
 }
