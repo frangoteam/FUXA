@@ -705,9 +705,13 @@ export class GaugesManager {
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
-            let gauge = HtmlGraphComponent.initElement(ga, res, ref, isview);
+            let gauge: GraphBaseComponent = HtmlGraphComponent.initElement(ga, res, ref, isview);
             if (gauge) {
                 this.setGraphPropety(gauge, ga.property);
+                gauge.onReload.subscribe(data => {
+                    // this.hmiService.queryDaqValues(data);
+                    console.log(gauge);
+                });
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;
@@ -768,7 +772,7 @@ export class GaugesManager {
                 let graph = this.hmiService.getGraph(property.id);
                 if (graph) {
                     gauge.init(graph.name, graph.property, graph.sources);
-                }                
+                }
             }
             if (property.options) {
                 gauge.setOptions(property.options);

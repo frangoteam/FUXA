@@ -33,7 +33,14 @@
                         <mat-select [(value)]="selectedGraph.property.xtype" (selectionChange)="onGraphXTypeChanged($event.value)"
                             placeholder="{{'graph.property-xtype' | translate}}">
                             <!-- <mat-option (click)="onAddGraphSource('tag');">{{'graph.config-category-tag' | translate}}</mat-option> -->
-                            <mat-option *ngFor="let ev of barXType | enumToArray" [value]="ev.key" [disabled]="ev.key !== xTypeValue">
+                            <mat-option *ngFor="let ev of barXType | enumToArray" [value]="ev.key">
+                                {{ ev.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="my-form-field section-item" *ngIf="selectedGraph.property.xtype === xTypeDate">
+                        <mat-select [(value)]="dateFunction.type" (selectionChange)="onGraphDateFunctionTypeChanged($event.value)" placeholder="{{'graph.property-fnctype' | translate}}">
+                            <mat-option *ngFor="let ev of barDateFunctionType | enumToArray" [value]="ev.key">
                                 {{ ev.value }}
                             </mat-option>
                         </mat-select>

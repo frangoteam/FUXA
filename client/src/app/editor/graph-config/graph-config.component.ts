@@ -6,7 +6,7 @@ import { ProjectService } from '../../_services/project.service';
 
 import { Utils } from '../../_helpers/utils';
 import { Device, DevicesUtils, Tag } from '../../_models/device';
-import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType } from '../../_models/graph';
+import { Graph, GraphSource, GraphType, GraphBarProperty, GraphBarXType, GraphBarDateFunctionType, GraphBarFunction, GraphBarDateFunction } from '../../_models/graph';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { DeviceTagDialog } from '../../device/device.component';
@@ -24,6 +24,9 @@ export class GraphConfigComponent implements OnInit {
 
     barXType = GraphBarXType;
     xTypeValue = Utils.getEnumKey(GraphBarXType, GraphBarXType.value);
+    xTypeDate = Utils.getEnumKey(GraphBarXType, GraphBarXType.date);
+    barDateFunctionType = GraphBarDateFunctionType;
+    dateFunction = new GraphBarFunction();
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
@@ -36,6 +39,9 @@ export class GraphConfigComponent implements OnInit {
     ngOnInit() {
         Object.keys(this.barXType).forEach(key => {
             this.translateService.get(this.barXType[key]).subscribe((txt: string) => { this.barXType[key] = txt });
+        });
+        Object.keys(this.barDateFunctionType).forEach(key => {
+            this.translateService.get(this.barDateFunctionType[key]).subscribe((txt: string) => { this.barDateFunctionType[key] = txt });
         });
     }
 
@@ -166,6 +172,7 @@ export class GraphConfigComponent implements OnInit {
         if (!this.selectedGraph.property) {
             this.selectedGraph.property = new GraphBarProperty();
         }
+        this.checkPropertyFunction(this.selectedGraph.property);
     }
 
     isGraphSelected(item: Graph) {
@@ -176,8 +183,23 @@ export class GraphConfigComponent implements OnInit {
 
     onGraphXTypeChanged(type: GraphBarXType) {
         this.selectedGraph.property.xtype = type;
+        this.checkPropertyFunction(this.selectedGraph.property);
     }
 
+    onGraphDateFunctionTypeChanged(type: GraphBarDateFunctionType) {
+        console.log(type);
+    }
+
+    checkPropertyFunction(property: any) {
+        if (property) {
+            if (property.xtype === this.xTypeDate) {
+                if (!property.function) {
+                    property.function = new GraphBarDateFunction();
+                }
+                this.dateFunction = property.function;
+            }
+        }
+    }
 
     getTagLabel(tag) {
         if (tag.label) {

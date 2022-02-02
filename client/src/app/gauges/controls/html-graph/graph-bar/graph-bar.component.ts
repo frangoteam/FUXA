@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 
 import { GraphBaseComponent, GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GraphBarProperty, GraphBarXType, GraphSource } from '../../../../_models/graph';
@@ -10,12 +10,13 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 @Component({
     selector: 'graph-bar',
     templateUrl: './graph-bar.component.html',
-    styleUrls: ['./graph-bar.component.css']
+    styleUrls: ['./graph-bar.component.scss']
 })
 export class GraphBarComponent extends GraphBaseComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BaseChartDirective) public chart?: BaseChartDirective;
     @Input() height = 240;
     @Input() width = 380;
+    @Output() onReload = new EventEmitter();
 
     public barChartOptions: GraphOptions = {
         responsive: true,
@@ -39,6 +40,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     sourceMap = {};
     sourceCount = 0;
     xTypeValue = Utils.getEnumKey(GraphBarXType, GraphBarXType.value);
+    reloadActive = false;
 
     constructor() {
         super();
@@ -119,6 +121,11 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             this.barChartOptions.title = GraphBaseComponent.getTitle(options, this.title);
             this.chart.update();
         }
+    }
+
+    onRefresh() {
+        this.onReload.emit();
+        this.reloadActive = !this.reloadActive;
     }
 
     resize(height?, width?) {

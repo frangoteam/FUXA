@@ -213,6 +213,9 @@
     "graph.property-sources": "Sources (Tags)",
     "graph.bar-xtype-value": "Values",
     "graph.bar-xtype-date": "Date and Time",
+    "graph.property-fnctype": "Function type",
+    "graph.bar-date-fnc-value-integral": "Sum (Integral)",
+    "graph.bar-date-fnc-hour-integral": "Hour Sum (Integral)",
 
     "graph.property-data": "Data",
     "graph.property-general": "General",

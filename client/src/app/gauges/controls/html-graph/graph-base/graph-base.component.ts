@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { GraphType, GraphSource } from '../../../../_models/graph';
 import { ChartOptions, GridLineOptions, ChartType, ChartColor, ChartYAxe } from 'chart.js';
 import { Utils } from '../../../../_helpers/utils';
@@ -8,6 +8,8 @@ import { Utils } from '../../../../_helpers/utils';
     template: ''
 })
 export class GraphBaseComponent {
+    @Output() onReload = new EventEmitter();
+    
     id: string;
     isEditor: boolean;
     public static VerticalBarChartType: ChartType = 'bar';

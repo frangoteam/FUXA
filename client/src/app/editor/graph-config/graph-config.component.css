@@ -195,6 +195,7 @@
 
 .section-item {
     width: 100%;
+    margin-bottom: 3px;
 }
 
 .section-item mat-select {
