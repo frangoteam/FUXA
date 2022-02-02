@@ -17,6 +17,20 @@
                     </mat-option>
                 </mat-select>
             </div>
+            <div class="section-newline"></div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 160px">
+                <span>{{'graph.property-last-range' | translate}}</span>
+                <mat-select [(value)]="options.lastRange" [disabled]="!isDateTime(graphCtrl.value)">
+                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="section-inline-margin"></div>
+            <div class="my-form-field section-inline-toggle slider-field">
+                <span>{{'graph.property-offline' | translate}}</span>
+                <mat-slide-toggle color="primary" [checked]="!options.offline" (change)="options.offline = !options.offline;onGraphChanged();"></mat-slide-toggle>
+            </div>
         </div>
         <div class="element-property-header">
             <span>{{'graph.property-general' | translate}}</span>

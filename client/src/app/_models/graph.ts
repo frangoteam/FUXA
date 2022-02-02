@@ -15,6 +15,13 @@ export class Graph {
     } 
 }
 
+export enum GraphRangeType {
+    last8h = 'graph.rangetype-last8h',
+    last1d = 'graph.rangetype-last1d',
+    last3d = 'graph.rangetype-last3d',
+    last1w = 'graph.rangetype-last1w'
+}
+
 export class GraphBarProperty {
     xtype: GraphBarXType;
     function: GraphBarFunction;

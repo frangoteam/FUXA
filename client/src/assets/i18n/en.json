@@ -268,6 +268,11 @@
     "graph.property-datalabels-show": "Show",
     "graph.property-datalabels-fontsize": "Font size",
     "graph.property-datalabels-align": "Align",
+    
+    "graph.rangetype-last8h": "Last 8 hours",
+    "graph.rangetype-last1d": "Last day",
+    "graph.rangetype-last3d": "Last 3 days",
+    "graph.rangetype-last1w": "Last week",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",

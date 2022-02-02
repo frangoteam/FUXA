@@ -6,7 +6,7 @@ import { Subject, ReplaySubject } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { Graph, GraphType } from '../../../../_models/graph';
+import { Graph, GraphType, GraphRangeType, GraphBarXType } from '../../../../_models/graph';
 import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
@@ -31,6 +31,8 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
     graphType: GraphType = GraphType.pie;
     options: GraphOptions;
     defaultColor = Utils.defaultColor;
+    lastRangeType = GraphRangeType;
+    dataXType = Utils.getEnumKey(GraphBarXType, GraphBarXType.date);
 
     graphCtrl: FormControl = new FormControl();
     graphFilterCtrl: FormControl = new FormControl();
@@ -52,6 +54,9 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             if (!this.data.settings.property.options) {
                 this.data.settings.property.options = GraphBarComponent.DefaultOptions();
             }
+            Object.keys(this.lastRangeType).forEach(key => {
+                this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+            });
         }
         this._reload();
     }
@@ -91,6 +96,11 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             this.data.settings.name = this.graphCtrl.value.name;
             this.data.settings.property.id = this.graphCtrl.value.id;
             this.data.settings.property.type = this.graphCtrl.value.type;
+            if (!this.isDateTime(this.graphCtrl.value)) {
+                this.options.lastRange = null;
+            } else {
+                this.options.lastRange = <GraphRangeType>Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d);
+            }
         } else {
             this.data.settings.name = '';
         }
@@ -124,6 +134,13 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
                 this.loadGraphs();
             }
         });
+    }
+
+    isDateTime(graph: Graph): boolean {
+        if (graph && graph.property && graph.property.xtype === this.dataXType) {
+            return true;
+        }
+        return false;
     }
 
     private loadGraphs(toset?: string) {

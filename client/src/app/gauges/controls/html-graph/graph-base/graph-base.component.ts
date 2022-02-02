@@ -1,6 +1,6 @@
 
 import { Component, Output, EventEmitter } from '@angular/core';
-import { GraphType, GraphSource } from '../../../../_models/graph';
+import { GraphType, GraphSource, GraphRangeType } from '../../../../_models/graph';
 import { ChartOptions, GridLineOptions, ChartType, ChartColor, ChartYAxe } from 'chart.js';
 import { Utils } from '../../../../_helpers/utils';
 
@@ -66,6 +66,7 @@ export interface GraphOptions extends ChartOptions {
     type?: ChartType,
     theme?: string,
     offline?: boolean,
+    lastRange?: GraphRangeType,
     borderWidth?: number,
     gridLinesShow?: boolean,
     gridLinesColor?: string,
