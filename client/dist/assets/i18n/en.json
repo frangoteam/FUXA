@@ -50,6 +50,7 @@
     "dlg.layout-lbl-infos": "Info notification mode",
 
     "dlg.menuitem-title": "Menu Item",
+    "dlg.menuitem-image": "[My Image...]",
     "dlg.menuitem-icon": "Icon",
     "dlg.menuitem-text": "Text",
     "dlg.menuitem-view": "View by Click",
@@ -212,6 +213,9 @@
     "graph.property-sources": "Sources (Tags)",
     "graph.bar-xtype-value": "Values",
     "graph.bar-xtype-date": "Date and Time",
+    "graph.property-fnctype": "Function type",
+    "graph.bar-date-fnc-value-integral": "Sum (Integral)",
+    "graph.bar-date-fnc-hour-integral": "Hour Sum (Integral)",
 
     "graph.property-data": "Data",
     "graph.property-general": "General",
@@ -223,9 +227,13 @@
     "graph.property-graph": "Graph to show",
     "graph.property-props": "Property",
     "graph.property-newgraph": "New Graph...",
+    "graph.property-date-last-range": "Date range",
+    "graph.property-date-group": "Group",
+    "graph.property-offline": "Online",
     "graph.property-graph-oriantation": "Oriantation",
     "graph.property-ori-vartical": "Vertical",
     "graph.property-ori-horizontal": "Horizontal",
+    "graph.property-decimals": "Decimals",
     "graph.property-yaxis-min": "Min",
     "graph.property-yaxis-max": "Max",
     "graph.property-stepsize": "Tick step",
@@ -264,6 +272,14 @@
     "graph.property-datalabels-show": "Show",
     "graph.property-datalabels-fontsize": "Font size",
     "graph.property-datalabels-align": "Align",
+    
+    "graph.rangetype-last1h": "Last hour",
+    "graph.rangetype-last1d": "Last day",
+    "graph.rangetype-last3d": "Last 3 days",
+    "graph.rangetype-last1w": "Last week",
+
+    "graph.grouptype-hours": "Hours",
+    "graph.grouptype-days": "Days",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
@@ -819,6 +835,8 @@
     "notification.type-alarm": "Alarms",
     "notification.type-trigger": "Trigger",
 
+    "scripts.list-title": "Scripts settings",
+
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
 
@@ -830,9 +848,11 @@
     "card.config-title": "Card settings",
     "card.config-content-type": "Content type",
     "card.config-content-view": "Content View",
+    "card.config-content-iframe": "Link address",
     "card.widget-view": "View",
     "card.widget-alarms": "Alarms",
     "card.widget-table": "Table",
+    "card.widget-iframe": "Link",
     "card.style-zoom": "Zoom",
 
     "texts.list-title": "Texts settings",
