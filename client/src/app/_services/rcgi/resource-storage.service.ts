@@ -6,6 +6,7 @@ import { ResWebApiService } from './reswebapi.service';
 import { Device } from '../../_models/device';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { AlarmQuery } from '../../_models/alarm';
+import { DaqQuery } from '../../_models/hmi';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -39,6 +40,8 @@ export abstract class ResourceStorageService {
     public abstract checkServer(): Observable<any>;
 
     public abstract getAppId(): string;
+
+    public abstract getDaqValues(query: DaqQuery): Observable<any>;
     
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) return source;

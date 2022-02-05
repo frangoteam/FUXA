@@ -7,7 +7,7 @@ import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size } from '../_models/hmi';
+import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -708,9 +708,13 @@ export class GaugesManager {
             let gauge: GraphBaseComponent = HtmlGraphComponent.initElement(ga, res, ref, isview);
             if (gauge) {
                 this.setGraphPropety(gauge, ga.property);
-                gauge.onReload.subscribe(data => {
-                    // this.hmiService.queryDaqValues(data);
-                    console.log(gauge);
+                gauge.onReload.subscribe((query: DaqQuery) => {
+                    this.hmiService.getDaqValues(query).subscribe(result => {
+                        gauge.setValues(query.sids, result);
+                    }, err => {
+                        gauge.setValues(query.sids, null);
+                        console.error('get DAQ values err: ' + err);
+                    });
                 });
                 this.mapGauges[ga.id] = gauge;
             }

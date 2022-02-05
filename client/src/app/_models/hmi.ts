@@ -295,6 +295,12 @@ export class DaqQuery {
     sids: string[];
 }
 
+export interface DaqValue {
+    id: string,
+    ts: number;
+    value: any;
+}
+
 export class DaqResult {
     gid: string;
     result: any;

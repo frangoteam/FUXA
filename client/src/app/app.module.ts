@@ -71,6 +71,7 @@ import { AppService } from './_services/app.service';
 import { TutorialComponent } from './help/tutorial/tutorial.component';
 import { WindowRef } from './_helpers/windowref';
 import { Utils, EnumToArrayPipe, EscapeHtmlPipe } from './_helpers/utils';
+import { Calc } from './_helpers/calc';
 import { Define } from './_helpers/define';
 import { Dictionary } from './_helpers/dictionary';
 import { NgxFabButtonComponent } from './gui-helpers/fab-button/ngx-fab-button.component';
@@ -294,6 +295,7 @@ export function createTranslateLoader(http: HttpClient) {
         GaugesManager,
         WindowRef,
         Utils,
+        Calc,
         HtmlSwitchComponent,
         PipeComponent,
         SliderComponent,

@@ -183,13 +183,27 @@ function getDevicesValues() {
 
 
 /**
- * Get the Device Tag value with Timestamp
+ * Get the Device Tag value
  * used from Alarms
  * @param {*} deviceid 
  * @param {*} sigid 
  * @param {*} value 
  */
 function getDeviceValue(deviceid, sigid) {
+    if (activeDevices[deviceid]) {
+        return activeDevices[deviceid].getValue(sigid);
+    }
+    return null;
+}
+
+/**
+ * Get the Device Tag value
+ * used from Alarms
+ * @param {*} sigid 
+ * @param {*} value 
+ */
+ function getTagValue(sigid) {
+    let deviceid = getDeviceIdForomTag(sigid)
     if (activeDevices[deviceid]) {
         return activeDevices[deviceid].getValue(sigid);
     }
@@ -297,6 +311,7 @@ var devices = module.exports = {
     getDevicesStatus: getDevicesStatus,
     getDevicesValues: getDevicesValues,
     getDeviceValue: getDeviceValue,
+    getTagValue: getTagValue,
     setDeviceValue: setDeviceValue,
     getDeviceIdForomTag: getDeviceIdForomTag,
     browseDevice: browseDevice,

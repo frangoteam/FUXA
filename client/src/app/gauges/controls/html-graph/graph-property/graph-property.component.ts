@@ -6,7 +6,7 @@ import { Subject, ReplaySubject } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { Graph, GraphType, GraphRangeType, GraphBarXType } from '../../../../_models/graph';
+import { Graph, GraphType, GraphRangeType, GraphBarXType, GraphDateGroupType } from '../../../../_models/graph';
 import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
@@ -32,6 +32,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
     options: GraphOptions;
     defaultColor = Utils.defaultColor;
     lastRangeType = GraphRangeType;
+    dateGroupType = GraphDateGroupType;
     dataXType = Utils.getEnumKey(GraphBarXType, GraphBarXType.date);
 
     graphCtrl: FormControl = new FormControl();
@@ -56,6 +57,9 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             }
             Object.keys(this.lastRangeType).forEach(key => {
                 this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+            });
+            Object.keys(this.dateGroupType).forEach(key => {
+                this.translateService.get(this.dateGroupType[key]).subscribe((txt: string) => { this.dateGroupType[key] = txt });
             });
         }
         this._reload();
@@ -98,8 +102,11 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             this.data.settings.property.type = this.graphCtrl.value.type;
             if (!this.isDateTime(this.graphCtrl.value)) {
                 this.options.lastRange = null;
+                this.options.dateGroup = null;
             } else {
+                this.options.offline = true;
                 this.options.lastRange = <GraphRangeType>Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d);
+                this.options.dateGroup = <GraphDateGroupType>Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
             }
         } else {
             this.data.settings.name = '';

@@ -459,6 +459,12 @@ export class HmiService {
     }
     //#endregion
 
+    //#region DAQ functions served from project service
+    getDaqValues(query: DaqQuery) {
+        return this.projectService.getDaqValues(query);
+    }
+    //#endregion
+
     //#region My Static functions
     public static toVariableId(src: string, name: string) {
         return src + HmiService.separator + name;

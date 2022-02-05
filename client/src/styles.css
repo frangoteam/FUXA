@@ -144,6 +144,10 @@ app-root {
     height: 100%;
 }
 
+.default-color {
+    color:rgba(0, 0, 0, 0.8);
+}
+
 /* toaster overwrite */
 /*-------------------*/
 #toast-container > div {

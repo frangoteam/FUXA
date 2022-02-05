@@ -227,9 +227,13 @@
     "graph.property-graph": "Graph to show",
     "graph.property-props": "Property",
     "graph.property-newgraph": "New Graph...",
+    "graph.property-date-last-range": "Date range",
+    "graph.property-date-group": "Group",
+    "graph.property-offline": "Online",
     "graph.property-graph-oriantation": "Oriantation",
     "graph.property-ori-vartical": "Vertical",
     "graph.property-ori-horizontal": "Horizontal",
+    "graph.property-decimals": "Decimals",
     "graph.property-yaxis-min": "Min",
     "graph.property-yaxis-max": "Max",
     "graph.property-stepsize": "Tick step",
@@ -269,10 +273,13 @@
     "graph.property-datalabels-fontsize": "Font size",
     "graph.property-datalabels-align": "Align",
     
-    "graph.rangetype-last8h": "Last 8 hours",
+    "graph.rangetype-last1h": "Last hour",
     "graph.rangetype-last1d": "Last day",
     "graph.rangetype-last3d": "Last 3 days",
     "graph.rangetype-last1w": "Last week",
+
+    "graph.grouptype-hours": "Hours",
+    "graph.grouptype-days": "Days",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",

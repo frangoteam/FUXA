@@ -7,6 +7,7 @@ import { EndPointApi } from '../../_helpers/endpointapi';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery } from '../../_models/alarm';
+import { DaqQuery } from '../../_models/hmi';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -88,5 +89,11 @@ export class ResWebApiService implements ResourceStorageService {
 
     getAppId() {
         return ResourceStorageService.prjresource;
+    }
+
+    getDaqValues(query: DaqQuery): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: JSON.stringify(query) };        
+        return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 }

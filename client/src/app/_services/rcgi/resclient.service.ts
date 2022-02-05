@@ -8,6 +8,7 @@ import { Device } from '../../_models/device';
 import { ResourceStorageService } from './resource-storage.service';
 import { Utils } from '../../_helpers/utils';
 import { AlarmQuery } from '../../_models/alarm';
+import { DaqQuery } from '../../_models/hmi';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -154,5 +155,11 @@ export class ResClientService implements ResourceStorageService {
 
     getAppId() {
         return ResourceStorageService.prjresource;
+    }
+
+    getDaqValues(query: DaqQuery): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
     }
 }

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
-import { Hmi, View, LayoutSettings } from '../_models/hmi';
+import { Hmi, View, LayoutSettings, DaqQuery } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
 import { Alarm, AlarmQuery } from '../_models/alarm';
@@ -667,6 +667,12 @@ export class ProjectService {
     //#region Upload resource to server
     uploadFile(file: any): Observable<UploadFile> {
         return this.storage.uploadFile(file);
+    }
+    //#endregion
+
+    //#region DAQ query
+    getDaqValues(query: DaqQuery): Observable<any> {
+        return this.storage.getDaqValues(query);
     }
     //#endregion
 

@@ -37,7 +37,9 @@ export class HtmlGraphComponent extends GaugeBaseComponent implements OnInit {
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, gauge?: any) {
         try {
-            gauge.setValue(sig.id, new Date().getTime() / 1000, sig.value);
+            if (gauge && !gauge.isOffline()) {
+                gauge.setValue(sig.id, new Date().getTime() / 1000, sig.value);
+            }
         } catch (err) {
             console.error(err);
         }
