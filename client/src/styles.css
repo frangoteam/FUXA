@@ -862,6 +862,10 @@ mat-toolbar-row {
 }
 
 /* Element side property */
+.element-property {
+    display: block;
+}
+
 .element-property-title {
     line-height: 30px;
     font-size: 17px;

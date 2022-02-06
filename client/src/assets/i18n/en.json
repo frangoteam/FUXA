@@ -281,6 +281,9 @@
     "graph.grouptype-hours": "Hours",
     "graph.grouptype-days": "Days",
 
+    "iframe.property-data": "Data",
+    "iframe.property-address": "Address",
+
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.views": "Views",
@@ -322,6 +325,8 @@
     "editor.controls-graphbar": "Bar Graph",
     "editor.controls-graph-bar-settings": "Bar Graph settings",
     "editor.controls-graph-pie-settings": "Pie Graph settings",
+    "editor.controls-iframe": "Iframe",
+    "editor.controls-iframe-settings": "Iframe settings",
 
     "editor.layout-settings": "Layout settings",
 

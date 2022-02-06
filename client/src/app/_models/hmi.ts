@@ -245,6 +245,10 @@ export interface GaugeGraphProperty {
     options: any;
 }
 
+export interface GaugeIframeProperty {
+    address: string;
+}
+
 export class Variable {
     id: string;
     name: string;

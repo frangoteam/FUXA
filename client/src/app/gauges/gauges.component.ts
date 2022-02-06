@@ -33,6 +33,7 @@ import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component'
 import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
+import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
 
 @Injectable()
 export class GaugesManager {
@@ -66,7 +67,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -190,6 +191,8 @@ export class GaugesManager {
             return this.mapGauges[ga.id] = SliderComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
             return this.mapGauges[ga.id] = HtmlSwitchComponent.detectChange(ga, res, ref);
+        } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
+            HtmlIframeComponent.initElement(ga, true);
         }
         return false;
     }
@@ -738,6 +741,9 @@ export class GaugesManager {
             let gauge = HtmlSwitchComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
+        } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
+            HtmlIframeComponent.initElement(ga, isview);
+            return true;
         }
     }
 

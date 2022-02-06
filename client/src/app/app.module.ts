@@ -108,6 +108,7 @@ import { HtmlButtonComponent } from './gauges/controls/html-button/html-button.c
 import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.component';
 import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
 import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.component';
+import { HtmlIframeComponent } from './gauges/controls/html-iframe/html-iframe.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
@@ -140,6 +141,7 @@ import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-
 import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';
 import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
 import { ChartsModule } from 'ng2-charts';
+import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -182,6 +184,7 @@ export function createTranslateLoader(http: HttpClient) {
         HtmlSelectComponent,
         HtmlChartComponent,
         HtmlGraphComponent,
+        HtmlIframeComponent,
         HtmlBagComponent,
         GaugeProgressComponent,
         GaugeSemaphoreComponent,
@@ -246,7 +249,8 @@ export function createTranslateLoader(http: HttpClient) {
         GraphBarComponent,
         GraphPieComponent,
         GraphPropertyComponent,
-        GraphBaseComponent
+        GraphBaseComponent,
+        IframePropertyComponent
    ],
     imports: [
         BrowserModule,

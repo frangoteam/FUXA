@@ -1,0 +1,17 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'editor.controls-iframe-settings' | translate}}
+    </div>
+    <div class="iframe-selection">
+        <div class="element-property-header">
+            <span>{{'iframe.property-data' | translate}}</span>
+        </div>
+        <div class="_section-newline">
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'iframe.property-address' | translate}}</span>
+                <input [(ngModel)]="property.address" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <div class="section-newline"></div>
+        </div>
+    </div>
+</div>

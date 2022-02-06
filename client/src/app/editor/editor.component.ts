@@ -635,7 +635,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             for (let i = 0; i < ele.length; i++) {
                 if (this.currentView.items[ele[i].id]) {
                     delete this.currentView.items[ele[i].id];
-                    if (this.gaugesRef.indexOf(ele[i].id) === -1) {
+                    if (this.gaugesRef.indexOf(ele[i].id) !== -1) {
                         if (this.gaugesRef[ele[i].id].ref && this.gaugesRef[ele[i].id].ref['ngOnDestroy']) {
                             try {
                                 this.gaugesRef[ele[i].id].ref['ngOnDestroy']();
@@ -1199,6 +1199,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                 views: hmi.views, dlgType: dlgType, graphs: this.projectService.getGraphs(),
                 names: names
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
+        } else if (dlgType === GaugeDialogType.Iframe) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings, dlgType: dlgType, names: names
             };
             if (!this.sidePanel.opened) {
                 this.sidePanel.toggle();

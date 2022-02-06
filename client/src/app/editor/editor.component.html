@@ -10,6 +10,9 @@
         <div *ngSwitchCase="gaugeDialogType.Graph">
             <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-graph-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.Iframe">
+            <app-iframe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-iframe-property>
+        </div>        
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
@@ -165,6 +168,10 @@
                                 (click)="setMode('html_graph-pie')">
                                 <span class="icon-tool icon-graphpie"></span>
                             </div> -->
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-iframe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-iframe')}"
+                                (click)="setMode('own_ctrl-iframe')">
+                                <span class="icon-tool icon-iframe"></span>
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->

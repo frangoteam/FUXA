@@ -47,7 +47,7 @@ export class ProjectService {
         private toastr: ToastrService) {
 
         this.storage = resewbApiService;
-        if (appService.isDemoApp) {
+        if (!environment.serverEnabled || appService.isDemoApp) {
             this.storage = resDemoService;
         } else if (appService.isClientApp) {
             this.storage = resClientService;
@@ -56,7 +56,7 @@ export class ProjectService {
         this.storage.getAppId = () => { return this.getAppId(); }
         this.storage.onRefreshProject = (): boolean => { return this.onRefreshProject() };
         this.storage.checkServer().subscribe(result => {
-            if (result) {
+            if (!environment.serverEnabled || result) {
                 this.serverSettings = result;
                 this.load();
             }

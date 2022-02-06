@@ -1,0 +1,16 @@
+.iframe-selection {
+    position: absolute;
+    top: 35px;
+    bottom: 0px;
+    overflow: auto;
+    width:calc(100% - 12px);
+
+}
+
+.section-item {
+    width: 100%;
+}
+
+.section-item-block input, span {
+    width: 100%;
+}
