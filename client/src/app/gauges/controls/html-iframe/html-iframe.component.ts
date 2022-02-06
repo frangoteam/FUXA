@@ -37,7 +37,7 @@ export class HtmlIframeComponent extends GaugeBaseComponent implements OnInit {
                 iframe.style['border'] = 'none';
                 iframe.style['background-color'] = '#F1F3F4';
                 iframe.setAttribute('title', 'iframe');
-                if (gaugeSettings.property.address) {
+                if (gaugeSettings.property && gaugeSettings.property.address) {
                     iframe.setAttribute('src', gaugeSettings.property.address);
                 }
                 svgIframeContainer.appendChild(iframe);
