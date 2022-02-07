@@ -841,6 +841,10 @@
     "notification.type-trigger": "Trigger",
 
     "scripts.list-title": "Scripts settings",
+    "scripts.list-name": "Name",
+    "scripts.list-type": "Type",
+    "scripts.list-params": "Parameters",
+    "script.property-title": "Script",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

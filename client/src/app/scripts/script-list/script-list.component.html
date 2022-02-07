@@ -24,35 +24,15 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-name' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
             </ng-container>
-            <!-- Receiver Column -->
-            <ng-container matColumnDef="receiver">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-receiver' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.receiver}} </mat-cell>
-            </ng-container>
-            <!-- Delay Column -->
-            <ng-container matColumnDef="delay">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-delay' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.delay}} </mat-cell>
-            </ng-container>
-            <!-- Interval Column -->
-            <ng-container matColumnDef="interval">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-interval' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.interval}} </mat-cell>
-            </ng-container>
+            <!-- Parameter Column -->
+            <ng-container matColumnDef="params">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-params' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.params}} </mat-cell>
+            </ng-container>            
             <!-- Type Column -->
             <ng-container matColumnDef="type">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-type' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
-            </ng-container>
-            <!-- Enabled Column -->
-            <ng-container matColumnDef="enabled">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-enabled' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.enabled}} </mat-cell>
-            </ng-container>
-            <!-- Subscriptions Column -->
-            <ng-container matColumnDef="subscriptions">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-subscriptions' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{getSubProperty(element)}} </mat-cell>
             </ng-container>
 
             <!-- Button remove Column -->

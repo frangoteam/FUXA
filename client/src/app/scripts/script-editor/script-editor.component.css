@@ -1,0 +1,11 @@
+
+.code-panel {
+    width: 800px;
+}
+
+.code-panel-toggle {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    z-index: 9999;
+}

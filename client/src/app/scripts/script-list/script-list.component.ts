@@ -16,7 +16,7 @@ import { Utils } from '../../_helpers/utils';
 })
 export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'receiver', 'delay', 'interval', 'type', 'enabled', 'subscriptions', 'remove'];
+    displayedColumns = ['select', 'name', 'params', 'type', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     @ViewChild(MatTable) table: MatTable<any>;
