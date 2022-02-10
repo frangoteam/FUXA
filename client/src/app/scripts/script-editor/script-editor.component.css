@@ -1,11 +1,106 @@
 
-.code-panel {
-    width: 800px;
+.container {
+    height: 100%;
 }
 
-.code-panel-toggle {
-    position: absolute;
-    top: 0px;
-    right: 20px;
-    z-index: 9999;
+.panel-header {
+    width: 100%;
+    display: block;
+}
+
+.panel-footer {
+    height: 22px;
+    font-family: monospace;
+}
+
+.panel-function {
+    display: inline-block;
+    width: calc(100% - 90px);
+    margin-top: 10px;
+    font-family: monospace;
+}
+
+.panel-toolbar {
+    float: right;
+}
+
+.panel-code {
+    width: 100%;
+}
+
+@media screen and (max-height: 920px) {
+    :host() ::ng-deep .CodeMirror{
+        height: 600px;
+    }
+}
+
+@media screen and (max-height: 820px) {
+    :host() ::ng-deep .CodeMirror{
+        height: 400px;
+    }
+}
+
+@media screen and (max-height: 720px) {
+    :host() ::ng-deep .CodeMirror{
+        height: 300px;
+    }
+}
+
+.side-panel {
+    background-color: #333a3c;
+    color: rgb(255, 255, 255);
+}
+
+.side-panel-header {
+    font-size: 15px;
+    margin-top: 5px;
+    line-height: 25px;
+}
+
+.side-toggle {
+    transform-origin: center center;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.side-toggle-expand {
+    transform: rotate(0deg);
+}
+
+.side-toggle-collapse {
+    transform: rotate(180deg);
+}
+
+.function-text {
+    color:rgb(0, 110, 255);
+    line-height: 25px;
+}
+
+.mychips {
+    display: inline-block;
+    font-size: inherit;
+    height: 26px;
+    line-height: 24px;
+    border-radius: 13px;
+    background-color: var(--chipsBackground);
+    cursor: pointer;
+    font-family: monospace;
+    vertical-align: middle;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.mychips mat-icon {
+    margin: 3px 3px 4px 2px;
+    opacity: 0.5;
+    font-size: 20px;
+    text-align: center;
+}
+
+.mychips span {
+    padding-left: 3px;
+    padding-right: 13px;
+    vertical-align: top;
 }

@@ -1,18 +1,22 @@
 export class Script {
     id: string;
     name: string;
-    receiver: string;
-    delay: number = 1;
-    interval: number = 0;
-    enabled: boolean = true;
-    text: string;
-    type: string;
-    subscriptions = {};
-    options: any;
+    code: string;
+    parameters: ScriptParam[] = [];
 
     constructor(_id: string) {
         this.id = _id;
     }    
+}
+
+export class ScriptParam {
+    name: string;
+    type: ScriptParamType;
+}
+
+export enum ScriptParamType {
+    tagid = 'script.paramtype-tagid',
+    value = 'script.paramtype-value',
 }
 
 export const SCRIPT_PREFIX = 's_';

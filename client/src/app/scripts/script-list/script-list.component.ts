@@ -19,6 +19,8 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
     displayedColumns = ['select', 'name', 'params', 'type', 'remove'];
     dataSource = new MatTableDataSource([]);
 
+    private subscriptionLoad: Subscription;
+
     @ViewChild(MatTable) table: MatTable<any>;
     @ViewChild(MatSort) sort: MatSort;
 
@@ -28,10 +30,10 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     ngOnInit() {
-        // this.loadNotifications();
-        // this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
-        //     this.loadNotifications();
-        // });
+        this.loadScripts();
+        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
+            this.loadScripts();
+        });
         // Object.values(this.alarmsEnum).forEach(key => {
         //     this.translateService.get('alarm.property-' + key).subscribe((txt: string) => { this.alarmsType[key] = txt });
         // });
@@ -55,31 +57,33 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.editScript(script, 1);
     }
 
-    // onEditNotification(notification: Notification, toAdd: number) {
-	// 	this.editNotification(notification, 0);
-    // }
+    onEditScript(script: Script, toAdd: number) {
+		this.editScript(script, 0);
+    }
 
-    // onRemoveNotification(notification: Notification) {
-	// 	this.editNotification(notification, -1);
-    // }
+    onRemoveScript(script: Script) {
+		this.editScript(script, -1);
+    }
 
     editScript(script: Script, toAdd: number) {
+        let dlgwidth = (toAdd < 0) ? 'auto' : '80%';
 		let mscript: Script = JSON.parse(JSON.stringify(script));
         let dialogRef = this.dialog.open(ScriptEditorComponent, {
             data: { script: mscript, editmode: toAdd, scripts: this.dataSource.data },
+            width: dlgwidth,
             position: { top: '80px' }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                // if (toAdd < 0) {
-                //     this.projectService.removeNotification(result).subscribe(result => {
-                //         this.loadNotifications();
-                //     });
-				// } else {
-                //     this.projectService.setNotification(result, notification).subscribe(result => {
-                //         this.loadNotifications();
-                //     });
-                // }
+                if (toAdd < 0) {
+                    this.projectService.removeScript(result).subscribe(result => {
+                        this.loadScripts();
+                    });
+				} else {
+                    this.projectService.setScript(result, script).subscribe(result => {
+                        this.loadScripts();
+                    });
+                }
             }
         });
     }
@@ -100,7 +104,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         return '';
     }
 
-    private loadNotifications() {
-        this.dataSource.data = this.projectService.getNotifications(); 
+    private loadScripts() {
+        this.dataSource.data = this.projectService.getScripts(); 
 	}
 }

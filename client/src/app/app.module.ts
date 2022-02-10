@@ -41,7 +41,7 @@ import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.c
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
-import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
+import { ScriptEditorComponent, DialogScriptParam } from './scripts/script-editor/script-editor.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent, DeviceTagDialog } from './device/device.component';
@@ -231,6 +231,7 @@ export function createTranslateLoader(http: HttpClient) {
         NotificationPropertyComponent,
         ScriptListComponent,
         ScriptEditorComponent,
+        DialogScriptParam,
         TextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
@@ -359,7 +360,8 @@ export function createTranslateLoader(http: HttpClient) {
         NgxUplotComponent,
         GraphBarComponent,
         GraphPieComponent,
-        GraphBaseComponent
+        GraphBaseComponent,
+        DialogScriptParam
     ],
     bootstrap: [AppComponent]
 })
