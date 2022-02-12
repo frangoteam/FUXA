@@ -109,13 +109,14 @@ $internal-backcolor: rgb(114,120,125);
 
 .device-icon {
     position: absolute;
-    font-size: 17px;
     cursor:pointer;
 }
 
 .device-edit {
+    position: absolute;
     bottom: 0px;
-    right: 2px;
+    right: 0px;
+    font-size: 17px;
 }
 
 .device-edit-disabled {
@@ -124,16 +125,17 @@ $internal-backcolor: rgb(114,120,125);
 }
 
 .device-delete {
-    top: 2px;
-    right: 2px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
     font-size: 17px;
 }
 
 .device-list {
-    // bottom: 0px;
-    right: 28px;
+    position: absolute;
+    right: 30px;
     font-size: 24px;
-    bottom: 2px;
+    bottom: 0px;
 }
 
 .device-status {

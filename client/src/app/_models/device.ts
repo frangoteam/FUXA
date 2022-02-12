@@ -232,3 +232,9 @@ export enum DeviceConnectionStatusType {
     off = 'device.connect-off',
     busy = 'device.connect-busy',
 }
+
+export enum ServerTagType {
+    number = 'number',
+    boolean = 'boolean',
+    string = 'string'
+}

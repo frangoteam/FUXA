@@ -59,13 +59,13 @@ export class DeviceListComponent implements OnInit {
         private toastr: ToastrService) { }
 
     ngOnInit() {
-    }
-
-    ngAfterViewInit() {
         this.devices = this.projectService.getDevices();
         if (!this.deviceSelected && this.devices) {
             this.deviceSelected = this.devices[0];
         }
+    }
+
+    ngAfterViewInit() {
         this.mapTags();
         if (this.deviceSelected) {
             this.bindToTable(this.deviceSelected.tags);
@@ -77,13 +77,18 @@ export class DeviceListComponent implements OnInit {
 
     mapTags() {
         Object.values(this.devices).forEach(d => {
-            Object.values(d.tags).forEach((t: Tag) => {
-                this.tagsMap[t.id] = t;
-            })
+            if (d.tags) {
+                Object.values(d.tags).forEach((t: Tag) => {
+                    this.tagsMap[t.id] = t;
+                })    
+            }
         });
     }
 
     private bindToTable(tags) {
+        if (!tags) {
+            tags = {};
+        }
         this.dataSource.data = Object.values(tags);
     }
 

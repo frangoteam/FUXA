@@ -111,11 +111,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     loadCurrentProject() {
         // take the copy of devices to save by leave
         let prj = this.projectService.getProject();
+        this.devices = this.projectService.getDevices();
         if (prj && prj.server) {
-            this.server = prj.server;
-        }
-        if (prj && prj.devices) {
-            this.devices = prj.devices;
+            this.server = this.devices[prj.server.id];
         }
         this.dataSource.data = Object.values(this.devices);
     }
@@ -360,28 +358,32 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         return [];
     }
 
-    onListDevice(device) {
+    onListDevice(device: Device) {
         this.goto.emit(device);
     }
 
-    isDevicePropertyToShow(device) {
+    isDevicePropertyToShow(device: Device) {
         if (device.property && device.type !== 'OPCUA') {
             return true;
         }
     }
 
-    isClientDevice(device) {
+    isClientDevice(device: Device) {
         return (device.type === DeviceType.WebStudio && this.appService.isClientApp);
     }
 
-    getDeviceAddress(device) {
+    isServer(device: Device) {
+        return this.server.id === device.id;
+    }
+
+    getDeviceAddress(device: Device) {
         if (device.property) {
             return device.property.address;
         }
         return '';
     }
 
-    getDevicePropertyToShow(device) {
+    getDevicePropertyToShow(device: Device) {
         let result = '';
         if (device.property) {
             if (device.type === DeviceType.OPCUA) {
@@ -414,7 +416,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         return result;
     }
 
-    getDeviceStatusColor(device) {
+    getDeviceStatusColor(device: Device) {
         if (this.devicesStatus[device.id]) {
             let milli = new Date().getTime();
             if (this.devicesStatus[device.id].last + 15000 < milli) {
@@ -432,7 +434,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
-    getDeviceStatusText(device) {
+    getDeviceStatusText(device: Device) {
         if (this.devicesStatus[device.id]) {
             let st = this.devicesStatus[device.id].status.replace('connect-', '');
             if (this.deviceStatusType[st]) {
@@ -503,7 +505,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     plcs(): Device[] {
-        return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI);
+        return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI && d.type !== DeviceType.FuxaServer);
     }
 
     flows(): Device[] {

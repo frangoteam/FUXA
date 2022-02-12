@@ -609,6 +609,12 @@ mat-toolbar-row {
     font-size: 14px !important;
 }
 
+.mat-button-sm {
+    height: 30px !important;
+    width: 30px !important;
+    line-height: 22px !important;
+}
+
 /* width */
 ::-webkit-scrollbar {
     width: 7px;

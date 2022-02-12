@@ -781,8 +781,22 @@ export class ProjectService {
         return (this.projectData) ? this.projectData.server : null;
     }
 
+    // getDevices(): any {
+    //     return (this.projectData) ? this.projectData.devices : {};
+    // }
+
     getDevices(): any {
-        return (this.projectData) ? this.projectData.devices : {};
+        let result = {};
+        if (this.projectData) {
+            result = this.projectData.devices;
+            if (!result[this.projectData.server.id]) {
+                // add server as device to use in script and logic
+                let server = JSON.parse(JSON.stringify(this.projectData.server));
+                server.tags = {};
+                result[server.id] = server;
+            }
+        }
+        return result;
     }
 
     getDeviceFromId(id: string): any {
