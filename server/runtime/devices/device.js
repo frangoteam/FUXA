@@ -11,6 +11,7 @@ var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var INMATIONclient = require('./inmation');
 var EthernetIPclient = require('./ethernetip');
+var FuxaServer = require('./fuxaserver');
 // var TEMPLATEclient = require('./template');
 
 var deviceCloseTimeout = 1000;
@@ -71,6 +72,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = EthernetIPclient.create(data, logger, events, manager);     
+    } else if (data.type === DeviceEnum.FuxaServer) {
+        if (!FuxaServer) {
+            return null;
+        }
+        comm = FuxaServer.create(data, logger, events, manager);     
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -366,6 +372,8 @@ function loadPlugin(type, module) {
         INMATIONclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
+    } else if (type === DeviceEnum.FuxaServer) {
+        FuxaServer = require(module);
     }
 }
 
@@ -393,7 +401,8 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     inmation: 'inmation',
-    EthernetIP: 'EthernetIP'
+    EthernetIP: 'EthernetIP',
+    FuxaServer: 'FuxaServer',
     // Template: 'template'
 }
 
