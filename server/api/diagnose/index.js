@@ -29,7 +29,7 @@ module.exports = {
         /**
          * GET Server logs folder content
          */
-        diagnoseApp.get('/api/logsdir', function (req, secureFnc, res) {
+        diagnoseApp.get('/api/logsdir', secureFnc, function (req, res) {
             var groups = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get logsdir: Tocken Expired");
@@ -58,7 +58,7 @@ module.exports = {
         /**
          * GET Server logs data
          */
-        diagnoseApp.get('/api/logs', function (req, secureFnc, res) {
+        diagnoseApp.get('/api/logs', secureFnc, function (req, res) {
             var groups = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get logs: Tocken Expired");
