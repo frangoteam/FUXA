@@ -76,18 +76,23 @@ export class GraphConfigComponent implements OnInit {
     onEditGraph(item: Graph) {
         let title = 'dlg.item-title';
         let label = 'dlg.item-name';
+        let error = 'dlg.item-name-error';
+        let exist = this.data.graphs.map((g) => { if (!item || item.name !== g.name) return g.name });
         this.translateService.get(title).subscribe((txt: string) => { title = txt });
         this.translateService.get(label).subscribe((txt: string) => { label = txt });
+        this.translateService.get(error).subscribe((txt: string) => { error = txt });
         let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
-            data: { name: (item) ? item.name : '', title: title, label: label }
+            data: { name: (item) ? item.name : '', title: title, label: label, exist: exist, error: error }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name && result.name.length > 0) {
                 if (item) {
                     item.name = result.name;
                 } else {
-                    this.data.graphs.push(new Graph(GraphType.bar, Utils.getShortGUID(), result.name));
+                    let graph = new Graph(GraphType.bar, Utils.getShortGUID(), result.name);
+                    this.data.graphs.push(graph);
+                    this.onSelectGraph(graph);
                 }
             }
         });
@@ -135,7 +140,7 @@ export class GraphConfigComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.data.graphs.splice(index, 1);
-                this.selectedGraph = <Graph>{ id: null, name: null };
+                this.selectedGraph = new Graph(GraphType.bar);
             }
         });
     }
@@ -182,8 +187,10 @@ export class GraphConfigComponent implements OnInit {
     }
 
     onGraphXTypeChanged(type: GraphBarXType) {
-        this.selectedGraph.property.xtype = type;
-        this.checkPropertyFunction(this.selectedGraph.property);
+        if (this.selectedGraph) {
+            this.selectedGraph.property.xtype = type;
+            this.checkPropertyFunction(this.selectedGraph.property);
+        }
     }
 
     onGraphDateFunctionTypeChanged(type: GraphBarDateFunctionType) {

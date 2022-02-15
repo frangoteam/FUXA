@@ -109,6 +109,16 @@ function load() {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.NOTIFICATIONS}' ${err}`);
                                 callback(err);
                             }); 
+                        },
+                        // step 4 get scripts
+                        function (callback) {
+                            getScripts().then(scripts => {
+                                data.scripts = scripts;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.SCRIPTS}' ${err}`);
+                                callback(err);
+                            }); 
                         }
                     ],
                     function (err) {
@@ -196,8 +206,15 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.NOTIFICATIONS;
                 section.name = value.id;
                 toremove = removeNotification(value);
-            }
-            else {
+            } else if (cmd === ProjectDataCmdType.SetScript) {
+                section.table = prjstorage.TableType.SCRIPTS;
+                section.name = value.id;
+                setScript(value);
+            } else if (cmd === ProjectDataCmdType.DelScript) {
+                section.table = prjstorage.TableType.SCRIPTS;
+                section.name = value.id;
+                toremove = removeScript(value);
+            } else {
                 logger.error(`prjstorage.setdata failed! '${section.table}'`);
                 reject('prjstorage.failed-to-setdata: Command not found!');    
             }
@@ -411,6 +428,44 @@ function removeNotification(notification) {
 }
 
 /**
+ * Set or add if not exist (check with script.id) the Script in Project
+ * @param {*} script 
+ */
+ function setScript(script) {
+    if (!data.scripts) {
+        data.scripts = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.scripts.length; i++) {
+        if (data.scripts[i].id === script.id) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.scripts[pos] = script;
+    } else {
+        data.scripts.push(script);
+    }
+}
+
+/**
+ * Remove the Script from Project
+ * @param {*} script 
+ */
+ function removeScript(script) {
+    if (data.scripts) {
+        var pos = -1;
+        for (var i = 0; i < data.scripts.length; i++) {
+            if (data.scripts[i].id === script.id) {
+                data.scripts.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the project data in accordance with autorization
  */
 function getProject(userId, userGroups) {
@@ -482,6 +537,14 @@ function setProject(prjcontent) {
                         if (notifications && notifications.length) {
                             for (var i = 0; i < notifications.length; i++) {
                                 scs.push({ table: prjstorage.TableType.NOTIFICATIONS, name: notifications[i].id, value: notifications[i] });
+                            }
+                        }
+                    } else if (key === 'scripts') {
+                        // notifications
+                        var scripts = prjcontent[key];
+                        if (scripts && scripts.length) {
+                            for (var i = 0; i < scripts.length; i++) {
+                                scs.push({ table: prjstorage.TableType.SCRIPTS, name: scripts[i].id, value: scripts[i] });
                             }
                         }     
                     } else {
@@ -601,6 +664,28 @@ function getAlarms() {
 }
 
 /**
+ * Get the scripts 
+ */
+ function getScripts() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.SCRIPTS).then(drows => {
+            if (drows.length > 0) {
+                var scripts = [];
+                for (var id = 0; id < drows.length; id++) {
+                    scripts.push(JSON.parse(drows[id].value));
+                }
+                resolve(scripts);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error(`project.prjstorage.get-scripts failed! '${prjstorage.TableType.SCRIPTS} ${err}'`);
+            reject(err);
+        });
+    });
+}
+
+/**
  * Set the device property
  */
 function setDeviceProperty(query) {
@@ -691,6 +776,8 @@ const ProjectDataCmdType = {
     DelAlarm: 'del-alarm',
     SetNotification: 'set-notification',
     DelNotification: 'del-notification',
+    SetScript: 'set-script',
+    DelScript: 'del-script',
 }
 
 module.exports = {

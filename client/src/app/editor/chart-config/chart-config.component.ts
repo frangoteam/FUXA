@@ -88,14 +88,17 @@ export class ChartConfigComponent implements OnInit {
         }
     }
 
-    onEditChart(chart) {
+    onEditChart(chart: Chart) {
         let title = 'dlg.item-title';
         let label = 'dlg.item-name';
+        let error = 'dlg.item-name-error';
+        let exist = this.data.charts.map((c) => { if (!chart || chart.name !== c.name) return c.name });
         this.translateService.get(title).subscribe((txt: string) => { title = txt });
         this.translateService.get(label).subscribe((txt: string) => { label = txt });
+        this.translateService.get(error).subscribe((txt: string) => { error = txt });
         let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
-            data: { name: (chart) ? chart.name : '', title: title, label: label }
+            data: { name: (chart) ? chart.name : '', title: title, label: label, exist: exist, error: error }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name && result.name.length > 0) {

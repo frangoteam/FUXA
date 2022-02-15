@@ -106,10 +106,22 @@
                         <span>{{'device.tag-property-obj-name' | translate}}</span>
                         <input [(ngModel)]="data.tag.name" style="width: 550px" type="text" (input)="onCheckValue($event)">
                     </div>
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px;" *ngIf="!isInternal()">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;" *ngIf="!isInternal() && !isServer()">
                         <span>{{'device.tag-property-path' | translate}}</span>
                         <input [(ngModel)]="data.tag.address" autocomplete="off" style="width: 550px" type="text" (input)="onCheckValue($event)">
                     </div>
+                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;" *ngIf="isServer()">
+                        <span>{{'device.tag-property-type' | translate}}</span>
+                        <mat-select [(value)]="data.tag.type" style="width: 350px">
+                            <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                                {{ type.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="my-form-field" style="float: right;margin-bottom: 10px;" *ngIf="isServer()">
+                        <span>{{'device.tag-property-initvalue' | translate}}</span>
+                        <input numberOnly [(ngModel)]="data.tag.init" style="width: 150px" type="text">
+                    </div>                       
                 </div>
                 <div class="error" *ngIf="error" style="display: block; color: red;">
                     <span>{{error}}</span>

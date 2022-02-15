@@ -1,11 +1,56 @@
-<p>
-  script-editor works!
-</p>
-<ngx-codemirror
-  [(ngModel)]="content"
-  [options]="{
-    lineNumbers: true,
-    theme: 'material',
-    mode: 'javascript'
-  }"
-></ngx-codemirror>
+<div class="container">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;width: calc(100% - 40px)" mat-dialog-draggable>{{'script.property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div *ngIf="data.editmode < 0">
+        {{msgRemoveScript}}
+    </div>
+    <div *ngIf="data.editmode >= 0">
+        <div class="panel-header">
+            <div class="panel-function">
+                <span class="function-text">function</span> 
+                <span class="function-name"> {{script.name}}</span> (
+                    <div *ngFor="let param of parameters; let i = index" class="mychips">
+                        <mat-icon (click)="onRemoveParameter(i)">cancel</mat-icon>
+                        <span>{{param.name}}</span>
+                    </div>
+                ) &#123;
+            </div>
+            <div class="panel-toolbar">
+                <button mat-icon-button [matMenuTriggerFor]="codeMenu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #codeMenu [overlapTrigger]="false"  xPosition="before">
+                    <button mat-menu-item (click)="onEditScriptName()" style="font-size: 14px;">{{'script.property-editname' | translate}}</button>
+                    <button mat-menu-item (click)="onAddFunctionParam()" style="font-size: 14px;">{{'script.property-addfnc-param' | translate}}</button>
+                    <!-- <button mat-menu-item   (click)="onAddFunctionTag()" style="font-size: 14px;">{{'script.property-addfnc-tag'| translate}}</button> -->
+                </mat-menu>
+                <button mat-icon-button (click)="sidePanel.toggle()">
+                    <mat-icon class="side-toggle" [ngClass]="sidePanel.opened ? 'side-toggle-collapse' : 'side-toggle-expand'">keyboard_arrow_left</mat-icon>
+                </button>
+            </div>
+        </div>
+        <div>
+            <mat-drawer-container class="panel-code">
+                <div *ngIf="ready">
+                    <ngx-codemirror #CodeMirror [(ngModel)]="codeMirrorContent" [options]="codeMirrorOptions"(ngModelChange)="onEditorContent($event)"></ngx-codemirror>
+                </div>
+                <mat-drawer #sidePanel class="side-panel" mode="side" position="end"
+                    style="height: 100%;padding: 7px; width:350px">
+                    <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <div class="side-panel-header">
+                        {{'script.property-systems' | translate}}
+                    </div>
+                </mat-drawer>
+            </mat-drawer-container>
+        </div>
+        <div class="panel-footer">
+            &#125;
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button (click)="onOkClick()" [disabled]="!isValid()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

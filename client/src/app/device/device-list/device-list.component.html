@@ -122,7 +122,7 @@
 
         <!-- Button remove Column -->
         <ng-container matColumnDef="remove">
-            <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+            <mat-header-cell *matHeaderCellDef>
                 <button *ngIf="!readonly" mat-icon-button (click)="onRemoveAll()" class="remove" matTooltip="{{'device.list-remove-all' | translate}}">
                     <mat-icon>clear</mat-icon>
                 </button>

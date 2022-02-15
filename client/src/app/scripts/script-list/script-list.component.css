@@ -68,24 +68,12 @@
     flex: 1 1 120px;
 }
 
-.mat-column-receiver {
-    flex: 1 1 160px;
-}
-
-.mat-column-delay {
-    flex: 0 0 80px;
-}
-
 .mat-column-type {
-    flex: 0 0 80px;
-}
-
-.mat-column-enabled {
     flex: 0 0 100px;
 }
 
-.mat-column-subscriptions {
-    flex: 3 1 400px;
+.mat-column-params {
+    flex: 3 1 180px;
 }
 
 .mat-column-remove {
@@ -95,11 +83,6 @@
 .selectidthClass{
     flex: 0 0 50px;
  }
-
-.message-error {
-    display: inline-block;
-    color:red;
-}
 
 .my-header-filter /deep/ .mat-sort-header-button {
     display: block;

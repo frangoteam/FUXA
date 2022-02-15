@@ -47,6 +47,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists texts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists alarms (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists notifications (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists scripts (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.bind failed! ${err}`);
@@ -177,6 +178,7 @@ function clearAll() {
         sql += "DELETE FROM texts;";
         sql += "DELETE FROM alarms;";
         sql += "DELETE FROM notifications;";
+        sql += "DELETE FROM scripts;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.clear failed! ${err}`);
@@ -199,6 +201,7 @@ const TableType = {
     TEXTS: 'texts',
     ALARMS: 'alarms',
     NOTIFICATIONS: 'notifications',
+    SCRIPTS: 'scripts',
 }
 
 module.exports = {

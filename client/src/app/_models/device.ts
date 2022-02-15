@@ -45,6 +45,8 @@ export class Tag {
     format: any;
     /** Daq settings */
     daq: TagDaq;
+    /** Init value */
+    init: string;
 
     constructor(_id: string) {
         this.id = _id;
@@ -231,4 +233,10 @@ export enum DeviceConnectionStatusType {
     failed = 'device.connect-failed',
     off = 'device.connect-off',
     busy = 'device.connect-busy',
+}
+
+export enum ServerTagType {
+    number = 'number',
+    boolean = 'boolean',
+    string = 'string'
 }

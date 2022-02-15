@@ -47,3 +47,5 @@ $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 @import '~codemirror/lib/codemirror';
 @import '~codemirror/theme/material';
+@import '~codemirror/addon/lint/lint';
+@import '~codemirror/addon/hint/show-hint';

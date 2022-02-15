@@ -6,6 +6,7 @@ import { Alarm } from './alarm';
 import { Notification } from './notification';
 import { Text } from './text';
 import { Utils } from '../_helpers/utils';
+import { Script } from './script';
 
 export class ProjectData {
     version: string = "1.01";
@@ -23,6 +24,8 @@ export class ProjectData {
     alarms: Alarm[] = [];
     /** Notifications  */
     notifications: Notification[] = [];
+    /** Scripts */
+    scripts: Script[] = [];
     /** not used yet */
     texts: Text[] = [];
     /** Plugins, name, version */
@@ -43,6 +46,8 @@ export enum ProjectDataCmdType {
     DelAlarm = 'del-alarm',
     SetNotification = 'set-notification',
     DelNotification = 'del-notification',
+    SetScript = 'set-script',
+    DelScript = 'del-script',
 }
 
 

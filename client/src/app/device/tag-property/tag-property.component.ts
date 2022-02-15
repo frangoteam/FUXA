@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from "rxjs";
 
-import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, TAG_PREFIX } from './../../_models/device';
+import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, ServerTagType } from './../../_models/device';
 import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -45,6 +45,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.dialogType = EditTagDialogType.Simple;
         } else if (this.isInternal()) {
             this.dialogType = EditTagDialogType.Simple;
+        } else if (this.isServer()) {
+            this.dialogType = EditTagDialogType.Simple;
+            this.tagType = ServerTagType;
         } else {
             if (this.isModbus()) {
                 this.tagType = ModbusTagType;
@@ -132,7 +135,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             });
             // this.data.nodes = result;
         } else if (this.isModbus() || this.isSiemensS7() || this.isEthernetIp()) {
-        } else if (this.isInternal()) {
+        } else if (this.isInternal() || this.isServer()) {
             let tags = <Tag[]>Object.values(this.data.device.tags);
             this.error = '';
             for (let i = 0; i < tags.length; i++) {
@@ -371,6 +374,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     isEthernetIp() {
 		return (this.data.device.type === DeviceType.EthernetIP) ? true : false;
+    }
+
+    isServer() {
+		return (this.data.device.type === DeviceType.FuxaServer) ? true : false;
     }
 
     checkMemAddress(memaddress) {

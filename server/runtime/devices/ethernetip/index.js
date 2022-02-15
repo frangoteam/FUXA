@@ -180,7 +180,7 @@ function EthernetIPclient(_data, _logger, _events) {
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
-    this.getValue = function (tagid) {
+    this.getValue = function (id) {
         if (varsValue[id]) {
             return { id: id, value: varsValue[id].value, ts: lastTimestampValue };
         }

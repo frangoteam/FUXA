@@ -6,6 +6,7 @@ import { environment } from './environments/environment';
 
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
+import 'codemirror/addon/lint/lint';
 
 if (environment.production) {
   enableProdMode();

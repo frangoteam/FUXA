@@ -40,8 +40,8 @@ export class DeviceListComponent implements OnInit {
     deviceType = DeviceType;
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
+    deviceSelected: Device = null;
 
-    @Input() deviceSelected: Device;
 	@Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
@@ -59,31 +59,36 @@ export class DeviceListComponent implements OnInit {
         private toastr: ToastrService) { }
 
     ngOnInit() {
-    }
-
-    ngAfterViewInit() {
         this.devices = this.projectService.getDevices();
         if (!this.deviceSelected && this.devices) {
             this.deviceSelected = this.devices[0];
         }
-        this.mapTags();
-        if (this.deviceSelected) {
-            this.bindToTable(this.deviceSelected.tags);
-        }
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.table.renderRows();
+    }
+
+    ngAfterViewInit() {
+        // this.mapTags();
+        // if (this.deviceSelected) {
+        //     this.bindToTable(this.deviceSelected.tags);
+        // }
+        // this.dataSource.paginator = this.paginator;
+        // this.dataSource.sort = this.sort;
+        // this.table.renderRows();
     }
 
     mapTags() {
         Object.values(this.devices).forEach(d => {
-            Object.values(d.tags).forEach((t: Tag) => {
-                this.tagsMap[t.id] = t;
-            })
+            if (d.tags) {
+                Object.values(d.tags).forEach((t: Tag) => {
+                    this.tagsMap[t.id] = t;
+                })    
+            }
         });
     }
 
     private bindToTable(tags) {
+        if (!tags) {
+            tags = {};
+        }
         this.dataSource.data = Object.values(tags);
     }
 
@@ -122,10 +127,6 @@ export class DeviceListComponent implements OnInit {
 
     onRemoveRow(row) {
         const index = this.dataSource.data.indexOf(row, 0);
-        // if (index > -1) {
-        //   this.dataSource.data.splice(index, 1);
-        //   this.dirty = true;
-        // }
         if (this.dataSource.data[index]) {
             delete this.deviceSelected.tags[this.dataSource.data[index].id];
         }
@@ -264,8 +265,8 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type, tag: Tag) {
-        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
-            type === DeviceType.WebStudio || type === DeviceType.internal || type === DeviceType.EthernetIP) {
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio || 
+            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -299,6 +300,10 @@ export class DeviceListComponent implements OnInit {
                     tag.divisor = temptag.divisor;
                     if (this.deviceSelected.type === DeviceType.internal) {
                         tag.value = '0';
+                    }
+                    if (this.deviceSelected.type === DeviceType.FuxaServer) {
+                        tag.init = temptag.init;
+                        tag.value = temptag.init;
                     }
                     if (checkToAdd) {
                         this.checkToAdd(tag, result.device);

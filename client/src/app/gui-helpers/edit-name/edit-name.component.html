@@ -4,11 +4,14 @@
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;margin-top: 10px;">
             <span>{{data.label}}</span>
-            <input [(ngModel)]="data.name" type="text" style="width:300px">
+            <input [(ngModel)]="data.name" type="text" style="width:300px" (input)="onCheckValue($event)">
+        </div>
+        <div style="display: block; color: red; height: 22px">
+            <span *ngIf="error">{{error}}</span>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button [disabled]="!isValid(data.name)" color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

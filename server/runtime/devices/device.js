@@ -11,10 +11,12 @@ var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var INMATIONclient = require('./inmation');
 var EthernetIPclient = require('./ethernetip');
+var FuxaServer = require('./fuxaserver');
 // var TEMPLATEclient = require('./template');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
+var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_DAQ_MIN_INTERVAL = 60000;            // with DAQ enabled, interval to save DAQ value anyway !!bigger as DEVICE_POLLING_INTERVAL
 
@@ -71,6 +73,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = EthernetIPclient.create(data, logger, events, manager);     
+    } else if (data.type === DeviceEnum.FuxaServer) {
+        if (!FuxaServer) {
+            return null;
+        }
+        comm = FuxaServer.create(data, logger, events, manager);     
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -175,7 +182,7 @@ function Device(data, runtime) {
      * Call Device to load Tags propperty in local for polling read values
      */
     this.load = function (data) {
-        pollingInterval = data.polling || DEVICE_POLLING_INTERVAL;
+        pollingInterval = data.polling || ((data.type === DeviceEnum.FuxaServer) ? SERVER_POLLING_INTERVAL : DEVICE_POLLING_INTERVAL);
         data.polling = pollingInterval;
         return comm.load(data);
     }
@@ -366,6 +373,8 @@ function loadPlugin(type, module) {
         INMATIONclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
+    } else if (type === DeviceEnum.FuxaServer) {
+        FuxaServer = require(module);
     }
 }
 
@@ -393,7 +402,8 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     inmation: 'inmation',
-    EthernetIP: 'EthernetIP'
+    EthernetIP: 'EthernetIP',
+    FuxaServer: 'FuxaServer',
     // Template: 'template'
 }
 
