@@ -7,7 +7,8 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { DeviceTagDialog } from '../../device/device.component';
-import { ScriptParamType, Script, SCRIPT_PREFIX } from '../../_models/script';
+import { ScriptParamType, Script, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptTestParam } from '../../_models/script';
+import { DevicesUtils, Tag } from '../../_models/device';
 
 @Component({
     selector: 'app-script-editor',
@@ -28,7 +29,12 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
         // lint: {options: {esversion: 2021}},
         lint: true,
     };
-    parameters = [];
+    systemFunctions = new SystemFunctions();
+    checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
+    parameters: ScriptParam[] = [];
+    testParameters: ScriptTestParam[] = [];
+    tagParamType = Utils.getEnumKey(ScriptParamType, ScriptParamType.tagid);
+
     script: Script;
     msgRemoveScript = '';
     ready = false;
@@ -48,30 +54,32 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
         }
         this.parameters = this.script.parameters;
         this.codeMirrorContent = this.script.code;
+        this.translateService.get('msg.script-remove', { value: this.script.name }).subscribe((txt: string) => { this.msgRemoveScript = txt });
+        this.systemFunctions.functions.forEach(fnc => {
+            this.translateService.get(fnc.text).subscribe((txt: string) => { fnc.text = txt });
+            this.translateService.get(fnc.tooltip).subscribe((txt: string) => { fnc.tooltip = txt });
+        });
+        this.loadTestParameter();
     }
 
     ngAfterViewInit() {
-        this.translateService.get('msg.script-remove', { value: this.script.name }).subscribe((txt: string) => { this.msgRemoveScript = txt });
     }
     
     setCM() {
         this.changeDetector.detectChanges();
         this.CodeMirror.codeMirror.refresh();
-        let spellcheckOverlay = {
-            token: function(stream) {
-                var ch;
-                if (stream.match("{{")) {
-                    while ((ch = stream.next()) != null)
-                    if (ch == "}" && stream.next() == "}") {
-                        stream.eat("}");
-                        return "code-error";
+        let spellCheckOverlay = {
+            token: (stream) => {
+                for (let i = 0; i < this.checkSystemFnc.length; i++) {
+                    if (stream.match(this.checkSystemFnc[i])) {
+                        return "system-function";
                     }
                 }
-                while (stream.next() != null && !stream.match('$setTag', false)) {}
+                while (stream.next() != null && this.checkSystemFnc.indexOf(stream) !== -1) {}
                 return null;
             }
         }
-        this.CodeMirror.codeMirror.addOverlay(spellcheckOverlay);
+        this.CodeMirror.codeMirror.addOverlay(spellCheckOverlay);
     }
 
     onNoClick(): void {
@@ -121,48 +129,93 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name && result.type) {
-                this.parameters.push(result);
+                this.parameters.push(new ScriptParam(result.name, result.type));
+                this.loadTestParameter();
             }
         });
     }
 
     onRemoveParameter(index) {
         this.parameters.splice(index, 1);
+        this.loadTestParameter();
     }
 
     onEditorContent(event) {
         this.script.code = this.codeMirrorContent;
     }
 
-    // onAddFunctionTag() {
-    //     let dialogRef = this.dialog.open(DeviceTagDialog, {
-    //         position: { top: '60px' },
-    //         data: { variableId: null, devices: this.data.devices, multiSelection: true }
-    //     });
+    onAddSystemFunction(sysfnc: SystemFunction) {
+        if (sysfnc.params.filter((value) => value).length === 1) {
+            this.onAddSystemFunctionTag(sysfnc);
+        }
+    }
 
-    //     dialogRef.afterClosed().subscribe((result) => {
-    //         if (result) {
-    //             let tagsId = [];
-    //             if (result.variablesId) {
-    //                 tagsId = result.variablesId;
-    //             } else if (result.variableId) {
-    //                 tagsId.push(result.variableId);
-    //             }
-    //             tagsId.forEach(id => {
-    //                 let device = DevicesUtils.getDeviceFromTagId(this.data.devices, id);
-    //                 let tag = DevicesUtils.getTagFromTagId([device], id);
-    //                 if (tag) {
-    //                     let exist = chart.lines.find(line => line.id === tag.id)
-    //                     if (!exist) {
-    //                         const myCopiedObject: ChartLine = {id: tag.id, name: this.getTagLabel(tag), device: device.name, color: this.getNextColor(), 
-    //                             label: this.getTagLabel(tag), yaxis: 1 };
-    //                         chart.lines.push(myCopiedObject);
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     });
-    // }
+    onAddSystemFunctionTag(sysfnc: SystemFunction) {
+        let dialogRef = this.dialog.open(DeviceTagDialog, {
+            position: { top: '60px' },
+            data: { variableId: null, devices: this.data.devices, multiSelection: false }
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result && result.variableId) {
+                let tag = { id: result.variableId, comment: DevicesUtils.getDeviceTagText(this.data.devices, result.variableId) };
+                let text = this.getFunctionText(sysfnc, [tag]);
+                this.insertText(text);
+            }
+        });
+    }
+
+    onSetTestTagParam(param: ScriptTestParam) {
+        let dialogRef = this.dialog.open(DeviceTagDialog, {
+            position: { top: '60px' },
+            data: { variableId: null, devices: this.data.devices, multiSelection: false }
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result && result.variableId) {
+                param.value = result.variableId;
+            }
+        });
+    }
+
+    onRunTest() {
+
+    }
+    
+    private insertText(text: string) {
+        let doc = this.CodeMirror.codeMirror.getDoc();
+        var cursor = doc.getCursor(); // gets the line number in the cursor position
+        doc.replaceRange(text, cursor);
+    }
+
+    private getFunctionText(sysfnc: SystemFunction, params: any[]): string {
+        let paramText = '';
+        for (let i = 0; i < sysfnc.params.length; i++) {
+            if (sysfnc.params[i]) {         // tag ID
+                if (paramText.length) {     // parameters separator
+                    paramText += ', ';
+                }
+                if (params[i]) {
+                    paramText += `'${params[i].id}' /* ${params[i].comment} */`;
+                } else {
+                    paramText += '';
+                }
+            }
+        }
+        return `${sysfnc.name}(${paramText})`;
+    }
+
+    private loadTestParameter() {
+        let params = [];
+        for (let i = 0; i < this.parameters.length; i++) {
+            let p = <ScriptTestParam> { name: this.parameters[i].name, type: this.parameters[i].type };
+            if (this.testParameters[i]) {
+                p.value = this.testParameters[i].value;
+            }
+            params.push(p);
+        }
+        this.testParameters = params;
+    }
 }
 
 @Component({

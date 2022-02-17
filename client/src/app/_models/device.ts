@@ -196,6 +196,15 @@ export const DEVICE_PREFIX = 'd_';
 export const TAG_PREFIX = 't_';
 
 export class DevicesUtils {
+    static getDeviceTagText (devices: Device[], id: string): string {
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i].tags[id]) {
+                return `${devices[i].name} - ${devices[i].tags[id].name}`;
+            }
+        }
+        return '';
+    }
+
     static getDeviceFromTagId (devices: Device[], id: string): Device {
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags[id]) {

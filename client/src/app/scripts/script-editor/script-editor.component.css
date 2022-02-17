@@ -27,18 +27,90 @@
 
 .panel-code {
     width: 100%;
+    --tab-height: 30px;
 }
 
-:host() ::ng-deep .CodeMirror-line {
-    /* padding-left: 10px !important; */
+.system-function button {
+    width: 100%;
+    font-size: 13px !important;
+    font-weight: 100 !important;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    background-color: #424242;
+    color: white;
 }
 
-:host() ::ng-deep .cm-code-error {
+.test-parameters {
+    display: block;
+    font-size: 12px;
+    padding: 5px 5px 5px 5px;
+}
+
+.test-console {
+    display: block;
+    font-size: 12px;
+    /* background-color: black; */
+    /* color: white; */
+    padding-left: 5px;
+    border-top: 1px solid #2D3335;
+}
+
+.test-parameters .header {
+    line-height: 24px;
+    width: 100%;
+}
+
+.test-parameters .content {
+    overflow: auto;
+}
+
+.content .my-form-field {
+    margin-top: 5px;
+}
+
+.content .content-input {
+    width: 220px;
+    background-color: #242b2e;
+}
+
+.content .content-button {
+    margin-left: 10px;
+    height: 27px;
+}
+
+.test-panel {
+    position: relative;
+}
+
+.test-panel .test-button {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
+
+.test-console .header {
+    line-height: 20px;
+    width: 100%;
+}
+
+.test-console .content {
+    overflow: auto;
+}
+:host() ::ng-deep .mat-tab-label {
+    height: var(--tab-height) !important;
+    color: white;
+}
+
+:host() ::ng-deep .cm-system-function {
     color: greenyellow;
 }
+
 @media screen and (max-height: 1500px) {
     :host() ::ng-deep .CodeMirror{
         height: 600px;
+    }
+    .test-panel {
+        height: calc(299px - var(--tab-height) / 2);
     }
 }
 
@@ -46,11 +118,17 @@
     :host() ::ng-deep .CodeMirror{
         height: 600px;
     }
+    .test-panel {
+        height: calc(299px - var(--tab-height) / 2);
+    }
 }
 
 @media screen and (max-height: 920px) {
     :host() ::ng-deep .CodeMirror{
         height: 540px;
+    }
+    .test-panel {
+        height: calc(269px - var(--tab-height) / 2);
     }
 }
 
@@ -58,17 +136,26 @@
     :host() ::ng-deep .CodeMirror{
         height: 480px;
     }
+    .test-panel {
+        height: calc(239px - var(--tab-height) / 2);
+    }
 }
 
 @media screen and (max-height: 820px) {
     :host() ::ng-deep .CodeMirror{
         height: 400px;
     }
+    .test-panel {
+        height: calc(199px - var(--tab-height) / 2);
+    }
 }
 
 @media screen and (max-height: 720px) {
     :host() ::ng-deep .CodeMirror{
         height: 300px;
+    }
+    .test-panel {
+        height: calc(149px - var(--tab-height) / 2);
     }
 }
 
@@ -81,6 +168,7 @@
     font-size: 15px;
     margin-top: 5px;
     line-height: 25px;
+    margin-bottom: 5px;
 }
 
 .side-toggle {

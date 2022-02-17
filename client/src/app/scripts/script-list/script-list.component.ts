@@ -70,7 +70,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         let scripts = this.dataSource.data.filter(s => s.id !== script.id);
 		let mscript: Script = JSON.parse(JSON.stringify(script));
         let dialogRef = this.dialog.open(ScriptEditorComponent, {
-            data: { script: mscript, editmode: toAdd, scripts: scripts },
+            data: { script: mscript, editmode: toAdd, scripts: scripts, devices: Object.values(this.projectService.getDevices()) },
             width: dlgwidth,
             position: { top: '80px' }
         });

@@ -19,7 +19,8 @@ $my-radio-theme:  mat-light-theme($my-radio-primary, $my-radio-accent);
 
 $my-button-primary: mat-palette($mat-blue, A200);
 $my-button-accent: mat-palette($mat-red, 600);
-$my-button-theme:  mat-light-theme($my-button-primary, $my-button-accent);
+$my-button-warn: mat-palette($mat-red, 600);
+$my-button-theme:  mat-light-theme($my-button-primary, $my-button-accent, $my-button-warn);
 @include mat-button-theme($my-button-theme);
 
 $my-slide-toggle-primary: mat-palette($mat-blue, 700);
