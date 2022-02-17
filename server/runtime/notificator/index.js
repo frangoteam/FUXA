@@ -26,7 +26,7 @@ function NotificatorManager(_runtime) {
     /**
      * Start TimerInterval to check Notifications
      */
-     this.start = function () {
+    this.start = function () {
         return new Promise(function (resolve, reject) {
             logger.info('notificator check start', true);
             notifyCheckStatus = setInterval(function () {
@@ -38,7 +38,7 @@ function NotificatorManager(_runtime) {
     /**
      * Stop StateMachine, break TimerInterval (_checkStatus)
      */
-     this.stop = function () {
+    this.stop = function () {
         return new Promise(function (resolve, reject) {
             logger.info('notificator.stop-checkstatus!', true);
             if (notifyCheckStatus) {
@@ -116,13 +116,13 @@ function NotificatorManager(_runtime) {
                     }
                 }
             }
-        }        
+        }
     }
 
     /**
      * Init Notificator database
      */
-     var _init = function () {
+    var _init = function () {
         return new Promise(function (resolve, reject) {
             resolve();
             // notifystorage.init(settings, logger).then(result => {
@@ -220,7 +220,7 @@ function NotificatorManager(_runtime) {
     /**
      * Check Notifications status
      */
-     var _checkNotifications = function () {
+    var _checkNotifications = function () {
         return new Promise(function (resolve, reject) {
             var time = new Date().getTime();
             // check alarms categorie subscriptions
@@ -236,10 +236,10 @@ function NotificatorManager(_runtime) {
                                         // get alarms summary in text format
                                         var alarmsSummary = runtime.alarmsMgr.getAlarmsString(stkey) || 'FUXA Alarms Error!';
                                         var mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
-                                        runtime.notificatorMgr.sendMail(mail, null).then(function() {
+                                        runtime.notificatorMgr.sendMail(mail, null).then(function () {
                                             notification.setNotify(time, stkey);
                                             logger.info(`notificator.notify.successful: ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
-                                        }).catch(function(senderr) {
+                                        }).catch(function (senderr) {
                                             logger.error(`notificator.notify.send.failed: ${senderr}`);
                                         });
                                     } catch (e) {
@@ -274,8 +274,8 @@ function NotificatorManager(_runtime) {
             try {
                 var smtpServer = smtp || settings.smtp;
                 if (smtpServer && smtpServer.host && smtpServer.port && smtpServer.username && smtpServer.password) {
-                    const transporter = nodemailer.createTransport({ 
-                        host: smtpServer.host, 
+                    const transporter = nodemailer.createTransport({
+                        host: smtpServer.host,
                         port: smtpServer.port,
                         secure: (smtpServer.port === 465) ? true : false, // true for 465, false for other ports
                         auth: {
@@ -291,7 +291,7 @@ function NotificatorManager(_runtime) {
                     resolve(`Message sent: ${info.messageId}`);
                 } else {
                     reject('SMTP data error!');
-                }                
+                }
             } catch (err) {
                 reject(err);
             }
@@ -310,7 +310,7 @@ module.exports = {
 /**
  * State of Notificator manager
  */
- var NotifyStatusEnum = {
+var NotifyStatusEnum = {
     INIT: 'init',
     LOAD: 'load',
     IDLE: 'idle',

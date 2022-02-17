@@ -11,18 +11,25 @@ export class Script {
     }    
 }
 
+export class ScriptTest extends Script {
+    test = true;
+    outputId: string;           // to filter the console output sended from backend script runner
+
+    constructor(_id: string, _name: string) {
+        super(_id);
+        this.name = _name;
+    }
+}
+
 export class ScriptParam {
     name: string;
     type: ScriptParamType;
+    value: any;
 
     constructor(_name: string, _type: ScriptParamType) {
         this.name = _name;
         this.type = _type;
     }
-}
-
-export class ScriptTestParam extends ScriptParam {
-    value: any;
 }
 
 export enum ScriptParamType {

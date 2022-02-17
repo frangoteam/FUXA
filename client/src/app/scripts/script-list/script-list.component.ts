@@ -81,7 +81,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.loadScripts();
                     });
 				} else {
-                    this.projectService.setScript(result, script).subscribe(result => {
+                    this.projectService.setScript(result, script).subscribe(() => {
                         this.loadScripts();
                     });
                 }

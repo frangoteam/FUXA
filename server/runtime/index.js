@@ -11,6 +11,7 @@ var project = require('./project');
 var users = require('./users');
 var alarms = require('./alarms');
 var notificator = require('./notificator');
+var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
@@ -21,6 +22,7 @@ var logger;
 var io;
 var alarmsMgr;
 var notificatorMgr;
+var scriptsMgr;
 var tagsSubscription = new Map();
 
 function init(_io, _api, _settings, _log, eventsMain) {
@@ -66,6 +68,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     });
     alarmsMgr = alarms.create(runtime);
     notificatorMgr = notificator.create(runtime);
+    scriptsMgr = scripts.create(runtime);
     devices.init(runtime);
 
     events.on('project-device:change', updateDevice);
@@ -422,6 +425,7 @@ var runtime = module.exports = {
     get daqStorage() { return daqstorage },
     get alarmsMgr() { return alarmsMgr },
     get notificatorMgr() { return notificatorMgr },
+    get scriptsMgr() { return scriptsMgr },
     events: events,
 
 }

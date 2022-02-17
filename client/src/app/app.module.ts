@@ -61,6 +61,7 @@ import { SettingsService } from './_services/settings.service';
 import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
 import { DiagnoseService } from './_services/diagnose.service';
+import { ScriptService } from './_services/script.service';
 import { ResWebApiService } from './_services/rcgi/reswebapi.service';
 import { ResDemoService } from './_services/rcgi/resdemo.service';
 import { ResClientService } from './_services/rcgi/resclient.service';
@@ -291,6 +292,7 @@ export function createTranslateLoader(http: HttpClient) {
         ProjectService,
         UserService,
         DiagnoseService,
+        ScriptService,
         PluginService,
         SettingsService,
         TesterService,

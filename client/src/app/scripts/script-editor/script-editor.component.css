@@ -79,6 +79,7 @@
 }
 
 .test-panel {
+    overflow: auto;
     position: relative;
 }
 
@@ -94,8 +95,14 @@
 }
 
 .test-console .content {
-    overflow: auto;
 }
+
+.console-text {
+    display: block;
+    line-height: 14px;
+    white-space: nowrap;
+}
+
 :host() ::ng-deep .mat-tab-label {
     height: var(--tab-height) !important;
     color: white;

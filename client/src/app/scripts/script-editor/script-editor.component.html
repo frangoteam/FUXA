@@ -68,6 +68,9 @@
                                 <div class="test-panel test-console">
                                     <div>
                                         <span class="header">{{'script.property-test-console' | translate}}</span>
+                                        <div *ngFor="let text of console; index as i" class="console-text">
+                                            <span>>{{text}}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

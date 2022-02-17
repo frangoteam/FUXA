@@ -3,11 +3,13 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ChangeDetectorRef } from '@angular/core';
 
+import { ProjectService } from '../../_services/project.service';
+import { ScriptService } from '../../_services/script.service';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { DeviceTagDialog } from '../../device/device.component';
-import { ScriptParamType, Script, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptTestParam } from '../../_models/script';
+import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam } from '../../_models/script';
 import { DevicesUtils, Tag } from '../../_models/device';
 
 @Component({
@@ -32,9 +34,10 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     systemFunctions = new SystemFunctions();
     checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
     parameters: ScriptParam[] = [];
-    testParameters: ScriptTestParam[] = [];
+    testParameters: ScriptParam[] = [];
     tagParamType = Utils.getEnumKey(ScriptParamType, ScriptParamType.tagid);
 
+    console: string[] = [];
     script: Script;
     msgRemoveScript = '';
     ready = false;
@@ -43,6 +46,8 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
         public dialog: MatDialog,
         private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
+        private projectService: ProjectService,
+        private scriptService: ScriptService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
             this.script = data.script;
             this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM()}, 0));
@@ -165,7 +170,7 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
         });
     }
 
-    onSetTestTagParam(param: ScriptTestParam) {
+    onSetTestTagParam(param: ScriptParam) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
             data: { variableId: null, devices: this.data.devices, multiSelection: false }
@@ -179,7 +184,17 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     }
 
     onRunTest() {
+        this.projectService.setScript(this.script, null).subscribe(() => {
+            let torun = new ScriptTest(this.script.id, this.script.name);
+            torun.parameters = this.testParameters;
+            torun.outputId = this.script.id;
+            delete torun.code;
+            this.scriptService.runScript(torun).subscribe(result => {
 
+            }, err => {
+                this.console.push((err.message) ? err.message : err);
+            });
+        });
     }
     
     private insertText(text: string) {
@@ -208,7 +223,7 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     private loadTestParameter() {
         let params = [];
         for (let i = 0; i < this.parameters.length; i++) {
-            let p = <ScriptTestParam> { name: this.parameters[i].name, type: this.parameters[i].type };
+            let p = new ScriptParam(this.parameters[i].name, this.parameters[i].type);
             if (this.testParameters[i]) {
                 p.value = this.testParameters[i].value;
             }

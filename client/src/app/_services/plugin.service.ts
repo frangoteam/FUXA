@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class PluginService {
 
     @Output() onPluginsChanged: EventEmitter<any> = new EventEmitter();
-v
+
     private endPointConfig: string = EndPointApi.getURL();
 
     constructor(private http: HttpClient,
