@@ -307,6 +307,10 @@ function update(cmd, data) {
                 notificatorMgr.reset();
             } else if (cmd === project.ProjectDataCmdType.SetNotification || cmd === project.ProjectDataCmdType.DelNotification) {
                 notificatorMgr.reset();
+            } else if (cmd === project.ProjectDataCmdType.SetScript) {
+                scriptsMgr.updateScript(data);
+            } else if (cmd === project.ProjectDataCmdType.DelScript) {
+                scriptsMgr.removeScript(data);
             }
             resolve(true);
         } catch (err) {

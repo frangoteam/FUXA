@@ -85,7 +85,8 @@ function setSections(sections) {
         // prepare query
         var sql = "";
         for(var i = 0; i < sections.length; i++) {
-            sql += "INSERT OR REPLACE INTO " + sections[i].table + " (name, value) VALUES('" + sections[i].name + "','"+ JSON.stringify(sections[i].value) + "');";
+            var value = JSON.stringify(sections[i].value).replace(/\'/g,"''");
+            sql += "INSERT OR REPLACE INTO " + sections[i].table + " (name, value) VALUES('" + sections[i].name + "','"+ value + "');";
         }
         db_prj.exec(sql, function (err) {
             if (err) {
@@ -105,7 +106,8 @@ function setSections(sections) {
  */
 function setSection(section) {
     return new Promise(function (resolve, reject) {
-        var sql = "INSERT OR REPLACE INTO " + section.table + " (name, value) VALUES('" + section.name + "','"+ JSON.stringify(section.value) + "');";
+        var value = JSON.stringify(section.value).replace(/\'/g,"''");
+        var sql = "INSERT OR REPLACE INTO " + section.table + " (name, value) VALUES('" + section.name + "','"+ value + "');";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.set failed! ${err}`);

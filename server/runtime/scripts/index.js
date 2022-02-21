@@ -53,6 +53,14 @@ function ScriptsManager(_runtime) {
         status = ScriptsStatusEnum.LOAD;
     }
 
+    this.updateScript = function (script) {
+
+    }
+
+    this.removeScript = function (script) {
+
+    }
+    
     // this.clear = function () {
     //     clearNotifications = true;
     // }
