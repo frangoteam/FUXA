@@ -2,14 +2,15 @@ import { Component, OnInit, AfterViewInit, Inject, ViewChild } from '@angular/co
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ChangeDetectorRef } from '@angular/core';
+import { Subscription } from "rxjs";
 
-import { ProjectService } from '../../_services/project.service';
+import { HmiService } from '../../_services/hmi.service';
 import { ScriptService } from '../../_services/script.service';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { DeviceTagDialog } from '../../device/device.component';
-import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam } from '../../_models/script';
+import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage } from '../../_models/script';
 import { DevicesUtils, Tag } from '../../_models/device';
 
 @Component({
@@ -41,12 +42,13 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     script: Script;
     msgRemoveScript = '';
     ready = false;
+    private subscriptionScriptConsole: Subscription;
 
     constructor(public dialogRef: MatDialogRef<ScriptEditorComponent>,
         public dialog: MatDialog,
         private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
-        private projectService: ProjectService,
+        private hmiService: HmiService,
         private scriptService: ScriptService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
             this.script = data.script;
@@ -64,12 +66,25 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
             this.translateService.get(fnc.text).subscribe((txt: string) => { fnc.text = txt });
             this.translateService.get(fnc.tooltip).subscribe((txt: string) => { fnc.tooltip = txt });
         });
+        this.subscriptionScriptConsole = this.hmiService.onScriptConsole.subscribe((scriptConsole: ScriptConsoleMessage) => {
+            this.console.push(scriptConsole.msg);
+        });
         this.loadTestParameter();
     }
 
     ngAfterViewInit() {
     }
     
+    ngOnDestroy() {
+        try {
+            if (this.subscriptionScriptConsole) {
+                this.subscriptionScriptConsole.unsubscribe();
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     setCM() {
         this.changeDetector.detectChanges();
         this.CodeMirror.codeMirror.refresh();
@@ -108,7 +123,7 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
 
     onEditScriptName() {
         let title = 'dlg.item-title';
-        let label = 'dlg.item-name';
+        let label = 'dlg.item-req-name';
         let error = 'dlg.item-name-error';
         let exist = this.data.scripts.map((s) => { return s.name });
         this.translateService.get(title).subscribe((txt: string) => { title = txt });
@@ -116,7 +131,7 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
         this.translateService.get(error).subscribe((txt: string) => { error = txt });
         let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
-            data: { name: this.script.name, title: title, label: label, exist: exist, error: error }
+            data: { name: this.script.name, title: title, label: label, exist: exist, error: error, validator: this.validateName }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name && result.name.length > 0) {
@@ -126,10 +141,11 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     }
 
     onAddFunctionParam() {
+        let error = 'dlg.item-name-error';
         let exist = this.parameters.map(p => { return p.name });
         let dialogRef = this.dialog.open(DialogScriptParam, {
             position: { top: '60px' },
-            data: { name: '', exist: exist }
+            data: { name: '', exist: exist, error: error, validator: this.validateName  }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -184,19 +200,26 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     }
 
     onRunTest() {
-        this.projectService.setScript(this.script, null).subscribe(() => {
-            let torun = new ScriptTest(this.script.id, this.script.name);
-            torun.parameters = this.testParameters;
-            torun.outputId = this.script.id;
-            delete torun.code;
-            this.scriptService.runScript(torun).subscribe(result => {
+        let torun = new ScriptTest(this.script.id, this.script.name);
+        torun.parameters = this.testParameters;
+        torun.outputId = this.script.id;
+        torun.code = this.script.code;
+        this.scriptService.runScript(torun).subscribe(result => {
 
-            }, err => {
-                this.console.push((err.message) ? err.message : err);
-            });
+        }, err => {
+            this.console.push((err.message) ? err.message : err);
         });
     }
+
+    onConsoleClear() {
+        this.console = [];
+    }
     
+    private validateName(name: string) {
+        let regName = /^[a-zA-Z]*$/;
+        return regName.test(name);
+    }
+
     private insertText(text: string) {
         let doc = this.CodeMirror.codeMirror.getDoc();
         var cursor = doc.getCursor(); // gets the line number in the cursor position
@@ -255,6 +278,7 @@ export class DialogScriptParam {
     }
 
     isValid(name): boolean {
+        if (this.data.validator && !this.data.validator(name)) return false;
         if (!this.data.type) return false;
         if (!this.data.name) return false;
         return (this.data.exist.find((n) => n === name)) ? false : true;

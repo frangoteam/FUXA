@@ -786,6 +786,7 @@ module.exports = {
     getDevices: getDevices,
     getAlarms: getAlarms,
     getNotifications: getNotifications,
+    getScripts: getScripts,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,

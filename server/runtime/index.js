@@ -76,6 +76,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('device-status:changed', updateDeviceStatus);
     events.on('alarms-status:changed', updateAlarmsStatus);
     events.on('tag-change:subscription', subscriptionTagChange);
+    events.on('script-console', scriptConsoleOutput);
 
     io.on('connection', (socket) => {
         logger.info('socket.io client connected');
@@ -268,6 +269,13 @@ function start() {
                 logger.error('runtime.failed-to-start-notificator: ' + err);
                 reject();
             });
+            // start scripts manager
+            scriptsMgr.start().then(function () {
+                resolve(true);
+            }).catch(function (err) {
+                logger.error('runtime.failed-to-start-scripts: ' + err);
+                reject();
+            });
         }).catch(function (err) {
             logger.error('runtime.failed-to-start: ' + err);
             reject();
@@ -288,6 +296,10 @@ function stop() {
         notificatorMgr.stop().then(function () {
         }).catch(function (err) {
             logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
+        });
+        scriptsMgr.stop().then(function () {
+        }).catch(function (err) {
+            logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
         });
         resolve(true);
     });
@@ -409,6 +421,17 @@ function updateAlarmsStatus() {
         });
     } catch (err) {
         logger.error('runtime.failed-to-update-alarms: ' + err);
+    }
+}
+
+/**
+ * Trasmit the scripts console output
+ * @param {*} output 
+ */
+function scriptConsoleOutput(output) {
+    try {
+        io.emit(Events.IoEventTypes.SCRIPT_CONSOLE, output);
+    } catch (err) {
     }
 }
 

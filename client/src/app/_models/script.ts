@@ -39,6 +39,12 @@ export enum ScriptParamType {
 
 export const SCRIPT_PREFIX = 's_';
 
+export interface ScriptConsoleMessage {
+    msg: string;
+    type: string;
+    id: string;
+}
+
 export class SystemFunctions {    
     functions = <SystemFunction[]>[{
         name: '$setTag', text: 'script.sys-fnc-settag-text', tooltip: 'script.sys-fnc-settag-tooltip', params: [true, false]

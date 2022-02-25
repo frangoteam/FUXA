@@ -79,7 +79,9 @@
     "dlg.docproperty-type": "View type",
     "dlg.item-title": "Name",
     "dlg.item-name": "Name",
+    "dlg.item-req-name": "Name (No spaced or numbers allowed)",
     "dlg.item-name-error": "Name exist!",
+    "dlg.parameter-title": "Parameter",
 
     "dlg.tagname-title": "Tag name",
     "dlg.tagname-name": "Name",

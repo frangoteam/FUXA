@@ -4,9 +4,11 @@
 
 'use strict';
 
+const MyScriptModule = require('./msm');
+
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
-function ScriptsManager(_runtime) {
+function ScriptsManager(_runtime) {    
     var runtime = _runtime;
     var events = runtime.events;        // Events to commit change to runtime
     var settings = runtime.settings;    // Settings
@@ -19,6 +21,7 @@ function ScriptsManager(_runtime) {
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
     // var subscriptionStatus = {};        // Status of subscription, to check if there are some change
     // var notificationsFound = 0;         // Notifications found to check 
+    var scriptModule = MyScriptModule.create(events);
 
     /**
      * Start TimerInterval to check Scripts
@@ -49,38 +52,18 @@ function ScriptsManager(_runtime) {
     }
 
     this.reset = function () {
-        this.clear();
+        // this.clear();
         status = ScriptsStatusEnum.LOAD;
     }
 
     this.updateScript = function (script) {
-
+        this.reset();
     }
 
     this.removeScript = function (script) {
-
+        this.reset();
     }
     
-    // this.clear = function () {
-    //     clearNotifications = true;
-    // }
-
-    // this.clearNotifications = function (all) {
-    //     return new Promise(function (resolve, reject) {
-    //         resolve();
-    //         // notifystorage.clearNotifications(all).then((result) => {
-    //         //     resolve(true);
-    //         // }).catch(function (err) {
-    //         //     reject(err);
-    //         // });
-    //     });
-    // }
-
-    // this.forceCheck = function () {
-    //     lastCheck = 0;
-    //     _checkStatus();
-    // }
-
     /**
      * Run script, <script> {id, name, parameters: <ScriptParam> {name, type: <ScriptParamType>[tagid, value], value: any} }
      * @returns 
@@ -88,6 +71,12 @@ function ScriptsManager(_runtime) {
     this.runScript = function (script) {
         return new Promise(async function (resolve, reject) {
             try {
+                if (script.test) {
+                    scriptModule.runTestScript(script);
+                } else {
+                    scriptModule.runScript(script);
+                }
+                // this.runtime.project.getScripts();
                 resolve(`Script OK: ${script.name}`);
             } catch (err) {
                 reject(err);
@@ -111,12 +100,15 @@ function ScriptsManager(_runtime) {
         } else if (status === ScriptsStatusEnum.LOAD) {
             if (_checkWorking(true)) {
                 _loadProperty().then(function () {
-                    _loadScripts().then(function () {
-                        status = ScriptsStatusEnum.IDLE;
-                        _checkWorking(false);
-                    }).catch(function (err) {
-                        _checkWorking(false);
-                    });
+                    _checkWorking(false);
+                    status = ScriptsStatusEnum.IDLE;
+
+                    // _loadScripts().then(function () {
+                    //     status = ScriptsStatusEnum.IDLE;
+                    //     _checkWorking(false);
+                    // }).catch(function (err) {
+                    //     _checkWorking(false);
+                    // });
                 }).catch(function (err) {
                     _checkWorking(false);
                 });
@@ -143,14 +135,8 @@ function ScriptsManager(_runtime) {
      */
     var _init = function () {
         return new Promise(function (resolve, reject) {
+            scriptModule.init(_getSystemFunctions());
             resolve();
-            // notifystorage.init(settings, logger).then(result => {
-            //     logger.info('notificator.notifystorage-init-successful!', true);
-            //     resolve();
-            // }).catch(function (err) {
-            //     logger.error('notificator.notifystorage.failed-to-init: ' + err);
-            //     reject(err);
-            // });
         });
     }
 
@@ -168,41 +154,26 @@ function ScriptsManager(_runtime) {
      */
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
-            notificationsSubsctiption = {};
-            notificationsFound = 0;
-            runtime.project.getScripts().then(function (result) {
-                // if (result) {
-                //     result.forEach(notification => {
-                //         if (notification.enabled) {
-                //             Object.keys(notification.subscriptions).forEach(sub => {
-                //                 if (notification.subscriptions[sub]) {
-                //                     if (!notificationsSubsctiption[sub]) {
-                //                         notificationsSubsctiption[sub] = [];
-                //                     }
-                //                     var temp = new Notification(notification.id, notification.name, notification.type);
-                //                     temp.receiver = notification.receiver;
-                //                     temp.delay = notification.delay;
-                //                     temp.interval = notification.interval;
-                //                     temp.enabled = notification.enabled;
-                //                     temp.text = notification.text;
-                //                     temp.subscriptions = notification.subscriptions;
-                //                     temp.options = notification.options;
-                //                     notificationsSubsctiption[sub].push(temp);
-                //                     notificationsFound++;
-                //                 }
-                //             });
-                //         }
-                //     });
-                // }
-                resolve();
+            runtime.project.getScripts().then((result) => {
+                if (result) {
+                    var lr = scriptModule.loadScripts(result);
+                    console.log('end load script!');
+                    resolve(lr.messages);
+                } else {
+                    resolve();
+                }
             }).catch(function (err) {
                 reject(err);
             });
         });
     }
 
-    // // check if alarms status chenaged
-    // events.on('alarms-status:changed', this.forceCheck);
+    var _getSystemFunctions = function () {
+        var sysFncs = {};
+        sysFncs['$getTag'] = runtime.devices.getTagValue;
+        sysFncs['$setTag'] = runtime.devices.setTagValue;
+        return sysFncs;
+    }
 }
 
 module.exports = {

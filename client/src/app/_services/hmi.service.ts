@@ -25,6 +25,7 @@ export class HmiService {
     @Output() onHostInterfaces: EventEmitter<any> = new EventEmitter();
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
+    @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
 
     public static separator = '^~^';
     public hmi: Hmi;
@@ -202,7 +203,9 @@ export class HmiService {
             this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
                 this.onDeviceWebApiRequest.emit(message);
             });
-
+            this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
+                this.onScriptConsole.emit(message);
+            });
             this.askDeviceValues();
             this.askAlarmsStatus();
         }
@@ -528,5 +531,6 @@ export enum IoEventTypes {
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',
     ALARMS_STATUS = 'alarms-status',
-    HOST_INTERFACES = 'host-interfaces'
+    HOST_INTERFACES = 'host-interfaces',
+    SCRIPT_CONSOLE = 'script-console'
 }

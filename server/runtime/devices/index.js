@@ -203,9 +203,23 @@ function getDeviceValue(deviceid, sigid) {
  * @param {*} value 
  */
  function getTagValue(sigid) {
-    let deviceid = getDeviceIdForomTag(sigid)
+    let deviceid = getDeviceIdFromTag(sigid)
     if (activeDevices[deviceid]) {
         return activeDevices[deviceid].getValue(sigid);
+    }
+    return null;
+}
+
+/**
+ * Set the Device Tag value
+ * used from Scripts
+ * @param {*} tagid 
+ * @param {*} value 
+ */
+ function setTagValue(tagid) {
+    let deviceid = getDeviceIdFromTag(tagid)
+    if (activeDevices[deviceid]) {
+        return activeDevices[deviceid].setValue(tagid);
     }
     return null;
 }
@@ -215,7 +229,7 @@ function getDeviceValue(deviceid, sigid) {
  * used from Alarms
  * @param {*} sigid 
  */
- function getDeviceIdForomTag(sigid) {
+ function getDeviceIdFromTag(sigid) {
     for (var id in activeDevices) {
         var tag = activeDevices[id].getTagProperty(sigid);
         if (tag) {
@@ -312,8 +326,9 @@ var devices = module.exports = {
     getDevicesValues: getDevicesValues,
     getDeviceValue: getDeviceValue,
     getTagValue: getTagValue,
+    setTagValue: setTagValue,
     setDeviceValue: setDeviceValue,
-    getDeviceIdForomTag: getDeviceIdForomTag,
+    getDeviceIdFromTag: getDeviceIdFromTag,
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,
     isWoking: isWoking,

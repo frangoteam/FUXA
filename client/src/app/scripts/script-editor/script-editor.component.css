@@ -97,6 +97,23 @@
 .test-console .content {
 }
 
+
+.small-icon-button {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+}
+
+.small-icon-button .mat-icon {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.small-icon-button .material-icons {
+    font-size: 16px;
+}
+
 .console-text {
     display: block;
     line-height: 14px;

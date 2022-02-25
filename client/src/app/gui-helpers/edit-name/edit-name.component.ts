@@ -20,6 +20,11 @@ export class EditNameComponent {
     }
 
     isValid(name: string): boolean {
+        if (this.data.validator) {
+            if (!this.data.validator(name)) {
+                return false;
+            }
+        }
         if (this.data.exist && this.data.exist.length) {
             return (this.data.exist.find((n) => n === name)) ? false : true;
         }

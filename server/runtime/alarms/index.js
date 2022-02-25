@@ -299,7 +299,7 @@ function AlarmsManager(_runtime) {
                         if (alr.property && alr.property.variableId) {
                             if (!alarms[alr.property.variableId]) {
                                 alarms[alr.property.variableId] = [];
-                                var deviceId = devices.getDeviceIdForomTag(alr.property.variableId);
+                                var deviceId = devices.getDeviceIdFromTag(alr.property.variableId);
                                 if (deviceId) {
                                     // help for a fast get value
                                     alarms[alr.property.variableId]['variableSource'] = deviceId;
@@ -388,7 +388,7 @@ function AlarmsManager(_runtime) {
         for (var i = 0; i < alarms.length; i++) {
             if (alarms[i].type === AlarmsTypes.ACTION && alarms[i].subproperty && !alarms[i].offtime) {
                 if (alarms[i].subproperty.type === ActionsTypes.SET_VALUE) {
-                    var deviceId = devices.getDeviceIdForomTag(alarms[i].subproperty.variableId);
+                    var deviceId = devices.getDeviceIdFromTag(alarms[i].subproperty.variableId);
                     if (deviceId) {
                         devices.setDeviceValue(deviceId, alarms[i].subproperty.variableId, alarms[i].subproperty.actparam);
                     } else {

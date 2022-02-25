@@ -15,7 +15,8 @@ const IoEventTypes = {
     DAQ_RESULT: 'daq-result',
     DAQ_ERROR: 'daq-error',
     ALARMS_STATUS: 'alarms-status',
-    HOST_INTERFACES: 'host-interfaces'
+    HOST_INTERFACES: 'host-interfaces',
+    SCRIPT_CONSOLE: 'script-console'
 }
 
 // module.exports = IoEventTypes;

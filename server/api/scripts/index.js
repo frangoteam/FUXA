@@ -38,8 +38,8 @@ module.exports = {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post runscript: Unauthorized");
             } else {
-                runtime.scriptsMgr.runScript(req.body.params.script).then(function () {
-                    res.end();
+                runtime.scriptsMgr.runScript(req.body.params.script).then(function (result) {
+                    res.json(result);
                 }).catch(function (err) {
                     if (err.code) {
                         res.status(400).json({ error: err.code, message: err.message });
