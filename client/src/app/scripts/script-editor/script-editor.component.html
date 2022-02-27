@@ -9,9 +9,12 @@
             <div class="panel-function">
                 <span class="function-text">function</span>
                 <span class="function-name"> {{script.name}}</span> (
-                <div *ngFor="let param of parameters; let i = index" class="mychips">
-                    <mat-icon (click)="onRemoveParameter(i)">cancel</mat-icon>
-                    <span>{{param.name}}</span>
+                <div *ngFor="let param of parameters; let i = index" style="display: inline-block;">
+                    <div class="mychips">
+                        <mat-icon (click)="onRemoveParameter(i)">cancel</mat-icon>
+                        <span>{{param.name}}</span>
+                    </div>
+                    <span *ngIf="i < parameters.length - 1">,</span>
                 </div>
                 ) &#123;
             </div>

@@ -1258,7 +1258,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()), title: title,
                     views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue,
                     inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
-                    names: names
+                    names: names, scripts: this.projectService.getScripts()
                 }
             });
         }

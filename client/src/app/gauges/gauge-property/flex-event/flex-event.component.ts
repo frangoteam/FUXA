@@ -11,6 +11,10 @@ import {
     GaugeSettings,
     View
 } from '../../../_models/hmi';
+import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script';
+
+import { Utils } from '../../../_helpers/utils';
+
 
 @Component({
     selector: 'flex-event',
@@ -23,19 +27,20 @@ export class FlexEventComponent implements OnInit {
     @Input() views: View[];
     @Input() inputs: GaugeSettings[];
     @Input() data: any;
+    @Input() scripts: Script[];
+
+    variablesMapping = 'variablesMapping';
+    eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 
     events: GaugeEvent[];
-    eventType: any;
+    eventType = GaugeEventType;
     setValueType = GaugeEventSetValueType;
-    actionType: any;
+    actionType = GaugeEventActionType;
 
     constructor(private translateService: TranslateService) {
     }
 
     ngOnInit() {
-        this.eventType = GaugeEventType;
-        this.actionType = GaugeEventActionType;
-
         Object.keys(this.eventType).forEach(key => {
             this.translateService.get(this.eventType[key]).subscribe((txt: string) => { this.eventType[key] = txt });
         });
@@ -65,6 +70,12 @@ export class FlexEventComponent implements OnInit {
         if (this.events) {
             this.events.forEach(element => {
                 if (element.type) {
+                    // clean unconfig
+                    if (element.action === this.eventRunScript) {
+                        delete element.actoptions[this.variablesMapping];
+                    } else {
+                        delete element.actoptions[SCRIPT_PARAMS_MAP];
+                    }
                     result.push(element);
                 }
             });
@@ -79,6 +90,16 @@ export class FlexEventComponent implements OnInit {
 
     onRemoveEvent(index: number) {
         this.events.splice(index, 1);
+    }
+
+    onScriptChanged(scriptId, event) {
+        if (event && this.scripts) {
+            let script = this.scripts.find(s => s.id === scriptId);
+            event.actoptions[SCRIPT_PARAMS_MAP] = [];
+            if (script && script.parameters) {
+                event.actoptions[SCRIPT_PARAMS_MAP] = JSON.parse(JSON.stringify(script.parameters));
+            }
+        }
     }
 
     withDestination(action) {
@@ -120,10 +141,18 @@ export class FlexEventComponent implements OnInit {
         return a === b;
     }
 
+    withRunScript(action) {
+        return action === this.eventRunScript;
+    }
+
     getView(viewId: any) {
         return this.views.find(function (item) {
             return item.id == viewId
         })
+    }
+
+    setScriptParam(scriptParam: ScriptParam, event) {
+        scriptParam.value = event.variableId;
     }
 
     private addEvent(ge: GaugeEvent) {

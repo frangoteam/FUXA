@@ -21,7 +21,7 @@ function ScriptsManager(_runtime) {
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
     // var subscriptionStatus = {};        // Status of subscription, to check if there are some change
     // var notificationsFound = 0;         // Notifications found to check 
-    var scriptModule = MyScriptModule.create(events);
+    var scriptModule = MyScriptModule.create(events, logger);
 
     /**
      * Start TimerInterval to check Scripts

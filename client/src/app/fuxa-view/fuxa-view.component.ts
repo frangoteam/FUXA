@@ -18,6 +18,8 @@ import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
 import { HmiService } from "../_services/hmi.service";
+import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
+import { ScriptService } from '../_services/script.service';
 
 declare var SVG: any;
 
@@ -41,6 +43,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     @ViewChild('inputDialogRef') inputDialogRef: ElementRef;
     @ViewChild('inputValueRef') inputValueRef: ElementRef;
 
+    eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+
     cards: CardModel[] = [];
     iframes: CardModel[] = [];
     dialog: DialogModalModel;
@@ -57,6 +61,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     constructor(private el: ElementRef,
         private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
+        private scriptService: ScriptService,
         private resolver: ComponentFactoryResolver) {
     }
 
@@ -376,6 +381,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 self.openWindow(ga.id, ev, events[i].actparam, events[i].actoptions);
             } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
                 self.onClose(ev);
+            } else if (events[i].action === this.eventRunScript) {
+                self.onRunScript(events[i]);
             }
         }
     }
@@ -638,6 +645,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     this.gaugesManager.putSignalValue(variableId, input.value);
                 }
             }
+        }
+    }
+
+    onRunScript(event: GaugeEvent) {
+        if (event.actparam) {
+            let torun = new Script(event.actparam);
+            torun.parameters = <ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP];
+            this.scriptService.runScript(torun).subscribe(result => {
+
+            }, err => {
+                console.error(err);
+            });
         }
     }
 

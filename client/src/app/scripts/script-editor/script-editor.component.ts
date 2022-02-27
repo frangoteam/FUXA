@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ChangeDetectorRef } from '@angular/core';
@@ -18,7 +18,7 @@ import { DevicesUtils, Tag } from '../../_models/device';
     templateUrl: './script-editor.component.html',
     styleUrls: ['./script-editor.component.css']
 })
-export class ScriptEditorComponent implements OnInit, AfterViewInit {
+export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(CodemirrorComponent) CodeMirror: CodemirrorComponent;
     codeMirrorContent: string;
     codeMirrorOptions = { 
@@ -229,18 +229,16 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit {
     private getFunctionText(sysfnc: SystemFunction, params: any[]): string {
         let paramText = '';
         for (let i = 0; i < sysfnc.params.length; i++) {
-            if (sysfnc.params[i]) {         // tag ID
-                if (paramText.length) {     // parameters separator
-                    paramText += ', ';
-                }
-                if (params[i]) {
-                    paramText += `'${params[i].id}' /* ${params[i].comment} */`;
-                } else {
-                    paramText += '';
-                }
+            if (paramText.length) {     // parameters separator
+                paramText += ', ';
+            }
+            if (sysfnc.params[i] && params[i]) {         // tag ID
+                paramText += `'${params[i].id}' /* ${params[i].comment} */`;
+            } else {
+                paramText += '';
             }
         }
-        return `${sysfnc.name}(${paramText})`;
+        return `${sysfnc.name}(${paramText});`;
     }
 
     private loadTestParameter() {

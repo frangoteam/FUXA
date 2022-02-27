@@ -77,4 +77,29 @@
             </div>
         </div>
     </div>
+    <div style="display: inline-block" *ngIf="withRunScript(item.action)">
+        <div class="my-form-field" style="width: 260px;padding-left: 20px;">
+            <span>{{'gauges.property-event-script' | translate}}</span>
+            <mat-select [(value)]="item.actparam" (selectionChange)="onScriptChanged($event.value, item)">
+                <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+            </mat-select>
+        </div>
+    </div>
+    <div *ngIf="withRunScript(item.action)" style="display: table; padding-top: 5px;">
+        <div *ngFor="let scriptParam of item.actoptions['params']; index as i" style="padding-left: 10px; padding-top: 5px;">
+            <div class="my-form-field">
+                <span>{{'gauges.property-event-script-param-name' | translate}}</span>
+                <input [(ngModel)]="scriptParam.name" type="text" style="width: 160px" readonly [disabled]="true">
+            </div>
+            <div style="margin-left: 10px; display: inline-block;">
+                <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
+                    <span>{{'gauges.property-event-script-param-value' | translate}}</span>
+                    <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                </div>
+                <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
+                    <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value" [withStaticValue]="false"></flex-variable>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

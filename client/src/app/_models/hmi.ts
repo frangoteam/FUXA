@@ -215,6 +215,7 @@ export enum GaugeEventActionType {
     onToggleValue = 'shapes.event-ontogglevalue',
     onSetInput = 'shapes.event-onsetinput',
     onclose = 'shapes.event-onclose',
+    onRunScript = 'shapes.event-onrunscript',
 }
 
 export enum GaugeEventSetValueType {

@@ -38,6 +38,7 @@ export enum ScriptParamType {
 }
 
 export const SCRIPT_PREFIX = 's_';
+export const SCRIPT_PARAMS_MAP = 'params';
 
 export interface ScriptConsoleMessage {
     msg: string;

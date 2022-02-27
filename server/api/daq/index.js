@@ -36,7 +36,7 @@ module.exports = {
                     var dbfncs = [];
                     for (let i = 0; i < query.sids.length; i++) {
                         if (query.to === query.from) {  // current values
-                            dbfncs.push([runtime.devices.getTagValue(query.sids[i])]);
+                            dbfncs.push([runtime.devices.getTagValue(query.sids[i], true)]);
                         } else {                        // from history
                             dbfncs.push(runtime.daqStorage.getNodeValues(query.sids[i], query.from, query.to));
                         }

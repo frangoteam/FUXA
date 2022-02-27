@@ -7,6 +7,7 @@ import { FlexHeadComponent } from './flex-head/flex-head.component';
 import { FlexEventComponent } from './flex-event/flex-event.component';
 import { FlexActionComponent } from './flex-action/flex-action.component';
 import { GaugeProperty, GaugeSettings, View } from '../../_models/hmi';
+import { Script } from '../../_models/script';
 import { UserGroups } from '../../_models/user';
 
 @Component({
@@ -30,6 +31,7 @@ export class GaugePropertyComponent implements OnInit {
     views: View[];
     defaultValue: any;
     inputs: GaugeSettings[];
+    scripts: Script[];
 
     constructor(public dialog: MatDialog,
         public dialogRef: MatDialogRef<GaugePropertyComponent>,
@@ -42,7 +44,8 @@ export class GaugePropertyComponent implements OnInit {
         this.actionsSupported = this.data.withActions;
         this.views = this.data.views;
         this.inputs = this.data.inputs;
-
+        this.scripts = this.data.scripts;
+        
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
             this.property = new GaugeProperty();

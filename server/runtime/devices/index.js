@@ -200,12 +200,21 @@ function getDeviceValue(deviceid, sigid) {
  * Get the Device Tag value
  * used from Alarms
  * @param {*} sigid 
- * @param {*} value 
+ * @param {*} fully, struct with timestamp
  */
- function getTagValue(sigid) {
-    let deviceid = getDeviceIdFromTag(sigid)
-    if (activeDevices[deviceid]) {
-        return activeDevices[deviceid].getValue(sigid);
+ function getTagValue(sigid, fully) {
+     try {
+        let deviceid = getDeviceIdFromTag(sigid)
+        if (activeDevices[deviceid]) {
+            let result = activeDevices[deviceid].getValue(sigid);
+            if (fully) {
+                return result;
+            } else {
+                return result.value;
+            }
+        }
+    } catch (err) {
+        console.error(err);
     }
     return null;
 }
@@ -216,10 +225,14 @@ function getDeviceValue(deviceid, sigid) {
  * @param {*} tagid 
  * @param {*} value 
  */
- function setTagValue(tagid) {
-    let deviceid = getDeviceIdFromTag(tagid)
-    if (activeDevices[deviceid]) {
-        return activeDevices[deviceid].setValue(tagid);
+ function setTagValue(tagid, value) {
+    try {
+        let deviceid = getDeviceIdFromTag(tagid)
+        if (activeDevices[deviceid]) {
+            return activeDevices[deviceid].setValue(tagid, value);
+        }
+    } catch (err) {
+        console.error(err);
     }
     return null;
 }
