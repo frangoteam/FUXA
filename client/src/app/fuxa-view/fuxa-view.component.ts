@@ -640,7 +640,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                         break;
                     }
                 }
-                if (input && !isNaN(input.value)) {
+                if (input && !Utils.isNullOrUndefined(input.value)) {
                     let variableId = this.fetchVariableId(event) || ga.property.variableId
                     this.gaugesManager.putSignalValue(variableId, input.value);
                 }
