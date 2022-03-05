@@ -3,6 +3,7 @@
  */
 
 var express = require("express");
+const authJwt = require('../jwt-helper');
 var runtime;
 var secureFnc;
 var checkGroupsFnc;
@@ -28,7 +29,13 @@ module.exports = {
          * Take from alarms storage and reply 
          */
         alarmsApp.get("/api/alarms", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
+            var groups = checkGroupsFnc(req);			
+			 if (res.statusCode === 403) {
+                runtime.logger.error("api get alarms: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get alarms: Unauthorized!");
+            } else {	
             try {
                 var result = runtime.alarmsMgr.getAlarmsValues(req.query, groups);
                 // res.header("Access-Control-Allow-Origin", "*");
@@ -45,7 +52,8 @@ module.exports = {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }
                 runtime.logger.error("api get alarms: " + err.message);
-            }                
+            }       
+			}			
         });
 
                 /**
@@ -53,7 +61,13 @@ module.exports = {
          * Take from alarms storage and reply 
          */
         alarmsApp.get("/api/alarmsHistory", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
+            var groups = checkGroupsFnc(req);	
+			if (res.statusCode === 403) {
+                runtime.logger.error("api get alarms: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get alarms: Unauthorized!");
+            } else {	
             runtime.alarmsMgr.getAlarmsHistory(req.query, groups).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -69,7 +83,8 @@ module.exports = {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }
                 runtime.logger.error("api get alarms: " + err.message);
-            });                
+            });    
+			}            
         });
 
         /**
@@ -77,7 +92,13 @@ module.exports = {
          * Set alarm ack
          */
         alarmsApp.post("/api/alarmack", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            var groups = checkGroupsFnc(req);			
+			 if (res.statusCode === 403) {
+                runtime.logger.error("api post alarms: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post alarms: Unauthorized");
+            } else {		
             runtime.alarmsMgr.setAlarmAck(req.body.params).then(function(data) {
                 res.end();
             }).catch(function(err) {
@@ -87,7 +108,8 @@ module.exports = {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }
                 runtime.logger.error("api post alarm-ack: " + err.message);
-            });                
+            });    
+		  }            
         });
 
         /**
@@ -95,6 +117,12 @@ module.exports = {
          */
         alarmsApp.post("/api/alarmsClear", secureFnc, function(req, res, next) {
             var groups = checkGroupsFnc(req);
+			 if (res.statusCode === 403) {
+                runtime.logger.error("api post alarms: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post alarms: Unauthorized");
+            } else {
             runtime.alarmsMgr.clearAlarms(req.body.params).then(function() {
                 runtime.alarmsMgr.reset();
                 res.end();
@@ -105,7 +133,8 @@ module.exports = {
                     res.status(400).json({error:"unexpected_error", message:err.toString()});
                 }
                 runtime.logger.error("api post alarms-clear: " + err.message);
-            });                
+            });      
+		  }			
         });
         return alarmsApp;
     }
