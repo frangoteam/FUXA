@@ -32,27 +32,24 @@ module.exports = {
             var groups = checkGroupsFnc(req);			
 			 if (res.statusCode === 403) {
                 runtime.logger.error("api get alarms: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api get alarms: Unauthorized!");
             } else {	
-            try {
-                var result = runtime.alarmsMgr.getAlarmsValues(req.query, groups);
-                // res.header("Access-Control-Allow-Origin", "*");
-                // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                if (result) {
-                    res.json(result);
-                } else {
-                    res.end();
-                }
-            } catch (err) {
-                if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
-                }
-                runtime.logger.error("api get alarms: " + err.message);
-            }       
+                try {
+                    var result = runtime.alarmsMgr.getAlarmsValues(req.query, groups);
+                    // res.header("Access-Control-Allow-Origin", "*");
+                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.end();
+                    }
+                } catch (err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api get alarms: " + err.message);
+                }       
 			}			
         });
 
@@ -64,26 +61,23 @@ module.exports = {
             var groups = checkGroupsFnc(req);	
 			if (res.statusCode === 403) {
                 runtime.logger.error("api get alarms: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api get alarms: Unauthorized!");
             } else {	
-            runtime.alarmsMgr.getAlarmsHistory(req.query, groups).then(result => {
-                // res.header("Access-Control-Allow-Origin", "*");
-                // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                if (result) {
-                    res.json(result);
-                } else {
-                    res.end();
-                }
-            }).catch(function(err) {
-                if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
-                } else {
-                    res.status(400).json({error:"unexpected_error", message:err.toString()});
-                }
-                runtime.logger.error("api get alarms: " + err.message);
-            });    
+                runtime.alarmsMgr.getAlarmsHistory(req.query, groups).then(result => {
+                    // res.header("Access-Control-Allow-Origin", "*");
+                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.end();
+                    }
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api get alarms: " + err.message);
+                });    
 			}            
         });
 

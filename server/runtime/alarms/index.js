@@ -90,7 +90,7 @@ function AlarmsManager(_runtime) {
     /**
      * Return the current active alarms values
      */
-    this.getAlarmsValues = function () {
+    this.getAlarmsValues = function (query, groups) {
         var result = [];
         Object.keys(alarms).forEach(alrkey => {
             alarms[alrkey].forEach(alr => {
@@ -98,7 +98,20 @@ function AlarmsManager(_runtime) {
                     var alritem = { name: alr.getId(), type: alr.type, ontime: alr.ontime, offtime: alr.offtime, acktime: alr.acktime, 
                         status: alr.status, text: alr.subproperty.text, group: alr.subproperty.group, 
                         bkcolor: alr.subproperty.bkcolor, color: alr.subproperty.color, toack: alr.isToAck() };
-                    result.push(alritem);
+                    var toshow = true;
+                    var canack = true;
+                    if (alr.tagproperty && alr.tagproperty.permission) {
+                        var mask = (alr.tagproperty.permission >> 8);
+                        toshow = (mask) ? mask & groups : 1;
+                        mask = (alr.tagproperty.permission & 255);
+                        canack = (mask) ? mask & groups : 1;
+                    }
+                    if (toshow) {
+                        if (!canack) {
+                            alritem.toack = 0;
+                        }
+                        result.push(alritem);
+                    }
                 }
             });
         });
@@ -121,10 +134,10 @@ function AlarmsManager(_runtime) {
     /**
      * Return the alarms history
      */
-    this.getAlarmsHistory = function (from, to) {
+    this.getAlarmsHistory = function (query, groups) {
         return new Promise(function (resolve, reject) {
             var history = [];
-            alarmstorage.getAlarmsHistory(from, to).then(result => {
+            alarmstorage.getAlarmsHistory(query.from, query.to).then(result => {
                 for (var i = 0; i < result.length; i++) {
                     var alr = new AlarmHistory(result[i].nametype);
                     alr.status = result[i].status;
@@ -135,7 +148,14 @@ function AlarmsManager(_runtime) {
                     alr.userack = result[i].userack;
                     alr.group = result[i].grp;
                     if (alr.ontime) {
-                        history.push(alr);
+                        var toshow = true;
+                        if (alarmsProperty[alr.name] && alarmsProperty[alr.name].property) {
+                            var mask = (alarmsProperty[alr.name].property.permission >> 8);
+                            var toshow = (mask) ? mask & groups : 1;    
+                        }
+                        if (toshow) {
+                            history.push(alr);
+                        }
                     }
                     // add action or defined colors
                     if (alr.type === AlarmsTypes.ACTION) {
