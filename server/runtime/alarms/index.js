@@ -179,25 +179,36 @@ function AlarmsManager(_runtime) {
      * @param {*} alarmname 
      * @returns 
      */
-    this.setAlarmAck = function (alarmname) {
+    this.setAlarmAck = function (alarmname, userId, groups) {
         return new Promise(function (resolve, reject) {
             var changed = [];
+            var authError = false;
             Object.keys(alarms).forEach(alrkey => {
                 alarms[alrkey].forEach(alr => {
                     if (alr.getId() === alarmname) {
-                        alr.setAck();
-                        changed.push(alr);
+                        var mask = ((alr.tagproperty.permission >> 8) & 255);
+                        var canack = (mask) ? mask & groups : 1;
+                        if (canack) {
+                            alr.setAck(userId);
+                            changed.push(alr);
+                        } else {
+                            authError = true;
+                        }
                     }
                 });
             });
-            if (changed.length) {
-                alarmstorage.setAlarms(changed).then(function (result) {
-                    resolve(true);
-                }).catch(function (err) {
-                    reject(err);
-                });
+            if (authError) {
+                reject({code: 401, error:"unauthorized_error", message: "Unauthorized!"});
             } else {
-                resolve(false);
+                if (changed.length) {
+                    alarmstorage.setAlarms(changed).then(function (result) {
+                        resolve(true);
+                    }).catch(function (err) {
+                        reject(err);
+                    });
+                } else {
+                    resolve(false);
+                }
             }
         });
     }
@@ -536,6 +547,7 @@ function Alarm(name, type, subprop, tagprop) {
                     this.acktime = 0;
 					this.offtime = 0;
                     this.ontime = time;
+                    this.userack = '';
                     return true;
                 }
                 // remove if acknowledged
@@ -564,15 +576,19 @@ function Alarm(name, type, subprop, tagprop) {
         this.acktime = 0;
         this.status = AlarmStatusEnum.VOID;
         this.lastcheck = 0;
+        this.userack = '';
     }
 
     this.toRemove = function () {
         this.toremove = true;
     }
 
-    this.setAck = function () {
-        this.acktime = new Date().getTime();
-        this.lastcheck = 0;
+    this.setAck = function (user) {
+        if (!this.acktime) {
+            this.acktime = new Date().getTime();
+            this.lastcheck = 0;
+            this.userack = user;
+        }
     }
 
     this.isToAck = function () {
