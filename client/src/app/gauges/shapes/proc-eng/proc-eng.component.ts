@@ -3,7 +3,7 @@
  */
 import { Component, OnInit, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType, GaugeActionStatus } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType, GaugeActionStatus, GaugePropertyColor } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 declare var SVG: any;
@@ -58,7 +58,6 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
-                let clr = '';
                 let value = parseFloat(sig.value);
                 if (Number.isNaN(value)) {
                     // maybe boolean
@@ -67,21 +66,22 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
                     value = parseFloat(value.toFixed(5));
                 }
                 if (ga.property) {
+                    let propertyColor = new GaugePropertyColor();
                     if (ga.property.variableId === sig.id && ga.property.ranges) {
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
-                                clr = ga.property.ranges[idx].color;
+                                propertyColor.fill = ga.property.ranges[idx].color;
                             }
                         }
-                        if (clr) {
-                            svgele.node.setAttribute('fill', clr);
+                        if (propertyColor.fill) {
+                            svgele.node.setAttribute('fill', propertyColor.fill);
                         }
                     }
                     // check actions
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
                             if (act.variableId === sig.id) {
-                                ProcEngComponent.processAction(act, svgele, value, gaugeStatus);
+                                ProcEngComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
                             }
                         });
                     }   
@@ -92,7 +92,7 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
         }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?:GaugePropertyColor) {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
                 let element = SVG.adopt(svgele.node);
@@ -106,7 +106,7 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= value && act.range.max >= value);
-            this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false);
+            this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false, propertyColor);
         } else {
             if (act.range.min <= value && act.range.max >= value) {
                 var element = SVG.adopt(svgele.node);

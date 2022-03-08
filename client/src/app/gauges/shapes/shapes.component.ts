@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GaugeBaseComponent } from '../gauge-base/gauge-base.component'
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType } from '../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugePropertyColor } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';
 
 declare var SVG: any;
@@ -61,22 +61,21 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
                     value = parseFloat(value.toFixed(5));
                 }
                 if (ga.property) {
+                    let propertyColor = new GaugePropertyColor();
                     if (ga.property.variableId === sig.id && ga.property.ranges) {
-                        let fill = '';
-                        let stroke = '';        
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
-                                fill = ga.property.ranges[idx].color;
-                                stroke = ga.property.ranges[idx].stroke;
+                                propertyColor.fill = ga.property.ranges[idx].color;
+                                propertyColor.stroke = ga.property.ranges[idx].stroke;
                             }
                         }
                         // check if general shape (line/path/fpath/text) to set the stroke 
                         let mode = ga.type.replace('svg-ext-shapes-', '');
-                        if (fill) {
-                            svgele.node.setAttribute('fill', fill);
+                        if (propertyColor.fill) {
+                            svgele.node.setAttribute('fill', propertyColor.fill);
                         }
-                        if (stroke) {
-                            svgele.node.setAttribute('stroke', stroke);
+                        if (propertyColor.stroke) {
+                            svgele.node.setAttribute('stroke', propertyColor.stroke);
                         }
 
                     }
@@ -84,7 +83,7 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
                             if (act.variableId === sig.id) {
-                                ShapesComponent.processAction(act, svgele, value, gaugeStatus);
+                                ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
                             }
                         });
                     }                
@@ -95,7 +94,7 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
         }            
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?:GaugePropertyColor) {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
                 let element = SVG.adopt(svgele.node);
@@ -109,7 +108,7 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= value && act.range.max >= value);
-            this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false);
+            this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false, propertyColor);
         } else {
             if (act.range.min <= value && act.range.max >= value) {
                 var element = SVG.adopt(svgele.node);

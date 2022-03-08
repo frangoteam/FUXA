@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus } from '../../_models/hmi';
+import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus, GaugePropertyColor } from '../../_models/hmi';
 
 import { Utils } from '../../_helpers/utils';
 
@@ -104,7 +104,7 @@ export class GaugeBaseComponent implements OnInit {
         gaugeStatus.actionRef = actionRef;
     }
 
-    static checkActionBlink(element: any, type: any, gaugeStatus: GaugeStatus, toEnable: boolean, options: any, dom: boolean) {
+    static checkActionBlink(element: any, type: any, gaugeStatus: GaugeStatus, toEnable: boolean, options: any, dom: boolean, propertyColor?:GaugePropertyColor) {
         if (!gaugeStatus.actionRef) {
             gaugeStatus.actionRef = new GaugeActionStatus(type);
         }
@@ -150,6 +150,11 @@ export class GaugeBaseComponent implements OnInit {
                 }
                 // restore gauge
                 if (gaugeStatus.actionRef.spool) {
+                    // check to overwrite with property color
+                    if (propertyColor) {
+                        if (propertyColor.fill) gaugeStatus.actionRef.spool.bk = propertyColor.fill;
+                        if (propertyColor.stroke) gaugeStatus.actionRef.spool.clr = propertyColor.stroke;
+                    }
                     if (dom) {
                         element.style.backgroundColor = gaugeStatus.actionRef.spool.bk;
                         element.style.color = gaugeStatus.actionRef.spool.clr;

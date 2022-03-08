@@ -181,6 +181,10 @@ export class GaugeActionBlink {
     interval: number = 1000;
 }
 
+export class GaugePropertyColor {
+    fill: string;
+    stroke: string;
+}
 export class GaugeStatus {
     variablesValue = {};
     onlyChange = false;         // to process value only by change
