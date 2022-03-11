@@ -500,7 +500,7 @@ function OpcUAclient(_data, _logger, _events) {
                     tagsIdMap[nodeId] = id;
                     var monitoredItem = await the_subscription.monitor(
                         { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
-                        { samplingInterval: 1000, discardOldest: true, queueSize: 1 },
+                        { samplingInterval: data.polling || 1000, discardOldest: true, queueSize: 1 },
                         opcua.TimestampsToReturn.Both
                     );
                     monitoredItem.on('changed', _monitorcallback(nodeId));
