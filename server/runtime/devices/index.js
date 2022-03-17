@@ -148,7 +148,9 @@ function loadDevice(device) {
             activeDevices[device.id] = tdev;
             activeDevices[device.id].bindGetProperty(runtime.project.getDeviceProperty);
         } else {
-            runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
+            if (!Device.isInternal(device)) {
+                runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
+            }
             return false;
         }
     }

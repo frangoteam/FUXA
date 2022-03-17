@@ -378,6 +378,10 @@ function loadPlugin(type, module) {
     }
 }
 
+function isInternal(device) {
+    return (device.type === DeviceEnum.internal);
+}
+
 module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
@@ -387,7 +391,8 @@ module.exports = {
     },
     getSupportedProperty: getSupportedProperty,
     getRequestResult: getRequestResult,
-    loadPlugin: loadPlugin
+    loadPlugin: loadPlugin,
+    isInternal: isInternal,
 }
 
 /**
