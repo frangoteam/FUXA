@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
+import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IframeComponent } from '../iframe/iframe.component';
 
 import { HmiService } from '../_services/hmi.service';
@@ -34,6 +35,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('sidenav') sidenav: SidenavComponent;
     @ViewChild('matsidenav') matsidenav: MatSidenav;
     @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
+    @ViewChild('cardsview') cardsview: CardsViewComponent;
     @ViewChild('alarmsview') alarmsview: AlarmViewComponent;
     @ViewChild('container') container: ElementRef;
 
@@ -124,6 +126,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (this.homeView.type !== this.cardViewType) {
                     this.fuxaview.hmi.layout = this.hmi.layout;
                     this.fuxaview.loadHmi(this.homeView);
+                } else if (this.cardsview) {
+                    this.cardsview.reload();
                 }
             }
             this.onAlarmsShowMode('close');
