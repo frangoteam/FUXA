@@ -4,11 +4,14 @@
             <div *ngIf="isEditor" >
                 <button class="mychart-toolbar-editor" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
                 </button>
-                <button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
-                    <mat-icon aria-label="<<">skip_previous</mat-icon>
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                    <mat-icon aria-label="time range">access_time</mat-icon>
+                </button>                    
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                    <mat-icon aria-label="back">skip_previous</mat-icon>
                 </button>
-                <button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
-                    <mat-icon aria-label=">>">skip_next</mat-icon>
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                    <mat-icon aria-label="forward">skip_next</mat-icon>
                 </button>                
             </div>
             <div *ngIf="!isEditor" >
@@ -20,12 +23,16 @@
                     </mat-option>
                 </mat-select>
                 <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                    (click)="onRange()">
+                    <mat-icon aria-label="time range">access_time</mat-icon>
+                </button>
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
                     (click)="onClick('B')">
-                    <mat-icon aria-label="<<">skip_previous</mat-icon>
+                    <mat-icon aria-label="back">skip_previous</mat-icon>
                 </button>
                 <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
                     (click)="onClick('F')">
-                    <mat-icon aria-label=">>">skip_next</mat-icon>
+                    <mat-icon aria-label="forward">skip_next</mat-icon>
                 </button>
             </div>
         </div>

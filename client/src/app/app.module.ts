@@ -16,6 +16,7 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { GestureConfig } from '@angular/material';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
@@ -82,6 +83,7 @@ import { ConfirmDialogComponent } from './gui-helpers/confirm-dialog/confirm-dia
 import { SelOptionsComponent } from './gui-helpers/sel-options/sel-options.component';
 import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.component';
 import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
+import { DaterangeDialogComponent } from './gui-helpers/daterange-dialog/daterange-dialog.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -179,6 +181,7 @@ export function createTranslateLoader(http: HttpClient) {
         EditNameComponent,
         ConfirmDialogComponent,
         DialogInfo,
+        DaterangeDialogComponent,
         GaugeBaseComponent,
         HtmlInputComponent,
         HtmlButtonComponent,
@@ -280,7 +283,8 @@ export function createTranslateLoader(http: HttpClient) {
         }),
         GridsterModule,
         ChartsModule,
-        CodemirrorModule
+        CodemirrorModule,
+        NgxDaterangepickerMd.forRoot(),
     ],
     providers: [
         // providersResourceService,
@@ -319,6 +323,7 @@ export function createTranslateLoader(http: HttpClient) {
         DialogTagName,
         DialogLinkProperty,
         DialogInfo,
+        DaterangeDialogComponent,
         DeviceTagDialog,
         GaugePropertyComponent,
         DialogGaugePermission,

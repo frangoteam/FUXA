@@ -6,6 +6,9 @@ import { DaqQuery, DateFormatType, TimeFormatType } from '../../../../_models/hm
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
+import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+
 @Component({
     selector: 'chart-uplot',
     templateUrl: './chart-uplot.component.html',
@@ -27,7 +30,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
 
-    constructor(private translateService: TranslateService) {
+    constructor(
+        public dialog: MatDialog, 
+        private translateService: TranslateService) {
     }
 
     ngOnInit() {
@@ -92,6 +97,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onTimeRange.emit(msg);
         }
     }
+
+    onRange() {
+        let dialogRef = this.dialog.open(DaterangeDialogComponent, {
+            panelClass: 'light-dialog-container'
+        });
+        dialogRef.afterClosed().subscribe(result => {
+        });
+    }    
 
     public resize(height?: number, width?: number) {
         let chart = this.chartPanel.nativeElement;

@@ -29,7 +29,7 @@ function init(_server, _runtime) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
             
-            var maxApiRequestSize = runtime.settings.apiMaxLength || '15mb';
+            var maxApiRequestSize = runtime.settings.apiMaxLength || '35mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize,extended:true}));
             authJwt.init(runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
