@@ -883,8 +883,12 @@ mat-toolbar-row {
 }
 
 .light-dialog-container .mat-dialog-container {
-    padding: 0px !important;
+    padding: 5px 0px  !important;
     color: unset !important;
+}
+
+.light-dialog-container .md-drppicker {
+    box-shadow: none !important;
 }
 
 .md-drppicker .btn {

@@ -55,3 +55,8 @@
     min-width: 40px;
     padding: unset;
 }
+
+::ng-deep .my-select-panel-class {
+    background: inherit !important;
+    color: inherit !important;
+}

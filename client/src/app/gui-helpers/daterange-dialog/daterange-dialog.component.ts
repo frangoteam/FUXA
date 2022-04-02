@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 import { DaterangepickerComponent } from 'ngx-daterangepicker-material';
-
+import { IDateRange } from '../../_models/hmi';
 @Component({
     selector: 'app-daterange-dialog',
     templateUrl: './daterange-dialog.component.html',
@@ -12,24 +12,21 @@ export class DaterangeDialogComponent implements OnInit {
 
     @ViewChild('dtrange') public dtrange: DaterangepickerComponent;
 
-    options = { showCancel: true, applyLabel: ' OK ' };
+    options = { };
 
     constructor(public dialogRef: MatDialogRef<DaterangeDialogComponent>) { }
 
     ngOnInit() {
     }
 
-    choosedDate(event) {
+    onOkClick(event) {
         console.log(this.dtrange.startDate);
-        this.dtrange.startDate
+        let dateRange = <IDateRange> { start: this.dtrange.startDate.toDate().getTime(), 
+            end: this.dtrange.endDate.toDate().getTime() };
+        this.dialogRef.close(dateRange);
+    }
+
+    onNoClick() {
         this.dialogRef.close();
-    }
-
-    change($event) {
-        console.log('dfdsf');
-    }
-
-    cancel() {
-        console.log('cancel');
     }
 }

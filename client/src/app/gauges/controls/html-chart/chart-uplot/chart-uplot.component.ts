@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, 
 
 import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxOptions, NgxSeries } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { DaqQuery, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
+import { DaqQuery, DateFormatType, TimeFormatType, IDateRange } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -98,11 +98,21 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onRange() {
+    onDateRange() {
         let dialogRef = this.dialog.open(DaterangeDialogComponent, {
             panelClass: 'light-dialog-container'
         });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((dateRange: IDateRange) => {
+            if (dateRange) {
+                this.range.from = dateRange.start;
+                this.range.to = dateRange.end;
+                let msg = new DaqQuery();
+                msg.gid = this.id;
+                msg.sids = Object.keys(this.mapData);
+                msg.from = dateRange.start;
+                msg.to = dateRange.end;
+                this.onTimeRange.emit(msg);
+            }
         });
     }    
 

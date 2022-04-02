@@ -373,3 +373,8 @@ export enum LinkType {
 }
 
 export const DEVICE_READONLY = 'rodevice';
+
+export interface IDateRange {
+    start;
+    end;
+}
