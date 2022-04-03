@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.1.5-656",
+  "version": "1.1.5-662",
   "keywords": [],
   "author": "frangoteam <4frango@gmail.com>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -47,7 +47,6 @@
     "ng2-charts": "2.2.3",
     "ng5-slider": "^1.2.0",
     "ngx-color-picker": "^11.0.0",
-    "ngx-daterangepicker-material": "^2.4.2",
     "ngx-toastr": "10.1.0",
     "panzoom": "^9.4.2",
     "rxjs": "~6.3.3",

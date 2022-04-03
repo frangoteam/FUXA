@@ -16,7 +16,7 @@ import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { GestureConfig } from '@angular/material';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { NgxDaterangepickerMd } from './gui-helpers/daterangepicker';
 
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
