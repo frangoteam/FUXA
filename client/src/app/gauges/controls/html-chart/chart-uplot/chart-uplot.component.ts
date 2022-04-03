@@ -2,9 +2,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, 
 
 import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxOptions, NgxSeries } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { DaqQuery, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
+import { DaqQuery, DateFormatType, TimeFormatType, IDateRange } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
+
+import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
     selector: 'chart-uplot',
@@ -27,7 +30,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
 
-    constructor(private translateService: TranslateService) {
+    constructor(
+        public dialog: MatDialog, 
+        private translateService: TranslateService) {
     }
 
     ngOnInit() {
@@ -92,6 +97,24 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onTimeRange.emit(msg);
         }
     }
+
+    onDateRange() {
+        let dialogRef = this.dialog.open(DaterangeDialogComponent, {
+            panelClass: 'light-dialog-container'
+        });
+        dialogRef.afterClosed().subscribe((dateRange: IDateRange) => {
+            if (dateRange) {
+                this.range.from = dateRange.start;
+                this.range.to = dateRange.end;
+                let msg = new DaqQuery();
+                msg.gid = this.id;
+                msg.sids = Object.keys(this.mapData);
+                msg.from = dateRange.start;
+                msg.to = dateRange.end;
+                this.onTimeRange.emit(msg);
+            }
+        });
+    }    
 
     public resize(height?: number, width?: number) {
         let chart = this.chartPanel.nativeElement;
@@ -226,7 +249,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public static DefaultOptions() {
         return <ChartOptions>{
-            title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(0,0,0,0)', legendBackground: 'rgba(0,0,0,0)',
+            title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(255,255,255,0)', legendBackground: 'rgba(255,255,255,0)',
             titleHeight: 18, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
             legendMode: 'always', series: [], width: 360, height: 200, decimalsPrecision: 2, realtime: 60,
             dateFormat: Utils.getEnumKey(DateFormatType, DateFormatType.MM_DD_YYYY),

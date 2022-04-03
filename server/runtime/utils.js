@@ -65,5 +65,9 @@ var utils = module.exports = {
     endTime: function (startTime) {
         var endTime = new Date();
         return endTime - startTime;
+    },
+
+    isEmptyObject: function (value) {
+        return value && Object.keys(value).length === 0 && value.constructor === Object;
     }
 }

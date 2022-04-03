@@ -47,6 +47,7 @@
     "ng2-charts": "2.2.3",
     "ng5-slider": "^1.2.0",
     "ngx-color-picker": "^11.0.0",
+    "ngx-daterangepicker-material": "^2.4.2",
     "ngx-toastr": "10.1.0",
     "panzoom": "^9.4.2",
     "rxjs": "~6.3.3",

@@ -1,0 +1,23 @@
+.container {
+    background-color: white;
+}
+
+.custom-datapicker {
+    display: flex;
+}
+
+.action-panel {
+    float: right;
+    padding-right: 20px;
+    margin-bottom: 8px;
+}
+
+.action-panel .btn-cancel {
+    background-color: white;
+    color: black;
+    margin-right: 10px;
+}
+
+::ng-deep .light-dialog-container .mat-dialog-container {
+    background-color: white !important;
+}

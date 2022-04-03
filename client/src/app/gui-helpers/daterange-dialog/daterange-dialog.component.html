@@ -1,0 +1,9 @@
+<div class="container">
+    <ngx-daterangepicker-material #dtrange [autoApply]="true" [locale]="options" class="custom-datapicker">
+    </ngx-daterangepicker-material>
+    
+    <div class="action-panel">
+        <button mat-raised-button class="btn-cancel" (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

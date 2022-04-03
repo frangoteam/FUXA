@@ -1,13 +1,13 @@
 <div>
     <h1 mat-dialog-title style="display:inline-block;cursor: move" mat-dialog-draggable>{{'chart.config-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div style="display: inline-block; width: 100%">
+    <div style="display: inline-block; width: 100%; position: relative;">
+        <div class="toolbox-toadd">
+            <button mat-icon-button (click)="onEditChart(null)">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+        </div>
         <div class="panelTop">
-            <div class="toolbox-toadd">
-                <button mat-icon-button (click)="onEditChart(null)">
-                    <mat-icon>add_circle_outline</mat-icon>
-                </button>
-            </div>
             <div *ngFor="let chart of data.charts; index as i" class="mychips" (click)="onSelectChart(chart)" [ngClass]="isChartSelected(chart)">
                 <mat-icon (click)="onSelectChart(chart);onRemoveChart(i)">cancel</mat-icon>
                 <span>

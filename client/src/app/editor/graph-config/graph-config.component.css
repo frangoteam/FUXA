@@ -4,6 +4,7 @@
     height: 180px;
     border: 1px solid var(--formBorder);
     position: relative;
+    overflow: auto;
 }
 
 .mychips {

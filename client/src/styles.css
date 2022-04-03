@@ -881,3 +881,21 @@ mat-toolbar-row {
     font-size: 14px;
     margin-top: 10px;
 }
+
+.light-dialog-container .mat-dialog-container {
+    padding: 5px 0px  !important;
+    color: unset !important;
+}
+
+.light-dialog-container .md-drppicker {
+    box-shadow: none !important;
+}
+
+.md-drppicker .btn {
+    float: right !important;
+    background-color: white !important;
+    color: black !important;
+    line-height: 28px !important;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}

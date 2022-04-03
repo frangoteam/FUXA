@@ -3,6 +3,8 @@
  */
  'use strict';
 
+var utils = require('../../utils');
+
  function FuxaServer(_data, _logger, _events) {
 
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
@@ -15,6 +17,7 @@
     var lastTimestampValue;             // Last Timestamp of values
     var tagsMap = {};                   // Map of tag id
     var overloading = 0;                // Overloading counter to mange the break connection
+    var tocheck = false;                // Flag that define if there are tags to check by polling
     var type;
 
     /**
@@ -52,17 +55,19 @@
     this.polling = async function () {
         if (_checkWorking(true)) {
             try {
-                var varsValueChanged = _clearVarsChanged();
-                lastTimestampValue = new Date().getTime();
-                _emitValues(varsValue);
+                if (tocheck) {
+                    var varsValueChanged = _clearVarsChanged();
+                    lastTimestampValue = new Date().getTime();
+                    _emitValues(varsValue);
 
-                if (this.addDaq) {
-                    var current = new Date().getTime();
-                    if (current - daqInterval > lastDaqInterval) {
-                        this.addDaq(data.tags);
-                        lastDaqInterval = current;
-                    } else if (Object.keys(varsValueChanged).length) {
-                        this.addDaq(varsValueChanged);
+                    if (this.addDaq) {
+                        var current = new Date().getTime();
+                        if (current - daqInterval > lastDaqInterval) {
+                            this.addDaq(data.tags);
+                            lastDaqInterval = current;
+                        } else if (Object.keys(varsValueChanged).length) {
+                            this.addDaq(varsValueChanged);
+                        }
                     }
                 }
             } catch (err) {
@@ -76,6 +81,7 @@
      * Load Tags attribute to read with polling
      */
     this.load = function (_data) {
+        varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
         tagsMap = {};
         var count = Object.keys(data.tags).length;
@@ -85,6 +91,7 @@
                 data.tags[id].value = _parseValue(data.tags[id].init);
             }
         }
+        tocheck = !utils.isEmptyObject(data.tags);
         logger.info(`'${data.name}' data loaded (${count})`, true);
     }
 

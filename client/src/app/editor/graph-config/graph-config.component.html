@@ -1,13 +1,13 @@
 <div>
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'graph.config-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div style="display: inline-block; width: 100%">
+    <div style="display: inline-block; width: 100%; position: relative;">
+        <div class="toolbox-toadd">
+            <button mat-icon-button (click)="onEditGraph(null)">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+        </div>
         <div class="panelTop">
-            <div class="toolbox-toadd">
-                <button mat-icon-button (click)="onEditGraph(null)">
-                    <mat-icon>add_circle_outline</mat-icon>
-                </button>
-            </div>
             <div *ngFor="let graph of data.graphs; index as i" class="mychips" (click)="onSelectGraph(graph)" [ngClass]="isGraphSelected(graph)">
                 <mat-icon (click)="onSelectGraph(graph);onRemoveGraph(i)">cancel</mat-icon>
                 <span>
