@@ -705,6 +705,7 @@
     "gauges.property-name": "Name",
     "gauges.property-text": "Text",
     "gauges.property-permission": "Authorization",
+    "gauges.property-mask": "Bitmask",
     "gauges.property-readonly": "Readonly",
     "gauges.property-event-type": "Type",
     "gauges.property-event-action": "Action",
@@ -897,6 +898,8 @@
     "texts.list-id": "ID",
     "texts.list-group": "Group",
     "texts.list-value": "Text",
+
+    "dlg.bitmask-title": "Bitmask",
 
     "dlg.textproperty-title": "Text",
     "dlg.textproperty-id": "ID",

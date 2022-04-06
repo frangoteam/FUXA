@@ -84,6 +84,7 @@ import { SelOptionsComponent } from './gui-helpers/sel-options/sel-options.compo
 import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.component';
 import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DaterangeDialogComponent } from './gui-helpers/daterange-dialog/daterange-dialog.component';
+import { BitmaskComponent } from './gui-helpers/bitmask/bitmask.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -222,6 +223,7 @@ export function createTranslateLoader(http: HttpClient) {
         NgxFabButtonComponent,
         NgxFabItemButtonComponent,
         TreetableComponent,
+        BitmaskComponent,
         SelOptionsComponent,
         LazyForDirective,
         NgxSwitchComponent,
@@ -368,7 +370,8 @@ export function createTranslateLoader(http: HttpClient) {
         GraphBarComponent,
         GraphPieComponent,
         GraphBaseComponent,
-        DialogScriptParam
+        DialogScriptParam,
+        BitmaskComponent
     ],
     bootstrap: [AppComponent]
 })

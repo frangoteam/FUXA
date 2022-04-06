@@ -520,6 +520,28 @@ app-root {
     color: var(--formInputColor);
 }
 
+.my-form-field-bitmask {
+    width:65px;
+    height:28px;
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
+    cursor: pointer;
+}
+
+.my-form-field-bitmask mat-icon {
+    position: absolute;
+    left: 40px;
+    line-height: 28px;
+}
+
+.my-form-field-bitmask input {
+    position: absolute;
+    left: 0px;
+    font-size: 13px;
+    width: 30px;
+    text-align:left;
+}
+
 .my-form-field-link {
     position:absolute; 
     bottom: 0px; 

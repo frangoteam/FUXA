@@ -68,6 +68,7 @@ export class FlexActionComponent implements OnInit {
 
     setVariable(index, event) {
         this.actions[index].variableId = event.variableId;
+        this.actions[index].bitmask = event.bitmask;
     }
 
     private addAction(ga: GaugeAction) {
