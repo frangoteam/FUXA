@@ -142,7 +142,8 @@ export enum ModbusTagType {
     Int32LE = 'Int32LE',
     UInt32LE = 'UInt32LE',
     Float32LE = 'Float32LE',
-    Float64LE = 'Float64LE'
+    Float64LE = 'Float64LE',
+    Float32MLE = 'Float32MLE'
     // String = 'String'
 }
 
