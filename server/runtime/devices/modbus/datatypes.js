@@ -7,7 +7,7 @@ function _gen(bytes, bFn, WordLen, swapType) {
             return buffer['read' + bFn](offset) 
         },
         formatter: v => {
-            const b = Buffer.allocUnsafe(bytes);//new Buffer(bytes);
+            var b = Buffer.allocUnsafe(bytes);//new Buffer(bytes);
             b['write' + bFn](v);
             _swap(b, swapType);
             return b;
@@ -18,7 +18,10 @@ function _gen(bytes, bFn, WordLen, swapType) {
 
 function _swap(buffer, swapType, offset = 0) {
     if (swapType == 2) {
-        buffer = [buffer[offset + 1], buffer[offset + 0], buffer[offset + 3], buffer[offset + 2]]; 
+        var temp = buffer[offset + 0];
+        buffer[offset + 0] = buffer[offset + 2]; buffer[offset + 2] = temp;
+        temp = buffer[offset + 1]; 
+        buffer[offset + 1] = buffer[offset + 3];buffer[offset + 3] = temp;
     }
 }
 
