@@ -324,6 +324,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             actions.forEach(act => {
                 if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.popup)) {
                     this.fuxaview.openDialog(null, act.params, {});
+                } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView)) {
+                    this.onGoToPage(act.params);
                 }
             });
         }

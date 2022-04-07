@@ -20,6 +20,7 @@ export class AlarmPropertyComponent implements OnInit {
     ackMode = AlarmAckMode;
     actionsType = AlarmActionsType;
     actionPopup = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.popup);
+    actionSetView = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.setView);
     actionSetValue = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.setValue);
     // actionSendMsg = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.sendMsg);
 

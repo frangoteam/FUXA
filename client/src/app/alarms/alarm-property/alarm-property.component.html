@@ -290,7 +290,7 @@
                                             <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
                                         </div>
                                     </div>
-                                    <div style="display: inline-block" *ngIf="item.type === actionPopup">
+                                    <div style="display: inline-block" *ngIf="item.type === actionPopup || item.type === actionSetView">
                                         <div class="my-form-field" style="padding-left: 20px; width: 260px;">
                                             <span>{{'alarm.property-action-destination' | translate}}</span>
                                             <mat-select [(value)]="item.actparam">
