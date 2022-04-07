@@ -174,5 +174,12 @@ export class GaugeBaseComponent implements OnInit {
             clearTimeout(actref.timer);
             actref.timer = null;
         }
-    }    
+    }
+
+    static checkBitmask(bitmask: number, value: number): number {
+        if (bitmask) {
+            return value & bitmask;
+        }
+        return value;
+    }
 }

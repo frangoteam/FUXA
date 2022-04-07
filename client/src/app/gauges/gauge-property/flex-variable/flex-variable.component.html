@@ -11,8 +11,15 @@
         </button>
     </div>
     <div class="my-form-field" style="margin-left: 0px;">
-        <span>{{getDeviceName(variableId)}}</span>
-        <input style="font-size: 13px;min-width: 450px" value="{{getVariableName(variableId)}}" readonly="true" [disabled]="true" 
+        <span>{{getDeviceName()}}</span>
+        <input style="font-size: 13px;min-width: 450px" value="{{getVariableName()}}" readonly="true" [disabled]="true" 
             title="{{tagTitle | translate}}" placeholder="{{tagTitle | translate}}">
     </div>
+    <div class="my-form-field" style="vertical-align: bottom; margin-left: 5px;" *ngIf="withBitmask">
+        <span>{{'gauges.property-mask' | translate}}</span>
+        <div class="my-form-field-bitmask">
+            <input value="{{getVariableMask()}}" readonly="true" [disabled]="true">
+            <mat-icon class="header-icon" (click)="onSetBitmask()">arrow_drop_down</mat-icon>
+        </div>
+    </div>    
 </div>

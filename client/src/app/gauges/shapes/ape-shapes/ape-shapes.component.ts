@@ -3,7 +3,7 @@
  */
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { Utils } from '../../../_helpers/utils';
 
@@ -61,6 +61,10 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         return GaugeDialogType.RangeWithAlarm;
     }
 
+    static isBitmaskSupported(): boolean {
+        return true;
+    }
+    
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
@@ -72,11 +76,12 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                     value = parseFloat(value.toFixed(5));
                 }
                 if (ga.property) {
+                    let propValue = GaugeBaseComponent.checkBitmask((<GaugeProperty>ga.property).bitmask, value);
                     if (ga.property.variableId === sig.id && ga.property.ranges) {
                         let fill = null;
                         let stroke = null;
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
-                            if (ga.property.ranges[idx].min <= value && ga.property.ranges[idx].max >= value) {
+                            if (ga.property.ranges[idx].min <= propValue && ga.property.ranges[idx].max >= propValue) {
                                 fill = ga.property.ranges[idx].color;
                                 stroke = ga.property.ranges[idx].stroke;
                             }
@@ -104,19 +109,20 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     }
 
     static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+        let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
         if (this.actionsType[act.type] === this.actionsType.hide) {
-            if (act.range.min <= value && act.range.max >= value) {
+            if (act.range.min <= actValue && act.range.max >= actValue) {
                 let element = SVG.adopt(svgele.node);
                 ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 this.runActionHide(element, act.type, gaugeStatus);
             }
         } else if (this.actionsType[act.type] === this.actionsType.show) {
-            if (act.range.min <= value && act.range.max >= value) {
+            if (act.range.min <= actValue && act.range.max >= actValue) {
                 let element = SVG.adopt(svgele.node);
                 this.runActionShow(element, act.type, gaugeStatus);
             }
         } else {
-            if (act.range.min <= value && act.range.max >= value) {
+            if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
                 ApeShapesComponent.runMyAction(element, act.type, gaugeStatus);
             }    

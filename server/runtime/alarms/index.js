@@ -74,8 +74,10 @@ function AlarmsManager(_runtime) {
                         result[alr.type]++;
                         if (alr.type === AlarmsTypes.ACTION && !alr.offtime) {
                             var action = actionsProperty[alr.nametype];
-                            if (action.subproperty && action.subproperty.type === ActionsTypes.POPUP) {
-                                result.actions.push({ type: action.subproperty.type, params: action.subproperty.actparam })
+                            if (action.subproperty) {
+                                if (action.subproperty.type === ActionsTypes.POPUP || action.subproperty.type === ActionsTypes.SET_VIEW) {
+                                    result.actions.push({ type: action.subproperty.type, params: action.subproperty.actparam })
+                                }
                             }
                         }
                     });
@@ -641,5 +643,6 @@ const AlarmsTypes = {
 const ActionsTypes = {
     POPUP: 'popup',
     SET_VALUE: 'setValue',
+    SET_VIEW: 'setView',
     SEND_MSG: 'sendMsg'
 }

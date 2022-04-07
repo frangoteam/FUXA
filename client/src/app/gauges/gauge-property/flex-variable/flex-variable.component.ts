@@ -8,6 +8,7 @@ import { Device, DeviceType, Tag, TAG_PREFIX, DevicesUtils } from '../../../_mod
 import { HmiService } from '../../../_services/hmi.service';
 import { Utils } from '../../../_helpers/utils';
 import { DeviceTagDialog } from '../../../device/device.component';
+import { BitmaskComponent } from '../../../gui-helpers/bitmask/bitmask.component';
 
 interface Variable {
     id: string;
@@ -28,8 +29,10 @@ export class FlexVariableComponent implements OnInit {
     @Input() variableValue: string;
     @Input() variableLabel: string = 'gauges.property-variable-value';
     @Input() withStaticValue: boolean = true;
+    @Input() withBitmask: boolean = false;
     @Input() tagLabel: string = 'gauges.property-tag-label';
     @Input() tagTitle: string = '';
+    @Input() bitmask: number;
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
@@ -52,7 +55,7 @@ export class FlexVariableComponent implements OnInit {
         }
     }
 
-    getDeviceName(variableId: string) {
+    getDeviceName() {
         let device = DevicesUtils.getDeviceFromTagId(this.data.devices, this.variableId);
         if (device) {
             return device.name;
@@ -60,7 +63,7 @@ export class FlexVariableComponent implements OnInit {
         return '';
     }
 
-    getVariableName(variableId: string) {
+    getVariableName() {
         let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);
         if (tag) {
             let result = tag.label || tag.name;
@@ -75,6 +78,13 @@ export class FlexVariableComponent implements OnInit {
         return '';
     }
 
+    getVariableMask(): string {
+        if (this.bitmask) {
+            return this.bitmask.toString(16);
+        }
+        return '';
+    }
+
     onChanged() {
         let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);
         if (tag) {
@@ -83,6 +93,9 @@ export class FlexVariableComponent implements OnInit {
         } else {
             this.value.variableId = null;
             this.value.variableRaw = null;
+        }
+        if (this.withBitmask) {
+            this.value.bitmask = this.bitmask
         }
         this.value.variableValue = this.variableValue;
         this.onchange.emit(this.value);   // Legacy
@@ -110,6 +123,20 @@ export class FlexVariableComponent implements OnInit {
             this.variableId = null;
         }
         this.onChanged();
+    }
+
+    onSetBitmask() {
+        let dialogRef = this.dialog.open(BitmaskComponent, {
+            position: { top: '60px' },
+            data: { bitmask: this.bitmask }
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.bitmask = result.bitmask;
+                this.onChanged();
+            }
+        });
     }
 }
 

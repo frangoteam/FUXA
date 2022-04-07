@@ -1,0 +1,52 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.bitmask-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content style="width:fit-content">
+        <mat-selection-list [(ngModel)]="selected" style="display: flex;">
+            <div style="display: inline-block;">
+                <mat-list-option [selected]="bits[0].selected" [value]="bits[0]" class="bitmask-item" checkboxPosition="after">{{bits[0].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[1].selected" [value]="bits[1]" class="bitmask-item" checkboxPosition="after">{{bits[1].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[2].selected" [value]="bits[2]" class="bitmask-item" checkboxPosition="after">{{bits[2].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[3].selected" [value]="bits[3]" class="bitmask-item" checkboxPosition="after">{{bits[3].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[4].selected" [value]="bits[4]" class="bitmask-item" checkboxPosition="after">{{bits[4].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[5].selected" [value]="bits[5]" class="bitmask-item" checkboxPosition="after">{{bits[5].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[6].selected" [value]="bits[6]" class="bitmask-item" checkboxPosition="after">{{bits[6].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[7].selected" [value]="bits[7]" class="bitmask-item" checkboxPosition="after">{{bits[7].label}}</mat-list-option>
+            </div>
+            <div *ngIf="size > 8" style="display: inline-block;">
+                <mat-list-option [selected]="bits[8].selected" [value]="bits[8]" class="bitmask-item" checkboxPosition="after">{{bits[8].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[9].selected" [value]="bits[9]" class="bitmask-item" checkboxPosition="after">{{bits[9].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[10].selected" [value]="bits[10]" class="bitmask-item" checkboxPosition="after">{{bits[10].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[11].selected" [value]="bits[11]" class="bitmask-item" checkboxPosition="after">{{bits[11].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[12].selected" [value]="bits[12]" class="bitmask-item" checkboxPosition="after">{{bits[12].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[13].selected" [value]="bits[13]" class="bitmask-item" checkboxPosition="after">{{bits[13].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[14].selected" [value]="bits[14]" class="bitmask-item" checkboxPosition="after">{{bits[14].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[15].selected" [value]="bits[15]" class="bitmask-item" checkboxPosition="after">{{bits[15].label}}</mat-list-option>
+            </div>
+            <div *ngIf="size > 16" style="display: inline-block;">
+                <mat-list-option [selected]="bits[16].selected" [value]="bits[16]" class="bitmask-item" checkboxPosition="after">{{bits[16].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[17].selected" [value]="bits[17]" class="bitmask-item" checkboxPosition="after">{{bits[17].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[18].selected" [value]="bits[18]" class="bitmask-item" checkboxPosition="after">{{bits[18].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[19].selected" [value]="bits[19]" class="bitmask-item" checkboxPosition="after">{{bits[19].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[20].selected" [value]="bits[20]" class="bitmask-item" checkboxPosition="after">{{bits[20].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[21].selected" [value]="bits[21]" class="bitmask-item" checkboxPosition="after">{{bits[21].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[22].selected" [value]="bits[22]" class="bitmask-item" checkboxPosition="after">{{bits[22].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[23].selected" [value]="bits[23]" class="bitmask-item" checkboxPosition="after">{{bits[23].label}}</mat-list-option>
+            </div>
+            <div *ngIf="size > 24" style="display: inline-block;">
+                <mat-list-option [selected]="bits[24].selected" [value]="bits[24]" class="bitmask-item" checkboxPosition="after">{{bits[24].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[25].selected" [value]="bits[25]" class="bitmask-item" checkboxPosition="after">{{bits[25].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[26].selected" [value]="bits[26]" class="bitmask-item" checkboxPosition="after">{{bits[26].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[27].selected" [value]="bits[27]" class="bitmask-item" checkboxPosition="after">{{bits[27].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[28].selected" [value]="bits[28]" class="bitmask-item" checkboxPosition="after">{{bits[28].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[29].selected" [value]="bits[29]" class="bitmask-item" checkboxPosition="after">{{bits[29].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[30].selected" [value]="bits[30]" class="bitmask-item" checkboxPosition="after">{{bits[30].label}}</mat-list-option>
+                <mat-list-option [selected]="bits[31].selected" [value]="bits[31]" class="bitmask-item" checkboxPosition="after">{{bits[31].label}}</mat-list-option>
+            </div>
+        </mat-selection-list>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

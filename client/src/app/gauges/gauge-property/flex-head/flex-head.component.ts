@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { FlexInputComponent } from '../flex-input/flex-input.component';
-import { GaugeProperty } from '../../../_models/hmi';
+import { GaugeProperty, IPropertyVariable } from '../../../_models/hmi';
 import { Device, Tag } from '../../../_models/device';
 import { HmiService } from '../../../_services/hmi.service';
 import { Utils } from '../../../_helpers/utils';
@@ -25,6 +25,7 @@ export class FlexHeadComponent implements OnInit {
     @Input() data: any;
     @Input() property: GaugeProperty;
     @Input() withStaticValue = true;
+    @Input() withBitmask = false;
     @ViewChild('flexinput') flexInput: FlexInputComponent;
 
     variable: any;
@@ -81,9 +82,10 @@ export class FlexHeadComponent implements OnInit {
         }
     }
 
-    setVariable(event) {
+    setVariable(event: IPropertyVariable) {
         this.property.variableId = event.variableId;
         this.property.variableValue = event.variableValue;
+        this.property.bitmask = event.bitmask;
 
         if (this.flexInput) {
             this.flexInput.changeTag(event.variableRaw);

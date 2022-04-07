@@ -140,6 +140,7 @@ export class GaugeSettings {
 export class GaugeProperty {
     variableId: string;
     variableValue: string;
+    bitmask: number;
     permission: number;
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
@@ -149,6 +150,16 @@ export class GaugeProperty {
     text: string;           // Text property (used by button)
 }
 
+export interface IPropertyVariable {
+    /** Tag id */
+    variableId: string;
+    // TODO not sure if it is necessary, from inmation
+    variableValue: string;
+    /** Bitmask to mask with value */
+    bitmask: number;
+    /** Reference to tag property, used to propagate to sub component */
+    variableRaw: Tag;
+}
 export class GaugeEvent {
     type: string;
     action: string;
@@ -168,6 +179,7 @@ export enum GaugeActionsType {
 
 export class GaugeAction {
     variableId: string;
+    bitmask: number;
     range: GaugeRangeProperty;
     type: any;
     options: any = {};
