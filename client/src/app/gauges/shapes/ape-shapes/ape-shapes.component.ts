@@ -61,6 +61,10 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         return GaugeDialogType.RangeWithAlarm;
     }
 
+    static isBitmaskSupported(): boolean {
+        return true;
+    }
+    
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {

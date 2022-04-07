@@ -571,6 +571,18 @@ export class GaugesManager {
         }
     }
 
+    static isBitmaskSupported(type: string): boolean {
+        for (let i = 0; i < GaugesManager.Gauges.length; i++) {
+            if (type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                if (typeof GaugesManager.Gauges[i]['isBitmaskSupported'] === 'function') {
+                    return GaugesManager.Gauges[i]['isBitmaskSupported']();
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * used from controls in editor to get default value of edit gauge property

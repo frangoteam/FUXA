@@ -13,6 +13,7 @@ export class FlexActionComponent implements OnInit {
 
     @Input() data: any;
     @Input() property: GaugeProperty;
+    @Input() withBitmask = false;
 
     actions: GaugeAction[];
     actionsSupported: any;

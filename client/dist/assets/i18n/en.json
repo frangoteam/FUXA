@@ -824,6 +824,7 @@
     "alarms.show-current": "Alarms",
     "alarms.show-history": "History Alarms",
     "alarm.action-popup": "Show Popup",
+    "alarm.action-onsetview": "Set View",
     "alarm.action-onsetvalue": "Set Value",
     "alarm.action-sendMsg": "Send Message",
     "alarm.property-action-type": "Action type",

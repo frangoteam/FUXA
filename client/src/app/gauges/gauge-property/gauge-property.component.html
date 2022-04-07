@@ -31,7 +31,7 @@
 					</div>
 				</div>
 				<div mat-dialog-content style="overflow: visible; width:100%;">
-					<flex-head [data]="data" [property]="property" #flexhead></flex-head>
+					<flex-head [data]="data" [property]="property" #flexhead [withBitmask]="withBitmask"></flex-head>
 				</div>
 			</div>
 		</mat-tab>
@@ -59,7 +59,8 @@
                     </button>-->
                 </div>
                 <div mat-dialog-content style="overflow: visible; width:100%">
-                    <flex-action [data]="data" [property]="property" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px"></flex-action>
+                    <flex-action [data]="data" [property]="property" [withBitmask]="withBitmask" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px">
+					</flex-action>
                 </div>
             </div>
         </mat-tab>

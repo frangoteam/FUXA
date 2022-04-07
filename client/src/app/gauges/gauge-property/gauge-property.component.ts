@@ -24,6 +24,7 @@ export class GaugePropertyComponent implements OnInit {
 
     slideView = true;
     slideActionView = true;
+    withBitmask = false;
     property: GaugeProperty;
     dialogType: GaugeDialogType = GaugeDialogType.RangeWithAlarm;
     eventsSupported: boolean;
@@ -45,7 +46,6 @@ export class GaugePropertyComponent implements OnInit {
         this.views = this.data.views;
         this.inputs = this.data.inputs;
         this.scripts = this.data.scripts;
-        
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
             this.property = new GaugeProperty();
@@ -67,6 +67,11 @@ export class GaugePropertyComponent implements OnInit {
             } else if (this.dialogType === GaugeDialogType.MinMax) {
                 this.flexHead.withInput = 'minmax';
             }
+        }
+
+        if (this.data.withBitmask) {
+            this.withBitmask = this.data.withBitmask;
+            this.withBitmask = this.data.withBitmask;
         }
     }
 
