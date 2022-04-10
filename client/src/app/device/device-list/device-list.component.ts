@@ -70,8 +70,8 @@ export class DeviceListComponent implements OnInit {
         // if (this.deviceSelected) {
         //     this.bindToTable(this.deviceSelected.tags);
         // }
-        // this.dataSource.paginator = this.paginator;
-        // this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         // this.table.renderRows();
     }
 

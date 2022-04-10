@@ -127,6 +127,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     gotoList(device: Device) {
+        this.onReload();
         this.show(this.tagsViewMode);
         this.deviceList.setSelectedDevice(device);
     }
