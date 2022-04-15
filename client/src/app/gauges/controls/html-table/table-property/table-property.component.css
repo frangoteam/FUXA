@@ -1,0 +1,6 @@
+.table-selection {
+    position: absolute;
+    top: 35px;
+    bottom: 0px;
+    overflow: auto;
+}

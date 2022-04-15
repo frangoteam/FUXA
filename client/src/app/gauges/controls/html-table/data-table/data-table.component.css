@@ -1,0 +1,42 @@
+::ng-deep .mat-table {
+    /* background-color: transparent !important; */
+    height: 100%;;
+    overflow: auto;
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+}
+
+.data-table-header {
+    min-height: 0px;
+}
+
+.data-table-row {
+    min-height: 0px;
+}
+
+.data-table-paginator {
+    height: 40px;
+    bottom: 0px;
+    position: absolute;
+    right: 0px;
+    /* float: right; */
+    background-color: transparent;
+}
+
+::ng-deep .data-table-paginator .mat-paginator-container {
+    min-height: unset;
+    height: 40px;
+}
+
+::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size {
+    height: inherit;
+    margin: unset;
+}
+
+::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size-select {
+    margin: unset;
+}

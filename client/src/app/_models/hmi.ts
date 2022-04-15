@@ -266,6 +266,30 @@ export interface GaugeIframeProperty {
     address: string;
 }
 
+export interface GaugeTableProperty {
+    id: string;
+    type: string;
+    options: TableOptions;
+}
+
+export interface TableOptions {
+    paginator?: { 
+        show: boolean 
+    },
+    background?: string,
+    gridColor?: string,
+    header?: { 
+        show: boolean,
+        fontSize?: number,
+        color?: string,
+        background?: string,
+    }
+    row?: { 
+        fontSize?: number,
+        color?: string,
+    }    
+}
+
 export class Variable {
     id: string;
     name: string;

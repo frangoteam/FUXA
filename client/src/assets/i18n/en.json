@@ -331,6 +331,8 @@
     "editor.controls-iframe": "Iframe",
     "editor.controls-iframe-settings": "Iframe settings",
 
+    "editor.controls-data-table-settings": "Data Table settings",
+
     "editor.layout-settings": "Layout settings",
 
     "editor.interactivity": "Interactivity",

@@ -34,6 +34,7 @@ import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
+import { HtmlTableComponent } from './controls/html-table/html-table.component';
 
 @Injectable()
 export class GaugesManager {
@@ -67,7 +68,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -752,6 +753,21 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
             let gauge = HtmlSwitchComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
+            return gauge;
+        } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
+            let gauge = HtmlTableComponent.initElement(ga, res, ref, isview);
+            if (gauge) {
+                // this.setGraphPropety(gauge, ga.property);
+                // gauge.onReload.subscribe((query: DaqQuery) => {
+                //     this.hmiService.getDaqValues(query).subscribe(result => {
+                //         gauge.setValues(query.sids, result);
+                //     }, err => {
+                //         gauge.setValues(query.sids, null);
+                //         console.error('get DAQ values err: ' + err);
+                //     });
+                // });
+                this.mapGauges[ga.id] = gauge;
+            }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.initElement(ga, isview);

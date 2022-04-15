@@ -706,6 +706,9 @@ select#start_marker option[value="D"] {
 .icon-graphpie {
     background: url("/assets/images/graphpie.svg") no-repeat center center;
 }
+.icon-table {
+    background: url("/assets/images/table.svg") no-repeat center center;
+}
 .icon-iframe {
     background: url("/assets/images/iframe.svg") no-repeat center center;
 }

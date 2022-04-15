@@ -1,0 +1,26 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'editor.controls-data-table-settings' | translate}}
+    </div>
+    <div class="table-selection">
+        <div class="element-property-header">
+            <span>{{'graph.property-layout' | translate}}</span>
+        </div>
+        <div class="_section-newline">
+            <!-- <div class="my-form-field section-inline-number">
+                <span>{{'graph.property-border' | translate}}</span>
+                <input numberOnly [(ngModel)]="options.paginator.show" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0">
+            </div> -->
+            <div class="section-inline-margin"></div>
+            <div class="my-form-field section-inline-toggle slider-field">
+                <span>{{'graph.property-padinator' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
+            </div>
+            <div class="section-inline-margin2"></div>
+            <div class="my-form-field section-inline-toggle section-inline-toggle-ext slider-field">
+                <span style="width: 60px">{{'graph.property-gridline' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
+            </div>
+        </div>        
+    </div>
+</div>
