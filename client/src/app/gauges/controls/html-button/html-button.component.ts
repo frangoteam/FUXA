@@ -161,7 +161,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
             }
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let inRange = (act.range.min <= value && act.range.max >= value);
-            this.checkActionBlink(button, act.type, gaugeStatus, inRange, act.options, true, propertyColor);
+            this.checkActionBlink(button, act, gaugeStatus, inRange, true, propertyColor);
         }
     }
 }
