@@ -5,7 +5,8 @@ import { Subscription } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 import { ScriptEditorComponent } from '../script-editor/script-editor.component';
-import { Script, SCRIPT_PREFIX } from '../../_models/script';
+import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/script-scheduling.component';
+import { Script, SCRIPT_PREFIX, ScriptScheduling } from '../../_models/script';
 import { AlarmsType } from '../../_models/alarm';
 import { Utils } from '../../_helpers/utils';
 
@@ -16,7 +17,7 @@ import { Utils } from '../../_helpers/utils';
 })
 export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'type', 'remove'];
+    displayedColumns = ['select', 'name', 'params', 'scheduling', 'type', 'options', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     private subscriptionLoad: Subscription;
@@ -65,6 +66,10 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.editScript(script, -1);
     }
 
+    onEditOptions(script: Script) {
+        this.editScriptScheduling(script);
+    }
+
     editScript(script: Script, toAdd: number) {
         let dlgwidth = (toAdd < 0) ? 'auto' : '80%';
         let scripts = this.dataSource.data.filter(s => s.id !== script.id);
@@ -89,20 +94,42 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    getSubProperty(notification: Notification) {
-        // if (notification) {
-        //     if (notification.type === this.notificationAlarm) {
-        //         let result = '';
-        //         Object.keys(notification.subscriptions).forEach(key => {
-        //             if (notification.subscriptions[key]) {
-        //                 if (result) result += ', ';
-        //                 result += this.alarmsType[key];
-        //             }
-        //         });
-        //         return result;
-        //     }
-        // }
+    getParameters(script: Script) {
+        if (script.parameters) {
+            let result = '';
+            Object.values(script.parameters).forEach(param => {
+                if (result) result += ', ';
+                result += `${param.name}: ${param.type}`;
+            });
+            return result;
+        }
         return '';
+    }
+
+    getScheduling(script: Script) {
+        if (script.scheduling) {
+            let result = '';
+            if (script.scheduling.interval) {
+                result += `${script.scheduling.interval} sec.`;
+            }
+            return result;
+        }
+        return '';
+    }
+
+    private editScriptScheduling(script: Script) {
+        let dialogRef = this.dialog.open(ScriptSchedulingComponent, {
+            data: <SchedulingData> { scheduling: script.scheduling },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe((result: ScriptScheduling) => {
+            if (result) {
+                script.scheduling = result;
+                this.projectService.setScript(script, null).subscribe(() => {
+                    this.loadScripts();
+                });
+            }
+        });
     }
 
     private loadScripts() {

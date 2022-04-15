@@ -15,12 +15,9 @@ function ScriptsManager(_runtime) {
     var logger = runtime.logger;        // Logger
     var scriptsCheckStatus = null;      // TimerInterval to check scripts manager status
     var working = false;                // Working flag to manage overloading of check notificator status
-    // var notificationsSubsctiption = {}; // Notifications matrix, grupped by subscriptions type
     var status = ScriptsStatusEnum.INIT;// Current status (StateMachine)
-    // var clearNotifications = false;     // Flag to clear current notifications from DB
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
-    // var subscriptionStatus = {};        // Status of subscription, to check if there are some change
-    // var notificationsFound = 0;         // Notifications found to check 
+    var schedulingMap = {};             // Mapped script mit scheduling
     var scriptModule = MyScriptModule.create(events, logger);
 
     /**
@@ -102,31 +99,23 @@ function ScriptsManager(_runtime) {
                 _loadProperty().then(function () {
                     _checkWorking(false);
                     status = ScriptsStatusEnum.IDLE;
-
-                    // _loadScripts().then(function () {
-                    //     status = ScriptsStatusEnum.IDLE;
-                    //     _checkWorking(false);
-                    // }).catch(function (err) {
-                    //     _checkWorking(false);
-                    // });
                 }).catch(function (err) {
                     _checkWorking(false);
                 });
             }
         } else if (status === ScriptsStatusEnum.IDLE) {
-            // if (notificationsFound) {
-            //     var current = new Date().getTime();
-            //     if (current - lastCheck > NOTIFY_CHECK_STATUS_INTERVAL) {
-            //         lastCheck = current;
-            //         if (_checkWorking(true)) {
-            //             _checkNotifications().then(function () {
-            //                 _checkWorking(false);
-            //             }).catch(function (err) {
-            //                 _checkWorking(false);
-            //             });
-            //         }
-            //     }
-            // }
+            const time = new Date().getTime();
+            Object.keys(schedulingMap).forEach((name) => {
+                const script = schedulingMap[name];
+                if (script.isToRun(time)) {
+                    try {
+                        scriptModule.runScriptWithoutParameter(script);
+                        script.lastRun = time;
+                    } catch (err) {
+                        reject(err);
+                    }
+                }
+            });
         }
     }
 
@@ -154,10 +143,15 @@ function ScriptsManager(_runtime) {
      */
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
-            runtime.project.getScripts().then((result) => {
-                if (result) {
-                    var lr = scriptModule.loadScripts(result);
-                    console.log('end load script!');
+            schedulingMap = {};
+            runtime.project.getScripts().then((scripts) => {
+                if (scripts) {
+                    var lr = scriptModule.loadScripts(scripts);
+                    Object.values(scripts).forEach((script) => {
+                        if (script.scheduling && script.scheduling.interval) {
+                            schedulingMap[script.name] = new ScriptSchedule(script);
+                        }
+                    });
                     resolve(lr.messages);
                 } else {
                     resolve();
@@ -189,4 +183,15 @@ var ScriptsStatusEnum = {
     INIT: 'init',
     LOAD: 'load',
     IDLE: 'idle',
+}
+
+function ScriptSchedule(script) {
+    this.id = script.id;
+    this.name = script.name;
+    this.scheduling = script.scheduling;
+    this.lastRun = 0;
+
+    this.isToRun = function(time) {
+        return (time - this.lastRun > this.scheduling.interval * 1000);
+    }
 }

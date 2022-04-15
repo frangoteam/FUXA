@@ -75,6 +75,12 @@
 .mat-column-params {
     flex: 3 1 180px;
 }
+.mat-column-scheduling {
+    flex: 3 1 180px;
+}
+.mat-column-options {
+    flex: 0 0 60px;
+}
 
 .mat-column-remove {
     flex: 0 0 60px;
