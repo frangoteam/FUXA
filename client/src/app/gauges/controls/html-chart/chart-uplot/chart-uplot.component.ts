@@ -171,9 +171,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.redraw();
     }
 
-    public addLine(id: string, name: string, line: ChartLine) {
+    public addLine(id: string, name: string, line: ChartLine, addYaxisToLabel: boolean) {
         if (!this.mapData[id]) {
-            const linelabel = line.label || name;
+            let linelabel = line.label || name;
+            if (addYaxisToLabel) 
+                linelabel = `Y${line.yaxis} - ${linelabel}`;
             let serie = <NgxSeries>{ label: linelabel, stroke: line.color, spanGaps: true };
             if (line.yaxis > 1) {
                 serie.scale = line.yaxis.toString();

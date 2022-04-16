@@ -772,12 +772,13 @@ export class GaugesManager {
                 if (chart) {
                     const opt = <ChartOptions>{ ...property.options, ...{ title: chart.name, id: chart.name, scales: { x: { time: true } } } };
                     gauge.setOptions(opt, true);
+                    let yaxisNotOne = chart.lines.find(line => line.yaxis > 1);
                     for (let i = 0; i < chart.lines.length; i++) {
                         let line = chart.lines[i];
                         let sigid = line.id;
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line);
+                            gauge.addLine(sigid, sigProperty.name, line, yaxisNotOne?true:false);
                         }
                     }
                     gauge.redraw();
