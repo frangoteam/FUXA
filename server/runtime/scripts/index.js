@@ -157,7 +157,6 @@ function ScriptsManager(_runtime) {
             runtime.project.getScripts().then((result) => {
                 if (result) {
                     var lr = scriptModule.loadScripts(result);
-                    console.log('end load script!');
                     resolve(lr.messages);
                 } else {
                     resolve();

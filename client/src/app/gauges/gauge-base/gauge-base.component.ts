@@ -178,7 +178,7 @@ export class GaugeBaseComponent implements OnInit {
 
     static checkBitmask(bitmask: number, value: number): number {
         if (bitmask) {
-            return value & bitmask;
+            return (value & bitmask) ? 1 : 0;
         }
         return value;
     }

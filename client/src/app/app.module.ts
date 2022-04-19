@@ -85,6 +85,7 @@ import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.componen
 import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DaterangeDialogComponent } from './gui-helpers/daterange-dialog/daterange-dialog.component';
 import { BitmaskComponent } from './gui-helpers/bitmask/bitmask.component';
+import { RangeNumberComponent } from './gui-helpers/range-number/range-number.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -257,7 +258,8 @@ export function createTranslateLoader(http: HttpClient) {
         GraphPieComponent,
         GraphPropertyComponent,
         GraphBaseComponent,
-        IframePropertyComponent
+        IframePropertyComponent,
+        RangeNumberComponent
    ],
     imports: [
         BrowserModule,
@@ -371,7 +373,8 @@ export function createTranslateLoader(http: HttpClient) {
         GraphPieComponent,
         GraphBaseComponent,
         DialogScriptParam,
-        BitmaskComponent
+        BitmaskComponent,
+        RangeNumberComponent
     ],
     bootstrap: [AppComponent]
 })
