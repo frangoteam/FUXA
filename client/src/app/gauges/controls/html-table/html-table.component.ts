@@ -26,16 +26,16 @@ export class HtmlTableComponent {
                 //     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 // }
                 htmlTable.innerHTML = '';
-                // (<GraphBaseComponent>componentRef.instance).isEditor = !isview;
+                (<DataTableComponent>componentRef.instance).isEditor = !isview;
 
                 // componentRef.instance.rangeType = chartRange;
-                // (<GraphBaseComponent>componentRef.instance).id = gab.id;
+                (<DataTableComponent>componentRef.instance).id = gab.id;
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlTable.appendChild(componentRef.location.nativeElement);
                 // let opt = <GraphOptions>{ panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
-                // opt = { ...GraphBarComponent.DefaultOptions(), ...opt };
-                // componentRef.instance.setOptions(opt);
+                let opt = DataTableComponent.DefaultOptions();
+                componentRef.instance.setOptions(opt);
 
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
@@ -43,7 +43,7 @@ export class HtmlTableComponent {
         }
     }
 
-    static detectChange(gab: GaugeSettings, res: any, ref: any) {
-        console.error(`Not Supported! ${this.name}`);
+    static detectChange(gab: GaugeSettings, res: any, ref: any): DataTableComponent{
+        return HtmlTableComponent.initElement(gab, res, ref, false);
     }    
 }

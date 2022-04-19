@@ -268,26 +268,66 @@ export interface GaugeIframeProperty {
 
 export interface GaugeTableProperty {
     id: string;
-    type: string;
+    type: TableType;
     options: TableOptions;
+}
+
+export enum TableType {
+    data = 'data',
+    history = 'history',
 }
 
 export interface TableOptions {
     paginator?: { 
         show: boolean 
     },
-    background?: string,
     gridColor?: string,
     header?: { 
         show: boolean,
+        height: number,
         fontSize?: number,
         color?: string,
         background?: string,
     }
     row?: { 
+        height: number,
         fontSize?: number,
         color?: string,
-    }    
+        background?: string,
+    }
+    columns: TableColumn[],
+    rows: TableRow[],
+}
+
+export enum TableColumnType {
+    label = 'label',
+    variable = 'variable',
+    timestamp = 'timestamp',
+}
+
+export class TableCell {
+    name: string;
+    label: string;
+    variableId: string;
+    valueFormat: string;
+    bitmask: number;
+    
+    constructor(name: string) {
+        this.name = name;
+    }
+}
+
+export class TableColumn extends TableCell {
+    type: TableColumnType;
+    align: string;
+
+    constructor(name: string, type?: TableColumnType) {
+        super(name);
+        this.type = type || TableColumnType.label;
+    }
+}
+
+export class TableRow extends TableCell {
 }
 
 export class Variable {

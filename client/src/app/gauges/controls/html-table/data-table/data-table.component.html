@@ -1,17 +1,23 @@
-<mat-table #table [dataSource]="dataSource" matSort>
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+<mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort>
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize">{{ column }}</mat-header-cell>
+        <mat-cell *matCellDef="let element" [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize"> {{element[column]}} </mat-cell>
     </ng-container>
 
-    <!-- Address Column -->
+    <!-- <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize"> {{'device.list-name' | translate}} </mat-header-cell>
+        <mat-cell *matCellDef="let element" [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize"> {{element.name}} </mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="address">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.adr}} </mat-cell>
-    </ng-container>
+        <mat-header-cell *matHeaderCellDef mat-sort-header [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize"> {{'device.list-address' | translate}} </mat-header-cell>
+        <mat-cell *matCellDef="let element" [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize"> {{element.adr}} </mat-cell>
+    </ng-container> -->
 
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableStyle.headerHeight"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableStyle.rowHeight"></mat-row>
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height" 
+        [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" 
+        [style.display]="(tableOptions.header.show) ? 'flex' : 'none'"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableOptions.row.height"
+        [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
 </mat-table>
-<mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator"></mat-paginator>
+<mat-paginator *ngIf="tableOptions.paginator.show" [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator" [style.color]="tableOptions.row.color"></mat-paginator>

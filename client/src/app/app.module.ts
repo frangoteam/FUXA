@@ -148,6 +148,7 @@ import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/grap
 import { ChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
+import { TableCustomizerComponent, DialogTableCell } from './gauges/controls/html-table/table-customizer/table-customizer.component';
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -262,6 +263,8 @@ export function createTranslateLoader(http: HttpClient) {
         GraphBaseComponent,
         IframePropertyComponent,
         TablePropertyComponent,
+        TableCustomizerComponent,
+        DialogTableCell,
         DataTableComponent
    ],
     imports: [
@@ -378,7 +381,9 @@ export function createTranslateLoader(http: HttpClient) {
         GraphBaseComponent,
         DialogScriptParam,
         BitmaskComponent,
-        DataTableComponent
+        DataTableComponent,
+        TableCustomizerComponent,
+        DialogTableCell
     ],
     bootstrap: [AppComponent]
 })

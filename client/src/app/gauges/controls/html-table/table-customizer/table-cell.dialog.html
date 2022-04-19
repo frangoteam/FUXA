@@ -1,0 +1,30 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.cell-dialog-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field" style="display: block;">
+            <span>{{'table.property-row-name' | translate}}</span>
+            <input [(ngModel)]="data.cell.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" style="width: 300px">
+        </div>
+        <div class="my-form-field" style="display: block; margin-top: 10px;">
+            <span>{{'table.property-row-type' | translate}}</span>
+            <mat-select [(value)]="data.cell.type" (selectionChange)="onTableChanged()" style="width: 300px">
+                <mat-option [value]="columnType.label">{{'table.property-column-label' | translate}}</mat-option>
+                <mat-option [value]="columnType.variable">{{'table.property-column-variable' | translate}}</mat-option>
+                <mat-option [value]="columnType.timestamp">{{'table.property-column-timestamp' | translate}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field" style="display: block; margin-top: 10px;">
+            <flex-variable [data]="devicesValues" [variableId]="data.cell.variableId" [bitmask]="data.cell.bitmask"
+            [withStaticValue]="false" [withBitmask]="true">
+           </flex-variable>
+        </div>
+        <!-- <div style="display: grid; margin-bottom: 20px;">
+      <input [(ngModel)]="data.name" type="text" width="100%" [readonly]="data.readonly">
+    </div> -->
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

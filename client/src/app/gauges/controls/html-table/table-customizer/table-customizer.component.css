@@ -1,0 +1,12 @@
+.toolbox {
+    z-index: 1000;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    line-height: 44px;
+}
+
+.toolbox button {
+    /* margin-right: 8px; */
+    margin-left: 10px;
+}

@@ -35,6 +35,7 @@ import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouisl
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
+import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 
 @Injectable()
 export class GaugesManager {
@@ -194,6 +195,11 @@ export class GaugesManager {
             return this.mapGauges[ga.id] = HtmlSwitchComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.initElement(ga, true);
+        } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlTableComponent.detectChange(ga, res, ref);
+            this.setTablePropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
         }
         return false;
     }
@@ -757,7 +763,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             let gauge = HtmlTableComponent.initElement(ga, res, ref, isview);
             if (gauge) {
-                // this.setGraphPropety(gauge, ga.property);
+                this.setTablePropety(gauge, ga.property);
                 // gauge.onReload.subscribe((query: DaqQuery) => {
                 //     this.hmiService.getDaqValues(query).subscribe(result => {
                 //         gauge.setValues(query.sids, result);
@@ -812,6 +818,20 @@ export class GaugesManager {
                     gauge.init(graph.name, graph.property, graph.sources);
                 }
             }
+            if (property.options) {
+                gauge.setOptions(property.options);
+            }
+        }
+    }
+
+    private setTablePropety(gauge: DataTableComponent, property: any) {
+        if (property) {
+            // if (property.id) {
+            //     let graph = this.hmiService.getGraph(property.id);
+            //     if (graph) {
+            //         gauge.init(graph.name, graph.property, graph.sources);
+            //     }
+            // }
             if (property.options) {
                 gauge.setOptions(property.options);
             }
