@@ -20,7 +20,7 @@
     </div>
     <div class="range-type-switch">
         <button mat-icon-button (click)="isNumber = !isNumber; onTypeChanged()" matTooltip="{{'gui.range-number-switcher' | translate}}">
-            <span *ngIf="!isNumber">[ , ]</span>
+            <span *ngIf="!isNumber">[ - ]</span>
             <span *ngIf="isNumber">1/0</span>
         </button>
     </div>

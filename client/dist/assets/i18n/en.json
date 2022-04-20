@@ -903,8 +903,8 @@
     "gui.range-number-min": "Min",
     "gui.range-number-max": "Max",
     "gui.range-number-boolean": "Mask value",
-    "gui.range-number-true": "True (1)",
-    "gui.range-number-false": "False (0)",
+    "gui.range-number-true": "True [1-1]",
+    "gui.range-number-false": "False [0-0]",
     "gui.range-number-switcher": "Range as number or boolean",
 
     "dlg.bitmask-title": "Bitmask",
