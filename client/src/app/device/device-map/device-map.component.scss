@@ -225,17 +225,6 @@ $internal-backcolor: rgb(114,120,125);
     flex: 0 0 10px;
  }
 
- .my-header-filter /deep/ .mat-sort-header-button {
-    display: block;
-    text-align: left;
-    margin-top: 5px;
-}
-
-.my-header-filter /deep/ .mat-sort-header-arrow {
-    top: -12px;
-    right: 20px;
-}
-
 .my-header-filter-input {
     display: block; 
     margin-top: 4px;
