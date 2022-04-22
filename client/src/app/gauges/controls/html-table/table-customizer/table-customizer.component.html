@@ -1,5 +1,5 @@
 <div style="position: relative;">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.customizer-title' | translate}}</h1>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <mat-table #table [dataSource]="dataSource" matSort style="width: 800px; height: 500px">
@@ -10,8 +10,8 @@
                         <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #optionsgMenu [overlapTrigger]="false">
-                        <button mat-menu-item (click)="onEditColumn(column)" style="font-size: 14px;">{{'table.customizer-edit' | translate}}</button>
-                        <button mat-menu-item (click)="onRemove(column)" style="font-size: 14px;">{{'table.customizer-remove' | translate}}</button>
+                        <button mat-menu-item (click)="onEditColumn(column)" style="font-size: 14px;">{{'table.customize-column-edit' | translate}}</button>
+                        <button mat-menu-item (click)="onRemove(column)" style="font-size: 14px;">{{'table.customize-column-remove' | translate}}</button>
                     </mat-menu>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
@@ -21,7 +21,7 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
         <div class="toolbox">
-            <button mat-icon-button (click)="onAddColumn()" matTooltip="{{'table.property-tooltip-add' | translate}}">
+            <button mat-icon-button (click)="onAddColumn()" matTooltip="{{'table.customize-column-add' | translate}}">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
         </div>

@@ -2,12 +2,12 @@
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.cell-dialog-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="my-form-field" style="display: block;">
-            <span>{{'table.property-row-name' | translate}}</span>
+        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block;">
+            <span>{{'table.cell-column-name' | translate}}</span>
             <input [(ngModel)]="data.cell.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" style="width: 300px">
         </div>
         <div class="my-form-field" style="display: block; margin-top: 10px;">
-            <span>{{'table.property-row-type' | translate}}</span>
+            <span>{{'table.cell-column-type' | translate}}</span>
             <mat-select [(value)]="data.cell.type" (selectionChange)="onTableChanged()" style="width: 300px">
                 <mat-option [value]="columnType.label">{{'table.property-column-label' | translate}}</mat-option>
                 <mat-option [value]="columnType.variable">{{'table.property-column-variable' | translate}}</mat-option>

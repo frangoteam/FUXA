@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { initDomAdapter } from '@angular/platform-browser/src/browser';
-import { TableColumn, TableRow, TableCell, TableColumnType } from '../../../../_models/hmi';
+import { TableType, TableColumn, TableRow, TableCell, TableColumnType } from '../../../../_models/hmi';
 
 import { ProjectService } from '../../../../_services/project.service';
 
@@ -13,6 +13,7 @@ import { ProjectService } from '../../../../_services/project.service';
 })
 export class TableCustomizerComponent implements OnInit, AfterViewInit {
 
+    tableType = TableType;
     displayedColumns = [];
     dataSource = new MatTableDataSource([]);
 
@@ -75,6 +76,7 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
     templateUrl: 'table-cell.dialog.html',
 })
 export class DialogTableCell {
+    cellType = TableCellType;
     columnType = TableColumnType;
     devicesValues = { devices: null };
     constructor(
@@ -96,6 +98,7 @@ export class DialogTableCell {
 export interface ITableCustom {
     columns: TableColumn[],
     rows: TableRow[],
+    type: TableType,
 }
 
 export interface ITableCell {

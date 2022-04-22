@@ -40,6 +40,7 @@ export class TablePropertyComponent implements OnInit {
     ngOnInit() {
         if (!this.data.settings.property) {
             this.data.settings.property = <GaugeTableProperty>{ id: null, type: this.tableType.data, options: this.options };
+            this.onTableChanged();
         } 
         this._reload();
     }
@@ -70,7 +71,8 @@ export class TablePropertyComponent implements OnInit {
         let dialogRef = this.dialog.open(TableCustomizerComponent, {
             data: <ITableCustom> { 
                 columns: JSON.parse(JSON.stringify(this.options.columns)), 
-                rows: JSON.parse(JSON.stringify(this.options.rows))
+                rows: JSON.parse(JSON.stringify(this.options.rows)),
+                type: <TableType>this.data.settings.property.type
             },
             position: { top: '60px' }
         });

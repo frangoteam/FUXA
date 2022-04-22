@@ -128,7 +128,7 @@
                         </div>                        
                     </div>
                 </mat-tab>
-                <mat-tab *ngIf="tableTypeCtrl.value === tableType.data" label="{{'table.property-rows' | translate}}">
+                <!-- <mat-tab *ngIf="tableTypeCtrl.value === tableType.data" label="{{'table.property-rows' | translate}}">
                     <div class="section-newline">&nbsp;</div>
                     <div *ngFor="let row of options.rows; index as y" class="cell-item">
                         <div class="my-form-field section-inline-name">
@@ -145,10 +145,10 @@
                             </mat-select>
                         </div>
                     </div>
-                </mat-tab>                
+                </mat-tab>                 -->
             </mat-tab-group>
             <div class="toolbox">
-                <button mat-icon-button (click)="onAdd()" matTooltip="{{'table.property-tooltip-add' | translate}}">
+                <button mat-icon-button (click)="onAdd()" matTooltip="{{'table.property-customize-tooltip' | translate}}">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
             </div>

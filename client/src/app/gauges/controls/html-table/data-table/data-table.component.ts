@@ -64,7 +64,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 background: '#F9F9F9',
                 color: '#000000',
             },
-            columns: [new TableColumn('Date/Time'), new TableColumn('Tag A')],
+            columns: [new TableColumn('[colDate]', TableColumnType.timestamp), new TableColumn('[colTag]', TableColumnType.variable)],
             rows: [],
         };
         return options;
