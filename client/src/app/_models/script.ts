@@ -5,7 +5,7 @@ export class Script {
     name: string;
     code: string;
     parameters: ScriptParam[] = [];
-
+    scheduling: ScriptScheduling;
     constructor(_id: string) {
         this.id = _id;
     }    
@@ -44,6 +44,10 @@ export interface ScriptConsoleMessage {
     msg: string;
     type: string;
     id: string;
+}
+
+export interface ScriptScheduling {
+    interval: number;
 }
 
 export class SystemFunctions {    
