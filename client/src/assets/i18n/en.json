@@ -324,6 +324,7 @@
     "table.customize-row-remove": "Delete row",
     "table.cell-column-name": "Column name",
     "table.cell-column-type": "Column type",
+    "table.cell-format": "Format",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",

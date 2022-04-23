@@ -299,7 +299,7 @@ export interface TableOptions {
     rows: TableRow[],
 }
 
-export enum TableColumnType {
+export enum TableCellType {
     label = 'label',
     variable = 'variable',
     timestamp = 'timestamp',
@@ -311,19 +311,19 @@ export class TableCell {
     variableId: string;
     valueFormat: string;
     bitmask: number;
+    type: TableCellType;
     
-    constructor(name: string) {
+    constructor(name: string, type?: TableCellType) {
         this.name = name;
+        this.type = type || TableCellType.label;
     }
 }
 
 export class TableColumn extends TableCell {
-    type: TableColumnType;
     align: string;
 
-    constructor(name: string, type?: TableColumnType) {
-        super(name);
-        this.type = type || TableColumnType.label;
+    constructor(name: string, type?: TableCellType) {
+        super(name, type);
     }
 }
 

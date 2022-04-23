@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 
-import { GaugeTableProperty, TableOptions, TableColumn, TableRow, TableColumnType } from '../../../../_models/hmi';
+import { GaugeTableProperty, TableOptions, TableColumn, TableRow, TableCellType } from '../../../../_models/hmi';
 
 @Component({
     selector: 'app-data-table',
@@ -64,7 +64,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 background: '#F9F9F9',
                 color: '#000000',
             },
-            columns: [new TableColumn('[colDate]', TableColumnType.timestamp), new TableColumn('[colTag]', TableColumnType.variable)],
+            columns: [new TableColumn('[colDate]', TableCellType.timestamp), new TableColumn('[colTag]', TableCellType.variable)],
             rows: [],
         };
         return options;

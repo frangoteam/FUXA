@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeTableProperty, TableType, TableOptions, TableColumn, TableRow, TableColumnType } from '../../../../_models/hmi';
+import { GaugeTableProperty, TableType, TableOptions, TableColumn, TableRow, TableCellType } from '../../../../_models/hmi';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { TableCustomizerComponent, ITableCustom } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
@@ -28,7 +28,7 @@ export class TablePropertyComponent implements OnInit {
     tableTypeCtrl: FormControl = new FormControl();
     options = DataTableComponent.DefaultOptions();
     tableType = TableType;
-    columnType = TableColumnType;
+    columnType = TableCellType;
 
     private _onDestroy = new Subject<void>();
 
@@ -40,7 +40,6 @@ export class TablePropertyComponent implements OnInit {
     ngOnInit() {
         if (!this.data.settings.property) {
             this.data.settings.property = <GaugeTableProperty>{ id: null, type: this.tableType.data, options: this.options };
-            this.onTableChanged();
         } 
         this._reload();
     }
@@ -53,6 +52,8 @@ export class TablePropertyComponent implements OnInit {
     private _reload() {
         if (this.data.settings.property) {
             this.tableTypeCtrl.setValue(this.data.settings.property.type);
+        } else {
+            this.ngOnInit();
         }
     }
 

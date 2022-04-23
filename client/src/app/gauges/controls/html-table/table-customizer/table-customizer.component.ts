@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { initDomAdapter } from '@angular/platform-browser/src/browser';
-import { TableType, TableColumn, TableRow, TableCell, TableColumnType } from '../../../../_models/hmi';
+import { TableType, TableColumn, TableRow, TableCell, TableCellType } from '../../../../_models/hmi';
 
 import { ProjectService } from '../../../../_services/project.service';
 
@@ -39,11 +39,11 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
     onEditColumn(column?: string) {
         let cell = this.data.columns.find(c => c.name === column);
         if (!column) {
-            cell = new TableColumn('[colName]', TableColumnType.label);
+            cell = new TableColumn('[colName]', TableCellType.label);
         }
         let dialogRef = this.dialog.open(DialogTableCell, {
             data: <ITableCell> { 
-                type: TableCellType.column, 
+                type: CellType.column, 
                 cell: JSON.parse(JSON.stringify(cell))
             },
             position: { top: '60px' }
@@ -62,6 +62,22 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
         this.ngOnInit();
     }
 
+    getColumnSettings(colIndex: number) {
+        let col = this.data.columns[colIndex];
+        return this.getCellSettings(col)
+    }
+
+    getCellSettings(cell: TableCell) {
+        if (cell.type === TableCellType.label) {
+            return 'label';
+        } else if (cell.type === TableCellType.timestamp) {
+            return 'timestamp';
+        } else if (cell.type === TableCellType.variable) {
+            return 'variable';
+        }
+        return '';
+    }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
@@ -77,7 +93,7 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
 })
 export class DialogTableCell {
     cellType = TableCellType;
-    columnType = TableColumnType;
+    columnType = TableCellType;
     devicesValues = { devices: null };
     constructor(
         private projectService: ProjectService,
@@ -102,11 +118,11 @@ export interface ITableCustom {
 }
 
 export interface ITableCell {
-    type: TableCellType,
+    type: CellType,
     cell: TableCell,
 }
 
-export enum TableCellType {
+export enum CellType {
     column,
     row,
 }
