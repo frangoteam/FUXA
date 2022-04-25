@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
+import { Utils } from '../../../../_helpers/utils';
 
-import { GaugeTableProperty, TableOptions, TableColumn, TableRow, TableCellType } from '../../../../_models/hmi';
+import { GaugeTableProperty, TableOptions, TableColumn, TableRow, TableCellType, TableCell } from '../../../../_models/hmi';
 
 @Component({
     selector: 'app-data-table',
@@ -18,6 +19,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     id: string;
     isEditor: boolean;
     displayedColumns = [];
+    columnsStyle = {};
     dataSource = new MatTableDataSource([]);
 
     tableOptions = DataTableComponent.DefaultOptions();
@@ -42,7 +44,46 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setOptions(options: TableOptions): void {
         this.tableOptions = { ...this.tableOptions, ...options };
-        this.displayedColumns = this.tableOptions.columns.map(x => x.name);
+        this.loadData();
+    }
+
+    getCellSetting(cell: TableCell) {
+        if (cell) {
+            if (cell.type === TableCellType.label) {
+                return cell.label || '';
+            } else if (cell.type === TableCellType.timestamp) {
+                return cell.valueFormat ? cell.valueFormat : '';
+            } else if (cell.type === TableCellType.variable) {
+                return (cell.variableId || '') + ((cell.valueFormat) ? ` (${cell.valueFormat})` : '');
+            } else if (cell.type === TableCellType.device) {
+                return (cell.variableId || '');
+            }
+        }
+        return '';
+    }
+
+    private loadData() {
+        // columns
+        let columnIds = [];
+        this.columnsStyle = {};
+        this.tableOptions.columns.forEach(cn => {
+            columnIds.push(cn.id);
+            this.columnsStyle[cn.id] = cn;
+        })
+        this.displayedColumns = columnIds;
+
+        // rows
+        let data = [];
+        this.tableOptions.rows.forEach(r => {
+            let row = {};
+            r.cells.forEach(c => {
+                if (c) {
+                    row[c.id] = c;
+                }
+            });
+            data.push(row);
+        });
+        this.dataSource.data = data;
     }
 
     public static DefaultOptions() {
@@ -64,7 +105,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 background: '#F9F9F9',
                 color: '#000000',
             },
-            columns: [new TableColumn('[colDate]', TableCellType.timestamp), new TableColumn('[colTag]', TableCellType.variable)],
+            columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.variable, 'Tags')],
             rows: [],
         };
         return options;

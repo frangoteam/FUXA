@@ -303,31 +303,43 @@ export enum TableCellType {
     label = 'label',
     variable = 'variable',
     timestamp = 'timestamp',
+    device = 'device',
 }
 
 export class TableCell {
-    name: string;
+    id: string;
     label: string;
     variableId: string;
     valueFormat: string;
     bitmask: number;
     type: TableCellType;
     
-    constructor(name: string, type?: TableCellType) {
-        this.name = name;
+    constructor(id: string, type?: TableCellType, label?: string) {
+        this.id = id;
         this.type = type || TableCellType.label;
+        this.label = label;
     }
 }
 
 export class TableColumn extends TableCell {
-    align: string;
-
-    constructor(name: string, type?: TableCellType) {
-        super(name, type);
+    align: TableCellAlignType = TableCellAlignType.left;
+    width = 100;
+    constructor(name: string, type?: TableCellType, label?: string) {
+        super(name, type, label);
     }
 }
 
-export class TableRow extends TableCell {
+export class TableRow {
+    cells: TableCell[];
+    constructor(cls: TableCell[]) {
+        this.cells = cls;
+    }
+}
+
+export enum TableCellAlignType {
+    left = 'left',
+    center = 'center',
+    right = 'right',
 }
 
 export class Variable {

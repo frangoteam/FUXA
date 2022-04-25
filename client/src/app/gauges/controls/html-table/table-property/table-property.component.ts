@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeTableProperty, TableType, TableOptions, TableColumn, TableRow, TableCellType } from '../../../../_models/hmi';
+import { GaugeTableProperty, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCellAlignType } from '../../../../_models/hmi';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { TableCustomizerComponent, ITableCustom } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
@@ -29,6 +29,7 @@ export class TablePropertyComponent implements OnInit {
     options = DataTableComponent.DefaultOptions();
     tableType = TableType;
     columnType = TableCellType;
+    alignType = TableCellAlignType;
 
     private _onDestroy = new Subject<void>();
 
@@ -39,8 +40,8 @@ export class TablePropertyComponent implements OnInit {
 
     ngOnInit() {
         if (!this.data.settings.property) {
-            this.data.settings.property = <GaugeTableProperty>{ id: null, type: this.tableType.data, options: this.options };
-        } 
+            this.data.settings.property = <GaugeTableProperty>{ id: null, type: this.tableType.data, options: DataTableComponent.DefaultOptions() };
+        }
         this._reload();
     }
 
@@ -52,6 +53,7 @@ export class TablePropertyComponent implements OnInit {
     private _reload() {
         if (this.data.settings.property) {
             this.tableTypeCtrl.setValue(this.data.settings.property.type);
+            this.options = this.data.settings.property.options;
         } else {
             this.ngOnInit();
         }
@@ -59,6 +61,7 @@ export class TablePropertyComponent implements OnInit {
 
     onTableChanged() {
         this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
+        this.data.settings.property.type = this.tableTypeCtrl.value;
         this.onPropChanged.emit(this.data.settings);
     }
 

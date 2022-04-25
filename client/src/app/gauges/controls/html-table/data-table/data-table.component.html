@@ -1,20 +1,16 @@
 <mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort>
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize">{{ column }}</mat-header-cell>
-        <mat-cell *matCellDef="let element" [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize"> {{element[column]}} </mat-cell>
+        <th *matHeaderCellDef mat-sort-header [style.minWidth.px]="columnsStyle[column].width" [ngClass]="columnsStyle[column].align"
+            [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize">
+            {{ columnsStyle[column].label }}
+        </th>
+        <td *matCellDef="let element" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
+             [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell"> 
+            {{getCellSetting(element[column])}} 
+        </td>
     </ng-container>
 
-    <!-- <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize"> {{'device.list-name' | translate}} </mat-header-cell>
-        <mat-cell *matCellDef="let element" [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize"> {{element.name}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="address">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize"> {{'device.list-address' | translate}} </mat-header-cell>
-        <mat-cell *matCellDef="let element" [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize"> {{element.adr}} </mat-cell>
-    </ng-container> -->
-
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height" 
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
         [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" 
         [style.display]="(tableOptions.header.show) ? 'flex' : 'none'"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableOptions.row.height"

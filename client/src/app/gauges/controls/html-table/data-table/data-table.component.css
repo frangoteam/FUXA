@@ -1,13 +1,21 @@
 ::ng-deep .mat-table {
     /* background-color: transparent !important; */
-    height: 100%;;
+    height: 100%;
     overflow: auto;
+    /* display: grid; */
 }
 
 .mat-header-row {
     top: 0;
     position: sticky;
     z-index: 1;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.mat-row {
+    padding-left: 10px;
+    padding-right: 5px;
 }
 
 .data-table-header {
@@ -39,4 +47,19 @@
 
 ::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size-select {
     margin: unset;
+}
+
+::ng-deep .left .mat-sort-header-container {
+    text-align: left;
+    justify-content: left;
+}
+
+::ng-deep .center .mat-sort-header-container {
+    text-align: center;
+    justify-content: center;
+}
+
+::ng-deep .right .mat-sort-header-container {
+    text-align: right;
+    justify-content: right;
 }

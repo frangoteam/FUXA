@@ -108,24 +108,29 @@
                 <mat-tab label="{{'table.property-cols' | translate}}">
                     <div class="section-newline">&nbsp;</div>
                     <div *ngFor="let column of options.columns; index as x" class="cell-item column-item">
-                        <div class="my-form-field section-inline-name">
+                        <div class="my-form-field section-inline">
                             <span>{{'table.property-column-name' | translate}}</span>
-                            <input [(ngModel)]="column.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" >
-                        </div>    
-                        <div class="section-inline-margin"></div>
-                        <div class="my-form-field section-inline-type">                            
-                            <span>{{'table.property-column-type' | translate}}</span>
-                            <mat-select [(value)]="column.type" (selectionChange)="onTableChanged()">
-                                <mat-option [value]="columnType.label">{{'table.property-column-label' | translate}}</mat-option>
-                                <mat-option [value]="columnType.variable">{{'table.property-column-variable' | translate}}</mat-option>
-                                <mat-option [value]="columnType.timestamp">{{'table.property-column-timestamp' | translate}}</mat-option>
-                            </mat-select>
+                            <input [(ngModel)]="column.label" type="text" [disabled]="true">
                         </div>
-                        <div class="section-inline-margin"></div>
-                        <div *ngIf="column.type === columnType.label" class="my-form-field section-inline-label">
-                            <span>{{'table.property-text' | translate}}</span>
-                            <input [(ngModel)]="column.label" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" >
+                        <div class="my-form-field section-inline-number">
+                            <span>{{'table.property-column-type' | translate}}</span>
+                            <input [(ngModel)]="column.type" type="text" [disabled]="true">
                         </div>                        
+                        <div class="section-item-newline">
+                            <div class="my-form-field section-inline-type">                            
+                                <span>{{'table.property-column-align' | translate}}</span>
+                                <mat-select [(value)]="column.align" (selectionChange)="onTableChanged()">
+                                    <mat-option [value]="alignType.left">{{'table.cell-align-left' | translate}}</mat-option>
+                                    <mat-option [value]="alignType.center">{{'table.cell-align-center' | translate}}</mat-option>
+                                    <mat-option [value]="alignType.right">{{'table.cell-align-right' | translate}}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="section-inline-margin" style="margin-right: 3px;"></div>
+                            <div class="my-form-field section-inline-number">
+                                <span>{{'table.property-column-width' | translate}}</span>
+                                <input numberOnly [(ngModel)]="column.width" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="40" >
+                            </div>
+                        </div>
                     </div>
                 </mat-tab>
                 <!-- <mat-tab *ngIf="tableTypeCtrl.value === tableType.data" label="{{'table.property-rows' | translate}}">
@@ -149,7 +154,7 @@
             </mat-tab-group>
             <div class="toolbox">
                 <button mat-icon-button (click)="onAdd()" matTooltip="{{'table.property-customize-tooltip' | translate}}">
-                    <mat-icon>add_circle_outline</mat-icon>
+                    <mat-icon>edit</mat-icon>
                 </button>
             </div>
         </div>
