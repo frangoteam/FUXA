@@ -113,7 +113,7 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= actValue && act.range.max >= actValue);
-            this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false, propertyColor);
+            this.checkActionBlink(element, act, gaugeStatus, inRange, false, propertyColor);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
