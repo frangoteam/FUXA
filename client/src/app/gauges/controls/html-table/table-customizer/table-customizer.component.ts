@@ -4,6 +4,7 @@ import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } f
 import { initDomAdapter } from '@angular/platform-browser/src/browser';
 import { TableType, TableColumn, TableRow, TableCell, TableCellType } from '../../../../_models/hmi';
 
+import { Device } from '../../../../_models/device';
 import { ProjectService } from '../../../../_services/project.service';
 import { Utils } from '../../../../_helpers/utils';
 
@@ -56,7 +57,7 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
     onAddRow() {
         let cells = [];
         this.data.columns.forEach(c => {
-            cells.push(new TableCell(c.id, c.type));
+                cells.push(new TableCell(c.id, c.type));
         });
         this.data.rows.push(new TableRow(cells));
         this.loadData();
@@ -64,7 +65,7 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
 
     onEditColumn(columnId?: string) {
         let colIndex = this.data.columns.findIndex(c => c.id === columnId);
-        let cell = new TableColumn(`[${Utils.getShortGUID('c_')}]`, TableCellType.label); 
+        let cell = new TableColumn(Utils.getShortGUID('c_'), TableCellType.label); 
         if (colIndex >= 0) {
             cell = this.data.columns[colIndex];
         }
@@ -130,20 +131,12 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
     }
 
     getColumnSetting(colIndex: number) {
-        return this.getCellSetting(this.data.columns[colIndex]);
+        return this.data.columns[colIndex].label || '';
     }
 
     getCellType(cell: TableCell) {
         if (cell) {
-            if (cell.type === TableCellType.label) {
-                return `${(cell.label) ? cell.label : ''} (label)`;
-            } else if (cell.type === TableCellType.timestamp) {
-                return `${(cell.label) ? cell.label : ''} (date/time)`;
-            } else if (cell.type === TableCellType.variable) {
-                return `${(cell.label) ? cell.label : ''} (variable)`;
-            } else if (cell.type === TableCellType.device) {
-                return `${(cell.label) ? cell.label : ''} (device)`;
-            }
+            return `${(cell.type) ? cell.type : ''}`;
         }
         return '';
     }
@@ -155,9 +148,9 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
             } else if (cell.type === TableCellType.timestamp) {                
                 return cell.valueFormat ? cell.valueFormat : '';
             } else if (cell.type === TableCellType.variable) {
-                return (cell.variableId || '') + ((cell.valueFormat) ? ` (${cell.valueFormat})` : '');
+                return (cell.label || '') + ((cell.valueFormat) ? ` (${cell.valueFormat})` : '');
             } else if (cell.type === TableCellType.device) {
-                return (cell.variableId || '');
+                return (cell.label || '');
             }
         }
         return '';
@@ -198,6 +191,17 @@ export class DialogTableCell {
 
     onSetVariable(event) {
         this.data.cell.variableId = event.variableId;
+        if (this.data.table === TableType.data) {
+            if (event.variableRaw) {
+                this.data.cell.label = event.variableRaw.name;
+                if (this.data.cell.type === TableCellType.device) {
+                    let device = this.projectService.getDeviceFromTagId(event.variableId);
+                    this.data.cell.label = device ? device.name : '';
+                }
+            } else {
+                this.data.cell.label = null;
+            }
+        }
     }
 }
 

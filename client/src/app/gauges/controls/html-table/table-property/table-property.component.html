@@ -7,13 +7,22 @@
             <span>{{'table.property-data' | translate}}</span>
         </div>
         <div class="_section-newline">
-            <div class="my-form-field section-item section-item-block">
+            <div class="my-form-field" style="width: 140px">
                 <span>{{'table.property-type' | translate}}</span>
                 <mat-select [formControl]="tableTypeCtrl" (selectionChange)="onTableChanged()">
                     <mat-option [value]="tableType.data">{{'table.property-type-data' | translate}}</mat-option>
                     <mat-option [value]="tableType.history">{{'table.property-type-history' | translate}}</mat-option>
                 </mat-select>
             </div>
+            <div class="section-inline-margin2"></div>
+            <div *ngIf="tableTypeCtrl.value === tableType.history" class="my-form-field" style="display: inline-block; width: 140px">
+                <span>{{'table.property-date-last-range' | translate}}</span>
+                <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
+                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>            
         </div>
         <div class="element-property-header">
             <span>{{'table.property-header' | translate}}</span>

@@ -2,12 +2,12 @@
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="width: 800px; height: 500px; display: block;">
+        <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block;">
             <ng-container *ngFor="let column of displayedColumns; index as i" [matColumnDef]="column">
                 <mat-header-cell *matHeaderCellDef >
-                    <div >
-                        <span style="display: block;">{{getColumnType(i)}} </span>
-                        <span style="display: block; font-size: 11px;">{{getColumnSetting(i)}} </span>
+                    <div class="data-table-cell">
+                        <span style="display: block; font-size: 12px;">{{getColumnType(i)}} </span>
+                        <span style="display: block;">{{getColumnSetting(i)}} </span>
                     </div>
                     <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="column-options">
                         <mat-icon>more_vert</mat-icon>
@@ -23,9 +23,9 @@
                             <mat-icon>clear</mat-icon>
                         </button>
                     </mat-cell>
-                    <div >
-                        <span style="display: block;">{{getCellType(element[column])}} </span>
-                        <span style="display: block; font-size: 11px;">{{getCellSetting(element[column])}} </span>
+                    <div class="data-table-cell">
+                        <span style="display: block; font-size: 12px;">{{getCellType(element[column])}} </span>
+                        <span style="display: block;">{{getCellSetting(element[column])}} </span>
                     </div>
                     <button mat-icon-button (click)="onEditCell(element, column)" class="column-options" matTooltip="{{'table.customize-cell-edit' | translate}}">
                         <mat-icon>edit</mat-icon>

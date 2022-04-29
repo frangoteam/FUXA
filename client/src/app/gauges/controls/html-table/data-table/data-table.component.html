@@ -4,9 +4,9 @@
             [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize">
             {{ columnsStyle[column].label }}
         </th>
-        <td *matCellDef="let element" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
+        <td *matCellDef="let element; index as i" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
              [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell"> 
-            {{getCellSetting(element[column])}} 
+            {{getCellValue(element[column], i, column)}} 
         </td>
     </ng-container>
 

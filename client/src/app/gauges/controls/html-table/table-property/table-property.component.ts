@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeTableProperty, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCellAlignType } from '../../../../_models/hmi';
+import { TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCellAlignType, TableRangeType } from '../../../../_models/hmi';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { TableCustomizerComponent, ITableCustom } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
@@ -30,6 +30,7 @@ export class TablePropertyComponent implements OnInit {
     tableType = TableType;
     columnType = TableCellType;
     alignType = TableCellAlignType;
+    lastRangeType = TableRangeType;
 
     private _onDestroy = new Subject<void>();
 
@@ -39,9 +40,9 @@ export class TablePropertyComponent implements OnInit {
         }
 
     ngOnInit() {
-        if (!this.data.settings.property) {
-            this.data.settings.property = <GaugeTableProperty>{ id: null, type: this.tableType.data, options: DataTableComponent.DefaultOptions() };
-        }
+        Object.keys(this.lastRangeType).forEach(key => {
+            this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+        });
         this._reload();
     }
 

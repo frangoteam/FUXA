@@ -289,6 +289,7 @@
 
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
+    "table.property-date-last-range": "Date range",
     "table.property-type": "Type",
     "table.property-header": "Header",
     "table.property-header-height": "Height",
@@ -331,12 +332,16 @@
     "table.cell-column-type": "Column type",
     "table.cell-row-type": "Row type",
     "table.cell-ts-format": "Format (DD/MM/YYYY - HH:mm:ss)",
-    "table.cell-value-format": "Format (#.### = 0.123)",
+    "table.cell-value-format": "Format (0.000)",
     "table.cell-format": "Format",
     "table.cell-text": "Text",
     "table.cell-align-left": "Left",
     "table.cell-align-center": "Center",
     "table.cell-align-right": "Right",
+
+    "table.rangetype-last1h": "Last hour",
+    "table.rangetype-last1d": "Last day",
+    "table.rangetype-last3d": "Last 3 days",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",

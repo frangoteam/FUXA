@@ -281,6 +281,7 @@ export interface TableOptions {
     paginator?: { 
         show: boolean 
     },
+    lastRange?: TableRangeType,
     gridColor?: string,
     header?: { 
         show: boolean,
@@ -340,6 +341,12 @@ export enum TableCellAlignType {
     left = 'left',
     center = 'center',
     right = 'right',
+}
+
+export enum TableRangeType {
+    last1h = 'table.rangetype-last1h',
+    last1d = 'table.rangetype-last1d',
+    last3d = 'table.rangetype-last3d',
 }
 
 export class Variable {

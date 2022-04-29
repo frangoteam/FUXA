@@ -1,9 +1,11 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { Utils } from '../../../../_helpers/utils';
 
-import { GaugeTableProperty, TableOptions, TableColumn, TableRow, TableCellType, TableCell } from '../../../../_models/hmi';
+import { GaugeTableProperty, DaqQuery, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
+import { format } from 'fecha';
 
+declare const numeral: any;
 @Component({
     selector: 'app-data-table',
     templateUrl: './data-table.component.html',
@@ -15,14 +17,20 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatSort) sort: MatSort;
     @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
     @ViewChild(MatPaginator) paginator: MatPaginator;
+    @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
 
     id: string;
+    type: TableType;
     isEditor: boolean;
     displayedColumns = [];
     columnsStyle = {};
     dataSource = new MatTableDataSource([]);
+    tagsMap = {};
+    dateRowMap = {};
+    range = { from: Date.now(), to: Date.now() };
 
     tableOptions = DataTableComponent.DefaultOptions();
+    data = [];
 
     constructor() { }
 
@@ -33,6 +41,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.sort.disabled = this.type === TableType.data;
     }
 
     ngOnDestroy() {
@@ -42,21 +51,91 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    onRangeChanged(ev) {
+        if (this.isEditor) {
+            return;
+        }
+        if (ev) {
+            this.range.from = Date.now();
+            this.range.to = Date.now();
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (TableRangeConverter.TableRangeToHours(ev) * 60 * 60 * 1000));
+
+            let msg = new DaqQuery();
+            msg.event = ev;
+            msg.gid = this.id;
+            msg.sids = Object.keys(this.tagsMap);
+            msg.from = this.range.from;
+            msg.to = this.range.to;
+            this.onTimeRange.emit(msg);
+        }
+    }
+
     setOptions(options: TableOptions): void {
         this.tableOptions = { ...this.tableOptions, ...options };
         this.loadData();
+        this.onRangeChanged(TableRangeType.last1h);
     }
 
-    getCellSetting(cell: TableCell) {
+    addValue(variableId: string, dt: number, variableValue: string) {
+        if (this.tagsMap[variableId]) {
+            this.tagsMap[variableId].value = variableValue;
+            this.tagsMap[variableId].rows.forEach(rowIndex => {
+                this.dateRowMap[rowIndex] = dt * 1e3;
+            })
+        }
+    }
+
+    public setValues(values) {
+        let data = [];
+        data.push({});
+        this.dataSource.data = data;
+        // result.push([]);    // timestamp, index 0
+        // let xmap = {};
+        // for (var i = 0; i < values.length; i++) {
+        //     result.push([]);    // line
+        //     for (var x = 0; x < values[i].length; x++) {
+        //         let t = values[i][x].dt / 1e3;
+        //         if (!result[0][t]) {
+        //             result[0].push(t);
+        //             xmap[t] = {};
+        //         }
+        //         xmap[t][i] = values[i][x].value;
+        //     }
+        // }
+        // result[0].sort(function (a, b) { return a - b });
+        // for (var i = 0; i < result[0].length; i++) {
+        //     let t = result[0][i];
+        //     for (var x = 1; x < result.length; x++) {
+        //         if (xmap[t][x - 1] !== undefined) {
+        //             result[x].push(xmap[t][x - 1]);
+        //         } else {
+        //             result[x].push(null);
+        //         }
+        //     }
+        // }
+        // this.nguplot.setData(result);
+        // this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+    }
+
+    getCellValue(cell: TableCell, rowIndex: number, column: string) {
         if (cell) {
             if (cell.type === TableCellType.label) {
                 return cell.label || '';
             } else if (cell.type === TableCellType.timestamp) {
-                return cell.valueFormat ? cell.valueFormat : '';
+                if (this.isEditor) {
+                    return format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                } else if (this.dateRowMap[rowIndex]) {
+                    return format(new Date(this.dateRowMap[rowIndex]), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                }
             } else if (cell.type === TableCellType.variable) {
-                return (cell.variableId || '') + ((cell.valueFormat) ? ` (${cell.valueFormat})` : '');
+                if (this.isEditor) {
+                    return numeral('123.56').format(cell.valueFormat);
+                } else if (cell.variableId && this.tagsMap[cell.variableId]) {
+                    return numeral(this.tagsMap[cell.variableId].value).format(cell.valueFormat);
+                }
+                return '';
             } else if (cell.type === TableCellType.device) {
-                return (cell.variableId || '');
+                return (cell.label || '');
             }
         }
         return '';
@@ -69,21 +148,43 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tableOptions.columns.forEach(cn => {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
+            if (this.type === TableType.history) {
+                this.mapCellContent(cn, 0);
+            }
         })
         this.displayedColumns = columnIds;
 
         // rows
         let data = [];
-        this.tableOptions.rows.forEach(r => {
+        for (let i = 0; i < this.tableOptions.rows.length; i++) {
+            let r = this.tableOptions.rows[i];
             let row = {};
-            r.cells.forEach(c => {
-                if (c) {
-                    row[c.id] = c;
+            r.cells.forEach(cell => {
+                if (cell) {
+                    row[cell.id] = cell;
+                    this.mapCellContent(cell, i);
                 }
             });
             data.push(row);
-        });
-        this.dataSource.data = data;
+        }
+        if (this.type === TableType.data) {
+            this.dataSource.data = data;
+        }
+    }
+
+    private mapCellContent(cell: TableCell, rowIndex: number): void {
+        if (cell.type === TableCellType.variable) {
+            if (cell.variableId) {
+                if (!this.tagsMap[cell.variableId]) {
+                    this.tagsMap[cell.variableId] = <ITagMap>{ value: NaN, cells: [], rows: []};
+                }
+                this.tagsMap[cell.variableId].cells.push(cell);
+                this.tagsMap[cell.variableId].rows.push(rowIndex);
+            }
+        } else if (cell.type === TableCellType.timestamp) {
+
+        }
+        this.dateRowMap[rowIndex] = '';
     }
 
     public static DefaultOptions() {
@@ -91,6 +192,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             paginator: { 
                 show: false 
             },
+            lastRange: TableRangeType.last1d,
             gridColor: '#E0E0E0',
             header: { 
                 show: true,
@@ -105,9 +207,41 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 background: '#F9F9F9',
                 color: '#000000',
             },
-            columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.variable, 'Tags')],
+            columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
             rows: [],
         };
         return options;
     }
 }
+
+interface IDataValue {
+    value: string;
+    cell: TableCell;
+}
+
+interface ITagMap {
+    value: number;
+    cells: TableCell[];
+    rows: number[];
+    stringValue: string;
+}
+
+
+export class TableRangeConverter {
+    static TableRangeToHours (crt: TableRangeType) {
+        let types = Object.keys(TableRangeType);
+        if (crt === types[0]) {         // TableRangeType.last8h) {
+            return 8;
+        } else if (crt === types[1]) {  // TableRangeType.last1d) {
+            return 24;
+        } else if (crt === types[2]) {  // TableRangeType.last3d) {
+            return 24 * 3; 
+        }
+        return 0;
+    }
+}
+
+// interface IRowDateTime {
+//     rowsIndex: number[];
+//     lastDateTime: string;
+// }

@@ -7,7 +7,7 @@ import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
+import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableRangeType } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -54,6 +54,7 @@ export class GaugesManager {
 
     mapChart = {};
     mapGauges = {};
+    mapTable = {};
 
     // list of gauges tags to speed up the check
     gaugesTags = [];
@@ -88,6 +89,9 @@ export class GaugesManager {
             try {
                 if (this.mapChart[message.gid]) {
                     let gauge: ChartUplotComponent = this.mapChart[message.gid];
+                    gauge.setValues(message.values);
+                } else if (this.mapTable[message.gid]) {
+                    let gauge: DataTableComponent = this.mapTable[message.gid];
                     gauge.setValues(message.values);
                 }
             } catch (err) {
@@ -304,6 +308,9 @@ export class GaugesManager {
                             if (this.mapGauges[g.id]) {
                                 delete this.mapGauges[g.id];
                             }
+                            if (this.mapTable[g.id]) {
+                                delete this.mapTable[g.id];
+                            }
                         } catch (err) {
                             console.error(err);
                         }
@@ -517,6 +524,15 @@ export class GaugesManager {
                             HtmlSwitchComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
                         }
                     });
+                    break;
+                } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
+                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                            if (k === ga.id && this.mapGauges[k]) {
+                                HtmlTableComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                            }
+                        });
+                    }
                     break;
                 } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
                     GaugesManager.Gauges[i]['processValue'](ga, svgele, sig, gaugeStatus);
@@ -764,15 +780,14 @@ export class GaugesManager {
             let gauge = HtmlTableComponent.initElement(ga, res, ref, isview);
             if (gauge) {
                 this.setTablePropety(gauge, ga.property);
-                // gauge.onReload.subscribe((query: DaqQuery) => {
-                //     this.hmiService.getDaqValues(query).subscribe(result => {
-                //         gauge.setValues(query.sids, result);
-                //     }, err => {
-                //         gauge.setValues(query.sids, null);
-                //         console.error('get DAQ values err: ' + err);
-                //     });
-                // });
+                this.mapTable[ga.id] = gauge;
+                gauge.onTimeRange.subscribe(data => {
+                    this.hmiService.queryDaqValues(data);
+                });
                 this.mapGauges[ga.id] = gauge;
+                if (isview) {
+                    gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1d));
+                }                
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
