@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { initDomAdapter } from '@angular/platform-browser/src/browser';
 import { TableType, TableColumn, TableRow, TableCell, TableCellType } from '../../../../_models/hmi';
+import { map, filter } from 'rxjs/operators';
 
 import { Device } from '../../../../_models/device';
 import { ProjectService } from '../../../../_services/project.service';
@@ -161,6 +162,20 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
     }
 
     onOkClick(): void {
+        this.data.rows.forEach(row => {
+            // check missing cell, happens if you add a column and do not set it in the rows
+            // or remove cells of deleted columns
+            if (row.cells.length < this.data.columns.length) {
+                for (let i = row.cells.length; i < this.data.columns.length; i++) {
+                    row.cells.push(new TableCell(this.data.columns[i].id, TableCellType.label, ''));
+                }
+            } else if (row.cells.length > this.data.columns.length) {
+                let columnIds = this.data.columns.map(column => { return column.id });
+                let cells = row.cells.filter(cell => columnIds.indexOf(cell.id) >= 0);
+                row.cells = cells;
+            }
+        });
+
         this.dialogRef.close(this.data);
     }
 }
@@ -186,6 +201,7 @@ export class DialogTableCell {
     }
 
     onOkClick(): void {
+
         this.dialogRef.close(this.data);
     }
 

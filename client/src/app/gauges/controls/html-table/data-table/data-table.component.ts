@@ -26,7 +26,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     columnsStyle = {};
     dataSource = new MatTableDataSource([]);
     tagsMap = {};
-    dateRowMap = {};
+    timestampMap = {};
     range = { from: Date.now(), to: Date.now() };
 
     tableOptions = DataTableComponent.DefaultOptions();
@@ -35,7 +35,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor() { }
 
     ngOnInit() {
-        this.dataSource.data = [];//{ name: 'pippo', adr: '233'}, { name: 'ciccio', adr: 2344 }, { name: 'pippo', adr: 233 }, { name: 'pippo', adr: 33}];
+        this.dataSource.data = this.data;
     }
 
     ngAfterViewInit() {
@@ -79,16 +79,24 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     addValue(variableId: string, dt: number, variableValue: string) {
         if (this.tagsMap[variableId]) {
             this.tagsMap[variableId].value = variableValue;
-            this.tagsMap[variableId].rows.forEach(rowIndex => {
-                this.dateRowMap[rowIndex] = dt * 1e3;
-            })
+            this.tagsMap[variableId].cells.forEach((cell: TableCellData) => {
+                cell.stringValue = numeral(this.tagsMap[variableId].value).format(cell.valueFormat);
+            });
+            // update timestamp of all timestamp cells
+            this.tagsMap[variableId].rows.forEach((rowIndex: number) => {
+                if (this.timestampMap[rowIndex]) {
+                    this.timestampMap[rowIndex].forEach((cell: TableCellData) => {
+                        cell.stringValue = format(new Date(dt * 1e3), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                    });
+                }
+            });
         }
     }
 
     public setValues(values) {
         let data = [];
         data.push({});
-        this.dataSource.data = data;
+        // this.dataSource.data = data;
         // result.push([]);    // timestamp, index 0
         // let xmap = {};
         // for (var i = 0; i < values.length; i++) {
@@ -117,30 +125,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
     }
 
-    getCellValue(cell: TableCell, rowIndex: number, column: string) {
-        if (cell) {
-            if (cell.type === TableCellType.label) {
-                return cell.label || '';
-            } else if (cell.type === TableCellType.timestamp) {
-                if (this.isEditor) {
-                    return format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
-                } else if (this.dateRowMap[rowIndex]) {
-                    return format(new Date(this.dateRowMap[rowIndex]), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
-                }
-            } else if (cell.type === TableCellType.variable) {
-                if (this.isEditor) {
-                    return numeral('123.56').format(cell.valueFormat);
-                } else if (cell.variableId && this.tagsMap[cell.variableId]) {
-                    return numeral(this.tagsMap[cell.variableId].value).format(cell.valueFormat);
-                }
-                return '';
-            } else if (cell.type === TableCellType.device) {
-                return (cell.label || '');
-            }
-        }
-        return '';
-    }
-
     private loadData() {
         // columns
         let columnIds = [];
@@ -149,42 +133,63 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
             if (this.type === TableType.history) {
-                this.mapCellContent(cn, 0);
+                // this.mapCellContent(cn, 0);
             }
         })
         this.displayedColumns = columnIds;
 
         // rows
-        let data = [];
+        this.data = [];
         for (let i = 0; i < this.tableOptions.rows.length; i++) {
             let r = this.tableOptions.rows[i];
             let row = {};
             r.cells.forEach(cell => {
                 if (cell) {
-                    row[cell.id] = cell;
-                    this.mapCellContent(cell, i);
+                    row[cell.id] = <TableCellData> {stringValue: '', rowIndex: i, ...cell};
+                    this.mapCellContent(row[cell.id]);
                 }
             });
-            data.push(row);
+            this.data.push(row);
         }
         if (this.type === TableType.data) {
-            this.dataSource.data = data;
+            this.dataSource.data = this.data;
         }
     }
 
-    private mapCellContent(cell: TableCell, rowIndex: number): void {
+    private mapCellContent(cell: TableCellData): void {
+        cell.stringValue = '';
         if (cell.type === TableCellType.variable) {
             if (cell.variableId) {
-                if (!this.tagsMap[cell.variableId]) {
-                    this.tagsMap[cell.variableId] = <ITagMap>{ value: NaN, cells: [], rows: []};
-                }
-                this.tagsMap[cell.variableId].cells.push(cell);
-                this.tagsMap[cell.variableId].rows.push(rowIndex);
+                if (this.isEditor) {
+                    cell.stringValue = numeral('123.56').format(cell.valueFormat);
+                }                
+                this.addVariableToMap(cell);
             }
         } else if (cell.type === TableCellType.timestamp) {
-
+            if (this.isEditor) {
+                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');;
+            }
+            this.addTimestampToMap(cell);
+        } else if (cell.type === TableCellType.label) {
+            cell.stringValue = cell.label;
+        } else if (cell.type === TableCellType.device) {
+            cell.stringValue = cell.label;
         }
-        this.dateRowMap[rowIndex] = '';
+    }
+
+    private addVariableToMap(cell: TableCellData) {
+        if (!this.tagsMap[cell.variableId]) {
+            this.tagsMap[cell.variableId] = <ITagMap>{ value: NaN, cells: [], rows: []};
+        }
+        this.tagsMap[cell.variableId].cells.push(cell);
+        this.tagsMap[cell.variableId].rows.push(cell.rowIndex);
+    }
+
+    private addTimestampToMap(cell: TableCellData) {
+        if (!this.timestampMap[cell.rowIndex]) {
+            this.timestampMap[cell.rowIndex] = [];
+        }
+        this.timestampMap[cell.rowIndex].push(cell);
     }
 
     public static DefaultOptions() {
@@ -214,16 +219,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 }
 
-interface IDataValue {
-    value: string;
-    cell: TableCell;
+export class TableCellData extends TableCell {
+    rowIndex: number;
+    stringValue: string;
 }
 
 interface ITagMap {
     value: number;
-    cells: TableCell[];
+    cells: TableCellData[];
     rows: number[];
-    stringValue: string;
 }
 
 

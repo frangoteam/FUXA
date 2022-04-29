@@ -6,7 +6,7 @@
         </th>
         <td *matCellDef="let element; index as i" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
              [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell"> 
-            {{getCellValue(element[column], i, column)}} 
+            {{element[column].stringValue}} 
         </td>
     </ng-container>
 
