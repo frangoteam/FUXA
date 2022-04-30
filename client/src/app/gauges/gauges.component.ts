@@ -786,7 +786,7 @@ export class GaugesManager {
                 });
                 this.mapGauges[ga.id] = gauge;
                 if (isview) {
-                    gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1d));
+                    gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1h));
                 }                
             }
             return gauge;

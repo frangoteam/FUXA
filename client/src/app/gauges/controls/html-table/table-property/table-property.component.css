@@ -36,7 +36,7 @@
 
 .section-inline-toggle {
     display: inline-block;
-    width: 50px;
+    width: 60px;
     text-align: center;
 }
 
@@ -46,6 +46,7 @@
 
 .section-inline-toggle-ext span {
     width: 85px;
+    text-align: left;
 }
 
 .section-inline-toggle-ext mat-slide-toggle {

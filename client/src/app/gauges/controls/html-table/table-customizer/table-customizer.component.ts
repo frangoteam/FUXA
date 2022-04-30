@@ -217,6 +217,13 @@ export class DialogTableCell {
             } else {
                 this.data.cell.label = null;
             }
+        } else if (this.data.table === TableType.history) {
+            if (event.variableRaw) {
+                if (this.data.cell.type === TableCellType.device) {
+                    let device = this.projectService.getDeviceFromTagId(event.variableId);
+                    this.data.cell['exname'] = device ? device.name : '';
+                }
+            }
         }
     }
 }

@@ -281,6 +281,9 @@ export interface TableOptions {
     paginator?: { 
         show: boolean 
     },
+    filter?: { 
+        show: boolean 
+    },    
     lastRange?: TableRangeType,
     gridColor?: string,
     header?: { 
@@ -325,6 +328,7 @@ export class TableCell {
 export class TableColumn extends TableCell {
     align: TableCellAlignType = TableCellAlignType.left;
     width = 100;
+    exname: string;
     constructor(name: string, type?: TableCellType, label?: string) {
         super(name, type, label);
     }

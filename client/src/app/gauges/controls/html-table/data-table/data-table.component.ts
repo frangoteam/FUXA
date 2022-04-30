@@ -27,8 +27,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     dataSource = new MatTableDataSource([]);
     tagsMap = {};
     timestampMap = {};
+    tagsColumnMap = {};
     range = { from: Date.now(), to: Date.now() };
-
+    tableHistoryType = TableType.history;
     tableOptions = DataTableComponent.DefaultOptions();
     data = [];
 
@@ -39,9 +40,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
         this.sort.disabled = this.type === TableType.data;
+        this.bindTableControls();
     }
 
     ngOnDestroy() {
@@ -63,7 +63,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             let msg = new DaqQuery();
             msg.event = ev;
             msg.gid = this.id;
-            msg.sids = Object.keys(this.tagsMap);
+            msg.sids = Object.keys(this.tagsColumnMap);
             msg.from = this.range.from;
             msg.to = this.range.to;
             this.onTimeRange.emit(msg);
@@ -94,35 +94,72 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public setValues(values) {
+        // merge the data to have rows with 0:timestamp, n:variable values
         let data = [];
-        data.push({});
-        // this.dataSource.data = data;
-        // result.push([]);    // timestamp, index 0
-        // let xmap = {};
-        // for (var i = 0; i < values.length; i++) {
-        //     result.push([]);    // line
-        //     for (var x = 0; x < values[i].length; x++) {
-        //         let t = values[i][x].dt / 1e3;
-        //         if (!result[0][t]) {
-        //             result[0].push(t);
-        //             xmap[t] = {};
-        //         }
-        //         xmap[t][i] = values[i][x].value;
-        //     }
-        // }
-        // result[0].sort(function (a, b) { return a - b });
-        // for (var i = 0; i < result[0].length; i++) {
-        //     let t = result[0][i];
-        //     for (var x = 1; x < result.length; x++) {
-        //         if (xmap[t][x - 1] !== undefined) {
-        //             result[x].push(xmap[t][x - 1]);
-        //         } else {
-        //             result[x].push(null);
-        //         }
-        //     }
-        // }
+        // data.push({});
+        data.push([]);    // timestamp, index 0
+        let xmap = {};
+        for (var i = 0; i < values.length; i++) {
+            data.push([]);    // line
+            for (var x = 0; x < values[i].length; x++) {
+                let t = values[i][x].dt;
+                if (!data[0][t]) {
+                    data[0].push(t);
+                    xmap[t] = {};
+                }
+                xmap[t][i] = values[i][x].value;
+            }
+        }
+        data[0].sort(function (a, b) { return b - a });
+        for (var i = 0; i < data[0].length; i++) {
+            let t = data[0][i];
+            for (var x = 1; x < data.length; x++) {
+                if (xmap[t][x - 1] !== undefined) {
+                    data[x].push(xmap[t][x - 1]);
+                } else {
+                    data[x].push(null);
+                }
+            }
+        }
+        // create the table data
+        let dataTable = [];
+        for (let i = 0; i < data[0].length; i++) {
+            // create the row
+            let row = {};
+            for (let x = 0; x < this.displayedColumns.length; x++) {
+                let column = <TableColumn>this.columnsStyle[this.displayedColumns[x]];
+                row[column.id] = <TableCellData> { stringValue: '' };
+                if (column.type === TableCellType.timestamp) {
+                    row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                } else if (column.type === TableCellType.variable) {
+                    row[column.id].stringValue = (data[x][i]) ? numeral(data[x][i]).format(column.valueFormat) : '';
+                } else if (column.type === TableCellType.device) {
+                    row[column.id].stringValue = column.exname;
+                }
+            }
+            dataTable.push(row);
+        }
+
+
+
         // this.nguplot.setData(result);
         // this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+        this.dataSource.data = dataTable;
+        this.bindTableControls();
+
+    }
+
+    applyFilter(filterValue: string) {
+        filterValue = filterValue.trim(); // Remove whitespace
+        filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+        this.dataSource.filter = filterValue;
+    }
+    
+    private bindTableControls(): void {
+        if (this.type === TableType.history && this.tableOptions.paginator.show) {
+            this.dataSource.paginator = this.paginator;
+        }
+        this.dataSource.sort = this.sort;
     }
 
     private loadData() {
@@ -133,27 +170,29 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
             if (this.type === TableType.history) {
-                // this.mapCellContent(cn, 0);
+                if (cn.variableId) {
+                    this.addColumnToMap(cn);
+                }
             }
         })
         this.displayedColumns = columnIds;
 
-        // rows
-        this.data = [];
-        for (let i = 0; i < this.tableOptions.rows.length; i++) {
-            let r = this.tableOptions.rows[i];
-            let row = {};
-            r.cells.forEach(cell => {
-                if (cell) {
-                    row[cell.id] = <TableCellData> {stringValue: '', rowIndex: i, ...cell};
-                    this.mapCellContent(row[cell.id]);
-                }
-            });
-            this.data.push(row);
-        }
         if (this.type === TableType.data) {
-            this.dataSource.data = this.data;
+            // rows
+            this.data = [];
+            for (let i = 0; i < this.tableOptions.rows.length; i++) {
+                let r = this.tableOptions.rows[i];
+                let row = {};
+                r.cells.forEach(cell => {
+                    if (cell) {
+                        row[cell.id] = <TableCellData> {stringValue: '', rowIndex: i, ...cell};
+                        this.mapCellContent(row[cell.id]);
+                    }
+                });
+                this.data.push(row);
+            }
         }
+        this.dataSource.data = this.data;
     }
 
     private mapCellContent(cell: TableCellData): void {
@@ -192,12 +231,22 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.timestampMap[cell.rowIndex].push(cell);
     }
 
+    private addColumnToMap(cell: TableColumn) {
+        if (!this.tagsColumnMap[cell.variableId]) {
+            this.tagsColumnMap[cell.variableId] = [];
+        }
+        this.tagsColumnMap[cell.variableId].push(cell);
+    }
+
     public static DefaultOptions() {
         let options = <TableOptions> { 
             paginator: { 
                 show: false 
             },
-            lastRange: TableRangeType.last1d,
+            filter: { 
+                show: false 
+            },
+            lastRange: TableRangeType.last1h,
             gridColor: '#E0E0E0',
             header: { 
                 show: true,
@@ -234,8 +283,8 @@ interface ITagMap {
 export class TableRangeConverter {
     static TableRangeToHours (crt: TableRangeType) {
         let types = Object.keys(TableRangeType);
-        if (crt === types[0]) {         // TableRangeType.last8h) {
-            return 8;
+        if (crt === types[0]) {         // TableRangeType.last1h) {
+            return 1;
         } else if (crt === types[1]) {  // TableRangeType.last1d) {
             return 24;
         } else if (crt === types[2]) {  // TableRangeType.last3d) {

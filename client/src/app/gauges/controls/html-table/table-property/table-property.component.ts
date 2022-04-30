@@ -54,7 +54,7 @@ export class TablePropertyComponent implements OnInit {
     private _reload() {
         if (this.data.settings.property) {
             this.tableTypeCtrl.setValue(this.data.settings.property.type);
-            this.options = this.data.settings.property.options;
+            Object.assign(this.options, DataTableComponent.DefaultOptions(), this.data.settings.property.options);
         } else {
             this.ngOnInit();
         }

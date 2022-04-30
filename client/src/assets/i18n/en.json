@@ -302,7 +302,8 @@
     "table.property-row-color": "Color",
     "table.property-row-fontSize": "Font size",    
     "table.property-layout": "Layout",
-    "table.property-paginator": "Show paginator",
+    "table.property-filter": "Filter",
+    "table.property-paginator": "Paginator",
     "table.property-gridline": "Show grid",
     "table.property-type-data": "Data table",
     "table.property-type-history": "History table",
@@ -339,6 +340,7 @@
     "table.cell-align-center": "Center",
     "table.cell-align-right": "Right",
 
+    "table.history-filter": "Filter",
     "table.rangetype-last1h": "Last hour",
     "table.rangetype-last1d": "Last day",
     "table.rangetype-last3d": "Last 3 days",
