@@ -62,6 +62,15 @@ function MyScriptsModule(_events, _logger) {
         }
     }
 
+    this.runScriptWithoutParameter = function (_script) {
+        if (scriptsModule) {
+            if (!_script.name) {
+                _script = Object.values(scriptsMap).find(s => s.id === _script.id);
+            }
+            scriptsModule[_script.name]();
+        }
+    }
+
     var _scriptsToModule = function (_scripts, _includes) {
         let result = { module: null, messages: [], scriptsMap: {} };
         try {

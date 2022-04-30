@@ -854,6 +854,8 @@
     "scripts.list-name": "Name",
     "scripts.list-type": "Type",
     "scripts.list-params": "Parameters",
+    "scripts.list-scheduling": "Scheduling/Interval",
+    "scripts.list-options": "Script options",
     "script.property-title": "Script",
     "script.property-systems": "System functions",
     "script.property-test": "Test",
@@ -874,6 +876,8 @@
     "script.sys-fnc-settag-tooltip": "System function to set Tag value: $setTag (TagID as string, value as string or number)",
     "script.sys-fnc-gettag-text": "$getTag (TagID)",
     "script.sys-fnc-gettag-tooltip": "System function to get Tag value: $getTag (TagID as string) return value as string or number",
+    "script.scheduling-title": "Script scheduling",
+    "script.scheduling-interval": "Interval in seconds",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
@@ -899,6 +903,13 @@
     "texts.list-id": "ID",
     "texts.list-group": "Group",
     "texts.list-value": "Text",
+
+    "gui.range-number-min": "Min",
+    "gui.range-number-max": "Max",
+    "gui.range-number-boolean": "Mask value",
+    "gui.range-number-true": "True [1-1]",
+    "gui.range-number-false": "False [0-0]",
+    "gui.range-number-switcher": "Range as number or boolean",
 
     "dlg.bitmask-title": "Bitmask",
 

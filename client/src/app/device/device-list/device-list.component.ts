@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
@@ -19,7 +19,8 @@ import { Utils } from '../../_helpers/utils';
 @Component({
     selector: 'app-device-list',
     templateUrl: './device-list.component.html',
-    styleUrls: ['./device-list.component.css']
+    styleUrls: ['./device-list.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class DeviceListComponent implements OnInit {
@@ -152,6 +153,7 @@ export class DeviceListComponent implements OnInit {
     private clearTags() {
         this.deviceSelected.tags = {};
         this.bindToTable(this.deviceSelected.tags);
+        this.projectService.setDeviceTags(this.deviceSelected);
     }
 
     /** Whether the number of selected elements matches the total number of rows. */

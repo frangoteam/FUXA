@@ -43,6 +43,7 @@ import { NotificationListComponent } from './notifications/notification-list/not
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
 import { ScriptEditorComponent, DialogScriptParam } from './scripts/script-editor/script-editor.component';
+import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent, DeviceTagDialog } from './device/device.component';
@@ -85,6 +86,7 @@ import { NgxSwitchComponent } from './gui-helpers/ngx-switch/ngx-switch.componen
 import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DaterangeDialogComponent } from './gui-helpers/daterange-dialog/daterange-dialog.component';
 import { BitmaskComponent } from './gui-helpers/bitmask/bitmask.component';
+import { RangeNumberComponent } from './gui-helpers/range-number/range-number.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -241,6 +243,7 @@ export function createTranslateLoader(http: HttpClient) {
         NotificationPropertyComponent,
         ScriptListComponent,
         ScriptEditorComponent,
+        ScriptSchedulingComponent,
         DialogScriptParam,
         TextListComponent,
         LogsViewComponent,
@@ -265,7 +268,8 @@ export function createTranslateLoader(http: HttpClient) {
         TablePropertyComponent,
         TableCustomizerComponent,
         DialogTableCell,
-        DataTableComponent
+        DataTableComponent,
+        RangeNumberComponent
    ],
     imports: [
         BrowserModule,
@@ -367,6 +371,7 @@ export function createTranslateLoader(http: HttpClient) {
         NotificationPropertyComponent,
         ScriptListComponent,
         ScriptEditorComponent,
+        ScriptSchedulingComponent,
         TextListComponent,
         DialogChartLine,
         DialogGraphSource,
@@ -383,7 +388,8 @@ export function createTranslateLoader(http: HttpClient) {
         BitmaskComponent,
         DataTableComponent,
         TableCustomizerComponent,
-        DialogTableCell
+        DialogTableCell,
+        RangeNumberComponent
     ],
     bootstrap: [AppComponent]
 })

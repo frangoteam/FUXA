@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus, GaugePropertyColor } from '../../_models/hmi';
+import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus, GaugePropertyColor, GaugeAction } from '../../_models/hmi';
 
 import { Utils } from '../../_helpers/utils';
 
@@ -104,17 +104,19 @@ export class GaugeBaseComponent implements OnInit {
         gaugeStatus.actionRef = actionRef;
     }
 
-    static checkActionBlink(element: any, type: any, gaugeStatus: GaugeStatus, toEnable: boolean, options: any, dom: boolean, propertyColor?:GaugePropertyColor) {
+    static checkActionBlink(element: any, act: GaugeAction, gaugeStatus: GaugeStatus, toEnable: boolean, dom: boolean, propertyColor?:GaugePropertyColor) {
         if (!gaugeStatus.actionRef) {
-            gaugeStatus.actionRef = new GaugeActionStatus(type);
+            gaugeStatus.actionRef = new GaugeActionStatus(act.type);
         }
-        gaugeStatus.actionRef.type = type;
-        if (toEnable && options.interval && !gaugeStatus.actionRef.timer) {
+        gaugeStatus.actionRef.type = act.type;
+        if (toEnable) {
+            GaugeBaseComponent.clearAnimationTimer(gaugeStatus.actionRef);
             var blinkStatus = false;
-            // save colors to restore on break
+            // save action (dummy) id and colors to restore on break
             try {
-                if (dom) gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color };
-                else gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke') };
+                const actId = GaugeBaseComponent.getBlinkActionId(act);
+                if (dom) gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };
+                else gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };
             } catch (err) {
                 console.error(err);
             }
@@ -123,33 +125,33 @@ export class GaugeBaseComponent implements OnInit {
                 try {
                     if (blinkStatus) {
                         if (dom) {
-                            element.style.backgroundColor = options.fillA;
-                            element.style.color = options.strokeA;
+                            element.style.backgroundColor = act.options.fillA;
+                            element.style.color = act.options.strokeA;
                         } else {
-                            element.node.setAttribute('fill', options.fillA);
-                            element.node.setAttribute('stroke', options.strokeA);
+                            element.node.setAttribute('fill', act.options.fillA);
+                            element.node.setAttribute('stroke', act.options.strokeA);
                         }
                     } else {
                         if (dom) {
-                            element.style.backgroundColor = options.fillB;
-                            element.style.color = options.strokeB;
+                            element.style.backgroundColor = act.options.fillB;
+                            element.style.color = act.options.strokeB;
                         } else {
-                            element.node.setAttribute('fill', options.fillB);
-                            element.node.setAttribute('stroke', options.strokeB);
+                            element.node.setAttribute('fill', act.options.fillB);
+                            element.node.setAttribute('stroke', act.options.strokeB);
                         }
                     }
                 } catch (err) {
                     console.error(err);
                 }
-            }, options.interval);
+            }, act.options.interval);
         } else if (!toEnable) {
             try {
-                if (gaugeStatus.actionRef.timer) {
-                    clearInterval(gaugeStatus.actionRef.timer);
-                    gaugeStatus.actionRef.timer = null;
-                }
                 // restore gauge
-                if (gaugeStatus.actionRef.spool) {
+                if (!gaugeStatus.actionRef.spool || gaugeStatus.actionRef.spool.actId === GaugeBaseComponent.getBlinkActionId(act)) {
+                    if (gaugeStatus.actionRef.timer) {
+                        clearInterval(gaugeStatus.actionRef.timer);
+                        gaugeStatus.actionRef.timer = null;
+                    }
                     // check to overwrite with property color
                     if (propertyColor) {
                         if (propertyColor.fill) gaugeStatus.actionRef.spool.bk = propertyColor.fill;
@@ -178,8 +180,12 @@ export class GaugeBaseComponent implements OnInit {
 
     static checkBitmask(bitmask: number, value: number): number {
         if (bitmask) {
-            return value & bitmask;
+            return (value & bitmask) ? 1 : 0;
         }
         return value;
+    }
+
+    static getBlinkActionId(act: GaugeAction) {
+        return `${act.variableId}-${act.range.max}-${act.range.min}`;
     }
 }

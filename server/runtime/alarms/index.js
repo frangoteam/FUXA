@@ -279,7 +279,8 @@ function AlarmsManager(_runtime) {
                 var tag = devices.getDeviceValue(alarms[alrkey]['variableSource'], alrkey);
                 if (tag !== null) {
                     groupalarms.forEach(alr => {
-                        if (alr.check(time, tag.ts, Number(tag.value))) {
+                        var value = _checkBitmask(alr, tag.value);
+                        if (alr.check(time, tag.ts, value)) {
                             changed.push(alr);
                         }
                     });
@@ -301,6 +302,13 @@ function AlarmsManager(_runtime) {
                 resolve(false);
             }
         });
+    }
+
+    var _checkBitmask = function(alarm, value) {
+        if (alarm.tagproperty.bitmask) {
+            return (value & alarm.tagproperty.bitmask) ? 1 : 0;
+        }
+        return Number(value);
     }
 
     /**

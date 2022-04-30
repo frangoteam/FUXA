@@ -80,7 +80,7 @@ export class FlexVariableComponent implements OnInit {
 
     getVariableMask(): string {
         if (this.bitmask) {
-            return this.bitmask.toString(16);
+            return `bit ${Utils.findBitPosition(this.bitmask).toString()}`;// this.bitmask.toString(16);
         }
         return '';
     }

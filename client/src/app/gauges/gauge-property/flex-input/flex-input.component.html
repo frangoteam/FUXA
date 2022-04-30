@@ -2,14 +2,7 @@
     <div *ngFor="let item of ranges; index as i" class="item">
         <div *ngIf="isWithRange()">
             <div *ngIf="slideView" class="item-range">
-                <div class="my-form-field">
-                    <span>{{'gauges.property-input-min' | translate}}</span>
-                    <input numberOnly [(ngModel)]="item.min" type="text" style="width: 80px">
-                </div>
-                <div class="my-form-field" style="padding-left: 20px;">
-                    <span>{{'gauges.property-input-max' | translate}}</span>
-                    <input numberOnly [(ngModel)]="item.max" type="text" style="width: 80px">
-                </div>
+                <range-number [range]="item"></range-number>
             </div>
             <div class="item-range input-slider" *ngIf="!slideView">
                 <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>

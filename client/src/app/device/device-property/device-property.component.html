@@ -93,10 +93,6 @@
                         <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
-                        <span>{{'device.property-port' | translate}}</span>
-                        <input numberOnly [(ngModel)]="data.device.property.port" style="width: 80px" type="text">
-                    </div>
-                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 10px;">
                         <span>{{'device.property-rack' | translate}}</span>
                         <input numberOnly [(ngModel)]="data.device.property.rack" style="width: 80px" type="text">
                     </div>

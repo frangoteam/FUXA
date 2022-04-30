@@ -1,0 +1,27 @@
+<div class="range-container">
+    <div *ngIf="isNumber" class="range-type">
+        <div class="my-form-field">
+            <span>{{'gui.range-number-min' | translate}}</span>
+            <input numberOnly [(ngModel)]="range.min" type="number" style="width: 70px">
+        </div>
+        <div class="my-form-field" style="padding-left: 10px;">
+            <span>{{'gui.range-number-max' | translate}}</span>
+            <input numberOnly [(ngModel)]="range.max" type="number" style="width: 70px">
+        </div>
+    </div>
+    <div *ngIf="!isNumber" class="range-type">
+        <div class="my-form-field boolean-selection">
+            <span>{{'gui.range-number-boolean' | translate}}</span>
+            <mat-select [(value)]="booleanValue" (selectionChange)="onBooleanChanged()">
+                <mat-option [value]="1">{{'gui.range-number-true' | translate}}</mat-option>
+                <mat-option [value]="0">{{'gui.range-number-false' | translate}}</mat-option>
+            </mat-select>
+        </div>
+    </div>
+    <div class="range-type-switch">
+        <button mat-icon-button (click)="isNumber = !isNumber; onTypeChanged()" matTooltip="{{'gui.range-number-switcher' | translate}}">
+            <span *ngIf="!isNumber">[ - ]</span>
+            <span *ngIf="isNumber">1/0</span>
+        </button>
+    </div>
+</div>

@@ -27,12 +27,31 @@
             <!-- Parameter Column -->
             <ng-container matColumnDef="params">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-params' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.parameters}} </mat-cell>
-            </ng-container>            
+                <mat-cell *matCellDef="let element"> {{getParameters(element)}} </mat-cell>
+            </ng-container>
+            <!-- Parameter Scheduling -->
+            <ng-container matColumnDef="scheduling">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-scheduling' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getScheduling(element)}} </mat-cell>
+            </ng-container>
             <!-- Type Column -->
             <ng-container matColumnDef="type">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-type' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
+            </ng-container>
+
+            <!-- Button edit options row -->
+            <ng-container matColumnDef="options">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <!-- <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" (click)="$event.stopPropagation();editOptions(element)" class="options" -->
+                    <button mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'scripts.list-options' | translate}}">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <!-- <mat-menu #optionsgMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="editOptions(element)" style="font-size: 14px;">{{'device.list-options' | translate}}</button>
+                    </mat-menu>-->
+                </mat-cell>
             </ng-container>
 
             <!-- Button remove Column -->

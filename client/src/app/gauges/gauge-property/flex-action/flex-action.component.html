@@ -4,19 +4,9 @@
     </flex-variable>
     <div class="action-content">
         <div *ngIf="slideView" class="item-range">
-            <div class="my-form-field">
-                <span>{{'gauges.property-input-min' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.range.min" type="text" style="width: 80px">
-            </div>
-            <div class="my-form-field" style="padding-left: 20px;">
-                <span>{{'gauges.property-input-max' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.range.max" type="text" style="width: 80px">
-            </div>
+            <range-number [range]="item.range"></range-number>
         </div>
-        <!-- <div class="item-range input-slider" *ngIf="!slideView">
-            <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
-        </div> -->
-        <div class="my-form-field" style="width: 300px;">
+        <div class="my-form-field" style="width: 278px;">
             <span>{{'gauges.property-action-type' | translate}}</span>
             <mat-select [(value)]="item.type" (selectionChange)="onCheckActionType(item.type, item)">
                 <mat-option *ngFor="let ev of actionsSupported | enumToArray" [value]="ev.key">

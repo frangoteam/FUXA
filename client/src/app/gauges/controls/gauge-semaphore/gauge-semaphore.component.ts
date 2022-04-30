@@ -107,7 +107,7 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= value && act.range.max >= value);
-            this.checkActionBlink(element, act.type, gaugeStatus, inRange, act.options, false);
+            this.checkActionBlink(element, act, gaugeStatus, inRange, false);
         }
     }
 }
