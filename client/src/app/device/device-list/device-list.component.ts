@@ -153,6 +153,7 @@ export class DeviceListComponent implements OnInit {
     private clearTags() {
         this.deviceSelected.tags = {};
         this.bindToTable(this.deviceSelected.tags);
+        this.projectService.setDeviceTags(this.deviceSelected);
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
