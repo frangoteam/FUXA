@@ -41,6 +41,33 @@
     background-color: transparent;
 }
 
+.moka-toolbar-editor {
+    display: inline-block;
+    margin-left:5px;
+    border: 0px;
+    height: 28px;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 20px;
+    box-shadow: 1px 1px 3px -1px #888 !important;
+    min-width: 40px;
+}
+.moka-toolbar-select {
+    width: 100px;
+    line-height: 28px;
+    padding-left: 5px;
+}
+
+.moka-toolbar-button {
+    width: 40px;
+    padding: unset;
+}
+
+.table-toolbar .date-range {
+    float: left;
+    max-height: 42px;
+}
+
 ::ng-deep .data-table-paginator .mat-paginator-container {
     min-height: unset;
     height: 42px;

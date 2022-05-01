@@ -4,6 +4,30 @@
         <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" 
                 style="width: 250px;" type="text" [style.backgroundColor]="tableOptions.header.background" [style.color]="tableOptions.row.color" >
     </div>
+    <div *ngIf="tableOptions.daterange.show" class="date-range">
+        <div *ngIf="!isEditor" >
+            <mat-select class="moka-toolbar-editor moka-toolbar-select" [(value)]="tableOptions.lastRange" [style.color]="tableOptions.row.color" 
+                [style.backgroundColor]="tableOptions.row.background" panelClass="my-select-panel-class" (selectionChange)="onRangeChanged($event.source.value)">
+                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key" [style.color]="tableOptions.row.color" 
+                    [style.backgroundColor]="tableOptions.row.background">
+                    {{ ev.value }}
+                </mat-option>
+            </mat-select>
+            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background" 
+                (click)="onDateRange()">
+            <mat-icon aria-label="time range">access_time</mat-icon>
+        </button>            
+        </div>
+        <div *ngIf="isEditor" >
+            <button class="moka-toolbar-editor moka-toolbar-select" [style.color]="tableOptions.row.color" [style.background-color]="tableOptions.row.background">
+            </button>
+            <button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background" 
+                (click)="onDateRange()">
+                <mat-icon aria-label="time range">access_time</mat-icon>
+            </button>
+        </div>
+
+    </div>
     <mat-paginator *ngIf="tableOptions.paginator.show" 
         [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator" [style.color]="tableOptions.row.color">
     </mat-paginator>

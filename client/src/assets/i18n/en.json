@@ -304,6 +304,7 @@
     "table.property-layout": "Layout",
     "table.property-filter": "Filter",
     "table.property-paginator": "Paginator",
+    "table.property-daterange": "Date Range",
     "table.property-gridline": "Show grid",
     "table.property-type-data": "Data table",
     "table.property-type-history": "History table",

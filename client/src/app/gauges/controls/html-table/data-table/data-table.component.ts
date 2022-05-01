@@ -1,8 +1,12 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { Utils } from '../../../../_helpers/utils';
+import { MatDialog } from '@angular/material';
 
-import { GaugeTableProperty, DaqQuery, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
+import { TranslateService } from '@ngx-translate/core';
+
+import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
+import { GaugeTableProperty, IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
 import { format } from 'fecha';
 
 declare const numeral: any;
@@ -30,13 +34,19 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     tagsColumnMap = {};
     range = { from: Date.now(), to: Date.now() };
     tableHistoryType = TableType.history;
+    lastRangeType = TableRangeType;
     tableOptions = DataTableComponent.DefaultOptions();
     data = [];
 
-    constructor() { }
+    constructor(
+        public dialog: MatDialog, 
+        private translateService: TranslateService) { }
 
     ngOnInit() {
         this.dataSource.data = this.data;
+        Object.keys(this.lastRangeType).forEach(key => {
+            this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+        });
     }
 
     ngAfterViewInit() {
@@ -69,6 +79,24 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onTimeRange.emit(msg);
         }
     }
+
+    onDateRange() {
+        let dialogRef = this.dialog.open(DaterangeDialogComponent, {
+            panelClass: 'light-dialog-container'
+        });
+        dialogRef.afterClosed().subscribe((dateRange: IDateRange) => {
+            if (dateRange) {
+                this.range.from = dateRange.start;
+                this.range.to = dateRange.end;
+                let msg = new DaqQuery();
+                msg.gid = this.id;
+                msg.sids = Object.keys(this.tagsColumnMap);
+                msg.from = dateRange.start;
+                msg.to = dateRange.end;
+                this.onTimeRange.emit(msg);
+            }
+        });
+    }  
 
     setOptions(options: TableOptions): void {
         this.tableOptions = { ...this.tableOptions, ...options };
@@ -246,7 +274,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             filter: { 
                 show: false 
             },
-            lastRange: TableRangeType.last1h,
+            daterange: { 
+                show: false 
+            },            
+            lastRange: Utils.getEnumKey(TableRangeType, TableRangeType.last1h),
             gridColor: '#E0E0E0',
             header: { 
                 show: true,
