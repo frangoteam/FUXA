@@ -31,6 +31,7 @@ export class TablePropertyComponent implements OnInit {
     columnType = TableCellType;
     alignType = TableCellAlignType;
     lastRangeType = TableRangeType;
+    defaultColor = Utils.defaultColor;
 
     private _onDestroy = new Subject<void>();
 

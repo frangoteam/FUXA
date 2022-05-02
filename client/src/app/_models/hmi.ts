@@ -283,7 +283,10 @@ export interface TableOptions {
     },
     filter?: { 
         show: boolean 
-    },    
+    },
+    daterange: { 
+        show: boolean
+    },
     lastRange?: TableRangeType,
     gridColor?: string,
     header?: { 
