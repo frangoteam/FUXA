@@ -64,6 +64,7 @@ import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
 import { DiagnoseService } from './_services/diagnose.service';
 import { ScriptService } from './_services/script.service';
+import { ResourcesService } from './_services/resources.service';
 import { ResWebApiService } from './_services/rcgi/reswebapi.service';
 import { ResDemoService } from './_services/rcgi/resdemo.service';
 import { ResClientService } from './_services/rcgi/resclient.service';
@@ -87,6 +88,7 @@ import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DaterangeDialogComponent } from './gui-helpers/daterange-dialog/daterange-dialog.component';
 import { BitmaskComponent } from './gui-helpers/bitmask/bitmask.component';
 import { RangeNumberComponent } from './gui-helpers/range-number/range-number.component';
+import { LibImagesComponent } from './resources/lib-images/lib-images.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -269,7 +271,8 @@ export function createTranslateLoader(http: HttpClient) {
         TableCustomizerComponent,
         DialogTableCell,
         DataTableComponent,
-        RangeNumberComponent
+        RangeNumberComponent,
+        LibImagesComponent
    ],
     imports: [
         BrowserModule,
@@ -311,6 +314,7 @@ export function createTranslateLoader(http: HttpClient) {
         UserService,
         DiagnoseService,
         ScriptService,
+        ResourcesService,
         PluginService,
         SettingsService,
         TesterService,
@@ -389,7 +393,8 @@ export function createTranslateLoader(http: HttpClient) {
         DataTableComponent,
         TableCustomizerComponent,
         DialogTableCell,
-        RangeNumberComponent
+        RangeNumberComponent,
+        LibImagesComponent
     ],
     bootstrap: [AppComponent]
 })

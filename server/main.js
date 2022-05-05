@@ -87,6 +87,7 @@ try {
     settings.settingsFile = settingsFile;
     settings.environment = process.env.NODE_ENV || 'prod';
     settings.uploadFileDir = '_upload_files';
+    settings.imagesFileDir = path.resolve(rootDir, '_images');
 
     // check new settings from default and merge if not defined
     var defSettings = require(path.join(__dirname, 'settings.default.js'));
@@ -162,6 +163,10 @@ settings.uploadFileDir = path.resolve(workDir, settings.uploadFileDir);
 if (!fs.existsSync(settings.uploadFileDir)) {
     fs.mkdirSync(settings.uploadFileDir);
 }
+// Check images resources folder
+if (!fs.existsSync(settings.imagesFileDir)) {
+    fs.mkdirSync(settings.imagesFileDir);
+}
 
 // Server settings
 if (settings.https) {
@@ -236,6 +241,7 @@ app.use('/rodevice', express.static(settings.httpStatic));
 app.use('/users', express.static(settings.httpStatic));
 app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
+app.use('/_images', express.static(settings.imagesFileDir));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', { stream: accessLogStream }));

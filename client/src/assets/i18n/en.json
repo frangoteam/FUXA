@@ -349,6 +349,7 @@
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.views": "Views",
+    "editor.resources": "Resources",
     "editor.view-delete": "Delete",
     "editor.view-rename": "Rename",
     "editor.view-property": "Property",
@@ -955,6 +956,8 @@
     "card.widget-table": "Table",
     "card.widget-iframe": "Link",
     "card.style-zoom": "Zoom",
+
+    "resources.lib-images": "Images",
 
     "texts.list-title": "Texts settings",
     "texts.list-filter": "Filter",

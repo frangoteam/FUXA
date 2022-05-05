@@ -19,6 +19,7 @@ import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
 import { Utils } from '../_helpers/utils';
 import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Define } from '../_helpers/define';
+import { LibImagesComponent } from '../resources/lib-images/lib-images.component';
 
 import * as FileSaver from 'file-saver';
 import { BagPropertyComponent } from '../gauges/controls/html-bag/bag-property/bag-property.component';
@@ -1318,6 +1319,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     //#endregion
+
+    onAddResource() {
+        let dialogRef = this.dialog.open(LibImagesComponent, {
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+            }
+        });
+    }
 
     isWithShadow() {
         if (this.selectedElement) {
