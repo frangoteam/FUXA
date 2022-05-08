@@ -36,12 +36,16 @@ export class LibImagesComponent implements OnInit, AfterViewInit {
 
     loadResources() {
         this.subscription = this.resourcesService.getResources(ResourceType.images).subscribe((result: Resources) => {
-            if (result) {
+            if (result) {                
                 this.resImages = result.groups || [];
             }
         }, err => {
             console.error('get Resources images error: ' + err);
         });
+    }
+
+    onSelect(imgPath: string) {
+        this.dialogRef.close(imgPath);
     }
 
     onNoClick(): void {

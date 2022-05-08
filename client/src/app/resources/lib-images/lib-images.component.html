@@ -3,7 +3,7 @@
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div mat-dialog-content>
         <mat-accordion multi="true">
-            <mat-expansion-panel *ngFor="let grpImages of resImages" class="my-expansion-panel">
+            <mat-expansion-panel *ngFor="let grpImages of resImages" class="my-expansion-panel lib-image-panel">
                 <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
                     <mat-panel-title>
                         {{grpImages.name}}
@@ -12,8 +12,8 @@
 
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <div *ngFor="let item of grpImages.items">
-                    <img src="{{item.path}}">
+                <div *ngFor="let item of grpImages.items" (click)="onSelect(item.path)" class="lib-image-item">
+                    <img src="{{item.path}}" id="{{item.path}}">
                 </div>
 
             </mat-expansion-panel>

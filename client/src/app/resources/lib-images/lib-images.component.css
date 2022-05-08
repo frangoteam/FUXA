@@ -1,0 +1,14 @@
+.lib-image-panel {
+    max-width: 900px;
+}
+
+.lib-image-item {
+    display: inline-block;
+    margin: 8px 8px 8px 8px;
+}
+
+.lib-image-item img {
+    width: 100px;
+    object-fit: cover;
+    cursor: pointer;
+}
