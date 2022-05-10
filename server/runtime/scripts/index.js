@@ -112,7 +112,11 @@ function ScriptsManager(_runtime) {
                         scriptModule.runScriptWithoutParameter(script);
                         script.lastRun = time;
                     } catch (err) {
-                        reject(err);
+                        if (err.message) {
+                            logger.error(err.message);
+                        } else {
+                            logger.error(err);
+                        }
                     }
                 }
             });
