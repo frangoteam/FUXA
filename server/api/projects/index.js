@@ -196,13 +196,14 @@ module.exports = {
                 let encoding = {};
                 // let basedata = file.data.replace(/^data:.*,/, '');
                 // let basedata = file.data.replace(/^data:image\/png;base64,/, "");
-                const filePath = path.join(runtime.settings.uploadFileDir, file.name);
+                let fileName = file.name.replace(new RegExp('../', 'g'), '');
+                const filePath = path.join(runtime.settings.uploadFileDir, fileName);
                 if (file.type !== 'svg') {
                     basedata = file.data.replace(/^data:.*,/, '');
                     encoding = {encoding: 'base64'};
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
-                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' +file.name };
+                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fileName };
                 res.json(result);
             } catch (err) {
                 if (err && err.code) {
