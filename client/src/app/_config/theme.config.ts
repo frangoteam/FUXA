@@ -76,7 +76,7 @@ export const THEMES = {
         formExtBackground: '#37373D',
         formInputExtBackground: '#424242',
         scrollbarTrack: '#414142',
-        scrollbarThumb: '#545454',
+        scrollbarThumb: '#686868',
         chipsBackground: '#242424',
         chipSelectedBackground: '#3059AF',
         chipSelectedColor: '#FFFFFF',

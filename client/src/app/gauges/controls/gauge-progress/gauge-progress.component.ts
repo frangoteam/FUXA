@@ -21,7 +21,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
     static prefixMax = 'M-GXP_';
     static prefixMin = 'm-GXP_';
     static prefixValue = 'V-GXP_';
-    static barColor = '#1565c0';
+    static barColor = '#3F4964';
 
     constructor() {
         super();
@@ -86,7 +86,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
                 ip.min = 0;
                 ip.max = 100;
                 ip.style = [true, true];
-                ip.color = '#1565c0';
+                ip.color = '#3F4964';
                 ga.property.ranges = [ip];
             }
             if (ga.property.ranges.length > 0) {

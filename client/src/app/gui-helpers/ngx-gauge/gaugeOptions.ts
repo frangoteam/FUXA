@@ -19,12 +19,12 @@ export class GaugeOptions {
         iconScale: 1.0,
         color: '#000000'
     };
-    angle: number = 0;
-    lineWidth: number = 0.3;
-    radiusScale: number = 0.6;
+    angle: number = -0.2;
+    lineWidth: number = 0.2;
+    radiusScale: number = 0.9;
     fontSize: number = 18;
     fontFamily: 'Sans-serif';
-    textFilePosition: number = 20;
+    textFilePosition: number = 30;
     limitMax: boolean = false;
     limitMin: boolean = false;
     highDpiSupport: boolean = true;
@@ -56,7 +56,7 @@ export class GaugeOptions {
     staticZones? = [
          {strokeStyle: "#F03E3E", min: 0, max: 200},
          {strokeStyle: "#FFDD00", min: 200, max: 500},
-         {strokeStyle: "#30B32D", min: 500, max: 2100},
+         {strokeStyle: "#3F4964", min: 500, max: 2100},
          {strokeStyle: "#FFDD00", min: 2100, max: 2800},
          {strokeStyle: "#F03E3E", min: 2800, max: 3000}
     ]

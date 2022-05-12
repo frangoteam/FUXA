@@ -46,11 +46,11 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
         if (!this.options) {
             this.options = new PipeOptions();
             this.options.borderWidth = 11;
-            this.options.border = '#000000';
+            this.options.border = '#3F4964';
             this.options.pipeWidth = 6;
-            this.options.pipe = '#0000ff';
+            this.options.pipe = '#E79180';
             this.options.contentWidth = 6;
-            this.options.content = '#0044ff';
+            this.options.content = '#DADADA';
             this.options.contentSpace = 20;
         }
         // this.permission = this.property.permission;

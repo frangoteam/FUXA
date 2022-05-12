@@ -173,8 +173,8 @@ export class NgxNouisliderOptions {
     orientation = 'vertical';//'horizontal';
     direction = 'ltr';
     fontFamily = 'Sans-serif';
-    shape = { baseColor: '#dcdcdc', connectColor: '#49b2ff', handleColor: '#018ef5' };
-    marker = { color: '#000', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
+    shape = { baseColor: '#cdcdcd', connectColor: '#262c3b', handleColor: '#3f4964' };
+    marker = { color: '#222222', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
     range = { min: 0, max: 100 };
     step = 1;
     pips = { mode: 'values', values: [0, 50, 100], density: 4 };
