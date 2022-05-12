@@ -4,7 +4,6 @@
     bottom: 0px;
     overflow: auto;
     width:calc(100% - 12px);
-
 }
 
 .section-item {
@@ -12,5 +11,5 @@
 }
 
 .section-item-block input, span {
-    width: 100%;
+    width:calc(100% - 10px);
 }

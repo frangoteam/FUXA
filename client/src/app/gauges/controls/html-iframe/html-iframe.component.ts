@@ -36,12 +36,21 @@ export class HtmlIframeComponent extends GaugeBaseComponent implements OnInit {
                 iframe.style['height'] = '100%';
                 iframe.style['border'] = 'none';
                 iframe.style['background-color'] = '#F1F3F4';
+                if (!isview) {
+                    svgIframeContainer.innerHTML = 'iframe';
+                    iframe.style['overflow'] = 'hidden';
+                    iframe.style['pointer-events'] = 'none';
+                }
                 iframe.setAttribute('title', 'iframe');
-                if (gaugeSettings.property && gaugeSettings.property.address) {
+                if (gaugeSettings.property && gaugeSettings.property.address && isview) {
                     iframe.setAttribute('src', gaugeSettings.property.address);
                 }
                 svgIframeContainer.appendChild(iframe);
             }
         }
     }
+
+    static detectChange(gab: GaugeSettings): void {
+        return HtmlIframeComponent.initElement(gab, false);
+    }  
 }

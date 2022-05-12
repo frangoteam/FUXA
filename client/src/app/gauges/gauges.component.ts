@@ -198,7 +198,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
             return this.mapGauges[ga.id] = HtmlSwitchComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
-            HtmlIframeComponent.initElement(ga, true);
+            HtmlIframeComponent.detectChange(ga);
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             delete this.mapGauges[ga.id];
             let gauge = HtmlTableComponent.detectChange(ga, res, ref);
