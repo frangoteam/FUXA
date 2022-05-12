@@ -218,7 +218,7 @@
             <!-- SVG-EDITOR -->
             <div [style.display]="(editorMode === editorModeType.SVG)?'block':'none' ">
                 <!-- RIGHT BAR -->
-                <div class="svg-tools-fly">
+                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' ">
                     <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyIdOpenState = true" (closed)="panelPropertyIdOpenState = false" hideToggle="true"
                         expanded="true" style="display:none">
                         <mat-expansion-panel-header class="svg-workarea-flybar-h">
@@ -241,8 +241,8 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyTransformOpenState = true" (closed)="panelPropertyTransformOpenState = false"
-                        hideToggle="true" expanded="true">
+                    <mat-expansion-panel class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelPropertyTransformOpenState = true" 
+                        (closed)="panelPropertyTransformOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
                                 <mat-icon aria-label="Select" *ngIf="panelPropertyTransformOpenState">expand_less</mat-icon>
@@ -594,7 +594,8 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel id="interaction_panel" class="svg-workarea-fly-p" (opened)="panelEventOpenState = true" (closed)="panelEventOpenState = false" hideToggle="true" expanded="true">
+                    <mat-expansion-panel id="interaction_panel" class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelEventOpenState = true" 
+                        (closed)="panelEventOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
                                 <mat-icon aria-label="Select" *ngIf="panelEventOpenState">expand_less</mat-icon>

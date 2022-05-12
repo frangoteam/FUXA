@@ -92,6 +92,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     currentMode = '';
     imagefile: string;
     gridOn: boolean = false;
+    isAnySelected = false;
     selectedElement: SelElement = new SelElement();
     panelsState = {
         enabled: false,
@@ -203,6 +204,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             // init svg-editor
             let toinit = mysvgeditor.initSvgEditor($,
                 (selected) => {
+                    this.isAnySelected = (selected);
                     this.onSelectedElement(selected);
                     let ga: GaugeSettings = this.getGaugeSettings(selected);
                 },
