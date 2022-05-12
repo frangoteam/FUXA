@@ -47,6 +47,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         Object.keys(this.lastRangeType).forEach(key => {
             this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
         });
+        this.dataSource.filterPredicate = (match: any, filter: string) => {
+            const cells = Object.values(match).map((c: TableCellData) => c.stringValue);
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].toLowerCase().includes(filter))
+                return true;
+            }
+            return false;
+        };        
     }
 
     ngAfterViewInit() {

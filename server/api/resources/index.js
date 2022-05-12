@@ -43,7 +43,7 @@ module.exports = {
                     for (var i = 0; i < resourcesDirs.length; i++) {
                         var group = { name: resourcesDirs[i], items: [] };
                         var dirPath = path.resolve(runtime.settings.imagesFileDir, resourcesDirs[i]);
-                        var wwwSubDir =  path.join('/_images', resourcesDirs[i]);
+                        var wwwSubDir =  path.join('_images', resourcesDirs[i]);
                         var files =  getFiles(dirPath, ['.jpg','.jpeg', '.png', '.gif', '.svg']);
                         for (var x = 0; x < files.length; x++) {
                             group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep)});
