@@ -1,0 +1,54 @@
+<div style="position: relative;">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block;">
+            <ng-container *ngFor="let column of displayedColumns; index as i" [matColumnDef]="column">
+                <mat-header-cell *matHeaderCellDef >
+                    <div class="data-table-cell">
+                        <span style="display: block; font-size: 12px;">{{getColumnType(i)}} </span>
+                        <span style="display: block;">{{getColumnSetting(i)}} </span>
+                    </div>
+                    <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="column-options">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #optionsgMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onEditColumn(column)" style="font-size: 14px;">{{'table.customize-column-edit' | translate}}</button>
+                        <button mat-menu-item (click)="onRemoveColumn(column)" style="font-size: 14px;">{{'table.customize-column-remove' | translate}}</button>
+                    </mat-menu>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" >
+                    <mat-cell *ngIf="i === 0" class="data-table-remove-row">
+                        <button mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove" matTooltip="{{'table.customize-row-remove' | translate}}">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </mat-cell>
+                    <div class="data-table-cell">
+                        <span style="display: block; font-size: 12px;">{{getCellType(element[column])}} </span>
+                        <span style="display: block;">{{getCellSetting(element[column])}} </span>
+                    </div>
+                    <button mat-icon-button (click)="onEditCell(element, column)" class="column-options" matTooltip="{{'table.customize-cell-edit' | translate}}">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;">
+            </mat-row>
+        </mat-table>
+        <div class="toolbox-column">
+            <button mat-icon-button (click)="onAddColumn()" matTooltip="{{'table.customize-column-add' | translate}}">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+        </div>
+        <div *ngIf="data.type === tableType.data" class="toolbox-row">
+            <button mat-icon-button (click)="onAddRow()" matTooltip="{{'table.customize-row-add' | translate}}">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+        </div>        
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

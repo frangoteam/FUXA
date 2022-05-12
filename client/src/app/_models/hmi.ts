@@ -266,6 +266,96 @@ export interface GaugeIframeProperty {
     address: string;
 }
 
+export interface GaugeTableProperty {
+    id: string;
+    type: TableType;
+    options: TableOptions;
+}
+
+export enum TableType {
+    data = 'data',
+    history = 'history',
+}
+
+export interface TableOptions {
+    paginator?: { 
+        show: boolean 
+    },
+    filter?: { 
+        show: boolean 
+    },
+    daterange: { 
+        show: boolean
+    },
+    lastRange?: TableRangeType,
+    gridColor?: string,
+    header?: { 
+        show: boolean,
+        height: number,
+        fontSize?: number,
+        color?: string,
+        background?: string,
+    }
+    row?: { 
+        height: number,
+        fontSize?: number,
+        color?: string,
+        background?: string,
+    }
+    columns: TableColumn[],
+    rows: TableRow[],
+}
+
+export enum TableCellType {
+    label = 'label',
+    variable = 'variable',
+    timestamp = 'timestamp',
+    device = 'device',
+}
+
+export class TableCell {
+    id: string;
+    label: string;
+    variableId: string;
+    valueFormat: string;
+    bitmask: number;
+    type: TableCellType;
+    
+    constructor(id: string, type?: TableCellType, label?: string) {
+        this.id = id;
+        this.type = type || TableCellType.label;
+        this.label = label;
+    }
+}
+
+export class TableColumn extends TableCell {
+    align: TableCellAlignType = TableCellAlignType.left;
+    width = 100;
+    exname: string;
+    constructor(name: string, type?: TableCellType, label?: string) {
+        super(name, type, label);
+    }
+}
+
+export class TableRow {
+    cells: TableCell[];
+    constructor(cls: TableCell[]) {
+        this.cells = cls;
+    }
+}
+
+export enum TableCellAlignType {
+    left = 'left',
+    center = 'center',
+    right = 'right',
+}
+
+export enum TableRangeType {
+    last1h = 'table.rangetype-last1h',
+    last1d = 'table.rangetype-last1d',
+    last3d = 'table.rangetype-last3d',
+}
+
 export class Variable {
     id: string;
     name: string;

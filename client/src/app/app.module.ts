@@ -64,6 +64,7 @@ import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
 import { DiagnoseService } from './_services/diagnose.service';
 import { ScriptService } from './_services/script.service';
+import { ResourcesService } from './_services/resources.service';
 import { ResWebApiService } from './_services/rcgi/reswebapi.service';
 import { ResDemoService } from './_services/rcgi/resdemo.service';
 import { ResClientService } from './_services/rcgi/resclient.service';
@@ -87,6 +88,7 @@ import { EditNameComponent } from './gui-helpers/edit-name/edit-name.component';
 import { DaterangeDialogComponent } from './gui-helpers/daterange-dialog/daterange-dialog.component';
 import { BitmaskComponent } from './gui-helpers/bitmask/bitmask.component';
 import { RangeNumberComponent } from './gui-helpers/range-number/range-number.component';
+import { LibImagesComponent } from './resources/lib-images/lib-images.component';
 
 import { DialogDraggableDirective } from './_directives/dialog-draggable.directive';
 import { ModalPositionCache } from './_directives/modal-position.cache';
@@ -116,6 +118,7 @@ import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.comp
 import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.component';
 import { HtmlIframeComponent } from './gauges/controls/html-iframe/html-iframe.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
+import { HtmlTableComponent } from './gauges/controls/html-table/html-table.component';
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
@@ -148,6 +151,9 @@ import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-prope
 import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
 import { ChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
+import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
+import { TableCustomizerComponent, DialogTableCell } from './gauges/controls/html-table/table-customizer/table-customizer.component';
+import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -261,7 +267,12 @@ export function createTranslateLoader(http: HttpClient) {
         GraphPropertyComponent,
         GraphBaseComponent,
         IframePropertyComponent,
-        RangeNumberComponent
+        TablePropertyComponent,
+        TableCustomizerComponent,
+        DialogTableCell,
+        DataTableComponent,
+        RangeNumberComponent,
+        LibImagesComponent
    ],
     imports: [
         BrowserModule,
@@ -303,6 +314,7 @@ export function createTranslateLoader(http: HttpClient) {
         UserService,
         DiagnoseService,
         ScriptService,
+        ResourcesService,
         PluginService,
         SettingsService,
         TesterService,
@@ -316,6 +328,7 @@ export function createTranslateLoader(http: HttpClient) {
         HtmlSwitchComponent,
         PipeComponent,
         SliderComponent,
+        HtmlTableComponent,
         Dictionary,
         ModalPositionCache,
         Define,
@@ -377,7 +390,11 @@ export function createTranslateLoader(http: HttpClient) {
         GraphBaseComponent,
         DialogScriptParam,
         BitmaskComponent,
-        RangeNumberComponent
+        DataTableComponent,
+        TableCustomizerComponent,
+        DialogTableCell,
+        RangeNumberComponent,
+        LibImagesComponent
     ],
     bootstrap: [AppComponent]
 })

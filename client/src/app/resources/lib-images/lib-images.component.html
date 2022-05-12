@@ -1,0 +1,39 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block; cursor:move;" mat-dialog-draggable>{{'resources.lib-images' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <div mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel *ngFor="let grpImages of resImages" class="my-expansion-panel lib-image-panel">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        {{grpImages.name}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div *ngFor="let item of grpImages.items" (click)="onSelect(item.path)" class="lib-image-item">
+                    <img src="{{item.path}}" id="{{item.path}}">
+                </div>
+
+            </mat-expansion-panel>
+            <!-- <mat-expansion-panel class="my-expansion-panel">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        Page editor
+                    </mat-panel-title>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                Page editor content
+            </mat-expansion-panel> -->
+        </mat-accordion>
+        <div style="display: block;width: 660px; padding-bottom: 20px;">
+
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+    </div>
+</div>

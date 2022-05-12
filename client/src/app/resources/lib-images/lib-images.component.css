@@ -1,0 +1,20 @@
+.lib-image-panel {
+    max-width: 900px;
+}
+
+.lib-image-item {
+    display: inline-block;
+    margin: 5px 5px 5px 5px;
+    padding: 2px 2px 2px 2px;
+}
+
+.lib-image-item img:hover {
+    background-color: rgba(182, 182, 182, 0.3);
+}
+
+.lib-image-item img {
+    min-width: 100px;
+    width: 100px;
+    object-fit: cover;
+    cursor: pointer;
+}

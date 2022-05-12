@@ -41,6 +41,7 @@
     "chartjs-plugin-datalabels": "1.0.0",
     "codemirror": "^5.65.1",
     "core-js": "^2.5.4",
+    "fecha": "^4.2.3",
     "file-saver": "2.0.5",
     "hammerjs": "^2.0.8",
     "material-design-icons": "^3.0.1",

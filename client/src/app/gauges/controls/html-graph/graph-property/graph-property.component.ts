@@ -94,7 +94,7 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
         this.graphCtrl.setValue(graph);
     }
 
-    onGraphChanged(theme?: string) {
+    onGraphChanged() {
         this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
         if (this.graphCtrl.value) {
             this.data.settings.name = this.graphCtrl.value.name;
