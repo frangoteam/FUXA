@@ -1,28 +1,72 @@
-.mychart-graph {
-    display: block;
-    margin: 0 auto;
-    margin-top: 30px;
-    overflow: hidden;
-    width: 360px;
+.chart-selection {
+    position: absolute;
+    top: 35px;
+    bottom: 0px;
+    overflow: auto;
 }
 
-.toolbox {
-    padding-top: 25px;
-    display: block;
-    overflow: hidden;
+.section-item {
+    width: 100%;
 }
 
-.field-row {
-    display: block;
-    margin-bottom: 5px;
+.section-item-block mat-select, span {
+    width:calc(100% - 15px);
 }
 
-.slider-field span {
-    padding-left: 2px;
-    text-overflow: clip;
-    max-width: 125px;
-    white-space: nowrap;
-    overflow: hidden;
+.section-inline-text {
+    display: inline-block;
+}
+
+.section-inline-text input {
+    width: 70px;
+}
+
+.section-inline-number {
+    display: inline-block;
+    width: 60px;
+}
+
+.section-inline-number input {
+    width: inherit;
+    text-align: center;
+}
+
+.section-inline-number span {
+    width: 65px;
+    text-align: left;
+}
+
+.section-inline-margin-s {
+    display: inline-block;
+    width: 5px;
+}
+
+.section-inline-color {
+    display: inline-block;
+    width: 70px;
+}
+
+.section-inline-color input {
+    width: 70px !important;
+    text-align: center;
+}
+
+.section-inline-color span {
+    width: 70px;
+}
+
+.section-inline-margin {
+    display: inline-block;
+    width: 12px;
+}
+
+.section-inline-margin2 {
+    display: inline-block;
+    width: 16px;
+}
+
+.section-newline {
+    margin-top: 5px;
 }
 
 ::ng-deep .slider-field mat-slider {

@@ -1,135 +1,114 @@
-<div style="width: 690px;position: relative;">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-chart-settings' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <mat-tab-group style="width: 100%;height: 560px" (selectedIndexChange)="onTabChanged()">
-        <mat-tab label="{{'chart.property-props' | translate}}">
-            <div style="max-height: 540px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
-                <div style="display: block;">
-                    <div class="my-form-field" style="width: 320px;">
-                        <span>{{'chart.property-chart' | translate}}</span>
-                        <mat-select [formControl]="chartCtrl">
-                            <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
-                            <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
-                            <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
-                                {{ chart.name }}
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <div class="my-form-field" style="width: 140px;margin-left: 20px;">
-                        <span>{{'chart.property-chart-type' | translate}}</span>
-                        <mat-select [(value)]="chartViewValue">
-                            <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
-                                {{ ev.value }}
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <div *ngIf="chartViewValue === chartViewRealtime" class="my-form-field" style="margin-left: 20px;">
-                        <span>{{'chart.property-realtime-max' | translate}}</span>
-                        <input numberOnly [(ngModel)]="options.realtime" type="text" style="width: 80px">
-                    </div>
-                </div>
-                <div style="display: block; width:100%">
-                    <mat-list class="list" style="padding-left: 8px;padding-right: 8px;">
-                        <div style="height: calc(100% - 36px); overflow-y: auto" *ngIf="chartCtrl.value">
-                            <mat-list-item *ngFor="let tag of chartCtrl.value.lines" style="font-size:14px;height: 27px;">
-                                <div style="width: 50%;text-overflow: ellipsis;display: block; overflow: hidden; white-space: nowrap;">
-                                    <span matTooltip="{{tag.name}}">{{tag.name}}</span>
-                                </div>
-                                <div style="width: 40%;text-overflow: ellipsis;display: block; overflow: hidden; white-space: nowrap;">
-                                    <span matTooltip="{{tag.device}}">{{tag.device}}</span>
-                                </div>
-                                <div [style.background-color]="tag.color" style="height:20px; width:30px">
-                                </div>
-                            </mat-list-item>
-                        </div>
-                    </mat-list>
-                </div>
+<div class="element-property">
+    <div class="element-property-title">
+        {{'editor.controls-chart-settings' | translate}}
+    </div>
+    <div class="chart-selection">
+        <div class="element-property-header">
+            <span>{{'chart.property-data' | translate}}</span>
+        </div>
+        <div class="_section-newline">
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'chart.property-chart' | translate}}</span>
+                <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
+                    <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
+                    <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
+                    <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
+                        {{ chart.name }}
+                    </mat-option>
+                </mat-select>
             </div>
-        </mat-tab>
-        <mat-tab label="{{'chart.property-layout' | translate}}">
-            <chart-uplot #chartuplot [options]="options" class="mychart-graph"></chart-uplot>
-            <div class="toolbox">
-                <div class="field-row">
-                    <div class="my-form-field" style="width:160px">
-                        <span>{{'chart.property-font' | translate}}</span>
-                        <mat-select [(value)]="options.fontFamily" (selectionChange)="onChangeOptions('fontFamily',  $event.value)">
-                            <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
-                                {{font}}
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <div class="my-form-field slider-field color-field" style="padding-left: 15px;">
-                        <span>{{'chart.property-color.text' | translate}}</span>
-                        <input [(colorPicker)]="options.axisLabelColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.axisLabelColor"
-                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                            [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('axisLabelColor', $event)" />
-                    </div>
-                    <div class="my-form-field slider-field color-field" style="padding-left: 30px;">
-                        <span>{{'chart.property-color.background' | translate}}</span>
-                        <input [(colorPicker)]="options.colorBackground" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.colorBackground"
-                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                            [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('colorBackground', $event)" />
-                    </div>
-                    <div class="my-form-field" style="width:120px;padding-left: 30px">
-                        <span>{{'chart.property-date.format' | translate}}</span>
-                        <mat-select [(value)]="options.dateFormat" (selectionChange)="onChangeOptions('date',  $event.value)">
-                            <mat-option *ngFor="let ev of dateFormat | enumToArray" [value]="ev.key">
-                                {{ ev.value }}
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <div class="my-form-field" style="width:120px;padding-left: 15px">
-                        <span>{{'chart.property-time.format' | translate}}</span>
-                        <mat-select [(value)]="options.timeFormat" (selectionChange)="onChangeOptions('time',  $event.value)">
-                            <mat-option *ngFor="let ev of timeFormat | enumToArray" [value]="ev.key">
-                                {{ ev.value }}
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <!-- <div class="my-form-field slider-field color-field" style="padding-left: 30px;">
-                        <span>{{'chart.property-color.legend' | translate}}</span>
-                        <input [(colorPicker)]="options.legendBackground" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.legendBackground"
-                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 88px"
-                            [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('legendBackground', $event)" />
-                    </div>
-                    <div class="my-form-field slider-field" style="padding-left: 8px">
-                        <span>{{'chart.property-font.legendsize' | translate}}</span>
-                        <mat-slider [(ngModel)]="options.legendFontSize" style="display:inline-block;width:80px" [min]="0" [max]="16" [step]="1" [thumbLabel]="true"
-                            (input)="onChangeOptions('legendFontSize', $event.value)">
-                        </mat-slider>
-                    </div> -->
-                </div>
-                <div class="field-row" style="padding-top: 5px;">
-                    <div class="my-form-field slider-field">
-                        <span>{{'chart.property-font.titlesize' | translate}}</span>
-                        <mat-slider [(ngModel)]="options.titleHeight" style="display:inline-block;" [min]="0" [max]="36" [step]="1" [thumbLabel]="true"
-                            (input)="onChangeOptions('titleHeight', $event.value)">
-                        </mat-slider>
-                    </div>
-                    <div class="my-form-field slider-field" style="padding-left: 8px">
-                        <span>{{'chart.property-font.axissize' | translate}}</span>
-                        <mat-slider [(ngModel)]="options.axisLabelFontSize" style="display:inline-block;" [min]="0" [max]="15" [step]="1" [thumbLabel]="true"
-                            (input)="onChangeOptions('axisLabelFontSize', $event.value)">
-                        </mat-slider>
-                    </div>
-                    <div class="my-form-field slider-field color-field" style="padding-left: 36px">
-                        <span>{{'chart.property-color.grid' | translate}}</span>
-                        <input [(colorPicker)]="options.gridLineColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridLineColor"
-                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                            [cpPosition]="'top'" (colorPickerChange)="onChangeOptions('gridLineColor', $event)" />
-                    </div>
-                    <div class="my-form-field" style="width:120px;padding-left: 30px">
-                        <span>{{'chart.property-legend.mode' | translate}}</span>
-                        <mat-select [(value)]="options.legendMode" (selectionChange)="onChangeOptions('legend',  $event.value)">
-                            <mat-option *ngFor="let ev of legendModes | enumToArray" [value]="ev.key">
-                                {{ ev.value }}
-                            </mat-option>
-                        </mat-select>
-                    </div>
+            <div class="section-newline"></div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                <span>{{'chart.property-chart-type' | translate}}</span>
+                <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged()">
+                    <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="section-inline-margin"></div>
+            <div *ngIf="chartViewValue !== chartViewRealtime" class="my-form-field section-item" style="display: inline-block; width: 120px">
+                <span>{{'chart.property-date-last-range' | translate}}</span>
+                <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
+                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div *ngIf="chartViewValue === chartViewRealtime" class="my-form-field section-inline-number section-item">
+                <span style="width: 100px">{{'chart.property-realtime-max' | translate}}</span>
+                <input numberOnly [(ngModel)]="options.realtime"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="1">
+            </div>            
+            <div class="element-property-header">
+                <span>{{'chart.property-general' | translate}}</span>
+            </div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                <span>{{'chart.property-font' | translate}}</span>
+                <mat-select [(value)]="options.fontFamily" (selectionChange)="onChartChanged()">
+                    <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
+                        {{font}}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="section-inline-margin"></div>
+            <div class="my-form-field section-inline-number section-toogle">
+                <span>{{'chart.property-font.titlesize' | translate}}</span>
+                <input numberOnly [(ngModel)]="options.titleHeight" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="36">
+            </div>
+            <div class="section-inline-margin"></div>
+            <div class="my-form-field section-inline-number section-toogle">
+                <span>{{'chart.property-font.axissize' | translate}}</span>
+                <input numberOnly [(ngModel)]="options.axisLabelFontSize" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="24">
+            </div>
+            <div class="section-newline"></div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                <span>{{'chart.property-date.format' | translate}}</span>
+                <mat-select [(value)]="options.dateFormat" (selectionChange)="onChartChanged()">
+                    <mat-option *ngFor="let ev of dateFormat | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="section-inline-margin"></div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                <span>{{'chart.property-time.format' | translate}}</span>
+                <mat-select [(value)]="options.timeFormat" (selectionChange)="onChartChanged()">
+                    <mat-option *ngFor="let ev of timeFormat | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="section-newline"></div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                <span>{{'chart.property-legend.mode' | translate}}</span>
+                <mat-select [(value)]="options.legendMode" (selectionChange)="onChartChanged()">
+                    <mat-option *ngFor="let ev of legendModes | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="element-property-header">
+                <span>{{'chart.property-yaxis' | translate}}</span>
+            </div>
+            <div class="my-form-field section-inline-text">
+                <span>{{'chart.property-axis-y1' | translate}}</span>
+                <input [(ngModel)]="options.axisLabelY1" type="text" (change)="onChartChanged()">
+            </div>
+            <div class="section-inline-margin-s"></div>
+            <div class="my-form-field section-inline-text">
+                <span>{{'chart.property-axis-y2' | translate}}</span>
+                <input [(ngModel)]="options.axisLabelY2" type="text" (change)="onChartChanged()">
+            </div>
+            <div class="section-inline-margin-s"></div>
+            <div class="my-form-field section-inline-text">
+                <span>{{'chart.property-axis-y3' | translate}}</span>
+                <input [(ngModel)]="options.axisLabelY3" type="text" (change)="onChartChanged()">
+            </div>
+            <div class="section-inline-margin-s"></div>
+            <div class="my-form-field section-inline-text">
+                <span>{{'chart.property-axis-y4' | translate}}</span>
+                <input [(ngModel)]="options.axisLabelY4" type="text" (change)="onChartChanged()">
+            </div>
                     <!-- <div class="my-form-field slider-field" style="padding-left: 12px">
                         <span>{{'chart.property-scala.auto' | translate}}</span>
                         <mat-slide-toggle color="primary" [(ngModel)]="autoScala.enabled" (change)="onChangeOptions('autoscala', $event.value)"></mat-slide-toggle>
@@ -142,34 +121,39 @@
                         <span>{{'chart.property-scala.max' | translate}}</span>
                         <input numberOnly [disabled]="autoScala.enabled" [(ngModel)]="autoScala.max" (change)="onChangeOptions('maxscala', $event.value)" style="width: 50px;text-align: center;display:inline-block;" type="text">
                     </div> -->
-                </div>
-                <div class="field-row" style="padding-top: 5px;">
-                    <div class="my-form-field">
-                        <span>{{'chart.property-axis-x' | translate}}</span>
-                        <input [(ngModel)]="options.axisLabelX" style="width: 80px" type="text" (change)="onChangeOptions('axisLabel', $event)" placeholder="{{'chart.labels-time' | translate}}">
-                    </div>
-                    <div class="my-form-field" style="margin-left: 20px;">
-                        <span>{{'chart.property-axis-y1' | translate}}</span>
-                        <input [(ngModel)]="options.axisLabelY1" style="width: 80px" type="text" (change)="onChangeOptions('axisLabel', $event)">
-                    </div>
-                    <div class="my-form-field" style="margin-left: 10px;">
-                        <span>{{'chart.property-axis-y2' | translate}}</span>
-                        <input [(ngModel)]="options.axisLabelY2" style="width: 80px" type="text" (change)="onChangeOptions('axisLabel', $event)">
-                    </div>
-                    <div class="my-form-field" style="margin-left: 10px;">
-                        <span>{{'chart.property-axis-y3' | translate}}</span>
-                        <input [(ngModel)]="options.axisLabelY3" style="width: 80px" type="text" (change)="onChangeOptions('axisLabel', $event)">
-                    </div>
-                    <div class="my-form-field" style="margin-left: 10px;">
-                        <span>{{'chart.property-axis-y4' | translate}}</span>
-                        <input [(ngModel)]="options.axisLabelY4" style="width: 80px" type="text" (change)="onChangeOptions('axisLabel', $event)">
-                    </div>
-                </div>
+            <div class="element-property-header">
+                <span>{{'chart.property-xaxis' | translate}}</span>
             </div>
-        </mat-tab>
-    </mat-tab-group>
-    <div mat-dialog-actions style="float:right; padding-bottom: 20px;">
-        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+            <div class="my-form-field section-inline-text">
+                <span>{{'chart.property-axis-x' | translate}}</span>
+                <input [(ngModel)]="options.axisLabelX" type="text" (change)="onChartChanged()" placeholder="{{'chart.labels-time' | translate}}">
+            </div>            
+            <div class="element-property-header">
+                <span>{{'chart.property-theme' | translate}}</span>
+            </div>
+            <div class="my-form-field section-inline-color color-field">
+                <span>{{'chart.property-color.text' | translate}}</span>
+                <input [(colorPicker)]="options.axisLabelColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.axisLabelColor"
+                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                    [cpPosition]="'auto'" (colorPickerChange)="onChartChanged()" />
+            </div>
+            <div class="section-inline-margin2"></div>
+            <div class="my-form-field section-inline-color color-field">
+                <span>{{'chart.property-color.background' | translate}}</span>
+                <input [(colorPicker)]="options.colorBackground" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.colorBackground"
+                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                    [cpPosition]="'auto'" (colorPickerChange)="onChartChanged()" />
+            </div>
+            <div class="section-inline-margin2"></div>
+            <div class="my-form-field section-inline-color color-field">
+                <span>{{'chart.property-color.grid' | translate}}</span>
+                <input [(colorPicker)]="options.gridLineColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridLineColor"
+                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                    [cpPosition]="'auto'" (colorPickerChange)="onChartChanged()" />
+            </div>  
+        </div>
     </div>
 </div>

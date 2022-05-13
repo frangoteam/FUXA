@@ -1189,14 +1189,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         // settings.property = JSON.parse(settings.property);        
         let dialogRef: any;
         if (dlgType === GaugeDialogType.Chart) {
-            dialogRef = this.dialog.open(ChartPropertyComponent, {
-                position: { top: '60px' },
-                data: {
-                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts(),
-                    names: names
-                }
-            });
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
+                views: hmi.views, dlgType: dlgType, charts: this.projectService.getCharts(),
+                names: names
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else if (dlgType === GaugeDialogType.Graph) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {

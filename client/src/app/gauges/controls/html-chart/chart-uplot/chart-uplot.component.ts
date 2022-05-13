@@ -158,7 +158,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public setRange(startRange) {
         if (this.withToolbar) {
-            this.onRangeChanged(startRange);
+            if (startRange) {
+                this.rangeTypeValue = this.options.lastRange;
+            } else if (this.options.lastRange) {
+                this.rangeTypeValue = this.options.lastRange;
+            }
+            this.onRangeChanged(this.rangeTypeValue);
         }
     }
 
@@ -342,4 +347,5 @@ export interface ChartOptions extends NgxOptions {
     legendBackground?: string;
     legendMode?: string;
     realtime?: number;
+    lastRange?: string;
 }

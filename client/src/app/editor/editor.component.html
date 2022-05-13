@@ -7,6 +7,9 @@
         <mat-icon>close</mat-icon>
     </button>
     <div [ngSwitch]="gaugeDialog.type">
+        <div *ngSwitchCase="gaugeDialogType.Chart">
+            <app-chart-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-chart-property>
+        </div>        
         <div *ngSwitchCase="gaugeDialogType.Graph">
             <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-graph-property>
         </div>

@@ -404,11 +404,14 @@ export class ProjectService {
      * @returns 
      */
     getGraph(id: string) {
-        for (let i = 0; i < this.projectData.graphs.length; i++) {
-            if (this.projectData.graphs[i].id === id) {
-                return this.projectData.graphs[i];
+        if (this.projectData.graphs) {
+            for (let i = 0; i < this.projectData.graphs.length; i++) {
+                if (this.projectData.graphs[i].id === id) {
+                    return this.projectData.graphs[i];
+                }
             }
         }
+        return null;
     }
 
     /**
