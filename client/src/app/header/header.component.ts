@@ -13,6 +13,7 @@ import { ThemeService } from '../_services/theme.service';
 import { HelpData, DEVICE_READONLY } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
 import { TranslateService } from '@ngx-translate/core';
+import { EditNameComponent } from '../gui-helpers/edit-name/edit-name.component';
 
 @Component({
     moduleId: module.id,
@@ -135,11 +136,11 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             let msg = '';
             this.translateService.get('msg.project-save-ask').subscribe((txt: string) => { msg = txt });
             if (window.confirm(msg)) {
-                // this.projectService.saveProject(SaveMode.Save);
                 this.projectService.setNewProject();
+                this.onRenameProject();
             }
-        } catch (e) {
-
+        } catch (err) {
+            console.error(err);
         }
     }
 
@@ -195,6 +196,23 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (e) {
 
         }
+    }
+
+    /**
+     * rename the project
+     */
+    onRenameProject() {
+        let title = '';
+        this.translateService.get('project.name').subscribe((txt: string) => { title = txt });
+        let dialogRef = this.dialog.open(EditNameComponent, {
+            position: { top: '60px' },
+            data: { name: this.projectService.getProjectName(), title: title }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result && result.name !== this.projectService.getProjectName()) {
+                this.projectService.setProjectName(result.name.replace(/ /g,''));
+            }
+        });        
     }
     //#endregion
 }

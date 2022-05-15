@@ -9,6 +9,7 @@
     "header.save-project": "Save Project",
     "header.save-project-tooltip": "Save all outstanding project changes",
     "header.saveas-project": "Save Project As...",
+    "header.rename-project": "Rename Project",
     "header.open-project": "Open Project",
     "header.edit-project": "Edit Project",
     "header.edit-views": "Views editor",
@@ -24,6 +25,8 @@
     "header.help-info": "About",
     "header.info-version": "Version ",
     "header.theme": "Theme light/dark",
+
+    "project.name": "Project name",
 
     "sidenav.title": "FUXA",
 
@@ -398,6 +401,7 @@
     "editor.controls-graph-pie-settings": "Pie Graph settings",
     "editor.controls-iframe": "Iframe",
     "editor.controls-iframe-settings": "Iframe settings",
+    "editor.controls-table": "Table",
 
     "editor.layout-settings": "Layout settings",
 

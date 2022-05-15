@@ -10,6 +10,8 @@ import { Script } from './script';
 
 export class ProjectData {
     version: string = "1.01";
+    /** Project name */
+    name?: string;
     /** FUXA Server */
     server: Device = new Device(Utils.getGUID(DEVICE_PREFIX));
     /** Hmi resource, layout, SVG, etc. */
