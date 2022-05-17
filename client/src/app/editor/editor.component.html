@@ -39,7 +39,7 @@
                         <mat-icon aria-label="Import" matTooltip="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn"
                             (click)="onImportView($event);$event.stopPropagation()">system_update_alt</mat-icon>
                         <input type="file" #viewFileImportInput style="display: none" id="viewFileUpload" (click)="$event.stopPropagation()"
-                            (change)="onViewFileChangeListener($event)" accept=".fuxav" />
+                            (change)="onViewFileChangeListener($event)" accept=".json" />
                     </mat-expansion-panel-header>
                     <div class="leftbar-panel view-panel">
                         <div *ngIf="hmi.views && hmi.views.length <= 0">

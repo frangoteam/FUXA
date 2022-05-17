@@ -1049,19 +1049,18 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * Export view in a file json format MyView.fuxav
+     * Export view in a file json format [View name].json
      * @param view
      */
     onExportView(view: View) {
-        let filename = 'fuxa-view.json';
-        let date = new Date();
+        let filename = `${view.name}.json`;
         let content = JSON.stringify(view);
         let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         FileSaver.saveAs(blob, filename);
     }
 
     /**
-     * Import view from file (exported in json format MyView.fuxav)
+     * Import view from file (exported in json format [View name].json)
      */
     onImportView() {
         let ele = document.getElementById('viewFileUpload') as HTMLElement;
