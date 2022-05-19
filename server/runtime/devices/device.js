@@ -9,7 +9,6 @@ var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
-var INMATIONclient = require('./inmation');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 // var TEMPLATEclient = require('./template');
@@ -63,11 +62,6 @@ function Device(data, runtime) {
             return null;
         }
         comm = MQTTclient.create(data, logger, events, manager);        
-    } else if (data.type === DeviceEnum.inmation) {
-        if (!INMATIONclient) {
-            return null;
-        }
-        comm = INMATIONclient.create(data, logger, events, manager);     
     } else if (data.type === DeviceEnum.EthernetIP) {
         if (!EthernetIPclient) {
             return null;
@@ -239,12 +233,6 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
-            } else if (data.type === DeviceEnum.inmation) {
-                comm.browse(path, callback).then(function (result) {
-                    resolve(result);
-                }).catch(function (err) {
-                    reject(err);
-                });
             } else {
                 reject('Browse not supported!');
             }
@@ -287,7 +275,7 @@ function Device(data, runtime) {
      * Bind function to ask project stored property (security)
      */
     this.bindGetProperty = function (fnc) {
-        if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient || data.type === DeviceEnum.inmation) {
+        if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient) {
             comm.bindGetProperty(fnc);
         }
     }
@@ -369,8 +357,6 @@ function loadPlugin(type, module) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
-    } else if (type === DeviceEnum.inmation) {
-        INMATIONclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
@@ -406,7 +392,6 @@ var DeviceEnum = {
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
-    inmation: 'inmation',
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     // Template: 'template'
