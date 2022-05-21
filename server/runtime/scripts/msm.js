@@ -71,6 +71,10 @@ function MyScriptsModule(_events, _logger) {
         }
     }
 
+    this.getScript = function (_script) {
+        return Object.values(scriptsMap).find(s => s.id === _script.id);
+    }
+
     var _scriptsToModule = function (_scripts, _includes) {
         let result = { module: null, messages: [], scriptsMap: {} };
         try {

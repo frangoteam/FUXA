@@ -117,7 +117,7 @@
     "general.clientId": "Client ID",
     "general.authority": "Authority",
     "general.grant-type": "Grant type",
-    "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,Administrator,G,H",
+    "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,F,G,Administrator",
 
     "tester.title": "Variable",
     "tester.send": "Send",
@@ -926,8 +926,14 @@
     "scripts.list-name": "Name",
     "scripts.list-type": "Type",
     "scripts.list-params": "Parameters",
-    "scripts.list-scheduling": "Scheduling/Interval",
+    "scripts.list-scheduling": "Scheduling / Interval",
+    "scripts.list-permission": "Authorization",
     "scripts.list-options": "Script options",
+
+    "script.permission-title": "Authorization",
+    "script.permission-label": "(void = full for everyone)",
+    "script.permission-enabled": "Enabled",
+
     "script.property-title": "Script",
     "script.property-systems": "System functions",
     "script.property-test": "Test",

@@ -44,6 +44,7 @@ import { NotificationPropertyComponent } from './notifications/notification-prop
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
 import { ScriptEditorComponent, DialogScriptParam } from './scripts/script-editor/script-editor.component';
 import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
+import { ScriptPermissionComponent } from './scripts/script-permission/script-permission.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent, DeviceTagDialog } from './device/device.component';
@@ -246,6 +247,7 @@ export function createTranslateLoader(http: HttpClient) {
         ScriptListComponent,
         ScriptEditorComponent,
         ScriptSchedulingComponent,
+        ScriptPermissionComponent,
         DialogScriptParam,
         TextListComponent,
         LogsViewComponent,
@@ -376,6 +378,7 @@ export function createTranslateLoader(http: HttpClient) {
         ScriptListComponent,
         ScriptEditorComponent,
         ScriptSchedulingComponent,
+        ScriptPermissionComponent,
         TextListComponent,
         DialogChartLine,
         DialogGraphSource,

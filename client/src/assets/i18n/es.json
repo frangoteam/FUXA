@@ -105,7 +105,7 @@
     "general.clientId": "ID Cliente",
     "general.authority": "Autoridad",
     "general.grant-type": "Tipo de permiso",
-    "general.usergroups": "Espectador,Operario,Ingeniero,Supervisor,Gerente,Administrador,G,H",
+    "general.usergroups": "Espectador,Operario,Ingeniero,Supervisor,Gerente,F,G,Administrator",
   
     "tester.title": "Variable",
     "tester.send": "Enviar",

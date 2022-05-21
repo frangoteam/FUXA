@@ -44,13 +44,13 @@
             <ng-container matColumnDef="options">
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <!-- <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" (click)="$event.stopPropagation();editOptions(element)" class="options" -->
-                    <button mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'scripts.list-options' | translate}}">
+                    <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="options" matTooltip="{{'scripts.list-options' | translate}}">
                         <mat-icon>more_vert</mat-icon>
                     </button>
-                    <!-- <mat-menu #optionsgMenu [overlapTrigger]="false">
-                        <button mat-menu-item (click)="editOptions(element)" style="font-size: 14px;">{{'device.list-options' | translate}}</button>
-                    </mat-menu>-->
+                    <mat-menu #optionsgMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onEditScriptScheduling(element)" style="font-size: 14px;">{{'scripts.list-scheduling' | translate}}</button>
+                        <button mat-menu-item (click)="onEditScriptPermission(element)" style="font-size: 14px;">{{'scripts.list-permission' | translate}}</button>
+                    </mat-menu>
                 </mat-cell>
             </ng-container>
 

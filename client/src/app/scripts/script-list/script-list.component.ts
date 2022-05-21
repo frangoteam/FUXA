@@ -9,6 +9,7 @@ import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/
 import { Script, SCRIPT_PREFIX, ScriptScheduling } from '../../_models/script';
 import { AlarmsType } from '../../_models/alarm';
 import { Utils } from '../../_helpers/utils';
+import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
 
 @Component({
     selector: 'app-script-list',
@@ -66,10 +67,6 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.editScript(script, -1);
     }
 
-    onEditOptions(script: Script) {
-        this.editScriptScheduling(script);
-    }
-
     editScript(script: Script, toAdd: number) {
         let dlgwidth = (toAdd < 0) ? 'auto' : '80%';
         let scripts = this.dataSource.data.filter(s => s.id !== script.id);
@@ -117,7 +114,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         return '';
     }
 
-    private editScriptScheduling(script: Script) {
+    onEditScriptScheduling(script: Script) {
         let dialogRef = this.dialog.open(ScriptSchedulingComponent, {
             data: <SchedulingData> { scheduling: script.scheduling },
             position: { top: '60px' }
@@ -131,6 +128,24 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
     }
+
+    onEditScriptPermission(script: Script) {
+        let permission = script.permission;
+        let dialogRef = this.dialog.open(ScriptPermissionComponent, {
+            position: { top: '60px' },
+            data: { permission: permission }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                script.permission = result.permission;
+                this.projectService.setScript(script, null).subscribe(() => {
+                    this.loadScripts();
+                });                
+            }
+        });
+    }
+
 
     private loadScripts() {
         this.dataSource.data = this.projectService.getScripts(); 

@@ -105,7 +105,7 @@
     "general.clientId": "클라이언트 ID",
     "general.authority": "권한",
     "general.grant-type": "인증 유형",
-    "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,Administrator,G,H",
+    "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,F,G,Administrator",
 
     "tester.title": "변수",
     "tester.send": "보내기",

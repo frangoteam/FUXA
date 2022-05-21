@@ -6,6 +6,7 @@ export class Script {
     code: string;
     parameters: ScriptParam[] = [];
     scheduling: ScriptScheduling;
+    permission: number;
     constructor(_id: string) {
         this.id = _id;
     }    

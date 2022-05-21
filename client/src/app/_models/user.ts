@@ -13,9 +13,9 @@ export class UserGroups {
             {id: 4, label: 'Engineer'},
             {id: 8, label: 'Supervisor'},
             {id: 16, label: 'Manager'},
-            {id: 32, label: 'Administrator'},
+            {id: 32, label: 'F'},
             {id: 64, label: 'G'},
-            {id: 128, label: 'H'}];
+            {id: 128, label: 'Administrator'}];
 
     static GroupsToValue (grps: any, extended?: boolean): number {
         let result = 0;
