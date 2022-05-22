@@ -674,9 +674,6 @@
                             <button mat-button id="tool_move_top" matTooltip="{{'editor.tools-movetop-title' | translate}}" class="main-btn">
                                 <mat-icon style="font-size: 28px;transform: scaleX(-1) scaleY(-1) translateX(-28px) translateY(-27px);">low_priority</mat-icon>
                             </button>
-                            <button mat-button id="tool_topath" matTooltip="{{'editor.tools-topath-title' | translate}}" class="main-btn">
-                                <mat-icon>linear_scale</mat-icon>
-                            </button>
                             <button mat-button id="tool_make_link" matTooltip="{{'editor.tools-hyperlink-title' | translate}}" class="main-btn" (click)="onMakeHyperlink()">
                                 <mat-icon style="font-size: 28px;">link</mat-icon>
                             </button>
@@ -1047,13 +1044,13 @@
             </a>
         </li>
         <li>
-            <a id="#move_down">{{'editor.cmenu-send-backward' | translate}}
-                <span class="shortcut">CTRL+[</span>
-            </a>
-        </li>
-        <li>
             <a id="#move_back">{{'editor.cmenu-send-back' | translate}}
                 <span class="shortcut">SHFT+CTRL+[</span>
+            </a>
+        </li>        
+        <li>
+            <a id="#move_down">{{'editor.cmenu-send-backward' | translate}}
+                <span class="shortcut">CTRL+[</span>
             </a>
         </li>
     </ul>
