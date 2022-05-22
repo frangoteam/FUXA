@@ -14,6 +14,7 @@ export class ThemeService {
         if (!THEMES[name]) {
             name = ThemeService.ThemeType.Dark;
         }
+        name = ThemeService.ThemeType.Dark;
         const theme = THEMES[name];
         Object.keys(theme).forEach((key) => {
             this.document.documentElement.style.setProperty(`--${key}`, theme[key]);
