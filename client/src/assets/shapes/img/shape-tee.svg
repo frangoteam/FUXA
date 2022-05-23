@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="shape-tee.svg"
+   id="svg858"
+   version="1.1"
+   height="24"
+   width="24">
+  <defs
+     id="defs862" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg858"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="35.51091"
+     inkscape:cx="12"
+     inkscape:zoom="8.8544831"
+     showgrid="false"
+     id="namedview860"
+     inkscape:window-height="1017"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <metadata
+     id="metadata854">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="fill:none;stroke:#ffffff;stroke-width:4.99762;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1"
+     transform="matrix(0.22416978,0,0,0.22416978,2.8351399,3.286888)"
+     id="g6">
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:4.99762;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1"
+       d="M 0,0 H 80 V 20 H 50 V 80 H 30 V 20 H 0 Z"
+       fill="#ffffff"
+       stroke="#000000"
+       stroke-miterlimit="10"
+       pointer-events="all"
+       id="path4" />
+  </g>
+</svg>

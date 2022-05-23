@@ -1,0 +1,3 @@
+{
+    "shapesToLoad": ["my-shapes", "proc-shapes", "ape-shapes"]
+}
