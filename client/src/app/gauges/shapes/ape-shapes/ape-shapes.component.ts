@@ -52,14 +52,20 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         return res;
     }
 
-    static getActions(type: string) {
+    static getActions(type: string, content: any) {
+        console.log(content);
         let actions = Object.assign({}, ApeShapesComponent.actionsType);
-        if (type === ApeShapesComponent.EliType) {
-            delete actions.downup;
-        } else if (type === ApeShapesComponent.PistonType) {
-            delete actions.anticlockwise;
-            delete actions.clockwise;
-        }
+        content[0].children[1].children.forEach(child => {
+            if (child.name === 'clockwise') {
+                actions.clockwise = ApeShapesComponent.actionsType.clockwise;
+            }
+            if (child.name === 'anticlockwise') {
+                actions.anticlockwise = ApeShapesComponent.actionsType.anticlockwise;
+            }
+            if (child.name === 'downup') {
+                actions.downup = ApeShapesComponent.actionsType.downup;
+            }
+        });
         return actions;
     }
 

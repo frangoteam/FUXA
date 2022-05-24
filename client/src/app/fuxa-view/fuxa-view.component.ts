@@ -479,7 +479,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         return result;
     }
 
-    private static getSvgElement(svgid: string) {
+    static getSvgElement(svgid: string) {
         let ele = document.getElementsByTagName('svg');
         for (let i = 0; i < ele.length; i++) {
             let svgItems = ele[i].getElementById(svgid);

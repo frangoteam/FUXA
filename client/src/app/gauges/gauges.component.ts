@@ -143,12 +143,12 @@ export class GaugesManager {
         return false;
     }
 
-    isWithActions(type) {
+    isWithActions(type, content) {
         if (type) {
             for (let i = 0; i < GaugesManager.GaugeWithActions.length; i++) {
                 if (type.startsWith(GaugesManager.GaugeWithActions[i].TypeTag)) {
                     if (typeof GaugesManager.GaugeWithActions[i]['getActions'] === 'function') {
-                        return GaugesManager.GaugeWithActions[i]['getActions'](type);
+                        return GaugesManager.GaugeWithActions[i]['getActions'](type, content);
                     }
                 }
             }

@@ -36,6 +36,7 @@ import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html
 import { GridsterItem } from 'angular-gridster2';
 import { CardConfigComponent } from './card-config/card-config.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
+import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 
 declare var Gauge: any;
 
@@ -1161,8 +1162,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.gaugesManager.isWithEvents(type);
     }
 
-    isWithActions(type) {
-        return this.gaugesManager.isWithActions(type);
+    isWithActions(type, content) {
+        return this.gaugesManager.isWithActions(type, content);
     }
 
     /**
@@ -1174,11 +1175,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     openEditGauge(settings, callback) {
         let tempsettings = JSON.parse(JSON.stringify(settings));
+        console.log('hola');
+        console.log(tempsettings);
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
         let bitmaskSupported = GaugesManager.isBitmaskSupported(settings.type);
         let eventsSupported = this.isWithEvents(settings.type);
-        let actionsSupported = this.isWithActions(settings.type);
+        let actionsSupported = this.isWithActions(settings.type, FuxaViewComponent.getSvgElement(settings.id));
         let defaultValue = GaugesManager.getDefaultValue(settings.type);
         let names = Object.values(this.currentView.items).map(gs => gs.name);
         // set default name
