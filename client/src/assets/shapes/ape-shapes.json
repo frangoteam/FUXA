@@ -4,7 +4,7 @@
     "shapes":[
        {
           "name":"eli",
-          "ico":"assets/shapes/img/anim-eli.svg",
+          "ico":"assets/shapes/icons/anim-eli.svg",
           "content":[
              {
                 "id":"",
@@ -17,7 +17,7 @@
        },
        {
           "name":"piston",
-          "ico":"assets/shapes/img/anim-piston.svg",
+          "ico":"assets/shapes/icons/anim-piston.svg",
           "content":[
              {
                 "id":"",

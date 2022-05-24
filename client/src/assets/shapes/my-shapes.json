@@ -4,7 +4,7 @@
     "shapes":[
        {
           "name":"rectangle",
-          "ico":"assets/shapes/img/shape-rectangle.svg",
+          "ico":"assets/shapes/icons/shape-rectangle.svg",
           "content":[
              {
                 "id":"",
@@ -18,7 +18,7 @@
        },
        {
           "name":"circle",
-          "ico":"assets/shapes/img/shape-circle.svg",
+          "ico":"assets/shapes/icons/shape-circle.svg",
           "content":[
              {
                 "id":"",
@@ -34,7 +34,7 @@
        },
        {
           "name":"diamond",
-          "ico":"assets/shapes/img/shape-diamond.svg",
+          "ico":"assets/shapes/icons/shape-diamond.svg",
           "content":[
              {
                 "id":"",
@@ -47,7 +47,7 @@
        },
        {
           "name":"triangle",
-          "ico":"assets/shapes/img/shape-triangle.svg",
+          "ico":"assets/shapes/icons/shape-triangle.svg",
           "content":[
              {
                 "id":"",
@@ -60,7 +60,7 @@
        },
        {
           "name":"halfcircle",
-          "ico":"assets/shapes/img/shape-halfcircle.svg",
+          "ico":"assets/shapes/icons/shape-halfcircle.svg",
           "content":[
              {
                 "id":"",
@@ -73,7 +73,7 @@
        },
        {
           "name":"delay",
-          "ico":"assets/shapes/img/shape-delay.svg",
+          "ico":"assets/shapes/icons/shape-delay.svg",
           "content":[
              {
                 "id":"",
@@ -86,7 +86,7 @@
        },
        {
           "name":"looplimit",
-          "ico":"assets/shapes/img/shape-looplimit.svg",
+          "ico":"assets/shapes/icons/shape-looplimit.svg",
           "content":[
              {
                 "id":"",
@@ -99,7 +99,7 @@
        },
        {
           "name":"prepara",
-          "ico":"assets/shapes/img/shape-prepara.svg",
+          "ico":"assets/shapes/icons/shape-prepara.svg",
           "content":[
              {
                 "id":"",
@@ -112,7 +112,7 @@
        },
        {
           "name":"trape",
-          "ico":"assets/shapes/img/shape-trape.svg",
+          "ico":"assets/shapes/icons/shape-trape.svg",
           "content":[
              {
                 "id":"",
@@ -125,7 +125,7 @@
        },
        {
           "name":"offpage",
-          "ico":"assets/shapes/img/shape-offpage.svg",
+          "ico":"assets/shapes/icons/shape-offpage.svg",
           "content":[
              {
                 "id":"",
@@ -138,7 +138,7 @@
        },
        {
           "name":"parallelogram",
-          "ico":"assets/shapes/img/shape-parallelogram.svg",
+          "ico":"assets/shapes/icons/shape-parallelogram.svg",
           "content":[
              {
                 "id":"",
@@ -151,7 +151,7 @@
        },
        {
           "name":"maninput",
-          "ico":"assets/shapes/img/shape-maninput.svg",
+          "ico":"assets/shapes/icons/shape-maninput.svg",
           "content":[
              {
                 "id":"",
@@ -164,7 +164,7 @@
        },
        {
           "name":"pentagon",
-          "ico":"assets/shapes/img/shape-pentagon.svg",
+          "ico":"assets/shapes/icons/shape-pentagon.svg",
           "content":[
              {
                 "id":"",
@@ -177,7 +177,7 @@
        },
        {
           "name":"octagon",
-          "ico":"assets/shapes/img/shape-octagon.svg",
+          "ico":"assets/shapes/icons/shape-octagon.svg",
           "content":[
              {
                 "id":"",
@@ -190,7 +190,7 @@
        },
        {
           "name":"ticket",
-          "ico":"assets/shapes/img/shape-ticket.svg",
+          "ico":"assets/shapes/icons/shape-ticket.svg",
           "content":[
              {
                 "id":"",
@@ -203,7 +203,7 @@
        },
        {
           "name":"display",
-          "ico":"assets/shapes/img/shape-display.svg",
+          "ico":"assets/shapes/icons/shape-display.svg",
           "content":[
              {
                 "id":"",
@@ -216,7 +216,7 @@
        },
        {
           "name":"or2",
-          "ico":"assets/shapes/img/shape-or2.svg",
+          "ico":"assets/shapes/icons/shape-or2.svg",
           "content":[
              {
                 "id":"",
@@ -229,7 +229,7 @@
        },
        {
           "name":"vor",
-          "ico":"assets/shapes/img/shape-vor.svg",
+          "ico":"assets/shapes/icons/shape-vor.svg",
           "content":[
              {
                 "id":"",
@@ -242,7 +242,7 @@
        },
        {
           "name":"tape",
-          "ico":"assets/shapes/img/shape-tape.svg",
+          "ico":"assets/shapes/icons/shape-tape.svg",
           "content":[
              {
                 "id":"",
@@ -255,7 +255,7 @@
        },
        {
           "name":"docu",
-          "ico":"assets/shapes/img/shape-docu.svg",
+          "ico":"assets/shapes/icons/shape-docu.svg",
           "content":[
              {
                 "id":"",
@@ -268,7 +268,7 @@
        },
        {
           "name":"cloud",
-          "ico":"assets/shapes/img/shape-cloud.svg",
+          "ico":"assets/shapes/icons/shape-cloud.svg",
           "content":[
              {
                 "id":"",
@@ -281,7 +281,7 @@
        },
        {
           "name":"or",
-          "ico":"assets/shapes/img/shape-or.svg",
+          "ico":"assets/shapes/icons/shape-or.svg",
           "content":[
              {
                 "id":"",
@@ -294,7 +294,7 @@
        },
        {
           "name":"switch",
-          "ico":"assets/shapes/img/shape-switch.svg",
+          "ico":"assets/shapes/icons/shape-switch.svg",
           "content":[
              {
                 "id":"",
@@ -307,7 +307,7 @@
        },
        {
           "name":"star4",
-          "ico":"assets/shapes/img/shape-star4.svg",
+          "ico":"assets/shapes/icons/shape-star4.svg",
           "content":[
              {
                 "id":"",
@@ -320,7 +320,7 @@
        },
        {
           "name":"poval",
-          "ico":"assets/shapes/img/shape-poval.svg",
+          "ico":"assets/shapes/icons/shape-poval.svg",
           "content":[
              {
                 "id":"",
@@ -333,7 +333,7 @@
        },
        {
           "name":"drop",
-          "ico":"assets/shapes/img/shape-drop.svg",
+          "ico":"assets/shapes/icons/shape-drop.svg",
           "content":[
              {
                 "id":"",
@@ -346,7 +346,7 @@
        },
        {
           "name":"heart",
-          "ico":"assets/shapes/img/shape-heart.svg",
+          "ico":"assets/shapes/icons/shape-heart.svg",
           "content":[
              {
                 "id":"",
@@ -359,7 +359,7 @@
        },
        {
           "name":"nosymbol",
-          "ico":"assets/shapes/img/shape-nosymbol.svg",
+          "ico":"assets/shapes/icons/shape-nosymbol.svg",
           "content":[
              {
                 "id":"",
@@ -372,7 +372,7 @@
        },
        {
           "name":"cylinder",
-          "ico":"assets/shapes/img/shape-cylinder.svg",
+          "ico":"assets/shapes/icons/shape-cylinder.svg",
           "content":[
              {
                 "id":"",
@@ -392,7 +392,7 @@
        },
        {
           "name":"cone",
-          "ico":"assets/shapes/img/shape-cone.svg",
+          "ico":"assets/shapes/icons/shape-cone.svg",
           "content":[
              {
                 "id":"",
@@ -405,7 +405,7 @@
        },
        {
           "name":"cross",
-          "ico":"assets/shapes/img/shape-cross.svg",
+          "ico":"assets/shapes/icons/shape-cross.svg",
           "content":[
              {
                 "id":"",
@@ -418,7 +418,7 @@
        },
        {
           "name":"corner",
-          "ico":"assets/shapes/img/shape-corner.svg",
+          "ico":"assets/shapes/icons/shape-corner.svg",
           "content":[
              {
                 "id":"",
@@ -431,7 +431,7 @@
        },
        {
           "name":"tee",
-          "ico":"assets/shapes/img/shape-tee.svg",
+          "ico":"assets/shapes/icons/shape-tee.svg",
           "content":[
              {
                 "id":"",
@@ -444,7 +444,7 @@
        },
        {
           "name":"arrow",
-          "ico":"assets/shapes/img/shape-arrow.svg",
+          "ico":"assets/shapes/icons/shape-arrow.svg",
           "content":[
              {
                 "id":"",
@@ -457,7 +457,7 @@
        },
        {
           "name":"doublearrow",
-          "ico":"assets/shapes/img/shape-doublearrow.svg",
+          "ico":"assets/shapes/icons/shape-doublearrow.svg",
           "content":[
              {
                 "id":"",
@@ -470,7 +470,7 @@
        },
        {
           "name":"rectindi",
-          "ico":"assets/shapes/img/shape-rectindi.svg",
+          "ico":"assets/shapes/icons/shape-rectindi.svg",
           "content":[
              {
                 "id":"",
@@ -483,7 +483,7 @@
        },
        {
           "name":"circleindi",
-          "ico":"assets/shapes/img/shape-circleindi.svg",
+          "ico":"assets/shapes/icons/shape-circleindi.svg",
           "content":[
              {
                 "id":"",

@@ -4,7 +4,7 @@
     "shapes":[
        {
           "name":"centrifugal",
-          "ico":"assets/shapes/img/centrifugal.svg",
+          "ico":"assets/shapes/icons/centrifugal.svg",
           "content":[
              {
                 "id":"",
@@ -24,7 +24,7 @@
        },
        {
           "name":"diaph",
-          "ico":"assets/shapes/img/diaph.svg",
+          "ico":"assets/shapes/icons/diaph.svg",
           "content":[
              {
                 "id":"",
@@ -44,7 +44,7 @@
        },
        {
           "name":"pumphidra",
-          "ico":"assets/shapes/img/pumphidra.svg",
+          "ico":"assets/shapes/icons/pumphidra.svg",
           "content":[
              {
                 "id":"",
@@ -64,7 +64,7 @@
        },
        {
           "name":"pumpjet",
-          "ico":"assets/shapes/img/pumpjet.svg",
+          "ico":"assets/shapes/icons/pumpjet.svg",
           "content":[
              {
                 "id":"",
@@ -84,7 +84,7 @@
        },
        {
           "name":"pumpgear",
-          "ico":"assets/shapes/img/pumpgear.svg",
+          "ico":"assets/shapes/icons/pumpgear.svg",
           "content":[
              {
                 "id":"",
@@ -118,7 +118,7 @@
        },
        {
           "name":"motor",
-          "ico":"assets/shapes/img/motor-simb.svg",
+          "ico":"assets/shapes/icons/motor-simb.svg",
           "content":[
              {
                 "id":"c",
@@ -142,7 +142,7 @@
        },
        {
           "name":"pumpturbi",
-          "ico":"assets/shapes/img/pumpturbi.svg",
+          "ico":"assets/shapes/icons/pumpturbi.svg",
           "content":[
              {
                 "id":"",
@@ -155,7 +155,7 @@
        },
        {
           "name":"pumpcentri1",
-          "ico":"assets/shapes/img/pumpcentri1.svg",
+          "ico":"assets/shapes/icons/pumpcentri1.svg",
           "content":[
              {
                 "id":"",
@@ -168,7 +168,7 @@
        },
        {
           "name":"pumpvacuum",
-          "ico":"assets/shapes/img/pumpvacuum.svg",
+          "ico":"assets/shapes/icons/pumpvacuum.svg",
           "content":[
              {
                 "id":"",
@@ -188,7 +188,7 @@
        },
        {
           "name":"pumpcentri2",
-          "ico":"assets/shapes/img/pumpcentri2.svg",
+          "ico":"assets/shapes/icons/pumpcentri2.svg",
           "content":[
              {
                 "id":"",
@@ -201,7 +201,7 @@
        },
        {
           "name":"pumpscreew",
-          "ico":"assets/shapes/img/pumpscreew.svg",
+          "ico":"assets/shapes/icons/pumpscreew.svg",
           "content":[
              {
                 "id":"",
@@ -228,7 +228,7 @@
        },
        {
           "name":"pumpblower",
-          "ico":"assets/shapes/img/pumpblower.svg",
+          "ico":"assets/shapes/icons/pumpblower.svg",
           "content":[
              {
                 "id":"",
@@ -255,7 +255,7 @@
        },
        {
           "name":"pumpgear2",
-          "ico":"assets/shapes/img/pumpgear2.svg",
+          "ico":"assets/shapes/icons/pumpgear2.svg",
           "content":[
              {
                 "id":"",
@@ -296,7 +296,7 @@
        },
        {
           "name":"pumphorizo",
-          "ico":"assets/shapes/img/pumphorizo.svg",
+          "ico":"assets/shapes/icons/pumphorizo.svg",
           "content":[
              {
                 "id":"",
@@ -316,7 +316,7 @@
        },
        {
           "name":"pumpscreew2",
-          "ico":"assets/shapes/img/pumpscreew2.svg",
+          "ico":"assets/shapes/icons/pumpscreew2.svg",
           "content":[
              {
                 "id":"",
@@ -336,7 +336,7 @@
        },
        {
           "name":"pumpperis",
-          "ico":"assets/shapes/img/pumpperis.svg",
+          "ico":"assets/shapes/icons/pumpperis.svg",
           "content":[
              {
                 "id":"",
@@ -384,7 +384,7 @@
        },
        {
           "name":"pumpfeed",
-          "ico":"assets/shapes/img/pumpfeed.svg",
+          "ico":"assets/shapes/icons/pumpfeed.svg",
           "content":[
              {
                 "id":"",
@@ -397,7 +397,7 @@
        },
        {
           "name":"compvoid",
-          "ico":"assets/shapes/img/compressor-void.svg",
+          "ico":"assets/shapes/icons/compressor-void.svg",
           "content":[
              {
                 "id":"",
@@ -410,7 +410,7 @@
        },
        {
           "name":"compfan",
-          "ico":"assets/shapes/img/compressor-fan.svg",
+          "ico":"assets/shapes/icons/compressor-fan.svg",
           "content":[
              {
                 "id":"",
@@ -423,7 +423,7 @@
        },
        {
           "name":"comppiston",
-          "ico":"assets/shapes/img/compressor-piston.svg",
+          "ico":"assets/shapes/icons/compressor-piston.svg",
           "content":[
              {
                 "id":"",
@@ -436,7 +436,7 @@
        },
        {
           "name":"compring",
-          "ico":"assets/shapes/img/compring.svg",
+          "ico":"assets/shapes/icons/compring.svg",
           "content":[
              {
                 "id":"",
@@ -463,7 +463,7 @@
        },
        {
           "name":"compejector",
-          "ico":"assets/shapes/img/compejector.svg",
+          "ico":"assets/shapes/icons/compejector.svg",
           "content":[
              {
                 "id":"",
@@ -483,7 +483,7 @@
        },
        {
           "name":"compdiaph",
-          "ico":"assets/shapes/img/compdiaph.svg",
+          "ico":"assets/shapes/icons/compdiaph.svg",
           "content":[
              {
                 "id":"",
@@ -503,7 +503,7 @@
        },
        {
           "name":"comprotary",
-          "ico":"assets/shapes/img/comprotary.svg",
+          "ico":"assets/shapes/icons/comprotary.svg",
           "content":[
              {
                 "id":"",
@@ -523,7 +523,7 @@
        },
        {
           "name":"compscrew",
-          "ico":"assets/shapes/img/compscrew.svg",
+          "ico":"assets/shapes/icons/compscrew.svg",
           "content":[
              {
                 "id":"",
@@ -543,7 +543,7 @@
        },
        {
           "name":"compair",
-          "ico":"assets/shapes/img/compair.svg",
+          "ico":"assets/shapes/icons/compair.svg",
           "content":[
              {
                 "id":"",
@@ -591,7 +591,7 @@
        },
        {
           "name":"compreci",
-          "ico":"assets/shapes/img/compreci.svg",
+          "ico":"assets/shapes/icons/compreci.svg",
           "content":[
              {
                 "id":"",
@@ -618,7 +618,7 @@
        },
        {
           "name":"compreci2",
-          "ico":"assets/shapes/img/compreci2.svg",
+          "ico":"assets/shapes/icons/compreci2.svg",
           "content":[
              {
                 "id":"",
@@ -638,7 +638,7 @@
        },
        {
           "name":"compsilence",
-          "ico":"assets/shapes/img/compsilence.svg",
+          "ico":"assets/shapes/icons/compsilence.svg",
           "content":[
              {
                 "id":"",
@@ -686,7 +686,7 @@
        },
        {
           "name":"compturbo",
-          "ico":"assets/shapes/img/compturbo.svg",
+          "ico":"assets/shapes/icons/compturbo.svg",
           "content":[
              {
                 "id":"",
@@ -706,7 +706,7 @@
        },
        {
           "name":"comprotary2",
-          "ico":"assets/shapes/img/comprotary2.svg",
+          "ico":"assets/shapes/icons/comprotary2.svg",
           "content":[
              {
                 "id":"",
@@ -740,7 +740,7 @@
        },
        {
           "name":"compring2",
-          "ico":"assets/shapes/img/compring2.svg",
+          "ico":"assets/shapes/icons/compring2.svg",
           "content":[
              {
                 "id":"",
@@ -767,7 +767,7 @@
        },
        {
           "name":"valveax",
-          "ico":"assets/shapes/img/valve-ax.svg",
+          "ico":"assets/shapes/icons/valve-ax.svg",
           "content":[
              {
                 "id":"",
@@ -780,7 +780,7 @@
        },
        {
           "name":"valvebx",
-          "ico":"assets/shapes/img/valve-bx.svg",
+          "ico":"assets/shapes/icons/valve-bx.svg",
           "content":[
              {
                 "id":"",
@@ -793,7 +793,7 @@
        },
        {
           "name":"valvecx",
-          "ico":"assets/shapes/img/valve-cx.svg",
+          "ico":"assets/shapes/icons/valve-cx.svg",
           "content":[
              {
                 "id":"",
@@ -806,7 +806,7 @@
        },
        {
           "name":"exchtube",
-          "ico":"assets/shapes/img/exchanger-tube.svg",
+          "ico":"assets/shapes/icons/exchanger-tube.svg",
           "content":[
              {
                 "id":"",
@@ -819,7 +819,7 @@
        },
        {
           "name":"agitator-prop",
-          "ico":"assets/shapes/img/agitator-prop.svg",
+          "ico":"assets/shapes/icons/agitator-prop.svg",
           "content":[
              {
                 "id":"",
@@ -832,7 +832,7 @@
        },
        {
           "name":"agitator-turbo",
-          "ico":"assets/shapes/img/agitator-turbo.svg",
+          "ico":"assets/shapes/icons/agitator-turbo.svg",
           "content":[
              {
                 "id":"",
@@ -873,7 +873,7 @@
        },
        {
           "name":"agitator-disc",
-          "ico":"assets/shapes/img/agitator-disc.svg",
+          "ico":"assets/shapes/icons/agitator-disc.svg",
           "content":[
              {
                 "id":"",
@@ -900,7 +900,7 @@
        },
        {
           "name":"agitator-paddle",
-          "ico":"assets/shapes/img/agitator-paddle.svg",
+          "ico":"assets/shapes/icons/agitator-paddle.svg",
           "content":[
              {
                 "id":"",
@@ -920,7 +920,7 @@
        },
        {
           "name":"centrifuge1",
-          "ico":"assets/shapes/img/centrifuge1.svg",
+          "ico":"assets/shapes/icons/centrifuge1.svg",
           "content":[
              {
                 "id":"",
@@ -940,7 +940,7 @@
        },
        {
           "name":"centrifuge2",
-          "ico":"assets/shapes/img/centrifuge2.svg",
+          "ico":"assets/shapes/icons/centrifuge2.svg",
           "content":[
              {
                 "id":"",
@@ -960,7 +960,7 @@
        },
        {
           "name":"centrifuge3",
-          "ico":"assets/shapes/img/centrifuge3.svg",
+          "ico":"assets/shapes/icons/centrifuge3.svg",
           "content":[
              {
                 "id":"",
@@ -980,7 +980,7 @@
        },
        {
           "name":"centrifuge4",
-          "ico":"assets/shapes/img/centrifuge4.svg",
+          "ico":"assets/shapes/icons/centrifuge4.svg",
           "content":[
              {
                 "id":"",
@@ -1000,7 +1000,7 @@
        },
        {
           "name":"crusher1",
-          "ico":"assets/shapes/img/crusher1.svg",
+          "ico":"assets/shapes/icons/crusher1.svg",
           "content":[
              {
                 "id":"",
@@ -1020,7 +1020,7 @@
        },
        {
           "name":"crusher2",
-          "ico":"assets/shapes/img/crusher2.svg",
+          "ico":"assets/shapes/icons/crusher2.svg",
           "content":[
              {
                 "id":"",
@@ -1040,7 +1040,7 @@
        },
        {
           "name":"crusher3",
-          "ico":"assets/shapes/img/crusher3.svg",
+          "ico":"assets/shapes/icons/crusher3.svg",
           "content":[
              {
                 "id":"",
@@ -1060,7 +1060,7 @@
        },
        {
           "name":"crusher4",
-          "ico":"assets/shapes/img/crusher4.svg",
+          "ico":"assets/shapes/icons/crusher4.svg",
           "content":[
              {
                 "id":"",
@@ -1087,7 +1087,7 @@
        },
        {
           "name":"crusher5",
-          "ico":"assets/shapes/img/crusher5.svg",
+          "ico":"assets/shapes/icons/crusher5.svg",
           "content":[
              {
                 "id":"",
@@ -1121,7 +1121,7 @@
        },
        {
           "name":"crusher6",
-          "ico":"assets/shapes/img/crusher6.svg",
+          "ico":"assets/shapes/icons/crusher6.svg",
           "content":[
              {
                 "id":"",
@@ -1141,7 +1141,7 @@
        },
        {
           "name":"crusher7",
-          "ico":"assets/shapes/img/crusher7.svg",
+          "ico":"assets/shapes/icons/crusher7.svg",
           "content":[
              {
                 "id":"",
@@ -1182,7 +1182,7 @@
        },
        {
           "name":"drier1",
-          "ico":"assets/shapes/img/drier1.svg",
+          "ico":"assets/shapes/icons/drier1.svg",
           "content":[
              {
                 "id":"",
@@ -1195,7 +1195,7 @@
        },
        {
           "name":"drier2",
-          "ico":"assets/shapes/img/drier2.svg",
+          "ico":"assets/shapes/icons/drier2.svg",
           "content":[
              {
                 "id":"",
@@ -1222,7 +1222,7 @@
        },
        {
           "name":"drier3",
-          "ico":"assets/shapes/img/drier3.svg",
+          "ico":"assets/shapes/icons/drier3.svg",
           "content":[
              {
                 "id":"",
@@ -1291,7 +1291,7 @@
        },
        {
           "name":"drier4",
-          "ico":"assets/shapes/img/drier4.svg",
+          "ico":"assets/shapes/icons/drier4.svg",
           "content":[
              {
                 "id":"",
@@ -1325,7 +1325,7 @@
        },
        {
           "name":"drier5",
-          "ico":"assets/shapes/img/drier5.svg",
+          "ico":"assets/shapes/icons/drier5.svg",
           "content":[
              {
                 "id":"",
@@ -1345,7 +1345,7 @@
        },
        {
           "name":"nozzle",
-          "ico":"assets/shapes/img/nozzle.svg",
+          "ico":"assets/shapes/icons/nozzle.svg",
           "content":[
              {
                 "id":"",
@@ -1358,7 +1358,7 @@
        },
        {
           "name":"nozzle2",
-          "ico":"assets/shapes/img/nozzle2.svg",
+          "ico":"assets/shapes/icons/nozzle2.svg",
           "content":[
              {
                 "id":"",
@@ -1371,7 +1371,7 @@
        },
        {
           "name":"feeder",
-          "ico":"assets/shapes/img/feeder.svg",
+          "ico":"assets/shapes/icons/feeder.svg",
           "content":[
              {
                 "id":"",
@@ -1398,7 +1398,7 @@
        },
        {
           "name":"feeder2",
-          "ico":"assets/shapes/img/feeder2.svg",
+          "ico":"assets/shapes/icons/feeder2.svg",
           "content":[
              {
                 "id":"",
@@ -1418,7 +1418,7 @@
        },
        {
           "name":"feeder3",
-          "ico":"assets/shapes/img/feeder3.svg",
+          "ico":"assets/shapes/icons/feeder3.svg",
           "content":[
              {
                 "id":"",
@@ -1431,7 +1431,7 @@
        },
        {
           "name":"exchheat",
-          "ico":"assets/shapes/img/exchanger-heat.svg",
+          "ico":"assets/shapes/icons/exchanger-heat.svg",
           "content":[
              {
                 "id":"",
@@ -1444,7 +1444,7 @@
        },
        {
           "name":"filter2",
-          "ico":"assets/shapes/img/filter2.svg",
+          "ico":"assets/shapes/icons/filter2.svg",
           "content":[
              {
                 "id":"",
@@ -1464,7 +1464,7 @@
        },
        {
           "name":"filter3",
-          "ico":"assets/shapes/img/filter3.svg",
+          "ico":"assets/shapes/icons/filter3.svg",
           "content":[
              {
                 "id":"",
@@ -1491,7 +1491,7 @@
        },
        {
           "name":"fitting1",
-          "ico":"assets/shapes/img/fitting1.svg",
+          "ico":"assets/shapes/icons/fitting1.svg",
           "content":[
              {
                 "id":"",
@@ -1512,7 +1512,7 @@
        },
        {
           "name":"fitting2",
-          "ico":"assets/shapes/img/fitting2.svg",
+          "ico":"assets/shapes/icons/fitting2.svg",
           "content":[
              {
                 "id":"",
@@ -1525,7 +1525,7 @@
        },
        {
           "name":"fitting3",
-          "ico":"assets/shapes/img/fitting3.svg",
+          "ico":"assets/shapes/icons/fitting3.svg",
           "content":[
              {
                 "id":"",
@@ -1552,7 +1552,7 @@
        },
        {
           "name":"fitting4",
-          "ico":"assets/shapes/img/fitting4.svg",
+          "ico":"assets/shapes/icons/fitting4.svg",
           "content":[
              {
                 "id":"",
@@ -1572,7 +1572,7 @@
        },
        {
           "name":"fitting5",
-          "ico":"assets/shapes/img/fitting5.svg",
+          "ico":"assets/shapes/icons/fitting5.svg",
           "content":[
              {
                 "id":"",
@@ -1592,7 +1592,7 @@
        },
        {
           "name":"fitting6",
-          "ico":"assets/shapes/img/fitting6.svg",
+          "ico":"assets/shapes/icons/fitting6.svg",
           "content":[
              {
                 "id":"",
@@ -1612,7 +1612,7 @@
        },
        {
           "name":"fitting7",
-          "ico":"assets/shapes/img/fitting7.svg",
+          "ico":"assets/shapes/icons/fitting7.svg",
           "content":[
              {
                 "id":"",
@@ -1625,7 +1625,7 @@
        },
        {
           "name":"fitting8",
-          "ico":"assets/shapes/img/fitting8.svg",
+          "ico":"assets/shapes/icons/fitting8.svg",
           "content":[
              {
                 "id":"",
@@ -1638,7 +1638,7 @@
        },
        {
           "name":"fitting9",
-          "ico":"assets/shapes/img/fitting9.svg",
+          "ico":"assets/shapes/icons/fitting9.svg",
           "content":[
              {
                 "id":"",
@@ -1651,7 +1651,7 @@
        },
        {
           "name":"fitting10",
-          "ico":"assets/shapes/img/fitting10.svg",
+          "ico":"assets/shapes/icons/fitting10.svg",
           "content":[
              {
                 "id":"",
@@ -1671,7 +1671,7 @@
        },
        {
           "name":"fitting11",
-          "ico":"assets/shapes/img/fitting11.svg",
+          "ico":"assets/shapes/icons/fitting11.svg",
           "content":[
              {
                 "id":"",
@@ -1698,7 +1698,7 @@
        },
        {
           "name":"fitting12",
-          "ico":"assets/shapes/img/fitting12.svg",
+          "ico":"assets/shapes/icons/fitting12.svg",
           "content":[
              {
                 "id":"",
@@ -1718,7 +1718,7 @@
        },
        {
           "name":"fitting13",
-          "ico":"assets/shapes/img/fitting13.svg",
+          "ico":"assets/shapes/icons/fitting13.svg",
           "content":[
              {
                 "id":"",
@@ -1731,7 +1731,7 @@
        },
        {
           "name":"misc1",
-          "ico":"assets/shapes/img/misc1.svg",
+          "ico":"assets/shapes/icons/misc1.svg",
           "content":[
              {
                 "id":"",
@@ -1758,7 +1758,7 @@
        },
        {
           "name":"misc2",
-          "ico":"assets/shapes/img/misc2.svg",
+          "ico":"assets/shapes/icons/misc2.svg",
           "content":[
              {
                 "id":"",
@@ -1778,7 +1778,7 @@
        },
        {
           "name":"misc3",
-          "ico":"assets/shapes/img/misc3.svg",
+          "ico":"assets/shapes/icons/misc3.svg",
           "content":[
              {
                 "id":"",
@@ -1791,7 +1791,7 @@
        },
        {
           "name":"misc4",
-          "ico":"assets/shapes/img/misc4.svg",
+          "ico":"assets/shapes/icons/misc4.svg",
           "content":[
              {
                 "id":"",
@@ -1811,7 +1811,7 @@
        },
        {
           "name":"misc5",
-          "ico":"assets/shapes/img/misc5.svg",
+          "ico":"assets/shapes/icons/misc5.svg",
           "content":[
              {
                 "id":"",
@@ -1831,7 +1831,7 @@
        },
        {
           "name":"misc6",
-          "ico":"assets/shapes/img/misc6.svg",
+          "ico":"assets/shapes/icons/misc6.svg",
           "content":[
              {
                 "id":"",
@@ -1844,7 +1844,7 @@
        },
        {
           "name":"misc7",
-          "ico":"assets/shapes/img/misc7.svg",
+          "ico":"assets/shapes/icons/misc7.svg",
           "content":[
              {
                 "id":"",
@@ -1857,7 +1857,7 @@
        },
        {
           "name":"misc8",
-          "ico":"assets/shapes/img/misc8.svg",
+          "ico":"assets/shapes/icons/misc8.svg",
           "content":[
              {
                 "id":"",
@@ -1870,7 +1870,7 @@
        },
        {
           "name":"tank1",
-          "ico":"assets/shapes/img/tank1.svg",
+          "ico":"assets/shapes/icons/tank1.svg",
           "content":[
              {
                 "id":"",
@@ -1883,7 +1883,7 @@
        },
        {
           "name":"tank2",
-          "ico":"assets/shapes/img/tank2.svg",
+          "ico":"assets/shapes/icons/tank2.svg",
           "content":[
              {
                 "id":"",
@@ -1896,7 +1896,7 @@
        },
        {
           "name":"tank3",
-          "ico":"assets/shapes/img/tank3.svg",
+          "ico":"assets/shapes/icons/tank3.svg",
           "content":[
              {
                 "id":"",
@@ -1909,7 +1909,7 @@
        },
        {
           "name":"tank4",
-          "ico":"assets/shapes/img/tank4.svg",
+          "ico":"assets/shapes/icons/tank4.svg",
           "content":[
              {
                 "id":"",
@@ -1922,7 +1922,7 @@
        },
        {
           "name":"tank5",
-          "ico":"assets/shapes/img/tank5.svg",
+          "ico":"assets/shapes/icons/tank5.svg",
           "content":[
              {
                 "id":"",
@@ -1935,7 +1935,7 @@
        },
        {
           "name":"tank6",
-          "ico":"assets/shapes/img/tank6.svg",
+          "ico":"assets/shapes/icons/tank6.svg",
           "content":[
              {
                 "id":"",
@@ -1955,7 +1955,7 @@
        },
        {
           "name":"tank7",
-          "ico":"assets/shapes/img/tank7.svg",
+          "ico":"assets/shapes/icons/tank7.svg",
           "content":[
              {
                 "id":"",
@@ -1968,7 +1968,7 @@
        },
        {
           "name":"tank8",
-          "ico":"assets/shapes/img/tank8.svg",
+          "ico":"assets/shapes/icons/tank8.svg",
           "content":[
              {
                 "id":"",
@@ -1981,7 +1981,7 @@
        },
        {
           "name":"tank9",
-          "ico":"assets/shapes/img/tank9.svg",
+          "ico":"assets/shapes/icons/tank9.svg",
           "content":[
              {
                 "id":"",
@@ -2022,7 +2022,7 @@
        },
        {
           "name":"exchanger1",
-          "ico":"assets/shapes/img/exchanger1.svg",
+          "ico":"assets/shapes/icons/exchanger1.svg",
           "content":[
              {
                 "id":"",
@@ -2042,7 +2042,7 @@
        },
        {
           "name":"exchanger2",
-          "ico":"assets/shapes/img/exchanger2.svg",
+          "ico":"assets/shapes/icons/exchanger2.svg",
           "content":[
              {
                 "id":"",
@@ -2062,7 +2062,7 @@
        },
        {
           "name":"exchanger3",
-          "ico":"assets/shapes/img/exchanger3.svg",
+          "ico":"assets/shapes/icons/exchanger3.svg",
           "content":[
              {
                 "id":"",
@@ -2075,7 +2075,7 @@
        },
        {
           "name":"exchanger4",
-          "ico":"assets/shapes/img/exchanger4.svg",
+          "ico":"assets/shapes/icons/exchanger4.svg",
           "content":[
              {
                 "id":"",
@@ -2088,7 +2088,7 @@
        },
        {
           "name":"exchanger5",
-          "ico":"assets/shapes/img/exchanger5.svg",
+          "ico":"assets/shapes/icons/exchanger5.svg",
           "content":[
              {
                 "id":"",
@@ -2108,7 +2108,7 @@
        },
        {
           "name":"exchanger6",
-          "ico":"assets/shapes/img/exchanger6.svg",
+          "ico":"assets/shapes/icons/exchanger6.svg",
           "content":[
              {
                 "id":"",
@@ -2128,7 +2128,7 @@
        },
        {
           "name":"exchanger7",
-          "ico":"assets/shapes/img/exchanger7.svg",
+          "ico":"assets/shapes/icons/exchanger7.svg",
           "content":[
              {
                 "id":"",
@@ -2148,7 +2148,7 @@
        },
        {
           "name":"exchanger8",
-          "ico":"assets/shapes/img/exchanger8.svg",
+          "ico":"assets/shapes/icons/exchanger8.svg",
           "content":[
              {
                 "id":"",
@@ -2168,7 +2168,7 @@
        },
        {
           "name":"exchanger9",
-          "ico":"assets/shapes/img/exchanger9.svg",
+          "ico":"assets/shapes/icons/exchanger9.svg",
           "content":[
              {
                 "id":"",
@@ -2188,7 +2188,7 @@
        },
        {
           "name":"exchfilter",
-          "ico":"assets/shapes/img/exchanger-filter.svg",
+          "ico":"assets/shapes/icons/exchanger-filter.svg",
           "content":[
              {
                 "id":"",
@@ -2201,7 +2201,7 @@
        },
        {
           "name":"pipi1",
-          "ico":"assets/shapes/img/pipi1.svg",
+          "ico":"assets/shapes/icons/pipi1.svg",
           "content":[
              {
                 "id":"",
@@ -2221,7 +2221,7 @@
        },
        {
           "name":"pipi2",
-          "ico":"assets/shapes/img/pipi2.svg",
+          "ico":"assets/shapes/icons/pipi2.svg",
           "content":[
              {
                 "id":"",
@@ -2248,7 +2248,7 @@
        },
        {
           "name":"pipi3",
-          "ico":"assets/shapes/img/pipi3.svg",
+          "ico":"assets/shapes/icons/pipi3.svg",
           "content":[
              {
                 "id":"",
@@ -2261,7 +2261,7 @@
        },
        {
           "name":"pipi4",
-          "ico":"assets/shapes/img/pipi4.svg",
+          "ico":"assets/shapes/icons/pipi4.svg",
           "content":[
              {
                 "id":"",
@@ -2274,7 +2274,7 @@
        },
        {
           "name":"pipi5",
-          "ico":"assets/shapes/img/pipi5.svg",
+          "ico":"assets/shapes/icons/pipi5.svg",
           "content":[
              {
                 "id":"",
@@ -2294,7 +2294,7 @@
        },
        {
           "name":"pipi6",
-          "ico":"assets/shapes/img/pipi6.svg",
+          "ico":"assets/shapes/icons/pipi6.svg",
           "content":[
              {
                 "id":"",
@@ -2307,7 +2307,7 @@
        },
        {
           "name":"pipi7",
-          "ico":"assets/shapes/img/pipi7.svg",
+          "ico":"assets/shapes/icons/pipi7.svg",
           "content":[
              {
                 "id":"",
