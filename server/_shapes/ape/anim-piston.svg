@@ -9,8 +9,6 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <g transform="matrix(.27785 0 0 .27785 3.9006 3.4516)" fill="none" stroke="#fff" stroke-width="3.8538">
-  <path d="m0 0h60v60h-60z"/>
-  <path d="m21 15-15 39h48l-15-39m-9 39v12" pointer-events="all"/>
- </g>
+ <path d="m40.52 0.0872v53.04"/>
+ <rect id="pm" x="2" y="50" width="76" height="28" />
 </svg>
