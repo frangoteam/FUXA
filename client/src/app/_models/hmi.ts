@@ -174,7 +174,8 @@ export enum GaugeActionsType {
     stop = 'shapes.action-stop',
     clockwise = 'shapes.action-clockwise',
     anticlockwise = 'shapes.action-anticlockwise',
-    downup = 'shapes.action-downup'
+    downup = 'shapes.action-downup',
+    custom = 'shapes.action-custom'
 }
 
 export class GaugeAction {

@@ -1,7 +1,7 @@
 /**
  * Shape extension
  */
-import { Component } from '@angular/core';
+import { Component, ContentChild } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
@@ -23,8 +23,14 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     static EliType = ApeShapesComponent.TypeTag + '-eli';
     static PistonType = ApeShapesComponent.TypeTag + '-piston';
 
-    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, downup: GaugeActionsType.downup,
-        hide: GaugeActionsType.hide, show: GaugeActionsType.show };
+    static actionsType: {
+        stop: GaugeActionsType.stop;
+        hide: GaugeActionsType.hide;
+        show: GaugeActionsType.show;
+        downup?: GaugeActionsType.downup;
+        clockwise?: GaugeActionsType.clockwise;
+        anticlockwise?: GaugeActionsType.anticlockwise;
+        } = { stop: GaugeActionsType.stop, hide: GaugeActionsType.hide, show: GaugeActionsType.show };
 
     constructor() {
         super();
