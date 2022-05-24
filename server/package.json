@@ -37,6 +37,7 @@
     "nopt": "5.0.0",
     "socket.io": "2.4.1",
     "sqlite3": "5.0.0",
+    "svgson": "5.2.1",
     "winston": "3.7.2"
   },
   "devDependencies": {}
