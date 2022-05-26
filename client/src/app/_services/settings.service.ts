@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
-import { AppSettings, SmtpSettings } from '../_models/settings';
+import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
 
 @Injectable({
     providedIn: 'root'
@@ -63,6 +63,12 @@ export class SettingsService {
                 settings.smtp.mailsender === this.appSettings.smtp.mailsender && settings.smtp.username === this.appSettings.smtp.username && 
                 settings.smtp.password === this.appSettings.smtp.password)) {
             this.appSettings.smtp = new SmtpSettings(settings.smtp);
+            dirty = true;
+        }
+        if (settings.daqstore && !(settings.daqstore.type === this.appSettings.daqstore.type && settings.daqstore.bucket === this.appSettings.daqstore.bucket && 
+            settings.daqstore.token === this.appSettings.daqstore.token && settings.daqstore.url === this.appSettings.daqstore.url && 
+            settings.daqstore.organization === this.appSettings.daqstore.organization)) {
+            this.appSettings.daqstore = new DaqStore(settings.daqstore);
             dirty = true;
         }
         return dirty;

@@ -71,6 +71,48 @@
                     </div>
                 </div>
             </mat-tab>
+            <mat-tab label="{{'dlg.app-settings-daqstore' | translate}}">
+                <div style="display: block; margin-top: 20px;overflow: hidden;">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.property-type' | translate}}</span>
+                        <mat-select [(value)]="settings.daqstore.type" style="width: 200px">
+                            <mat-option *ngFor="let type of daqstoreType | enumToArray" [value]="type.key">
+                                {{ type.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div *ngIf="settings.daqstore.type" style="display: block;">
+                        <div [ngSwitch]="settings.daqstore.type">
+                            <div *ngSwitchCase="daqstoreType.influxDB">
+                                <div style="display: block; margin-top: 20px">
+                                    <div class="my-form-field">
+                                        <span>{{'dlg.app-settings-daqstore-url' | translate}}</span>
+                                        <input [(ngModel)]="settings.daqstore.url" placeholder="https://us-west-2-1.aws.cloud2.influxdata.com" class="input-row" type="text">
+                                    </div>
+                                </div>
+                                <div style="display: block; margin-top: 20px">
+                                    <div class="my-form-field">
+                                        <span>{{'dlg.app-settings-daqstore-token' | translate}}</span>
+                                        <input [(ngModel)]="settings.daqstore.token" placeholder="" class="input-row" type="text">
+                                    </div>
+                                </div>
+                                <div style="display: block; margin-top: 20px">
+                                    <div class="my-form-field">
+                                        <span>{{'dlg.app-settings-daqstore-bucket' | translate}}</span>
+                                        <input [(ngModel)]="settings.daqstore.bucket" placeholder="" class="input-row" type="text">
+                                    </div>
+                                </div>
+                                <div style="display: block; margin-top: 20px">
+                                    <div class="my-form-field">
+                                        <span>{{'dlg.app-settings-daqstore-organization' | translate}}</span>
+                                        <input [(ngModel)]="settings.daqstore.organization" placeholder="" class="input-row" type="text">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
     <div mat-dialog-actions class="dialog-action">

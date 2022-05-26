@@ -9,6 +9,8 @@ export class AppSettings {
     tokenExpiresIn = '1h';
     /** Smtp to send mails */
     smtp = new SmtpSettings();
+    /** Daq store database */
+    daqstore = new DaqStore();
 }
 
 export class SmtpSettings {
@@ -32,6 +34,28 @@ export class SmtpSettings {
             this.password = smtp.password;    
         }
     }
+}
+
+export class DaqStore {
+    type = DaqStoreType.SQlite;
+    url?: string;
+    organization?: string;
+    token?: string;
+    bucket?: string;
+    constructor(daqstore: DaqStore = null) {
+        if (daqstore) {
+            this.type = daqstore.type;
+            this.url = daqstore.url;
+            this.organization = daqstore.organization;
+            this.token = daqstore.token;
+            this.bucket = daqstore.bucket;
+        }
+    }
+}
+
+export enum DaqStoreType {
+    SQlite = 'SQlite',
+    influxDB = 'influxDB',
 }
 
 export class MailMessage {

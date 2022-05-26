@@ -6,7 +6,7 @@ import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { AppSettings, MailMessage, SmtpSettings } from '../../_models/settings';
+import { AppSettings, DaqStore, DaqStoreType, MailMessage, SmtpSettings } from '../../_models/settings';
 
 @Component({
     selector: 'app-app-settings',
@@ -28,6 +28,8 @@ export class AppSettingsComponent implements OnInit {
     smtpTesting = false;
     smtpTestAddress = '';
     showPassword = false;
+    
+    daqstoreType = DaqStoreType;
     
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,
@@ -51,6 +53,7 @@ export class AppSettingsComponent implements OnInit {
         if (!this.settings.smtp) {
             this.settings.smtp = new SmtpSettings();
         }
+        this.settings.daqstore = this.settings.daqstore || new DaqStore();
     }
 
     onNoClick() {
