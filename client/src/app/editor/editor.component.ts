@@ -298,6 +298,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onSelectView(this.hmi.views[0]);
             }
         }
+        // check and set start page
+        if (!this.hmi.layout) {
+            this.hmi.layout = new LayoutSettings();
+        }
+        if (!this.hmi.layout.start) {
+            this.hmi.layout.start = this.hmi.views[0].id;
+        }
         this.loadPanelState();
         this.isLoading = false;
     }
@@ -868,7 +875,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Add View to Project with a default name View_[x]
      */
-    addView(name?: string, type?: ViewType) {
+    addView(name?: string, type?: ViewType): string {
         if (this.hmi.views) {
             let nn = "View_";
             let idx = 1;
@@ -900,7 +907,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.hmi.views.push(v);
             this.onSelectView(v);
             this.saveView(this.currentView);
+            return v.id;
         }
+        return null;
     }
 
     /**

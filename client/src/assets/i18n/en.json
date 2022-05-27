@@ -37,6 +37,7 @@
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
     "dlg.layout-lbl-sview": "Start View",
+    "dlg.layout-lbl-login-start": "Show login on start",
     "dlg.layout-lbl-zoom": "Zoom",
     "dlg.layout-navigation-mode": "Show Navigation",
     "dlg.layout-show-dev": "Show button",
@@ -118,6 +119,8 @@
     "general.authority": "Authority",
     "general.grant-type": "Grant type",
     "general.usergroups": "Viewer,Operator,Engineer,Supervisor,Manager,F,G,Administrator",
+    "general.enabled": "Enabled",
+    "general.disabled": "Disabled",
 
     "tester.title": "Variable",
     "tester.send": "Send",

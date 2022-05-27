@@ -286,6 +286,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.isLoading = false;
         this.securityEnabled = this.projectService.isSecurityEnabled();
+        if (this.securityEnabled && !this.isLoggedIn() && this.hmi.layout.loginonstart) {
+            this.onLogin();
+        }
     }
 
     private setBackground() {
