@@ -39,7 +39,7 @@
 			<app-cards-view *ngIf="!showHomeLink && homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-cards-view>
 			<app-fuxa-view *ngIf="!showHomeLink && homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
 			<app-iframe *ngIf="showHomeLink" [hidden]="isLoading || !showHomeLink" #iframeview [link]="homeLink" class="home-body" style="width:100%; height:100%"></app-iframe>
-			<div id="alarms-panel">
+			<div id="alarms-panel" [style.width]="alarmPanelWidth">
 				<app-alarm-view #alarmsview [fullview]="false" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
 			</div>
 		</div>

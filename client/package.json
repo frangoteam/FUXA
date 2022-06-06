@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.1.6-716",
+  "version": "1.1.6-721",
   "keywords": [],
   "author": "frangoteam <4frango@gmail.com>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -72,6 +72,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "node-sass": "^4.14.1",
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",

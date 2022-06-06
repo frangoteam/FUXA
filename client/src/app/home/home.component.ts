@@ -53,10 +53,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     alarms = { show: false, count: 0, mode: '' };
     infos = { show: false, count: 0, mode: '' };
     headerButtonMode = NotificationModeType;
-    alarmsPanelOpen = false;
     layoutHeader = new HeaderSettings();
 	showNavigation = true;
     viewAsAlarms = LinkType.alarms;
+    alarmPanelWidth = '100%';
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
@@ -199,22 +199,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onAlarmsShowMode(mode: string) {
+        if (Utils.getEnumKey(NaviModeType, NaviModeType.fix) === this.hmi.layout.navigation.mode && this.matsidenav) {
+            this.alarmPanelWidth = `calc(100% - ${this.matsidenav._width}px)`;
+        }
         let ele = document.getElementById("alarms-panel");
         if (mode === 'expand') {
             ele.classList.add("is-full-active");
             // ele.classList.remove('is-active');			
-            this.alarmsPanelOpen = true;
             this.alarmsview.startAskAlarmsValues();
         } else if (mode === 'collapse') {
             ele.classList.add('is-active');
             ele.classList.remove('is-full-active');
-            this.alarmsPanelOpen = true;
             this.alarmsview.startAskAlarmsValues();
         } else {
             // ele.classList.toggle("is-active");
             ele.classList.remove('is-active');
             ele.classList.remove('is-full-active');
-            this.alarmsPanelOpen = false;
         }
     }
 
