@@ -212,7 +212,9 @@ export class DeviceTagDialog implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any) {
         if (this.data.devices) {
             this.data.devices.forEach((device: Device) => {
-                if (device.tags) {
+                if (data.deviceFilter && data.deviceFilter.indexOf(device.type) !== -1) {
+                    // filtered device 
+                } else if (device.tags) {
                     Object.values(device.tags).forEach((t: Tag) => this.tags.push(<TagElement>{
                         id: t.id, name: t.name, address: t.address,
                         device: device.name, checked: (t.id === this.data.variableId), error: null
