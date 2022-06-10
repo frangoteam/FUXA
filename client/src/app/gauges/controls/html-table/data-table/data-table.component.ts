@@ -116,7 +116,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.tagsMap[variableId]) {
             this.tagsMap[variableId].value = variableValue;
             this.tagsMap[variableId].cells.forEach((cell: TableCellData) => {
-                cell.stringValue = numeral(this.tagsMap[variableId].value).format(cell.valueFormat);
+                cell.stringValue = Utils.formatValue(this.tagsMap[variableId].value, cell.valueFormat);
             });
             // update timestamp of all timestamp cells
             this.tagsMap[variableId].rows.forEach((rowIndex: number) => {
