@@ -69,5 +69,9 @@ var utils = module.exports = {
 
     isEmptyObject: function (value) {
         return value && Object.keys(value).length === 0 && value.constructor === Object;
+    },
+
+    isNullOrUndefined: function (ele) {
+        return (ele === null || ele === undefined) ? true : false;
     }
 }

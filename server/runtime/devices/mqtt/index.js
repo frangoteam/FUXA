@@ -3,6 +3,7 @@
  */
 'use strict';
 const mqtt = require('mqtt');
+var utils = require('../../utils');
 
 function MQTTclient(_data, _logger, _events) {
     var data = _data;                   // Current data
@@ -343,7 +344,7 @@ function MQTTclient(_data, _logger, _events) {
                                     if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
                                         try {
                                             var subitems = JSON.parse(data.tags[id].value);
-                                            if (subitems[data.tags[id].memaddress]) {
+                                            if (!utils.isNullOrUndefined(subitems[data.tags[id].memaddress])) {
                                                 data.tags[id].value = subitems[data.tags[id].memaddress];
                                             } else {
                                                 data.tags[id].value = oldvalue;

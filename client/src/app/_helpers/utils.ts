@@ -140,6 +140,18 @@ export class Utils {
         }
     }
 
+    /**
+     * check boolean and convert to number
+     * @param value 
+     */
+    static toNumber(value: any) {
+        const b = Utils.Boolify(value);
+        if (!Utils.isNullOrUndefined(b)) {
+            return Number(b);
+        }
+        return value;
+    }
+
     static formatValue(value: string, format: string): string {
         try {
             if (Utils.isNumeric(value)) {
