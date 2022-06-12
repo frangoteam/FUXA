@@ -626,7 +626,7 @@ function DaqNode(_settings, _log, _id) {
 }
 
 module.exports = {
-    create: function (data, logger, events) {
-        return new DaqNode(data, logger, events);
+    create: function (data, logger, id) {
+        return new DaqNode(data, logger, id);
     }
 };

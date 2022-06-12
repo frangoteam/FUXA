@@ -38,24 +38,48 @@ export class SmtpSettings {
 
 export class DaqStore {
     type = DaqStoreType.SQlite;
+    varsion?: string;
     url?: string;
     organization?: string;
-    token?: string;
+    credential?: StoreCredential;
     bucket?: string;
     constructor(daqstore: DaqStore = null) {
         if (daqstore) {
             this.type = daqstore.type;
             this.url = daqstore.url;
             this.organization = daqstore.organization;
-            this.token = daqstore.token;
+            this.credential = daqstore.credential;
             this.bucket = daqstore.bucket;
         }
+    }
+
+    isEquals(store: DaqStore) {
+        if (this.type === store.type && this.bucket === store.bucket && this.url === store.url && this.organization === store.organization &&
+            (this.credential && this.credential.isEquals(store.credential))) {
+            return true;
+        }
+        return false;
+    }
+}
+
+export class StoreCredential {
+    token?: string;
+    username?: string;
+    password?: string;
+
+    isEquals(credential: StoreCredential) {
+        return (this.token === credential.token && this.username === credential.username && this.password === credential.password);
     }
 }
 
 export enum DaqStoreType {
     SQlite = 'SQlite',
     influxDB = 'influxDB',
+}
+
+export enum influxDBVersionType {
+    VERSION_18_FLUX = '1.8-flux',
+    VERSION_20 = '2.0',
 }
 
 export class MailMessage {

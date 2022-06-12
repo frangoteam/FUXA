@@ -65,9 +65,7 @@ export class SettingsService {
             this.appSettings.smtp = new SmtpSettings(settings.smtp);
             dirty = true;
         }
-        if (settings.daqstore && !(settings.daqstore.type === this.appSettings.daqstore.type && settings.daqstore.bucket === this.appSettings.daqstore.bucket && 
-            settings.daqstore.token === this.appSettings.daqstore.token && settings.daqstore.url === this.appSettings.daqstore.url && 
-            settings.daqstore.organization === this.appSettings.daqstore.organization)) {
+        if (settings.daqstore && !settings.daqstore.isEquals(this.appSettings.daqstore)) {
             this.appSettings.daqstore = new DaqStore(settings.daqstore);
             dirty = true;
         }

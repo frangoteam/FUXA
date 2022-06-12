@@ -69,5 +69,30 @@ var utils = module.exports = {
 
     isEmptyObject: function (value) {
         return value && Object.keys(value).length === 0 && value.constructor === Object;
+    },
+
+    isObject(value) {
+        var type = typeof value;
+        return !!value && (type == 'object' || type == 'function');
+    },
+
+    isPlainObject(value) {
+        var Ctor;
+        if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value) && !isArguments(value)) ||
+            (!hasOwnProperty.call(value, 'constructor') && (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
+          return false;
+        }
+        var result;
+        if (lodash.support.ownLast) {
+          baseForIn(value, function(subValue, key, object) {
+            result = hasOwnProperty.call(object, key);
+            return false;
+          });
+          return result !== false;
+        }
+        baseForIn(value, function(subValue, key) {
+          result = key;
+        });
+        return result === undefined || hasOwnProperty.call(value, result);
     }
 }

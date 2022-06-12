@@ -125,6 +125,9 @@ try {
         if (mysettings.smtp) {
             settings.smtp = mysettings.smtp;
         }
+        if (mysettings.daqstore) {
+            settings.daqstore = mysettings.daqstore;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)

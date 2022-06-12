@@ -6,11 +6,15 @@
 
 const fs = require('fs');
 const path = require('path');
-var DaqNode = require("./daqnode");
+var SqliteDB = require("./sqlite");
+var InfluxDB = require("./influxdb");
 
-var settings
+var daqStoreType;
+
+var settings;
 var logger;
-var daqnodes = {};              // list of daqnode
+var daqDB = {};                 // list of daqDB node: SQlite one pro device, influxDB only one
+var timeSerieDB;
 
 function init(_settings, _log) {
     settings = _settings;
@@ -19,18 +23,27 @@ function init(_settings, _log) {
 }
 
 function reset() {
-    for (var id in daqnodes) {
-        daqnodes[id].close();
+    daqStoreType = _getDbType();
+    for (var id in daqDB) {
+        daqDB[id].close();
     }
-    daqnodes = {};
+    daqDB = {};
     logger.info("daqstorage reset!", true);
 }
 
-function addDaqNode(id, fncgetprop) {
-    if (!daqnodes[id]) {
-        daqnodes[id] = DaqNode.create(settings, logger, id);
+function addDaqNode(_id, fncgetprop) {
+    var id = _id;
+    if (_getDbType() === DaqStoreTypeEnum.influxDB) {
+        id = _getDbType();
     }
-    return daqnodes[id].setCall(fncgetprop);
+    if (!daqDB[id]) {
+        if (id === DaqStoreTypeEnum.influxDB) {
+            daqDB[id] = InfluxDB.create(settings, logger);
+        } else {
+            daqDB[id] = SqliteDB.create(settings, logger, id);
+        }
+    }
+    return daqDB[id].setCall(fncgetprop);
     // return daqnodes[id].addDaqValue;
 }
 
@@ -46,12 +59,24 @@ function getNodeValues(tagid, fromts, tots) {
 }
 
 function _getDaqNode(tagid) {
-    var nodes = Object.values(daqnodes);
+    var nodes = Object.values(daqDB);
     for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].getDaqMap()[tagid]) {
             return nodes[i];
         }
     }
+}
+
+function _getDbType() {
+    if (settings.daqstore && settings.daqstore) {
+        return settings.daqstore.type;
+    }
+    return DaqStoreTypeEnum.SQlite;
+}
+
+var DaqStoreTypeEnum = {
+    SQlite: 'SQlite',
+    influxDB: 'influxDB',
 }
 
 module.exports = {

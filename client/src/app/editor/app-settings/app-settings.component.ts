@@ -6,7 +6,7 @@ import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { AppSettings, DaqStore, DaqStoreType, MailMessage, SmtpSettings } from '../../_models/settings';
+import { AppSettings, DaqStore, DaqStoreType, MailMessage, SmtpSettings, StoreCredential } from '../../_models/settings';
 
 @Component({
     selector: 'app-app-settings',
@@ -54,6 +54,9 @@ export class AppSettingsComponent implements OnInit {
             this.settings.smtp = new SmtpSettings();
         }
         this.settings.daqstore = this.settings.daqstore || new DaqStore();
+        if (!this.settings.daqstore.credential) {
+            this.settings.daqstore.credential = new StoreCredential()
+        }
     }
 
     onNoClick() {
