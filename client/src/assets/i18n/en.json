@@ -551,6 +551,8 @@
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
 
+    "tutorial.editor-keyboard-shortcuts": "Editor Keyboard Shortcuts",
+
     "shapes.action-hide": "Hide",
     "shapes.action-show": "Show",
     "shapes.action-blink": "Blink",
