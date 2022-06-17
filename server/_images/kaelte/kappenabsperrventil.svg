@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="23mm" height="14mm"
+viewBox="0 0 235 140">
+<title>kappenabsperrventil</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polygon points="68 47 68 98 117 72" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polygon points="117 72 167 47 167 98" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="167.50 72.50 192.50 72.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.50 72.50 42.50 72.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<circle cx="117.52" cy="72.50" r="9.53" fill="rgb(0,0,0)" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="97.50 62.50 97.50 42.50 137.50 42.50 137.50 62.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+</svg>

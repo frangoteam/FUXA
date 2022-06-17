@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="21mm" height="23mm"
+viewBox="0 0 210 235">
+<title>magnetventil</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polygon points="118 167 168 167 143 118" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polygon points="143 118 118 68 168 68" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="142.50 67.50 142.50 42.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="142.50 167.50 142.50 192.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="142.50 117.50 91.88 117.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 42 132 L 42 102 92 102 92 132 42 132 Z" />
+<polyline points="42.50 102.50 92.50 132.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+</svg>

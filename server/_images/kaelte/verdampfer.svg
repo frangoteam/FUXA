@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="61mm" height="60mm"
+viewBox="0 0 610 607">
+<title>verdampfer</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 118 116 L 493 116 493 491 118 491 118 116 Z" />
+<circle cx="305.19" cy="228.50" r="74.69" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="42.50 416.00 567.50 416.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="192.50 378.50 192.50 453.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="267.50 378.50 267.50 453.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="342.50 378.50 342.50 453.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="417.50 378.50 417.50 453.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="530.00 408.50 530.00 423.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="80.00 408.50 80.00 423.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="267.50 161.00 237.50 266.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="342.50 161.00 372.50 266.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="305.00 258.50 305.00 291.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polygon points="324 91 324 58 343 58 305 41 268 58 286 58 286 91" fill="rgb(0,128,255)" stroke="rgb(0,0,0)" stroke-width="2" />
+<polygon points="324 566 324 533 343 533 305 516 268 533 286 533 286 566" fill="rgb(255,128,0)" stroke="rgb(0,0,0)" stroke-width="2" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 305.00 228.50 Q 309.47 223.04 311.14 219.93 Q 312.80 216.82 313.82 213.44 Q 314.85 210.06 315.19 206.55 Q 315.54 203.04 315.19 199.53 Q 314.85 196.02 313.82 192.64 Q 312.80 189.26 311.14 186.15 Q 309.47 183.04 307.24 180.31" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 305.25 177.58 Q 300.77 183.04 299.11 186.15 Q 297.45 189.26 296.42 192.64 Q 295.40 196.02 295.05 199.53 Q 294.71 203.04 295.05 206.55 Q 295.40 210.06 296.42 213.44 Q 297.45 216.82 299.11 219.93 Q 300.77 223.04 303.01 225.77" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 305.25 228.50 Q 307.74 235.10 309.60 238.10 Q 311.46 241.10 313.87 243.67 Q 316.29 246.25 319.15 248.30 Q 322.02 250.36 325.24 251.82 Q 328.45 253.27 331.89 254.07 Q 335.32 254.87 338.85 254.99 Q 342.38 255.10 345.86 254.53 Q 349.34 253.96 349.34 253.95" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 349.21 254.17 Q 346.73 247.57 344.86 244.57 Q 343.00 241.58 340.59 239.00 Q 338.18 236.43 335.31 234.37 Q 332.44 232.32 329.23 230.86 Q 326.01 229.40 322.58 228.60 Q 319.14 227.80 315.61 227.69 Q 312.09 227.57 308.60 228.15 Q 305.12 228.72 305.12 228.72" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 305.13 228.72 Q 305.12 228.72 301.64 228.15 Q 298.16 227.57 294.63 227.69 Q 291.11 227.80 287.67 228.60 Q 284.23 229.40 281.02 230.86 Q 277.81 232.32 274.94 234.37 Q 272.07 236.43 269.66 239.00 Q 267.25 241.58 265.38 244.57 Q 263.52 247.57 262.28 250.87" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 260.90 253.95 Q 260.91 253.95 264.39 254.53 Q 267.87 255.10 271.39 254.99 Q 274.92 254.87 278.36 254.07 Q 281.79 253.27 285.01 251.82 Q 288.22 250.36 291.09 248.30 Q 293.96 246.25 296.37 243.67 Q 298.78 241.10 300.65 238.10 Q 302.51 235.10 303.75 231.80" />
+</svg>

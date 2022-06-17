@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="23mm" height="30mm"
+viewBox="0 0 235 307">
+<title>sammler</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polyline points="67.50 53.60 67.50 253.60" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="167.50 53.60 167.50 253.60" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 68 54 C 118 29 168 54 168 54" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 168 254 C 118 279 68 254 68 254" />
+<polyline points="167.50 78.60 192.50 78.60" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.50 228.60 42.50 228.60" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+</svg>

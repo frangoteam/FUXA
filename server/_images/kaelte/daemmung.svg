@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="13mm" height="33mm"
+viewBox="0 0 135 335">
+<title>daemmung</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polyline points="66.88 42.50 66.88 292.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 267.50 92.50 67.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="42.50 67.50 42.50 267.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 92.50 42.50 117.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 117.50 42.50 142.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 142.50 42.50 167.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 167.50 42.50 192.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 192.50 42.50 217.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 217.50 42.50 242.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+</svg>

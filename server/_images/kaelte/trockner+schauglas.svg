@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="13mm" height="38mm"
+viewBox="0 0 134 385">
+<title>trockner+schauglas</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polyline points="67.00 167.50 67.00 192.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.00 67.50 67.00 42.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 42 68 L 92 68 92 167 42 167 42 68 Z" />
+<polyline points="42.00 82.50 92.00 82.50" fill="none" stroke="rgb(0,0,0)" stroke-width="3" />
+<polyline points="42.00 152.50 92.00 152.50" fill="none" stroke="rgb(0,0,0)" stroke-width="3" />
+<polyline points="42.00 87.50 92.00 87.50" fill="none" stroke="rgb(0,0,0)" stroke-width="1" stroke-dasharray="2,4" />
+<polyline points="42.00 147.50 92.00 147.50" fill="none" stroke="rgb(0,0,0)" stroke-width="1" stroke-dasharray="2,4" />
+<polyline points="67.00 317.50 67.00 342.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.00 217.50 67.00 192.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 42 217 L 92 217 92 317 42 317 42 217 Z" />
+<circle cx="67.06" cy="267.50" r="24.56" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<circle cx="67" cy="267" r="6" fill="rgb(0,0,0)" stroke="none" stroke-width="2" />
+</svg>
