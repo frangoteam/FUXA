@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="28mm" height="33mm"
+viewBox="0 0 285 335">
+<title>bsk-motor</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polyline points="92.50 167.50 42.50 167.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="192.50 167.50 242.50 167.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="217.50 162.50 217.50 172.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.50 162.50 67.50 172.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 192 292 L 92 292 92 42 192 42 192 292 Z" />
+<polyline points="177.50 42.50 92.50 252.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="192.50 82.50 107.50 292.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="rgb(0,0,0)" stroke="rgb(0,0,0)" stroke-width="5" d=" M 152.40 168.54 Q 152.50 167.50 152.40 166.46 Q 152.31 165.43 152.02 164.43 Q 151.74 163.43 151.28 162.52 Q 150.81 161.60 150.19 160.79 Q 149.57 159.99 148.81 159.33 Q 148.06 158.67 147.19 158.17 Q 146.33 157.68 145.39 157.38 Q 144.45 157.08 143.48 156.98 Q 142.50 156.88 141.52 156.98 Q 140.55 157.08 139.61 157.38 Q 138.67 157.68 137.81 158.17 Q 136.94 158.67 136.19 159.33 Q 135.43 159.99 134.81 160.79 Q 134.19 161.60 133.72 162.52 Q 133.26 163.43 132.98 164.43 Q 132.69 165.43 132.60 166.46 Q 132.50 167.50 132.60 168.54 Q 132.69 169.57 132.98 170.57 Q 133.26 171.57 133.72 172.48 Q 134.19 173.40 134.81 174.21 Q 135.43 175.01 136.19 175.67 Q 136.94 176.33 137.81 176.83 Q 138.67 177.32 139.61 177.62 Q 140.55 177.92 141.52 178.02 Q 142.50 178.12 143.48 178.02 Q 144.45 177.92 145.39 177.62 Q 146.33 177.32 147.19 176.83 Q 148.06 176.33 148.81 175.67 Q 149.57 175.01 150.19 174.21 Q 150.81 173.40 151.28 172.48 Q 151.74 171.57 152.02 170.57 Q 152.31 169.57 152.40 168.54 Z" />
+</svg>

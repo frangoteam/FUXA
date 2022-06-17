@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="28mm" height="33mm"
+viewBox="0 0 285 335">
+<title>filter</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polyline points="192.50 167.50 242.50 167.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="92.50 167.50 42.50 167.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.50 172.50 67.50 162.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="217.50 172.50 217.50 162.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 92 42 L 192 42 192 292 92 292 92 42 Z" />
+<polyline points="192.50 167.50 167.50 42.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="192.50 167.50 167.50 292.50" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+</svg>

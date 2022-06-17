@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with "sPlan" (http://www.abacom-online.de) -->
+<svg version="1.1" baseProfile="full"
+xmlns="http://www.w3.org/2000/svg"
+width="43mm" height="33mm"
+viewBox="0 0 435 334">
+<title>ventilator</title>
+<defs>
+<style type="text/css">
+<![CDATA[
+polyline {stroke-linecap:round; stroke-linejoin:round}
+polygon {stroke-linecap:round; stroke-linejoin:round}
+path {stroke-linecap:round; stroke-linejoin:round}
+circle {stroke-linecap:round; stroke-linejoin:round}
+]]>
+</style>
+</defs>
+<polyline points="92.50 167.00 42.50 167.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="342.50 167.00 392.50 167.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="367.50 162.00 367.50 172.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="67.50 162.00 67.50 172.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<path fill="none" stroke="rgb(0,0,0)" stroke-width="5" d=" M 342 292 L 92 292 92 42 342 42 342 292 Z" />
+<circle cx="217.19" cy="167.00" r="124.81" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="317.50 242.00 142.50 267.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+<polyline points="142.50 67.00 317.50 92.00" fill="none" stroke="rgb(0,0,0)" stroke-width="5" />
+</svg>
