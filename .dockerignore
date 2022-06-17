@@ -1,0 +1,9 @@
+*/temp*
+temp?
+
+*/node_modules*
+
+*/_appdata/*
+*/_db/*
+#*/_images/*
+*/_logs*
