@@ -1,4 +1,5 @@
 # node:14 is not working on my system
+#FROM node:14
 FROM node:17
 
 # Create app directory 
