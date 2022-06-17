@@ -7,10 +7,11 @@ import { Router } from '@angular/router';
 
 import { DeviceListComponent } from './device-list/device-list.component';
 import { DeviceMapComponent } from './device-map/device-map.component';
-import { Device, Tag, DeviceViewModeType } from './../_models/device';
+import { Device, Tag, DeviceViewModeType, DevicesUtils } from './../_models/device';
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { HmiService } from '../_services/hmi.service';
 import { DEVICE_READONLY } from '../_models/hmi';
+import { Utils } from '../_helpers/utils';
 
 @Component({
     selector: 'app-device',
@@ -148,9 +149,9 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
         }, 1000);
     }
 
-    onExport() {
+    onExport(type: string) {
         try {
-            this.projectService.exportDevices();
+            this.projectService.exportDevices(type);
         } catch (err) {
             console.error(err);
         }
@@ -166,13 +167,19 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
      * @param event file resource
      */
     onFileChangeListener(event) {
-        let files = event.srcElement.files;
         let input = event.target;
         let reader = new FileReader();
         reader.onload = (data) => {
-            let devices = JSON.parse(reader.result.toString());
+            let devices;
+            if (Utils.isJson(reader.result)) {
+                // JSON
+                devices = JSON.parse(reader.result.toString());
+            } else {
+                // CSV
+                devices = DevicesUtils.csvToDevices(reader.result.toString());   
+            }
             this.projectService.importDevices(devices);
-            this.projectService.onRefreshProject();
+            setTimeout(() => { this.projectService.onRefreshProject(); }, 2000);
         }
 
         reader.onerror = function () {

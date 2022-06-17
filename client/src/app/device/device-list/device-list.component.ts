@@ -77,6 +77,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     mapTags() {
+        this.devices = this.projectService.getDevices();
         Object.values(this.devices).forEach(d => {
             if (d.tags) {
                 Object.values(d.tags).forEach((t: Tag) => {
@@ -84,6 +85,7 @@ export class DeviceListComponent implements OnInit {
                 })    
             }
         });
+        this.setSelectedDevice(this.deviceSelected);
     }
 
     private bindToTable(tags) {

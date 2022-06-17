@@ -10,9 +10,13 @@
 <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="fab-reload" style="right: 50px !important">
     <mat-icon>more_vert</mat-icon>
 </button>
-<input type="file" #fileImportInput style="display: none" id="devicesConfigFileUpload" (change)="onFileChangeListener($event)" accept=".json" />
+<input type="file" #fileImportInput style="display: none" id="devicesConfigFileUpload" (change)="onFileChangeListener($event)" accept=".json,.csv" />
 <mat-menu #optionsgMenu [overlapTrigger]="false">
-    <button mat-menu-item (click)="onExport()" style="font-size: 14px;">{{'devices.export' | translate}}</button>
+    <button mat-menu-item [matMenuTriggerFor]="export" style="font-size: 14px;">{{'devices.export' | translate}}</button>
+    <mat-menu #export="matMenu" xPosition="before">
+        <button mat-menu-item (click)="onExport('json')">{{'devices.export-json' | translate}}</button>
+        <button mat-menu-item (click)="onExport('csv')">{{'devices.export-csv' | translate}}</button>
+      </mat-menu>
     <mat-divider class="menu-separator"></mat-divider>
     <button mat-menu-item (click)="onImport()" style="font-size: 14px;">{{'devices.import' | translate}}</button>
 </mat-menu>

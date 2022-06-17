@@ -12,7 +12,7 @@ import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
 import { Text } from '../_models/text';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX } from '../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -162,23 +162,33 @@ export class ProjectService {
         FileSaver.saveAs(blob, filename);
     }
 
-    exportDevices() {
-        let filename = 'fuxa-devices.json';
-        if (this.getProjectName()) {
-            filename = `${this.getProjectName()}-devices.json`;
-        }        
-        let devices = Object.values(this.convertToSave(this.getDevices()));
-        let content = JSON.stringify(devices, null, 2);
+    exportDevices(type: string) {
+        let content = '';
+        const name = this.projectData.name || 'fuxa';
+        let filename = `${name}-devices.${type}`;
+        const devices = <Device[]>Object.values(this.convertToSave(this.getDevices()));
+        if (type === 'csv') {
+            content = DevicesUtils.devicesToCsv(devices);
+        } else {    // json
+            if (this.getProjectName()) {
+                filename = `${this.getProjectName()}-devices.json`;
+            }
+            content = JSON.stringify(devices, null, 2);
+        }
         let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         FileSaver.saveAs(blob, filename);
     }
 
     importDevices(devices: Device[]) {
-        devices.forEach(device => {
-            if (device.id && device.name) {
-                this.setDevice(device, null, null);
-            }
-        })
+        if (!devices) {
+            this.notifyError('msg.import-devices-error');
+        } else {
+            devices.forEach(device => {
+                if (device.id && device.name) {
+                    this.setDevice(device, null, null);
+                }
+            })
+        }
     }
 
     reload() {
@@ -738,6 +748,18 @@ export class ProjectService {
         this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt });
         if (msg) {
             this.toastr.error(msg, '', {
+                timeOut: 3000,
+                closeButton: true,
+                disableTimeOut: true
+            });
+        }
+    }
+
+    private notifyError(msgCode: string) {
+        this.translateService.get(msgCode).subscribe((txt: string) => { msgCode = txt });
+        if (msgCode) {
+            console.error(`FUXA Error: ${msgCode}`);
+            this.toastr.error(msgCode, '', {
                 timeOut: 3000,
                 closeButton: true,
                 disableTimeOut: true

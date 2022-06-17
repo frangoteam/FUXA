@@ -657,6 +657,8 @@
     "device.list-options": "Tag options",
 
     "devices.export": "Export devices",
+    "devices.export-json": "JSON",
+    "devices.export-csv": "CSV",
     "devices.import": "Import devices",
     "device.property-client": "Device Property",
     "device.property-server": "FUXA Server Property",
@@ -1093,5 +1095,6 @@
     "msg.signin-failed": "Unauthorized",
     "msg.get-project-void": "Project not found!",
     "msg.editor-mode-locked": "The editor is already open!",
-    "msg.alarms-clear-success": "All alarms have been cancelled!"
+    "msg.alarms-clear-success": "All alarms have been cancelled!",
+    "msg.import-devices-error": "Import devices failed!"
 }

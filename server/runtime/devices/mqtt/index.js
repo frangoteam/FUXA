@@ -287,11 +287,13 @@ function MQTTclient(_data, _logger, _events) {
             var tag = data.tags[tagid];
             if (tag) {
                 if (tag.options) {
-                    tag.options.pubs.forEach(item => {
-                        if (item.type === 'value') {
-                            item.value = value;
-                        }
-                    })
+                    if (tag.options.pubs) {
+                        tag.options.pubs.forEach(item => {
+                            if (item.type === 'value') {
+                                item.value = value;
+                            }
+                        })
+                    }
                 }
                 if (tag.type === 'raw') {
                     tag['value'] = value;
