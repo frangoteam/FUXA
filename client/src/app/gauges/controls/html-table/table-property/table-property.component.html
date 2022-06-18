@@ -102,24 +102,26 @@
             </div> -->
             <div class="section-inline-margin"></div>
             <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'table.property-filter' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.filter.show" (change)="onTableChanged()"></mat-slide-toggle>
-            </div>            
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'table.property-paginator' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'table.property-daterange' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()"></mat-slide-toggle>
-            </div>            
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
                 <span>{{'table.property-header' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="options.header.show" (change)="onTableChanged()"></mat-slide-toggle>
-            </div>            
+            </div>
+            <div *ngIf="tableTypeCtrl.value === tableType.history" style="display: inline-block;">
+                <div class="section-inline-margin2"></div>
+                <div class="my-form-field section-inline-toggle slider-field">
+                    <span>{{'table.property-filter' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.filter.show" (change)="onTableChanged()"></mat-slide-toggle>
+                </div>
+                <div class="section-inline-margin2"></div>
+                <div class="my-form-field section-inline-toggle slider-field">
+                    <span>{{'table.property-paginator' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
+                </div>
+                <div class="section-inline-margin2"></div>
+                <div class="my-form-field section-inline-toggle slider-field">
+                    <span>{{'table.property-daterange' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()"></mat-slide-toggle>
+                </div>
+            </div>
         </div>
         <div class="section-newline">&nbsp;</div>
         <div style="position: relative">
