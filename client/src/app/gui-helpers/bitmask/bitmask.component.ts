@@ -18,7 +18,7 @@ export class BitmaskComponent implements OnInit {
     ngOnInit() {
         this.size = this.data.size || 32;
         for (let i = 0; i < this.size; i++) {
-            let bit = <Bit>{id: Math.pow(2, i), label: (i + 1).toString()};
+            let bit = <Bit>{id: Math.pow(2, i), label: (i).toString()};
             this.bits.push(bit);
             if (this.data.bitmask & bit.id) {
                 this.selected.push(bit);
