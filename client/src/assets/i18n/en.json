@@ -536,7 +536,7 @@
     "editor.tools-redo-title": "Redo [Y]",
     "editor.tools-clone-title": "Duplicate Element [D]",
     "editor.tools-delete-title": "Delete Element [Delete/Backspace]",
-    "editor.tools-movebottom-title": "end to Back [ Ctrl+Shift+[ ]",
+    "editor.tools-movebottom-title": "Send to Back [ Ctrl+Shift+[ ]",
     "editor.tools-movetop-title": "Bring to Front [ Ctrl+Shift+] ]",
     "editor.tools-topath-title": "Convert to Path",
     "editor.tools-clonemulti-title": "Clone Elements [C]",
