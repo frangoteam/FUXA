@@ -134,7 +134,7 @@ function MODBUSclient(_data, _logger, _events) {
                     }
                 }
             }
-            _checkWorking(false);
+            // _checkWorking(false);
             Promise.all(readVarsfnc).then(result => {
                 _checkWorking(false);
                 if (result.length) {

@@ -228,7 +228,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             result.push([]);    // line
             for (var x = 0; x < values[i].length; x++) {
                 let t = values[i][x].dt / 1e3;
-                if (!result[0][t]) {
+                if (result[0].indexOf(t) === -1) {
                     result[0].push(t);
                     xmap[t] = {};
                 }

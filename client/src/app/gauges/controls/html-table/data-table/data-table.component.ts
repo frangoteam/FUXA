@@ -139,7 +139,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             data.push([]);    // line
             for (var x = 0; x < values[i].length; x++) {
                 let t = values[i][x].dt;
-                if (!data[0][t]) {
+                if (data[0].indexOf(t) === -1) {
                     data[0].push(t);
                     xmap[t] = {};
                 }
