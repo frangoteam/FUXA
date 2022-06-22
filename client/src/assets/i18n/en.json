@@ -964,6 +964,17 @@
     "script.scheduling-title": "Script scheduling",
     "script.scheduling-interval": "Interval in seconds",
 
+    "reports.list-title": "Reports settings",
+    "reports.list-name": "Name",
+    "reports.list-type": "Type",
+    "reports.list-receiver": "Receiver",
+    "reports.list-scheduling": "Scheduling / Interval",
+    "reports.list-enabled": "Enabled",
+
+    "report.property-title": "Report",
+    "report.property-name": "Name",
+    "report.property-receiver": "Receivers",
+
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
 
@@ -1029,6 +1040,7 @@
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
+    "dlg.setup-reports": "Reports",
     "dlg.setup-settings": "Settings",
     "dlg.setup-logs": "Logs",
     "dlg.setup-notifications": "Notifications",
@@ -1070,6 +1082,7 @@
     "msg.device-tag-remove": "Would you like to remove Tag ",
     "msg.device-tag-exist": "Tag name exist!",
     "msg.notification-property-missing-value": "Some values are missing!",
+    "msg.report-property-missing-value": "There are incorrect or missing values!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.project-load-error": "Unable to read '{{value}}'",
@@ -1079,6 +1092,7 @@
     "msg.chart-remove": "Would you like to remove Chart '{{value}}'?",
     "msg.graph-remove": "Would you like to remove Bar chart '{{value}}'?",
     "msg.script-remove": "Would you like to remove Script '{{value}}'?",
+    "msg.report-remove": "Would you like to remove Report ",
     "msg.device-connection-error": "Device '{{value}}' connection error!",
     "msg.server-connection-error": "Server connection failed!",
     "msg.sendmail-success": "Mail send successful!",
