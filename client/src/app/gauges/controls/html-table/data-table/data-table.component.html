@@ -51,3 +51,6 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableOptions.row.height"
         [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
 </mat-table>
+<div *ngIf="loading" class="spinner">
+    <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
+</div>

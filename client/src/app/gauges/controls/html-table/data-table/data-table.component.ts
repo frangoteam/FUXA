@@ -8,6 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { GaugeTableProperty, IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
 import { format } from 'fecha';
+import { Subject, timer } from 'rxjs';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 declare const numeral: any;
 @Component({
@@ -23,6 +25,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
 
+    loading = false;
     id: string;
     type: TableType;
     isEditor: boolean;
@@ -37,7 +40,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     lastRangeType = TableRangeType;
     tableOptions = DataTableComponent.DefaultOptions();
     data = [];
-
+    private destroy$ = new Subject<void>();
+    
     constructor(
         public dialog: MatDialog, 
         private translateService: TranslateService) { }
@@ -64,6 +68,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         try {
+            this.destroy$.next();
+            this.destroy$.complete();
+            this.destroy$.unsubscribe();
         } catch (e) {
             console.error(e);
         }
@@ -85,6 +92,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             msg.from = this.range.from;
             msg.to = this.range.to;
             this.onTimeRange.emit(msg);
+            if (this.type === TableType.history) {
+                this.setLoading(true);
+            }
         }
     }
 
@@ -102,6 +112,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 msg.from = dateRange.start;
                 msg.to = dateRange.end;
                 this.onTimeRange.emit(msg);
+                this.setLoading(true);
             }
         });
     }  
@@ -182,7 +193,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
         this.dataSource.data = dataTable;
         this.bindTableControls();
-
+        this.setLoading(false);
     }
 
     applyFilter(filterValue: string) {
@@ -191,6 +202,17 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.filter = filterValue;
     }
     
+    setLoading(load: boolean) {        
+        if (load) {
+            timer(10000).pipe(
+                takeUntil(this.destroy$)
+            ).subscribe((res) => {
+                this.loading = false;
+            });
+        }
+        this.loading = load;
+    }
+
     private bindTableControls(): void {
         if (this.type === TableType.history && this.tableOptions.paginator.show) {
             this.dataSource.paginator = this.paginator;

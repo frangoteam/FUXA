@@ -104,3 +104,9 @@
     text-align: right;
     justify-content: right;
 }
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 20px);
+}
