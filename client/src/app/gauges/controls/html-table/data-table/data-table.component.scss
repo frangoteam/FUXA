@@ -110,3 +110,26 @@
     top: 50%;
     left: calc(50% - 20px);
 }
+
+.small-icon-button {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+
+    .mat-icon {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    .material-icons {
+        font-size: 20px;
+    }
+}
+
+.reload-btn {
+    position: absolute;
+    top: 45px;
+    right: 10px;
+    z-index: 9999;
+}

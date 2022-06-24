@@ -51,6 +51,11 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableOptions.row.height"
         [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
 </mat-table>
+<div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
+    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="tableOptions.header.color">
+        <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
+    </button>
+</div>
 <div *ngIf="loading" class="spinner">
     <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
 </div>

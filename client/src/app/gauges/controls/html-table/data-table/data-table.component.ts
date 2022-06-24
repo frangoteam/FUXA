@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { Utils } from '../../../../_helpers/utils';
 import { MatDialog } from '@angular/material';
@@ -9,13 +9,13 @@ import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dial
 import { GaugeTableProperty, IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { Subject, timer } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 
 declare const numeral: any;
 @Component({
     selector: 'app-data-table',
     templateUrl: './data-table.component.html',
-    styleUrls: ['./data-table.component.css']
+    styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -40,6 +40,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     lastRangeType = TableRangeType;
     tableOptions = DataTableComponent.DefaultOptions();
     data = [];
+    reloadActive = false;
+    private lastDaqQuery = new DaqQuery();
     private destroy$ = new Subject<void>();
     
     constructor(
@@ -69,7 +71,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy() {
         try {
             this.destroy$.next();
-            this.destroy$.complete();
             this.destroy$.unsubscribe();
         } catch (e) {
             console.error(e);
@@ -85,16 +86,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.range.to = Date.now();
             this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (TableRangeConverter.TableRangeToHours(ev) * 60 * 60 * 1000));
 
-            let msg = new DaqQuery();
-            msg.event = ev;
-            msg.gid = this.id;
-            msg.sids = Object.keys(this.tagsColumnMap);
-            msg.from = this.range.from;
-            msg.to = this.range.to;
-            this.onTimeRange.emit(msg);
-            if (this.type === TableType.history) {
-                this.setLoading(true);
-            }
+            this.lastDaqQuery.event = ev;
+            this.lastDaqQuery.gid = this.id;
+            this.lastDaqQuery.sids = Object.keys(this.tagsColumnMap);
+            this.lastDaqQuery.from = this.range.from;
+            this.lastDaqQuery.to = this.range.to;
+            this.onDaqQuery();
         }
     }
 
@@ -106,16 +103,26 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (dateRange) {
                 this.range.from = dateRange.start;
                 this.range.to = dateRange.end;
-                let msg = new DaqQuery();
-                msg.gid = this.id;
-                msg.sids = Object.keys(this.tagsColumnMap);
-                msg.from = dateRange.start;
-                msg.to = dateRange.end;
-                this.onTimeRange.emit(msg);
-                this.setLoading(true);
+                this.lastDaqQuery.gid = this.id;
+                this.lastDaqQuery.sids = Object.keys(this.tagsColumnMap);
+                this.lastDaqQuery.from = dateRange.start;
+                this.lastDaqQuery.to = dateRange.end;
+                this.onDaqQuery();
             }
         });
     }  
+
+    onDaqQuery() {
+        this.onTimeRange.emit(this.lastDaqQuery);
+        if (this.type === TableType.history) {
+            this.setLoading(true);
+        }
+    }
+
+    onRefresh() {      
+        this.onRangeChanged(this.lastDaqQuery.event);
+        this.reloadActive = true;
+    }
 
     setOptions(options: TableOptions): void {
         this.tableOptions = { ...this.tableOptions, ...options };
@@ -140,7 +147,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    public setValues(values) {
+    setValues(values) {
         // merge the data to have rows with 0:timestamp, n:variable values
         let data = [];
         // data.push({});
@@ -186,14 +193,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             dataTable.push(row);
         }
-
-
-
-        // this.nguplot.setData(result);
-        // this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
         this.dataSource.data = dataTable;
         this.bindTableControls();
-        this.setLoading(false);
+        setTimeout(() => {
+            this.setLoading(false);
+        }, 500);
+        this.reloadActive = false;
     }
 
     applyFilter(filterValue: string) {
