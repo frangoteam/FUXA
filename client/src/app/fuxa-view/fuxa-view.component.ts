@@ -38,6 +38,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
     @Output() onclose = new EventEmitter();
+    @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
     @ViewChild('dataContainer') dataContainer: ElementRef;
     @ViewChild('inputDialogRef') inputDialogRef: ElementRef;
@@ -139,10 +140,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             this.id = view.id;
             this.view = view;
             if (view.type === this.cardViewType) {
-                let cards = JSON.parse(view.svgcontent);
-                if (cards.content) {
-                    this.dataContainer.nativeElement.innerHTML = cards.content.replace('<title>Layer 1</title>', '');
-                }
+                this.ongoto.emit(view.id);
+                return;
             } else {
                 this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
             }

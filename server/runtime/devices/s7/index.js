@@ -292,10 +292,10 @@ function S7client(_data, _logger, _events) {
                         if (type === 'BOOL') {
                             try {
                                 let pos = parseInt(tag.address.charAt(tag.address.length - 1));
-                                result[tag.id] = { id: tag.id, value: (_getBit(value, pos)) ? 1 : 0, type: type };
+                                result[tag.id] = { id: tag.id, value: (_getBit(value, pos)) ? 1 : 0, type: type, daq: tag.daq };
                             } catch (err) { }
                         } else {
-                            result[tag.id] = { id: tag.id, value: value, type: type };
+                            result[tag.id] = { id: tag.id, value: value, type: type, daq: tag.daq };
                         }
                         someval = true;
                     });
@@ -305,7 +305,7 @@ function S7client(_data, _logger, _events) {
                             items[itemidx].value = (_getBit(items[itemidx].value, items[itemidx].bit)) ? 1 : 0;
                         } catch (err) { }
                     }
-                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type };
+                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq };
                     someval = true;
                 }
             }

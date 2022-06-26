@@ -385,7 +385,7 @@ export class DevicesUtils {
         let result = `${DevicesUtils.lineDevice}${DevicesUtils.columnDelimiter}`;
         dkeys.forEach(dk => {
             if (dk !== 'property') {
-                let text = device[dk].toString() || '';
+                let text = (device[dk]) ? device[dk].toString() : '' || '';
                 result += `${text.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske)}${DevicesUtils.columnDelimiter}`;
             }
         });

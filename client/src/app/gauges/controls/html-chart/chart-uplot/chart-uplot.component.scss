@@ -1,0 +1,91 @@
+.mychart-panel {
+    display: block;
+    margin: 0 auto;
+    height: inherit;
+    width: inherit;
+}
+
+.mychart-graph {
+    display: block;
+    margin: 0 auto;
+}
+
+.mychart-toolbar {
+    display: block;
+    height: 34px !important;
+    width: 100% !important;
+    background-color: transparent;
+}
+
+.mychart-toolbar-editor {
+    margin-left:5px;
+    border: 0px;
+    height: 28px;
+    width: 140px;
+    vertical-align: middle;
+    line-height: 20px;
+    box-shadow: 1px 1px 3px -1px #888;
+}
+
+.mychart-toolbar-srange {
+    width: 140px; 
+    background-color: inherit !important;
+    /* border: 0.5px solid #888; */
+    box-shadow: 1px 1px 3px -1px #888;
+}
+
+::ng-deep .mychart-toolbar-srange .mat-select-value {
+    color: inherit !important;
+}
+
+::ng-deep .mychart-toolbar-srange .mat-select-arrow {
+    color: inherit !important;
+}
+
+.mychart-toolbar-step {
+    margin-left:5px;
+    border: 0px;
+    height: 28px;
+    width: 40px;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 20px;
+    /* border: 0.5px solid #888; */
+    box-shadow: 1px 1px 3px -1px #888 !important;
+    min-width: 40px;
+    padding: unset;
+}
+
+::ng-deep .my-select-panel-class {
+    background: inherit !important;
+    color: inherit !important;
+}
+
+.spinner {
+    position: absolute;
+    top: 40%;
+    left: calc(50% - 20px);
+}
+
+.small-icon-button {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+
+    .mat-icon {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    .material-icons {
+        font-size: 20px;
+    }
+}
+
+.reload-btn {
+    position: absolute;
+    top: 35px;
+    right: 5px;
+    z-index: 9999;
+}
