@@ -119,7 +119,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onRefresh() {      
+    onRefresh() {
         this.onRangeChanged(this.lastDaqQuery.event);
         this.reloadActive = true;
     }

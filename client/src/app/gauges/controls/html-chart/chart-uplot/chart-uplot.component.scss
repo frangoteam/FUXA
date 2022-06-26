@@ -60,3 +60,32 @@
     background: inherit !important;
     color: inherit !important;
 }
+
+.spinner {
+    position: absolute;
+    top: 40%;
+    left: calc(50% - 20px);
+}
+
+.small-icon-button {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+
+    .mat-icon {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    .material-icons {
+        font-size: 20px;
+    }
+}
+
+.reload-btn {
+    position: absolute;
+    top: 35px;
+    right: 5px;
+    z-index: 9999;
+}

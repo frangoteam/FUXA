@@ -38,7 +38,12 @@
         </div>
     </div>
     <ngx-uplot class="mychart-graph" #nguplot></ngx-uplot>
-    <!-- <div class="loader-holder"> -->
-        <!-- <div class="loader"></div> -->
-    <!-- </div> -->
+    <div *ngIf="!isEditor && withToolbar" class="reload-btn">
+        <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="options.axisLabelColor">
+            <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
+        </button>
+    </div>    
+    <div *ngIf="loading" class="spinner">
+        <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
+    </div>
 </div>
