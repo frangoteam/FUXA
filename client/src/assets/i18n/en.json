@@ -974,6 +974,9 @@
     "report.property-title": "Report",
     "report.property-name": "Name",
     "report.property-receiver": "Receivers",
+    "report.property-scheduling-type": "Report scheduling",
+    "report.property-content": "Content",
+    "report.property-page": "Page settings",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

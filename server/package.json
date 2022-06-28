@@ -35,6 +35,7 @@
     "node-snap7": "1.0.6",
     "nodemailer": "6.7.4",
     "nopt": "5.0.0",
+    "pdfkit-table": "^0.1.99",
     "socket.io": "2.4.1",
     "sqlite3": "5.0.3",
     "winston": "3.7.2"

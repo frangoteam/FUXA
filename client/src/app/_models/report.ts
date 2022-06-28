@@ -4,15 +4,32 @@ export class Report {
     id: string;
     name: string;
     receiver?: string;
-    scheduling: ReportScheduling;
+    scheduling: ReportSchedulingType;
     content?: ReportContent; 
     constructor(_id: string) {
         this.id = _id;
-    }    
+        this.content = this.defaultContent();
+    }
+
+    defaultContent() {
+        return <ReportContent> { 
+            paper: 'A4',
+            margin: <ReportPageMargin> {
+                top: 20,
+                bottom: 20,
+                left: 40,
+                right: 20
+            },
+            fontName: 'Helvetica',
+            items: []
+        }
+    }
 }
 
-export interface ReportScheduling {
-    interval: number;
+export enum ReportSchedulingType {
+    day = 'report.scheduling-day',
+    week = 'report.scheduling-week',
+    month = 'report.scheduling-month',
 }
 
 export interface ReportContent {

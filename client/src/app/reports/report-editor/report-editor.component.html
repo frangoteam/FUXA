@@ -5,55 +5,71 @@
         {{'msg.report-remove' | translate}} '{{report.name}}' ?
     </div>
     <div mat-dialog-content *ngIf="data.editmode >= 0">
-        <div style="display: block;">
-            <div class="my-form-field">
-                <span>{{'report.property-name' | translate}}</span>
-                <input formControlName="name" type="text" style="width:400px">
+        <div class="left-panel">
+            <div style="display: block;">
+                <div class="my-form-field">
+                    <span>{{'report.property-name' | translate}}</span>
+                    <input formControlName="name" type="text" style="width:400px">
+                </div>
+            </div>
+            <div style="display: block; margin-top: 10px;">
+                <div class="my-form-field">
+                    <span>{{'report.property-receiver' | translate}}</span>
+                    <input formControlName="receiver" type="text" style="width:400px">
+                </div>
+            </div>
+            <div style="display: block; margin-top: 10px">
+                <div class="my-form-field">
+                    <span>{{'report.property-scheduling-type' | translate}}</span>
+                    <mat-select formControlName="scheduling" style="width: 207px" (selectionChange)="onSchedulingChanged()">
+                        <mat-option *ngFor="let ev of schedulingType | enumToArray" [value]="ev.key">
+                            {{ ev.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="content-panel">
+                <mat-tab-group style="width: 100%;" #grptabs>
+                    <mat-tab label="{{'report.property-content' | translate}}">
+                        <div *ngFor="let item of report.content; index as x" class="cell-item column-item">
+                            <div class="my-form-field section-inline">
+                                <span>{{'table.property-column-name' | translate}}</span>
+                                <input [(ngModel)]="item.label" type="text" [disabled]="true">
+                            </div>
+                            <div class="my-form-field section-inline-number">
+                                <span>{{'table.property-column-type' | translate}}</span>
+                                <input [(ngModel)]="column.type" type="text" [disabled]="true">
+                            </div>
+                            <div class="section-item-newline">
+                                <div class="my-form-field section-inline-type">
+                                    <span>{{'table.property-column-align' | translate}}</span>
+                                    <mat-select [(value)]="item.align" (selectionChange)="onTableChanged()">
+                                        <mat-option [value]="alignType.left">{{'table.cell-align-left' | translate}}</mat-option>
+                                        <mat-option [value]="alignType.center">{{'table.cell-align-center' | translate}}</mat-option>
+                                        <mat-option [value]="alignType.right">{{'table.cell-align-right' | translate}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="section-inline-margin" style="margin-right: 3px;"></div>
+                                <div class="my-form-field section-inline-number">
+                                    <span>{{'table.property-column-width' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="item.width" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="40">
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab label="{{'report.property-page' | translate}}">
+
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+            <div style="display: block; margin-top: 10px; height: 20px; margin-bottom: 10px;">
+                <div class="message-error" *ngIf="!myForm.valid">
+                    <span>{{'msg.report-property-missing-value' | translate}}</span>
+                </div>
             </div>
         </div>
-        <div style="display: block; margin-top: 10px;">
-            <div class="my-form-field">
-                <span>{{'report.property-receiver' | translate}}</span>
-                <input formControlName="receiver" type="text" style="width:400px">
-            </div>
-        </div>
-        <!-- <div style="display: block; margin-top: 10px">
-            <div class="my-form-field">
-                <span>{{'notification.property-type' | translate}}</span>
-                <mat-select [(value)]="data.notification.type" style="width: 207px" (selectionChange)="onTypeChanged(data.notification.type)">
-                    <mat-option *ngFor="let ev of notificationsType | enumToArray" [value]="ev.key" [disabled]="ev.key === notificationTrigger">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="my-form-field" style="margin-left: 10px; max-width:80px">
-                <span>{{'notification.property-delay' | translate}}</span>
-                <input numberOnly [(ngModel)]="data.notification.delay" type="number" max="60" min="1" step="1" style="width:80px">
-            </div>
-            <div class="my-form-field" style="margin-left: 16px; max-width:80px">
-                <span>{{'notification.property-interval' | translate}}</span>
-                <input numberOnly [(ngModel)]="data.notification.interval" type="number" max="60" min="0" step="1" style="width:80px">
-            </div>
-        </div> -->
-        <!-- <div style="display: block; margin-top: 10px">
-            <div class="my-form-field" style="float: right; margin-right: 30px;">
-                <span>{{'notification.property-enabled' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="data.notification.enabled" style="vertical-align: middle;"></mat-slide-toggle>
-            </div>
-        </div> -->
-        <!-- <div style="display: block; margin-top: 10px;width: 400px">
-            <div class="my-form-field" *ngIf="data.notification.type === notificationAlarm">
-                <span>{{'notification.property-priority' | translate}}</span>
-                <mat-checkbox *ngFor="let item of alarmsType" (change)="onSubscriptionChanged(item, $event.checked)" [checked]="getTypeValue(item)"
-                    style="margin: 7px 10px 7px 10px;">
-                    {{'alarm.property-' + item | translate}}
-                </mat-checkbox>
-            </div>
-        </div> -->
-        <div style="display: block; margin-top: 10px; height: 20px; margin-bottom: 10px;">
-            <div class="message-error" *ngIf="!myForm.valid">
-                <span>{{'msg.report-property-missing-value' | translate}}</span>
-            </div>
+        <div class="right-panel">
+            <iframe width="600" height="775"></iframe>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
