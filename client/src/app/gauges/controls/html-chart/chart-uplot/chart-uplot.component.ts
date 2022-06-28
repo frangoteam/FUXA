@@ -10,6 +10,7 @@ import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dial
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DataConverterService } from '../../../../_services/data-converter.service';
 
 @Component({
     selector: 'chart-uplot',
@@ -37,7 +38,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     constructor(
-        public dialog: MatDialog, 
+        private dataService: DataConverterService,
+        public dialog: MatDialog,
         private translateService: TranslateService) {
     }
 
@@ -131,6 +133,21 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     onRefresh() {
         this.onRangeChanged(this.lastDaqQuery.event);
         this.reloadActive = true;
+    }
+
+    onExportData() {
+        // let data = <DataTableContent>{ name: 'data', columns: [] };
+        // let columns = {};
+        // Object.values(this.columnsStyle).forEach((column: TableColumn) => {
+        //     columns[column.id] = <DataTableColumn>{ header: `${column.label}`, values: [] };
+        // });
+        // this.dataSource.data.forEach(row => {
+        //     Object.keys(row).forEach(id => {
+        //         columns[id].values.push(<TableCellData>row[id].stringValue);
+        //     });
+        // });
+        // data.columns = Object.values(columns);
+        // this.dataService.exportTagsData(data);
     }
 
     public resize(height?: number, width?: number) {

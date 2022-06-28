@@ -10,6 +10,7 @@ import { GaugeTableProperty, IDateRange, DaqQuery, TableType, TableOptions, Tabl
 import { format } from 'fecha';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
 
 declare const numeral: any;
 @Component({
@@ -45,6 +46,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
     
     constructor(
+        private dataService: DataConverterService,
         public dialog: MatDialog, 
         private translateService: TranslateService) { }
 
@@ -216,6 +218,21 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
         this.loading = load;
+    }
+
+    onExportData() {
+        let data = <DataTableContent>{ name: 'data', columns: [] };
+        let columns = {};
+        Object.values(this.columnsStyle).forEach((column: TableColumn) => {
+            columns[column.id] = <DataTableColumn>{ header: `${column.label}`, values: [] };
+        });
+        this.dataSource.data.forEach(row => {
+            Object.keys(row).forEach(id => {
+                columns[id].values.push(<TableCellData>row[id].stringValue);
+            });
+        });
+        data.columns = Object.values(columns);
+        this.dataService.exportTagsData(data);
     }
 
     private bindTableControls(): void {

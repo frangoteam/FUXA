@@ -155,6 +155,7 @@ import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-pr
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
 import { TableCustomizerComponent, DialogTableCell } from './gauges/controls/html-table/table-customizer/table-customizer.component';
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
+import { DataConverterService } from './_services/data-converter.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -315,6 +316,7 @@ export function createTranslateLoader(http: HttpClient) {
         ProjectService,
         UserService,
         DiagnoseService,
+        DataConverterService,
         ScriptService,
         ResourcesService,
         PluginService,
