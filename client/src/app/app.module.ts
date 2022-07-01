@@ -157,6 +157,7 @@ import { TableCustomizerComponent, DialogTableCell } from './gauges/controls/htm
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportEditorComponent } from './reports/report-editor/report-editor.component';
+import { DataConverterService } from './_services/data-converter.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -319,6 +320,7 @@ export function createTranslateLoader(http: HttpClient) {
         ProjectService,
         UserService,
         DiagnoseService,
+        DataConverterService,
         ScriptService,
         ResourcesService,
         PluginService,

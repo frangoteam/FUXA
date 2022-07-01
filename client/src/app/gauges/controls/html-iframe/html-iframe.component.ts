@@ -45,6 +45,7 @@ export class HtmlIframeComponent extends GaugeBaseComponent implements OnInit {
                 if (gaugeSettings.property && gaugeSettings.property.address && isview) {
                     iframe.setAttribute('src', gaugeSettings.property.address);
                 }
+                iframe.innerHTML = '&nbsp;';
                 svgIframeContainer.appendChild(iframe);
             }
         }

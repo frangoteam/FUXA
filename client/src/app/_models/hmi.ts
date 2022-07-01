@@ -123,7 +123,7 @@ export enum HeaderBarModeType {
 export class DocProfile {
     width: number = 1024;
     height: number = 768;
-    bkcolor: string = '';
+    bkcolor: string = '#ffffffff';
     margin: number = 10;
 }
 
