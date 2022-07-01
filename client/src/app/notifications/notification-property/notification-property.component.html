@@ -21,9 +21,7 @@
             <div class="my-form-field">
                 <span>{{'notification.property-type' | translate}}</span>
                 <mat-select [(value)]="data.notification.type" style="width: 207px" (selectionChange)="onTypeChanged(data.notification.type)">
-                    <mat-option *ngFor="let ev of notificationsType | enumToArray" [value]="ev.key" [disabled]="ev.key === notificationTrigger">
-                        {{ ev.value }}
-                    </mat-option>
+                    <mat-option [value]="notificationAlarm"> {{ notificationsType[notificationAlarm] }} </mat-option>                    
                 </mat-select>
             </div>
             <div class="my-form-field" style="margin-left: 10px; max-width:80px">
