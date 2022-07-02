@@ -977,6 +977,14 @@
     "report.property-scheduling-type": "Report scheduling",
     "report.property-content": "Content",
     "report.property-page": "Page settings",
+    "report.property-page-size": "Page size",
+    "report.property-page-orientation": "Page orientation",
+    "report.property-page-ori-landscape": "landscape",
+    "report.property-page-ori-portrait": "portrait",
+    "report.scheduling-day": "Every Day",
+    "report.scheduling-week": "Every Week",
+    "report.scheduling-month": "Every Month",
+
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

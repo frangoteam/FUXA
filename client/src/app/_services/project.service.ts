@@ -685,7 +685,7 @@ export class ProjectService {
             }
             let exist = this.projectData.reports.find(tx => tx.id === report.id);
             if (exist) {
-                exist.name = report.name;
+                Utils.assign(exist, report);
             } else {
                 this.projectData.reports.push(report);
             }

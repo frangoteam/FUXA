@@ -273,6 +273,15 @@ export class Utils {
         }
         return result;
     }
+
+    static assign = (target: { [key: string]: any }, ...sources: object[]) => {
+        sources.forEach((source) => {
+          return Object.keys(source).forEach((key) => {
+            target[key] = source[key as keyof Object]
+          })
+        })
+        return target
+    }
 }
 
 @Pipe({

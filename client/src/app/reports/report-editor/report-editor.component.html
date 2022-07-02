@@ -4,49 +4,43 @@
     <div mat-dialog-content *ngIf="data.editmode < 0">
         {{'msg.report-remove' | translate}} '{{report.name}}' ?
     </div>
-    <div mat-dialog-content *ngIf="data.editmode >= 0">
+    <div mat-dialog-content *ngIf="data.editmode >= 0" class="dialog-ld-content" style="position: relative">
         <div class="left-panel">
-            <div style="display: block;">
-                <div class="my-form-field">
-                    <span>{{'report.property-name' | translate}}</span>
-                    <input formControlName="name" type="text" style="width:400px">
-                </div>
+            <div class="my-form-field report-row">
+                <span>{{'report.property-name' | translate}}</span>
+                <input formControlName="name" type="text">
             </div>
-            <div style="display: block; margin-top: 10px;">
-                <div class="my-form-field">
-                    <span>{{'report.property-receiver' | translate}}</span>
-                    <input formControlName="receiver" type="text" style="width:400px">
-                </div>
+            <div class="my-form-field report-row mt10">
+                <span>{{'report.property-receiver' | translate}}</span>
+                <input formControlName="receiver" type="text">
             </div>
-            <div style="display: block; margin-top: 10px">
-                <div class="my-form-field">
-                    <span>{{'report.property-scheduling-type' | translate}}</span>
-                    <mat-select formControlName="scheduling" style="width: 207px" (selectionChange)="onSchedulingChanged()">
-                        <mat-option *ngFor="let ev of schedulingType | enumToArray" [value]="ev.key">
-                            {{ ev.value }}
-                        </mat-option>
-                    </mat-select>
-                </div>
+            <div class="my-form-field report-row mt10">
+                <span>{{'report.property-scheduling-type' | translate}}</span>
+                <mat-select formControlName="scheduling">
+                    <mat-option *ngFor="let ev of schedulingType | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
             </div>
             <div class="content-panel">
                 <mat-tab-group style="width: 100%;" #grptabs>
-                    <mat-tab label="{{'report.property-content' | translate}}">
-                        <div *ngFor="let item of report.content; index as x" class="cell-item column-item">
+                    <mat-tab *ngIf="report.content" label="{{'report.property-content' | translate}}">
+                        <div *ngFor="let item of report.content?.items; index as x" class="cell-item column-item">
                             <div class="my-form-field section-inline">
-                                <span>{{'table.property-column-name' | translate}}</span>
+                                <span>{{'report.property-column-name' | translate}}</span>
                                 <input [(ngModel)]="item.label" type="text" [disabled]="true">
                             </div>
                             <div class="my-form-field section-inline-number">
-                                <span>{{'table.property-column-type' | translate}}</span>
+                                <span>{{'report.property-column-type' | translate}}</span>
                                 <input [(ngModel)]="column.type" type="text" [disabled]="true">
                             </div>
                             <div class="section-item-newline">
                                 <div class="my-form-field section-inline-type">
-                                    <span>{{'table.property-column-align' | translate}}</span>
+                                    <span>{{'report.property-column-align' | translate}}</span>
                                     <mat-select [(value)]="item.align" (selectionChange)="onTableChanged()">
-                                        <mat-option [value]="alignType.left">{{'table.cell-align-left' | translate}}</mat-option>
-                                        <mat-option [value]="alignType.center">{{'table.cell-align-center' | translate}}</mat-option>
-                                        <mat-option [value]="alignType.right">{{'table.cell-align-right' | translate}}</mat-option>
+                                        <mat-option [value]="alignType.left">{{'report.cell-align-left' | translate}}</mat-option>
+                                        <mat-option [value]="alignType.center">{{'report.cell-align-center' | translate}}</mat-option>
+                                        <mat-option [value]="alignType.right">{{'report.cell-align-right' | translate}}</mat-option>
                                     </mat-select>
                                 </div>
                                 <div class="section-inline-margin" style="margin-right: 3px;"></div>
@@ -57,19 +51,35 @@
                             </div>
                         </div>
                     </mat-tab>
-                    <mat-tab label="{{'report.property-page' | translate}}">
-
+                    <mat-tab *ngIf="report.docproperty" label="{{'report.property-page' | translate}}">
+                        <div class="mt20" style="display: block">
+                            <div class="my-form-field">
+                                <span>{{'report.property-page-size' | translate}}</span>
+                                <mat-select [(value)]="report.docproperty.pageSize" (selectionChange)="onReportChanged()" style="width: 100px">
+                                    <mat-option value="A3">A3</mat-option>
+                                    <mat-option value="A4">A4</mat-option>
+                                    <mat-option value="A5">A5</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field ml20">
+                                <span>{{'report.property-page-orientation' | translate}}</span>
+                                <mat-select [(value)]="report.docproperty.pageOrientation" (selectionChange)="onReportChanged()" style="width: 160px">
+                                    <mat-option value="landscape">{{'report.property-page-ori-landscape' | translate}}</mat-option>
+                                    <mat-option value="portrait">{{'report.property-page-ori-portrait' | translate}}</mat-option>
+                                </mat-select>
+                            </div>                        
+                        </div>
                     </mat-tab>
                 </mat-tab-group>
             </div>
-            <div style="display: block; margin-top: 10px; height: 20px; margin-bottom: 10px;">
-                <div class="message-error" *ngIf="!myForm.valid">
-                    <span>{{'msg.report-property-missing-value' | translate}}</span>
-                </div>
-            </div>
         </div>
-        <div class="right-panel">
-            <iframe width="600" height="775"></iframe>
+        <div class="rigth-panel">
+            <iframe id="iframeContainer"></iframe>
+        </div>
+    </div>
+    <div class="valid-error">
+        <div class="message-error" *ngIf="!myForm.valid">
+            <span>{{'msg.report-property-missing-value' | translate}}</span>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

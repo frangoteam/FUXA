@@ -1,0 +1,59 @@
+
+$panelLeft: 380px;
+$panelRight: 880px;
+
+.left-panel {
+    float: left;
+    width: $panelLeft;
+}
+
+.report-row {
+    width: inherit;
+
+    input, mat-select {
+        width: -webkit-fill-available;
+    }
+}
+
+.content-toolbox {
+    line-height: 20px; 
+}
+
+.content-toolbox span {
+    float: left;
+}
+
+.content-toolbox button {
+    float: right;
+}
+
+.content-panel {
+    display: block; 
+    margin-top: 15px;
+    width: 100%;
+    /* position: relative; */
+}
+
+.content-list {
+    /* position: absolute; */
+    /* top: 30px; */
+    /* left: 0px; */
+    /* right: 0px; */
+
+}
+
+.rigth-panel {
+    // float: right;
+    background-color: aqua;
+    position: absolute;
+    top: 0px;
+    bottom: 10px;
+    left: $panelLeft;
+    right: 20px;
+    margin-left: 40px;
+}
+
+.valid-error {
+    float: left;
+    margin-top: 15px;
+}

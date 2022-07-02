@@ -5,23 +5,20 @@ export class Report {
     name: string;
     receiver?: string;
     scheduling: ReportSchedulingType;
+    docproperty: ReportDocProperty;
     content?: ReportContent; 
     constructor(_id: string) {
         this.id = _id;
-        this.content = this.defaultContent();
+        this.docproperty = this.defaultDocProperty();
+        this.content = <ReportContent> { items: [] };
     }
 
-    defaultContent() {
-        return <ReportContent> { 
-            paper: 'A4',
-            margin: <ReportPageMargin> {
-                top: 20,
-                bottom: 20,
-                left: 40,
-                right: 20
-            },
+    defaultDocProperty() {
+        return <ReportDocProperty> { 
+            pageSize: 'A4',
+            pageOrientation: 'portrait',        // landscape 
+            pageMargins: [ 60, 60, 40, 60 ],    // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
             fontName: 'Helvetica',
-            items: []
         }
     }
 }
@@ -33,10 +30,13 @@ export enum ReportSchedulingType {
 }
 
 export interface ReportContent {
+    items?: ReportItem[];
+}
+
+export interface ReportDocProperty {
     paper?: string;
     margin?: ReportPageMargin;
     fontName?: string;
-    items?: ReportItem[];
 }
 
 export interface ReportPageMargin {
