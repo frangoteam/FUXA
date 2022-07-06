@@ -53,15 +53,24 @@ export interface ReportItem {
     size?: number,
 }
 
+export interface ReportItemText extends ReportItem {
+    text: string;
+}
 export interface ReportItemTable extends ReportItem {
     tags: Tag[],
-    from: number,
-    to: number,
+    range: ReportDateRangeType,
 }
 
 export enum ReportItemType {
     text = 'report.item-type-text',
     table = 'report.item-type-table',
+}
+
+export enum ReportDateRangeType {
+    one = 'report.item-daterange-one',
+    day = 'report.item-daterange-day',
+    week = 'report.item-daterange-week',
+    month = 'report.item-daterange-month',
 }
 
 export const REPORT_PREFIX = 'r_';

@@ -1,0 +1,25 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'report.item-table-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field">
+            <span>{{'report.item-daterange' | translate}}</span>
+            <mat-select [(value)]="data.range">
+                <mat-option *ngFor="let ev of dateRangeType | enumToArray" [value]="ev.key">
+                    {{ ev.value }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div style="min-width: 900px; height: 500px; display: block;">
+            <div class="report-table-cell">
+                {{'report.item-table-timestamp' | translate}}
+            </div>
+            <div *ngFor="let tag of data.tags; index as i" class="report-table-cell">
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

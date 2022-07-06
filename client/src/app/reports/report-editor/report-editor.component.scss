@@ -42,9 +42,38 @@ $panelRight: 880px;
 
 }
 
+.report-item {
+    line-height: 24px;
+    padding: 7px 0px 5px 0px;
+    border-bottom: 1px solid var(--toolboxBorder);
+}
+
+.report-item-type {
+    display: inline-block;
+
+}
+
+.report-head-menu {
+    float:right; 
+    padding-top: 5px; 
+    padding-right: 5px;
+    cursor: pointer;
+}
+
+.report-item-menu {
+    cursor: pointer;
+    float: left;
+    margin-right: 10px;
+}
+
+.report-item-label {
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .rigth-panel {
     // float: right;
-    background-color: aqua;
     position: absolute;
     top: 0px;
     bottom: 10px;

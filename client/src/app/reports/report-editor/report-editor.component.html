@@ -25,29 +25,24 @@
             <div class="content-panel">
                 <mat-tab-group style="width: 100%;" #grptabs>
                     <mat-tab *ngIf="report.content" label="{{'report.property-content' | translate}}">
-                        <div *ngFor="let item of report.content?.items; index as x" class="cell-item column-item">
-                            <div class="my-form-field section-inline">
-                                <span>{{'report.property-column-name' | translate}}</span>
-                                <input [(ngModel)]="item.label" type="text" [disabled]="true">
-                            </div>
-                            <div class="my-form-field section-inline-number">
-                                <span>{{'report.property-column-type' | translate}}</span>
-                                <input [(ngModel)]="column.type" type="text" [disabled]="true">
-                            </div>
-                            <div class="section-item-newline">
-                                <div class="my-form-field section-inline-type">
-                                    <span>{{'report.property-column-align' | translate}}</span>
-                                    <mat-select [(value)]="item.align" (selectionChange)="onTableChanged()">
-                                        <mat-option [value]="alignType.left">{{'report.cell-align-left' | translate}}</mat-option>
-                                        <mat-option [value]="alignType.center">{{'report.cell-align-center' | translate}}</mat-option>
-                                        <mat-option [value]="alignType.right">{{'report.cell-align-right' | translate}}</mat-option>
-                                    </mat-select>
-                                </div>
-                                <div class="section-inline-margin" style="margin-right: 3px;"></div>
-                                <div class="my-form-field section-inline-number">
-                                    <span>{{'table.property-column-width' | translate}}</span>
-                                    <input numberOnly [(ngModel)]="item.width" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="40">
-                                </div>
+                        <div style="width: 100%; display: block; height: 10px;">
+                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem2" class="report-head-menu">add_circle_outline</mat-icon>
+                        </div>
+                        <mat-menu #menuitem2="matMenu">
+                            <button mat-menu-item (click)="onAddItem(itemTextType)">{{'report.content-addtext' | translate}}</button>
+                            <button mat-menu-item (click)="onAddItem(itemTableType)">{{'report.content-addtable' | translate}}</button>
+                        </mat-menu>
+                        <div *ngFor="let item of report.content?.items; index as i" class="report-item">
+                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem" class="report-item-menu">more_vert</mat-icon>
+                            <mat-menu #menuitem="matMenu">
+                                <button mat-menu-item (click)="onEditItem(item, i, true)">{{'report.content-edit' | translate}}</button>
+                                <button mat-menu-item (click)="onAddItem(itemTextType, i, false)">{{'report.content-addtext' | translate}}</button>
+                                <button mat-menu-item (click)="onAddItem(itemTableType, i, false)">{{'report.content-addtable' | translate}}</button>
+                                <button mat-menu-item (click)="onDeleteItem(i)">{{'report.content-delete' | translate}}</button>
+                            </mat-menu>
+                            <div class="report-item-type">
+                                <span>[{{item.type}}] - </span>
+                                <span *ngIf="item.type === itemTextType" class="report-item-label">{{item.text}}</span>
                             </div>
                         </div>
                     </mat-tab>
@@ -78,7 +73,7 @@
         </div>
     </div>
     <div class="valid-error">
-        <div class="message-error" *ngIf="!myForm.valid">
+        <div class="message-error" *ngIf="myForm.invalid">
             <span>{{'msg.report-property-missing-value' | translate}}</span>
         </div>
     </div>

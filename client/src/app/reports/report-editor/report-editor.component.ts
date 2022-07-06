@@ -2,9 +2,12 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Report, ReportSchedulingType } from '../../_models/report';
+import { Report, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";  
+import { Utils } from '../../_helpers/utils';
+import { ReportItemTextComponent } from './report-item-text/report-item-text.component';
+import { ReportItemTableComponent } from './report-item-table/report-item-table.component';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;   
 
 @Component({
@@ -16,6 +19,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     myForm: FormGroup;
 
+    itemTextType = Utils.getEnumKey(ReportItemType, ReportItemType.text);
+    itemTableType = Utils.getEnumKey(ReportItemType, ReportItemType.table);
     report: Report;
     schedulingType = ReportSchedulingType;
 
@@ -41,9 +46,10 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        // this.makePDF(PDFDocument, blob, 'asdf', iframe);
         this.onReportChanged();
+        this.myForm.markAsPristine();
     }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
@@ -53,13 +59,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
         if (this.data.editmode < 0) {
             this.dialogRef.close(this.report);
-        } else if (this.checkValid()) {
+        } else if (this.myForm.valid) {
             this.dialogRef.close(this.report);
         }
-    }
-
-    checkValid() {
-        return this.myForm.valid;
     }
 
     onReportChanged() {
@@ -75,7 +77,60 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     getPdfContent(report: Report)  {
         let docDefinition = {...report.docproperty };
         docDefinition['header'] = 'FUXA by frangoteam';
-        docDefinition['content'] = 'Sample PDF generated with Angular and PDFMake';
+        docDefinition['content'] = [];
+        report.content.items.forEach((item: ReportItem) => {
+            if (item.type === this.itemTextType) {
+                const itemText = <ReportItemText>item;
+                docDefinition['content'].push({ text: itemText.text });
+            }
+        });
         return docDefinition;
+    }
+
+    onAddItem(type: ReportItemType, index: number, edit: boolean) {
+        let item = <ReportItem>{ type: type };
+        if (type === this.itemTextType) {
+            item = {...item, ...<ReportItemText> { text: '' }};
+        } else if (type === this.itemTableType) {
+            item = {...item, ...<ReportItemTable> {
+                tags: []
+            }};
+        }
+        this.onEditItem(item, index, edit);
+    }
+
+    onEditItem(item: ReportItem, index: number, edit: boolean) {
+        let dialogRef = null;
+        const dlgconfig = {
+            data: JSON.parse(JSON.stringify(item)),
+            position: { top: '60px' }
+        };
+
+        if (item.type === this.itemTableType) {
+            dialogRef = this.dialog.open(ReportItemTableComponent, dlgconfig);
+        } else  {
+            dialogRef = this.dialog.open(ReportItemTextComponent, dlgconfig);
+        }
+
+
+        dialogRef.afterClosed().subscribe(result => {    
+            if (result) {
+                if (index <= this.report.content.items.length) {
+                    if (edit) {
+                        this.report.content.items.splice(index, 1, result);
+                    } else {
+                        this.report.content.items.splice(index, 0, result);
+                    }
+                } else {
+                    this.report.content.items.push(result);
+                }
+                this.onReportChanged();
+            }
+        });
+    }
+
+    onDeleteItem(index: number) {
+        this.report.content.items.splice(index, 1);
+        this.onReportChanged();
     }
 }

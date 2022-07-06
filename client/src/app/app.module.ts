@@ -158,6 +158,8 @@ import { DataTableComponent } from './gauges/controls/html-table/data-table/data
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportEditorComponent } from './reports/report-editor/report-editor.component';
 import { DataConverterService } from './_services/data-converter.service';
+import { ReportItemTextComponent } from './reports/report-editor/report-item-text/report-item-text.component';
+import { ReportItemTableComponent } from './reports/report-editor/report-item-table/report-item-table.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -279,7 +281,9 @@ export function createTranslateLoader(http: HttpClient) {
         DialogTableCell,
         DataTableComponent,
         RangeNumberComponent,
-        LibImagesComponent
+        LibImagesComponent,
+        ReportItemTextComponent,
+        ReportItemTableComponent,
    ],
     imports: [
         BrowserModule,
@@ -405,7 +409,9 @@ export function createTranslateLoader(http: HttpClient) {
         TableCustomizerComponent,
         DialogTableCell,
         RangeNumberComponent,
-        LibImagesComponent
+        LibImagesComponent,
+        ReportItemTextComponent,
+        ReportItemTableComponent,
     ],
     bootstrap: [AppComponent]
 })

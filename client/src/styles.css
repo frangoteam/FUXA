@@ -470,7 +470,7 @@ app-root {
     text-overflow:ellipsis;
 }
 
-.my-form-field input, mat-select {
+.my-form-field input, mat-select, textarea {
     font-size: 13px;
     border: unset;
     /* border: 0.5px solid rgba(0,0,0,0.1); */
@@ -479,7 +479,7 @@ app-root {
     font-size: 13px;
 }
 
-.my-form-field input {
+.my-form-field input, textarea {
     padding: 6px 3px 7px 4px;
     background-color: var(--formInputBackground);
     color: var(--formInputColor);
