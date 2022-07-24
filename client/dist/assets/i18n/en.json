@@ -984,7 +984,13 @@
     "report.scheduling-day": "Every Day",
     "report.scheduling-week": "Every Week",
     "report.scheduling-month": "Every Month",
-
+    "report.content-addtext": "Add Text",
+    "report.content-addtable": "Add Table",
+    "report.content-edit": "Edit",
+    "report.content-delete": "Delete",
+    "report.item-text-title": "Report Text",
+    "report.item-text-label": "Text",
+    "report.item-table-title": "Report Table",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
