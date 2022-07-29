@@ -1,23 +1,36 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { ReportDateRangeType, ReportItemTable } from '../../../_models/report';
+import { DeviceTagDialog } from '../../../device/device.component';
+import { Utils } from '../../../_helpers/utils';
+import { DeviceType, Tag } from '../../../_models/device';
+import { ReportDateRangeType, ReportItemTable, ReportTableColumn, ReportTableColumnType } from '../../../_models/report';
+import { ProjectService } from '../../../_services/project.service';
 
 @Component({
     selector: 'app-report-item-table',
     templateUrl: './report-item-table.component.html',
-    styleUrls: ['./report-item-table.component.css']
+    styleUrls: ['./report-item-table.component.scss']
 })
 export class ReportItemTableComponent implements OnInit {
 
     dateRangeType = ReportDateRangeType;
+    columns: ReportTableColumn[];
 
     constructor(public dialogRef: MatDialogRef<ReportItemTableComponent>,
+        public dialog: MatDialog,
         private translateService: TranslateService,
+        private projectService: ProjectService,
         @Inject(MAT_DIALOG_DATA) public data: ReportItemTable) { 
-            if (!this.data.tags) {
-                this.data.tags = [];
+            if (this.data.columns.length <= 0) {
+                this.data.columns = [ <ReportTableColumn>{ 
+                    type: ReportTableColumnType.timestamp, 
+                    tag: <Tag>{ label: 'Timestamp' },
+                    align: 'left',
+                    width: 'auto'
+                }];
             }
+            this.columns = Utils.clone(this.data.columns);
         }
 
     ngOnInit() {
@@ -26,11 +39,41 @@ export class ReportItemTableComponent implements OnInit {
         });
     }
 
+    onAddItem(index: number) {
+        let dialogRef = this.dialog.open(DeviceTagDialog, {
+            position: { top: '60px' },
+            data: { 
+                variableId: null, 
+                devices: Object.values(this.projectService.getDevices()), 
+                multiSelection: true,
+                deviceFilter: [ DeviceType.internal ]
+            }
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                let varsId = result.variablesId || [result.variableId];
+                varsId.forEach(tagId => {
+                    this.columns.splice(++index, 0, <ReportTableColumn>{ 
+                        tag: this.projectService.getTagFromId(tagId),
+                        width: 'auto',
+                        align: 'left'
+                    });
+                })
+            }
+        });
+    }
+
+    onDeleteItem(index: number) {
+        this.columns.splice(index, 1);
+    }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
 
     onOkClick(): void {
+        this.data.columns = this.columns;
         this.dialogRef.close(this.data);
     }
 }

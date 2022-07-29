@@ -965,9 +965,17 @@ mat-toolbar-row {
     margin-bottom: 5px;
 }
 
+.message-error {
+    color:#ff5151;
+}
+
 /* standard */
 .mt10 {
     margin-top: 10px;
+}
+
+.mt20 {
+    margin-top: 20px;
 }
 
 .ml10 {

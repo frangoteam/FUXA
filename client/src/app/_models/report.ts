@@ -1,15 +1,17 @@
+import { Utils } from "../_helpers/utils";
 import { Tag } from "./device";
 
 export class Report {
     id: string;
     name: string;
     receiver?: string;
-    scheduling: ReportSchedulingType;
+    scheduling: string;
     docproperty: ReportDocProperty;
     content?: ReportContent; 
     constructor(_id: string) {
         this.id = _id;
         this.docproperty = this.defaultDocProperty();
+        this.scheduling = Utils.getEnumKey(ReportSchedulingType, ReportSchedulingType.week);
         this.content = <ReportContent> { items: [] };
     }
 
@@ -24,6 +26,7 @@ export class Report {
 }
 
 export enum ReportSchedulingType {
+    none = 'report.scheduling-none',
     day = 'report.scheduling-day',
     week = 'report.scheduling-week',
     month = 'report.scheduling-month',
@@ -57,8 +60,21 @@ export interface ReportItemText extends ReportItem {
     text: string;
 }
 export interface ReportItemTable extends ReportItem {
-    tags: Tag[],
+    columns: ReportTableColumn[],
     range: ReportDateRangeType,
+    maxrow: number,
+}
+
+export interface ReportTableColumn {
+    type: ReportTableColumnType;
+    tag: Tag,
+    align: string;
+    width: string,
+}
+
+export enum ReportTableColumnType {
+    timestamp = 0,
+    tag = 1,
 }
 
 export enum ReportItemType {
@@ -67,7 +83,7 @@ export enum ReportItemType {
 }
 
 export enum ReportDateRangeType {
-    one = 'report.item-daterange-one',
+    one = 'report.item-daterange-none',
     day = 'report.item-daterange-day',
     week = 'report.item-daterange-week',
     month = 'report.item-daterange-month',

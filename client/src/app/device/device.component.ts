@@ -222,10 +222,11 @@ export class DeviceTagDialog implements OnInit {
                 if (data.deviceFilter && data.deviceFilter.indexOf(device.type) !== -1) {
                     // filtered device 
                 } else if (device.tags) {
-                    Object.values(device.tags).forEach((t: Tag) => this.tags.push(<TagElement>{
-                        id: t.id, name: t.name, address: t.address,
-                        device: device.name, checked: (t.id === this.data.variableId), error: null
-                    }));
+                    Object.values(device.tags).forEach((t: Tag) => this.tags.push(<TagElement> {
+                            id: t.id, name: t.name, address: t.address,
+                            device: device.name, checked: (t.id === this.data.variableId), error: null
+                        }
+                    ));
                 }
             }
             )

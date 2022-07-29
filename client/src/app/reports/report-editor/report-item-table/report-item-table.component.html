@@ -4,17 +4,51 @@
     <div mat-dialog-content>
         <div class="my-form-field">
             <span>{{'report.item-daterange' | translate}}</span>
-            <mat-select [(value)]="data.range">
+            <mat-select [(value)]="data.range" style="width: 140px">
                 <mat-option *ngFor="let ev of dateRangeType | enumToArray" [value]="ev.key">
                     {{ ev.value }}
                 </mat-option>
             </mat-select>
         </div>
-        <div style="min-width: 900px; height: 500px; display: block;">
-            <div class="report-table-cell">
-                {{'report.item-table-timestamp' | translate}}
-            </div>
-            <div *ngFor="let tag of data.tags; index as i" class="report-table-cell">
+        <div class="my-form-field ml20">
+            <span>{{'report.item-maxrow' | translate}}</span>
+            <input numberOnly [(ngModel)]="data.maxrow" style="width: 140px" (keyup.enter)="onTableChanged()" type="number" min="1" max="1000">
+        </div>        
+        <div class="data-table">
+            <div *ngFor="let column of columns; index as i" class="data-table-cell">
+                <div class="label" [style.textAlign]="column.align">
+                    {{column.tag.label || column.tag.name}}
+                </div>
+                <div class="menu">
+                    <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem">more_vert</mat-icon>
+                </div>
+                <mat-menu #menuitem="matMenu">
+                    <button mat-menu-item (click)="onAddItem(i)">{{'report.table-additag' | translate}}</button>
+                    <button mat-menu-item [matMenuTriggerFor]="menualign">{{'report.table-alignitem' | translate}}</button>
+                    <mat-divider *ngIf="i > 0" class="menu-separator"></mat-divider>
+                    <button *ngIf="i > 0" mat-menu-item (click)="onDeleteItem(i)">{{'report.table-delitem' | translate}}</button>
+                </mat-menu>
+                <mat-menu #menualign="matMenu">
+                    <button mat-menu-item (click)="column.align = 'left'">
+                        <div class="menu-item-select">
+                            <mat-icon *ngIf="column.align === 'left'">done</mat-icon>
+                            <span [ngClass]="column.align === 'left' ? '' : 'unselect'">{{'general.align-left' | translate}}</span>
+                        </div>
+                    </button>
+                    <button mat-menu-item (click)="column.align = 'center'">
+                        <div class="menu-item-select">
+                            <mat-icon *ngIf="column.align === 'center'">done</mat-icon>
+                            <span [ngClass]="column.align === 'center' ? '' : 'unselect'">{{'general.align-center' | translate}}</span>
+                        </div>
+                        
+                    </button>
+                    <button mat-menu-item (click)="column.align = 'right'">
+                        <div class="menu-item-select">
+                            <mat-icon *ngIf="column.align === 'right'">done</mat-icon>
+                            <span [ngClass]="column.align === 'right' ? '' : 'unselect'">{{'general.align-right' | translate}}</span>
+                        </div>
+                    </button>
+                </mat-menu> 
             </div>
         </div>
     </div>

@@ -32,17 +32,12 @@
             <!-- Interval Column -->
             <ng-container matColumnDef="scheduling">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-scheduling' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.scheduling}} </mat-cell>
+                <mat-cell *matCellDef="let element"> {{getScheduling(element.scheduling)}} </mat-cell>
             </ng-container>
             <!-- Type Column -->
             <ng-container matColumnDef="type">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-type' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
-            </ng-container>
-            <!-- Enabled Column -->
-            <ng-container matColumnDef="enabled">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-enabled' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.enabled}} </mat-cell>
             </ng-container>
             <!-- Button create Column -->
             <ng-container matColumnDef="create">

@@ -282,6 +282,8 @@ export class Utils {
         })
         return target
     }
+
+    static clone = (obj) => { return JSON.parse(JSON.stringify(obj)); }
 }
 
 @Pipe({

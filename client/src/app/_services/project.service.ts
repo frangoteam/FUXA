@@ -12,7 +12,7 @@ import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
 import { Text } from '../_models/text';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils } from '../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -920,6 +920,16 @@ export class ProjectService {
                 return devices[i];
             }
         }
+    }
+
+    getTagFromId(tagId: string): Tag {
+        let devices = <Device[]>Object.values(this.projectData.devices);
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i].tags[tagId]) {
+                return devices[i].tags[tagId];
+            }
+        }
+        return null;
     }
 
     /**

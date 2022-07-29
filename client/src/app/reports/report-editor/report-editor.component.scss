@@ -43,9 +43,17 @@ $panelRight: 880px;
 }
 
 .report-item {
+    font-size: 14px;
     line-height: 24px;
     padding: 7px 0px 5px 0px;
     border-bottom: 1px solid var(--toolboxBorder);
+
+    mat-icon {
+        font-size: 18px;
+        line-height: 24px;
+        margin-left: 4px;
+    }
+
 }
 
 .report-item-type {
@@ -85,4 +93,10 @@ $panelRight: 880px;
 .valid-error {
     float: left;
     margin-top: 15px;
+}
+
+::ng-deep .mat-tab-label {
+    height: 34px !important;
+    min-width: 120px !important;
+    width: 140px !important;
 }

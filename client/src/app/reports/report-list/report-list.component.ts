@@ -4,7 +4,7 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { Utils } from '../../_helpers/utils';
-import { Report, REPORT_PREFIX } from '../../_models/report';
+import { Report, ReportSchedulingType, REPORT_PREFIX } from '../../_models/report';
 import { ProjectService } from '../../_services/project.service';
 import { ReportEditorComponent } from '../report-editor/report-editor.component';
 
@@ -15,10 +15,11 @@ import { ReportEditorComponent } from '../report-editor/report-editor.component'
 })
 export class ReportListComponent implements OnInit {
 
-    displayedColumns = ['select', 'name', 'receiver', 'scheduling', 'type', 'enabled', 'create', 'remove'];
+    displayedColumns = ['select', 'name', 'receiver', 'scheduling', 'type', 'create', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     private subscriptionLoad: Subscription;
+    private schedulingType = ReportSchedulingType;
 
     @ViewChild(MatTable) table: MatTable<any>;
     @ViewChild(MatSort) sort: MatSort;
@@ -31,6 +32,10 @@ export class ReportListComponent implements OnInit {
         this.loadReports();
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
             this.loadReports();
+        });
+
+        Object.keys(this.schedulingType).forEach(key => {
+            this.translateService.get(this.schedulingType[key]).subscribe((txt: string) => { this.schedulingType[key] = txt });
         });
     }
 
@@ -45,6 +50,10 @@ export class ReportListComponent implements OnInit {
             }
         } catch (e) {
         }
+    }
+
+    getScheduling(scheduling: ReportSchedulingType) {
+        return this.schedulingType[scheduling] || '';
     }
 
     onAddReport() {

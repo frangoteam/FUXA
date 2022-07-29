@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Report, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
+import { Report, ReportDateRangeType, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";  
 import { Utils } from '../../_helpers/utils';
@@ -82,6 +82,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             if (item.type === this.itemTextType) {
                 const itemText = <ReportItemText>item;
                 docDefinition['content'].push({ text: itemText.text });
+            } else if (item.type === this.itemTableType) {
+                const itemTable = ReportEditorComponent.getTableContent(<ReportItemTable>item);
+                docDefinition['content'].push(itemTable);
             }
         });
         return docDefinition;
@@ -93,7 +96,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             item = {...item, ...<ReportItemText> { text: '' }};
         } else if (type === this.itemTableType) {
             item = {...item, ...<ReportItemTable> {
-                tags: []
+                columns: [],
+                maxrow: 100,
+                range: Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.day),
             }};
         }
         this.onEditItem(item, index, edit);
@@ -133,4 +138,24 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         this.report.content.items.splice(index, 1);
         this.onReportChanged();
     }
+
+    static getTableContent(item: ReportItemTable) {
+        let content = { layout: 'lightHorizontalLines' }; // optional
+        let header = item.columns.map<any>(col => { 
+            return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
+        });
+        let values = item.columns.map(col => col.tag.address || '');
+        content['table'] = {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 1,
+            widths: item.columns.map(col => col.width), //[ '*', 'auto', 100],
+            body: [
+                header,
+                values
+            ]
+        }
+        return content;
+    }
+
 }
