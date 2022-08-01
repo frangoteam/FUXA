@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { Utils } from '../../_helpers/utils';
 import { Report, ReportSchedulingType, REPORT_PREFIX } from '../../_models/report';
+import { CommandService } from '../../_services/command.service';
 import { ProjectService } from '../../_services/project.service';
 import { ReportEditorComponent } from '../report-editor/report-editor.component';
 
@@ -26,7 +27,8 @@ export class ReportListComponent implements OnInit {
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
-        private projectService: ProjectService) { }
+        private projectService: ProjectService,
+        private commandService: CommandService) { }
 
     ngOnInit() {
         this.loadReports();
@@ -62,6 +64,11 @@ export class ReportListComponent implements OnInit {
 
     onEditReport(report: Report, toAdd: number) {
         this.editReport(report, 0);
+    }
+
+    onStartReport(report: Report) {
+        this.commandService.buildReport(report).subscribe(() => {
+        });
     }
 
     onRemoveReport(report: Report) {

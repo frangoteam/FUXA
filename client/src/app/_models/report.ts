@@ -62,7 +62,7 @@ export interface ReportItemText extends ReportItem {
 export interface ReportItemTable extends ReportItem {
     columns: ReportTableColumn[],
     range: ReportDateRangeType,
-    maxrow: number,
+    interval: number,
 }
 
 export interface ReportTableColumn {

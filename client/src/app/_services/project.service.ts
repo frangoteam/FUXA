@@ -726,7 +726,7 @@ export class ProjectService {
                 observer.error(err);
             });
         });
-    }    
+    }
     //#endregion
 
     //#region Texts resource

@@ -43,8 +43,8 @@
             <ng-container matColumnDef="create">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-icon-button (click)="$event.stopPropagation();onCreateReport(element)">
-                        <mat-icon>upload</mat-icon>
+                    <button mat-icon-button (click)="$event.stopPropagation();onStartReport(element)">
+                        <mat-icon>play_arrow</mat-icon>
                     </button>
                 </mat-cell>
             </ng-container>

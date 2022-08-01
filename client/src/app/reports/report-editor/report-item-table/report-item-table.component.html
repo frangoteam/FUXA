@@ -11,8 +11,8 @@
             </mat-select>
         </div>
         <div class="my-form-field ml20">
-            <span>{{'report.item-maxrow' | translate}}</span>
-            <input numberOnly [(ngModel)]="data.maxrow" style="width: 140px" (keyup.enter)="onTableChanged()" type="number" min="1" max="1000">
+            <span>{{'report.item-interval' | translate}}</span>
+            <input numberOnly [(ngModel)]="data.interval" style="width: 140px" type="number" min="1" max="1000">
         </div>        
         <div class="data-table">
             <div *ngFor="let column of columns; index as i" class="data-table-cell">

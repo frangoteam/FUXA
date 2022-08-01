@@ -1003,7 +1003,7 @@
     "report.item-daterange-day": "Last day",
     "report.item-daterange-week": "Last week",
     "report.item-daterange-month": "Last month",
-    "report.item-maxrow": "Max table row",
+    "report.item-interval": "Interval (seconds)",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

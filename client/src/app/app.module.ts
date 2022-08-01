@@ -160,6 +160,7 @@ import { ReportEditorComponent } from './reports/report-editor/report-editor.com
 import { DataConverterService } from './_services/data-converter.service';
 import { ReportItemTextComponent } from './reports/report-editor/report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './reports/report-editor/report-item-table/report-item-table.component';
+import { CommandService } from './_services/command.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -324,6 +325,7 @@ export function createTranslateLoader(http: HttpClient) {
         ProjectService,
         UserService,
         DiagnoseService,
+        CommandService,
         DataConverterService,
         ScriptService,
         ResourcesService,

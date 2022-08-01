@@ -97,8 +97,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         } else if (type === this.itemTableType) {
             item = {...item, ...<ReportItemTable> {
                 columns: [],
-                maxrow: 100,
-                range: Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.day),
+                interval: 300,
+                range: this.myForm.value.scheduling,
             }};
         }
         this.onEditItem(item, index, edit);

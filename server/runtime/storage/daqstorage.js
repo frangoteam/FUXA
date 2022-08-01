@@ -45,6 +45,26 @@ function getNodeValues(tagid, fromts, tots) {
     });
 }
 
+function getNodesValues(tagsid, fromts, tots, options) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            resolve(['asdf', ...tagsid.map(col => col || '')]);
+            var dbfncs = [];
+            for (let i = 0; i < tagsid.length; i++) {
+                dbfncs.push(getNodeValues(tagsid[i], fromts, tots));
+            }
+            var result = {};
+            await Promise.all(dbfncs).then(values => {
+                resolve({ gid: msg.gid, values: values });
+            }, reason => {
+                reject(reason);
+            });
+        } catch (err) {
+            reject(['ERR', ...tagsid.map(col => 'ERR')]);
+        }
+    });
+}
+
 function _getDaqNode(tagid) {
     var nodes = Object.values(daqnodes);
     for (var i = 0; i < nodes.length; i++) {
@@ -58,5 +78,6 @@ module.exports = {
     init: init,
     reset: reset,
     addDaqNode: addDaqNode,
-    getNodeValues: getNodeValues
+    getNodeValues: getNodeValues,
+    getNodesValues: getNodesValues
 };
