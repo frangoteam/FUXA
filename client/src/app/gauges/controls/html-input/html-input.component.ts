@@ -42,7 +42,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static getDialogType(): GaugeDialogType {
-        return GaugeDialogType.OnlyValue;
+        return GaugeDialogType.Input;
     }
 
     static getActions(type: string) {
@@ -70,16 +70,30 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                 let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
                 if (input) {
                     let val = parseFloat(sig.value);
+                    let unit;
+                    let digit = 5;
+                    
+                    if (ga.property.ranges) {
+                        unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
+                        let tmp = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
+                        if(!Utils.isNullOrUndefined(tmp)){
+                            digit = tmp;
+                        }
+                    }
+
                     if (Number.isNaN(val)) {
                         // maybe boolean
                         val = Number(sig.value);
                     } else {
-                        val = parseFloat(val.toFixed(5));
+                        val = parseFloat(val.toFixed(digit));
                     }
 
                     // Do not update value if input is in focus!
                     if(!(document.hasFocus && input.id == document.activeElement.id )){
                         input.value = val;
+                        if(unit){
+                            input.value += ' ' + unit;
+                        }
                     }
                     // check actions
                     if (ga.property.actions) {
@@ -153,5 +167,26 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                 this.runActionShow(element, act.type, gaugeStatus);
             }
         }
+    }
+
+    static validateValue(value: any, ga: GaugeSettings) : [boolean, string] {
+        if(ga.property.ranges && ga.property.ranges.length > 0 && ga.property.ranges[0].type === 'unit'){
+            let min = ga.property.ranges[0].min;
+            let max = ga.property.ranges[0].max;
+
+            if(min && max){
+                if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
+                    return [false, 'Value is not a number'];
+                }
+                else {
+                    let numVal = parseFloat(value);
+                    if(numVal < min || numVal > max){
+                        return [false, `Min = ${min}, Max = ${max}`];
+                    }
+                }
+            }
+        }
+
+        return [true, ''];
     }
 }

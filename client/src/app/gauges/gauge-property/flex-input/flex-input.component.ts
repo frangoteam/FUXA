@@ -178,6 +178,13 @@ export class FlexInputComponent implements OnInit {
         return false;
     }
 
+    isInputMinMax(){
+        if (this.data.dlgType === 16) {  // GaugeDialogType.Input
+            return true;
+        }
+        return false;
+    }
+
     onFormatDigitChanged(range: GaugeRangeProperty, event) {
         range['fractionDigitsId'] = event.variableId;
         range['fractionDigits'] = event.variableValue;

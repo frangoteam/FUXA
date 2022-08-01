@@ -20,6 +20,7 @@ import { Utils } from '../_helpers/utils';
 import { HmiService } from "../_services/hmi.service";
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
+import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 
 declare var SVG: any;
 
@@ -52,6 +53,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     mapGaugeStatus = {};
     inputDialog = { show: false, timer: null, x: 0, y: 0, target: null };
     gaugeInput = '';
+    gaugeCurrentValue = '';
+    inputChanged : boolean = false;
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
@@ -407,15 +410,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
-                    self.gaugesManager.putEvent(htmlevent);                
-                    htmlevent.dom.blur();
+
+                    let res = HtmlInputComponent.validateValue(htmlevent.dom.value, htmlevent.ga);
+                    if(res[0] === false){
+                        htmlevent.dom.setCustomValidity("Invalid input. " + res[1]);
+                        htmlevent.dom.reportValidity();
+                    }
+                    else{
+                        self.gaugesManager.putEvent(htmlevent);
+                        htmlevent.dom.setCustomValidity('');
+                        // Remove focus!
+                        self.inputChanged = true;
+                        htmlevent.dom.blur();
+                    }
                 }
             };
             if (this.hmi.layout.inputdialog === 'true') {
                 htmlevent.dom.onfocus = function (ev) {
                     if (ev.currentTarget) {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
-                        self.toggleShowInputDialog(true, inputRect.left, inputRect.top, htmlevent);
+                        // self.toggleShowInputDialog(true, inputRect.left, inputRect.top, htmlevent);
                         self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0), inputRect.top - 5, htmlevent);
                         for (let i = 0; i < ev.currentTarget.attributes.length; i++)  {
                             if (ev.currentTarget.attributes['style']) {
@@ -423,7 +437,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                             }
                             
                         }
+                        self.gaugeCurrentValue = htmlevent.dom.value;    
                         document.body.appendChild(self.inputDialogRef.nativeElement);
+
                         setTimeout(() => {
                             self.inputValueRef.nativeElement.focus();
                         }, 300);
@@ -434,7 +450,22 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     // The reason why dialog is not being hidden is that toggleShowInputDialog(true) get called multiple times and the timer is then canceled.
                     // self.toggleShowInputDialog(false);
                 }
-            }else{
+            } else {
+
+                // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
+                // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
+                
+                htmlevent.dom.onfocus = function (ev) {
+                    self.inputChanged = false;
+                    if(htmlevent.ga.property){
+                        let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
+                        if(unit && htmlevent.dom.value.endsWith(unit)){
+                            let len = htmlevent.dom.value.length;
+                            htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
+                        }
+                    }
+                }
+
                 htmlevent.dom.onblur = function (ev) {
                     // Update variable value in case it has changed while input had focus
                     let variables = self.gaugesManager.getBindSignalsValue(htmlevent.ga);
@@ -443,9 +474,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     if (variables.length && svgeles.length) {
                         self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
                     }
+
+                    // Remove any error message
+                    htmlevent.dom.setCustomValidity('');
                 }
             }
-
         } else if (htmlevent.type === 'change') {
             htmlevent.dom.onchange = function (ev) {
                 htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
@@ -710,6 +743,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         } else {
             this.inputDialog.timer = setTimeout(() => {
                 this.inputDialog.show = false;
+                this.gaugeCurrentValue = '';
             }, 300);
         }
     }
@@ -718,13 +752,27 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     }
 
+    inputOnChange(){
+        if(!this.inputValueRef.nativeElement.checkValidity()){
+            this.inputValueRef.nativeElement.setCustomValidity('');
+        }
+    }
+
     onOkClick(evintput) {
         if (this.inputDialog.target.dom) {
-            this.inputDialog.target.dom.value = evintput;
-            this.inputDialog.target.dbg = 'key pressed ' + this.inputDialog.target.dom.id + ' ' + this.inputDialog.target.dom.value;
-            this.inputDialog.target.id = this.inputDialog.target.dom.id;
-            this.inputDialog.target.value = this.inputDialog.target.dom.value;
-            this.gaugesManager.putEvent(this.inputDialog.target);
+            let res = HtmlInputComponent.validateValue(evintput, this.inputDialog.target.ga);
+            if(res[0] === false){
+                this.inputValueRef.nativeElement.setCustomValidity('Invalid input. ' + res[1]);
+                this.inputValueRef.nativeElement.reportValidity();
+            }
+            else{
+                this.inputValueRef.nativeElement.setCustomValidity('');
+                this.inputDialog.target.dom.value = evintput;
+                this.inputDialog.target.dbg = 'key pressed ' + this.inputDialog.target.dom.id + ' ' + this.inputDialog.target.dom.value;
+                this.inputDialog.target.id = this.inputDialog.target.dom.id;
+                this.inputDialog.target.value = this.inputDialog.target.dom.value;
+                this.gaugesManager.putEvent(this.inputDialog.target);
+            }
         }
     }
 }
