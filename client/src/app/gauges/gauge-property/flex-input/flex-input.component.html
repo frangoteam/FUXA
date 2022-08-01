@@ -63,6 +63,18 @@
                 <span>{{'gauges.property-input-label' | translate}}</span>
                 <input [(ngModel)]="item.text" type="text" style="width: 200px;text-align: left !important">
             </div>
+            <div class="my-form-field" style="margin-left: 20px;">
+                <span>{{'gauges.property-input-color' | translate}}</span>
+                <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                    [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                    class="input-color" style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
+            </div>
+            <div class="my-form-field" style="margin-left: 10px;">
+                <span>{{'gauges.property-input-stroke' | translate}}</span>
+                <input [(colorPicker)]="item.stroke" [value]="item.stroke" [style.background]="item.stroke" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                    [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
+                    style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+            </div>
             <div class="item-remove">
                 <button mat-icon-button (click)="onRemoveInput(i)" class="remove">
                     <mat-icon>clear</mat-icon>
