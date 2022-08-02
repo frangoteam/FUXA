@@ -17,7 +17,7 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
     static LabelTag = 'Shapes';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop, 
-                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
+                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate };
 
     constructor() {
         super();
@@ -114,6 +114,22 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= actValue && act.range.max >= actValue);
             this.checkActionBlink(element, act, gaugeStatus, inRange, false, propertyColor);
+        } else if (this.actionsType[act.type] === this.actionsType.rotate) {
+            let element = SVG.adopt(svgele.node);
+            let valRange = act.range.max - act.range.min;
+            let angleRange = act.options.maxAngle - act.options.minAngle;
+
+            // Calculate rotation based on defined ranges and actual value
+            let rotation = valRange > 0 ? act.options.minAngle + (actValue * angleRange / valRange) : 0;
+
+            // Don't allow rotation angle to exceed configured range
+            if(rotation > act.options.maxAngle) {
+                rotation = act.options.maxAngle;
+            }
+            else if(rotation < act.options.minAngle){
+                rotation = act.options.minAngle;
+            } 
+            element.rotate(rotation);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
@@ -136,6 +152,6 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
                 ShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 gaugeStatus.actionRef.type = type;
             }
-        }
+        } 
     }
 }
