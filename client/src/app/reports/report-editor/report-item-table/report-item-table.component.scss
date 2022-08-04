@@ -8,7 +8,7 @@
 .data-table-cell {
     white-space: nowrap;
     max-width: 120px;
-    min-height: 60px;
+    min-height: 100px;
     overflow: hidden;
     position: relative;
     border: 1px solid #7F7F7F;
@@ -20,7 +20,7 @@
     .menu {
         font-size: 18px;
         position: absolute;
-        bottom: 5px;
+        bottom: 0px;
         left: 5px;
         cursor: pointer;
         

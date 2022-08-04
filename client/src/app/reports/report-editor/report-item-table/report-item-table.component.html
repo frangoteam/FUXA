@@ -12,12 +12,24 @@
         </div>
         <div class="my-form-field ml20">
             <span>{{'report.item-interval' | translate}}</span>
-            <input numberOnly [(ngModel)]="data.interval" style="width: 140px" type="number" min="1" max="1000">
+            <mat-select [(value)]="data.interval" style="width: 140px">
+                <mat-option *ngFor="let ev of intervalType | enumToArray" [value]="ev.key">
+                    {{ ev.value }}
+                </mat-option>
+            </mat-select>
         </div>        
         <div class="data-table">
             <div *ngFor="let column of columns; index as i" class="data-table-cell">
                 <div class="label" [style.textAlign]="column.align">
                     {{column.tag.label || column.tag.name}}
+                </div>
+                <div *ngIf="i > 0" class="my-form-field mt10">
+                    <span>{{'report.item-function-type' | translate}}</span>
+                    <mat-select [(value)]="column.function" style="width: 110px">
+                        <mat-option *ngFor="let ev of functionType | enumToArray" [value]="ev.key">
+                            {{ ev.value }}
+                        </mat-option>
+                    </mat-select>
                 </div>
                 <div class="menu">
                     <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem">more_vert</mat-icon>

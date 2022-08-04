@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Report, ReportDateRangeType, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
+import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";  
 import { Utils } from '../../_helpers/utils';
@@ -84,6 +84,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                 docDefinition['content'].push({ text: itemText.text });
             } else if (item.type === this.itemTableType) {
                 const itemTable = ReportEditorComponent.getTableContent(<ReportItemTable>item);
+                const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemTable>item).range);
+                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}` });
                 docDefinition['content'].push(itemTable);
             }
         });
@@ -97,7 +99,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         } else if (type === this.itemTableType) {
             item = {...item, ...<ReportItemTable> {
                 columns: [],
-                interval: 300,
+                interval: Utils.getEnumKey(ReportIntervalType, ReportIntervalType.hour),
                 range: this.myForm.value.scheduling,
             }};
         }
@@ -140,7 +142,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     static getTableContent(item: ReportItemTable) {
-        let content = { layout: 'lightHorizontalLines' }; // optional
+        let content = { layout: 'lightHorizontalLines' }; // optional        
         let header = item.columns.map<any>(col => { 
             return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
         });
@@ -158,4 +160,41 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         return content;
     }
 
+    private static getDateRange (dateRange: ReportDateRangeType) : DateTimeRange {
+        if (dateRange === Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.day)) {
+            var yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            return { 
+                begin: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()), 
+                end: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59)
+            };
+        } else if (dateRange === Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.week)) {
+            var lastWeek = new Date();
+            lastWeek = new Date(lastWeek.setDate(lastWeek.getDate() - 7 - (lastWeek.getDay() + 6 ) % 7));
+            var diff = lastWeek.getDate() - lastWeek.getDay() + (lastWeek.getDay() == 0 ? -6 : 1); // adjust when day is sunday
+            lastWeek = new Date(lastWeek.setDate(diff));
+            return { 
+                begin: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate()), 
+                end: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate() + 6, 23, 59, 59)
+            };
+        } else if (dateRange === Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.month)) {
+            var lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            lastMonth.setDate(-1);
+            return { 
+                begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1), 
+                end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), lastMonth.getDate(), 23, 59, 59)
+            };
+        } else {
+            return { 
+                begin: new Date(), 
+                end: new Date()
+            };
+        }
+    }
+}
+
+interface DateTimeRange {
+    begin: Date,
+    end: Date
 }

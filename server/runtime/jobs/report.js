@@ -99,6 +99,8 @@ function Report(_property, _runtime) {
                         docDefinition['content'].push({ text: item.text });
                     } else if (item.type === 'table') {
                         await _getTableContent(item).then(itemTable => {
+                            const tableDateRange = _getDateRange(item.range);
+                            docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}` });
                             docDefinition['content'].push(itemTable);
                         });
                     }
@@ -119,8 +121,9 @@ function Report(_property, _runtime) {
             //item.columns.map(col => col.tag.address || '');
             let values = [];
             let tagsids = item.columns.filter(col => col.type !== 0).map(col => col.tag.id);
-            let timeRange = _getTimeRange(item.range);
-            let options = { interval: item.interval, full: true };
+            let fncs = item.columns.filter(col => col.type !== 0).map(col => col.function);
+            let timeRange = _getDateRange(item.range);
+            let options = { interval: item.interval, functions: fncs };
             await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), options).then(result => {
                 values = result;
             }).catch(function (err) {
@@ -141,7 +144,7 @@ function Report(_property, _runtime) {
     }
 
     
-    var _getTimeRange = function (dateRange) {
+    var _getDateRange = function (dateRange) {
         if (dateRange === ReportDateRangeType.day) {
             var yesterday = new Date(currentTime);
             yesterday.setDate(yesterday.getDate() - 1);

@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DeviceTagDialog } from '../../../device/device.component';
 import { Utils } from '../../../_helpers/utils';
 import { DeviceType, Tag } from '../../../_models/device';
-import { ReportDateRangeType, ReportItemTable, ReportTableColumn, ReportTableColumnType } from '../../../_models/report';
+import { ReportDateRangeType, ReportFunctionType, ReportIntervalType, ReportItemTable, ReportTableColumn, ReportTableColumnType } from '../../../_models/report';
 import { ProjectService } from '../../../_services/project.service';
 
 @Component({
@@ -15,6 +15,9 @@ import { ProjectService } from '../../../_services/project.service';
 export class ReportItemTableComponent implements OnInit {
 
     dateRangeType = ReportDateRangeType;
+    intervalType = ReportIntervalType;
+    functionType = ReportFunctionType;
+
     columns: ReportTableColumn[];
 
     constructor(public dialogRef: MatDialogRef<ReportItemTableComponent>,
@@ -37,6 +40,12 @@ export class ReportItemTableComponent implements OnInit {
         Object.keys(this.dateRangeType).forEach(key => {
             this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt });
         });
+        Object.keys(this.intervalType).forEach(key => {
+            this.translateService.get(this.intervalType[key]).subscribe((txt: string) => { this.intervalType[key] = txt });
+        });
+        Object.keys(this.functionType).forEach(key => {
+            this.translateService.get(this.functionType[key]).subscribe((txt: string) => { this.functionType[key] = txt });
+        });
     }
 
     onAddItem(index: number) {
@@ -57,7 +66,8 @@ export class ReportItemTableComponent implements OnInit {
                     this.columns.splice(++index, 0, <ReportTableColumn>{ 
                         tag: this.projectService.getTagFromId(tagId),
                         width: 'auto',
-                        align: 'left'
+                        align: 'left',
+                        function: Utils.getEnumKey(ReportFunctionType, ReportFunctionType.average)
                     });
                 })
             }

@@ -6,7 +6,8 @@
 
 const fs = require('fs');
 const path = require('path');
-var DaqNode = require("./daqnode");
+var DaqNode = require('./daqnode');
+var calculator = require('./calculator');
 
 var settings
 var logger;
@@ -48,14 +49,30 @@ function getNodeValues(tagid, fromts, tots) {
 function getNodesValues(tagsid, fromts, tots, options) {
     return new Promise(async function (resolve, reject) {
         try {
-            resolve(['asdf', ...tagsid.map(col => col || '')]);
+            // resolve(['asdf', ...tagsid.map(col => col || '')]);
             var dbfncs = [];
             for (let i = 0; i < tagsid.length; i++) {
                 dbfncs.push(getNodeValues(tagsid[i], fromts, tots));
             }
             var result = {};
             await Promise.all(dbfncs).then(values => {
-                resolve({ gid: msg.gid, values: values });
+                if (!values || values.length <= 1) {    // (0)[]
+                    resolve(['-', ...tagsid.map(col => col || '-')]);
+                } else {
+                    let calcValues = [];
+                    for (let idx = 0 ; idx < values.length; idx++) {
+                        if (options.functions[idx]) {
+                            calcValues.push(calculator.getMin(values[idx], options.functions[idx], options.interval));
+                        } else {
+                            calcValues.push(calculator.getMin(values[idx]));
+                        }
+                    }
+                    let mergeValues = Object.keys(calcValues[0]).map(ts => [ts, calcValues[0][ts]]);
+                    for (let x = 0; x < calcValues[0].length; x++) {
+
+                    }
+                    resolve(calcValues);
+                }
             }, reason => {
                 reject(reason);
             });

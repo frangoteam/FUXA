@@ -62,14 +62,15 @@ export interface ReportItemText extends ReportItem {
 export interface ReportItemTable extends ReportItem {
     columns: ReportTableColumn[],
     range: ReportDateRangeType,
-    interval: number,
+    interval: ReportIntervalType,
 }
 
 export interface ReportTableColumn {
-    type: ReportTableColumnType;
+    type: ReportTableColumnType,
     tag: Tag,
     align: string;
     width: string,
+    function: ReportFunctionType,
 }
 
 export enum ReportTableColumnType {
@@ -87,6 +88,18 @@ export enum ReportDateRangeType {
     day = 'report.item-daterange-day',
     week = 'report.item-daterange-week',
     month = 'report.item-daterange-month',
+}
+
+export enum ReportIntervalType {
+    hour = 'report.item-interval-hour',
+    day = 'report.item-interval-day',
+}
+
+export enum ReportFunctionType {
+    min = 'report.item-function-min',
+    max = 'report.item-function-max',
+    average = 'report.item-function-average',
+    sum = 'report.item-function-sum',
 }
 
 export const REPORT_PREFIX = 'r_';
