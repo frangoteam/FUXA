@@ -69,23 +69,22 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
             if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
                 let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
                 if (input) {
-                    let val = parseFloat(sig.value);
+                    let val: any = parseFloat(sig.value);
                     let unit;
-                    let digit = 5;
+                    let digit;
                     
                     if (ga.property.ranges) {
                         unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
-                        let tmp = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
-                        if(!Utils.isNullOrUndefined(tmp)){
-                            digit = tmp;
-                        }
+                        digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
                     }
 
                     if (Number.isNaN(val)) {
                         // maybe boolean
                         val = Number(sig.value);
+                    } else if (!Utils.isNullOrUndefined(digit)){
+                        val = val.toFixed(digit);
                     } else {
-                        val = parseFloat(val.toFixed(digit));
+                        val = parseFloat(val.toFixed(5));
                     }
 
                     // Do not update value if input is in focus!
