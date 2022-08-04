@@ -47,7 +47,7 @@ const Datatypes = {
     /**
      * Int32
      */
-    Int32: _gen(4, 'Int32BE', 2, 2),
+    Int32: _gen(4, 'Int32BE', 2),
     /**
      * UInt32
      */
@@ -97,7 +97,7 @@ const Datatypes = {
     /**
      * Float32MLE
      */
-     Float32MLE: _gen(4, 'FloatBE', 2, 2),
+    Float32MLE: _gen(4, 'FloatBE', 2, 2),
 
     /**
      * String
