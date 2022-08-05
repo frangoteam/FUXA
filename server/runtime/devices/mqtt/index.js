@@ -342,7 +342,18 @@ function MQTTclient(_data, _logger, _events) {
                                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
                                     var id = topicsMap[topicAddr][i].id;
                                     var oldvalue = data.tags[id].value;
-                                    data.tags[id].value = msg.toString();
+                                    let val = parseFloat(msg.toString());
+                                    if (Number.isNaN(val)) {
+                                        // maybe boolean
+                                        val = Number(value);
+                                        // maybe string
+                                        if (Number.isNaN(val)) {
+                                            val = value;
+                                        }
+                                    } else {
+                                        val = parseFloat(val.toFixed(5));
+                                    }
+                                    data.tags[id].value = val;
                                     data.tags[id].timestamp = new Date().getTime();
                                     data.tags[id].changed = true;
                                     if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
