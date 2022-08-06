@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
+var utils = require('../utils');
 
 var settings
 var logger;
@@ -56,22 +57,26 @@ function getNodesValues(tagsid, fromts, tots, options) {
             }
             var result = {};
             await Promise.all(dbfncs).then(values => {
-                if (!values || values.length <= 1) {    // (0)[]
-                    resolve(['-', ...tagsid.map(col => col || '-')]);
+                if (!values || values.length < 1) {    // (0)[]
+                    resolve(['', ...tagsid.map(col => '')]);
                 } else {
                     let calcValues = [];
                     for (let idx = 0 ; idx < values.length; idx++) {
                         if (options.functions[idx]) {
-                            calcValues.push(calculator.getMin(values[idx], options.functions[idx], options.interval));
+                            calcValues.push(calculator.getFunctionValues(values[idx], fromts, tots, options.functions[idx], options.interval));
                         } else {
-                            calcValues.push(calculator.getMin(values[idx]));
+                            calcValues.push(calculator.getFunctionValues(values[idx], fromts, tots));
                         }
                     }
-                    let mergeValues = Object.keys(calcValues[0]).map(ts => [ts, calcValues[0][ts]]);
-                    for (let x = 0; x < calcValues[0].length; x++) {
-
+                    let keys = Object.keys(calcValues[0]).map(ts => Number(ts));
+                    let mergeValues = Object.keys(calcValues[0]).map(ts => [utils.getFormatDate(new Date(Number(ts))), _getValue(calcValues[0][ts])]);
+                    for (let x = 1; x < calcValues.length; x++) {
+                        let y = 0;
+                        keys.forEach(k => {
+                            mergeValues[y++].push(_getValue(calcValues[x][k]));
+                        });
                     }
-                    resolve(calcValues);
+                    resolve(mergeValues);
                 }
             }, reason => {
                 reject(reason);
@@ -90,6 +95,14 @@ function _getDaqNode(tagid) {
         }
     }
 }
+
+function _getValue(value) {
+    if (value == Number.MAX_VALUE || value == Number.MIN_VALUE) {
+        return '';
+    }
+    return value.toString();
+}
+
 
 module.exports = {
     init: init,

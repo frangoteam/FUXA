@@ -136,7 +136,7 @@ function Report(_property, _runtime) {
                 widths: item.columns.map(col => col.width), //[ '*', 'auto', 100],
                 body: [
                     header,
-                    values
+                    ...values
                 ]
             }
             resolve(content);

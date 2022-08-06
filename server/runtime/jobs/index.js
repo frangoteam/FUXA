@@ -29,7 +29,7 @@ function JobsManager(_runtime) {
             logger.info('jobs check start', true);
             jobsCheckStatus = setInterval(function () {
                 _checkStatus();     // check in 20 seconds interval
-            }, 2000);
+            }, 5000);
         });
     }
 
@@ -55,8 +55,9 @@ function JobsManager(_runtime) {
 
     this.forceReport = function (report) {
         var found = false;
-        jobsList.forEach(item => {            
-            if (item.type === JobType.Report && item.job.getProperty().id === report.id) {
+        jobsList.forEach(item => {    
+            let jp = item.job.getProperty();
+            if (item.type === JobType.Report && jp.id === report.id) {
                 item.force = true;
                 forceCheck = true;
                 found = true;
@@ -155,8 +156,8 @@ function JobsManager(_runtime) {
             try {
                 jobsList.forEach(item => {
                     if (item.job['execute']) {
-                        var time = new Date();
-                        jobsExecute.push(item.job['execute'](time, item.force));
+                        jobsExecute.push(item.job['execute'](new Date(), item.force));
+                        item.force = false;
                     }
                 });
                 Promise.all(jobsExecute).then(values => {

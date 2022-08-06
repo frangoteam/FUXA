@@ -105,5 +105,30 @@ var utils = module.exports = {
             SS = '0' + SS;
         }
         return `${yyyy}-${mm}-${dd}_${HH}-${MM}-${SS}`;
+    },
+
+    getFormatDate: function (dt) {
+        var yyyy = dt.getFullYear();
+        var mm = dt.getMonth() + 1;
+        var dd = dt.getDate();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var HH = dt.getHours();
+        var MM = dt.getMinutes();
+        var SS = dt.getSeconds();
+        if (HH < 10) {
+            HH = '0' + HH;
+        }
+        if (MM < 10) {
+            MM = '0' + MM;
+        }
+        if (SS < 10) {
+            SS = '0' + SS;
+        }
+        return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
     }
 }

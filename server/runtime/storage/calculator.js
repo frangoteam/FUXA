@@ -4,140 +4,189 @@
 
 'use strict';
 
+function getFunctionValues(values, fromts, tots, fnc, interval) {
+    if (fnc === ReportFunctionType.min) {
+        return getMin(values, fromts, tots, interval);
+    } else if (fnc === ReportFunctionType.max) {
+        return getMax(values, fromts, tots, interval);
+    } else if (fnc === ReportFunctionType.average) {
+        return getAverage(values, fromts, tots, interval);
+    } else if (fnc === ReportFunctionType.sum) {
+        return getSum(values, fromts, tots, interval);
+    }
+}
+
 /**
  * 
  * @param {*} values 
  * @param {*} fnc 
- * @param {*} collection hour / day 
+ * @param {*} intervalType hour / day 
  * @returns 
  */
-function getMin(timeserie, fnc, collectionType) {
-    let result = [];
+function getMin(timeserie, fromts, tots, intervalType) {
+    let result = getInterval(fromts, tots, intervalType, Number.MAX_VALUE);
     // sort to start with the oldest
     let sorted = timeserie.sort(function (a, b) {
         return a.dt - b.dt;
     });
 
-    let addToCollection = (collections, collectionIndex, value) => {
-        if (!collections[collectionIndex]) {
-            collections[collectionIndex] = value;
-        } else {
-            collections[collectionIndex] += value;
+    let addToInterval = (intervals, intervalIndex, value) => {
+        if (!intervals[intervalIndex]) {
+            intervals[intervalIndex] = Number.MAX_VALUE;
+        } else if (intervals[intervalIndex] > value) {
+            intervals[intervalIndex] = value;
         }
-    }
-
-    let getCollectionTime = (millyDt, _collection, next) => {
-        let dt = new Date(millyDt);
-        let toadd = (next) ? 1 : 0;
-        if (_collection === ReportIntervalType.day) {
-            dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + toadd, 0, 0, 0);
-        } else if (_collection === ReportIntervalType.hour) {
-            dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours() + toadd, 0, 0);
-        }
-        return dt;
     }
     
-    let lastRecord = null;// : TimeValue { dt: number, value: number };
-    let lastCollectionIndex = null;
     for (let i = 0; i < sorted.length; i++) {
-        let collectionIndex = getCollectionTime(sorted[i].dt, collectionType, false).getTime();
-        // check missing value to fill collectionsIndex
-        while (lastCollectionIndex && lastCollectionIndex < collectionIndex) {
-            let nextCollectionIndex = getCollectionTime(lastRecord.dt, collectionType, true).getTime();
-            let delta = nextCollectionIndex - lastRecord.dt;
-            addToCollection(result, nextCollectionIndex, lastRecord.value * (delta / 1000));
-            lastCollectionIndex = nextCollectionIndex;
-            lastRecord.dt = nextCollectionIndex;
-            // console.log(`last Record:${new Date(lastRecord.datetime)}`);
-        }
-        // sum left => skip the first one
-        if (lastRecord) {
-            let delta = sorted[i].dt - lastRecord.dt;
-            addToCollection(result, collectionIndex, sorted[i].value * (delta / 1000));
-        }
-
-        lastRecord = sorted[i];
-        // console.log(`last Record:${new Date(lastRecord.datetime)}`);
-        lastCollectionIndex = collectionIndex;
+        let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
+        addToInterval(result, intervalIndex, parseFloat(sorted[i].value));
     }
     return result;
 }
 
-function getMax(values, fnc, interval) {
-    let result = [];
-    // // sort to start with the oldest
-    // let sorted = timeserie.sort(function (a, b) {
-    //     return a.dt - b.dt;
-    // });
+function getMax(timeserie, fromts, tots, intervalType) {
+    let result = getInterval(fromts, tots, intervalType, Number.MIN_VALUE);
+    // sort to start with the oldest
+    let sorted = timeserie.sort(function (a, b) {
+        return a.dt - b.dt;
+    });
 
-    // let addToCollection = (collections: number[], collectionIndex: number, value: number) => {
-    //     if (!collections[collectionIndex]) {
-    //         collections[collectionIndex] = value;
-    //     } else {
-    //         collections[collectionIndex] += value;
-    //     }
-    //     // console.log(`add: ${new Date(collectionIndex)} + ${value} = ${collections[collectionIndex]}`);
-    // }
-
-    // let getCollectionTime = (millyDt: number, collectionType: ReportIntervalType, next) => {
-    //     let dt = new Date(millyDt);
-    //     let toadd = (next) ? 1 : 0;
-    //     if (collectionType === CollectionType.Year) {
-    //         dt = new Date(dt.getFullYear() + toadd, 0, 0, 0, 0, 0);
-    //     } else if (collectionType === CollectionType.Month) {
-    //         dt = new Date(dt.getFullYear(), dt.getMonth() + toadd, 0, 0, 0, 0);
-    //     } else if (collectionType === CollectionType.Day) {
-    //         dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + toadd, 0, 0, 0);
-    //     } else if (collectionType === CollectionType.Hour) {
-    //         dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours() + toadd, 0, 0);
-    //     } else if (collectionType === CollectionType.Minute) {
-    //         dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), dt.getMinutes() + toadd, 0);
-    //     } else if (collectionType === CollectionType.Second) {
-    //         dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), dt.getMinutes(), dt.getSeconds() + toadd);
-    //     }
-    //     // console.log(`in:${new Date(millyDt)}   ${dt}`);
-    //     return dt;
-    // }
+    let addToInterval = (intervals, intervalIndex, value) => {
+        if (!intervals[intervalIndex]) {
+            intervals[intervalIndex] = Number.MIN_VALUE;
+        } else if (intervals[intervalIndex] < value) {
+            intervals[intervalIndex] = value;
+        }
+    }
     
-    // let lastRecord: TimeValue = null;
-    // let lastCollectionIndex = null;
-    // for (let i = 0; i < sorted.length; i++) {
-    //     let collectionIndex = getCollectionTime(sorted[i].dt, collectionType, false).getTime();
-    //     // check missing value to fill collectionsIndex
-    //     while (lastCollectionIndex && lastCollectionIndex < collectionIndex) {
-    //         let nextCollectionIndex = getCollectionTime(lastRecord.dt, collectionType, true).getTime();
-    //         let delta = nextCollectionIndex - lastRecord.dt;
-    //         addToCollection(result, nextCollectionIndex, lastRecord.value * (delta / 1000));
-    //         lastCollectionIndex = nextCollectionIndex;
-    //         lastRecord.dt = nextCollectionIndex;
-    //         // console.log(`last Record:${new Date(lastRecord.datetime)}`);
-    //     }
-    //     // sum left => skip the first one
-    //     if (lastRecord) {
-    //         let delta = sorted[i].dt - lastRecord.dt;
-    //         addToCollection(result, collectionIndex, sorted[i].value * (delta / 1000));
-    //     }
-
-    //     lastRecord = sorted[i];
-    //     // console.log(`last Record:${new Date(lastRecord.datetime)}`);
-    //     lastCollectionIndex = collectionIndex;
-    // }
-    // // calculates with unit
-    // if (unit) {
-    //     Object.keys(result).forEach(k => {
-    //         result[k] /= unit;
-    //     });
-    // }
+    for (let i = 0; i < sorted.length; i++) {
+        let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
+        addToInterval(result, intervalIndex, parseFloat(sorted[i].value));
+    }
     return result;
 }
 
 function getAverage(values, fnc, interval) {
+    let result = getInterval(fromts, tots, intervalType, 0);
+    let counts = getInterval(fromts, tots, intervalType, 0);
+    // sort to start with the oldest
+    let sorted = timeserie.sort(function (a, b) {
+        return a.dt - b.dt;
+    });
+
+    let addToInterval = (intervals, counters, intervalIndex, value) => {
+        if (!intervals[intervalIndex]) {
+            intervals[intervalIndex] = 0;
+        } else {
+            intervals[intervalIndex] += value;
+            counters[intervalIndex]++;
+        }
+    }
+    
+    for (let i = 0; i < sorted.length; i++) {
+        let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
+        addToInterval(result, counts, intervalIndex, parseFloat(sorted[i].value));
+    }
+    // average
+    Object.keys(result).forEach(k => {
+        if (counts[k]) {
+            result[k] = result[k] / counts[k];
+        }
+    });
+    return result; 
 }
 
 function getSum(values, fnc, interval) {
+    let result = getInterval(fromts, tots, intervalType, 0);
+    // sort to start with the oldest
+    let sorted = timeserie.sort(function (a, b) {
+        return a.dt - b.dt;
+    });
+
+    let addToInterval = (intervals, intervalIndex, value) => {
+        if (!intervals[intervalIndex]) {
+            intervals[intervalIndex] = 0;
+        } else {
+            intervals[intervalIndex] += value;
+        }
+    }
+    
+    for (let i = 0; i < sorted.length; i++) {
+        let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
+        addToInterval(result, intervalIndex, parseFloat(sorted[i].value));
+    }
+    return result;    
+}
+
+
+function getIntegral(timeserie, fromts, tots, intervalType) {
+    let result = getInterval(fromts, tots, intervalType, Number.MAX_VALUE);
+    // sort to start with the oldest
+    let sorted = timeserie.sort(function (a, b) {
+        return a.dt - b.dt;
+    });
+
+    let addToInterval = (intervals, intervalIndex, value) => {
+        if (!intervals[intervalIndex]) {
+            intervals[intervalIndex] = value;
+        } else if (intervals[intervalIndex] > value) {
+            intervals[intervalIndex] += value;
+        }
+    }
+    
+    let lastRecord = null;// : TimeValue { dt: number, value: number };
+    let lastIntervalIndex = null;
+    for (let i = 0; i < sorted.length; i++) {
+        let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
+        // check missing value to fill intervalsIndex
+        while (lastIntervalIndex && lastIntervalIndex < intervalIndex) {
+            let nextIntervalIndex = getIntervalTime(lastRecord.dt, intervalType, true).getTime();
+            let delta = nextIntervalIndex - lastRecord.dt;
+            addToInterval(result, nextIntervalIndex, parseFloat(lastRecord.value) * (delta / 1000));
+            lastIntervalIndex = nextIntervalIndex;
+            lastRecord.dt = nextIntervalIndex;
+        }
+        // sum left => skip the first one
+        if (lastRecord) {
+            let delta = sorted[i].dt - lastRecord.dt;
+            addToInterval(result, intervalIndex, parseFloat(sorted[i].value) * (delta / 1000));
+        }
+
+        lastRecord = sorted[i];
+        lastIntervalIndex = intervalIndex;
+    }
+    return result;
+}
+
+function getInterval(fromts, tots, type, defvalue) {
+    let result = {};
+    let dt = getStepDate(fromts, type, 0);
+    while (dt.getTime() < tots) {
+        result[dt.getTime()] = defvalue;
+        dt = getStepDate(dt, type, 1);
+    }
+    return result;
+}
+
+function getIntervalTime(millyDt, _interval, next) {
+    let dt = new Date(millyDt);
+    let toadd = (next) ? 1 : 0;
+    return getStepDate(dt, _interval, toadd);
+}
+
+function getStepDate(ts, type, toadd) {
+    let dt = new Date(ts);
+    if (type === ReportIntervalType.day) {
+        dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + toadd, 0, 0, 0);
+    } else if (type === ReportIntervalType.hour) {
+        dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours() + toadd, 0, 0);
+    }
+    return dt;
 }
 
 module.exports = {
+    getFunctionValues: getFunctionValues,
     getMin: getMin,
     getMax: getMax,
     getAverage: getAverage,
