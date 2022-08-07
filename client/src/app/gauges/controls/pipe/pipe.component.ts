@@ -8,6 +8,10 @@ import { Utils } from '../../../_helpers/utils';
 declare var SVG: any;
 declare var Raphael: any;
 
+export enum PipeActionsType {
+    hidecontent = 'pipe.action-hide-content'
+}
+
 @Injectable()
 export class PipeComponent {
 
@@ -16,7 +20,8 @@ export class PipeComponent {
     static LabelTag = 'Pipe';
     static prefixB = 'PIE_';
 
-    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
+    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, 
+                            hidecontent: PipeActionsType.hidecontent };
 
     static getSignals(pro: any) {
         let res: string[] = [];
@@ -94,6 +99,7 @@ export class PipeComponent {
             if (eletoanim) {
                 let len = 1000;
                 if (PipeComponent.actionsType[type] === PipeComponent.actionsType.clockwise) {
+                    eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
                         if (len < 0) len = 1000;
                         eletoanim.style.strokeDashoffset = len;
@@ -101,12 +107,15 @@ export class PipeComponent {
                     }, 20);
                     gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
                 } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.anticlockwise) {
+                    eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
                         if (len > 1000) len = 0;
                         eletoanim.style.strokeDashoffset = len;
                         len++;
                     }, 20);
                     gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
+                } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.hidecontent) {
+                    eletoanim.style.display = 'none';
                 }
             }
         }

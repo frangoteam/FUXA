@@ -585,6 +585,7 @@
     "pipe.property-content-width": "Content width",
     "pipe.property-content-color": "Content color",
     "pipe.property-content-space": "Content dash",
+    "pipe.action-hide-content": "Hide content",
 
     "slider.property-props": "Property",
     "slider.property-horizontal": "Horizontal",
