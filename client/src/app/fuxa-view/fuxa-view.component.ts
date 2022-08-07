@@ -54,7 +54,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     inputDialog = { show: false, timer: null, x: 0, y: 0, target: null };
     gaugeInput = '';
     gaugeCurrentValue = '';
-    inputChanged : boolean = false;
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
@@ -419,8 +418,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     else{
                         self.gaugesManager.putEvent(htmlevent);
                         htmlevent.dom.setCustomValidity('');
-                        // Remove focus!
-                        self.inputChanged = true;
                         htmlevent.dom.blur();
                     }
                 }
@@ -429,8 +426,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 htmlevent.dom.onfocus = function (ev) {
                     if (ev.currentTarget) {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
-                        // self.toggleShowInputDialog(true, inputRect.left, inputRect.top, htmlevent);
-                        self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0), inputRect.top - 5, htmlevent);
+                        // self.toggleShowInputDialog(true, inputRect.left, inputRect.top, htmlevent);                       
+                        // self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0), inputRect.top - 5, htmlevent);
+
+                        self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0) - 7, inputRect.top - 8, htmlevent);
+
                         for (let i = 0; i < ev.currentTarget.attributes.length; i++)  {
                             if (ev.currentTarget.attributes['style']) {
                                 self.setInputDialogStyle(self.inputDialogRef.nativeElement, ev.currentTarget.attributes['style'].textContent, inputRect);
@@ -456,7 +456,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
                 
                 htmlevent.dom.onfocus = function (ev) {
-                    self.inputChanged = false;
                     if(htmlevent.ga.property){
                         let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
                         if(unit && htmlevent.dom.value.endsWith(unit)){
@@ -733,6 +732,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     
     toggleShowInputDialog(show: boolean, x: number = -1, y: number = -1, htmlev: Event = null) {
         if (show) {
+
+            // console.log(`d = ${d} and wH = ${self.innerHeight} and dH = ${this.inputDialogRef.nativeElement.getBoundingClientRect().height}`);
+
+            // Evaluate top/bottom coordinate and adjust to dialog position to fit into window. We know that dialog height is 112
+            let d = self.innerHeight - (y + 114);
+           
+            if(y < 0){
+                y = 0;
+            }else if(d < 0){
+                y += d;
+            }
+
             this.inputDialog.show = true;
             if (x >= 0 && y >= 0) {
                 this.inputDialog.target = htmlev;
