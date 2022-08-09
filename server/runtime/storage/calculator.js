@@ -179,7 +179,7 @@ function getStepDate(ts, type, toadd) {
     let dt = new Date(ts);
     if (type === ReportIntervalType.day) {
         dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + toadd, 0, 0, 0);
-    } else if (type === ReportIntervalType.hour) {
+    } else { //if (type === ReportIntervalType.hour) {
         dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours() + toadd, 0, 0);
     }
     return dt;

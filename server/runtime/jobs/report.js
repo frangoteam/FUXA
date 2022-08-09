@@ -18,12 +18,12 @@ function Report(_property, _runtime) {
 
     this.execute = function (time, force) {
         currentTime = time;
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             try {
                 if (!_isToExecute(time) && !force) {
                     resolve(true);
                 } else {
-                    _createPdfBinary().then(filepath => {
+                    await _createPdfBinary().then(filepath => {
                         if (property.receiver) {
                             let subject = `Report ${property.name}`;
                             let attachments = { path: filepath };
@@ -33,6 +33,7 @@ function Report(_property, _runtime) {
                                 logger.error(`report.send.failed: ${senderr}`);
                             });
                         }
+                        lastExecuted = currentTime;
                         resolve(filepath);
                     }).catch(function (err) {
                         reject(err);
@@ -62,7 +63,7 @@ function Report(_property, _runtime) {
     }
 
     var _createPdfBinary = function () {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             var fonts = {
                 Roboto: {
                     normal: path.join(__dirname, 'fonts/Roboto-Regular.ttf'),
@@ -72,7 +73,7 @@ function Report(_property, _runtime) {
                 }
               };
             let pdfmake = new Pdfmake(fonts);
-            _getPdfContent(property).then(content => {
+            await _getPdfContent(property).then(content => {
                 let docPath = path.join(runtime.settings.reportsDir,`${property.name}_${utils.getDate(new Date())}.pdf`);
                 pdfDoc = pdfmake.createPdfKitDocument(content, {});
                 const stream = fs.createWriteStream(docPath);

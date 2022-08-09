@@ -53,10 +53,10 @@ function getNodesValues(tagsid, fromts, tots, options) {
             // resolve(['asdf', ...tagsid.map(col => col || '')]);
             var dbfncs = [];
             for (let i = 0; i < tagsid.length; i++) {
-                dbfncs.push(getNodeValues(tagsid[i], fromts, tots));
+                dbfncs.push(await getNodeValues(tagsid[i], fromts, tots));
             }
             var result = {};
-            await Promise.all(dbfncs).then(values => {
+            Promise.all(dbfncs).then(values => {
                 if (!values || values.length < 1) {    // (0)[]
                     resolve(['', ...tagsid.map(col => '')]);
                 } else {
