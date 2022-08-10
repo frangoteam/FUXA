@@ -57,6 +57,9 @@ export class SystemFunctions {
     },
     {
         name: '$getTag', text: 'script.sys-fnc-gettag-text', tooltip: 'script.sys-fnc-gettag-tooltip', params: [true]
+    },
+    {
+        name: '$setView', text: 'script.sys-fnc-setview-text', tooltip: 'script.sys-fnc-setview-tooltip', params: [false]
     }];
 }
 
