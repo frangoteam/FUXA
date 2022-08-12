@@ -168,6 +168,8 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onAddSystemFunction(sysfnc: SystemFunction) {
         if (sysfnc.params.filter((value) => value).length === 1) {
             this.onAddSystemFunctionTag(sysfnc);
+        } else {
+            this.insertText(this.getFunctionText(sysfnc, "'MainView'"));
         }
     }
 
@@ -185,7 +187,7 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe((result) => {
             if (result && result.variableId) {
                 let tag = { id: result.variableId, comment: DevicesUtils.getDeviceTagText(this.data.devices, result.variableId) };
-                let text = this.getFunctionText(sysfnc, [tag]);
+                let text = this.getTagFunctionText(sysfnc, [tag]);
                 this.insertText(text);
             }
         });
@@ -236,7 +238,7 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
         doc.replaceRange(text, cursor);
     }
 
-    private getFunctionText(sysfnc: SystemFunction, params: any[]): string {
+    private getTagFunctionText(sysfnc: SystemFunction, params: any[]): string {
         let paramText = '';
         for (let i = 0; i < sysfnc.params.length; i++) {
             if (paramText.length) {     // parameters separator
@@ -249,6 +251,10 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
         return `${sysfnc.name}(${paramText});`;
+    }
+
+    private getFunctionText(sysfnc: SystemFunction, param: string): string {
+        return `${sysfnc.name}(${param});`;
     }
 
     private loadTestParameter() {

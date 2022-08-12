@@ -588,6 +588,7 @@
     "pipe.property-content-width": "Content width",
     "pipe.property-content-color": "Content color",
     "pipe.property-content-space": "Content dash",
+    "pipe.action-hide-content": "Hide content",
 
     "slider.property-props": "Property",
     "slider.property-horizontal": "Horizontal",
@@ -966,6 +967,8 @@
     "script.sys-fnc-gettag-tooltip": "System function to get Tag value: $getTag (TagID as string) return value as string or number",
     "script.scheduling-title": "Script scheduling",
     "script.scheduling-interval": "Interval in seconds",
+    "script.sys-fnc-setview-text": "$setView (View name)",
+    "script.sys-fnc-setview-tooltip": "System function to set View on client: $setView (View name as string)",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Subscription } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -63,6 +63,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
+    private subscriptiongoTo: Subscription;
+    private destroy$ = new Subject<void>();
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -92,6 +94,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
                 this.setAlarmsStatus(event);
             });
+            this.subscriptiongoTo = this.hmiService.onGoTo.subscribe(viewName => {
+                this.onGoToPage(this.projectService.getViewId(viewName));
+            });
+
             this.hmiService.askAlarmsStatus();
             this.changeDetector.detectChanges();
         }
@@ -108,6 +114,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.subscriptionAlarmsStatus) {
                 this.subscriptionAlarmsStatus.unsubscribe();
             }
+            if (this.subscriptiongoTo) {
+                this.subscriptiongoTo.unsubscribe();
+            }
+            this.destroy$.next();
+            this.destroy$.complete();
         } catch (e) {
         }
     }
