@@ -435,6 +435,18 @@ function scriptConsoleOutput(output) {
     }
 }
 
+/**
+ * Trasmit the scripts command to frontend (clients)
+ * @param {*} command
+ * @param {*} parameters
+ */
+ function scriptSendCommand(command) {
+    try {
+        io.emit(Events.IoEventTypes.SCRIPT_COMMAND, command);
+    } catch (err) {
+    }
+}
+
 var runtime = module.exports = {
     init: init,
     project: project,
@@ -454,5 +466,5 @@ var runtime = module.exports = {
     get notificatorMgr() { return notificatorMgr },
     get scriptsMgr() { return scriptsMgr },
     events: events,
-
+    scriptSendCommand: scriptSendCommand,
 }
