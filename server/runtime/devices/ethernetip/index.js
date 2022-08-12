@@ -275,7 +275,7 @@ function EthernetIPclient(_data, _logger, _events) {
                 var id = itemsMap[key].id;
                 var diff = (itemsMap[key].value != vars[key]);
                 itemsMap[key].value = vars[key];
-                varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type };
+                varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq };
                 if (diff) {
                     changed[id] = varsValue[id];
                 }

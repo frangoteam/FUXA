@@ -184,7 +184,13 @@ function ScriptsManager(_runtime) {
         var sysFncs = {};
         sysFncs['$getTag'] = runtime.devices.getTagValue;
         sysFncs['$setTag'] = runtime.devices.setTagValue;
+        sysFncs['$setView'] = _setCommandView;
         return sysFncs;
+    }
+
+    var _setCommandView = function (view) {
+        let command = { command: ScriptCommandEnum.SETVIEW, params: [view] };
+        runtime.scriptSendCommand(command);
     }
 }
 
@@ -197,7 +203,7 @@ module.exports = {
 /**
  * State of Scripts manager
  */
-var ScriptsStatusEnum = {
+const ScriptsStatusEnum = {
     INIT: 'init',
     LOAD: 'load',
     IDLE: 'idle',
@@ -212,4 +218,8 @@ function ScriptSchedule(script) {
     this.isToRun = function(time) {
         return (time - this.lastRun > this.scheduling.interval * 1000);
     }
+}
+
+const ScriptCommandEnum = {
+    SETVIEW: 'SETVIEW',
 }

@@ -3,6 +3,7 @@
  */
 'use strict';
 const mqtt = require('mqtt');
+var utils = require('../../utils');
 
 function MQTTclient(_data, _logger, _events) {
     var data = _data;                   // Current data
@@ -286,11 +287,15 @@ function MQTTclient(_data, _logger, _events) {
             var tag = data.tags[tagid];
             if (tag) {
                 if (tag.options) {
-                    tag.options.pubs.forEach(item => {
-                        if (item.type === 'value') {
-                            item.value = value;
-                        }
-                    })
+                    if (tag.options.pubs) {
+                        tag.options.pubs.forEach(item => {
+                            if (item.type === 'value') {
+                                item.value = value;
+                            }
+                        })
+                    } else if (tag.options.subs && tag.options.subs.indexOf(tag.memaddress) !== -1) {
+                        tag.value = value;
+                    }
                 }
                 if (tag.type === 'raw') {
                     tag['value'] = value;
@@ -343,7 +348,7 @@ function MQTTclient(_data, _logger, _events) {
                                     if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
                                         try {
                                             var subitems = JSON.parse(data.tags[id].value);
-                                            if (subitems[data.tags[id].memaddress]) {
+                                            if (!utils.isNullOrUndefined(subitems[data.tags[id].memaddress])) {
                                                 data.tags[id].value = subitems[data.tags[id].memaddress];
                                             } else {
                                                 data.tags[id].value = oldvalue;
@@ -525,6 +530,10 @@ function MQTTclient(_data, _logger, _events) {
                     } else if (topicTopuplish[0]) { // payloand with row data
                         client.publish(tags[key].address, Object.values(topicTopuplish)[0].toString());
                     }
+                } else if (tags[key].type === 'json' && tags[key].options && tags[key].options.subs && tags[key].options.subs.length) {
+                    let obj = {};
+                    obj[tags[key].memaddress] = tags[key].value;
+                    client.publish(tags[key].address, JSON.stringify(obj));
                 } else if (tags[key].value) {   // whitout payload
                     client.publish(tags[key].address, tags[key].value.toString());
                     tags[key].value = null;

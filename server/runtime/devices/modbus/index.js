@@ -134,7 +134,7 @@ function MODBUSclient(_data, _logger, _events) {
                     }
                 }
             }
-            _checkWorking(false);
+            // _checkWorking(false);
             Promise.all(readVarsfnc).then(result => {
                 _checkWorking(false);
                 if (result.length) {
@@ -506,11 +506,11 @@ function MODBUSclient(_data, _logger, _events) {
                     let value = items[itemidx].value;
                     let tags = items[itemidx].Tags;
                     tags.forEach(tag => {
-                        result[tag.id] = { id: tag.id, value: convertValue(value, tag.divisor), type: type };
+                        result[tag.id] = { id: tag.id, value: convertValue(value, tag.divisor), type: type, daq: tag.daq };
                         someval = true;
                     });
                 } else {
-                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type };
+                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq };
                     someval = true;
                 }
             }

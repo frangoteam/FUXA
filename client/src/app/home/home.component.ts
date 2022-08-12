@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Subscription } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -53,16 +53,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     alarms = { show: false, count: 0, mode: '' };
     infos = { show: false, count: 0, mode: '' };
     headerButtonMode = NotificationModeType;
-    alarmsPanelOpen = false;
     layoutHeader = new HeaderSettings();
 	showNavigation = true;
     viewAsAlarms = LinkType.alarms;
+    alarmPanelWidth = '100%';
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
 
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
+    private subscriptiongoTo: Subscription;
+    private destroy$ = new Subject<void>();
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -92,6 +94,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
                 this.setAlarmsStatus(event);
             });
+            this.subscriptiongoTo = this.hmiService.onGoTo.subscribe(viewName => {
+                this.onGoToPage(this.projectService.getViewId(viewName));
+            });
+
             this.hmiService.askAlarmsStatus();
             this.changeDetector.detectChanges();
         }
@@ -108,6 +114,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.subscriptionAlarmsStatus) {
                 this.subscriptionAlarmsStatus.unsubscribe();
             }
+            if (this.subscriptiongoTo) {
+                this.subscriptiongoTo.unsubscribe();
+            }
+            this.destroy$.next();
+            this.destroy$.complete();
         } catch (e) {
         }
     }
@@ -199,22 +210,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onAlarmsShowMode(mode: string) {
+        if (Utils.getEnumKey(NaviModeType, NaviModeType.fix) === this.hmi.layout.navigation.mode && this.matsidenav) {
+            this.alarmPanelWidth = `calc(100% - ${this.matsidenav._width}px)`;
+        }
         let ele = document.getElementById("alarms-panel");
         if (mode === 'expand') {
             ele.classList.add("is-full-active");
             // ele.classList.remove('is-active');			
-            this.alarmsPanelOpen = true;
             this.alarmsview.startAskAlarmsValues();
         } else if (mode === 'collapse') {
             ele.classList.add('is-active');
             ele.classList.remove('is-full-active');
-            this.alarmsPanelOpen = true;
             this.alarmsview.startAskAlarmsValues();
         } else {
             // ele.classList.toggle("is-active");
             ele.classList.remove('is-active');
             ele.classList.remove('is-full-active');
-            this.alarmsPanelOpen = false;
         }
     }
 
@@ -286,6 +297,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.isLoading = false;
         this.securityEnabled = this.projectService.isSecurityEnabled();
+        if (this.securityEnabled && !this.isLoggedIn() && this.hmi.layout.loginonstart) {
+            this.onLogin();
+        }
     }
 
     private setBackground() {

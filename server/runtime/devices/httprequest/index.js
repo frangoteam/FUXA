@@ -239,10 +239,7 @@ function HTTPclient(_data, _logger, _events) {
                     var tag = requestItemsMap[key][index];
                     if (tag) {
                         someval = true;
-                        result[tag.id] = { id: tag.id, value: (tag.memaddress) ? items[tag.memaddress] : items[key], type: items[key].type };
-                    } else {
-                        someval = true;
-                        result[tag.id] = { id: tag.id, value: items[key], type: requestItemsMap[key].type };
+                        result[tag.id] = { id: tag.id, value: (tag.memaddress) ? items[tag.memaddress] : items[key], type: items[key].type, daq: tag.daq };
                     }
                 }
             }

@@ -12,7 +12,10 @@
                 </button>
                 <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
                     <mat-icon aria-label="forward">skip_next</mat-icon>
-                </button>                
+                </button>
+                <!-- <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
+                    <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
+                </button> -->
             </div>
             <div *ngIf="!isEditor" >
                 <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-srange" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
@@ -34,11 +37,20 @@
                     (click)="onClick('F')">
                     <mat-icon aria-label="forward">skip_next</mat-icon>
                 </button>
+                <!-- <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                    (click)="onExportData()">
+                    <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
+                </button> -->
             </div>
         </div>
     </div>
     <ngx-uplot class="mychart-graph" #nguplot></ngx-uplot>
-    <!-- <div class="loader-holder"> -->
-        <!-- <div class="loader"></div> -->
-    <!-- </div> -->
+    <div *ngIf="!isEditor && withToolbar" class="reload-btn">
+        <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="options.axisLabelColor">
+            <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
+        </button>
+    </div>    
+    <div *ngIf="loading" class="spinner">
+        <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
+    </div>
 </div>

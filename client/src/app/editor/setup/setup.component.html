@@ -115,7 +115,15 @@
                         <span>{{'dlg.setup-scripts' | translate}}</span>
                     </div>
                 </button>
-            </div>                
+            </div>
+            <div class="btn-card">
+                <button mat-button (click)="goTo('/reports')" class="card-btn" [disabled]="isToDisable('reports')">
+                    <div class="card-btn-content">
+                        <mat-icon>content_paste</mat-icon>
+                        <span>{{'dlg.setup-reports' | translate}}</span>
+                    </div>
+                </button>
+            </div>
         </div>
         <div class="separator">
             <div class="separator-line" style="position:absolute;left: 0px"></div>

@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { AlarmsType } from '../../_models/alarm';
 import { Notification, NotificationsType } from '../../_models/notification';
 import { TranslateService } from '@ngx-translate/core';
+import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-notification-property',
@@ -14,8 +15,8 @@ export class NotificationPropertyComponent implements OnInit {
 
     notification: Notification;
     notificationsType = NotificationsType;
-    notificationAlarm = Object.keys(NotificationsType).find(key => NotificationsType[key] === NotificationsType.alarms);
-    notificationTrigger = Object.keys(NotificationsType).find(key => NotificationsType[key] === NotificationsType.trigger);
+    notificationAlarm = Utils.getEnumKey(NotificationsType, NotificationsType.alarms);
+    notificationTrigger = Utils.getEnumKey(NotificationsType, NotificationsType.trigger);
 
     alarmsType = [AlarmsType.HIGH_HIGH, AlarmsType.HIGH, AlarmsType.LOW, AlarmsType.INFO];
 
@@ -23,13 +24,14 @@ export class NotificationPropertyComponent implements OnInit {
 
     constructor(public dialogRef: MatDialogRef<NotificationPropertyComponent>,
         private translateService: TranslateService,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+            this.notification = this.data.notification;
+    }
 
     ngOnInit() {
         Object.keys(this.notificationsType).forEach(key => {
             this.translateService.get(this.notificationsType[key]).subscribe((txt: string) => { this.notificationsType[key] = txt });
         });
-        this.notification = this.data.notification;
     }
 
     onNoClick(): void {

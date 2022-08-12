@@ -25,6 +25,15 @@
                 </div>
                 <div style="display: block;margin-top: 5px;">
                     <div class="my-form-field" style="display: inline-block">
+                        <span>{{'dlg.layout-lbl-login-start' | translate}}</span>
+                        <mat-select [(value)]="data.layout.loginonstart" style="width: 400px">
+                            <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
+                            <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
+                        </mat-select>
+                    </div>
+                </div>                
+                <div style="display: block;margin-top: 10px;">
+                    <div class="my-form-field" style="display: inline-block">
                         <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
                         <mat-select [(value)]="data.layout.zoom" style="width: 400px">
                             <mat-option *ngFor="let type of zoomMode | enumToArray" [value]="type.key">

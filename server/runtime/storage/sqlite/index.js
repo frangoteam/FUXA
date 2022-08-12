@@ -185,7 +185,7 @@ function DaqNode(_settings, _log, _id) {
                 var addDaqfnc = [];
                 // prepare functions
                 for (var tagid in tags) {
-                    if (tags[tagid].daq && !tags[tagid].daq.enabled) {
+                    if (!tags[tagid].daq || !tags[tagid].daq.enabled) {
                         continue;
                     }
                     if (!daqTagsMap[tagid]) {

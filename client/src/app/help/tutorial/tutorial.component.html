@@ -14,7 +14,37 @@
     </div>
     <div class="tutorial-body">
         <mat-accordion multi="true">
-            <mat-expansion-panel class="my-expansion-panel">
+            <mat-expansion-panel class="my-expansion-panel" expanded="true">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        {{ 'tutorial.editor-keyboard-shortcuts' | translate }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="tutorial-content">
+                    <ul>
+                        <li>Ctrl + Left / Right: rotate selected item</li>
+                        <li>Ctrl + Shift + Left / Right: rotate the selected item in big step</li>
+                        <li>Shift + O / P: select the prev / next item</li>
+                        <li>Tab / Shift + Tab: select the prev / next item</li>
+                        <li>Ctrl + Up / Down: central zoom in / out</li>
+                        <li>Ctrl + Z / Y: undo / redo</li>
+                        <li>Shift + 'resize with mouse the selected item': lock width and height</li>
+                        <li>Shift + Up / Down / Left / Right: move the selected item</li>
+                        <li>Shift + SCROLLER: zoom by mouse position</li>
+                        <li>Ctrl + A: select all item</li>
+                        <li>Ctrl + G: group or ungroup selected item</li>
+                        <li>Ctrl + D: duplicate selected item</li>
+                        <li>Shift + 'Draw line': line gradient horizonal, vertical 45° diagonal</li>
+                        <li>Ctrl + X: cut selected item</li>
+                        <li>Ctrl + C / V: copy / paste selected item</li>
+                    </ul>
+                </div>
+            </mat-expansion-panel>
+
+            <!-- <mat-expansion-panel class="my-expansion-panel">
                 <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
                     <mat-panel-title>
                         Basic Layout
@@ -25,19 +55,8 @@
                 </mat-expansion-panel-header>
                 Basic content
 
-            </mat-expansion-panel>
-            <mat-expansion-panel class="my-expansion-panel">
-                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
-                    <mat-panel-title>
-                        Page editor
-                    </mat-panel-title>
-                    <mat-panel-description>
-
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                Page editor content
-            </mat-expansion-panel>
-            <mat-expansion-panel class="my-expansion-panel">
+            </mat-expansion-panel> -->
+            <!-- <mat-expansion-panel class="my-expansion-panel">
                 <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
                     <mat-panel-title>
                         Device
@@ -47,7 +66,7 @@
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 Device content
-            </mat-expansion-panel>
+            </mat-expansion-panel> -->
         </mat-accordion>
     </div>
 </div>

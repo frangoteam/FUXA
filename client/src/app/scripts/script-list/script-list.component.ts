@@ -47,9 +47,9 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         try {
-            // if (this.subscriptionLoad) {
-            //     this.subscriptionLoad.unsubscribe();
-            // }
+            if (this.subscriptionLoad) {
+                this.subscriptionLoad.unsubscribe();
+            }
         } catch (e) {
         }
     }

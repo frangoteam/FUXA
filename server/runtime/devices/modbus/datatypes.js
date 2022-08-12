@@ -87,9 +87,17 @@ const Datatypes = {
     Float64LE: _gen(8, 'DoubleLE', 4),
     
     /**
+     * Int32MLE
+     */
+    Int32MLE: _gen(4, 'Int32BE', 2, 2),
+    /**
+     * UInt32MLE
+     */
+    UInt32MLE: _gen(4, 'UInt32BE', 2, 2),
+    /**
      * Float32MLE
      */
-     Float32MLE: _gen(4, 'FloatBE', 2, 2),
+    Float32MLE: _gen(4, 'FloatBE', 2, 2),
 
     /**
      * String

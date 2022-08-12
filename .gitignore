@@ -77,6 +77,8 @@ _pkg/
 #resources images
 _images/
 
+_reports/
+
 # appdata
 server/_appdata
 #server/package-lock.json

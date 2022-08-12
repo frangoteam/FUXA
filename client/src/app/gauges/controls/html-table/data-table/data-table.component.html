@@ -1,53 +1,65 @@
-<div *ngIf="type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)" class="table-toolbar" 
+<div *ngIf="type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)" class="table-toolbar"
     [style.backgroundColor]="tableOptions.row.background">
     <div *ngIf="tableOptions.filter.show" class="my-form-field" style="float: left; padding-left: 20px;">
-        <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" 
-                style="width: 250px;" type="text" [style.backgroundColor]="tableOptions.header.background" [style.color]="tableOptions.row.color" >
+        <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" style="width: 250px;" type="text"
+            [style.backgroundColor]="tableOptions.header.background" [style.color]="tableOptions.row.color">
     </div>
     <div *ngIf="tableOptions.daterange.show" class="date-range">
-        <div *ngIf="!isEditor" >
-            <mat-select class="moka-toolbar-editor moka-toolbar-select" [(value)]="tableOptions.lastRange" [style.color]="tableOptions.row.color" 
+        <div *ngIf="!isEditor">
+            <mat-select class="moka-toolbar-editor moka-toolbar-select" [(value)]="tableOptions.lastRange" [style.color]="tableOptions.row.color"
                 [style.backgroundColor]="tableOptions.row.background" panelClass="my-select-panel-class" (selectionChange)="onRangeChanged($event.source.value)">
-                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key" [style.color]="tableOptions.row.color" 
+                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key" [style.color]="tableOptions.row.color"
                     [style.backgroundColor]="tableOptions.row.background">
                     {{ ev.value }}
                 </mat-option>
             </mat-select>
-            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background" 
-                (click)="onDateRange()">
-            <mat-icon aria-label="time range">access_time</mat-icon>
-        </button>            
-        </div>
-        <div *ngIf="isEditor" >
-            <button class="moka-toolbar-editor moka-toolbar-select" [style.color]="tableOptions.row.color" [style.background-color]="tableOptions.row.background">
-            </button>
-            <button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background" 
+            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background"
                 (click)="onDateRange()">
                 <mat-icon aria-label="time range">access_time</mat-icon>
             </button>
+            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background" 
+                (click)="onExportData()">
+                <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
+            </button>
         </div>
-
+        <div *ngIf="isEditor">
+            <button class="moka-toolbar-editor moka-toolbar-select" [style.color]="tableOptions.row.color" [style.background-color]="tableOptions.row.background">
+            </button>
+            <button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background">
+                <mat-icon aria-label="time range">access_time</mat-icon>
+            </button>
+            <button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background">
+                <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
+            </button>
+        </div>
     </div>
-    <mat-paginator *ngIf="tableOptions.paginator.show" 
-        [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator" [style.color]="tableOptions.row.color">
+    <mat-paginator *ngIf="tableOptions.paginator.show" [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator" [style.color]="tableOptions.row.color">
     </mat-paginator>
 </div>
-<mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort 
+<mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort
     [style.height]="(type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)) ? 'calc(100% - 42px)' : '100%'">
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef mat-sort-header [style.minWidth.px]="columnsStyle[column].width" [ngClass]="columnsStyle[column].align"
-            [style.color]="tableOptions.header.color" [style.fontSize.px]="tableOptions.header.fontSize">
+        <th *matHeaderCellDef mat-sort-header [style.minWidth.px]="columnsStyle[column].width" [ngClass]="columnsStyle[column].align" [style.color]="tableOptions.header.color"
+            [style.fontSize.px]="tableOptions.header.fontSize">
             {{ columnsStyle[column].label }}
         </th>
         <td *matCellDef="let element; index as i" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
-            [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell"> 
-            {{element[column].stringValue}} 
+            [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell">
+            {{element[column].stringValue}}
         </td>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
-        [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" 
-        [style.display]="(tableOptions.header.show) ? 'flex' : 'none'"></mat-header-row>
+        [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
+    </mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableOptions.row.height"
         [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
 </mat-table>
+<div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
+    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="tableOptions.header.color">
+        <mat-icon [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
+    </button>
+</div>
+<div *ngIf="loading" class="spinner">
+    <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
+</div>

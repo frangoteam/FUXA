@@ -8,11 +8,14 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Subject, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { DataConverterService } from '../../../../_services/data-converter.service';
 
 @Component({
     selector: 'chart-uplot',
     templateUrl: './chart-uplot.component.html',
-    styleUrls: ['./chart-uplot.component.css']
+    styleUrls: ['./chart-uplot.component.scss']
 })
 export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -22,16 +25,21 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() options: ChartOptions;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
 
-    public id: string;
-    public withToolbar = false;
-    public isEditor = false;
+    loading = false;
+    id: string;
+    withToolbar = false;
+    isEditor = false;
+    reloadActive = false;
+    private lastDaqQuery = new DaqQuery();
     rangeTypeValue = Utils.getEnumKey(ChartRangeType, ChartRangeType.last8h);
     rangeType: ChartRangeType;
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
+    private destroy$ = new Subject<void>();
 
     constructor(
-        public dialog: MatDialog, 
+        private dataService: DataConverterService,
+        public dialog: MatDialog,
         private translateService: TranslateService) {
     }
 
@@ -54,6 +62,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.nguplot.ngOnDestroy();
             }
             delete this.nguplot;
+            this.destroy$.next();
+            this.destroy$.unsubscribe();
         } catch (e) {
             console.error(e);
         }
@@ -63,9 +73,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isEditor) {
             return;
         }
-        let msg = new DaqQuery();
-        msg.gid = this.id;
-        msg.event = ev;
+        this.lastDaqQuery.gid = this.id;
+        this.lastDaqQuery.event = ev;
         if (ev === 'B') {           // back
             this.range.to = new Date(this.range.from).getTime();
             this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));
@@ -73,10 +82,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.range.from = new Date(this.range.to).getTime();
             this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));
         }
-        msg.sids = Object.keys(this.mapData);
-        msg.from = this.range.from;
-        msg.to = this.range.to;
-        this.onTimeRange.emit(msg);
+        this.lastDaqQuery.sids = Object.keys(this.mapData);
+        this.lastDaqQuery.from = this.range.from;
+        this.lastDaqQuery.to = this.range.to;
+        this.onDaqQuery();
     }
 
     onRangeChanged(ev) {
@@ -88,13 +97,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.range.to = Date.now();
             this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(ev) * 60 * 60 * 1000));
 
-            let msg = new DaqQuery();
-            msg.event = ev;
-            msg.gid = this.id;
-            msg.sids = Object.keys(this.mapData);
-            msg.from = this.range.from;
-            msg.to = this.range.to;
-            this.onTimeRange.emit(msg);
+            this.lastDaqQuery.event = ev;
+            this.lastDaqQuery.gid = this.id;
+            this.lastDaqQuery.sids = Object.keys(this.mapData);
+            this.lastDaqQuery.from = this.range.from;
+            this.lastDaqQuery.to = this.range.to;
+            this.onDaqQuery();
         }
     }
 
@@ -106,15 +114,41 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (dateRange) {
                 this.range.from = dateRange.start;
                 this.range.to = dateRange.end;
-                let msg = new DaqQuery();
-                msg.gid = this.id;
-                msg.sids = Object.keys(this.mapData);
-                msg.from = dateRange.start;
-                msg.to = dateRange.end;
-                this.onTimeRange.emit(msg);
+                this.lastDaqQuery.gid = this.id;
+                this.lastDaqQuery.sids = Object.keys(this.mapData);
+                this.lastDaqQuery.from = dateRange.start;
+                this.lastDaqQuery.to = dateRange.end;
+                this.onDaqQuery();
             }
         });
     }    
+
+    onDaqQuery() {
+        this.onTimeRange.emit(this.lastDaqQuery);
+        if (this.withToolbar) {
+            this.setLoading(true);
+        }
+    }
+
+    onRefresh() {
+        this.onRangeChanged(this.lastDaqQuery.event);
+        this.reloadActive = true;
+    }
+
+    onExportData() {
+        // let data = <DataTableContent>{ name: 'data', columns: [] };
+        // let columns = {};
+        // Object.values(this.columnsStyle).forEach((column: TableColumn) => {
+        //     columns[column.id] = <DataTableColumn>{ header: `${column.label}`, values: [] };
+        // });
+        // this.dataSource.data.forEach(row => {
+        //     Object.keys(row).forEach(id => {
+        //         columns[id].values.push(<TableCellData>row[id].stringValue);
+        //     });
+        // });
+        // data.columns = Object.values(columns);
+        // this.dataService.exportTagsData(data);
+    }
 
     public resize(height?: number, width?: number) {
         let chart = this.chartPanel.nativeElement;
@@ -228,7 +262,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             result.push([]);    // line
             for (var x = 0; x < values[i].length; x++) {
                 let t = values[i][x].dt / 1e3;
-                if (!result[0][t]) {
+                if (result[0].indexOf(t) === -1) {
                     result[0].push(t);
                     xmap[t] = {};
                 }
@@ -248,6 +282,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.nguplot.setData(result);
         this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+        setTimeout(() => {
+            this.setLoading(false);
+        }, 500);
     }
 
     public redraw() {
@@ -262,6 +299,17 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             dateFormat: Utils.getEnumKey(DateFormatType, DateFormatType.MM_DD_YYYY),
             timeFormat: Utils.getEnumKey(TimeFormatType, TimeFormatType.hh_mm_ss_AA)
         };
+    }
+
+    private setLoading(load: boolean) {        
+        if (load) {
+            timer(10000).pipe(
+                takeUntil(this.destroy$)
+            ).subscribe((res) => {
+                this.loading = false;
+            });
+        }
+        this.loading = load;
     }
 
     private updateCanvasOptions(ngup: NgxUplotComponent) {

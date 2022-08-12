@@ -1,0 +1,135 @@
+::ng-deep .mat-table {
+    /* background-color: transparent !important; */
+    height: 100%;
+    overflow: auto;
+    /* display: grid; */
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.mat-row {
+    padding-left: 10px;
+    padding-right: 5px;
+}
+
+.data-table-header {
+    min-height: 0px;
+}
+
+.data-table-row {
+    min-height: 0px;
+}
+
+.table-toolbar {
+    height: 42px;
+    display: block;
+    line-height: 42px;
+}
+
+.data-table-paginator {
+    height: 42px;
+    top: 0px;
+    position: absolute;
+    right: 0px;
+    /* float: right; */
+    background-color: transparent;
+}
+
+.moka-toolbar-editor {
+    display: inline-block;
+    margin-left:5px;
+    border: 0px;
+    height: 28px;
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 20px;
+    box-shadow: 1px 1px 3px -1px #888 !important;
+    min-width: 40px;
+}
+.moka-toolbar-select {
+    width: 100px;
+    line-height: 28px;
+    padding-left: 5px;
+}
+
+.moka-toolbar-button {
+    width: 40px;
+    padding: unset;
+}
+
+.table-toolbar .date-range {
+    float: left;
+    max-height: 42px;
+}
+
+::ng-deep .data-table-paginator .mat-paginator-container {
+    min-height: unset;
+    height: 42px;
+}
+
+::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size {
+    height: inherit;
+    margin: unset;
+}
+
+::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size-select {
+    margin: unset;
+}
+
+::ng-deep .dark-theme .mat-select-value {
+    color: inherit !important;
+}
+
+::ng-deep .mat-select-trigger,.mat-select-value {
+    color: inherit !important;
+}
+
+::ng-deep .left .mat-sort-header-container {
+    text-align: left;
+    justify-content: left;
+}
+
+::ng-deep .center .mat-sort-header-container {
+    text-align: center;
+    justify-content: center;
+}
+
+::ng-deep .right .mat-sort-header-container {
+    text-align: right;
+    justify-content: right;
+}
+
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 20px);
+}
+
+.small-icon-button {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+
+    .mat-icon {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+
+    .material-icons {
+        font-size: 20px;
+    }
+}
+
+.reload-btn {
+    position: absolute;
+    top: 45px;
+    right: 10px;
+    z-index: 9999;
+}

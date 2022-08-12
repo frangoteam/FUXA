@@ -38,6 +38,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
     @Output() onclose = new EventEmitter();
+    @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
     @ViewChild('dataContainer') dataContainer: ElementRef;
     @ViewChild('inputDialogRef') inputDialogRef: ElementRef;
@@ -139,10 +140,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             this.id = view.id;
             this.view = view;
             if (view.type === this.cardViewType) {
-                let cards = JSON.parse(view.svgcontent);
-                if (cards.content) {
-                    this.dataContainer.nativeElement.innerHTML = cards.content.replace('<title>Layer 1</title>', '');
-                }
+                this.ongoto.emit(view.id);
+                return;
             } else {
                 this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
             }
@@ -408,7 +407,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
-                    self.gaugesManager.putEvent(htmlevent);
+                    self.gaugesManager.putEvent(htmlevent);                
+                    htmlevent.dom.blur();
                 }
             };
             if (this.hmi.layout.inputdialog === 'true') {
@@ -430,7 +430,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     }
                 }
                 htmlevent.dom.onblur = function (ev) {
-                    self.toggleShowInputDialog(false);
+                    // Not sure what is the point to call this one. This onblur() occurs 300ms after showing the dialog, when dialogs own input gets focus. Why shall we then try to hide the input dialog?
+                    // The reason why dialog is not being hidden is that toggleShowInputDialog(true) get called multiple times and the timer is then canceled.
+                    // self.toggleShowInputDialog(false);
+                }
+            }else{
+                htmlevent.dom.onblur = function (ev) {
+                    // Update variable value in case it has changed while input had focus
+                    let variables = self.gaugesManager.getBindSignalsValue(htmlevent.ga);
+                    let svgeles = FuxaViewComponent.getSvgElements(htmlevent.ga.id);
+
+                    if (variables.length && svgeles.length) {
+                        self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
+                    }
                 }
             }
 

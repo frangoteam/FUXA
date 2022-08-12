@@ -160,7 +160,7 @@ export class GaugeBaseComponent implements OnInit {
                     if (dom) {
                         element.style.backgroundColor = gaugeStatus.actionRef.spool.bk;
                         element.style.color = gaugeStatus.actionRef.spool.clr;
-                    } else {
+                    } else if (gaugeStatus.actionRef.spool) {
                         element.node.setAttribute('fill', gaugeStatus.actionRef.spool.bk);
                         element.node.setAttribute('stroke', gaugeStatus.actionRef.spool.clr);
                     }

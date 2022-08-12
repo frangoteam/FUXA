@@ -47,6 +47,8 @@ export class LayoutSettings {
     hidenavigation: boolean = false;
     /** GUI Theme */
     theme = '';
+    /** Show login by start */
+    loginonstart?: boolean = false;
 }
 
 export class NavigationSettings {
@@ -55,9 +57,9 @@ export class NavigationSettings {
     /** Menu item show type (text, icon) */
     type: NaviItemType;
     /** Menu background color */
-    bkcolor: string;
+    bkcolor: string = '#F4F5F7';
     /** Menu item text and icon color */
-    fgcolor: string;
+    fgcolor: string = '#1D1D1D';
     /** Menu items */
     items: NaviItem[];
     constructor() {
@@ -121,7 +123,7 @@ export enum HeaderBarModeType {
 export class DocProfile {
     width: number = 1024;
     height: number = 768;
-    bkcolor: string = '';
+    bkcolor: string = '#ffffffff';
     margin: number = 10;
 }
 

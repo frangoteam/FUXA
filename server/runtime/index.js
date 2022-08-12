@@ -15,6 +15,7 @@ var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
+var jobs = require('./jobs');
 
 var apiDevice;
 var settings
@@ -23,6 +24,7 @@ var io;
 var alarmsMgr;
 var notificatorMgr;
 var scriptsMgr;
+var jobsMgr;
 var tagsSubscription = new Map();
 
 function init(_io, _api, _settings, _log, eventsMain) {
@@ -69,6 +71,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     alarmsMgr = alarms.create(runtime);
     notificatorMgr = notificator.create(runtime);
     scriptsMgr = scripts.create(runtime);
+    jobsMgr = jobs.create(runtime);
     devices.init(runtime);
 
     events.on('project-device:change', updateDevice);
@@ -276,6 +279,13 @@ function start() {
                 logger.error('runtime.failed-to-start-scripts: ' + err);
                 reject();
             });
+            // start jobs manager
+            jobsMgr.start().then(function () {
+                resolve(true);
+            }).catch(function (err) {
+                logger.error('runtime.failed-to-start-jobs: ' + err);
+                reject();
+            });            
         }).catch(function (err) {
             logger.error('runtime.failed-to-start: ' + err);
             reject();
@@ -301,6 +311,10 @@ function stop() {
         }).catch(function (err) {
             logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
         });
+        jobsMgr.stop().then(function () {
+        }).catch(function (err) {
+            logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
+        });        
         resolve(true);
     });
 }
@@ -323,6 +337,8 @@ function update(cmd, data) {
                 scriptsMgr.updateScript(data);
             } else if (cmd === project.ProjectDataCmdType.DelScript) {
                 scriptsMgr.removeScript(data);
+            } else if (cmd === project.ProjectDataCmdType.SetReport || cmd === project.ProjectDataCmdType.DelReport) {
+                jobsMgr.reset();
             }
             resolve(true);
         } catch (err) {
@@ -435,6 +451,18 @@ function scriptConsoleOutput(output) {
     }
 }
 
+/**
+ * Trasmit the scripts command to frontend (clients)
+ * @param {*} command
+ * @param {*} parameters
+ */
+ function scriptSendCommand(command) {
+    try {
+        io.emit(Events.IoEventTypes.SCRIPT_COMMAND, command);
+    } catch (err) {
+    }
+}
+
 var runtime = module.exports = {
     init: init,
     project: project,
@@ -453,6 +481,7 @@ var runtime = module.exports = {
     get alarmsMgr() { return alarmsMgr },
     get notificatorMgr() { return notificatorMgr },
     get scriptsMgr() { return scriptsMgr },
+    get jobsMgr() { return jobsMgr },
     events: events,
-
+    scriptSendCommand: scriptSendCommand,
 }

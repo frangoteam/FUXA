@@ -76,7 +76,9 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                     } else {
                         val = parseFloat(val.toFixed(5));
                     }
-                    if (!input.value || input.value.length <= 0) {
+
+                    // Do not update value if input is in focus!
+                    if(!(document.hasFocus && input.id == document.activeElement.id )){
                         input.value = val;
                     }
                     // check actions

@@ -12,7 +12,7 @@
 
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <div *ngFor="let item of grpImages.items" (click)="onSelect(item.path)" class="lib-image-item">
+                <div *ngFor="let item of grpImages.items" (click)="onSelect(item.path)" class="lib-image-item" matTooltip="{{item.name}}">
                     <img src="{{item.path}}" id="{{item.path}}">
                 </div>
 

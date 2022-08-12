@@ -26,6 +26,7 @@ export class HmiService {
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
+    @Output() onGoTo: EventEmitter<string> = new EventEmitter();
 
     public static separator = '^~^';
     public hmi: Hmi;
@@ -203,9 +204,14 @@ export class HmiService {
             this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
                 this.onDeviceWebApiRequest.emit(message);
             });
+            // scripts
             this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
                 this.onScriptConsole.emit(message);
             });
+            this.socket.on(IoEventTypes.SCRIPT_COMMAND, (message) => {
+                this.onScriptCommand(message);
+            });
+
             this.askDeviceValues();
             this.askAlarmsStatus();
         }
@@ -474,6 +480,16 @@ export class HmiService {
     }
 
     //#endregion
+
+    private onScriptCommand(message: ScriptCommandMessage) {
+        switch (message.command) {
+            case ScriptCommandEnum.SETVIEW:
+                if (message.params && message.params.length) {
+                    this.onGoTo.emit(message.params[0]);
+                }
+                break;
+        }
+    }
 }
 
 class ViewSignalGaugeMap {
@@ -532,5 +548,15 @@ export enum IoEventTypes {
     DAQ_ERROR = 'daq-error',
     ALARMS_STATUS = 'alarms-status',
     HOST_INTERFACES = 'host-interfaces',
-    SCRIPT_CONSOLE = 'script-console'
+    SCRIPT_CONSOLE = 'script-console',
+    SCRIPT_COMMAND = 'script-command'
+}
+
+const ScriptCommandEnum = {
+    SETVIEW: 'SETVIEW',
+}
+
+interface ScriptCommandMessage {
+    command: string,
+    params: any[]
 }

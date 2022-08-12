@@ -46,7 +46,8 @@ module.exports = {
                         var wwwSubDir =  path.join('_images', resourcesDirs[i]);
                         var files =  getFiles(dirPath, ['.jpg','.jpeg', '.png', '.gif', '.svg']);
                         for (var x = 0; x < files.length; x++) {
-                            group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep)});
+                            var filename = files[x].replace(/\.[^\/.]+$/, '');
+                            group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
                         }
                         result.groups.push(group);
                     }

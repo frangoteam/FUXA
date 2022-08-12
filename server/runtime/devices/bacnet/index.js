@@ -574,7 +574,7 @@ function BACNETclient(_data, _logger, _events) {
                 for (var index in requestItemsMap[address]) {
                     var tag = requestItemsMap[address][index];
                     if (!varsValue[tag.id] || varsValue[tag.id].value !== vars[index].value) {
-                        changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type };
+                        changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type, daq: tag.daq };
                         varsValue[tag.id] = changed[tag.id];
                         someval = true;
                     }
