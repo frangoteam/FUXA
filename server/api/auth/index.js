@@ -29,7 +29,7 @@ module.exports = {
 
         /**
          * POST SignIn
-         * Sign In with User credential
+         * Sign In with User credentials
          */
         authApp.post('/api/signin', function (req, res, next) {
             runtime.users.findOne(req.body).then(function (userInfo) {

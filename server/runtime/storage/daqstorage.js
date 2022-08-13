@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 var SqliteDB = require("./sqlite");
 var InfluxDB = require("./influxdb");
-var DaqNode = require('./daqnode');
+// var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
 var utils = require('../utils');
 
@@ -104,7 +104,7 @@ function getNodesValues(tagsid, fromts, tots, options) {
 function _getDaqNode(tagid) {
     var nodes = Object.values(daqDB);
     for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].getDaqMap()[tagid]) {
+        if (nodes[i].getDaqMap(tagid)[tagid]) {
             return nodes[i];
         }
     }

@@ -76,6 +76,10 @@ var utils = module.exports = {
         return !!value && (type == 'object' || type == 'function');
     },
 
+    isBoolean(value) {
+        return (typeof value === 'boolean');
+    },
+
     isPlainObject(value) {
         var Ctor;
         if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value) && !isArguments(value)) ||
@@ -95,7 +99,7 @@ var utils = module.exports = {
         });
         return result === undefined || hasOwnProperty.call(value, result);
     },
-    
+
     isNullOrUndefined: function (ele) {
         return (ele === null || ele === undefined) ? true : false;
     },

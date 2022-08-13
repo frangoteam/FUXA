@@ -80,6 +80,9 @@ function MQTTclient(_data, _logger, _events) {
                         client.on("error", function (err) {
                             logger.error(`'${data.name}' try to connect error! ${err}`);
                             _checkWorking(false);
+                            if (client && !client.connected) {
+                                client.end(true);
+                            }
                             reject(err);
                         });
                     } else {

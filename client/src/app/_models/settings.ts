@@ -41,34 +41,34 @@ export class DaqStore {
     varsion?: string;
     url?: string;
     organization?: string;
-    credential?: StoreCredential;
+    credentials?: StoreCredentials;
     bucket?: string;
     constructor(daqstore: DaqStore = null) {
         if (daqstore) {
             this.type = daqstore.type;
             this.url = daqstore.url;
             this.organization = daqstore.organization;
-            this.credential = daqstore.credential;
+            this.credentials = daqstore.credentials;
             this.bucket = daqstore.bucket;
         }
     }
 
     isEquals(store: DaqStore) {
         if (this.type === store.type && this.bucket === store.bucket && this.url === store.url && this.organization === store.organization &&
-            (this.credential && this.credential.isEquals(store.credential))) {
+            (this.credentials && StoreCredentials.isEquals(this.credentials, store.credentials))) {
             return true;
         }
         return false;
     }
 }
 
-export class StoreCredential {
+export class StoreCredentials {
     token?: string;
     username?: string;
     password?: string;
 
-    isEquals(credential: StoreCredential) {
-        return (this.token === credential.token && this.username === credential.username && this.password === credential.password);
+    static isEquals(a: StoreCredentials, b: StoreCredentials) {
+        return (a.token === b.token && a.username === b.username && a.password === b.password);
     }
 }
 
