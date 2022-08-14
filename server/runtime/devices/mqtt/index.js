@@ -145,10 +145,10 @@ function MQTTclient(_data, _logger, _events) {
                     if (this.addDaq) {
                         var current = new Date().getTime();
                         if (current - daqInterval > lastDaqInterval) {
-                            this.addDaq(data.tags);
+                            this.addDaq(data.tags, data.name);
                             lastDaqInterval = current;
                         } else if (Object.keys(varsValueChanged).length) {
-                            this.addDaq(varsValueChanged);
+                            this.addDaq(varsValueChanged, data.name);
                         }
                     }
                 } catch (err) {
