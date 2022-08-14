@@ -130,5 +130,17 @@ var utils = module.exports = {
             SS = '0' + SS;
         }
         return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
+    },
+
+    isFloat: function (n){
+        return Number(n) === n && n % 1 !== 0;
+    },
+
+    parseFloat: function (value, decimals) {
+        if (this.isFloat(value)) {
+            return parseFloat(value.toFixed(decimals));
+        } else {
+            return parseFloat(value);
+        }
     }
 }

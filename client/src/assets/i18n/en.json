@@ -1150,5 +1150,7 @@
     "msg.get-project-void": "Project not found!",
     "msg.editor-mode-locked": "The editor is already open!",
     "msg.alarms-clear-success": "All alarms have been cancelled!",
-    "msg.import-devices-error": "Import devices failed!"
+    "msg.import-devices-error": "Import devices failed!",
+    "msg.report-build-forced": "Send to build Report successful",
+    "msg.report-build-error": "Send to build Report failed!"
 }
