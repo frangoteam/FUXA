@@ -1112,6 +1112,12 @@
     "dlg.app-auth-expiration-1d": "Enabled with token expiration in 1 day.",
     "dlg.app-auth-tooltip": "By enabled you have a administrator account 'admin/123456'. Don't forget to change it",
 
+    "dlg.app-settings-daqstore": "DAQ storage",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-token": "Token",
+    "dlg.app-settings-daqstore-bucket": "Bucket",
+    "dlg.app-settings-daqstore-organization": "Organization",
+
     "msg.alarm-remove": "Would you like to remove Alarm ",
     "msg.text-remove": "Would you like to remove Text ",
     "msg.alarmproperty-error-exist": "Alarm name exist!",

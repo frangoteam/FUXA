@@ -100,7 +100,9 @@ function init(_server, _runtime) {
                         }
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
-                        res.end();
+                        runtime.restart(true).then(function(result) {
+                            res.end();
+                        });
                     } catch (err) {
                         res.status(400).json({ error: "unexpected_error", message: err });
                         runtime.logger.error("api post settings: " + err);
@@ -128,6 +130,9 @@ function mergeUserSettings(settings) {
     }
     if (settings.smtp) {
         runtime.settings.smtp = settings.smtp;
+    }
+    if (settings.daqstore) {
+        runtime.settings.daqstore = settings.daqstore;
     }
 }
 
