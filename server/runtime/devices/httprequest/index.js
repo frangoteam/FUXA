@@ -91,10 +91,10 @@ function HTTPclient(_data, _logger, _events) {
                         if (this.addDaq) {
                             var current = new Date().getTime();
                             if (current - daqInterval > lastDaqInterval) {
-                                this.addDaq(varsValue);
+                                this.addDaq(varsValue, data.name);
                                 lastDaqInterval = current;
                             } else if (varsValueChanged) {
-                                this.addDaq(varsValueChanged);
+                                this.addDaq(varsValueChanged, data.name);
                             }
                         }
                         if (lastStatus !== 'connect-ok') {

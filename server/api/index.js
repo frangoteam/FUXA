@@ -17,6 +17,7 @@ var diagnoseApi = require('./diagnose');
 var scriptsApi = require('./scripts');
 var resourcesApi = require('./resources');
 var daqApi = require('./daq');
+var commandApi = require('./command');
 
 var apiApp;
 var server;
@@ -52,6 +53,8 @@ function init(_server, _runtime) {
             apiApp.use(scriptsApi.app());
             resourcesApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(resourcesApi.app());
+            commandApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(commandApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes
@@ -97,7 +100,9 @@ function init(_server, _runtime) {
                         }
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
-                        res.end();
+                        runtime.restart(true).then(function(result) {
+                            res.end();
+                        });
                     } catch (err) {
                         res.status(400).json({ error: "unexpected_error", message: err });
                         runtime.logger.error("api post settings: " + err);
@@ -125,6 +130,9 @@ function mergeUserSettings(settings) {
     }
     if (settings.smtp) {
         runtime.settings.smtp = settings.smtp;
+    }
+    if (settings.daqstore) {
+        runtime.settings.daqstore = settings.daqstore;
     }
 }
 

@@ -1,0 +1,68 @@
+<div class="header-panel">
+    <mat-icon>content_paste</mat-icon>
+    {{'reports.list-title' | translate}}
+</div>
+<div class="work-panel">
+    <div class="container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <!-- Checkbox Column -->
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onAddReport()" class="remove">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onEditReport(element)" class="remove">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-name' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+            <!-- Receiver Column -->
+            <ng-container matColumnDef="receiver">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-receiver' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.receiver}} </mat-cell>
+            </ng-container>
+            <!-- Interval Column -->
+            <ng-container matColumnDef="scheduling">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-scheduling' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getScheduling(element.scheduling)}} </mat-cell>
+            </ng-container>
+            <!-- Type Column -->
+            <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'reports.list-type' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
+            </ng-container>
+            <!-- Button create Column -->
+            <ng-container matColumnDef="create">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onStartReport(element)">
+                        <mat-icon>play_arrow</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <!-- Button remove Column -->
+            <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveReport(element)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+        </mat-table>
+    </div>
+</div>
+<button mat-fab color="primary" (click)="onAddReport()" class="fab-add">
+    <mat-icon class="">add</mat-icon>
+</button>

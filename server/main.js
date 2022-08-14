@@ -88,6 +88,7 @@ try {
     settings.environment = process.env.NODE_ENV || 'prod';
     settings.uploadFileDir = '_upload_files';
     settings.imagesFileDir = path.resolve(rootDir, '_images');
+    settings.reportsDir = path.resolve(rootDir, '_reports');
 
     // check new settings from default and merge if not defined
     var defSettings = require(path.join(__dirname, 'settings.default.js'));
@@ -125,6 +126,9 @@ try {
         if (mysettings.smtp) {
             settings.smtp = mysettings.smtp;
         }
+        if (mysettings.daqstore) {
+            settings.daqstore = mysettings.daqstore;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)
@@ -156,6 +160,10 @@ if (!fs.existsSync(settings.dbDir)) {
 // Check package folder
 if (!fs.existsSync(settings.packageDir)) {
     fs.mkdirSync(settings.packageDir);
+}
+// Check reports folder
+if (!fs.existsSync(settings.reportsDir)) {
+    fs.mkdirSync(settings.reportsDir);
 }
 // Check upload file folder
 settings.httpUploadFileStatic = 'resources';

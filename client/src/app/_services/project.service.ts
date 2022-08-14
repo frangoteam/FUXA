@@ -12,7 +12,7 @@ import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
 import { Text } from '../_models/text';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils } from '../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,6 +24,7 @@ import { AppService } from './app.service';
 import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
+import { Report } from '../_models/report';
 
 @Injectable()
 export class ProjectService {
@@ -604,7 +605,7 @@ export class ProjectService {
 
     //#region Scripts resource
     /**
-     * get notifications resource
+     * get scripts
      */
     getScripts(): Script[] {
         return (this.projectData) ? (this.projectData.scripts) ? this.projectData.scripts : [] : null;
@@ -656,6 +657,68 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelScript, script, this.projectData).subscribe(result => {
+                observer.next();
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+    //#endregion
+
+    //#region Reports
+    /**
+     * get reports
+     */
+    getReports(): Report[] {
+        return (this.projectData) ? (this.projectData.reports) ? this.projectData.reports : [] : null;
+    }
+
+    /**
+     * save the report to project
+     */
+    setReport(report: Report, old: Report) {
+        return new Observable((observer) => {
+            if (!this.projectData.reports) {
+                this.projectData.reports = [];
+            }
+            let exist = this.projectData.reports.find(tx => tx.id === report.id);
+            if (exist) {
+                Utils.assign(exist, report);
+            } else {
+                this.projectData.reports.push(report);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetReport, report, this.projectData).subscribe(result => {
+                if (old && old.id && old.id !== report.id) {
+                    this.removeReport(old).subscribe(result => {
+                        observer.next();
+                    });
+                } else {
+                    observer.next();
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    /**
+     * remove the report from project
+     */
+     removeReport(report: Report) {
+        return new Observable((observer) => {
+            if (this.projectData.reports) {
+                for (let i = 0; i < this.projectData.reports.length; i++) {
+                    if (this.projectData.reports[i].id === report.id) {
+                        this.projectData.reports.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.DelReport, report, this.projectData).subscribe(result => {
                 observer.next();
             }, err => {
                 console.error(err);
@@ -857,6 +920,16 @@ export class ProjectService {
                 return devices[i];
             }
         }
+    }
+
+    getTagFromId(tagId: string): Tag {
+        let devices = <Device[]>Object.values(this.projectData.devices);
+        for (let i = 0; i < devices.length; i++) {
+            if (devices[i].tags[tagId]) {
+                return devices[i].tags[tagId];
+            }
+        }
+        return null;
     }
 
     /**

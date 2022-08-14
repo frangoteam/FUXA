@@ -24,13 +24,14 @@ export class NotificationPropertyComponent implements OnInit {
 
     constructor(public dialogRef: MatDialogRef<NotificationPropertyComponent>,
         private translateService: TranslateService,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) { 
+            this.notification = this.data.notification;
+    }
 
     ngOnInit() {
         Object.keys(this.notificationsType).forEach(key => {
             this.translateService.get(this.notificationsType[key]).subscribe((txt: string) => { this.notificationsType[key] = txt });
         });
-        this.notification = this.data.notification;
     }
 
     onNoClick(): void {

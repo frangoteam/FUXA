@@ -1,0 +1,51 @@
+.data-table {
+    min-width: 900px;
+    margin-top: 20px;
+    height: 500px;
+    display: block;
+}
+
+.data-table-cell {
+    white-space: nowrap;
+    max-width: 120px;
+    min-height: 100px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #7F7F7F;
+    font-size: 12px;
+    padding: 5px;
+    display: inline-block;
+    width: -webkit-fill-available;
+
+    .menu {
+        font-size: 18px;
+        position: absolute;
+        bottom: 0px;
+        left: 5px;
+        cursor: pointer;
+        
+        mat-icon {
+            font-size: 18px;
+        }
+    }
+
+    .label {
+        width: inherit;
+    }
+}
+
+.menu-item-select {
+
+    mat-icon {
+        font-size: 18px;
+        margin-right: unset !important;
+    }
+
+    span {
+        line-height: 20px;
+    }
+
+    .unselect {
+        padding-left: 25px;
+    }
+}

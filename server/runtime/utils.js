@@ -71,7 +71,93 @@ var utils = module.exports = {
         return value && Object.keys(value).length === 0 && value.constructor === Object;
     },
 
+    isObject(value) {
+        var type = typeof value;
+        return !!value && (type == 'object' || type == 'function');
+    },
+
+    isBoolean(value) {
+        return (typeof value === 'boolean');
+    },
+
+    isPlainObject(value) {
+        var Ctor;
+        if (!(isObjectLike(value) && objToString.call(value) == objectTag && !isHostObject(value) && !isArguments(value)) ||
+            (!hasOwnProperty.call(value, 'constructor') && (Ctor = value.constructor, typeof Ctor == 'function' && !(Ctor instanceof Ctor)))) {
+          return false;
+        }
+        var result;
+        if (lodash.support.ownLast) {
+          baseForIn(value, function(subValue, key, object) {
+            result = hasOwnProperty.call(object, key);
+            return false;
+          });
+          return result !== false;
+        }
+        baseForIn(value, function(subValue, key) {
+          result = key;
+        });
+        return result === undefined || hasOwnProperty.call(value, result);
+    },
+
     isNullOrUndefined: function (ele) {
         return (ele === null || ele === undefined) ? true : false;
+    },
+
+    dayOfYear: function (date) {
+        if (date) {
+            return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+        }
+        return -1;
+    },
+
+    getDate: function (dt) {
+        var yyyy = dt.getFullYear();
+        var mm = dt.getMonth() + 1;
+        var dd = dt.getDate();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var HH = dt.getHours();
+        var MM = dt.getMinutes();
+        var SS = dt.getSeconds();
+        if (HH < 10) {
+            HH = '0' + HH;
+        }
+        if (MM < 10) {
+            MM = '0' + MM;
+        }
+        if (SS < 10) {
+            SS = '0' + SS;
+        }
+        return `${yyyy}-${mm}-${dd}_${HH}-${MM}-${SS}`;
+    },
+
+    getFormatDate: function (dt) {
+        var yyyy = dt.getFullYear();
+        var mm = dt.getMonth() + 1;
+        var dd = dt.getDate();
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+        var HH = dt.getHours();
+        var MM = dt.getMinutes();
+        var SS = dt.getSeconds();
+        if (HH < 10) {
+            HH = '0' + HH;
+        }
+        if (MM < 10) {
+            MM = '0' + MM;
+        }
+        if (SS < 10) {
+            SS = '0' + SS;
+        }
+        return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
     }
 }

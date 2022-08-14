@@ -470,7 +470,7 @@ app-root {
     text-overflow:ellipsis;
 }
 
-.my-form-field input, mat-select {
+.my-form-field input, mat-select, textarea {
     font-size: 13px;
     border: unset;
     /* border: 0.5px solid rgba(0,0,0,0.1); */
@@ -479,7 +479,7 @@ app-root {
     font-size: 13px;
 }
 
-.my-form-field input {
+.my-form-field input, textarea {
     padding: 6px 3px 7px 4px;
     background-color: var(--formInputBackground);
     color: var(--formInputColor);
@@ -757,7 +757,31 @@ mat-toolbar-row {
     background-color: #2196f3;
 }
 
+@media screen and (max-height: 1500px) {
+    .dialog-ld-content {
+        max-height: 820px !important;
+        height: 820px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+
+@media screen and (max-height: 1200px) {
+    .dialog-ld-content {
+        max-height: 720px !important;
+        height: 720px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+
 @media screen and (max-height: 920px) {
+    .dialog-ld-content {
+        max-height: 600px !important;
+        height: 600px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
     .dialog-mdsd-content {
         height: 605px !important;
         overflow-y: scroll;
@@ -771,10 +795,28 @@ mat-toolbar-row {
     }
 }
 
+@media screen and (max-height: 820px) {
+    .dialog-ld-content {
+        max-height: 500px !important;
+        height: 500px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+
+@media screen and (max-height: 720px) {
+    .dialog-ld-content {
+        max-height: 400px !important;
+        height: 400px !important;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+
 /* Dialog */
 .dialog-action {
     float: right;
-    padding-bottom: 20px !important;
+    /* padding-bottom: 20px !important; */
 }
 
 .dialog-property .mat-dialog-container {
@@ -921,4 +963,33 @@ mat-toolbar-row {
     line-height: 28px !important;
     margin-right: 10px;
     margin-bottom: 5px;
+}
+
+.message-error {
+    color:#ff5151;
+}
+
+/* standard */
+.mt10 {
+    margin-top: 10px;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+
+.ml20 {
+    margin-left: 20px;
+}
+
+.mr20 {
+    margin-right: 20px;
 }

@@ -1,0 +1,85 @@
+<form [formGroup]="myForm">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'report.property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content *ngIf="data.editmode < 0">
+        {{'msg.report-remove' | translate}} '{{report.name}}' ?
+    </div>
+    <div mat-dialog-content *ngIf="data.editmode >= 0" class="dialog-ld-content" style="position: relative">
+        <div class="left-panel">
+            <div class="my-form-field report-row">
+                <span>{{'report.property-name' | translate}}</span>
+                <input formControlName="name" type="text">
+            </div>
+            <div class="my-form-field report-row mt10">
+                <span>{{'report.property-receiver' | translate}}</span>
+                <input formControlName="receiver" type="text">
+            </div>
+            <div class="my-form-field report-row mt10">
+                <span>{{'report.property-scheduling-type' | translate}}</span>
+                <mat-select formControlName="scheduling">
+                    <mat-option *ngFor="let ev of schedulingType | enumToArray" [value]="ev.key">
+                        {{ ev.value }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="content-panel">
+                <mat-tab-group style="width: 100%;" #grptabs>
+                    <mat-tab *ngIf="report.content" label="{{'report.property-content' | translate}}">
+                        <div style="width: 100%; display: block; height: 10px;">
+                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem2" class="report-head-menu">add_circle_outline</mat-icon>
+                        </div>
+                        <mat-menu #menuitem2="matMenu">
+                            <button mat-menu-item (click)="onAddItem(itemTextType)">{{'report.content-addtext' | translate}}</button>
+                            <button mat-menu-item (click)="onAddItem(itemTableType)">{{'report.content-addtable' | translate}}</button>
+                        </mat-menu>
+                        <div *ngFor="let item of report.content?.items; index as i" class="report-item">
+                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem" class="report-item-menu">more_vert</mat-icon>
+                            <mat-menu #menuitem="matMenu">
+                                <button mat-menu-item (click)="onEditItem(item, i, true)">{{'report.content-edit' | translate}}</button>
+                                <button mat-menu-item (click)="onAddItem(itemTextType, i, false)">{{'report.content-addtext' | translate}}</button>
+                                <button mat-menu-item (click)="onAddItem(itemTableType, i, false)">{{'report.content-addtable' | translate}}</button>
+                                <mat-divider class="menu-separator"></mat-divider>
+                                <button mat-menu-item (click)="onDeleteItem(i)">{{'report.content-delete' | translate}}</button>
+                            </mat-menu>
+                            <div class="report-item-type">
+                                <span>[{{item.type}}] - </span>
+                                <span *ngIf="item.type === itemTextType" class="report-item-label">{{item.text}}</span>
+                            </div>
+                        </div>
+                    </mat-tab>
+                    <mat-tab *ngIf="report.docproperty" label="{{'report.property-page' | translate}}">
+                        <div class="mt20" style="display: block">
+                            <div class="my-form-field">
+                                <span>{{'report.property-page-size' | translate}}</span>
+                                <mat-select [(value)]="report.docproperty.pageSize" (selectionChange)="onReportChanged()" style="width: 100px">
+                                    <mat-option value="A3">A3</mat-option>
+                                    <mat-option value="A4">A4</mat-option>
+                                    <mat-option value="A5">A5</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field ml20">
+                                <span>{{'report.property-page-orientation' | translate}}</span>
+                                <mat-select [(value)]="report.docproperty.pageOrientation" (selectionChange)="onReportChanged()" style="width: 160px">
+                                    <mat-option value="landscape">{{'report.property-page-ori-landscape' | translate}}</mat-option>
+                                    <mat-option value="portrait">{{'report.property-page-ori-portrait' | translate}}</mat-option>
+                                </mat-select>
+                            </div>                        
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+        <div class="rigth-panel">
+            <iframe id="iframeContainer"></iframe>
+        </div>
+    </div>
+    <div class="valid-error">
+        <div class="message-error" *ngIf="myForm.invalid">
+            <span>{{'msg.report-property-missing-value' | translate}}</span>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

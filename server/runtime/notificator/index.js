@@ -297,6 +297,12 @@ function NotificatorManager(_runtime) {
             }
         });
     }
+
+    this.sendMailMessage = function (from, to, subj, text, html, attachments) {
+        let mail = new MailMessage(from, to, subj, text, html, attachments);
+        return this.sendMail(mail, null);
+    }
+
     // check if alarms status chenaged
     events.on('alarms-status:changed', this.forceCheck);
 }
@@ -304,6 +310,9 @@ function NotificatorManager(_runtime) {
 module.exports = {
     create: function (runtime) {
         return new NotificatorManager(runtime);
+    },
+    createMessage: function(from, to, subj, text, html, attachments) {
+        return new MailMessage(from, to, subj, text, html, attachments);
     }
 }
 
@@ -364,10 +373,11 @@ function Notification(id, name, type) {
     }
 }
 
-function MailMessage(from, to, subj, text, html) {
+function MailMessage(from, to, subj, text, html, attachments) {
     this.from = from;
     this.to = to;
     this.subject = subj;
     this.text = text;
     this.html = html;
+    this.attachments = attachments;
 }
