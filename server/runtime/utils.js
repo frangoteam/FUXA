@@ -159,5 +159,31 @@ var utils = module.exports = {
             SS = '0' + SS;
         }
         return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
+    },
+
+    isNumber: function(n) {
+        if (!isNaN(n) && typeof n === 'number') {
+            return true;
+        }
+        return false;
+    },
+
+    isFloat: function (n) {
+        return Number(n) === n && n % 1 !== 0;
+    },
+
+    parseFloat: function (value, decimals) {
+        if (this.isFloat(value)) {
+            return parseFloat(value.toFixed(decimals));
+        } else {
+            return parseFloat(value);
+        }
+    },
+
+    isValidRange: function (min, max) {
+        if (this.isNumber(min) && this.isNumber(max)) {
+            return true;
+        }
+        return false;
     }
 }

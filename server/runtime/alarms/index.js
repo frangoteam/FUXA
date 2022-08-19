@@ -5,6 +5,7 @@
 'use strict';
 
 const alarmstorage = require('./alarmstorage');
+var utils = require('./../utils');
 
 var ALARMS_CHECK_STATUS_INTERVAL = 1000;
 var TimeMultiplier	= 1000;		//1000 = rates are in seconds - alpaslanske
@@ -450,7 +451,7 @@ function AlarmsManager(_runtime) {
     }
 
     var _isAlarmEnabled = function (alarm) {
-        if (alarm && alarm.enabled && alarm.checkdelay > 0 && alarm.min && alarm.max && alarm.timedelay) {
+        if (alarm && alarm.enabled && alarm.checkdelay > 0 && utils.isValidRange(alarm.min, alarm.max) && alarm.timedelay) {
             return true;
         }
         return false;
@@ -464,7 +465,7 @@ function AlarmsManager(_runtime) {
     }
 
     var _isActionsValid = function (action) {
-        if (action && action.checkdelay > 0 && action.min && action.max && action.timedelay) {
+        if (action && action.checkdelay > 0 && utils.isValidRange(action.min, action.max) && action.timedelay) {
             return true;
         }
         return false;
