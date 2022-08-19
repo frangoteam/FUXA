@@ -2,12 +2,13 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
+import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";  
 import { Utils } from '../../_helpers/utils';
 import { ReportItemTextComponent } from './report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './report-item-table/report-item-table.component';
+import { ReportItemAlarmsComponent } from './report-item-alarms/report-item-alarms.component';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;   
 
 @Component({
@@ -21,6 +22,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     itemTextType = Utils.getEnumKey(ReportItemType, ReportItemType.text);
     itemTableType = Utils.getEnumKey(ReportItemType, ReportItemType.table);
+    itemAlarmsType = Utils.getEnumKey(ReportItemType, ReportItemType.alarms);
     report: Report;
     schedulingType = ReportSchedulingType;
 
@@ -102,6 +104,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                 interval: Utils.getEnumKey(ReportIntervalType, ReportIntervalType.hour),
                 range: this.myForm.value.scheduling,
             }};
+        } else if (type === this.itemAlarmsType) {
+            item = {...item, ...<ReportItemAlarms> {
+                priority: [],
+                range: this.myForm.value.scheduling,
+            }};
         }
         this.onEditItem(item, index, edit);
     }
@@ -115,6 +122,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
         if (item.type === this.itemTableType) {
             dialogRef = this.dialog.open(ReportItemTableComponent, dlgconfig);
+        } else if (item.type === this.itemAlarmsType) {
+            dialogRef = this.dialog.open(ReportItemAlarmsComponent, dlgconfig);
         } else  {
             dialogRef = this.dialog.open(ReportItemTextComponent, dlgconfig);
         }

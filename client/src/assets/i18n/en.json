@@ -993,6 +993,7 @@
     "report.scheduling-month": "Every Month",
     "report.content-addtext": "Add Text",
     "report.content-addtable": "Add Table",
+    "report.content-addalarms": "Add Alarms",
     "report.content-edit": "Edit",
     "report.content-delete": "Delete",
     "report.item-text-title": "Report Text",
@@ -1014,6 +1015,8 @@
     "report.item-function-max": "Max",
     "report.item-function-average": "Average",
     "report.item-function-sum": "Sum",
+    "report.item-alarms-title": "Report Alarms",
+    "report.alarms-priority": "Alarms priority",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

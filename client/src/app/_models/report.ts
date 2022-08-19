@@ -78,9 +78,16 @@ export enum ReportTableColumnType {
     tag = 1,
 }
 
+export interface ReportItemAlarms extends ReportItem {
+    priority: [],
+    range: ReportDateRangeType,
+    interval: ReportIntervalType,
+}
+
 export enum ReportItemType {
     text = 'report.item-type-text',
     table = 'report.item-type-table',
+    alarms = 'report.item-type-alarms',
 }
 
 export enum ReportDateRangeType {
