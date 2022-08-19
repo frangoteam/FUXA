@@ -161,7 +161,14 @@ var utils = module.exports = {
         return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
     },
 
-    isFloat: function (n){
+    isNumber: function(n) {
+        if (!isNaN(n) && typeof n === 'number') {
+            return true;
+        }
+        return false;
+    },
+
+    isFloat: function (n) {
         return Number(n) === n && n % 1 !== 0;
     },
 
@@ -171,5 +178,12 @@ var utils = module.exports = {
         } else {
             return parseFloat(value);
         }
+    },
+
+    isValidRange: function (min, max) {
+        if (this.isNumber(min) && this.isNumber(max)) {
+            return true;
+        }
+        return false;
     }
 }
