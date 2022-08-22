@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { AlarmsType } from '../../../_models/alarm';
+import { map } from 'rxjs/operators';
+import { AlarmPriorityType, AlarmPropertyType, AlarmStatusType, AlarmsType } from '../../../_models/alarm';
 import { ReportDateRangeType, ReportItemAlarms } from '../../../_models/report';
 import { ReportItemTableComponent } from '../report-item-table/report-item-table.component';
 
@@ -14,6 +15,7 @@ export class ReportItemAlarmsComponent implements OnInit {
 
     dateRangeType = ReportDateRangeType;
     alarmsType = [AlarmsType.HIGH_HIGH, AlarmsType.HIGH, AlarmsType.LOW, AlarmsType.INFO];
+    alarmPropertyType = Object.values(AlarmPropertyType).map(a => a);
 
     constructor(
         public dialogRef: MatDialogRef<ReportItemTableComponent>,
@@ -30,8 +32,16 @@ export class ReportItemAlarmsComponent implements OnInit {
         this.data.priority[type] = value;
     }
 
-    getTypeValue(type: AlarmsType) {
+    onPropertyChanged(property: AlarmPropertyType, value: boolean) {
+        this.data.property[property] = value;
+    }
+
+    getPriorityValue(type: AlarmsType) {
         return this.data.priority[type];
+    }
+
+    getPropertyValue(type: AlarmPropertyType) {
+        return this.data.property[type];
     }
 
     onNoClick(): void {
@@ -39,7 +49,21 @@ export class ReportItemAlarmsComponent implements OnInit {
     }
 
     onOkClick(): void {
-        // this.data.columns = this.columns;
+        this.data.priorityText = {};
+        Object.keys(AlarmPriorityType).forEach(key => {
+            this.translateService.get(AlarmPriorityType[key]).subscribe((txt: string) => { this.data.priorityText[key] = txt });
+        });
+
+        this.data.propertyText = {};
+        Object.keys(this.data.property).forEach(key => {
+            if (this.data.property[key]) {
+                this.translateService.get('alarms.view-' + key).subscribe((txt: string) => { this.data.propertyText[key] = txt });
+            }
+        });
+        this.data.statusText = {};
+        Object.keys(AlarmStatusType).forEach(key => {
+            this.translateService.get(AlarmStatusType[key]).subscribe((txt: string) => { this.data.statusText[key] = txt });
+        });
         this.dialogRef.close(this.data);
     }
 }

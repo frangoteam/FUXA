@@ -970,6 +970,10 @@ mat-toolbar-row {
 }
 
 /* standard */
+.block {
+    display: block;
+}
+
 .mt10 {
     margin-top: 10px;
 }

@@ -9,6 +9,8 @@ import { Utils } from '../../_helpers/utils';
 import { ReportItemTextComponent } from './report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './report-item-table/report-item-table.component';
 import { ReportItemAlarmsComponent } from './report-item-alarms/report-item-alarms.component';
+import { utils } from 'protractor';
+import { AlarmPropertyType, AlarmsType } from '../../_models/alarm';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;   
 
 @Component({
@@ -23,6 +25,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     itemTextType = Utils.getEnumKey(ReportItemType, ReportItemType.text);
     itemTableType = Utils.getEnumKey(ReportItemType, ReportItemType.table);
     itemAlarmsType = Utils.getEnumKey(ReportItemType, ReportItemType.alarms);
+    fontSize = [6, 8, 10, 12, 14, 16, 18, 20];
     report: Report;
     schedulingType = ReportSchedulingType;
 
@@ -78,16 +81,26 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     getPdfContent(report: Report)  {
         let docDefinition = {...report.docproperty };
-        docDefinition['header'] = 'FUXA by frangoteam';
+        docDefinition['header'] = { text: 'FUXA by frangoteam', style:[{fontSize: 6}]};
+        docDefinition['footer'] = function(currentPage, pageCount) { 
+            return { text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]} ; 
+        },
         docDefinition['content'] = [];
         report.content.items.forEach((item: ReportItem) => {
             if (item.type === this.itemTextType) {
                 const itemText = <ReportItemText>item;
-                docDefinition['content'].push({ text: itemText.text });
+                docDefinition['content'].push({ text: itemText.text, style: [{ alignment: item.align, fontSize: item.size }] });
             } else if (item.type === this.itemTableType) {
                 const itemTable = ReportEditorComponent.getTableContent(<ReportItemTable>item);
                 const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemTable>item).range);
-                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}` });
+                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                    style: [{ fontSize: item.size }] });
+                docDefinition['content'].push(itemTable);
+            } else if (item.type === this.itemAlarmsType) {
+                const itemTable = ReportEditorComponent.getAlarmsContent(<ReportItemAlarms>item);
+                const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemAlarms>item).range);
+                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                    style: [{ fontSize: item.size }] });
                 docDefinition['content'].push(itemTable);
             }
         });
@@ -95,9 +108,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     onAddItem(type: ReportItemType, index: number, edit: boolean) {
-        let item = <ReportItem>{ type: type };
+        let item = <ReportItem>{ type: type, align: 'left', size: 10 };
         if (type === this.itemTextType) {
-            item = {...item, ...<ReportItemText> { text: '' }};
+            item = {...item, ...<ReportItemText> { text: '' }, ... { style: [{ alignment: item.align }]}};
         } else if (type === this.itemTableType) {
             item = {...item, ...<ReportItemTable> {
                 columns: [],
@@ -106,7 +119,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             }};
         } else if (type === this.itemAlarmsType) {
             item = {...item, ...<ReportItemAlarms> {
-                priority: [],
+                priority: Utils.convertArrayToObject(Object.values(AlarmsType), true),
+                property: Utils.convertArrayToObject(Object.values(AlarmPropertyType), true),
                 range: this.myForm.value.scheduling,
             }};
         }
@@ -150,17 +164,46 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         this.onReportChanged();
     }
 
+    onAlignItem(item: ReportItem, align: string) {
+        item.align = align;
+        this.onReportChanged();
+    }
+
+    onFontSizeItem(item: ReportItem, size: number) {
+        item.size = size;
+        this.onReportChanged();
+    }
+
     static getTableContent(item: ReportItemTable) {
-        let content = { layout: 'lightHorizontalLines' }; // optional        
+        let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional        
         let header = item.columns.map<any>(col => { 
             return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
         });
-        let values = item.columns.map(col => col.tag.address || '');
+        let values = item.columns.map(col => col.tag.address || '...');
         content['table'] = {
             // headers are automatically repeated if the table spans over multiple pages
             // you can declare how many rows should be treated as headers
             headerRows: 1,
             widths: item.columns.map(col => col.width), //[ '*', 'auto', 100],
+            body: [
+                header,
+                values
+            ]
+        }
+        return content;
+    }
+
+    static getAlarmsContent(item: ReportItemAlarms) {
+        let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
+        let header = Object.values(item.propertyText).map<any>(col => { 
+            return { text: col, bold: true, style: [{ alignment: 'left' }] }
+        });
+        let values = Object.values(item.propertyText).map(col => '...');
+        content['table'] = {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 1,
+            widths: Object.values(item.propertyText).map(col => '*'), //[ '*', 'auto', 100],
             body: [
                 header,
                 values

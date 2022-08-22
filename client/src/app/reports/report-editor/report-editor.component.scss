@@ -100,3 +100,19 @@ $panelRight: 880px;
     min-width: 120px !important;
     width: 140px !important;
 }
+
+.menu-item-select {
+
+    mat-icon {
+        font-size: 18px;
+        margin-right: unset !important;
+    }
+
+    span {
+        line-height: 20px;
+    }
+
+    .unselect {
+        padding-left: 25px;
+    }
+}

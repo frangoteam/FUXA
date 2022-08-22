@@ -19,7 +19,7 @@ export class Report {
         return <ReportDocProperty> { 
             pageSize: 'A4',
             pageOrientation: 'portrait',        // landscape 
-            pageMargins: [ 60, 60, 40, 60 ],    // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
+            pageMargins: [ 60, 40, 40, 40 ],    // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
             fontName: 'Helvetica',
         }
     }
@@ -79,9 +79,12 @@ export enum ReportTableColumnType {
 }
 
 export interface ReportItemAlarms extends ReportItem {
-    priority: [],
+    priority: {},
+    priorityText: {},
+    property: {},
+    propertyText: {},
+    statusText: {},
     range: ReportDateRangeType,
-    interval: ReportIntervalType,
 }
 
 export enum ReportItemType {

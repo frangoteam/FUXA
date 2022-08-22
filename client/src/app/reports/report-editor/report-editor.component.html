@@ -37,11 +37,43 @@
                             <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem" class="report-item-menu">more_vert</mat-icon>
                             <mat-menu #menuitem="matMenu">
                                 <button mat-menu-item (click)="onEditItem(item, i, true)">{{'report.content-edit' | translate}}</button>
+                                <button mat-menu-item [matMenuTriggerFor]="menufontsize">{{'report.content-fontsizeitem' | translate}}</button>
+                                <button mat-menu-item *ngIf="item.type === itemTextType" [matMenuTriggerFor]="menualign">{{'report.content-alignitem' | translate}}</button>
+                                <mat-divider class="menu-separator"></mat-divider>
                                 <button mat-menu-item (click)="onAddItem(itemTextType, i, false)">{{'report.content-addtext' | translate}}</button>
                                 <button mat-menu-item (click)="onAddItem(itemTableType, i, false)">{{'report.content-addtable' | translate}}</button>
                                 <button mat-menu-item (click)="onAddItem(itemAlarmsType, i, false)">{{'report.content-addalarms' | translate}}</button>
                                 <mat-divider class="menu-separator"></mat-divider>
                                 <button mat-menu-item (click)="onDeleteItem(i)">{{'report.content-delete' | translate}}</button>
+                            </mat-menu>
+                            <mat-menu #menualign="matMenu">
+                                <button mat-menu-item (click)="onAlignItem(item, 'left')">
+                                    <div class="menu-item-select">
+                                        <mat-icon *ngIf="item.align === 'left'">done</mat-icon>
+                                        <span [ngClass]="item.align === 'left' ? '' : 'unselect'">{{'general.align-left' | translate}}</span>
+                                    </div>
+                                </button>
+                                <button mat-menu-item (click)="onAlignItem(item, 'center')">
+                                    <div class="menu-item-select">
+                                        <mat-icon *ngIf="item.align === 'center'">done</mat-icon>
+                                        <span [ngClass]="item.align === 'center' ? '' : 'unselect'">{{'general.align-center' | translate}}</span>
+                                    </div>
+                                    
+                                </button>
+                                <button mat-menu-item (click)="onAlignItem(item, 'right')">
+                                    <div class="menu-item-select">
+                                        <mat-icon *ngIf="item.align === 'right'">done</mat-icon>
+                                        <span [ngClass]="item.align === 'right' ? '' : 'unselect'">{{'general.align-right' | translate}}</span>
+                                    </div>
+                                </button>
+                            </mat-menu>
+                            <mat-menu #menufontsize="matMenu">
+                                <button mat-menu-item *ngFor="let size of fontSize;" (click)="onFontSizeItem(item, size)">
+                                    <div class="menu-item-select">
+                                        <mat-icon *ngIf="item.size === size">done</mat-icon>
+                                        <span [ngClass]="item.size === size ? '' : 'unselect'">{{size}}</span>
+                                    </div>
+                                </button>                                
                             </mat-menu>
                             <div class="report-item-type">
                                 <span>[{{item.type}}] - </span>
