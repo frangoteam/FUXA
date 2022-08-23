@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer, OnDestroy, OnInit, AfterViewInit, Input } from '@angular/core';
+import { Directive, ElementRef, Renderer2, OnDestroy, OnInit, AfterViewInit, Input } from '@angular/core';
 
 
 @Directive({
@@ -25,7 +25,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
 
     private mustBePosition: Array<string> = ['absolute', 'fixed', 'relative'];
     constructor(
-        private el: ElementRef, private renderer: Renderer
+        private el: ElementRef, private renderer: Renderer2
     ) {
 
     }
