@@ -52,18 +52,18 @@ import {
   .fab-menu .fab-toggle:hover {
     transform: scale(1.2, 1.2) translate3d(0, 0, 0);
   }
-  .fab-menu /deep/ .item {
+  .fab-menu ::ng-deep .item {
      opacity: 0;
   }
-  .fab-menu.active /deep/ .item {
+  .fab-menu.active ::ng-deep .item {
      opacity: 1;
   }
-  .fab-menu.active /deep/ .content-wrapper {
+  .fab-menu.active ::ng-deep .content-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  .fab-menu.active /deep/ .content {
+  .fab-menu.active ::ng-deep .content {
     display: block;
   }
   .fab-menu.active .fab-toggle {
