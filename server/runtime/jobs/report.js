@@ -139,12 +139,12 @@ function Report(_property, _runtime) {
                 let options = { interval: item.interval, functions: fncs };
                 await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), options).then(result => {
                     if (!result || !result.length) {
-                        values = item.columns.map(col => '');
+                        values = [item.columns.map(col => { return {text: ''}})];
                     } else {
                         values = result;
                     }
                 }).catch(function (err) {
-                    values = item.columns.map(col => 'ERROR');
+                    values = [item.columns.map(col => { return {text: 'ERROR'}})];
                 });
                 content['table'] = {
                     // headers are automatically repeated if the table spans over multiple pages
@@ -209,9 +209,9 @@ function Report(_property, _runtime) {
                 const query = { from: timeRange.begin.getTime(), to: timeRange.end.getTime() };
                 await runtime.alarmsMgr.getAlarmsHistory(query).then(result => {
                     if (!result || !result.length) {
-                        values = Object.values(item.propertyText).map(col => { 
+                        values = [Object.values(item.propertyText).map(col => { 
                             return { text: '', style: [{ alignment: 'left' }] }
-                        });
+                        })];
                      } else {
                         const property = Object.keys(item.property).filter(prop => { if (item.property[prop]) return prop; });
                         values = result.filter(alr => { if (item.priority[alr.type]) return alr; });
@@ -231,10 +231,9 @@ function Report(_property, _runtime) {
                             });
                             return row;
                         })
-                        console.log('asdf');
                      }
                 }).catch(function (err) {
-                    values = Object.values(item.propertyText).map(col => 'ERROR');
+                    values = [Object.values(item.propertyText).map(col => { return {text: 'ERROR'}})];
                 });
                 content['table'] = {
                     // headers are automatically repeated if the table spans over multiple pages
