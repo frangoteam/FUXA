@@ -462,6 +462,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                             let len = htmlevent.dom.value.length;
                             htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
                         }
+                        htmlevent.dom.select();
                     }
                 }
 
