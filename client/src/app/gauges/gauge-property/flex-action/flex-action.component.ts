@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink } from '../../../_models/hmi';
+import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink, GaugeActionRotate } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-action',
@@ -18,6 +18,7 @@ export class FlexActionComponent implements OnInit {
     actions: GaugeAction[];
     actionsSupported: any;
     actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
+    actionRotate = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.rotate);
     itemtype: any;
     slideView = true;
 
@@ -82,6 +83,8 @@ export class FlexActionComponent implements OnInit {
     onCheckActionType(type: any, ga: GaugeAction) {
         if (type === this.actionBlink && typeof(ga.options) !== typeof(GaugeActionBlink)) {
             ga.options = new GaugeActionBlink();
-        }
+        } else if (type === this.actionRotate && typeof(ga.options) !== typeof(GaugeActionRotate)) {
+            ga.options = new GaugeActionRotate();
+        } 
     }
 }
