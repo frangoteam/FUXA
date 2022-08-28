@@ -172,6 +172,7 @@ function JobsManager(_runtime) {
                 });
             } catch (err) {
                 logger.error(`checkJobs.failed: ${err}`);
+                reject(err);
             }                
         });
     }

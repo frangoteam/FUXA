@@ -104,3 +104,27 @@ export enum AlarmActionsType {
     setValue = 'alarm.action-onsetvalue',
     // sendMsg = 'alarm.action-onsendmsg',
 }
+
+export enum AlarmPropertyType {
+    ontime = 'ontime',
+    text = 'text',
+    type = 'type',
+    group = 'group',
+    status = 'status',
+    offtime = 'offtime',
+    acktime = 'acktime',
+    ackuser = 'userack',
+}
+
+export enum AlarmStatusType {
+    N = 'alarm.status-active',
+    NF = 'alarm.status-passive',
+    NA = 'alarm.status-active-ack',
+}
+
+export enum AlarmPriorityType {
+    highhigh = 'alarm.property-highhigh',
+    high = 'alarm.property-high',
+    low = 'alarm.property-low',
+    info = 'alarm.property-info'
+}

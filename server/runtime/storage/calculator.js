@@ -4,6 +4,8 @@
 
 'use strict';
 
+const utils = require("../utils");
+
 function getFunctionValues(values, fromts, tots, fnc, interval) {
     if (fnc === ReportFunctionType.min) {
         return getMin(values, fromts, tots, interval);
@@ -40,7 +42,7 @@ function getMin(timeserie, fromts, tots, intervalType) {
     
     for (let i = 0; i < sorted.length; i++) {
         let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
-        addToInterval(result, intervalIndex, parseFloat(sorted[i].value));
+        addToInterval(result, intervalIndex, utils.parseFloat(sorted[i].value, 5));
     }
     return result;
 }
@@ -62,12 +64,12 @@ function getMax(timeserie, fromts, tots, intervalType) {
     
     for (let i = 0; i < sorted.length; i++) {
         let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
-        addToInterval(result, intervalIndex, parseFloat(sorted[i].value));
+        addToInterval(result, intervalIndex, utils.parseFloat(sorted[i].value, 5));
     }
     return result;
 }
 
-function getAverage(values, fnc, interval) {
+function getAverage(timeserie, fromts, tots, intervalType) {
     let result = getInterval(fromts, tots, intervalType, 0);
     let counts = getInterval(fromts, tots, intervalType, 0);
     // sort to start with the oldest
@@ -76,7 +78,7 @@ function getAverage(values, fnc, interval) {
     });
 
     let addToInterval = (intervals, counters, intervalIndex, value) => {
-        if (!intervals[intervalIndex]) {
+        if (utils.isNullOrUndefined(intervals[intervalIndex])) {
             intervals[intervalIndex] = 0;
         } else {
             intervals[intervalIndex] += value;
@@ -91,13 +93,13 @@ function getAverage(values, fnc, interval) {
     // average
     Object.keys(result).forEach(k => {
         if (counts[k]) {
-            result[k] = result[k] / counts[k];
+            result[k] = utils.parseFloat(result[k] / counts[k], 5);
         }
     });
     return result; 
 }
 
-function getSum(values, fnc, interval) {
+function getSum(timeserie, fromts, tots, intervalType) {
     let result = getInterval(fromts, tots, intervalType, 0);
     // sort to start with the oldest
     let sorted = timeserie.sort(function (a, b) {
@@ -105,10 +107,11 @@ function getSum(values, fnc, interval) {
     });
 
     let addToInterval = (intervals, intervalIndex, value) => {
-        if (!intervals[intervalIndex]) {
+        if (utils.isNullOrUndefined(intervals[intervalIndex])) {
             intervals[intervalIndex] = 0;
         } else {
             intervals[intervalIndex] += value;
+            intervals[intervalIndex] = utils.parseFloat(intervals[intervalIndex], 5)
         }
     }
     

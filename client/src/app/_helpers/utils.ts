@@ -274,6 +274,12 @@ export class Utils {
         return result;
     }
 
+    /**
+     * set object values to target
+     * @param target 
+     * @param sources 
+     * @returns 
+     */
     static assign = (target: { [key: string]: any }, ...sources: object[]) => {
         sources.forEach((source) => {
           return Object.keys(source).forEach((key) => {
@@ -284,6 +290,12 @@ export class Utils {
     }
 
     static clone = (obj) => { return JSON.parse(JSON.stringify(obj)); }
+
+    static convertArrayToObject  = (array, value) => {
+        return array.reduce((accumulator, key) => {
+            return {...accumulator, [key]: value};
+        }, {});
+    }
 }
 
 @Pipe({
