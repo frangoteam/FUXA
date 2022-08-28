@@ -37,9 +37,10 @@ export interface ReportContent {
 }
 
 export interface ReportDocProperty {
-    paper?: string;
-    margin?: ReportPageMargin;
-    fontName?: string;
+    pageSize: string;
+    pageOrientation: string;
+    pageMargins: number[];
+    fontName: string;
 }
 
 export interface ReportPageMargin {

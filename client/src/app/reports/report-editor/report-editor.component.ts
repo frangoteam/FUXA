@@ -40,7 +40,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             id: [this.report.id, Validators.required],
             name: [this.report.name, Validators.required],
             receiver: [this.report.receiver],
-            scheduling: [this.report.scheduling]
+            scheduling: [this.report.scheduling],
+            marginLeft: [this.report.docproperty.pageMargins[0]],
+            marginTop: [this.report.docproperty.pageMargins[1]],
+            marginRight: [this.report.docproperty.pageMargins[2]],
+            marginBottom: [this.report.docproperty.pageMargins[3]],
         });
     }
 
@@ -60,7 +64,10 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     onOkClick(): void {
-        this.report = {...this.report, ...this.myForm.value};
+        this.report.id = this.myForm.controls.id.value;
+        this.report.name = this.myForm.controls.name.value;
+        this.report.receiver = this.myForm.controls.receiver.value;
+        this.report.scheduling = this.myForm.controls.scheduling.value;
 
         if (this.data.editmode < 0) {
             this.dialogRef.close(this.report);
@@ -69,7 +76,22 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         }
     }
 
+    onSchedulingChanged() {
+        this.report.content.items.forEach(item => {
+            if (item.type === this.itemTableType) {
+                (<ReportItemTable>item).range = this.myForm.controls.scheduling.value;
+            } else if (item.type === this.itemAlarmsType) {
+                (<ReportItemAlarms>item).range = this.myForm.controls.scheduling.value;
+            }
+        });
+        this.onReportChanged();
+    }
+
     onReportChanged() {
+        this.report.docproperty.pageMargins = [this.myForm.controls.marginLeft.value, 
+                                                this.myForm.controls.marginTop.value, 
+                                                this.myForm.controls.marginRight.value, 
+                                                this.myForm.controls.marginBottom.value];
         const pdfDocGenerator = pdfMake.createPdf(this.getPdfContent(this.report));
         pdfDocGenerator.getDataUrl((dataUrl) => {
             const targetIframe = document.querySelector('iframe');

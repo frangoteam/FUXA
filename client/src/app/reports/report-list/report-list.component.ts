@@ -62,7 +62,7 @@ export class ReportListComponent implements OnInit {
         this.editReport(new Report(Utils.getGUID(REPORT_PREFIX)), 1);
     }
 
-    onEditReport(report: Report, toAdd: number) {
+    onEditReport(report: Report) {
         this.editReport(report, 0);
     }
 

@@ -978,6 +978,10 @@ mat-toolbar-row {
     margin-top: 10px;
 }
 
+.mt15 {
+    margin-top: 15px;
+}
+
 .mt20 {
     margin-top: 20px;
 }
@@ -996,4 +1000,8 @@ mat-toolbar-row {
 
 .mr20 {
     margin-right: 20px;
+}
+
+.mr5 {
+    margin-right: 5px;
 }

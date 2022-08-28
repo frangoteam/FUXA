@@ -4,7 +4,7 @@
     <div mat-dialog-content>
         <div class="my-form-field">
             <span>{{'report.item-daterange' | translate}}</span>
-            <mat-select [(value)]="data.range" style="width: 140px">
+            <mat-select [(value)]="data.range" style="width: 200px" [disabled]="true">
                 <mat-option *ngFor="let ev of dateRangeType | enumToArray" [value]="ev.key">
                     {{ ev.value }}
                 </mat-option>

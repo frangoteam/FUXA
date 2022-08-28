@@ -47,7 +47,7 @@ $panelRight: 880px;
     line-height: 24px;
     padding: 7px 0px 5px 0px;
     border-bottom: 1px solid var(--toolboxBorder);
-
+    
     mat-icon {
         font-size: 18px;
         line-height: 24px;
@@ -68,10 +68,17 @@ $panelRight: 880px;
     cursor: pointer;
 }
 
+.report-item-edit {
+    cursor: pointer;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
 .report-item-menu {
     cursor: pointer;
-    float: left;
-    margin-right: 10px;
+    float: right;
+    margin-right: 3px;
+    vertical-align: middle;
 }
 
 .report-item-label {

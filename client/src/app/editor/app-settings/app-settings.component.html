@@ -50,21 +50,27 @@
                 </div>
                 <div style="display: block; margin-top: 20px">
                     <div class="my-form-field">
+                        <span>{{'dlg.app-settings-smtp-mailsender' | translate}}</span>
+                        <input [(ngModel)]="settings.smtp.mailsender" placeholder="fuxa@example.com" class="input-row" type="text">
+                    </div>
+                </div>
+                <div style="display: block; margin-top: 20px">
+                    <div class="my-form-field">
                         <span>{{'dlg.app-settings-smtp-user' | translate}}</span>
-                        <input [(ngModel)]="settings.smtp.username" placeholder="fuxa@example.com" style="width: 320px" type="text">
+                        <input [(ngModel)]="settings.smtp.username" placeholder="fuxa@example.com" class="input-row" type="text">
                     </div>
                 </div>
                 <div style="display: block; margin-top: 20px">
                     <div class="my-form-field">
                         <span>{{'dlg.app-settings-smtp-password' | translate}}</span>
-                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="settings.smtp.password" style="width: 320px;">
+                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="settings.smtp.password" class="input-row">
                         <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
                     </div>
                 </div>
                 <div style="display: block; margin-top: 20px; margin-bottom: 20px;">
                     <div class="my-form-field">
                         <span>{{'dlg.app-settings-smtp-testaddress' | translate}}</span>
-                        <input [(ngModel)]="smtpTestAddress" style="width: 320px" type="text">
+                        <input [(ngModel)]="smtpTestAddress" style="width: 534px" type="text">
                     </div>
                     <div class="my-form-field" style="display: inline-block; padding-left: 10px;">
                         <button mat-raised-button color="basic" (click)="onSmtpTest()" [disabled]="!isSmtpTestReady()">{{'dlg.app-settings-smtp-test' | translate}}</button>
