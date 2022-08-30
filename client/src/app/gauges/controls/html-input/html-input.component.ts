@@ -183,24 +183,24 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
         }
     }
 
-    static validateValue(value: any, ga: GaugeSettings) : [boolean, string] {
+    static validateValue(value: any, ga: GaugeSettings) : {valid: boolean, errorText: string, min: number, max: number} {
         if(ga.property.ranges && ga.property.ranges.length > 0 && ga.property.ranges[0].type === 'unit'){
             let min = ga.property.ranges[0].min;
             let max = ga.property.ranges[0].max;
 
             if(min && max){
                 if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
-                    return [false, 'Value is not a number'];
+                    return {valid: false, errorText: 'html-input.not-a-number', min: 0, max: 0};
                 }
                 else {
                     let numVal = parseFloat(value);
                     if(numVal < min || numVal > max){
-                        return [false, `Min = ${min}, Max = ${max}`];
+                        return {valid: false, errorText: 'html-input.out-of-range', min: min, max: max};
                     }
                 }
             }
         }
 
-        return [true, ''];
+        return {valid: true, errorText: '', min: 0, max: 0};
     }
 }
