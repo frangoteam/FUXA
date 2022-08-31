@@ -18,7 +18,7 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
 })
 export class ChartConfigComponent implements OnInit {
 
-    @ViewChild(MatSelectionList) selTags: MatSelectionList;
+    @ViewChild(MatSelectionList, {static: false}) selTags: MatSelectionList;
 
     selectedChart = <Chart>{ id: null, name: null, lines: [] };
     selectedDevice = { id: null, name: null, tags: []};

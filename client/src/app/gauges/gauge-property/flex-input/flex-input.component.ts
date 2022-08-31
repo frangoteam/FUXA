@@ -17,8 +17,8 @@ export class FlexInputComponent implements OnInit {
     @Input() type: string;
     @Input() inputType: string;
     @Input() default: any;
-    @ViewChild('unit') varunit: FlexVariableComponent;
-    @ViewChild('digits') vardigits: FlexVariableComponent;
+    @ViewChild('unit', {static: false}) varunit: FlexVariableComponent;
+    @ViewChild('digits', {static: false}) vardigits: FlexVariableComponent;
 
 
     tag: Tag = null;

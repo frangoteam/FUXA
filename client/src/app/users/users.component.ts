@@ -19,8 +19,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
 	users: User[];
 
-	@ViewChild(MatTable) table: MatTable<any>;
-	@ViewChild(MatSort) sort: MatSort;
+	@ViewChild(MatTable, {static: true}) table: MatTable<any>;
+	@ViewChild(MatSort, {static: true}) sort: MatSort;
 
 	constructor(private dialog: MatDialog,
 		private userService: UserService) { }
@@ -109,7 +109,7 @@ export class DialogUser {
 	selectedGroups = [];
 	groups = UserGroups.Groups;
 
-	@ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+	@ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
 	constructor(public dialogRef: MatDialogRef<DialogUser>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {

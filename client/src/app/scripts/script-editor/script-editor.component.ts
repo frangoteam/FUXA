@@ -19,7 +19,7 @@ import { DevicesUtils, DeviceType, Tag } from '../../_models/device';
     styleUrls: ['./script-editor.component.css']
 })
 export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(CodemirrorComponent) CodeMirror: CodemirrorComponent;
+    @ViewChild(CodemirrorComponent, {static: true}) CodeMirror: CodemirrorComponent;
     codeMirrorContent: string;
     codeMirrorOptions = { 
         lineNumbers: true, 

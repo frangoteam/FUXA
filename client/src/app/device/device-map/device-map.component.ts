@@ -32,9 +32,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     dataSource = new MatTableDataSource([]);
     tableWidth = 1200;
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     flowBorder = 5;
     flowWidth = 160;

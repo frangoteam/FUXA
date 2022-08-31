@@ -11,7 +11,7 @@ import { GraphType, GraphSource } from '../../../../_models/graph';
     styleUrls: ['./graph-pie.component.css']
 })
 export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnDestroy {
-    @ViewChild(BaseChartDirective) public chart?: BaseChartDirective;
+    @ViewChild(BaseChartDirective, {static: false}) public chart?: BaseChartDirective;
     @Input() height = 240;
     @Input() width = 380;
 

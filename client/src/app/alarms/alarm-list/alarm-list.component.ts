@@ -20,8 +20,8 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionLoad: Subscription;
     private enabledText = "";
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,

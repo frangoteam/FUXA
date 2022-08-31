@@ -7,9 +7,9 @@ import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '
 })
 export class NgxSwitchComponent implements AfterViewInit {
 
-    @ViewChild('switcher') public switcher: ElementRef;
-    @ViewChild('slider') public slider: ElementRef;
-    @ViewChild('toggler') public toggler: ElementRef;
+    @ViewChild('switcher', {static: false}) public switcher: ElementRef;
+    @ViewChild('slider', {static: false}) public slider: ElementRef;
+    @ViewChild('toggler', {static: false}) public toggler: ElementRef;
     options: SwitchOptions = new SwitchOptions();
     checked = false;
     onUpdate: any;

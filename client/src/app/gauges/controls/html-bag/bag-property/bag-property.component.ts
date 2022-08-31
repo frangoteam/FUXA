@@ -17,8 +17,8 @@ import { Define } from '../../../../_helpers/define';
 })
 export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
 
-    @ViewChild("ngauge") ngauge: NgxGaugeComponent;
-	@ViewChild('flexhead') flexHead: FlexHeadComponent;
+    @ViewChild("ngauge", {static: false}) ngauge: NgxGaugeComponent;
+	@ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
 
     gauge = {
         value: 30

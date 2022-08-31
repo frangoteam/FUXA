@@ -9,7 +9,7 @@ export class TreetableComponent implements OnInit {
 
     @Input() config: any;
     @Output() expand = new EventEmitter();
-    @ViewChild('treetable') treetable: ElementRef;
+    @ViewChild('treetable', {static: true}) treetable: ElementRef;
 
 
     TypeOfTree = TreeType;

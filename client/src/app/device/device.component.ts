@@ -20,9 +20,9 @@ import { Utils } from '../_helpers/utils';
 })
 export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
 
-    @ViewChild('devicelist') deviceList: DeviceListComponent;
-    @ViewChild('devicemap') deviceMap: DeviceMapComponent;
-    @ViewChild('fileImportInput') fileImportInput: any;
+    @ViewChild('devicelist', {static: true}) deviceList: DeviceListComponent;
+    @ViewChild('devicemap', {static: true}) deviceMap: DeviceMapComponent;
+    @ViewChild('fileImportInput', {static: true}) fileImportInput: any;
 
     private subscriptionLoad: Subscription;
     private subscriptionDeviceChange: Subscription;
@@ -199,9 +199,9 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
 })
 export class DeviceTagDialog implements OnInit {
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     dataSource = new MatTableDataSource([]);
     nameFilter = new FormControl();

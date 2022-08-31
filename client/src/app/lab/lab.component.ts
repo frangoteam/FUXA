@@ -19,8 +19,8 @@ declare var Raphael: any;
 
 export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('messagecontainer', { read: ViewContainerRef }) entry: ViewContainerRef;
-    @ViewChild('tester') tester: TesterComponent;
+    @ViewChild('messagecontainer', { read: ViewContainerRef, static: false }) entry: ViewContainerRef;
+    @ViewChild('tester', {static: false}) tester: TesterComponent;
 
     currentView: View = new View();
     hmi: Hmi = new Hmi();

@@ -111,8 +111,8 @@ export class NgxFabItemButtonComponent {
     @Output() clicked: EventEmitter<any> = new EventEmitter();
     @Output() exclicked: EventEmitter<any> = new EventEmitter();
     @Input() disabled = false;
-    @ViewChild('elementref') elementref;
-    @ViewChild('contentref') contentref;
+    @ViewChild('elementref', {static: false}) elementref;
+    @ViewChild('contentref', {static: false}) contentref;
 
     emitClickEvent($event: Event) {
         if (this.disabled) {

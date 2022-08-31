@@ -34,9 +34,9 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() showMode:EventEmitter<string> = new EventEmitter();
 
     dataSource = new MatTableDataSource([]);
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     private rxjsPollingTimer = timer(0, 2000);
     private destroy = new Subject();

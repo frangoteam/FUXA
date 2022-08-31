@@ -18,10 +18,10 @@ declare var SVG: any;
 })
 export class PipePropertyComponent implements OnInit, AfterViewInit {
 
-	@ViewChild('flexauth') flexAuth: FlexAuthComponent;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
-    @ViewChild('flexevent') flexEvent: FlexEventComponent;
-    @ViewChild('flexaction') flexAction: FlexActionComponent;
+	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
+    @ViewChild('flexevent', {static: false}) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', {static: false}) flexAction: FlexActionComponent;
     property: GaugeProperty;
     options: PipeOptions;
     name: string;

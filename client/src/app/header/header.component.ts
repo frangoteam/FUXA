@@ -23,9 +23,9 @@ import { EditNameComponent } from '../gui-helpers/edit-name/edit-name.component'
 })
 export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('sidenav')sidenav: any; 
-    @ViewChild('tutorial') tutorial: TutorialComponent;
-    @ViewChild('fileImportInput') fileImportInput: any;
+    @ViewChild('sidenav', {static: false})sidenav: any; 
+    @ViewChild('tutorial', {static: false}) tutorial: TutorialComponent;
+    @ViewChild('fileImportInput', {static: false}) fileImportInput: any;
 
     darkTheme = true;
     ineditor = false;

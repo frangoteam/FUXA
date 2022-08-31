@@ -13,8 +13,8 @@ import { AlarmProperty, AlarmAckMode, AlarmSubProperty, AlarmSubActions, AlarmAc
 })
 export class AlarmPropertyComponent implements OnInit {
 
-	@ViewChild('flexauth') flexAuth: FlexAuthComponent;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
+	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
 
     property: AlarmProperty;
     ackMode = AlarmAckMode;

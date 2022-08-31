@@ -26,7 +26,7 @@ export class FlexHeadComponent implements OnInit {
     @Input() property: GaugeProperty;
     @Input() withStaticValue = true;
     @Input() withBitmask = false;
-    @ViewChild('flexinput') flexInput: FlexInputComponent;
+    @ViewChild('flexinput', {static: false}) flexInput: FlexInputComponent;
 
     variable: any;
     withInput = null;

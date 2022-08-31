@@ -19,8 +19,8 @@ import { DataConverterService } from '../../../../_services/data-converter.servi
 })
 export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('chartPanel') public chartPanel: ElementRef;
-    @ViewChild('nguplot') public nguplot: NgxUplotComponent;
+    @ViewChild('chartPanel', {static: false}) public chartPanel: ElementRef;
+    @ViewChild('nguplot', {static: false}) public nguplot: NgxUplotComponent;
 
     @Input() options: ChartOptions;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();

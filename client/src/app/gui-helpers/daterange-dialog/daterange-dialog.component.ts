@@ -10,7 +10,7 @@ import { IDateRange } from '../../_models/hmi';
 })
 export class DaterangeDialogComponent implements OnInit {
 
-    @ViewChild('dtrange') public dtrange: DaterangepickerComponent;
+    @ViewChild('dtrange', {static: false}) public dtrange: DaterangepickerComponent;
 
     options = { };
 

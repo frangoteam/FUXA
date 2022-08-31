@@ -14,9 +14,9 @@ import { LogsRequest } from '../_models/diagnose';
 })
 export class LogsViewComponent implements OnInit, AfterViewInit {
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     dataSource = new MatTableDataSource([]);
     ontimeFilter = new FormControl();

@@ -31,7 +31,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.renderer.setElementAttribute(this.el.nativeElement, 'draggable', 'true');
+        this.renderer.setAttribute(this.el.nativeElement, 'draggable', 'true');
     }
     ngAfterViewInit() {
         try {
@@ -44,7 +44,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
         }
     }
     ngOnDestroy(): void {
-        this.renderer.setElementAttribute(this.el.nativeElement, 'draggable', 'false');
+        this.renderer.setAttribute(this.el.nativeElement, 'draggable', 'false');
     }
 
     onDragStart(event: any) {
@@ -75,7 +75,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
 
     doTranslation(x: number, y: number) {
         if (!x || !y) return;
-        this.renderer.setElementStyle(this.el.nativeElement, 'top', (y - this.dy) + 'px');
-        this.renderer.setElementStyle(this.el.nativeElement, 'left', (x - this.dx) + 'px');
+        this.renderer.setStyle(this.el.nativeElement, 'top', (y - this.dy) + 'px');
+        this.renderer.setStyle(this.el.nativeElement, 'left', (x - this.dx) + 'px');
     }
 }

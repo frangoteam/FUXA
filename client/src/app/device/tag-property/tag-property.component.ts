@@ -27,7 +27,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     private subscriptionNodeAttribute: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
 
-    @ViewChild(TreetableComponent) treetable: TreetableComponent;
+    @ViewChild(TreetableComponent, {static: true}) treetable: TreetableComponent;
 
     constructor(
         private hmiService: HmiService,

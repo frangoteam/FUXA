@@ -22,8 +22,8 @@ export class ReportListComponent implements OnInit {
     private subscriptionLoad: Subscription;
     private schedulingType = ReportSchedulingType;
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatTable, {static: true}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,

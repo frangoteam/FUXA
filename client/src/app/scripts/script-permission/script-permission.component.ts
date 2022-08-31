@@ -13,7 +13,7 @@ export class ScriptPermissionComponent {
   selectedGroups = [];
 	groups = UserGroups.Groups;
 
-	@ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+	@ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
 	constructor(public dialogRef: MatDialogRef<ScriptPermissionComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {

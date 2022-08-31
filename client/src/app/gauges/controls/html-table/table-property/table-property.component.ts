@@ -23,7 +23,7 @@ export class TablePropertyComponent implements OnInit {
     @Input('reload') set reload(b: any) {
         this._reload();
     }
-    @ViewChild('grptabs') grptabs: MatTabGroup;
+    @ViewChild('grptabs', {static: false}) grptabs: MatTabGroup;
 
     tableTypeCtrl: FormControl = new FormControl();
     options = DataTableComponent.DefaultOptions();

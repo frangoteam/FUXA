@@ -163,7 +163,7 @@ export class DialogMenuItem {
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
     
-    @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
     constructor(public projectService: ProjectService,
         public dialogRef: MatDialogRef<DialogMenuItem>,

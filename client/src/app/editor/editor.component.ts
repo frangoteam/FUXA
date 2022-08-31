@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
-import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
 import { ChartPropertyComponent } from '../gauges/controls/html-chart/chart-property/chart-property.component';
 import { GraphPropertyComponent } from '../gauges/controls/html-graph/graph-property/graph-property.component';
@@ -70,10 +69,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // currentUser: User;
     // users: User[] = [];
     // @ViewChild('fillcolor') fillcolor: ElementRef;
-    @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
-    @ViewChild('viewFileImportInput') viewFileImportInput: any;
-    @ViewChild('cardsview') cardsview: CardsViewComponent;
-    @ViewChild('sidePanel') sidePanel: MatDrawer;
+    @ViewChild('gaugepanel', {static: false}) gaugePanelComponent: GaugeBaseComponent;
+    @ViewChild('viewFileImportInput', {static: false}) viewFileImportInput: any;
+    @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
+    @ViewChild('sidePanel', {static: false}) sidePanel: MatDrawer;
 
     gaugeDialogType = GaugeDialogType;
     gaugeDialog = { type: null, data: null };

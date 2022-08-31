@@ -32,14 +32,14 @@ import panzoom from 'panzoom';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('sidenav') sidenav: SidenavComponent;
-    @ViewChild('matsidenav') matsidenav: MatSidenav;
-    @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
-    @ViewChild('cardsview') cardsview: CardsViewComponent;
-    @ViewChild('alarmsview') alarmsview: AlarmViewComponent;
-    @ViewChild('container') container: ElementRef;
+    @ViewChild('sidenav', {static: false}) sidenav: SidenavComponent;
+    @ViewChild('matsidenav', {static: false}) matsidenav: MatSidenav;
+    @ViewChild('fuxaview', {static: false}) fuxaview: FuxaViewComponent;
+    @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
+    @ViewChild('alarmsview', {static: false}) alarmsview: AlarmViewComponent;
+    @ViewChild('container', {static: false}) container: ElementRef;
 
-    @ViewChild('iframeview') iframeview: IframeComponent;
+    @ViewChild('iframeview', {static: false}) iframeview: IframeComponent;
 
     isLoading = true;
     homeView: View = new View();

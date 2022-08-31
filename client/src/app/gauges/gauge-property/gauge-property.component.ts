@@ -18,9 +18,9 @@ import { UserGroups } from '../../_models/user';
 export class GaugePropertyComponent implements OnInit {
 
     @Input() name: any;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
-    @ViewChild('flexevent') flexEvent: FlexEventComponent;
-    @ViewChild('flexaction') flexAction: FlexActionComponent;
+    @ViewChild('flexhead', {static: true}) flexHead: FlexHeadComponent;
+    @ViewChild('flexevent', {static: true}) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', {static: true}) flexAction: FlexActionComponent;
 
     slideView = true;
     slideActionView = true;
@@ -195,7 +195,7 @@ export class DialogGaugePermission {
     extensionGroups = [];
     groups = UserGroups.Groups;
 
-    @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
     constructor(
         public dialogRef: MatDialogRef<DialogGaugePermission>,

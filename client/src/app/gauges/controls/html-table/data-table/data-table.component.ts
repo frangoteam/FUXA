@@ -20,10 +20,10 @@ declare const numeral: any;
 })
 export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
 
     loading = false;

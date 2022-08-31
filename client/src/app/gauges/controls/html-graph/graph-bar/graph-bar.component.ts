@@ -15,7 +15,7 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
     styleUrls: ['./graph-bar.component.scss']
 })
 export class GraphBarComponent extends GraphBaseComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(BaseChartDirective) public chart?: BaseChartDirective;
+    @ViewChild(BaseChartDirective, {static: false}) public chart?: BaseChartDirective;
     @Input() height = 240;
     @Input() width = 380;
     @Output() onReload: EventEmitter<DaqQuery> = new EventEmitter();

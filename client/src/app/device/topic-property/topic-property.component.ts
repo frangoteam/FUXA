@@ -14,9 +14,9 @@ import { Tag, TAG_PREFIX } from '../../_models/device';
 })
 export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('grptabs') grptabs: MatTabGroup;
-    @ViewChild('tabsub') tabsub: MatTab;
-    @ViewChild('tabpub') tabpub: MatTab;
+    @ViewChild('grptabs', {static: true}) grptabs: MatTabGroup;
+    @ViewChild('tabsub', {static: true}) tabsub: MatTab;
+    @ViewChild('tabpub', {static: true}) tabpub: MatTab;
 
     private subscriptionBrowse: Subscription;
 

@@ -15,7 +15,7 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() public id: string;
     @Input() public options: NgxOptions;
-    @ViewChild('graph') public graph: ElementRef;
+    @ViewChild('graph', {static: true}) public graph: ElementRef;
 
 
     readonly lineInterpolations = {

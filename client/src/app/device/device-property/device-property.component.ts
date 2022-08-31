@@ -17,7 +17,7 @@ import { Utils } from '../../_helpers/utils';
 export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	// @Input() name: any;
-	@ViewChild(MatExpansionPanel) panelProperty: MatExpansionPanel;
+	@ViewChild(MatExpansionPanel, {static: false}) panelProperty: MatExpansionPanel;
 	securityRadio: any;
 	mode: any;
 	deviceType: any = {};

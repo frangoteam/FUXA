@@ -47,10 +47,10 @@ export class DeviceListComponent implements OnInit {
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     constructor(private dialog: MatDialog,
         private hmiService: HmiService,

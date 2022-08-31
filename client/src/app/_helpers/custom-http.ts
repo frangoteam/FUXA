@@ -1,5 +1,6 @@
 ﻿import { Injectable } from "@angular/core";
 import { ConnectionBackend, XHRBackend, RequestOptions, Request, RequestOptionsArgs, Response, Http, Headers } from "@angular/http";
+import { ConnectionBackend, XHRBackend, RequestOptions, Request, RequestOptionsArgs, Response, Http, Headers } from "@angular/common/http";
 import { appConfig } from '../app.config';
 
 import { Observable } from "rxjs";

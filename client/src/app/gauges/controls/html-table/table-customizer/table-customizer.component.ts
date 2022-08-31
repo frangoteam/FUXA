@@ -1,7 +1,6 @@
 import { Component, OnInit, AfterViewInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
-import { initDomAdapter } from '@angular/platform-browser/src/browser';
 import { TableType, TableColumn, TableRow, TableCell, TableCellType } from '../../../../_models/hmi';
 import { map, filter } from 'rxjs/operators';
 

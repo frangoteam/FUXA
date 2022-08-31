@@ -18,9 +18,9 @@ import { Define } from '../../../../_helpers/define';
 })
 export class SliderPropertyComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('flexauth') flexAuth: FlexAuthComponent;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
-    @ViewChild('slider') slider: NgxNouisliderComponent;
+    @ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
+    @ViewChild('slider', {static: false}) slider: NgxNouisliderComponent;
     property: GaugeProperty;
     options = new NgxNouisliderOptions();
     defaultColor = Utils.defaultColor;

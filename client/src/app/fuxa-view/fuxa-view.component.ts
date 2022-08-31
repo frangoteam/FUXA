@@ -40,9 +40,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
-    @ViewChild('dataContainer') dataContainer: ElementRef;
-    @ViewChild('inputDialogRef') inputDialogRef: ElementRef;
-    @ViewChild('inputValueRef') inputValueRef: ElementRef;
+    @ViewChild('dataContainer', {static: false}) dataContainer: ElementRef;
+    @ViewChild('inputDialogRef', {static: false}) inputDialogRef: ElementRef;
+    @ViewChild('inputValueRef', {static: false}) inputValueRef: ElementRef;
 
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 

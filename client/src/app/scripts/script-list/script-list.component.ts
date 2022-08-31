@@ -23,8 +23,8 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionLoad: Subscription;
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatTable, {static: true}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: true}) sort: MatSort;
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
