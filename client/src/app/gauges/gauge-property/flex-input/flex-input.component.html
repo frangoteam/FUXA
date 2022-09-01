@@ -76,4 +76,10 @@
             </flex-variable>
         </div>
     </div>
+    <div *ngIf="isWithUpdate()" class="item-unit">
+        <div class="my-form-field mt15 ml20">
+            <span>{{'gauges.property-update-enabled' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="property.updated" class="ml20"></mat-slide-toggle>
+        </div>
+    </div>
 </div>
