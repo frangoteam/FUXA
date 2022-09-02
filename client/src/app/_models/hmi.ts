@@ -149,7 +149,8 @@ export class GaugeProperty {
     actions: GaugeAction[] = [];
     options: any;
     readonly: boolean;
-    text: string;           // Text property (used by button)
+    text: string;               // Text property (used by button)
+    updated: boolean = false;   // Used by input
 }
 
 export interface IPropertyVariable {
