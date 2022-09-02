@@ -1,4 +1,5 @@
 import { isNumber } from "util";
+import { Utils } from "../_helpers/utils";
 
 export class Alarm {
     name: string;
@@ -38,7 +39,7 @@ export class AlarmSubRange {
     timedelay: number;
     
     static isValid(asr: AlarmSubRange): boolean {
-        if (asr && asr.checkdelay && asr.min && asr.max && asr.timedelay) {
+        if (asr && asr.checkdelay && Utils.isNumeric(asr.min) && Utils.isNumeric(asr.max) && asr.timedelay) {
             return true;
         }
         return false;
