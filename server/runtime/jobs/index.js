@@ -3,16 +3,16 @@
 */
 
 var Report = require('./report');
+var Cleaner = require('./cleaner');
 
 'use strict';
 
-var JOBS_CHECK_STATUS_INTERVAL = 1000 * 60 * 60;    // 1 hour
+var JOBS_CHECK_STATUS_INTERVAL = 1000 * 60 * 30;    // 30 min.
 var MILLI_MINUTE = 60000;
 
 function JobsManager(_runtime) {
     var runtime = _runtime;
     var events = runtime.events;        // Events to commit change to runtime
-    var settings = runtime.settings;    // Settings
     var logger = runtime.logger;        // Logger
     var jobsCheckStatus = null;         // TimerInterval to check Jobs status
     var working = false;                // Working flag to manage overloading of check notificator status
@@ -130,6 +130,15 @@ function JobsManager(_runtime) {
     var _loadJobs = function () {
         return new Promise(function (resolve, reject) {
             jobsList = [];
+            // cleaner
+            try {
+                var cleaner = Cleaner.create(runtime);
+                var job = new Job(cleaner, JobType.Cleaner);
+                jobsList.push(job);    
+            } catch (err) {
+                logger.error(`_loadJobs.cleaner.failed: ${err}`);
+            }    
+            // reports
             runtime.project.getReports().then(function (result) {
                 if (result) {
                     result.forEach(rptProperty => {
@@ -201,4 +210,5 @@ function Job(_job, _type) {
 
 const JobType = {
     Report: 1,
+    Cleaner: 2,
 }
