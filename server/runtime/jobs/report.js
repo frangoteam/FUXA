@@ -1,7 +1,6 @@
 /*
 * Report: get data, create/send/store pdf
 */
-const { ResultFlags } = require('node-bacnet/lib/enum');
 var utils = require('../utils');
 const Pdfmake = require('pdfmake');
 var fs = require('fs')
