@@ -101,6 +101,18 @@ function getNodesValues(tagsid, fromts, tots, options) {
     });
 }
 
+function checkRetention() {
+    return new Promise(async function (resolve, reject) {
+        if (_getDbType() === DaqStoreTypeEnum.SQlite) {
+            SqliteDB.checkRetention(_getRetentionLimit(settings.daqstore.retention), settings.dbDir, (err) => {
+                logger.error(`daqstorage.checkRetention remove file failed! ${err}`);
+            });
+        }
+        logger.info(`daqstorage.checkRetention processed`);
+        resolve();
+    });
+}
+
 function _getDaqNode(tagid) {
     var nodes = Object.values(daqDB);
     for (var i = 0; i < nodes.length; i++) {
@@ -121,6 +133,7 @@ var DaqStoreTypeEnum = {
     SQlite: 'SQlite',
     influxDB: 'influxDB',
 }
+
 function _getValue(value) {
     if (value == Number.MAX_VALUE || value == Number.MIN_VALUE) {
         return '';
@@ -128,11 +141,35 @@ function _getValue(value) {
     return value.toString();
 }
 
+var _getRetentionLimit = function(retention) {
+    var dayToAdd = 0;
+    if (retention === 'day1') {
+        dayToAdd = 1;
+    } else if (retention === 'days2') {
+        dayToAdd = 2;
+    } else if (retention === 'days3') {
+        dayToAdd = 3;
+    } else if (retention === 'days7') {
+        dayToAdd = 7;
+    } else if (retention === 'days14') {
+        dayToAdd = 14;
+    } else if (retention === 'days30') {
+        dayToAdd = 30;
+    } else if (retention === 'days90') {
+        dayToAdd = 90;
+    } else if (retention === 'year1') {
+        dayToAdd = 365;
+    }
+    const date = new Date();
+    date.setDate(date.getDate() - dayToAdd);
+    return date;
+}
 
 module.exports = {
     init: init,
     reset: reset,
     addDaqNode: addDaqNode,
     getNodeValues: getNodeValues,
-    getNodesValues: getNodesValues
+    getNodesValues: getNodesValues,
+    checkRetention: checkRetention,
 };

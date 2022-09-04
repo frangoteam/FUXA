@@ -150,9 +150,11 @@ export class GaugeProperty {
     options: any;
     readonly: boolean;
     text: string;               // Text property (used by button)
-    updated: boolean = false;   // Used by input
 }
 
+export interface InputOptionsProperty {
+    updated: boolean;
+}
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;

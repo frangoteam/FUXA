@@ -6,7 +6,7 @@ import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { AppSettings, DaqStore, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
+import { AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
 
 @Component({
     selector: 'app-app-settings',
@@ -30,6 +30,7 @@ export class AppSettingsComponent implements OnInit {
     showPassword = false;
     
     daqstoreType = DaqStoreType;
+    retationType = DaqStoreRetentionType;
     
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,
