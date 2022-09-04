@@ -94,7 +94,6 @@ export enum DaqStoreRetentionType {
     days30 = 'days30',
     days90 = 'days90',
     year1 = 'year1',
-    never = 'never',
 }
 
 export class MailMessage {
