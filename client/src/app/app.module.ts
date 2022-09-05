@@ -57,7 +57,6 @@ import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
 import { TesterComponent } from './tester/tester.component';
-import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
 import { UserService } from './_services/user.service';
 import { SettingsService } from './_services/settings.service';
@@ -332,7 +331,6 @@ export function createTranslateLoader(http: HttpClient) {
         PluginService,
         SettingsService,
         TesterService,
-        customHttpProvider,
         httpInterceptorProviders,
         AuthService,
         GaugesManager,
