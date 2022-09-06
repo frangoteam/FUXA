@@ -1,0 +1,32 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'report.item-alarms-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field">
+            <span>{{'report.item-daterange' | translate}}</span>
+            <mat-select [(value)]="data.range" style="width: 200px" [disabled]="true">
+                <mat-option *ngFor="let ev of dateRangeType | enumToArray" [value]="ev.key">
+                    {{ ev.value }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="alarms">
+            <div class="my-form-field">
+                <span>{{'report.alarms-priority' | translate}}</span>
+                <mat-checkbox *ngFor="let item of alarmsType" (change)="onPriorityChanged(item, $event.checked)" [checked]="getPriorityValue(item)" style="margin: 7px 10px 7px 10px;">
+                    {{'alarm.property-' + item | translate}}
+                </mat-checkbox>
+            </div>
+            <div class="my-form-field block mt20">
+                <span>{{'report.alarms-column' | translate}}</span>
+                <mat-checkbox *ngFor="let item of alarmPropertyType" (change)="onPropertyChanged(item, $event.checked)" [checked]="getPropertyValue(item)" style="margin: 7px 10px 7px 10px;">
+                    {{'alarms.view-' + item | translate}}
+                </mat-checkbox>
+            </div>            
+        </div>        
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

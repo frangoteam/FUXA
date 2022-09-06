@@ -15,6 +15,7 @@ var sqlite3 = require('sqlite3').verbose();
 const db_daqdata_prefix = 'daq-data_';
 const db_daqmap_prefix = 'daq-map_';
 const db_daqtoken = 3600000;    // 1 hour
+const archive_folder = 'archive';
 
 function DaqNode(_settings, _log, _id) {
 
@@ -436,30 +437,23 @@ function DaqNode(_settings, _log, _id) {
     }
 
     function _getArchiveFiles(id, fromts, tots) {
-        var archive = path.resolve(settings.dbDir, 'archive');
+        const archive = path.resolve(settings.dbDir, archive_folder);
         var result = [];
         if (fs.existsSync(archive)) {
             fs.readdirSync(archive).forEach(file => {
-                var ranges = file.split('_');
-                if (ranges.length >= 3) {
-                    var fr = ranges[ranges.length - 2];
-                    var to = ranges[ranges.length - 1];
-                    var f = _suffixToTimestamp(fr);
-                    var t = _suffixToTimestamp(to);
-                    if (file.indexOf(id) > 0 && f <= tots && t >= fromts) {
-                        result.push(path.join(archive, file));
-                    }
+                const fromTo = _suffixToTimestamp(file);
+                if (file.indexOf(id) > 0 && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
+                    result.push(path.join(archive, file));
                 }
             });
             result.sort();
         }
-        // result.reverse();
         return result;
     }
 
     function _archiveDBfile(dbfile, ts) {
         var suffix = _getDateTimeSuffix(new Date(ts));
-        var archive = path.resolve(settings.dbDir, 'archive');
+        var archive = path.resolve(settings.dbDir, archive_folder);
         if (!fs.existsSync(archive)) {
             fs.mkdirSync(archive);
         }
@@ -491,19 +485,6 @@ function DaqNode(_settings, _log, _id) {
             SS = '0' + SS;
         }
         return '' + yyyy + mm + dd + HH + MM + SS;
-    }
-
-    function _suffixToTimestamp(dt) {
-        if (dt.length >= 14) {
-            var yyyy = parseInt(dt.substring(0, 4));
-            var mm = parseInt(dt.substring(4, 6)) - 1;
-            var dd = parseInt(dt.substring(6, 8));
-            var HH = parseInt(dt.substring(8, 10));
-            var MM = parseInt(dt.substring(10, 12));
-            var SS = parseInt(dt.substring(12, 14));
-            return new Date(yyyy, mm, dd, HH, MM, SS).getTime();
-        }
-        return null;
     }
 
     function _resetDB(file) {
@@ -625,8 +606,49 @@ function DaqNode(_settings, _log, _id) {
     return true;
 }
 
+/**
+ * Check and remove old data
+ */
+function checkRetention(dtlimit, dbDir, callbackError) {
+    var archiveDir = path.resolve(dbDir, archive_folder);
+    var files = fs.readdirSync(archiveDir);
+    files.forEach(file => {
+        const fromTo = _suffixToTimestamp(file);
+        if (fromTo && fromTo.from < dtlimit.getTime()) {
+            fs.unlink(path.join(archiveDir, file), (err) => {
+                if (err && callbackError) {
+                    callbackError(`daqstorage.checkRetention remove file ${file} failed! ${err}`);
+                }
+            });
+        }
+    });
+}
+
+function _suffixToTimestamp(file) {
+    function _parseSuffix(dtText) {
+        if (dtText.length >= 14) {
+            var yyyy = parseInt(dtText.substring(0, 4));
+            var mm = parseInt(dtText.substring(4, 6)) - 1;
+            var dd = parseInt(dtText.substring(6, 8));
+            var HH = parseInt(dtText.substring(8, 10));
+            var MM = parseInt(dtText.substring(10, 12));
+            var SS = parseInt(dtText.substring(12, 14));
+            return new Date(yyyy, mm, dd, HH, MM, SS).getTime();
+        }
+        return null;
+    }
+    var ranges = file.split('_');
+    if (ranges.length >= 3) {
+        return { from: _parseSuffix(ranges[ranges.length - 2]),
+                to: _parseSuffix(ranges[ranges.length - 1])
+        };
+    }
+    return null;
+}
+
 module.exports = {
     create: function (data, logger, id) {
         return new DaqNode(data, logger, id);
-    }
+    },
+    checkRetention: checkRetention
 };

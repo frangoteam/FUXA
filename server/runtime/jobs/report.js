@@ -1,7 +1,6 @@
 /*
 * Report: get data, create/send/store pdf
 */
-const { ResultFlags } = require('node-bacnet/lib/enum');
 var utils = require('../utils');
 const Pdfmake = require('pdfmake');
 var fs = require('fs')
@@ -92,17 +91,28 @@ function Report(_property, _runtime) {
         return new Promise(async function (resolve, reject) {
             try {
                 let docDefinition = {...report.docproperty };
-                docDefinition['header'] = 'FUXA powered by frangoteam';
+                docDefinition['header'] = { text: 'FUXA by frangoteam', style:[{fontSize: 6}]};
+                docDefinition['footer'] = function(currentPage, pageCount) { 
+                    return { text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]} ; 
+                },                
                 docDefinition['content'] = [];
                 for (let i = 0; i < report.content.items.length; i++) {
                     let item = report.content.items[i];
                     if (item.type === 'text') {
-                        docDefinition['content'].push({ text: item.text });
+                        docDefinition['content'].push({ text: item.text, style: [{ alignment: item.align, fontSize: item.size }] });
                     } else if (item.type === 'table') {
                         await _getTableContent(item).then(itemTable => {
                             const tableDateRange = _getDateRange(item.range);
-                            docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}` });
+                            docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                                style: [{ fontSize: item.size }] });
                             docDefinition['content'].push(itemTable);
+                        });
+                    } else if (item.type === 'alarms') {
+                        await _getAlarmsContent(item).then(itemAlarms => {
+                            const alarmsDateRange = _getDateRange(item.range);
+                            docDefinition['content'].push({ text: `${alarmsDateRange.begin.toLocaleDateString()} - ${alarmsDateRange.end.toLocaleDateString()}`,
+                                style: [{ fontSize: item.size }] });
+                            docDefinition['content'].push(itemAlarms);
                         });
                     }
                 }
@@ -115,32 +125,40 @@ function Report(_property, _runtime) {
 
     var _getTableContent = function (item) {
         return new Promise(async function (resolve, reject) {
-            let content = { layout: 'lightHorizontalLines' }; // optional
-            let header = item.columns.map(col => { 
-                return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
-            });
-            //item.columns.map(col => col.tag.address || '');
-            let values = [];
-            let tagsids = item.columns.filter(col => col.type !== 0).map(col => col.tag.id);
-            let fncs = item.columns.filter(col => col.type !== 0).map(col => col.function);
-            let timeRange = _getDateRange(item.range);
-            let options = { interval: item.interval, functions: fncs };
-            await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), options).then(result => {
-                values = result;
-            }).catch(function (err) {
-                values = item.columns.map(col => 'ERROR');
-            });
-            content['table'] = {
-                // headers are automatically repeated if the table spans over multiple pages
-                // you can declare how many rows should be treated as headers
-                headerRows: 1,
-                widths: item.columns.map(col => col.width), //[ '*', 'auto', 100],
-                body: [
-                    header,
-                    ...values
-                ]
-            }
-            resolve(content);
+            try {
+                let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
+                let header = item.columns.map(col => { 
+                    return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
+                });
+                //item.columns.map(col => col.tag.address || '');
+                let values = [];
+                let tagsids = item.columns.filter(col => col.type !== 0).map(col => col.tag.id);
+                let fncs = item.columns.filter(col => col.type !== 0).map(col => col.function);
+                let timeRange = _getDateRange(item.range);
+                let options = { interval: item.interval, functions: fncs };
+                await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), options).then(result => {
+                    if (!result || !result.length) {
+                        values = [item.columns.map(col => { return {text: ''}})];
+                    } else {
+                        values = result;
+                    }
+                }).catch(function (err) {
+                    values = [item.columns.map(col => { return {text: 'ERROR'}})];
+                });
+                content['table'] = {
+                    // headers are automatically repeated if the table spans over multiple pages
+                    // you can declare how many rows should be treated as headers
+                    headerRows: 1,
+                    widths: item.columns.map(col => col.width), //[ '*', 'auto', 100],
+                    body: [
+                        header,
+                        ...values
+                    ]
+                }
+                resolve(content);
+            } catch (err) {
+                reject(err);
+            }                
         });
     }
 
@@ -176,6 +194,61 @@ function Report(_property, _runtime) {
                 end: new Date(currentTime)
             };
         }
+    }
+
+    var _getAlarmsContent = function (item) {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
+                let header = Object.values(item.propertyText).map(col => { 
+                    return { text: col, bold: true, style: [{ alignment: 'left' }] }
+                });
+                let values = [];
+                const timeRange = _getDateRange(item.range);
+                const query = { from: timeRange.begin.getTime(), to: timeRange.end.getTime() };
+                await runtime.alarmsMgr.getAlarmsHistory(query).then(result => {
+                    if (!result || !result.length) {
+                        values = [Object.values(item.propertyText).map(col => { 
+                            return { text: '', style: [{ alignment: 'left' }] }
+                        })];
+                     } else {
+                        const property = Object.keys(item.property).filter(prop => { if (item.property[prop]) return prop; });
+                        values = result.filter(alr => { if (item.priority[alr.type]) return alr; });
+                        values = values.map(alr => {
+                            let row = [];
+                            property.forEach((prop) => {
+                                var text = '';
+                                if (prop === 'ontime' && alr.ontime) text = utils.getFormatDate(new Date(Number(alr.ontime)), 'ymd');
+                                else if (prop === 'offtime' && alr.offtime) text = utils.getFormatDate(new Date(Number(alr.offtime)), 'ymd');
+                                else if (prop === 'acktime' && alr.acktime) text = utils.getFormatDate(new Date(Number(alr.acktime)), 'ymd');
+                                else if (prop === 'text') text = alr.text;
+                                else if (prop === 'group') text = alr.group;
+                                else if (prop === 'userack') text = alr.userack;
+                                else if (prop === 'status') text = item.statusText[alr.status];
+                                else if (prop === 'type') text = item.priorityText[alr.type];
+                                row.push({text: text, style: [{fillColor: alr.bkcolor, color: alr.color}]});
+                            });
+                            return row;
+                        })
+                     }
+                }).catch(function (err) {
+                    values = [Object.values(item.propertyText).map(col => { return {text: 'ERROR'}})];
+                });
+                content['table'] = {
+                    // headers are automatically repeated if the table spans over multiple pages
+                    // you can declare how many rows should be treated as headers
+                    headerRows: 1,
+                    widths: Object.values(item.propertyText).map(col => '*'), //[ '*', 'auto', 100],
+                    body: [
+                        header,
+                        ...values
+                    ]
+                }
+                resolve(content);
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 }
 

@@ -136,7 +136,7 @@ var utils = module.exports = {
         return `${yyyy}-${mm}-${dd}_${HH}-${MM}-${SS}`;
     },
 
-    getFormatDate: function (dt) {
+    getFormatDate: function (dt, format) {
         var yyyy = dt.getFullYear();
         var mm = dt.getMonth() + 1;
         var dd = dt.getDate();
@@ -157,6 +157,9 @@ var utils = module.exports = {
         }
         if (SS < 10) {
             SS = '0' + SS;
+        }
+        if (format === 'ymd') {
+            return `${yyyy}/${mm}/${dd}/ ${HH}:${MM}:${SS}`;
         }
         return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
     },

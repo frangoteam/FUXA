@@ -9,6 +9,7 @@ import { FlexActionComponent } from './flex-action/flex-action.component';
 import { GaugeProperty, GaugeSettings, View } from '../../_models/hmi';
 import { Script } from '../../_models/script';
 import { UserGroups } from '../../_models/user';
+import { InputType } from './flex-input/flex-input.component';
 
 @Component({
     selector: 'gauge-property',
@@ -54,18 +55,18 @@ export class GaugePropertyComponent implements OnInit {
         this.defaultValue = this.data.default;
 
         if (this.dialogType === GaugeDialogType.OnlyValue) {
-            this.flexHead.withInput = null;
+            this.flexHead.withInput = InputType.update;
         } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
-            this.flexHead.withInput = 'unit';
+            this.flexHead.withInput = InputType.unit;
         } else {
             this.flexHead.defaultValue = this.defaultValue;
-            this.flexHead.withInput = 'range';
+            this.flexHead.withInput = InputType.range;
             if (this.dialogType === GaugeDialogType.ValueWithRef) {
-                this.flexHead.withInput = 'text';
+                this.flexHead.withInput = InputType.text;
             } else if (this.dialogType === GaugeDialogType.Step) {
-                this.flexHead.withInput = 'step';
+                this.flexHead.withInput = InputType.step;
             } else if (this.dialogType === GaugeDialogType.MinMax) {
-                this.flexHead.withInput = 'minmax';
+                this.flexHead.withInput = InputType.minmax;
             }
         }
 

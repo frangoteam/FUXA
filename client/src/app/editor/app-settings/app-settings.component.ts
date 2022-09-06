@@ -6,7 +6,7 @@ import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { AppSettings, DaqStore, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
+import { AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
 
 @Component({
     selector: 'app-app-settings',
@@ -30,6 +30,7 @@ export class AppSettingsComponent implements OnInit {
     showPassword = false;
     
     daqstoreType = DaqStoreType;
+    retationType = DaqStoreRetentionType;
     
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,
@@ -82,7 +83,7 @@ export class AppSettingsComponent implements OnInit {
 
     onSmtpTest() {
         this.smtpTesting = true;
-        let msg = <MailMessage>{ from: this.settings.smtp.username, to: this.smtpTestAddress, subject: 'FUXA', text: 'TEST' };
+        let msg = <MailMessage>{ from: this.settings.smtp.mailsender || this.settings.smtp.username, to: this.smtpTestAddress, subject: 'FUXA', text: 'TEST' };
         this.diagnoseService.sendMail(msg, this.settings.smtp).subscribe(() => {
             this.smtpTesting = false;
             var msg = '';

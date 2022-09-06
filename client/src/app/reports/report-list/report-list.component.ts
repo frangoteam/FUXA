@@ -62,7 +62,7 @@ export class ReportListComponent implements OnInit {
         this.editReport(new Report(Utils.getGUID(REPORT_PREFIX)), 1);
     }
 
-    onEditReport(report: Report, toAdd: number) {
+    onEditReport(report: Report) {
         this.editReport(report, 0);
     }
 
@@ -100,6 +100,6 @@ export class ReportListComponent implements OnInit {
     }
 
     private loadReports() {
-        this.dataSource.data = this.projectService.getReports();
+        this.dataSource.data = this.projectService.getReports().sort((a:Report, b:Report) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
     }
 }

@@ -51,5 +51,17 @@
                 </div>
             </div>
         </div>
+        <div [ngSwitch]="item.type">
+            <div *ngSwitchCase="actionRotate" class="action-blink">
+                <div class="my-form-field" style="padding-right: 10px;">
+                    <span>{{'gauges.property-action-minAngle' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.minAngle" type="number" style="width: 70px">
+                </div>
+                <div class="my-form-field">
+                    <span>{{'gauges.property-action-maxAngle' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.maxAngle" type="number" style="width: 70px">
+                </div>
+            </div>
+        </div>
     </div>
 </div>

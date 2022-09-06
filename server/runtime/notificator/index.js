@@ -283,8 +283,8 @@ function NotificatorManager(_runtime) {
                             pass: smtpServer.password
                         }
                     });
-                    if (!msg.from) {
-                        msg.from = smtpServer.username;
+                    if (!msg.from || smtpServer.mailsender) {
+                        msg.from = smtpServer.mailsender || smtpServer.username;
                     }
                     let info = await transporter.sendMail(msg);
                     console.log(info.messageId);

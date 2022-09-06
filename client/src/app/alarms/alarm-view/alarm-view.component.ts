@@ -6,7 +6,7 @@ import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AlarmQuery } from '../../_models/alarm';
+import { AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/alarm';
 
 @Component({
     selector: 'app-alarm-view',
@@ -22,8 +22,8 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     showheader = false;
     currentShowMode = 'collapse';
     alarmsPolling: any;
-    statusText = AlarmStatus;
-    priorityText = AlarmPriority;
+    statusText = AlarmStatusType;
+    priorityText = AlarmPriorityType;
     alarmShowType = AlarmShowType;
     showType = AlarmShowType.alarms;
     history = [];
@@ -146,7 +146,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onShowAlarmsHistory() {
         this.showType = AlarmShowType.history;
         this.displayColumns = this.historyColumns;
-        let query: AlarmQuery = <AlarmQuery>{ from: 'a', to: 'b' };
+        let query: AlarmQuery = <AlarmQuery>{ from: null, to: null };
         this.hmiService.getAlarmsHistory(query).subscribe(result => {
             if (result) {
                 result.forEach(alr => {
@@ -159,19 +159,6 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
             console.error('get Alarms history err: ' + err);
         });
     }
-}
-
-export enum AlarmStatus {
-    N = 'alarm.status-active',
-    NF = 'alarm.status-passive',
-    NA = 'alarm.status-active-ack',
-}
-
-export enum AlarmPriority {
-    highhigh = 'alarm.property-highhigh',
-    high = 'alarm.property-high',
-    low = 'alarm.property-low',
-    info = 'alarm.property-info'
 }
 
 export enum AlarmShowType {

@@ -78,7 +78,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                     }
 
                     // Do not update value if input is in focus!
-                    if(!(document.hasFocus && input.id == document.activeElement.id )){
+                    if(ga.property.options && ga.property.options.updated && !(document.hasFocus && input.id == document.activeElement.id)){
                         input.value = val;
                     }
                     // check actions
