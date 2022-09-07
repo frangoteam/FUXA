@@ -416,26 +416,21 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         // let htmlevent = this.getHtmlElement(ga.id);
         if (htmlevent.type === 'key-enter') {
             htmlevent.dom.onkeydown = function (ev) {
-                if (ev.keyCode === 13) { // ENTER key
+                if (ev.key == 'Enter') {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
 
                     let res = HtmlInputComponent.validateValue(htmlevent.dom.value, htmlevent.ga);
                     if(!res.valid){
-                        // if(res.errorText === 'html-input.out-of-range'){
-                        //     htmlevent.dom.setCustomValidity(`${self.translateService.instant(res.errorText)}. ${self.translateService.instant('html-input.min')}=${res.min}, ${self.translateService.instant('html-input.max')}=${res.max}`);   
-                        // } else{
-                        //     htmlevent.dom.setCustomValidity(self.translateService.instant(res.errorText));    
-                        // }
-                        // htmlevent.dom.reportValidity();
                         self.setInputValidityMessage(res, htmlevent.dom);
                     }
                     else{
                         self.gaugesManager.putEvent(htmlevent);
                         htmlevent.dom.blur();
                     }
-                } else if (ev.keyCode == 27) { // ESC key
+                } else if (ev.key == 'Escape') {
+                    
                     htmlevent.dom.blur();
                 }
             };
@@ -459,13 +454,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                         }, 300);
                     }
                 }
-                htmlevent.dom.onblur = function (ev) {
-                    // Not sure what is the point to call this one. This onblur() occurs 300ms after showing the dialog, when dialogs own input gets focus. Why shall we then try to hide the input dialog?
-                    // The reason why dialog is not being hidden is that toggleShowInputDialog(true) get called multiple times and the timer is then canceled.
-                    // self.toggleShowInputDialog(false);
-                }
-            } else {
-
+            }else{
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
                 
@@ -488,7 +477,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     if (variables.length && svgeles.length) {
                         self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
                     }
-
+``
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
                 }
