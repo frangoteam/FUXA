@@ -430,7 +430,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                         htmlevent.dom.blur();
                     }
                 } else if (ev.key == 'Escape') {
-                    
                     htmlevent.dom.blur();
                 }
             };
