@@ -427,7 +427,7 @@ function S7client(_data, _logger, _events) {
     var _readVars = function (vars) {
         return new Promise((resolve, reject) => {
             s7client.ReadMultiVars(vars, (err, res) => {
-                if (err) return this._getErr(err);
+                if (err) return _getErr(err);
                 let changed = [];
                 let errs = [];
 
@@ -502,7 +502,7 @@ function S7client(_data, _logger, _events) {
         }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
-                if (err) return this._getErr(err);
+                if (err) return _getErr(err);
                 let errs = [];
 
                 res = vars.map((v, i) => {

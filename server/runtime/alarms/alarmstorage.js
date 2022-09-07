@@ -101,10 +101,10 @@ function getAlarms() {
         if (!db_alarms) {
             reject(false);
         } else {
-            // var sql = "SELECT * FROM history WHERE dt BETWEEN ? and ? ORDER BY dt ASC";
-            // db_alarms.all(sql, [from, to], function (err, rows) {
-            var sql = "SELECT * FROM chronicle ORDER BY ontime DESC";
-            db_alarms.all(sql, function (err, rows) {
+            var start = from || 0;
+            var end = to || Number.MAX_SAFE_INTEGER;
+            var sql = "SELECT * FROM chronicle WHERE ontime BETWEEN ? and ? ORDER BY ontime DESC";
+            db_alarms.all(sql, [start, end], function (err, rows) {
                 if (err) {
                     reject(err);
                 } else {

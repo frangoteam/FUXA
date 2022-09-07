@@ -149,9 +149,12 @@ export class GaugeProperty {
     actions: GaugeAction[] = [];
     options: any;
     readonly: boolean;
-    text: string;           // Text property (used by button)
+    text: string;               // Text property (used by button)
 }
 
+export interface InputOptionsProperty {
+    updated: boolean;
+}
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;
@@ -176,7 +179,8 @@ export enum GaugeActionsType {
     stop = 'shapes.action-stop',
     clockwise = 'shapes.action-clockwise',
     anticlockwise = 'shapes.action-anticlockwise',
-    downup = 'shapes.action-downup'
+    downup = 'shapes.action-downup',
+    rotate = 'shapes.action-rotate'
 }
 
 export class GaugeAction {
@@ -193,6 +197,11 @@ export class GaugeActionBlink {
     fillA: string = null;
     fillB: string = null;
     interval: number = 1000;
+}
+
+export class GaugeActionRotate {
+    minAngle: number = 0;
+    maxAngle: number = 90;
 }
 
 export class GaugePropertyColor {

@@ -57,7 +57,6 @@ import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
 import { TesterComponent } from './tester/tester.component';
-import { customHttpProvider } from './_helpers/custom-http';
 import { TesterService } from './tester/tester.service';
 import { UserService } from './_services/user.service';
 import { SettingsService } from './_services/settings.service';
@@ -161,6 +160,7 @@ import { DataConverterService } from './_services/data-converter.service';
 import { ReportItemTextComponent } from './reports/report-editor/report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './reports/report-editor/report-item-table/report-item-table.component';
 import { CommandService } from './_services/command.service';
+import { ReportItemAlarmsComponent } from './reports/report-editor/report-item-alarms/report-item-alarms.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -285,6 +285,7 @@ export function createTranslateLoader(http: HttpClient) {
         LibImagesComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
+        ReportItemAlarmsComponent
    ],
     imports: [
         BrowserModule,
@@ -332,7 +333,6 @@ export function createTranslateLoader(http: HttpClient) {
         PluginService,
         SettingsService,
         TesterService,
-        customHttpProvider,
         httpInterceptorProviders,
         AuthService,
         GaugesManager,
@@ -414,6 +414,7 @@ export function createTranslateLoader(http: HttpClient) {
         LibImagesComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
+        ReportItemAlarmsComponent
     ],
     bootstrap: [AppComponent]
 })

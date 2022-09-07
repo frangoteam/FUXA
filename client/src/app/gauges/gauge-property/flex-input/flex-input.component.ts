@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Options } from 'ng5-slider';
 
-import { GaugeRangeProperty } from '../../../_models/hmi';
+import { GaugeProperty, GaugeRangeProperty, InputOptionsProperty } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
@@ -13,9 +13,10 @@ import { FlexVariableComponent } from '../flex-variable/flex-variable.component'
 })
 export class FlexInputComponent implements OnInit {
     @Input() data: any;
+    @Input() property: GaugeProperty;
     @Input() ranges: GaugeRangeProperty[];
     @Input() type: string;
-    @Input() inputType: string;
+    @Input() inputType: InputType;
     @Input() default: any;
     @ViewChild('unit') varunit: FlexVariableComponent;
     @ViewChild('digits') vardigits: FlexVariableComponent;
@@ -60,7 +61,9 @@ export class FlexInputComponent implements OnInit {
                 this.withValue = this.ranges[0].style[1];
             }
         } else if (this.isWithUnit()) {
-
+        } 
+        if (this.isWithUpdate()) {
+            this.property.options = this.property.options || <InputOptionsProperty>{ updated: false };
         }
         this.ranges.forEach(range => {
             if (!range.color) {
@@ -144,38 +147,27 @@ export class FlexInputComponent implements OnInit {
     }
 
     isWithRange() {
-        if (this.inputType === 'range') {
-            return true;
-        }
-        return false;
+        return this.inputType === InputType.range;
     }
 
     isMinMax() {
-        if (this.inputType === 'minmax') {
-            return true;
-        }
-        return false;
+        return this.inputType === InputType.minmax;
     }
 
     isWithRangeColor() {
-        if (this.inputType === 'range') {
-            return true;
-        }
-        return false;
+        return this.inputType === InputType.range;
     }
 
     isWithStep() {
-        if (this.inputType === 'step') {
-            return true;
-        }
-        return false;
+        return this.inputType === InputType.step;
     }
 
     isWithUnit() {
-        if (this.inputType === 'unit') {
-            return true;
-        }
-        return false;
+        return this.inputType === InputType.unit;
+    }
+
+    isWithUpdate() {
+        return this.inputType === InputType.update;
     }
 
     isInputMinMax(){
@@ -202,4 +194,14 @@ export class FlexInputComponent implements OnInit {
 
 export enum InputItemType {
     Color,
+}
+
+
+export enum InputType {
+    unit,
+    range,
+    text,
+    step,
+    minmax,
+    update,
 }

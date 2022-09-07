@@ -2,12 +2,15 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
+import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";  
 import { Utils } from '../../_helpers/utils';
 import { ReportItemTextComponent } from './report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './report-item-table/report-item-table.component';
+import { ReportItemAlarmsComponent } from './report-item-alarms/report-item-alarms.component';
+import { utils } from 'protractor';
+import { AlarmPropertyType, AlarmsType } from '../../_models/alarm';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;   
 
 @Component({
@@ -21,6 +24,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     itemTextType = Utils.getEnumKey(ReportItemType, ReportItemType.text);
     itemTableType = Utils.getEnumKey(ReportItemType, ReportItemType.table);
+    itemAlarmsType = Utils.getEnumKey(ReportItemType, ReportItemType.alarms);
+    fontSize = [6, 8, 10, 12, 14, 16, 18, 20];
     report: Report;
     schedulingType = ReportSchedulingType;
 
@@ -35,7 +40,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             id: [this.report.id, Validators.required],
             name: [this.report.name, Validators.required],
             receiver: [this.report.receiver],
-            scheduling: [this.report.scheduling]
+            scheduling: [this.report.scheduling],
+            marginLeft: [this.report.docproperty.pageMargins[0]],
+            marginTop: [this.report.docproperty.pageMargins[1]],
+            marginRight: [this.report.docproperty.pageMargins[2]],
+            marginBottom: [this.report.docproperty.pageMargins[3]],
         });
     }
 
@@ -55,7 +64,10 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     onOkClick(): void {
-        this.report = {...this.report, ...this.myForm.value};
+        this.report.id = this.myForm.controls.id.value;
+        this.report.name = this.myForm.controls.name.value;
+        this.report.receiver = this.myForm.controls.receiver.value;
+        this.report.scheduling = this.myForm.controls.scheduling.value;
 
         if (this.data.editmode < 0) {
             this.dialogRef.close(this.report);
@@ -64,7 +76,22 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         }
     }
 
+    onSchedulingChanged() {
+        this.report.content.items.forEach(item => {
+            if (item.type === this.itemTableType) {
+                (<ReportItemTable>item).range = this.myForm.controls.scheduling.value;
+            } else if (item.type === this.itemAlarmsType) {
+                (<ReportItemAlarms>item).range = this.myForm.controls.scheduling.value;
+            }
+        });
+        this.onReportChanged();
+    }
+
     onReportChanged() {
+        this.report.docproperty.pageMargins = [this.myForm.controls.marginLeft.value, 
+                                                this.myForm.controls.marginTop.value, 
+                                                this.myForm.controls.marginRight.value, 
+                                                this.myForm.controls.marginBottom.value];
         const pdfDocGenerator = pdfMake.createPdf(this.getPdfContent(this.report));
         pdfDocGenerator.getDataUrl((dataUrl) => {
             const targetIframe = document.querySelector('iframe');
@@ -76,16 +103,26 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     getPdfContent(report: Report)  {
         let docDefinition = {...report.docproperty };
-        docDefinition['header'] = 'FUXA by frangoteam';
+        docDefinition['header'] = { text: 'FUXA by frangoteam', style:[{fontSize: 6}]};
+        docDefinition['footer'] = function(currentPage, pageCount) { 
+            return { text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]} ; 
+        },
         docDefinition['content'] = [];
         report.content.items.forEach((item: ReportItem) => {
             if (item.type === this.itemTextType) {
                 const itemText = <ReportItemText>item;
-                docDefinition['content'].push({ text: itemText.text });
+                docDefinition['content'].push({ text: itemText.text, style: [{ alignment: item.align, fontSize: item.size }] });
             } else if (item.type === this.itemTableType) {
                 const itemTable = ReportEditorComponent.getTableContent(<ReportItemTable>item);
                 const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemTable>item).range);
-                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}` });
+                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                    style: [{ fontSize: item.size }] });
+                docDefinition['content'].push(itemTable);
+            } else if (item.type === this.itemAlarmsType) {
+                const itemTable = ReportEditorComponent.getAlarmsContent(<ReportItemAlarms>item);
+                const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemAlarms>item).range);
+                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                    style: [{ fontSize: item.size }] });
                 docDefinition['content'].push(itemTable);
             }
         });
@@ -93,13 +130,19 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     onAddItem(type: ReportItemType, index: number, edit: boolean) {
-        let item = <ReportItem>{ type: type };
+        let item = <ReportItem>{ type: type, align: 'left', size: 10 };
         if (type === this.itemTextType) {
-            item = {...item, ...<ReportItemText> { text: '' }};
+            item = {...item, ...<ReportItemText> { text: '' }, ... { style: [{ alignment: item.align }]}};
         } else if (type === this.itemTableType) {
             item = {...item, ...<ReportItemTable> {
                 columns: [],
                 interval: Utils.getEnumKey(ReportIntervalType, ReportIntervalType.hour),
+                range: this.myForm.value.scheduling,
+            }};
+        } else if (type === this.itemAlarmsType) {
+            item = {...item, ...<ReportItemAlarms> {
+                priority: Utils.convertArrayToObject(Object.values(AlarmsType), true),
+                property: Utils.convertArrayToObject(Object.values(AlarmPropertyType), true),
                 range: this.myForm.value.scheduling,
             }};
         }
@@ -115,6 +158,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
         if (item.type === this.itemTableType) {
             dialogRef = this.dialog.open(ReportItemTableComponent, dlgconfig);
+        } else if (item.type === this.itemAlarmsType) {
+            dialogRef = this.dialog.open(ReportItemAlarmsComponent, dlgconfig);
         } else  {
             dialogRef = this.dialog.open(ReportItemTextComponent, dlgconfig);
         }
@@ -141,17 +186,46 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         this.onReportChanged();
     }
 
+    onAlignItem(item: ReportItem, align: string) {
+        item.align = align;
+        this.onReportChanged();
+    }
+
+    onFontSizeItem(item: ReportItem, size: number) {
+        item.size = size;
+        this.onReportChanged();
+    }
+
     static getTableContent(item: ReportItemTable) {
-        let content = { layout: 'lightHorizontalLines' }; // optional        
+        let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional        
         let header = item.columns.map<any>(col => { 
             return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
         });
-        let values = item.columns.map(col => col.tag.address || '');
+        let values = item.columns.map(col => col.tag.address || '...');
         content['table'] = {
             // headers are automatically repeated if the table spans over multiple pages
             // you can declare how many rows should be treated as headers
             headerRows: 1,
             widths: item.columns.map(col => col.width), //[ '*', 'auto', 100],
+            body: [
+                header,
+                values
+            ]
+        }
+        return content;
+    }
+
+    static getAlarmsContent(item: ReportItemAlarms) {
+        let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
+        let header = Object.values(item.propertyText).map<any>(col => { 
+            return { text: col, bold: true, style: [{ alignment: 'left' }] }
+        });
+        let values = Object.values(item.propertyText).map(col => '...');
+        content['table'] = {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 1,
+            widths: Object.values(item.propertyText).map(col => '*'), //[ '*', 'auto', 100],
             body: [
                 header,
                 values
