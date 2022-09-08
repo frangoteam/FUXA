@@ -103,10 +103,14 @@ function getNodesValues(tagsid, fromts, tots, options) {
 
 function checkRetention() {
     return new Promise(async function (resolve, reject) {
-        if (_getDbType() === DaqStoreTypeEnum.SQlite) {
-            SqliteDB.checkRetention(_getRetentionLimit(settings.daqstore.retention), settings.dbDir, (err) => {
-                logger.error(`daqstorage.checkRetention remove file failed! ${err}`);
-            });
+        if (settings.daqstore && _getDbType() === DaqStoreTypeEnum.SQlite) {
+            try {
+                SqliteDB.checkRetention(_getRetentionLimit(settings.daqstore.retention), settings.dbDir, (err) => {
+                    logger.error(`daqstorage.checkRetention remove file failed! ${err}`);
+                });
+            } catch (err) {
+                logger.error(err);
+            }
         }
         logger.info(`daqstorage.checkRetention processed`);
         resolve();
