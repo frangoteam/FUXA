@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 var express = require("express");
 const authJwt = require('../jwt-helper');
-const imageGenerator = require('../../runtime/jobs/helper/image-generator');
+const Report = require('../../runtime/jobs/report');
 
 var runtime;
 var secureFnc;
@@ -78,19 +78,9 @@ module.exports = {
             } else {
                 try {
                     var query = JSON.parse(req.query.param);
-                    var result = { id: null, content: null };
-                    imageGenerator.createImage().then((content) => {
-                        // result.id = query.chart.id;
-                        // result.content = content.toString('base64');
+                    const report = Report.create(null, runtime);
+                    report.getChartImage(query.chart, query.range).then((content) => {
                         res.end(content.toString('base64'));
-                        // const filePath = path.join(runtime.settings.uploadFileDir, '/_spool_for_report.png');
-                        // fs.writeFileSync(filePath, content);
-                        // res.header('Content-Type', 'image/png;base64');
-                        // fs.readFile(filePath,
-                        //     function (err, content) {
-                        //         // Serving the image
-                        //         res.end(content.toString('base64'));
-                        // });
                     }).catch(function (err) {
                         if (err.code) {
                             res.status(400).json({ error: err.code, message: err.message });

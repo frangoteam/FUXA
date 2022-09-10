@@ -5,6 +5,7 @@ const utils = require('../utils');
 const Pdfmake = require('pdfmake');
 var fs = require('fs')
 var path = require('path');
+const imageGenerator = require('./helper/image-generator');
 
 'use strict';
 
@@ -46,6 +47,18 @@ function Report(_property, _runtime) {
 
     this.getProperty = function () {
         return property;
+    }
+
+    this.getChartImage = function (chart, range, values) {
+        return new Promise(async function (resolve, reject) {
+            const timeRange = _getDateRange(range);
+            imageGenerator.createImage().then((content) => {
+                resolve(content.toString('base64'));
+            }).catch(function (err) {
+                reject(err);
+                logger.error("createImage: " + err);
+            });
+        });
     }
 
     var _isToExecute = function (date) {

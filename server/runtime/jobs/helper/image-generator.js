@@ -51,10 +51,7 @@ const createImage = async (file) => {
         }
     };
 
-    const imageBuffer = await chartJSNodeCanvas.renderToBuffer(configuration);
-    // const dataUrl = await chartJSNodeCanvas.renderToDataURL(configuration);
-    // const stream = await chartJSNodeCanvas.renderToStream(configuration);
-    return imageBuffer;
+    return await chartJSNodeCanvas.renderToBuffer(configuration);
 }
 
 module.exports = {

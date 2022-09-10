@@ -148,25 +148,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                             docDefinition['content'].push({
                                 image: `data:image/png;base64,${this.imagesList[itemChart.chart.id]}`,
                                 // if you specify both width and height - image will be stretched
-                                width: 450,
-                                height: 450
+                                width: 500,
+                                // height: 70
                             });
                         }
-                        // this.resourcesService.generateImage(<ReportItemChart>item).subscribe((result: any) => {
-                        //     docDefinition['content'].push({
-                        //         image: `data:image/png;base64,${result}`,
-                        //         // if you specify both width and height - image will be stretched
-                        //         width: 450,
-                        //         height: 450
-                        //     });
-                        //     observer.next(docDefinition);
-                        // }, err => {
-                        //     console.error('get Resources images error: ' + err);
-                        // });
                     }
-                    // } else {
-                    //     observer.next(docDefinition);
-                    // }
                 });
                 observer.next(docDefinition);
             }, error => {
@@ -179,14 +165,16 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     private checkImages(items: ReportItem[]): Observable<ImageItem[]> {
         let source: Array<Observable<any>> = [];
         items.forEach((item: ReportItem) => {
-            source.push(this.resourcesService.generateImage(<ReportItemChart>item).pipe(
-                map(result => {
-                    return { id: (<ReportItemChart>item).chart.id, content: result };
-                })
-            ));
+            const chartItem = <ReportItemChart>item;
+            if (!this.imagesList[chartItem.chart.id]) {
+                source.push(this.resourcesService.generateImage(<ReportItemChart>item).pipe(
+                    map(result => {
+                        return { id: (<ReportItemChart>item).chart.id, content: result };
+                    })
+                ));
+            }
         });
         return forkJoin(source).pipe(
-            tap(console.log),
             map((results) => [...results])
         );
     }
