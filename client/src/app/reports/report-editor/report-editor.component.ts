@@ -2,7 +2,7 @@ import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
+import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemChart, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";  
 import { Utils } from '../../_helpers/utils';
@@ -11,6 +11,10 @@ import { ReportItemTableComponent } from './report-item-table/report-item-table.
 import { ReportItemAlarmsComponent } from './report-item-alarms/report-item-alarms.component';
 import { utils } from 'protractor';
 import { AlarmPropertyType, AlarmsType } from '../../_models/alarm';
+import { ReportItemChartComponent } from './report-item-chart/report-item-chart.component';
+import { ResourcesService } from '../../_services/resources.service';
+import { forkJoin, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;   
 
 @Component({
@@ -25,14 +29,18 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     itemTextType = Utils.getEnumKey(ReportItemType, ReportItemType.text);
     itemTableType = Utils.getEnumKey(ReportItemType, ReportItemType.table);
     itemAlarmsType = Utils.getEnumKey(ReportItemType, ReportItemType.alarms);
+    itemChartType = Utils.getEnumKey(ReportItemType, ReportItemType.chart);
     fontSize = [6, 8, 10, 12, 14, 16, 18, 20];
     report: Report;
     schedulingType = ReportSchedulingType;
+    
+    private imagesList = {};
 
     constructor(public dialogRef: MatDialogRef<ReportEditorComponent>,
         public dialog: MatDialog,
         private fb: FormBuilder,
         private translateService: TranslateService,
+        private resourcesService: ResourcesService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.report = data.report;
@@ -92,41 +100,95 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                                                 this.myForm.controls.marginTop.value, 
                                                 this.myForm.controls.marginRight.value, 
                                                 this.myForm.controls.marginBottom.value];
-        const pdfDocGenerator = pdfMake.createPdf(this.getPdfContent(this.report));
-        pdfDocGenerator.getDataUrl((dataUrl) => {
-            const targetIframe = document.querySelector('iframe');
-            targetIframe.src = dataUrl;
-            targetIframe.style.width = '100%';
-            targetIframe.style.height = '100%';
+        this.getPdfContent(this.report).subscribe(content => {
+            const pdfDocGenerator = pdfMake.createPdf(content);
+            pdfDocGenerator.getDataUrl((dataUrl) => {
+                const targetIframe = document.querySelector('iframe');
+                targetIframe.src = dataUrl;
+                targetIframe.style.width = '100%';
+                targetIframe.style.height = '100%';
+            });
         });
     }
 
-    getPdfContent(report: Report)  {
-        let docDefinition = {...report.docproperty };
-        docDefinition['header'] = { text: 'FUXA by frangoteam', style:[{fontSize: 6}]};
-        docDefinition['footer'] = function(currentPage, pageCount) { 
-            return { text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]} ; 
-        },
-        docDefinition['content'] = [];
-        report.content.items.forEach((item: ReportItem) => {
-            if (item.type === this.itemTextType) {
-                const itemText = <ReportItemText>item;
-                docDefinition['content'].push({ text: itemText.text, style: [{ alignment: item.align, fontSize: item.size }] });
-            } else if (item.type === this.itemTableType) {
-                const itemTable = ReportEditorComponent.getTableContent(<ReportItemTable>item);
-                const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemTable>item).range);
-                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
-                    style: [{ fontSize: item.size }] });
-                docDefinition['content'].push(itemTable);
-            } else if (item.type === this.itemAlarmsType) {
-                const itemTable = ReportEditorComponent.getAlarmsContent(<ReportItemAlarms>item);
-                const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemAlarms>item).range);
-                docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
-                    style: [{ fontSize: item.size }] });
-                docDefinition['content'].push(itemTable);
-            }
+    getPdfContent(report: Report): Observable<Object>  {
+        return new Observable((observer) => {
+            let docDefinition = {...report.docproperty };
+            docDefinition['header'] = { text: 'FUXA by frangoteam', style:[{fontSize: 6}]};
+            docDefinition['footer'] = (currentPage, pageCount) => {
+                return { text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]};
+            };
+            // first resolve async images from server
+            this.checkImages(report.content.items.filter(item => item.type === this.itemChartType)).subscribe((images: ImageItem[] ) => {
+                images.forEach((item: ImageItem) => {
+                    if (!this.imagesList[item.id]) {
+                        this.imagesList[item.id] = item.content;
+                    }
+                });
+                docDefinition['content'] = [];
+                report.content.items.forEach((item: ReportItem) => {
+                    if (item.type === this.itemTextType) {
+                        const itemText = <ReportItemText>item;
+                        docDefinition['content'].push({ text: itemText.text, style: [{ alignment: item.align, fontSize: item.size }] });
+                    } else if (item.type === this.itemTableType) {
+                        const itemTable = ReportEditorComponent.getTableContent(<ReportItemTable>item);
+                        const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemTable>item).range);
+                        docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                            style: [{ fontSize: item.size }] });
+                        docDefinition['content'].push(itemTable);
+                    } else if (item.type === this.itemAlarmsType) {
+                        const itemTable = ReportEditorComponent.getAlarmsContent(<ReportItemAlarms>item);
+                        const tableDateRange = ReportEditorComponent.getDateRange((<ReportItemAlarms>item).range);
+                        docDefinition['content'].push({ text: `${tableDateRange.begin.toLocaleDateString()} - ${tableDateRange.end.toLocaleDateString()}`,
+                            style: [{ fontSize: item.size }] });
+                        docDefinition['content'].push(itemTable);
+                    } else if (item.type === this.itemChartType) {
+                        const itemChart = <ReportItemChart>item;
+                        if (itemChart.chart && this.imagesList[itemChart.chart.id]) {
+                            docDefinition['content'].push({
+                                image: `data:image/png;base64,${this.imagesList[itemChart.chart.id]}`,
+                                // if you specify both width and height - image will be stretched
+                                width: 450,
+                                height: 450
+                            });
+                        }
+                        // this.resourcesService.generateImage(<ReportItemChart>item).subscribe((result: any) => {
+                        //     docDefinition['content'].push({
+                        //         image: `data:image/png;base64,${result}`,
+                        //         // if you specify both width and height - image will be stretched
+                        //         width: 450,
+                        //         height: 450
+                        //     });
+                        //     observer.next(docDefinition);
+                        // }, err => {
+                        //     console.error('get Resources images error: ' + err);
+                        // });
+                    }
+                    // } else {
+                    //     observer.next(docDefinition);
+                    // }
+                });
+                observer.next(docDefinition);
+            }, error => {
+                console.error('get Resources images error: ' + error);
+                observer.next(docDefinition);
+            });
         });
-        return docDefinition;
+    }
+
+    private checkImages(items: ReportItem[]): Observable<ImageItem[]> {
+        let source: Array<Observable<any>> = [];
+        items.forEach((item: ReportItem) => {
+            source.push(this.resourcesService.generateImage(<ReportItemChart>item).pipe(
+                map(result => {
+                    return { id: (<ReportItemChart>item).chart.id, content: result };
+                })
+            ));
+        });
+        return forkJoin(source).pipe(
+            tap(console.log),
+            map((results) => [...results])
+        );
     }
 
     onAddItem(type: ReportItemType, index: number, edit: boolean) {
@@ -145,6 +207,10 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                 property: Utils.convertArrayToObject(Object.values(AlarmPropertyType), true),
                 range: this.myForm.value.scheduling,
             }};
+        } else if (type === this.itemChartType) {
+            item = {...item, ...<ReportItemChart> {
+                range: this.myForm.value.scheduling,
+            }};
         }
         this.onEditItem(item, index, edit);
     }
@@ -160,6 +226,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             dialogRef = this.dialog.open(ReportItemTableComponent, dlgconfig);
         } else if (item.type === this.itemAlarmsType) {
             dialogRef = this.dialog.open(ReportItemAlarmsComponent, dlgconfig);
+        } else if (item.type === this.itemChartType) {
+            dialogRef = this.dialog.open(ReportItemChartComponent, dlgconfig);
         } else  {
             dialogRef = this.dialog.open(ReportItemTextComponent, dlgconfig);
         }
@@ -271,4 +339,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 interface DateTimeRange {
     begin: Date,
     end: Date
+}
+
+interface ImageItem {
+    id: string,
+    content: string,
 }

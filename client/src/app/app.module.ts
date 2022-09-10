@@ -161,6 +161,7 @@ import { ReportItemTextComponent } from './reports/report-editor/report-item-tex
 import { ReportItemTableComponent } from './reports/report-editor/report-item-table/report-item-table.component';
 import { CommandService } from './_services/command.service';
 import { ReportItemAlarmsComponent } from './reports/report-editor/report-item-alarms/report-item-alarms.component';
+import { ReportItemChartComponent } from './reports/report-editor/report-item-chart/report-item-chart.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -285,7 +286,8 @@ export function createTranslateLoader(http: HttpClient) {
         LibImagesComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
-        ReportItemAlarmsComponent
+        ReportItemAlarmsComponent,
+        ReportItemChartComponent
    ],
     imports: [
         BrowserModule,
@@ -414,7 +416,8 @@ export function createTranslateLoader(http: HttpClient) {
         LibImagesComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
-        ReportItemAlarmsComponent
+        ReportItemAlarmsComponent,
+        ReportItemChartComponent
     ],
     bootstrap: [AppComponent]
 })

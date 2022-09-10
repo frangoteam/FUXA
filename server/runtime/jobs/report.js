@@ -1,7 +1,7 @@
 /*
 * Report: get data, create/send/store pdf
 */
-var utils = require('../utils');
+const utils = require('../utils');
 const Pdfmake = require('pdfmake');
 var fs = require('fs')
 var path = require('path');
