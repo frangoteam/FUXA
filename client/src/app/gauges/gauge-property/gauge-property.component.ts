@@ -58,6 +58,8 @@ export class GaugePropertyComponent implements OnInit {
             this.flexHead.withInput = InputType.update;
         } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
             this.flexHead.withInput = InputType.unit;
+        } else if (this.dialogType === GaugeDialogType.Input){
+            this.flexHead.withInput = InputType.unit;
         } else {
             this.flexHead.defaultValue = this.defaultValue;
             this.flexHead.withInput = InputType.range;
@@ -183,7 +185,8 @@ export enum GaugeDialogType {
     Switch,
     Graph,
     Iframe,
-    Table
+    Table,
+    Input
 }
 
 @Component({
