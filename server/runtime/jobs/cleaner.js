@@ -6,7 +6,7 @@ var fs = require('fs')
 var path = require('path');
 
 'use strict';
-const timeRange = {from: 15, to: 16};
+const timeRange = {from: 1, to: 2};
 
 function Cleaner(_runtime) {
     var runtime = _runtime;

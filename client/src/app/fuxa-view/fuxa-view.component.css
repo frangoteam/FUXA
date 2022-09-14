@@ -110,6 +110,8 @@
     padding: 5px;
     background-color: #fff;
     min-width: 80px;
+    border: 0.5px solid #888;
+    border-radius: 2px;
 }
 
 .dialog-input input {
@@ -118,7 +120,7 @@
     padding: 6px 3px 7px 4px;
     width: 100%;
     display: block;
-    margin: 0 auto;
+    margin: 2px auto;
 }
 
 .dialog-input button {

@@ -638,6 +638,11 @@
     "html-switch.property-font-size": "Font size",
     "html-switch.property-font": "Font",
 
+    "html-input.min": "Min",
+    "html-input.max": "Max",
+    "html-input.out-of-range": "Value out of range",
+    "html-input.not-a-number": "Value is not a number",
+
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",
     "editor.tools-zoomlevel-fitsection": "Fit to selection",
@@ -834,6 +839,7 @@
     "gauges.property-interval-msec": "Interval (msec.)",
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set a Tag of internal device",
+    "gauges.property-input-range": "Allowed input range",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
