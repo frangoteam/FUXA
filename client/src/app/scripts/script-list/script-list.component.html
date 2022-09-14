@@ -40,6 +40,12 @@
                 <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
             </ng-container>
 
+            <!-- Mode Column -->
+            <ng-container matColumnDef="mode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-mode' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.mode || 'SERVER'}} </mat-cell>
+            </ng-container>
+            
             <!-- Button edit options row -->
             <ng-container matColumnDef="options">
                 <mat-header-cell *matHeaderCellDef></mat-header-cell>
@@ -50,6 +56,7 @@
                     <mat-menu #optionsgMenu [overlapTrigger]="false">
                         <button mat-menu-item (click)="onEditScriptScheduling(element)" style="font-size: 14px;">{{'scripts.list-scheduling' | translate}}</button>
                         <button mat-menu-item (click)="onEditScriptPermission(element)" style="font-size: 14px;">{{'scripts.list-permission' | translate}}</button>
+                        <button mat-menu-item (click)="onEditScriptMode(element)" style="font-size: 14px;">{{'scripts.list-mode' | translate}}</button>
                     </mat-menu>
                 </mat-cell>
             </ng-container>

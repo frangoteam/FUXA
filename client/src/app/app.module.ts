@@ -161,6 +161,7 @@ import { ReportItemTextComponent } from './reports/report-editor/report-item-tex
 import { ReportItemTableComponent } from './reports/report-editor/report-item-table/report-item-table.component';
 import { CommandService } from './_services/command.service';
 import { ReportItemAlarmsComponent } from './reports/report-editor/report-item-alarms/report-item-alarms.component';
+import { ScriptModeComponent } from './scripts/script-mode/script-mode.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -254,6 +255,7 @@ export function createTranslateLoader(http: HttpClient) {
         ScriptEditorComponent,
         ScriptSchedulingComponent,
         ScriptPermissionComponent,
+        ScriptModeComponent,
         ReportListComponent,
         ReportEditorComponent,
         DialogScriptParam,
@@ -391,6 +393,7 @@ export function createTranslateLoader(http: HttpClient) {
         ScriptEditorComponent,
         ScriptSchedulingComponent,
         ScriptPermissionComponent,
+        ScriptModeComponent,
         ReportListComponent,
         ReportEditorComponent,
         TextListComponent,

@@ -624,6 +624,7 @@ export class ProjectService {
                 exist.name = script.name;
                 exist.code = script.code;
                 exist.parameters = script.parameters;
+                exist.mode = script.mode;
             } else {
                 this.projectData.scripts.push(script);
             }
