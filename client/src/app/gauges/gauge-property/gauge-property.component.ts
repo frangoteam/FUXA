@@ -9,7 +9,7 @@ import { FlexActionComponent } from './flex-action/flex-action.component';
 import { GaugeProperty, GaugeSettings, View } from '../../_models/hmi';
 import { Script } from '../../_models/script';
 import { UserGroups } from '../../_models/user';
-import { InputType } from './flex-input/flex-input.component';
+import { PropertyType } from './flex-input/flex-input.component';
 
 @Component({
     selector: 'gauge-property',
@@ -54,21 +54,19 @@ export class GaugePropertyComponent implements OnInit {
 
         this.defaultValue = this.data.default;
 
-        if (this.dialogType === GaugeDialogType.OnlyValue) {
-            this.flexHead.withInput = InputType.update;
+        if (this.dialogType === GaugeDialogType.Input) {
+            this.flexHead.withProperty = PropertyType.input;
         } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
-            this.flexHead.withInput = InputType.unit;
-        } else if (this.dialogType === GaugeDialogType.Input){
-            this.flexHead.withInput = InputType.unit;
+            this.flexHead.withProperty = PropertyType.output;
         } else {
             this.flexHead.defaultValue = this.defaultValue;
-            this.flexHead.withInput = InputType.range;
+            this.flexHead.withProperty = PropertyType.range;
             if (this.dialogType === GaugeDialogType.ValueWithRef) {
-                this.flexHead.withInput = InputType.text;
+                this.flexHead.withProperty = PropertyType.text;
             } else if (this.dialogType === GaugeDialogType.Step) {
-                this.flexHead.withInput = InputType.step;
+                this.flexHead.withProperty = PropertyType.step;
             } else if (this.dialogType === GaugeDialogType.MinMax) {
-                this.flexHead.withInput = InputType.minmax;
+                this.flexHead.withProperty = PropertyType.minmax;
             }
         }
 
@@ -173,7 +171,6 @@ export enum GaugeDialogType {
     Range,
     RangeAndText,
     RangeWithAlarm,
-    OnlyValue,
     ValueAndUnit,
     ValueWithRef,
     Step,

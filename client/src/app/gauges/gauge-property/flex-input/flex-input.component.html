@@ -10,15 +10,17 @@
             <div *ngIf="isWithRangeColor()" style="display: inline-block;">
                 <div class="my-form-field">
                     <span>{{'gauges.property-input-color' | translate}}</span>
-                    <input [(colorPicker)]="item.color" [value]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
-                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
-                        style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+                    <input [(colorPicker)]="item.color" [value]="item.color" [style.background]="item.color" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                        [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+                        [cpOKButtonClass]="'cpOKButtonClass'" class="input-color" style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'"
+                        [cpOutputFormat]="'hex'" />
                 </div>
                 <div class="my-form-field" style="margin-left: 10px;">
                     <span>{{'gauges.property-input-stroke' | translate}}</span>
-                    <input [(colorPicker)]="item.stroke" [value]="item.stroke" [style.background]="item.stroke" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
-                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color"
-                        style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'"/>
+                    <input [(colorPicker)]="item.stroke" [value]="item.stroke" [style.background]="item.stroke" [cpPresetColors]="defaultColor"
+                        [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
+                        [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color" style="width:70px;" [cpPosition]="'auto'"
+                        [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'" />
                 </div>
             </div>
             <div class="item-remove">
@@ -43,9 +45,9 @@
                 </div>
                 <div class="my-form-field" style="width: 60px;margin-left: 20px;">
                     <span>{{'gauges.property-input-color' | translate}}</span>
-                    <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
-                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                        class="input-color" style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
+                    <input [(colorPicker)]="item.color" [style.background]="getColor(item)" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                        [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+                        [cpOKButtonClass]="'cpOKButtonClass'" class="input-color" style="width:70px;" [cpPosition]="'auto'" [cpAlphaChannel]="'always'" />
                 </div>
                 <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 30px" [(ngModel)]="withLabel">Range</mat-checkbox> -->
                 <!-- <mat-checkbox class="input-minmax-cb" style="padding-left: 20px" [(ngModel)]="withValue">Value</mat-checkbox> -->
@@ -67,12 +69,12 @@
                 </button>
             </div>
         </div>
-        <div *ngIf="isWithUnit()" class="item-unit">
+        <div *ngIf="isOutputCtrl()" class="item-unit">
             <flex-variable #unit [data]="data" (onchange)="onUnitChanged(item, $event)" [variableId]="item.textId" [variableValue]="item.text"
                 [variableLabel]="'gauges.property-input-unit'">
             </flex-variable>
-            <flex-variable #digits [data]="data" (onchange)="onFormatDigitChanged(item, $event)" [variableId]="item.fractionDigitsId" [variableValue]="item.fractionDigits"
-                [variableLabel]="'gauges.property-format-digits'">
+            <flex-variable #digits [data]="data" (onchange)="onFormatDigitChanged(item, $event)" [variableId]="item.fractionDigitsId"
+                [variableValue]="item.fractionDigits" [variableLabel]="'gauges.property-format-digits'">
             </flex-variable>
         </div>
         <div *ngIf="isInputMinMax()">
@@ -89,10 +91,24 @@
             </div>
         </div>
     </div>
-    <div *ngIf="isWithUpdate()" class="item-unit">
-        <div class="my-form-field mt15 ml20">
+    <div *ngIf="isInputCtrl()" class="mt15">
+        <div class="my-form-field ml20">
             <span>{{'gauges.property-update-enabled' | translate}}</span>
             <mat-slide-toggle color="primary" [(ngModel)]="property.options.updated" class="ml20"></mat-slide-toggle>
         </div>
+        <div class="my-form-field ml30">
+            <span>{{'gauges.property-numeric-enabled' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="property.options.numeric" class="ml20"></mat-slide-toggle>
+        </div>
+        <ng-container *ngIf="property.options.numeric">
+            <div class="my-form-field ml20">
+                <span>{{'gauges.property-input-min' | translate}}</span>
+                <input numberOnly [(ngModel)]="property.options.min" type="number" style="width: 80px">
+            </div>
+            <div class="my-form-field ml20">
+                <span>{{'gauges.property-input-max' | translate}}</span>
+                <input numberOnly [(ngModel)]="property.options.max" type="number" style="width: 80px">
+            </div>
+        </ng-container>
     </div>
 </div>

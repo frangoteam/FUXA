@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus, GaugePropertyColor, GaugeAction } from '../../_models/hmi';
 
 import { Utils } from '../../_helpers/utils';
+import { PropertyType } from '../gauge-property/flex-input/flex-input.component';
 
 // declare var SVG: any;
 
@@ -62,7 +63,7 @@ export class GaugeBaseComponent implements OnInit {
 
     static getUnit(pro: GaugeProperty, gaugeStatus: GaugeStatus) {
         if (pro) {
-            if (pro.ranges && pro.ranges.length > 0 && pro.ranges[0].type === 'unit') {
+            if (pro.ranges && pro.ranges.length > 0 && pro.ranges[0].type === PropertyType.output) {
                 if (pro.ranges[0].textId && !Utils.isNullOrUndefined(gaugeStatus.variablesValue[pro.ranges[0].textId])) {
                     pro.ranges[0].text = gaugeStatus.variablesValue[pro.ranges[0].textId];
                 }

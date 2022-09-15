@@ -686,8 +686,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             let ele = document.getElementById(event.actparam);
             if (ele) {
                 let input = null;
-                for (let i = 0; i < GaugesManager.GaugeWithInput.length; i++) {
-                    input = Utils.searchTreeStartWith(ele, GaugesManager.GaugeWithInput[i]);
+                for (let i = 0; i < GaugesManager.GaugeWithProperty.length; i++) {
+                    input = Utils.searchTreeStartWith(ele, GaugesManager.GaugeWithProperty[i]);
                     if (input) {
                         break;
                     }
