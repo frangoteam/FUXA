@@ -154,6 +154,9 @@ export class GaugeProperty {
 
 export interface InputOptionsProperty {
     updated: boolean;
+    numeric?: boolean;
+    min?: number;
+    max?: number;
 }
 export interface IPropertyVariable {
     /** Tag id */

@@ -29,7 +29,7 @@ export class FlexHeadComponent implements OnInit {
     @ViewChild('flexinput') flexInput: FlexInputComponent;
 
     variable: any;
-    withInput = null;
+    withProperty = null;
     alarme: any;
     currentTag: Tag = null;
     defaultValue: any;
@@ -68,7 +68,7 @@ export class FlexHeadComponent implements OnInit {
     }
 
     getProperty() {
-        if (this.withInput) {
+        if (this.withProperty) {
             this.property.ranges = this.flexInput.getRanges();
         }
         return this.property;
