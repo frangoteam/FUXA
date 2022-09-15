@@ -36,6 +36,8 @@
 
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
+    "dlg.layout-lbl-logo": "Logo",
+    "dlg.layout-lbl-icon": "Icon",
     "dlg.layout-lbl-sview": "Start View",
     "dlg.layout-lbl-login-start": "Show login on start",
     "dlg.layout-lbl-zoom": "Zoom",

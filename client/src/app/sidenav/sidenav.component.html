@@ -1,8 +1,9 @@
 <div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type"
                         [style.background-color]="layoutNavigation.bkcolor" [style.color]="layoutNavigation.fgcolor">
     <mat-list style="background-color: inherit;">
-        <mat-list-item style="height: 35px; font-weight: bold; padding-left: 10px;padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="layoutNavigation.fgcolor">
-            {{'sidenav.title' | translate}}
+        <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="layoutNavigation.fgcolor">
+            <span *ngIf="!logo; else hasLogo">{{'sidenav.title' | translate}}</span>
+            <ng-template #hasLogo><img src="{{logo}}" alt="{{sidenav.title}}" style="max-width: 100%; max-height: 100%;"></ng-template>
         </mat-list-item>
         <mat-list-item *ngFor="let item of layout.navigation.items; let i = index" [ngClass]="'menu-item-' + layout.navigation.type" style="width: unset" [style.color]="layoutNavigation.fgcolor">
             <button type="button" mat-button class="sidenav-btn" (click)="onGoTo(item)" [ngSwitch]="layout.navigation.type">
