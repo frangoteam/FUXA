@@ -17,7 +17,6 @@ import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, 
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
-import { HmiService } from "../_services/hmi.service";
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
@@ -97,6 +96,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             this.clearGaugeStatus();
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
+            }
+            if (this.inputDialogRef) {
+                this.inputDialogRef.nativeElement.style.display = 'none';
             }
         } catch (err) {
             console.error(err);
