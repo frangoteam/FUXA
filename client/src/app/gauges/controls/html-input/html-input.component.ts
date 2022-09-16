@@ -3,6 +3,7 @@ import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
 import { GaugeSettings, Variable, GaugeStatus, GaugeAction, Event, GaugeActionsType } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+import { PropertyType } from '../../gauge-property/flex-input/flex-input.component';
 
 declare var SVG: any;
 
@@ -117,6 +118,15 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                 if (input) {
                     input.value = '';
                     input.setAttribute('autocomplete', 'off');
+                    if (gab.property.options && gab.property.options.numeric) {
+                        input.setAttribute('type', 'number');
+                        if (!Utils.isNullOrUndefined(gab.property.options.min)) {
+                            input.setAttribute('min', gab.property.options.min);
+                        }
+                        if (!Utils.isNullOrUndefined(gab.property.options.max)) {
+                            input.setAttribute('max', gab.property.options.max);
+                        }
+                    }
 
                     // Adjust the width to better fit the surrounding svg rect
                     input.style.width = 'calc(100% - 5px)';
@@ -184,23 +194,21 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static validateValue(value: any, ga: GaugeSettings) : {valid: boolean, errorText: string, min: number, max: number} {
-        if(ga.property.ranges && ga.property.ranges.length > 0 && ga.property.ranges[0].type === 'unit'){
-            let min = ga.property.ranges[0].min;
-            let max = ga.property.ranges[0].max;
-
-            if(min && max){
+        if(ga.property.options && ga.property.options.numeric){
+            if(!Utils.isNullOrUndefined(ga.property.options.min) && !Utils.isNullOrUndefined(ga.property.options.max)){
                 if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
                     return {valid: false, errorText: 'html-input.not-a-number', min: 0, max: 0};
                 }
                 else {
                     let numVal = parseFloat(value);
-                    if(numVal < min || numVal > max){
-                        return {valid: false, errorText: 'html-input.out-of-range', min: min, max: max};
+                    if(numVal < ga.property.options.min || numVal > ga.property.options.max){
+                        return { valid: false, errorText: 'html-input.out-of-range', 
+                                min: ga.property.options.min, max: ga.property.options.max };
                     }
                 }
             }
         }
 
-        return {valid: true, errorText: '', min: 0, max: 0};
+        return { valid: true, errorText: '', min: 0, max: 0 };
     }
 }

@@ -4,6 +4,6 @@
          [withStaticValue]="withStaticValue" [withBitmask]="withBitmask">
         </flex-variable>
     </div>
-    <flex-input #flexinput *ngIf="withInput" [data]="data" [property]="property" [ranges]="property.ranges" [default]="defaultValue" [inputType]="withInput" style="padding-bottom: 5px">
+    <flex-input #flexinput *ngIf="withProperty" [data]="data" [property]="property" [ranges]="property.ranges" [default]="defaultValue" [propertyType]="withProperty" style="padding-bottom: 5px">
     </flex-input>
 </div>

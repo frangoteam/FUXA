@@ -826,6 +826,7 @@
     "gauges.property-input-label": "Label",
     "gauges.property-input-unit": "Unit",
     "gauges.property-update-enabled": "Enable update",
+    "gauges.property-numeric-enabled": "Only number",
     "gauges.property-format-digits": "Format digits",
     "gauges.property-actions": "Actions",
     "gauges.property-action-type": "Type",
