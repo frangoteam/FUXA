@@ -947,6 +947,7 @@
     "scripts.list-title": "Scripts settings",
     "scripts.list-name": "Name",
     "scripts.list-type": "Type",
+    "scripts.list-mode": "Mode",
     "scripts.list-params": "Parameters",
     "scripts.list-scheduling": "Scheduling / Interval",
     "scripts.list-permission": "Authorization",
@@ -955,6 +956,10 @@
     "script.permission-title": "Authorization",
     "script.permission-label": "(void = full for everyone)",
     "script.permission-enabled": "Enabled",
+
+    "script.mode": "Execute mode",
+    "script.mode-title": "Execute mode",
+    "script.mode-label": "(Default: Server)",
 
     "script.property-title": "Script",
     "script.property-systems": "System functions",
