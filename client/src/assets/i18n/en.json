@@ -36,6 +36,7 @@
 
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
+    "dlg.layout-lbl-auto-resize": "Auto resize",
     "dlg.layout-lbl-sview": "Start View",
     "dlg.layout-lbl-login-start": "Show login on start",
     "dlg.layout-lbl-zoom": "Zoom",

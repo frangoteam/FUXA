@@ -31,6 +31,8 @@ export enum ViewType {
 } 
 
 export class LayoutSettings {
+    /** Auto resize view */
+    autoresize?: boolean = false;
     /** Start view (home) */
     start: string = '';
     /** Left side navigation menu settings */

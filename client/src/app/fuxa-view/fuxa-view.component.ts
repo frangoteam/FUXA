@@ -4,6 +4,7 @@ import {
     ComponentFactoryResolver,
     ElementRef,
     EventEmitter,
+    HostListener,
     Input,
     OnInit,
     Output,
@@ -22,6 +23,7 @@ import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { TranslateService } from '@ngx-translate/core';
+import { ProjectService } from '../_services/project.service';
 
 declare var SVG: any;
 
@@ -67,6 +69,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
         private scriptService: ScriptService,
+        private projectService: ProjectService,
         private resolver: ComponentFactoryResolver) {
     }
 
@@ -157,11 +160,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         this.loadWatch(this.view);
     }
 
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event) {
+        if (this.projectService.getHmi().layout && this.projectService.getHmi().layout.autoresize) {
+            Utils.resizeView('.home-body');
+        }
+    }
+
     /**
      * load all gauge settings, bind gauge with signals, bind gauge event
      * @param view
      */
-     private loadWatch(view: View) {
+    private loadWatch(view: View) {
         if (view && view.items) {
             let items = this.applyVariableMapping(view.items);
             // this.gaugesManager.initGaugesMap();
@@ -195,16 +206,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                             let svgeles = FuxaViewComponent.getSvgElements(gaugeSetting.id);
                             for (let y = 0; y < svgeles.length; y++) {
                                 variables.forEach(variable => {
-                                    this.gaugesManager.processValue(gaugeSetting, svgeles[y], variable, gaugeStatus);                                    
+                                    this.gaugesManager.processValue(gaugeSetting, svgeles[y], variable, gaugeStatus);
                                 });
                             }
                         }
                     }
 
-    
+
                 } catch (err) {
                     console.error('loadWatch: ' + err);
-                }    
+                }
             }
             if (!this.subscriptionOnChange) {
                 this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(this.handleSignal.bind(this));
@@ -400,9 +411,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     private setInputValidityMessage(result: any, el: any){
         if(result.errorText === 'html-input.out-of-range'){
-            el.setCustomValidity(`${this.translateService.instant(result.errorText)}. ${this.translateService.instant('html-input.min')}=${result.min}, ${this.translateService.instant('html-input.max')}=${result.max}`);   
+            el.setCustomValidity(`${this.translateService.instant(result.errorText)}. ${this.translateService.instant('html-input.min')}=${result.min}, ${this.translateService.instant('html-input.max')}=${result.max}`);
         } else{
-            el.setCustomValidity(this.translateService.instant(result.errorText));    
+            el.setCustomValidity(this.translateService.instant(result.errorText));
         }
         el.reportValidity();
     }
@@ -439,7 +450,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
 
                         self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0) - 7, inputRect.top - 8, htmlevent);
-                        
+
                         for (let i = 0; i < ev.currentTarget.attributes.length; i++)  {
                             if (ev.currentTarget.attributes['style']) {
                                 self.setInputDialogStyle(self.inputDialogRef.nativeElement, ev.currentTarget.attributes['style'].textContent, inputRect);
@@ -456,7 +467,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             }else{
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
-                
+
                 htmlevent.dom.onfocus = function (ev) {
                     if(htmlevent.ga.property){
                         let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
@@ -476,7 +487,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     if (variables.length && svgeles.length) {
                         self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
                     }
-``
+                    ``
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
                 }
@@ -501,7 +512,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             let el = element.children[i];
             if (el.tagName.toLowerCase() === 'input') {
                 el.value = '';
-                style += 'width: ' + sourceBound.width + 'px !important;'; 
+                style += 'width: ' + sourceBound.width + 'px !important;';
                 el.setAttribute('style', style);
             }
         }
@@ -737,12 +748,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         }
         return null;
     }
-    
+
     toggleShowInputDialog(show: boolean, x: number = -1, y: number = -1, htmlev: Event = null) {
         if (show) {
             // Evaluate top/bottom coordinate and adjust to dialog position to fit into window. We know that dialog height is 112
             let d = self.innerHeight - (y + 114);
-           
+
             if(y < 0){
                 y = 0;
             }else if(d < 0){
