@@ -346,6 +346,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 svgele.click(function (ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                 });
+                svgele.touchstart(function (ev) {
+                    self.runEvents(self, ga, ev, clickEvents);
+                });
+                
             }
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
             if (mouseDownEvents && mouseDownEvents.length > 0) {

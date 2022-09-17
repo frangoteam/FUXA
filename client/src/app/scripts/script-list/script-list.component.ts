@@ -10,6 +10,7 @@ import { Script, SCRIPT_PREFIX, ScriptScheduling } from '../../_models/script';
 import { AlarmsType } from '../../_models/alarm';
 import { Utils } from '../../_helpers/utils';
 import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
+import { ScriptModeComponent } from '../script-mode/script-mode.component';
 
 @Component({
     selector: 'app-script-list',
@@ -18,7 +19,7 @@ import { ScriptPermissionComponent } from '../script-permission/script-permissio
 })
 export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'params', 'scheduling', 'type', 'options', 'remove'];
+    displayedColumns = ['select', 'name', 'params', 'scheduling', 'type', 'mode', 'options', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     private subscriptionLoad: Subscription;
@@ -146,6 +147,21 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+    onEditScriptMode(script: Script) {
+        let dialogRef = this.dialog.open(ScriptModeComponent, {
+            position: { top: '60px' },
+            data: { mode: script.mode }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                script.mode = result.mode;
+                this.projectService.setScript(script, null).subscribe(() => {
+                    this.loadScripts();
+                });                
+            }
+        });
+    }
 
     private loadScripts() {
         this.dataSource.data = this.projectService.getScripts(); 
