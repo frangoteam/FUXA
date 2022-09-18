@@ -16,7 +16,7 @@ export class FlexInputComponent implements OnInit {
     @Input() property: GaugeProperty;
     @Input() ranges: GaugeRangeProperty[];
     @Input() type: string;
-    @Input() inputType: InputType;
+    @Input() propertyType: PropertyType;
     @Input() default: any;
     @ViewChild('unit') varunit: FlexVariableComponent;
     @ViewChild('digits') vardigits: FlexVariableComponent;
@@ -60,10 +60,10 @@ export class FlexInputComponent implements OnInit {
                 this.withLabel = this.ranges[0].style[0];
                 this.withValue = this.ranges[0].style[1];
             }
-        } else if (this.isWithUnit()) {
+        } else if (this.isOutputCtrl()) {
         } 
-        if (this.isWithUpdate()) {
-            this.property.options = this.property.options || <InputOptionsProperty>{ updated: false };
+        if (this.isInputCtrl()) {
+            this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
         }
         this.ranges.forEach(range => {
             if (!range.color) {
@@ -94,7 +94,7 @@ export class FlexInputComponent implements OnInit {
     getRanges() {
         let result = [];
         this.ranges.forEach(element => {
-            element.type = this.inputType;
+            element.type = this.propertyType;
             if (this.isWithStep()) {
                 element.max = element.min;
                 if (element.min !== null && element.max !== null) {
@@ -133,7 +133,7 @@ export class FlexInputComponent implements OnInit {
                 }
             }
         }
-        if (this.isWithUnit()) {
+        if (this.isOutputCtrl()) {
             let device = DevicesUtils.getDeviceFromTagId(this.data.devices, _tag.id);
             if (device) {
                 if (this.varunit) {
@@ -147,27 +147,34 @@ export class FlexInputComponent implements OnInit {
     }
 
     isWithRange() {
-        return this.inputType === InputType.range;
+        return this.propertyType === PropertyType.range;
     }
 
     isMinMax() {
-        return this.inputType === InputType.minmax;
+        return this.propertyType === PropertyType.minmax;
     }
 
     isWithRangeColor() {
-        return this.inputType === InputType.range;
+        return this.propertyType === PropertyType.range;
     }
 
     isWithStep() {
-        return this.inputType === InputType.step;
+        return this.propertyType === PropertyType.step;
     }
 
-    isWithUnit() {
-        return this.inputType === InputType.unit;
+    isOutputCtrl() {
+        return this.propertyType === PropertyType.output;
     }
 
-    isWithUpdate() {
-        return this.inputType === InputType.update;
+    isInputCtrl() {
+        return this.propertyType === PropertyType.input;
+    }
+
+    isInputMinMax(){
+        if (this.data.dlgType === 16) {  // GaugeDialogType.Input
+            return true;
+        }
+        return false;
     }
 
     onFormatDigitChanged(range: GaugeRangeProperty, event) {
@@ -190,11 +197,11 @@ export enum InputItemType {
 }
 
 
-export enum InputType {
-    unit,
-    range,
-    text,
-    step,
-    minmax,
-    update,
+export enum PropertyType {
+    output = 1,
+    range = 2,
+    text = 3,
+    step = 4,
+    minmax = 5,
+    input = 6,
 }

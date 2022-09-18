@@ -17,9 +17,10 @@ import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, 
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
-import { HmiService } from "../_services/hmi.service";
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
+import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
+import { TranslateService } from '@ngx-translate/core';
 
 declare var SVG: any;
 
@@ -52,6 +53,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     mapGaugeStatus = {};
     inputDialog = { show: false, timer: null, x: 0, y: 0, target: null };
     gaugeInput = '';
+    gaugeInputCurrent = '';
 
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
@@ -60,6 +62,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     protected plainVariableMapping: any = {};
 
     constructor(private el: ElementRef,
+        private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
         private scriptService: ScriptService,
@@ -93,6 +96,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             this.clearGaugeStatus();
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
+            }
+            if (this.inputDialogRef) {
+                this.inputDialogRef.nativeElement.style.display = 'none';
             }
         } catch (err) {
             console.error(err);
@@ -342,6 +348,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 svgele.click(function (ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                 });
+                svgele.touchstart(function (ev) {
+                    self.runEvents(self, ga, ev, clickEvents);
+                });
+                
             }
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
             if (mouseDownEvents && mouseDownEvents.length > 0) {
@@ -394,6 +404,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         }
     }
 
+    private setInputValidityMessage(result: any, el: any){
+        if(result.errorText === 'html-input.out-of-range'){
+            el.setCustomValidity(`${this.translateService.instant(result.errorText)}. ${this.translateService.instant('html-input.min')}=${result.min}, ${this.translateService.instant('html-input.max')}=${result.max}`);   
+        } else{
+            el.setCustomValidity(this.translateService.instant(result.errorText));    
+        }
+        el.reportValidity();
+    }
+
     /**
      * bind the html input control with key-enter event and select control with change event
      * @param htmlevent
@@ -402,12 +421,21 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         let self = this;
         // let htmlevent = this.getHtmlElement(ga.id);
         if (htmlevent.type === 'key-enter') {
-            htmlevent.dom.onkeypress = function (ev) {
-                if (ev.keyCode === 13) {
+            htmlevent.dom.onkeydown = function (ev) {
+                if (ev.key == 'Enter') {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
-                    self.gaugesManager.putEvent(htmlevent);                
+
+                    let res = HtmlInputComponent.validateValue(htmlevent.dom.value, htmlevent.ga);
+                    if(!res.valid){
+                        self.setInputValidityMessage(res, htmlevent.dom);
+                    }
+                    else{
+                        self.gaugesManager.putEvent(htmlevent);
+                        htmlevent.dom.blur();
+                    }
+                } else if (ev.key == 'Escape') {
                     htmlevent.dom.blur();
                 }
             };
@@ -415,26 +443,37 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 htmlevent.dom.onfocus = function (ev) {
                     if (ev.currentTarget) {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
-                        self.toggleShowInputDialog(true, inputRect.left, inputRect.top, htmlevent);
-                        self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0), inputRect.top - 5, htmlevent);
+
+                        self.toggleShowInputDialog(true, inputRect.left + ((inputRect.width < 80) ? -((80 - inputRect.width) / 2) : 0) - 7, inputRect.top - 8, htmlevent);
+                        
                         for (let i = 0; i < ev.currentTarget.attributes.length; i++)  {
                             if (ev.currentTarget.attributes['style']) {
                                 self.setInputDialogStyle(self.inputDialogRef.nativeElement, ev.currentTarget.attributes['style'].textContent, inputRect);
                             }
-                            
                         }
+                        self.gaugeInputCurrent = htmlevent.dom.value;
                         document.body.appendChild(self.inputDialogRef.nativeElement);
+
                         setTimeout(() => {
                             self.inputValueRef.nativeElement.focus();
                         }, 300);
                     }
                 }
-                htmlevent.dom.onblur = function (ev) {
-                    // Not sure what is the point to call this one. This onblur() occurs 300ms after showing the dialog, when dialogs own input gets focus. Why shall we then try to hide the input dialog?
-                    // The reason why dialog is not being hidden is that toggleShowInputDialog(true) get called multiple times and the timer is then canceled.
-                    // self.toggleShowInputDialog(false);
-                }
             }else{
+                // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
+                // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
+                
+                htmlevent.dom.onfocus = function (ev) {
+                    if(htmlevent.ga.property){
+                        let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
+                        if(unit && htmlevent.dom.value.endsWith(unit)){
+                            let len = htmlevent.dom.value.length;
+                            htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
+                        }
+                        htmlevent.dom.select();
+                    }
+                }
+
                 htmlevent.dom.onblur = function (ev) {
                     // Update variable value in case it has changed while input had focus
                     let variables = self.gaugesManager.getBindSignalsValue(htmlevent.ga);
@@ -443,9 +482,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     if (variables.length && svgeles.length) {
                         self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
                     }
+``
+                    // Remove any error message when input is blured
+                    htmlevent.dom.setCustomValidity('');
+                }
+
+                htmlevent.dom.oninput = function(ev){
+                    // Remove any error message when input changes 
+                    htmlevent.dom.setCustomValidity('');
                 }
             }
-
         } else if (htmlevent.type === 'change') {
             htmlevent.dom.onchange = function (ev) {
                 htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
@@ -646,8 +692,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
             let ele = document.getElementById(event.actparam);
             if (ele) {
                 let input = null;
-                for (let i = 0; i < GaugesManager.GaugeWithInput.length; i++) {
-                    input = Utils.searchTreeStartWith(ele, GaugesManager.GaugeWithInput[i]);
+                for (let i = 0; i < GaugesManager.GaugeWithProperty.length; i++) {
+                    input = Utils.searchTreeStartWith(ele, GaugesManager.GaugeWithProperty[i]);
                     if (input) {
                         break;
                     }
@@ -700,6 +746,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     
     toggleShowInputDialog(show: boolean, x: number = -1, y: number = -1, htmlev: Event = null) {
         if (show) {
+            // Evaluate top/bottom coordinate and adjust to dialog position to fit into window. We know that dialog height is 112
+            let d = self.innerHeight - (y + 114);
+           
+            if(y < 0){
+                y = 0;
+            }else if(d < 0){
+                y += d;
+            }
+
             this.inputDialog.show = true;
             if (x >= 0 && y >= 0) {
                 this.inputDialog.target = htmlev;
@@ -710,6 +765,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         } else {
             this.inputDialog.timer = setTimeout(() => {
                 this.inputDialog.show = false;
+                this.gaugeInputCurrent = '';
             }, 300);
         }
     }
@@ -718,13 +774,25 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     }
 
+    inputOnChange(){
+        // Remove any error message when input changes 
+        this.inputValueRef.nativeElement.setCustomValidity('');
+    }
+
     onOkClick(evintput) {
         if (this.inputDialog.target.dom) {
-            this.inputDialog.target.dom.value = evintput;
-            this.inputDialog.target.dbg = 'key pressed ' + this.inputDialog.target.dom.id + ' ' + this.inputDialog.target.dom.value;
-            this.inputDialog.target.id = this.inputDialog.target.dom.id;
-            this.inputDialog.target.value = this.inputDialog.target.dom.value;
-            this.gaugesManager.putEvent(this.inputDialog.target);
+            let res = HtmlInputComponent.validateValue(evintput, this.inputDialog.target.ga);
+            if(!res.valid){
+                this.setInputValidityMessage(res, this.inputValueRef.nativeElement);
+            }
+            else{
+                this.inputValueRef.nativeElement.setCustomValidity('');
+                this.inputDialog.target.dom.value = evintput;
+                this.inputDialog.target.dbg = 'key pressed ' + this.inputDialog.target.dom.id + ' ' + this.inputDialog.target.dom.value;
+                this.inputDialog.target.id = this.inputDialog.target.dom.id;
+                this.inputDialog.target.value = this.inputDialog.target.dom.value;
+                this.gaugesManager.putEvent(this.inputDialog.target);
+            }
         }
     }
 }
