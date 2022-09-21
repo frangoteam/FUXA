@@ -61,19 +61,27 @@ function getNodeValues(tagid, fromts, tots) {
     });
 }
 
+/**
+ * Return tags values, 
+ * if with options then return function array [{DD/MM/YYYY mm:HH, ...values}]
+ * else for chart object {tagId} [{Date, value}]
+ * @param {*} tagsid 
+ * @param {*} fromts 
+ * @param {*} tots 
+ * @param {*} options 
+ * @returns 
+ */
 function getNodesValues(tagsid, fromts, tots, options) {
     return new Promise(async function (resolve, reject) {
         try {
-            // resolve(['asdf', ...tagsid.map(col => col || '')]);
             var dbfncs = [];
             for (let i = 0; i < tagsid.length; i++) {
                 dbfncs.push(await getNodeValues(tagsid[i], fromts, tots));
             }
-            var result = {};
             Promise.all(dbfncs).then(values => {
                 if (!values || values.length < 1) {    // (0)[]
                     resolve(['', ...tagsid.map(col => '')]);
-                } else {
+                } else if (options) {
                     let calcValues = [];
                     for (let idx = 0 ; idx < values.length; idx++) {
                         if (options.functions[idx]) {
@@ -91,6 +99,14 @@ function getNodesValues(tagsid, fromts, tots, options) {
                         });
                     }
                     resolve(mergeValues);
+                } else {
+                    var result = {};
+                    for (let i = 0; i < tagsid.length; i++) {
+                        result[tagsid[i]] = values[i].map(v => { return { x: new Date(v.dt), y: v.value} });
+                        result[tagsid[i]].push({ x: new Date(tots), y: null});
+                        result[tagsid[i]].unshift({ x: new Date(fromts), y: null});
+                    }
+                    resolve(result);
                 }
             }, reason => {
                 reject(reason);

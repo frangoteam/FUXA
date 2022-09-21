@@ -31,6 +31,7 @@
                                 <button mat-menu-item (click)="onAddItem(itemTextType)">{{'report.content-addtext' | translate}}</button>
                                 <button mat-menu-item (click)="onAddItem(itemTableType)">{{'report.content-addtable' | translate}}</button>
                                 <button mat-menu-item (click)="onAddItem(itemAlarmsType)">{{'report.content-addalarms' | translate}}</button>
+                                <button mat-menu-item (click)="onAddItem(itemChartType)">{{'report.content-addchart' | translate}}</button>
                             </mat-menu>
                         </div>
                         <div *ngFor="let item of report.content?.items; index as i" class="report-item">
@@ -39,6 +40,7 @@
                                 <span *ngIf="item.type === itemTextType">{{'report.content-type-text' | translate}}</span>
                                 <span *ngIf="item.type === itemTableType">{{'report.content-type-tagstable' | translate}}</span>
                                 <span *ngIf="item.type === itemAlarmsType">{{'report.content-type-alarmshistory' | translate}}</span>
+                                <span *ngIf="item.type === itemChartType">{{'report.content-type-chart' | translate}}</span>
                             </div>
                             <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem" class="report-item-menu">more_vert</mat-icon>
                             <mat-menu #menuitem="matMenu">
@@ -48,6 +50,7 @@
                                 <button mat-menu-item (click)="onAddItem(itemTextType, i, false)">{{'report.content-addtext' | translate}}</button>
                                 <button mat-menu-item (click)="onAddItem(itemTableType, i, false)">{{'report.content-addtable' | translate}}</button>
                                 <button mat-menu-item (click)="onAddItem(itemAlarmsType, i, false)">{{'report.content-addalarms' | translate}}</button>
+                                <button mat-menu-item (click)="onAddItem(itemChartType, i, false)">{{'report.content-addchart' | translate}}</button>
                                 <mat-divider class="menu-separator"></mat-divider>
                                 <button mat-menu-item (click)="onDeleteItem(i)">{{'report.content-delete' | translate}}</button>
                             </mat-menu>
@@ -73,7 +76,7 @@
                                 </button>
                             </mat-menu>
                             <mat-menu #menufontsize="matMenu">
-                                <button mat-menu-item *ngFor="let size of fontSize;" (click)="onFontSizeItem(item, size)">
+                                <button mat-menu-item *ngFor="let size of fontSize;" (click)="onFontSizeItem(i, item, size)">
                                     <div class="menu-item-select">
                                         <mat-icon *ngIf="item.size === size">done</mat-icon>
                                         <span [ngClass]="item.size === size ? '' : 'unselect'">{{size}}</span>
