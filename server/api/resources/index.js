@@ -79,7 +79,7 @@ module.exports = {
                 try {
                     var query = JSON.parse(req.query.param);
                     const report = Report.create(null, runtime);
-                    report.getChartImage(query.chart, query.range).then((content) => {
+                    report.getChartImage(query).then((content) => {
                         res.end(content.toString('base64'));
                     }).catch(function (err) {
                         if (err.code) {

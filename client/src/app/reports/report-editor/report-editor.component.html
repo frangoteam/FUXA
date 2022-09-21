@@ -76,7 +76,7 @@
                                 </button>
                             </mat-menu>
                             <mat-menu #menufontsize="matMenu">
-                                <button mat-menu-item *ngFor="let size of fontSize;" (click)="onFontSizeItem(item, size)">
+                                <button mat-menu-item *ngFor="let size of fontSize;" (click)="onFontSizeItem(i, item, size)">
                                     <div class="menu-item-select">
                                         <mat-icon *ngIf="item.size === size">done</mat-icon>
                                         <span [ngClass]="item.size === size ? '' : 'unselect'">{{size}}</span>

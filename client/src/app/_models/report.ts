@@ -91,6 +91,8 @@ export interface ReportItemAlarms extends ReportItem {
 export interface ReportItemChart extends ReportItem {
     chart: Chart,
     range: ReportDateRangeType,
+    width?: number,
+    height?: number,
 }
 
 export enum ReportItemType {

@@ -20,6 +20,14 @@
                     </mat-option>
                 </mat-select>
             </div>
+            <div class="my-form-field ml20">
+                <span>{{'report.chart-width' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.width" (change)="onChartChanged()" type="number" min="100" style="width: 75px">
+            </div>
+            <div class="my-form-field ml10">
+                <span>{{'report.chart-height' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.height" (change)="onChartChanged()" type="number" min="100" style="width: 75px">
+            </div>            
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

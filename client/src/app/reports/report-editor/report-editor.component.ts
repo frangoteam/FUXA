@@ -13,7 +13,7 @@ import { utils } from 'protractor';
 import { AlarmPropertyType, AlarmsType } from '../../_models/alarm';
 import { ReportItemChartComponent } from './report-item-chart/report-item-chart.component';
 import { ResourcesService } from '../../_services/resources.service';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;   
 
@@ -148,7 +148,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                             docDefinition['content'].push({
                                 image: `data:image/png;base64,${this.imagesList[itemChart.chart.id]}`,
                                 // if you specify both width and height - image will be stretched
-                                width: 500,
+                                width: itemChart.width || 500,
+                                height: itemChart.height || 350,
                                 // height: 70
                             });
                         }
@@ -163,10 +164,13 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     private checkImages(items: ReportItem[]): Observable<ImageItem[]> {
+        if (items.length <= 0) {
+            return of([]);
+        }
         let source: Array<Observable<any>> = [];
         items.forEach((item: ReportItem) => {
             const chartItem = <ReportItemChart>item;
-            if (!this.imagesList[chartItem.chart.id]) {
+            if (chartItem.chart && !this.imagesList[chartItem.chart.id]) {
                 source.push(this.resourcesService.generateImage(<ReportItemChart>item).pipe(
                     map(result => {
                         return { id: (<ReportItemChart>item).chart.id, content: result };
@@ -198,6 +202,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         } else if (type === this.itemChartType) {
             item = {...item, ...<ReportItemChart> {
                 range: this.myForm.value.scheduling,
+                width: 500,
+                height: 350,
+                size: 14,
             }};
         }
         this.onEditItem(item, index, edit);
@@ -225,6 +232,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             if (result) {
                 if (index <= this.report.content.items.length) {
                     if (edit) {
+                        this.checkToRemoveImage(index);
                         this.report.content.items.splice(index, 1, result);
                     } else {
                         this.report.content.items.splice(index, 0, result);
@@ -238,6 +246,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     onDeleteItem(index: number) {
+        this.checkToRemoveImage(index);
         this.report.content.items.splice(index, 1);
         this.onReportChanged();
     }
@@ -247,8 +256,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         this.onReportChanged();
     }
 
-    onFontSizeItem(item: ReportItem, size: number) {
+    onFontSizeItem(index: number, item: ReportItem, size: number) {
         item.size = size;
+        this.checkToRemoveImage(index);
         this.onReportChanged();
     }
 
@@ -288,6 +298,15 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             ]
         }
         return content;
+    }
+
+    private checkToRemoveImage(index: number) {
+        if (this.report.content.items[index] && this.report.content.items[index].type === this.itemChartType) {
+            const reportChart = <ReportItemChart>this.report.content.items[index];
+            if (reportChart.chart) {
+                delete this.imagesList[reportChart.chart.id];    
+            }
+        }
     }
 
     private static getDateRange (dateRange: ReportDateRangeType) : DateTimeRange {

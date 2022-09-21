@@ -7,46 +7,69 @@ const width = 1200; //px
 const height = 900; //px
 const backgroundColour = 'white';
 const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, backgroundColour });
+var timeFormat = 'moment.ISO_8601';
 
-const createImage = async (file) => {
+const createImage = async (chartItem, chartValues) => {
+    let datasets = [];
+    chartItem.chart.lines.forEach(line => {
+        datasets.push({
+            label: line.label, 
+            borderColor: line.color,
+            data: chartValues[line.id],
+            fill: (line.fill) ? true : false,
+            backgroundColor: line.fill,
+            borderWidth: 1
+        });
+    });
     const configuration = {
         type: 'line',
         data: {
-            labels: ['Standing costs', 'Running costs'],
-            datasets: [{
-                label: 'Washing and cleaning',
-                data: [0, 8],
-                backgroundColor: '#22aa99'
-            }, {
-                label: 'Traffic tickets',
-                data: [0, 2],
-                backgroundColor: '#994499'
-            }, {
-                label: 'Tolls',
-                data: [0, 1],
-                backgroundColor: '#316395'
-            }, {
-                label: 'Parking',
-                data: [5, 2],
-                backgroundColor: '#b82e2e'
-            }, {
-                label: 'Car tax',
-                data: [0, 1],
-                backgroundColor: '#66aa00'
-            }]
+            labels: [],
+            datasets: datasets,
         },
         options: {
-            responsive: false,
             legend: {
-                position: 'right'
+				display: true,
+                position: 'bottom',
+                labels: {
+                    fontSize: chartItem.size || 14
+                }
+            },
+            elements: {
+                point:{
+                    radius: 0
+                }
             },
             scales: {
-                xAxes: [{
-                    stacked: true
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
+              xAxes: [{
+                type: 'time',
+                fontSize: 20,
+                time: {
+                    unit: 'day',
+                    unitStepSize: 1,
+                    displayFormats: {
+                       'day': 'DD/MM/YYYY'
+                    }
+                },
+                displayFormats: {
+                    year: 'YYYY'
+                },
+                scaleLabel: {
+                    display: false,
+                    labelString: 'Date',
+                },
+                ticks: {
+                    fontSize: chartItem.size || 14
+                }
+              }],
+              yAxes: [{
+                ticks: {
+                    fontSize: chartItem.size || 14
+                }
+              }],
+              title: {
+                display: false,
+              }
             }
         }
     };
