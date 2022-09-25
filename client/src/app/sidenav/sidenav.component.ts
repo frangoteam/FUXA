@@ -3,8 +3,6 @@ import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material';
 
 import { LayoutSettings, NaviItem, NaviModeType, NavigationSettings, LinkType } from '../_models/hmi';
-import { ProjectService } from '../_services/project.service';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidenav',
@@ -24,15 +22,9 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     layout = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
-    hmiLoadSubscription: Subscription;
 
     constructor(private router: Router,
-        private changeDetector: ChangeDetectorRef,
-        private projectService: ProjectService) {
-        this.hmiLoadSubscription = this.projectService.onLoadHmi.subscribe(load => {
-            this.logo = this.projectService.getHmi().layout.logo;
-        });
-
+        private changeDetector: ChangeDetectorRef) {
     }
 
     ngAfterViewInit() {
@@ -55,17 +47,7 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
         this.layout = ly;
         if (this.layout.navigation) {
             this.layoutNavigation = this.layout.navigation;
+            this.logo = this.layout.navigation.logo;
         }
     }
-
-
-    ngOnDestroy() {
-        try {
-            if (this.hmiLoadSubscription) {
-                this.hmiLoadSubscription.unsubscribe();
-            }
-        } catch (e) {
-        }
-    }
-
 }

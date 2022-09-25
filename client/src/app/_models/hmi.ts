@@ -49,8 +49,6 @@ export class LayoutSettings {
     theme = '';
     /** Show login by start */
     loginonstart?: boolean = false;
-    /** Custom logo resource */
-    logo?: boolean = false;
 }
 
 export class NavigationSettings {
@@ -64,6 +62,8 @@ export class NavigationSettings {
     fgcolor: string = '#1D1D1D';
     /** Menu items */
     items: NaviItem[];
+    /** Custom logo resource */
+    logo?: boolean = false;    
     constructor() {
         this.mode = Object.keys(NaviModeType).find(key => NaviModeType[key] === NaviModeType.over) as NaviModeType;
         this.type = Object.keys(NaviItemType).find(key => NaviItemType[key] === NaviItemType.block) as NaviItemType;

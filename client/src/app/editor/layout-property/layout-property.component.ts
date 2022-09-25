@@ -33,6 +33,7 @@ export class LayoutPropertyComponent implements OnInit {
     zoomMode: any;
     inputMode = InputModeType;
     headerMode = HeaderBarModeType;
+    logo = null;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
