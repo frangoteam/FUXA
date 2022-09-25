@@ -49,6 +49,8 @@ export class LayoutSettings {
     theme = '';
     /** Show login by start */
     loginonstart?: boolean = false;
+    /** Custom logo resource */
+    logo?: boolean = false;
 }
 
 export class NavigationSettings {

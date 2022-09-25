@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material';
 
 import { LayoutSettings, NaviItem, NaviModeType, NavigationSettings, LinkType } from '../_models/hmi';
+import { ProjectService } from '../_services/project.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidenav',
@@ -18,12 +20,20 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     viewAsLink = LinkType.address;
     viewAsAlarms = LinkType.alarms;
 
+    logo = null;
     layout = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
+    hmiLoadSubscription: Subscription;
 
     constructor(private router: Router,
-        private changeDetector: ChangeDetectorRef) { }
+        private changeDetector: ChangeDetectorRef,
+        private projectService: ProjectService) {
+        this.hmiLoadSubscription = this.projectService.onLoadHmi.subscribe(load => {
+            this.logo = this.projectService.getHmi().layout.logo;
+        });
+
+    }
 
     ngAfterViewInit() {
     }
@@ -36,7 +46,7 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     onGoTo(item: NaviItem) {
         if (item.link && item.view === this.viewAsLink) {
             this.goToLink.emit(item.link);
-        } else if (item.view ) {
+        } else if (item.view) {
             this.goToPage.emit(item.view);
         }
     }
@@ -47,4 +57,15 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
             this.layoutNavigation = this.layout.navigation;
         }
     }
+
+
+    ngOnDestroy() {
+        try {
+            if (this.hmiLoadSubscription) {
+                this.hmiLoadSubscription.unsubscribe();
+            }
+        } catch (e) {
+        }
+    }
+
 }

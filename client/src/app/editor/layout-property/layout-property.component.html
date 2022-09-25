@@ -31,7 +31,16 @@
                             <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
                         </mat-select>
                     </div>
-                </div>                
+                </div>
+                <div class="my-form-field" style="display: inline-block;margin-top: 10px;">
+                    <span>{{'dlg.layout-lbl-logo' | translate}}</span>
+                    <mat-select [(value)]="data.layout.logo" style="width: 400px">
+                        <mat-option (click)="data.layout.logo = null;"></mat-option>
+                        <mat-option *ngFor="let resource of resources" [value]="resource.path">
+                            {{ resource.name }}
+                        </mat-option>
+                    </mat-select>
+                </div>                                                          
                 <div style="display: block;margin-top: 10px;">
                     <div class="my-form-field" style="display: inline-block">
                         <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
