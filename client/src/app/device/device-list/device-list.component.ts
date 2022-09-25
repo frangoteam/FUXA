@@ -43,7 +43,7 @@ export class DeviceListComponent implements OnInit {
     tagsMap = {};
     deviceSelected: Device = null;
 
-	@Input() readonly = false;
+    @Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
 
@@ -82,7 +82,7 @@ export class DeviceListComponent implements OnInit {
             if (d.tags) {
                 Object.values(d.tags).forEach((t: Tag) => {
                     this.tagsMap[t.id] = t;
-                })    
+                })
             }
         });
         this.setSelectedDevice(this.deviceSelected);
@@ -104,7 +104,9 @@ export class DeviceListComponent implements OnInit {
     setSelectedDevice(device: Device) {
         this.devices = this.projectService.getDevices();
         this.updateDeviceValue();
-        // this.devices = JSON.parse(JSON.stringify(this.projectService.getDevices()));
+        if (!device) {
+            return;
+        }
         Object.values(this.devices).forEach(d => {
             if (d.name === device.name) {
                 this.deviceSelected = d;
@@ -121,7 +123,6 @@ export class DeviceListComponent implements OnInit {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
-
     }
 
     onGoBack() {
@@ -269,7 +270,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type, tag: Tag) {
-        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio || 
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
@@ -411,14 +412,14 @@ export class DeviceListComponent implements OnInit {
                 // check if name exist
                 if (existNames.indexOf(topic.name) !== -1) {
                     let msg = '';
-                    this.translateService.get('device.topic-name-exist', { value: topic.name}).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt });
                     this.notifyError(msg);
                 } else {
                     // check if subscriptions address exist for new topic
                     let exist = null;
                     if (!oldTopic) {
                         Object.keys(this.deviceSelected.tags).forEach((key) => {
-                            if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].memaddress === topic.memaddress && 
+                            if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].memaddress === topic.memaddress &&
                                 this.deviceSelected.tags[key].id != topic.id && this.deviceSelected.tags[key].options.subs) {
                                 exist = DeviceListComponent.formatAddress(topic.address, topic.memaddress);
                             }
@@ -426,7 +427,7 @@ export class DeviceListComponent implements OnInit {
                     }
                     if (exist) {
                         let msg = '';
-                        this.translateService.get('device.topic-subs-address-exist', { value: exist}).subscribe((txt: string) => { msg = txt });
+                        this.translateService.get('device.topic-subs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt });
                         this.notifyError(msg);
                     } else {
                         this.deviceSelected.tags[topic.id] = topic;
@@ -445,7 +446,7 @@ export class DeviceListComponent implements OnInit {
             // check if name exist
             if (existNames.indexOf(topic.name) !== -1) {
                 let msg = '';
-                this.translateService.get('device.topic-name-exist', { value: topic.name}).subscribe((txt: string) => { msg = txt });
+                this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt });
                 this.notifyError(msg);
             } else {
                 // check if publish address exist
@@ -457,7 +458,7 @@ export class DeviceListComponent implements OnInit {
                 })
                 if (exist) {
                     let msg = '';
-                    this.translateService.get('device.topic-pubs-address-exist', { value: exist}).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('device.topic-pubs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt });
                     this.notifyError(msg);
                 } else {
                     this.deviceSelected.tags[topic.id] = topic;
