@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { DaterangepickerComponent } from '../daterangepicker';
 import { IDateRange } from '../../_models/hmi';

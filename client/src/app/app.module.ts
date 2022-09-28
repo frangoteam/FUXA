@@ -13,7 +13,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { GestureConfig } from '@angular/material';
+import { GestureConfig } from '@angular/material/core';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { NgxDaterangepickerMd } from './gui-helpers/daterangepicker';

@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatMenuTrigger } from '@angular/material';
-import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { Subscription, Subject, timer, Observable, empty } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 

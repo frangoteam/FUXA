@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscription } from "rxjs";
 
 import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, ServerTagType } from './../../_models/device';

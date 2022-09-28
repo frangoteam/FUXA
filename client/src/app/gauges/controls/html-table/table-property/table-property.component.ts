@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Input, Output, ViewChild } from '@angular/core';
 import { Subject, ReplaySubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { MatTabGroup } from '@angular/material';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTabGroup } from '@angular/material/tabs';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 

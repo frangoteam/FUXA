@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ReplaySubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';

@@ -1,7 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
-import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 import { DiagnoseService } from '../_services/diagnose.service';
 import { AppService } from '../_services/app.service';

@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatExpansionPanel } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { Subscription } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 
