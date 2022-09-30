@@ -10,6 +10,8 @@ import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
 import { UploadFile } from '../../_models/project';
+import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
+import { ResourcesService } from '../../_services/resources.service';
 
 @Component({
     selector: 'app-layout-property',
@@ -24,17 +26,20 @@ export class LayoutPropertyComponent implements OnInit {
 
     startView: string;
     sideMode: string;
+    resources: ResourceItem[] = [];
     navMode: any;
     navType: any;
     notifyMode: any;
     zoomMode: any;
     inputMode = InputModeType;
     headerMode = HeaderBarModeType;
+    logo = null;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: any,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
-        private translateService: TranslateService) {
+        private translateService: TranslateService,
+        private resourcesService: ResourcesService) {
         if (!data.layout) {
             data.layout = new LayoutSettings();
         }
@@ -44,6 +49,13 @@ export class LayoutPropertyComponent implements OnInit {
             data.layout.navigation.items = [];
         }
         this.draggableListLeft = data.layout.navigation.items;
+        this.resourcesService.getResources(ResourceType.images).subscribe((result: Resources) => {
+            if (result) {
+                result.groups.forEach((group: ResourceGroup) => {
+                    this.resources.push(...group.items);
+                });
+            }
+        });
     }
 
     ngOnInit() {

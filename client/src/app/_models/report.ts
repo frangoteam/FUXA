@@ -1,6 +1,6 @@
 import { Utils } from "../_helpers/utils";
 import { Tag } from "./device";
-
+import { Chart } from './chart';
 export class Report {
     id: string;
     name: string;
@@ -88,10 +88,18 @@ export interface ReportItemAlarms extends ReportItem {
     range: ReportDateRangeType,
 }
 
+export interface ReportItemChart extends ReportItem {
+    chart: Chart,
+    range: ReportDateRangeType,
+    width?: number,
+    height?: number,
+}
+
 export enum ReportItemType {
     text = 'report.item-type-text',
     table = 'report.item-type-table',
     alarms = 'report.item-type-alarms',
+    chart = 'report.item-type-chart',
 }
 
 export enum ReportDateRangeType {

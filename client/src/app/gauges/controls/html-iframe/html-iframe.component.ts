@@ -32,6 +32,7 @@ export class HtmlIframeComponent extends GaugeBaseComponent implements OnInit {
             if (svgIframeContainer) {
                 svgIframeContainer.innerHTML = '';
                 let iframe = document.createElement('iframe');
+                iframe.setAttribute('name', gaugeSettings.name);
                 iframe.style['width'] = '100%';
                 iframe.style['height'] = '100%';
                 iframe.style['border'] = 'none';

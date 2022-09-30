@@ -18,12 +18,14 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     viewAsLink = LinkType.address;
     viewAsAlarms = LinkType.alarms;
 
+    logo = null;
     layout = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
 
     constructor(private router: Router,
-        private changeDetector: ChangeDetectorRef) { }
+        private changeDetector: ChangeDetectorRef) {
+    }
 
     ngAfterViewInit() {
     }
@@ -36,7 +38,7 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
     onGoTo(item: NaviItem) {
         if (item.link && item.view === this.viewAsLink) {
             this.goToLink.emit(item.link);
-        } else if (item.view ) {
+        } else if (item.view) {
             this.goToPage.emit(item.view);
         }
     }
@@ -45,6 +47,7 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
         this.layout = ly;
         if (this.layout.navigation) {
             this.layoutNavigation = this.layout.navigation;
+            this.logo = this.layout.navigation.logo;
         }
     }
 }

@@ -18,7 +18,6 @@ import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, 
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
-import { HmiService } from "../_services/hmi.service";
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
@@ -63,6 +62,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
     protected plainVariableMapping: any = {};
+    private subscriptionLoad: Subscription;
 
     constructor(private el: ElementRef,
         private translateService: TranslateService,
@@ -87,6 +87,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.loadHmi(this.view);
+
+        /* check if already loaded */
+        if (this.projectService.getHmi()) {
+            this.projectService.initScheduledScripts();
+        } else {
+            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(
+                load => {this.projectService.initScheduledScripts();
+            });             
+        }
         try {
             this.gaugesManager.emitBindedSignals(this.id);
         } catch (err) {
@@ -96,10 +105,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     ngOnDestroy() {
         try {
+			if (this.subscriptionLoad) {
+				this.subscriptionLoad.unsubscribe();
+			}
+            this.projectService.clearScheduledScripts();
             this.gaugesManager.unbindGauge(this.id);
             this.clearGaugeStatus();
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
+            }
+            if (this.inputDialogRef) {
+                this.inputDialogRef.nativeElement.style.display = 'none';
             }
         } catch (err) {
             console.error(err);
@@ -357,6 +373,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                 svgele.click(function (ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                 });
+                svgele.touchstart(function (ev) {
+                    self.runEvents(self, ga, ev, clickEvents);
+                });
+                
             }
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
             if (mouseDownEvents && mouseDownEvents.length > 0) {
@@ -713,7 +733,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     onRunScript(event: GaugeEvent) {
         if (event.actparam) {
-            let torun = new Script(event.actparam);
+            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
             torun.parameters = <ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP];
             this.scriptService.runScript(torun).subscribe(result => {
 
