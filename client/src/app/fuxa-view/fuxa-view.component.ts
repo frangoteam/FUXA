@@ -21,6 +21,7 @@ import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { TranslateService } from '@ngx-translate/core';
+import { ProjectService } from '../_services/project.service';
 
 declare var SVG: any;
 
@@ -60,12 +61,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
     protected plainVariableMapping: any = {};
+    private subscriptionLoad: Subscription;
 
     constructor(private el: ElementRef,
         private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
         private scriptService: ScriptService,
+        private projectService: ProjectService,
         private resolver: ComponentFactoryResolver) {
     }
 
@@ -83,6 +86,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.loadHmi(this.view);
+
+        /* check if already loaded */
+        if (this.projectService.getHmi()) {
+            this.projectService.initScheduledScripts();
+        } else {
+            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(
+                load => {this.projectService.initScheduledScripts();
+            });             
+        }
         try {
             this.gaugesManager.emitBindedSignals(this.id);
         } catch (err) {
@@ -92,6 +104,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     ngOnDestroy() {
         try {
+			if (this.subscriptionLoad) {
+				this.subscriptionLoad.unsubscribe();
+			}
+            this.projectService.clearScheduledScripts();
             this.gaugesManager.unbindGauge(this.id);
             this.clearGaugeStatus();
             if (this.subscriptionOnChange) {
@@ -708,7 +724,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
 
     onRunScript(event: GaugeEvent) {
         if (event.actparam) {
-            let torun = new Script(event.actparam);
+            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
             torun.parameters = <ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP];
             this.scriptService.runScript(torun).subscribe(result => {
 

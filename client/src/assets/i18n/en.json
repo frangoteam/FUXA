@@ -304,6 +304,7 @@
 
     "iframe.property-data": "Data",
     "iframe.property-address": "Address",
+    "iframe.property-name": "Name",
 
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
