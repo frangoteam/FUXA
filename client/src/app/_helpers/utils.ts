@@ -296,6 +296,19 @@ export class Utils {
             return {...accumulator, [key]: value};
         }, {});
     }
+
+    static resizeView = (selector) => {
+        document.querySelectorAll(selector).forEach((scaled: any) => {
+            let parent = scaled.parentNode,
+            ratio = (parent.offsetWidth / scaled.offsetWidth),
+            padding = scaled.offsetHeight * ratio;
+      
+          scaled.style.transform = 'scale(' + ratio + ')';
+          scaled.style.transformOrigin = 'top left';
+      
+          parent.style.paddingTop = padding;
+        })
+      }    
 }
 
 @Pipe({

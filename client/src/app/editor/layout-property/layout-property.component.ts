@@ -161,6 +161,15 @@ export class LayoutPropertyComponent implements OnInit {
             return '';
         }
     }
+
+    onAutoResizeChange(value): void {
+        this.data.layout.zoom = ZoomModeType[ZoomModeType.disabled] ? value == true : this.data.layout.zoom;
+    }
+
+    onZoomChange(value): void {
+        this.data.layout.autoresize = false ? value : this.data.layout.autoresize;
+    }
+
 }
 
 @Component({
