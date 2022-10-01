@@ -112,6 +112,7 @@ export enum NotificationModeType {
 export enum ZoomModeType {
     disabled = 'item.zoommode-disabled',
     enabled = 'item.zoommode-enabled',
+    autoresize = 'item.zoommode-autoresize',
 }
 
 export enum InputModeType {

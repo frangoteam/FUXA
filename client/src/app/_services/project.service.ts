@@ -608,14 +608,16 @@ export class ProjectService {
 
     initScheduledScripts() {
         /* init all schedules from scripts with mode client */
-        this.projectData.scripts.forEach((script: Script) => {
-            if (script.mode == ScriptMode.CLIENT && script.scheduling && script.scheduling.interval > 0) {
-                this.intervals.push(setInterval(
-                    () => {
-                        this.scriptService.runScript(script).subscribe(() => { })
-                    }, script.scheduling.interval * 1000));
-            }
-        })
+        if (this.projectData.scripts) {
+            this.projectData.scripts.forEach((script: Script) => {
+                if (script.mode == ScriptMode.CLIENT && script.scheduling && script.scheduling.interval > 0) {
+                    this.intervals.push(setInterval(
+                        () => {
+                            this.scriptService.runScript(script).subscribe(() => { })
+                        }, script.scheduling.interval * 1000));
+                }
+            })
+        }
     }
 
     clearScheduledScripts() {

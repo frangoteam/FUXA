@@ -14,7 +14,7 @@ import {
 import { Subscription } from "rxjs";
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
@@ -174,12 +174,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
         }
         this.changeDetector.detectChanges();
         this.loadWatch(this.view);
+        // // @ts-ignore 
+        // window.dispatchEvent(new window.Event('resize'));
     }
 
 
     @HostListener('window:resize', ['$event'])
     onResize(event) {
-        if (this.projectService.getHmi().layout && this.projectService.getHmi().layout.autoresize) {
+        let hmi = this.projectService.getHmi();
+        if (hmi && hmi.layout && ZoomModeType[hmi.layout.zoom] === ZoomModeType.autoresize) {
             Utils.resizeView('.home-body');
         }
     }
@@ -507,7 +510,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit {
                     if (variables.length && svgeles.length) {
                         self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
                     }
-                    ``
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
                 }

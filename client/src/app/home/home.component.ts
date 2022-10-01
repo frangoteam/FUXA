@@ -294,7 +294,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.homeView && this.fuxaview) {
             this.fuxaview.hmi.layout = this.hmi.layout;
             this.fuxaview.loadHmi(this.homeView);
-            window.dispatchEvent(new window.Event('resize'));                
         }
         this.isLoading = false;
         this.securityEnabled = this.projectService.isSecurityEnabled();

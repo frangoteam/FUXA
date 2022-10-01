@@ -300,13 +300,10 @@ export class Utils {
     static resizeView = (selector) => {
         document.querySelectorAll(selector).forEach((scaled: any) => {
             let parent = scaled.parentNode,
-            ratio = (parent.offsetWidth / scaled.offsetWidth),
-            padding = scaled.offsetHeight * ratio;
-      
-          scaled.style.transform = 'scale(' + ratio + ')';
-          scaled.style.transformOrigin = 'top left';
-      
-          parent.style.paddingTop = padding;
+            ratioWidth = (parent.offsetWidth / scaled.offsetWidth),
+            ratioHeight = (parent.offsetHeight / scaled.offsetHeight);
+            scaled.style.transform = 'scale(' + Math.min(ratioWidth, ratioHeight) + ')';
+            scaled.style.transformOrigin = 'top left';
         })
       }    
 }

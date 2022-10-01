@@ -3,18 +3,8 @@
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div class="dialog-mdsd-content">
         <mat-tab-group style="width: 950px;height: 700px">
-            <mat-tab label="{{'dlg.layout-general' | translate}}">
-                <div style="display: block;">
-                    <div class="my-form-field" style="display: inline-block;margin-top: 25px;">
-                        <span>{{'dlg.layout-lbl-auto-resize' | translate}}</span>
-                        <mat-select [(value)]="data.layout.autoresize" style="width: 400px" 
-                            [disabled]="data.layout.zoom != 'disabled'" (selectionChange)="onAutoResizeChange()">
-                                <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
-                                <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
-                        </mat-select>
-                    </div>
-                </div>                
-                <div style="display: block;margin-top: 10px;">
+            <mat-tab label="{{'dlg.layout-general' | translate}}">             
+                <div style="display: block;margin-top: 25px;">
                     <div class="my-form-field">
                         <span>{{'dlg.layout-lbl-sview' | translate}}</span>
                         <mat-select [(value)]="data.layout.start" style="width: 400px">
@@ -45,8 +35,7 @@
                 <div style="display: block;margin-top: 10px;">
                     <div class="my-form-field" style="display: inline-block">
                         <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
-                        <mat-select [(value)]="data.layout.zoom" style="width: 400px" [disabled]="data.layout.autoresize"
-                            (selectionChange)="onZoomChange()">
+                        <mat-select [(value)]="data.layout.zoom" style="width: 400px">
                             <mat-option *ngFor="let type of zoomMode | enumToArray" [value]="type.key">
                                 {{ type.value }}
                             </mat-option>

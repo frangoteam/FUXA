@@ -146,7 +146,8 @@
     "item.notifymode-float": "Push",
 
     "item.zoommode-disabled": "Disabled",
-    "item.zoommode-enabled": "Enabled",
+    "item.zoommode-enabled": "Manually",
+    "item.zoommode-autoresize": "Auto-resize",
 
     "item.headerbarmode-hide": "Hide",
     "item.headerbarmode-show": "Show",
