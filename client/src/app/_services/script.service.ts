@@ -14,11 +14,10 @@ export class ScriptService {
 
     private endPointConfig: string = EndPointApi.getURL();
 
-    constructor(private http: HttpClient, private projectService: ProjectService) { }
+    constructor(private http: HttpClient) { }
 
     runScript(script: Script) {
         return new Observable((observer) => {
-            script = this.projectService.getScripts().find(dataScript => dataScript.id == script.id);
 
             if (!script.mode || script.mode == ScriptMode.SERVER) {
                 if (environment.serverEnabled) {

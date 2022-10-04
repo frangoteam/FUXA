@@ -5,7 +5,8 @@ const utils = require('../utils');
 const Pdfmake = require('pdfmake');
 var fs = require('fs')
 var path = require('path');
-const imageGenerator = require('./helper/image-generator');
+// TODO wait compatibility with arm
+// const imageGenerator = require('./helper/image-generator');
 const { time } = require('console');
 
 'use strict';
@@ -221,12 +222,15 @@ function Report(_property, _runtime) {
             if (!values) {
                 values = _getSampleValues(itemChart.chart.lines, timeRange);
             }
-            imageGenerator.createImage(itemChart, values).then((content) => {
-                resolve(content.toString('base64'));
-            }).catch(function (err) {
-                reject(err);
-                logger.error("createImage: " + err);
-            });
+            reject('TODO node create image from canvas is not supported!');
+
+            // TODO wait compatibility with arm
+            // imageGenerator.createImage(itemChart, values).then((content) => {
+            //     resolve(content.toString('base64'));
+            // }).catch(function (err) {
+            //     reject(err);
+            //     logger.error("createImage: " + err);
+            // });
         });
     }
 

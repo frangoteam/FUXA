@@ -166,7 +166,7 @@ function ScriptsManager(_runtime) {
                 if (scripts) {
                     var lr = scriptModule.loadScripts(scripts);
                     Object.values(scripts).forEach((script) => {
-                        if (script.scheduling && script.scheduling.interval) {
+                        if (script.scheduling && script.scheduling.interval && script.mode != 'CLIENT') {
                             schedulingMap[script.name] = new ScriptSchedule(script);
                         }
                     });

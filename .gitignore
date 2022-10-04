@@ -79,6 +79,8 @@ _images/
 
 _reports/
 
+test/
+
 # appdata
 server/_appdata
 #server/package-lock.json

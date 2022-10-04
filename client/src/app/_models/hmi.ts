@@ -31,6 +31,8 @@ export enum ViewType {
 } 
 
 export class LayoutSettings {
+    /** Auto resize view */
+    autoresize?: boolean = false;
     /** Start view (home) */
     start: string = '';
     /** Left side navigation menu settings */
@@ -110,6 +112,7 @@ export enum NotificationModeType {
 export enum ZoomModeType {
     disabled = 'item.zoommode-disabled',
     enabled = 'item.zoommode-enabled',
+    autoresize = 'item.zoommode-autoresize',
 }
 
 export enum InputModeType {

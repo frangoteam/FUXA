@@ -10,7 +10,7 @@ import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
 import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
-import { Script } from '../_models/script';
+import { Script, ScriptMode } from '../_models/script';
 import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag } from '../_models/device';
 import { EndPointApi } from '../_helpers/endpointapi';
@@ -25,6 +25,7 @@ import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
+import { ScriptService } from './script.service';
 
 @Injectable()
 export class ProjectService {
@@ -37,6 +38,7 @@ export class ProjectService {
 
     public serverSettings: ServerSettings;
     private storage: ResourceStorageService;
+    public intervals: any [] = [];
 
     private projectOld: string = '';
     private ready = false;
@@ -44,6 +46,7 @@ export class ProjectService {
     constructor(private resewbApiService: ResWebApiService,
         private resDemoService: ResDemoService,
         private resClientService: ResClientService,
+        private scriptService: ScriptService,
         private appService: AppService,
         private translateService: TranslateService,
         private toastr: ToastrService) {
@@ -603,6 +606,28 @@ export class ProjectService {
     }
     //#endregion
 
+    initScheduledScripts() {
+        /* init all schedules from scripts with mode client */
+        if (this.projectData.scripts) {
+            this.projectData.scripts.forEach((script: Script) => {
+                if (script.mode == ScriptMode.CLIENT && script.scheduling && script.scheduling.interval > 0) {
+                    this.intervals.push(setInterval(
+                        () => {
+                            this.scriptService.runScript(script).subscribe(() => { })
+                        }, script.scheduling.interval * 1000));
+                }
+            })
+        }
+    }
+
+    clearScheduledScripts() {
+        /* clear all intervals from scripts with client mode */
+        this.intervals.forEach(interval => {clearInterval(interval)});
+        this.intervals = [];
+    }
+    
+
+    
     //#region Scripts resource
     /**
      * get scripts
