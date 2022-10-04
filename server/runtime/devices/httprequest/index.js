@@ -206,6 +206,13 @@ function HTTPclient(_data, _logger, _events) {
                 }).catch(err => {
                     reject(err);
                 });
+            } if (data.property.getTags) {
+                axios.get(data.property.address).then(res => {
+                    lastTimestampRequest = new Date().getTime();
+                    resolve(parseData(res.data, data.property));
+                }).catch(err => {
+                    reject(err);
+                });
             } else {
                 reject();
             }

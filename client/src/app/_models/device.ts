@@ -29,6 +29,10 @@ export class Device {
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
     };
+
+    static isWebApiProperty(device: Device): boolean {
+        return device.type === DeviceType.WebAPI && device.property.getTags && device.property.postTags;
+    }
 }
 
 export class Tag {
@@ -136,6 +140,13 @@ export class DeviceNetProperty {
         // method: 'Method flag used for WebAPI (GET/POST)',
         // format: 'Data format flag used for WebAPI (CSV/JSON)',
     }
+}
+
+export class DeviceWebApiProperty {
+    /** Get Tags URL */
+    getTags: string;
+    /** Port Tags URL */
+    postTags: string;
 }
 
 export class DeviceSecurity {

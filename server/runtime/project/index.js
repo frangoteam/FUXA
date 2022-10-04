@@ -293,11 +293,17 @@ function removeView(view) {
 }
 
 /**
- * Set Device to loacal data
+ * Set Device to local data
  * @param {*} device 
+ * @param {*} merge merge with exist (tags)
  */
-function setDevice(device) {
-    data.devices[device.id] = device;
+function setDevice(device, merge) {
+    if (merge && data.devices[device.id]) {
+        device.enabled = data.devices[device.id].enabled;
+        data.devices[device.id] = {...data.devices[device.id], ...device};
+    } else {
+        data.devices[device.id] = device;
+    }
 }
 
 /**
@@ -863,7 +869,7 @@ function _mergeDefaultConfig() {
                                 logger.error(`project.merge-config: DEVICES${JSON.stringify(device)} missing property!`);
                             } else {
                                 var deviceToAdd = new Device(device);
-                                setDevice(deviceToAdd);
+                                setDevice(deviceToAdd, true);
                                 logger.info(`project.merge-config: Device ${deviceToAdd.name} added!`);    
                             }
                         } catch (err) {
