@@ -244,6 +244,27 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
             }
         });
+        // client ask device tags configurtions, used for connections that load tags dinamically (webapi)
+        socket.on(Events.IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
+            try {
+                if (message && message.deviceId) {
+                    devices.getDeviceTagsResult(message.deviceId).then(result => {
+                        message.result = result;
+                        io.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
+                    }).catch(function (err) {
+                        logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: ${err}`);
+                        message.error = err;
+                        io.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
+                    });
+                } else {
+                    logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: wrong message`);
+                    message.error = 'wrong message';
+                    io.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
+                }
+            } catch (err) {
+                logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: ${err}`);
+            }
+        });        
     });
 }
 

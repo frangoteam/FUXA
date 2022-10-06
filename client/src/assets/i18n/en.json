@@ -1214,5 +1214,6 @@
     "msg.alarms-clear-success": "All alarms have been cancelled!",
     "msg.import-devices-error": "Import devices failed!",
     "msg.report-build-forced": "Send to build Report successful",
-    "msg.report-build-error": "Send to build Report failed!"
+    "msg.report-build-error": "Send to build Report failed!",
+    "msg.device-tags-request-result": "Load {{value}} of {{current}}"
 }

@@ -25,6 +25,7 @@ export class HmiService {
     @Output() onHostInterfaces: EventEmitter<any> = new EventEmitter();
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
+    @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<string> = new EventEmitter();
 
@@ -204,6 +205,9 @@ export class HmiService {
             this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
                 this.onDeviceWebApiRequest.emit(message);
             });
+            this.socket.on(IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
+                this.onDeviceTagsRequest.emit(message);
+            });            
             // scripts
             this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
                 this.onScriptConsole.emit(message);
@@ -243,6 +247,16 @@ export class HmiService {
         if (this.socket) {
             let msg = { property: property };
             this.socket.emit(IoEventTypes.DEVICE_WEBAPI_REQUEST, msg);
+        }
+    }
+
+    /**
+     * Ask device tags settings
+     */
+     public askDeviceTags(deviceId: string) {
+        if (this.socket) {
+            let msg = { deviceId: deviceId };
+            this.socket.emit(IoEventTypes.DEVICE_TAGS_REQUEST, msg);
         }
     }
 
@@ -543,6 +557,7 @@ export enum IoEventTypes {
     DEVICE_BROWSE = 'device-browse',
     DEVICE_NODE_ATTRIBUTE = 'device-node-attribute',
     DEVICE_WEBAPI_REQUEST = 'device-webapi-request',
+    DEVICE_TAGS_REQUEST = 'device-tags-request',
     DAQ_QUERY = 'daq-query',
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',

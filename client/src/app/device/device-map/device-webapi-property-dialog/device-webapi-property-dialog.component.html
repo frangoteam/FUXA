@@ -24,11 +24,14 @@
             <div class="my-form-field block mt10">
                 <span>{{'device.webapi-property-gettags' | translate}}</span>
                 <input [(value)]="data.device.property.getTags" style="width: 350px" type="text" [disabled]="true">
-            </div>            
+            </div>
             <div class="my-form-field block mt10">
                 <span>{{'device.webapi-property-posttags' | translate}}</span>
                 <input [(value)]="data.device.property.postTags" style="width: 350px" type="text" [disabled]="true">
-            </div>            
+            </div>
+            <div class="block mt15" style="height: 24px;">
+                <span>{{message}}</span>
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
