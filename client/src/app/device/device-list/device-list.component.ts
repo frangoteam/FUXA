@@ -42,7 +42,8 @@ export class DeviceListComponent implements OnInit {
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
     deviceSelected: Device = null;
-
+    isDeviceToEdit = true;
+    
     @Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
@@ -107,6 +108,7 @@ export class DeviceListComponent implements OnInit {
         if (!device) {
             return;
         }
+        this.isDeviceToEdit = !Device.isWebApiProperty(device)
         Object.values(this.devices).forEach(d => {
             if (d.name === device.name) {
                 this.deviceSelected = d;
@@ -238,7 +240,7 @@ export class DeviceListComponent implements OnInit {
 
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
-            return tag.label;
+            return tag.label || tag.name;
         } else if (this.deviceSelected.type === DeviceType.OPCUA) {
             return tag.label;
         } else {

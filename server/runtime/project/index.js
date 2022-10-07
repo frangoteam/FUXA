@@ -868,7 +868,11 @@ function _mergeDefaultConfig() {
                             if (!device || !device.id || !device.name || !device.type || !device.configs) {
                                 logger.error(`project.merge-config: DEVICES${JSON.stringify(device)} missing property!`);
                             } else {
+                                var existDevice = data.devices[device.id];
                                 var deviceToAdd = new Device(device);
+                                if (existDevice) {
+                                    deviceToAdd.tags = existDevice.tags;
+                                }
                                 setDevice(deviceToAdd, true);
                                 logger.info(`project.merge-config: Device ${deviceToAdd.name} added!`);    
                             }
@@ -888,13 +892,13 @@ function _mergeDefaultConfig() {
         }
     });
 
-    function Device(device) {
+    function Device(device, tags) {
         this.id = device.id;
         this.name = device.name;
         this.enabled = true;
         this.type = device.type;
         this.polling = 1000 || device.configs.requestIntervalMs;
-        this.tags = {};
+        this.tags = tags || {};
         this.property = device.configs;
 
         var a = Object.values(DeviceType);

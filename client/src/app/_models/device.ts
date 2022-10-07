@@ -31,7 +31,7 @@ export class Device {
     };
 
     static isWebApiProperty(device: Device): boolean {
-        return device.type === DeviceType.WebAPI && device.property.getTags && device.property.postTags;
+        return device.type === DeviceType.WebAPI && device.property.getTags;
     }
 }
 

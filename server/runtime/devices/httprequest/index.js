@@ -177,8 +177,21 @@ function HTTPclient(_data, _logger, _events) {
     /**
      * Set the Tag value, not used
      */
-    this.setValue = function (sigid, value) {
-        logger.warn(`'${data.name}' setValue not supported!`);
+    this.setValue = function (tagId, value) {
+        if (apiProperty.ownFlag && data.tags[tagId]) {
+            if (apiProperty.postTags) {
+                axios.post(apiProperty.getTags, [{id: tagId, value: value}]).then(res => {
+                    lastTimestampRequest = new Date().getTime();
+                    logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true);
+                }).catch(err => {
+                    logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
+                });
+            } else {
+                logger.error(`postTags undefined (setValue)`, true);
+            }
+        } else {
+            logger.error(`setValue not supported!`, true);
+        }
     }
 
     /**
