@@ -715,6 +715,10 @@
     "device.security-none": "None",
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encrypt",
+    "device.webapi-property-title": "WebAPI Property",
+    "device.webapi-property-gettags": "URL GET Tags",
+    "device.webapi-property-posttags": "URL POST Tags",
+    "device.webapi-property-loadtags": "Load Tags",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
@@ -1210,5 +1214,6 @@
     "msg.alarms-clear-success": "All alarms have been cancelled!",
     "msg.import-devices-error": "Import devices failed!",
     "msg.report-build-forced": "Send to build Report successful",
-    "msg.report-build-error": "Send to build Report failed!"
+    "msg.report-build-error": "Send to build Report failed!",
+    "msg.device-tags-request-result": "Load {{value}} of {{current}}"
 }
