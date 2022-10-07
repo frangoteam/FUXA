@@ -257,6 +257,23 @@ function Device(data, runtime) {
     }
 
     /**
+     * Call Device to return Tags property (WebAPI)
+     */
+    this.getTagsProperty = function() {
+        return new Promise(function (resolve, reject) {
+            if (data.type === DeviceEnum.WebAPI && comm.getTagsProperty) {
+                comm.getTagsProperty().then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } else {
+                reject('Get Tags Property not supported!');
+            }
+        });
+    }
+
+    /**
      * Call Device to bind the DAQ store function
      */
     this.bindSaveDaqValue = function (fnc) {
@@ -379,6 +396,8 @@ module.exports = {
     getRequestResult: getRequestResult,
     loadPlugin: loadPlugin,
     isInternal: isInternal,
+
+    get DeviceType() { return DeviceEnum }
 }
 
 /**

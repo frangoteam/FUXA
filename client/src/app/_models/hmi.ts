@@ -166,7 +166,7 @@ export interface InputOptionsProperty {
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;
-    // TODO not sure if it is necessary, from inmation
+    // TODO not sure if it is necessary
     variableValue: string;
     /** Bitmask to mask with value */
     bitmask: number;

@@ -1,0 +1,42 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'device.webapi-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="content">
+            <div class="my-form-field block">
+                <span>{{'device.property-name' | translate}}</span>
+                <input [(value)]="data.device.name" style="width: 350px" type="text" [disabled]="true">
+            </div>
+            <div class="block mt10">
+                <div class="my-form-field">
+                    <span>{{'device.property-type' | translate}}</span>
+                    <input [(value)]="data.device.type" style="width: 160px" type="text" [disabled]="true">
+                </div>
+                <div class="my-form-field ml20">
+                    <span>{{'device.property-polling' | translate}}</span>
+                    <input [(value)]="data.device.polling" style="width: 80px" type="text" [disabled]="true">
+                </div>
+                <div class="my-form-field ml20">
+                    <span>{{'device.property-enable' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
+                </div>
+            </div>
+            <div class="my-form-field block mt10">
+                <span>{{'device.webapi-property-gettags' | translate}}</span>
+                <input [(value)]="data.device.property.getTags" style="width: 350px" type="text" [disabled]="true">
+            </div>
+            <div class="my-form-field block mt10">
+                <span>{{'device.webapi-property-posttags' | translate}}</span>
+                <input [(value)]="data.device.property.postTags" style="width: 350px" type="text" [disabled]="true">
+            </div>
+            <div class="block mt15" style="height: 24px;">
+                <span>{{message}}</span>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button color="accent" (click)="onLoadTagsClick()" style="margin-right: 80px;">{{'device.webapi-property-loadtags' | translate}}</button>
+        <button mat-raised-button (click)="onNoClick()" style="float: right">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" style="float: right">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

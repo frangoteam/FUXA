@@ -34,9 +34,8 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;text-align: center;width: 80px;" *ngIf="!isFuxaServer && data.device.type !== deviceType.internal">
-                <span *ngIf="data.device.type === deviceType.WebStudio">{{'device.property-subscribe' | translate}}</span>
-                <span *ngIf="data.device.type !== deviceType.WebStudio">{{'device.property-enable' | translate}}</span>
+            <div *ngIf="!isFuxaServer && data.device.type !== deviceType.internal" class="my-form-field" style="display: inline-block;margin-bottom: 10px;text-align: center;width: 80px;">
+                <span>{{'device.property-enable' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="data.device.enabled"></mat-slide-toggle>
             </div>
             <div *ngIf="data.device.property && data.device.type" [ngSwitch]="data.device.type">

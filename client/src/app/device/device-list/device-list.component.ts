@@ -42,7 +42,8 @@ export class DeviceListComponent implements OnInit {
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
     deviceSelected: Device = null;
-
+    isDeviceToEdit = true;
+    
     @Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
@@ -107,16 +108,14 @@ export class DeviceListComponent implements OnInit {
         if (!device) {
             return;
         }
+        this.isDeviceToEdit = !Device.isWebApiProperty(device)
         Object.values(this.devices).forEach(d => {
             if (d.name === device.name) {
                 this.deviceSelected = d;
                 this.bindToTable(this.deviceSelected.tags);
             }
         });
-        if (this.deviceSelected.type === DeviceType.WebStudio) {
-            this.displayedColumns = this.defClientColumns;
-            this.tableWidth = this.defClientRowWidth;
-        } else if (this.deviceSelected.type === DeviceType.internal) {
+        if (this.deviceSelected.type === DeviceType.internal) {
             this.displayedColumns = this.defInternalColumns;
             this.tableWidth = this.defInternalRowWidth;
         } else {
@@ -241,7 +240,7 @@ export class DeviceListComponent implements OnInit {
 
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
-            return tag.label;
+            return tag.label || tag.name;
         } else if (this.deviceSelected.type === DeviceType.OPCUA) {
             return tag.label;
         } else {
@@ -270,7 +269,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type, tag: Tag) {
-        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio ||
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
             return true;
         } else if (type === DeviceType.MQTTclient) {

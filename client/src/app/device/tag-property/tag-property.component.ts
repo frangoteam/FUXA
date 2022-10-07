@@ -41,8 +41,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             this.config.height = '640px';
             this.config.width = '1000px';
             this.config.type = (this.isWebApi()) ? 'todefine' : '';
-        } else if (this.isExternal()) {
-            this.dialogType = EditTagDialogType.Simple;
         } else if (this.isInternal()) {
             this.dialogType = EditTagDialogType.Simple;
         } else if (this.isServer()) {
@@ -142,16 +140,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 if (tags[i].id !== this.data.tag.id && tags[i].name === this.data.tag.name) {
                     this.error = '';
                     this.translateService.get('msg.device-tag-exist').subscribe((txt: string) => { this.error = txt });
-                    return;
-                }
-            }
-        } else if (this.isExternal()) {
-            let tags =  <Tag[]>Object.values(this.data.device.tags);
-            this.error = '';
-            for (let i = 0; i < tags.length; i++) {
-                if (tags[i].id !== this.data.tag.id && tags[i].address === this.data.tag.address) {
-                    this.error = '';
-                    this.translateService.get('msg.device-tag-exist').subscribe((txt: string) => { this.error = txt });                    
                     return;
                 }
             }
@@ -363,10 +351,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isBACnet() {
         return (this.data.device.type === DeviceType.BACnet) ? true : false;
     }
-    
-    isExternal() {
-        return (this.data.device.type === DeviceType.WebStudio) ? true : false;
-    }
 
     isInternal() {
 		return (this.data.device.type === DeviceType.internal) ? true : false;
@@ -391,8 +375,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             return false;
         } else if (this.isOpcua() || this.isWebApi()) {
             return true;
-        } else if (this.isExternal()) {
-            return (this.data.tag.address) ? true : false;
         } else if (this.isInternal()) {
             return (this.data.tag.name) ? true : false;
         } else if (this.data.tag && !this.data.tag.name) {

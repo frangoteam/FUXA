@@ -312,6 +312,24 @@ function readNodeAttribute(deviceid, node) {
 }
 
 /**
+ * Return Device Tags settings
+ * @param {*} deviceId 
+ */
+function getDeviceTagsResult(deviceId) {
+    return new Promise(function (resolve, reject) {
+        if (activeDevices[deviceId] && activeDevices[deviceId].getTagsProperty) {
+            activeDevices[deviceId].getTagsProperty().then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else {
+            reject('Device not found!');
+        }
+    });
+}
+
+/**
  * Return the property (security mode) supported from device
  * @param {*} endpoint 
  * @param {*} type 
@@ -346,6 +364,7 @@ var devices = module.exports = {
     getDeviceIdFromTag: getDeviceIdFromTag,
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,
+    getDeviceTagsResult: getDeviceTagsResult,
     isWoking: isWoking,
     getSupportedProperty: getSupportedProperty,
     getRequestResult: getRequestResult
