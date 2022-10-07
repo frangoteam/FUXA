@@ -195,29 +195,29 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
 
     onAddToSubscribe() {
         if (this.topicContent && this.topicContent.length && this.invokeSubscribe) {
-            // let items = [];
+            let topicsToAdd = [];
             for (let i = 0; i < this.topicContent.length; i++) {
                 if (this.topicContent[i].checked) {
-                    // items.push(this.topicContent[i].key);
-                    let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                    let topic = new Tag(Utils.getGUID(TAG_PREFIX));
                     if (this.data.topic) {
-                        tag = new Tag(this.data.topic.id);
+                        topic = new Tag(this.data.topic.id);
                     }
-                    tag.type = this.topicSelectedSubType;
-                    tag.address = this.selectedTopic.key;
-                    tag.memaddress = this.topicContent[i].key;
-                    tag.options = { subs: this.topicContent.map((tcnt) => { return tcnt.key }) };
+                    topic.type = this.topicSelectedSubType;
+                    topic.address = this.selectedTopic.key;
+                    topic.memaddress = this.topicContent[i].key;
+                    topic.options = { subs: this.topicContent.map((tcnt) => { return tcnt.key }) };
                     if (this.topicContent[i].name) {
-                        tag.name = this.topicContent[i].name;
+                        topic.name = this.topicContent[i].name;
                     } else {
-                        tag.name = this.selectedTopic.key;
-                        if (tag.type === 'json') {
-                            tag.name += '[' + tag.memaddress + ']';
+                        topic.name = this.selectedTopic.key;
+                        if (topic.type === 'json') {
+                            topic.name += '[' + topic.memaddress + ']';
                         }
                     }
-                    this.invokeSubscribe(this.data.topic, [tag]);
+                    topicsToAdd.push(topic);
                 }
             }
+            this.invokeSubscribe(this.data.topic, topicsToAdd);
         }
     }
     //#endregion
