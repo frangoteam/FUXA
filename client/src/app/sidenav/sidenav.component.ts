@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 
 import { LayoutSettings, NaviItem, NaviModeType, NavigationSettings, LinkType } from '../_models/hmi';
 

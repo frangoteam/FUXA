@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef, Input, ViewChild } from '@angular/core';
 import { Subscription } from "rxjs";
-import { MatDialog } from '@angular/material';
-import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DevicePropertyComponent } from './../device-property/device-property.component';

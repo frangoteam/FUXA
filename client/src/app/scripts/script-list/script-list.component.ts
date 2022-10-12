@@ -1,5 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Inject, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MatTable, MatTableDataSource, MAT_DIALOG_DATA, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { Subscription } from "rxjs";
 
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +9,6 @@ import { ProjectService } from '../../_services/project.service';
 import { ScriptEditorComponent } from '../script-editor/script-editor.component';
 import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/script-scheduling.component';
 import { Script, SCRIPT_PREFIX, ScriptScheduling } from '../../_models/script';
-import { AlarmsType } from '../../_models/alarm';
 import { Utils } from '../../_helpers/utils';
 import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
 

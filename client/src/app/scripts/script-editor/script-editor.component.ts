@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, Inject, ViewChild, OnDestroy } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ChangeDetectorRef } from '@angular/core';
 import { Subscription } from "rxjs";

@@ -3,6 +3,17 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, HostListener, E
 declare const noUiSlider: any;
 declare const wNumb: any;
 
+export class NgxNouisliderOptions {
+    orientation = 'vertical';//'horizontal';
+    direction = 'ltr';
+    fontFamily = 'Sans-serif';
+    shape = { baseColor: '#cdcdcd', connectColor: '#262c3b', handleColor: '#3f4964' };
+    marker = { color: '#222222', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
+    range = { min: 0, max: 100 };
+    step = 1;
+    pips = { mode: 'values', values: [0, 50, 100], density: 4 };
+    tooltip = { type: 'none', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 }
+}
 @Component({
     selector: 'ngx-nouislider',
     templateUrl: './ngx-nouislider.component.html',
@@ -167,16 +178,4 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
         return parseFloat(this.uiSlider.get());
     }
 
-}
-
-export class NgxNouisliderOptions {
-    orientation = 'vertical';//'horizontal';
-    direction = 'ltr';
-    fontFamily = 'Sans-serif';
-    shape = { baseColor: '#cdcdcd', connectColor: '#262c3b', handleColor: '#3f4964' };
-    marker = { color: '#222222', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
-    range = { min: 0, max: 100 };
-    step = 1;
-    pips = { mode: 'values', values: [0, 50, 100], density: 4 };
-    tooltip = { type: 'none', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 }
 }

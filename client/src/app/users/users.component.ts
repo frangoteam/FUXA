@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
-import { MatTable, MatTableDataSource, MatSort, MatMenuTrigger } from '@angular/material';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { SelOptionsComponent } from '../gui-helpers/sel-options/sel-options.component';
 
