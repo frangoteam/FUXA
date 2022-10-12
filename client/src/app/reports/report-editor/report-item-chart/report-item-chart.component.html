@@ -1,0 +1,37 @@
+<div>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'report.chart-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field">
+            <span>{{'report.item-daterange' | translate}}</span>
+            <mat-select [(value)]="data.range" style="width: 200px" [disabled]="true">
+                <mat-option *ngFor="let ev of dateRangeType | enumToArray" [value]="ev.key">
+                    {{ ev.value }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="chart">
+            <div class="my-form-field">
+                <span>{{'report.chart-name' | translate}}</span>
+                <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()" style="width: 200px">
+                    <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
+                    <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
+                        {{ chart.name }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field ml20">
+                <span>{{'report.chart-width' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.width" (change)="onChartChanged()" type="number" min="100" style="width: 75px">
+            </div>
+            <div class="my-form-field ml10">
+                <span>{{'report.chart-height' | translate}}</span>
+                <input numberOnly [(ngModel)]="data.height" (change)="onChartChanged()" type="number" min="100" style="width: 75px">
+            </div>            
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

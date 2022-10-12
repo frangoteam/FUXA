@@ -3,9 +3,9 @@
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div class="dialog-mdsd-content">
         <mat-tab-group style="width: 950px;height: 700px">
-            <mat-tab label="{{'dlg.layout-general' | translate}}">
-                <div style="display: block;">
-                    <div class="my-form-field" style="display: inline-block;margin-top: 25px;">
+            <mat-tab label="{{'dlg.layout-general' | translate}}">             
+                <div style="display: block;margin-top: 25px;">
+                    <div class="my-form-field">
                         <span>{{'dlg.layout-lbl-sview' | translate}}</span>
                         <mat-select [(value)]="data.layout.start" style="width: 400px">
                             <mat-option *ngFor="let view of data.views" [value]="view.id">
@@ -31,7 +31,7 @@
                             <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
                         </mat-select>
                     </div>
-                </div>                
+                </div>
                 <div style="display: block;margin-top: 10px;">
                     <div class="my-form-field" style="display: inline-block">
                         <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
@@ -78,9 +78,12 @@
                     <div class="sidenav-menu" [style.background-color]="data.layout.navigation.bkcolor" [style.color]="data.layout.navigation.fgcolor"
                         style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
                         <mat-list class="dndList" style="padding-top: 10px; background-color: inherit;">
+                            <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="data.layout.navigation.fgcolor">
+                                <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
+                                <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
+                            </mat-list-item>
                             <mat-list-item *ngFor="let item of draggableListLeft; let i = index" [ngClass]="'menu-item-' + data.layout.navigation.type" style="width: unset">
                                 <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
-                                    <!-- <mat-icon *ngIf="mode.value === navMode.icon || mode.value === navMode.block">{{item.icon}}</mat-icon> -->
                                     <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                                         <img *ngIf="item.image" src="{{item.image}}">
                                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
@@ -143,6 +146,15 @@
                                     class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
                                     [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
                             </div>
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;margin-top: 10px;">
+                            <span>{{'dlg.layout-lbl-logo' | translate}}</span>
+                            <mat-select [(value)]="data.layout.navigation.logo" style="width: 300px">
+                                <mat-option (click)="data.layout.navigation.logo = null;"></mat-option>
+                                <mat-option *ngFor="let resource of resources" [value]="resource.path">
+                                    {{ resource.name }}
+                                </mat-option>
+                            </mat-select>
                         </div>
                     </div>
                 </div>

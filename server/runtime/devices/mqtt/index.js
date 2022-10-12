@@ -11,7 +11,7 @@ function MQTTclient(_data, _logger, _events) {
     var working = false;                // Working flag to manage overloading polling and connection
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last connections status
-    var varsValue = [];                 // Tags to send to frontend { id, type, value }
+    var varsValue = {};                 // Tags to send to frontend { id, type, value }
     var overloading = 0;                // Overloading counter to mange the break connection
     var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
@@ -233,7 +233,7 @@ function MQTTclient(_data, _logger, _events) {
      * Load Topics attribute and map tags to publish
      */
     this.load = function (_data) {
-        varsValue = [];
+        varsValue = {};
         refTagToTopics = {};
         data = JSON.parse(JSON.stringify(_data));
         try {

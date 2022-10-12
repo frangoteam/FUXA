@@ -3,6 +3,7 @@ import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
 import { GaugeSettings, Variable, GaugeStatus, GaugeAction, Event, GaugeActionsType } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+import { PropertyType } from '../../gauge-property/flex-input/flex-input.component';
 
 declare var SVG: any;
 
@@ -42,7 +43,7 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
     }
 
     static getDialogType(): GaugeDialogType {
-        return GaugeDialogType.OnlyValue;
+        return GaugeDialogType.Input;
     }
 
     static getActions(type: string) {
@@ -69,10 +70,20 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
             if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
                 let input = Utils.searchTreeStartWith(svgele.node, this.prefix);
                 if (input) {
-                    let val = parseFloat(sig.value);
+                    let val: any = parseFloat(sig.value);
+                    let unit;
+                    let digit;
+                    
+                    if (ga.property.ranges) {
+                        unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
+                        digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
+                    }
+
                     if (Number.isNaN(val)) {
                         // maybe boolean
                         val = Number(sig.value);
+                    } else if (!Utils.isNullOrUndefined(digit)){
+                        val = val.toFixed(digit);
                     } else {
                         val = parseFloat(val.toFixed(5));
                     }
@@ -80,6 +91,9 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                     // Do not update value if input is in focus!
                     if(ga.property.options && ga.property.options.updated && !(document.hasFocus && input.id == document.activeElement.id)){
                         input.value = val;
+                        if(unit){
+                            input.value += ' ' + unit;
+                        }
                     }
                     // check actions
                     if (ga.property.actions) {
@@ -104,7 +118,31 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                 if (input) {
                     input.value = '';
                     input.setAttribute('autocomplete', 'off');
+                    if (gab.property.options && gab.property.options.numeric) {
+                        input.setAttribute('type', 'number');
+                        if (!Utils.isNullOrUndefined(gab.property.options.min)) {
+                            input.setAttribute('min', gab.property.options.min);
+                        }
+                        if (!Utils.isNullOrUndefined(gab.property.options.max)) {
+                            input.setAttribute('max', gab.property.options.max);
+                        }
+                    }
+
+                    // Adjust the width to better fit the surrounding svg rect
+                    input.style.width = 'calc(100% - 5px)';
                 }
+            }
+
+            // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
+            let fobj = ele.getElementsByTagName('foreignObject');
+            if(fobj){
+                fobj[0].style.paddingLeft = '1px'; 
+            }
+
+            // Set the border on the surrounding svg rect
+            let rects = ele.getElementsByTagName('rect');
+            if(rects){
+                rects[0].setAttribute('stroke-width','0.5');
             }
         }
     }
@@ -153,5 +191,24 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
                 this.runActionShow(element, act.type, gaugeStatus);
             }
         }
+    }
+
+    static validateValue(value: any, ga: GaugeSettings) : {valid: boolean, errorText: string, min: number, max: number} {
+        if(ga.property.options && ga.property.options.numeric){
+            if(!Utils.isNullOrUndefined(ga.property.options.min) && !Utils.isNullOrUndefined(ga.property.options.max)){
+                if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
+                    return {valid: false, errorText: 'html-input.not-a-number', min: 0, max: 0};
+                }
+                else {
+                    let numVal = parseFloat(value);
+                    if(numVal < ga.property.options.min || numVal > ga.property.options.max){
+                        return { valid: false, errorText: 'html-input.out-of-range', 
+                                min: ga.property.options.min, max: ga.property.options.max };
+                    }
+                }
+            }
+        }
+
+        return { valid: true, errorText: '', min: 0, max: 0 };
     }
 }

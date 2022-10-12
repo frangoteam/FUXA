@@ -11,6 +11,7 @@ const IoEventTypes = {
     DEVICE_BROWSE: 'device-browse',
     DEVICE_NODE_ATTRIBUTE: 'device-node-attribute',
     DEVICE_WEBAPI_REQUEST: 'device-webapi-request',
+    DEVICE_TAGS_REQUEST: 'device-tags-request',
     DAQ_QUERY: 'daq-query',
     DAQ_RESULT: 'daq-result',
     DAQ_ERROR: 'daq-error',

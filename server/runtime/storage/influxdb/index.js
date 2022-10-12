@@ -125,19 +125,21 @@ function Influx(_settings, _log) {
 
     function writePoint(tag, deviceName) {
         try {
-            const point = new Point(tag.id)
-            .tag('name', tag.name)
-            .tag('type', tag.type)
-            .timestamp(new Date(tag.timestamp));
-            if (deviceName) {
-                point.tag('device', deviceName);
+            if (!utils.isNullOrUndefined(tag.value)) {
+                const point = new Point(tag.id)
+                .tag('name', tag.name)
+                .tag('type', tag.type)
+                .timestamp(new Date(tag.timestamp));
+                if (deviceName) {
+                    point.tag('device', deviceName);
+                }
+                if (utils.isBoolean(tag.value)) {
+                    point.booleanField('value', tag.value);
+                } else {
+                    point.floatField('value', tag.value)
+                }
+                writeApi.writePoint(point);
             }
-            if (utils.isBoolean(tag.value)) {
-                point.booleanField('value', tag.value);
-            } else {
-                point.floatField('value', tag.value)
-            }
-            writeApi.writePoint(point);
         } catch (error) {
             logger.error(`influxdb-writePoints failed! ${error}`);
         }

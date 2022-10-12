@@ -21,7 +21,7 @@
         <!-- Checkbox Column -->
         <ng-container matColumnDef="select">
             <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                <button *ngIf="!readonly" mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
+                <button *ngIf="!readonly && isDeviceToEdit" mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
                     <mat-icon>add</mat-icon>
                 </button>
             </mat-header-cell>

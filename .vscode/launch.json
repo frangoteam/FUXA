@@ -30,6 +30,17 @@
       "request": "launch",
       "url": "http://localhost:4200/#",
       "webRoot": "${workspaceFolder}/client/src"
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server Env-Process",
+      "localRoot": "${workspaceFolder}/server",
+      "remoteRoot": "${workspaceFolder}/server",
+      "program": "${workspaceRoot}/server/main.js",
+      "args": [
+        "--env=test"
+      ]
+    },
   ]
 }

@@ -58,6 +58,10 @@ if (parsedArgs.userDir) {
     workDir = path.resolve(parsedArgs.userDir, '_appdata');
 }
 
+if (parsedArgs.env) {
+    require('./envParams.js');
+}
+
 if (!fs.existsSync(workDir)) {
     fs.mkdirSync(workDir);
 }

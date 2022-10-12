@@ -11,6 +11,7 @@ const async = require('async');
 var events = require('../events');
 var utils = require('../utils');
 const prjstorage = require('./prjstorage');
+const DeviceType = require('../devices/device').DeviceType;
 
 const version = '1.02';
 var settings;                   // Application settings
@@ -131,10 +132,11 @@ function load() {
                             }); 
                         }                        
                     ],
-                    function (err) {
+                    async function (err) {
                         if (err) {
                             reject(err);
                         } else {
+                            await _mergeDefaultConfig();
                             resolve();
                         }
                     });
@@ -291,11 +293,17 @@ function removeView(view) {
 }
 
 /**
- * Set Device to loacal data
+ * Set Device to local data
  * @param {*} device 
+ * @param {*} merge merge with exist (tags)
  */
-function setDevice(device) {
-    data.devices[device.id] = device;
+function setDevice(device, merge) {
+    if (merge && data.devices[device.id]) {
+        device.enabled = data.devices[device.id].enabled;
+        data.devices[device.id] = {...data.devices[device.id], ...device};
+    } else {
+        data.devices[device.id] = device;
+    }
 }
 
 /**
@@ -845,6 +853,59 @@ function _filterProjectGroups(groups) {
         }
     }
     return result;
+}
+
+function _mergeDefaultConfig() {
+    return new Promise(async function (resolve, reject) {
+        try {
+            if (process.env.DEVICES && typeof process.env.DEVICES === 'string') {
+                try {
+                    logger.info('project.merge-config: in progress!');
+                    var devices = JSON.parse(process.env.DEVICES);
+                    devices.forEach(device => {
+                        try {
+                            // check device required
+                            if (!device || !device.id || !device.name || !device.type || !device.configs) {
+                                logger.error(`project.merge-config: DEVICES${JSON.stringify(device)} missing property!`);
+                            } else {
+                                var existDevice = data.devices[device.id];
+                                var deviceToAdd = new Device(device);
+                                if (existDevice) {
+                                    deviceToAdd.tags = existDevice.tags;
+                                }
+                                setDevice(deviceToAdd, true);
+                                logger.info(`project.merge-config: Device ${deviceToAdd.name} added!`);    
+                            }
+                        } catch (err) {
+                            logger.error(`project.merge-config: DEVICES${JSON.stringify(device)} failed! ${err}`);
+                            reject();
+                        }                            
+                    });
+                } catch (err) {
+                    logger.error(`project.merge-config: DEVICES failed! ${err}`);
+                }
+            }
+            resolve();
+        } catch (err) {
+            logger.error(`project.merge-config: failed! ${err}`);
+            reject();
+        }
+    });
+
+    function Device(device, tags) {
+        this.id = device.id;
+        this.name = device.name;
+        this.enabled = true;
+        this.type = device.type;
+        this.polling = 1000 || device.configs.requestIntervalMs;
+        this.tags = tags || {};
+        this.property = device.configs;
+
+        var a = Object.values(DeviceType);
+        if (Object.values(DeviceType).indexOf(device.type) === -1) {
+            throw new Error('DeviceType unknow');
+        }
+    }
 }
 
 const ProjectDataCmdType = {

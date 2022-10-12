@@ -449,6 +449,10 @@ app-root {
     font-size: 14px;
     text-align: center;
     /* color: rgba(0, 0, 0, 1) !important; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: break-spaces;
+    line-height: 20px;
 }
 
 /* Layout form */
@@ -996,6 +1000,10 @@ mat-toolbar-row {
 
 .ml20 {
     margin-left: 20px;
+}
+
+.ml30 {
+    margin-left: 30px;
 }
 
 .mr20 {

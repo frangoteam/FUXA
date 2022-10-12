@@ -31,6 +31,8 @@ export enum ViewType {
 } 
 
 export class LayoutSettings {
+    /** Auto resize view */
+    autoresize?: boolean = false;
     /** Start view (home) */
     start: string = '';
     /** Left side navigation menu settings */
@@ -62,6 +64,8 @@ export class NavigationSettings {
     fgcolor: string = '#1D1D1D';
     /** Menu items */
     items: NaviItem[];
+    /** Custom logo resource */
+    logo?: boolean = false;    
     constructor() {
         this.mode = Object.keys(NaviModeType).find(key => NaviModeType[key] === NaviModeType.over) as NaviModeType;
         this.type = Object.keys(NaviItemType).find(key => NaviItemType[key] === NaviItemType.block) as NaviItemType;
@@ -108,6 +112,7 @@ export enum NotificationModeType {
 export enum ZoomModeType {
     disabled = 'item.zoommode-disabled',
     enabled = 'item.zoommode-enabled',
+    autoresize = 'item.zoommode-autoresize',
 }
 
 export enum InputModeType {
@@ -154,11 +159,14 @@ export class GaugeProperty {
 
 export interface InputOptionsProperty {
     updated: boolean;
+    numeric?: boolean;
+    min?: number;
+    max?: number;
 }
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;
-    // TODO not sure if it is necessary, from inmation
+    // TODO not sure if it is necessary
     variableValue: string;
     /** Bitmask to mask with value */
     bitmask: number;

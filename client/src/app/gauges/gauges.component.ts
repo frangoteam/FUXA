@@ -60,7 +60,7 @@ export class GaugesManager {
     gaugesTags = [];
 
     // list of gauges with input
-    static GaugeWithInput = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
+    static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
     ApeShapesComponent.TypeTag];

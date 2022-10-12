@@ -9,10 +9,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { DevicePropertyComponent } from './../device-property/device-property.component';
 import { ProjectService } from '../../_services/project.service';
 import { PluginService } from '../../_services/plugin.service';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DeviceViewModeType, DeviceConnectionStatusType } from './../../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DeviceViewModeType, DeviceConnectionStatusType, DeviceWebApiProperty } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { Plugin } from '../../_models/plugin';
 import { AppService } from '../../_services/app.service';
+import { DeviceWebapiPropertyDialogComponent } from './device-webapi-property-dialog/device-webapi-property-dialog.component';
 
 @Component({
     selector: 'app-device-map',
@@ -107,7 +108,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     onEditDevice(device: Device) {
-        this.editDevice(device, false);
+        if (Device.isWebApiProperty(device)) {
+            this.showDeviceWebApiProperty(device);
+        } else {
+            this.editDevice(device, false);
+        }
     }
 
     loadCurrentProject() {
@@ -144,7 +149,6 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             this.plugins.push(DeviceType.MQTTclient);
             this.plugins.push(DeviceType.internal);
         } else {
-            this.plugins.push(DeviceType.WebStudio);
             this.plugins.push(DeviceType.internal);
         }
     }
@@ -371,7 +375,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     isClientDevice(device: Device) {
-        return (device.type === DeviceType.WebStudio && this.appService.isClientApp);
+        return (this.appService.isClientApp);
     }
 
     isServer(device: Device) {
@@ -503,6 +507,18 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                 }
             }
             this.checkLayout();
+        });
+    }
+
+    showDeviceWebApiProperty(device: Device) {
+        let dialogRef = this.dialog.open(DeviceWebapiPropertyDialogComponent, {
+            data: {
+                device: device,
+            },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
         });
     }
 

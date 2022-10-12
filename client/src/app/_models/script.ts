@@ -7,6 +7,7 @@ export class Script {
     parameters: ScriptParam[] = [];
     scheduling: ScriptScheduling;
     permission: number;
+    mode: ScriptMode = ScriptMode.SERVER;
     constructor(_id: string) {
         this.id = _id;
     }    
@@ -68,4 +69,9 @@ export interface SystemFunction {
     text: string,       // button text
     tooltip: string;    // description
     params: [boolean],  // array of function parameter where true is for tag and false for any (value)
+}
+
+export enum ScriptMode {
+    CLIENT = 'CLIENT',
+    SERVER = 'SERVER',
 }

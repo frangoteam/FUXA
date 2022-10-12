@@ -761,7 +761,7 @@ THE SOFTWARE.
 
 ngraph.events
 BSD-3-Clause
-Copyright (c) 2013-2019 Andrei Kashcha
+Copyright (c) 2013-2022 Andrei Kashcha
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -822,7 +822,7 @@ panzoom
 MIT
 The MIT License (MIT)
 
-Copyright (c) 2016 - 2021 Andrei Kashcha
+Copyright (c) 2016 - 2022 Andrei Kashcha
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -29,6 +29,10 @@ export class Device {
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
     };
+
+    static isWebApiProperty(device: Device): boolean {
+        return device.type === DeviceType.WebAPI && device.property.getTags;
+    }
 }
 
 export class Tag {
@@ -138,6 +142,13 @@ export class DeviceNetProperty {
     }
 }
 
+export class DeviceWebApiProperty {
+    /** Get Tags URL */
+    getTags: string;
+    /** Port Tags URL */
+    postTags: string;
+}
+
 export class DeviceSecurity {
     mode: any;
     username: string;
@@ -155,7 +166,6 @@ export enum DeviceType {
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',
     MQTTclient = 'MQTTclient',
-    WebStudio = 'WebStudio',
     internal = 'internal',
     EthernetIP = 'EthernetIP'
     // Template: 'template'

@@ -45,8 +45,9 @@ export class DeviceListComponent implements OnInit {
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
     deviceSelected: Device = null;
-
-	@Input() readonly = false;
+    isDeviceToEdit = true;
+    
+    @Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
 
@@ -85,7 +86,7 @@ export class DeviceListComponent implements OnInit {
             if (d.tags) {
                 Object.values(d.tags).forEach((t: Tag) => {
                     this.tagsMap[t.id] = t;
-                })    
+                })
             }
         });
         this.setSelectedDevice(this.deviceSelected);
@@ -107,24 +108,23 @@ export class DeviceListComponent implements OnInit {
     setSelectedDevice(device: Device) {
         this.devices = this.projectService.getDevices();
         this.updateDeviceValue();
-        // this.devices = JSON.parse(JSON.stringify(this.projectService.getDevices()));
+        if (!device) {
+            return;
+        }
+        this.isDeviceToEdit = !Device.isWebApiProperty(device)
         Object.values(this.devices).forEach(d => {
             if (d.name === device.name) {
                 this.deviceSelected = d;
                 this.bindToTable(this.deviceSelected.tags);
             }
         });
-        if (this.deviceSelected.type === DeviceType.WebStudio) {
-            this.displayedColumns = this.defClientColumns;
-            this.tableWidth = this.defClientRowWidth;
-        } else if (this.deviceSelected.type === DeviceType.internal) {
+        if (this.deviceSelected.type === DeviceType.internal) {
             this.displayedColumns = this.defInternalColumns;
             this.tableWidth = this.defInternalRowWidth;
         } else {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
-
     }
 
     onGoBack() {
@@ -243,7 +243,7 @@ export class DeviceListComponent implements OnInit {
 
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
-            return tag.label;
+            return tag.label || tag.name;
         } else if (this.deviceSelected.type === DeviceType.OPCUA) {
             return tag.label;
         } else {
@@ -272,7 +272,7 @@ export class DeviceListComponent implements OnInit {
     }
 
     isToEdit(type, tag: Tag) {
-        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU || type === DeviceType.WebStudio || 
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
@@ -414,14 +414,14 @@ export class DeviceListComponent implements OnInit {
                 // check if name exist
                 if (existNames.indexOf(topic.name) !== -1) {
                     let msg = '';
-                    this.translateService.get('device.topic-name-exist', { value: topic.name}).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt });
                     this.notifyError(msg);
                 } else {
                     // check if subscriptions address exist for new topic
                     let exist = null;
                     if (!oldTopic) {
                         Object.keys(this.deviceSelected.tags).forEach((key) => {
-                            if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].memaddress === topic.memaddress && 
+                            if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].memaddress === topic.memaddress &&
                                 this.deviceSelected.tags[key].id != topic.id && this.deviceSelected.tags[key].options.subs) {
                                 exist = DeviceListComponent.formatAddress(topic.address, topic.memaddress);
                             }
@@ -429,7 +429,7 @@ export class DeviceListComponent implements OnInit {
                     }
                     if (exist) {
                         let msg = '';
-                        this.translateService.get('device.topic-subs-address-exist', { value: exist}).subscribe((txt: string) => { msg = txt });
+                        this.translateService.get('device.topic-subs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt });
                         this.notifyError(msg);
                     } else {
                         this.deviceSelected.tags[topic.id] = topic;
@@ -448,7 +448,7 @@ export class DeviceListComponent implements OnInit {
             // check if name exist
             if (existNames.indexOf(topic.name) !== -1) {
                 let msg = '';
-                this.translateService.get('device.topic-name-exist', { value: topic.name}).subscribe((txt: string) => { msg = txt });
+                this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt });
                 this.notifyError(msg);
             } else {
                 // check if publish address exist
@@ -460,7 +460,7 @@ export class DeviceListComponent implements OnInit {
                 })
                 if (exist) {
                     let msg = '';
-                    this.translateService.get('device.topic-pubs-address-exist', { value: exist}).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('device.topic-pubs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt });
                     this.notifyError(msg);
                 } else {
                     this.deviceSelected.tags[topic.id] = topic;

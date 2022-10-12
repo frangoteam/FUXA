@@ -611,17 +611,19 @@ function DaqNode(_settings, _log, _id) {
  */
 function checkRetention(dtlimit, dbDir, callbackError) {
     var archiveDir = path.resolve(dbDir, archive_folder);
-    var files = fs.readdirSync(archiveDir);
-    files.forEach(file => {
-        const fromTo = _suffixToTimestamp(file);
-        if (fromTo && fromTo.from < dtlimit.getTime()) {
-            fs.unlink(path.join(archiveDir, file), (err) => {
-                if (err && callbackError) {
-                    callbackError(`daqstorage.checkRetention remove file ${file} failed! ${err}`);
-                }
-            });
-        }
-    });
+    if (fs.existsSync(archiveDir)) {
+        var files = fs.readdirSync(archiveDir);
+        files.forEach(file => {
+            const fromTo = _suffixToTimestamp(file);
+            if (fromTo && fromTo.from < dtlimit.getTime()) {
+                fs.unlink(path.join(archiveDir, file), (err) => {
+                    if (err && callbackError) {
+                        callbackError(`daqstorage.checkRetention remove file ${file} failed! ${err}`);
+                    }
+                });
+            }
+        });
+    }
 }
 
 function _suffixToTimestamp(file) {

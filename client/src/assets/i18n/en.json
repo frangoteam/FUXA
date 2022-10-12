@@ -36,6 +36,9 @@
 
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
+    "dlg.layout-lbl-auto-resize": "Auto resize",
+    "dlg.layout-lbl-logo": "Logo",
+    "dlg.layout-lbl-icon": "Icon",
     "dlg.layout-lbl-sview": "Start View",
     "dlg.layout-lbl-login-start": "Show login on start",
     "dlg.layout-lbl-zoom": "Zoom",
@@ -143,7 +146,8 @@
     "item.notifymode-float": "Push",
 
     "item.zoommode-disabled": "Disabled",
-    "item.zoommode-enabled": "Enabled",
+    "item.zoommode-enabled": "Manually",
+    "item.zoommode-autoresize": "Auto-resize",
 
     "item.headerbarmode-hide": "Hide",
     "item.headerbarmode-show": "Show",
@@ -302,6 +306,7 @@
 
     "iframe.property-data": "Data",
     "iframe.property-address": "Address",
+    "iframe.property-name": "Name",
 
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
@@ -638,6 +643,11 @@
     "html-switch.property-font-size": "Font size",
     "html-switch.property-font": "Font",
 
+    "html-input.min": "Min",
+    "html-input.max": "Max",
+    "html-input.out-of-range": "Value out of range",
+    "html-input.not-a-number": "Value is not a number",
+
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",
     "editor.tools-zoomlevel-fitsection": "Fit to selection",
@@ -705,6 +715,10 @@
     "device.security-none": "None",
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encrypt",
+    "device.webapi-property-title": "WebAPI Property",
+    "device.webapi-property-gettags": "URL GET Tags",
+    "device.webapi-property-posttags": "URL POST Tags",
+    "device.webapi-property-loadtags": "Load Tags",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
@@ -821,6 +835,7 @@
     "gauges.property-input-label": "Label",
     "gauges.property-input-unit": "Unit",
     "gauges.property-update-enabled": "Enable update",
+    "gauges.property-numeric-enabled": "Only number",
     "gauges.property-format-digits": "Format digits",
     "gauges.property-actions": "Actions",
     "gauges.property-action-type": "Type",
@@ -834,6 +849,7 @@
     "gauges.property-interval-msec": "Interval (msec.)",
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set a Tag of internal device",
+    "gauges.property-input-range": "Allowed input range",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
@@ -940,6 +956,7 @@
     "scripts.list-title": "Scripts settings",
     "scripts.list-name": "Name",
     "scripts.list-type": "Type",
+    "scripts.list-mode": "Mode",
     "scripts.list-params": "Parameters",
     "scripts.list-scheduling": "Scheduling / Interval",
     "scripts.list-permission": "Authorization",
@@ -948,6 +965,10 @@
     "script.permission-title": "Authorization",
     "script.permission-label": "(void = full for everyone)",
     "script.permission-enabled": "Enabled",
+
+    "script.mode": "Execute mode",
+    "script.mode-title": "Execute mode",
+    "script.mode-label": "(Default: Server)",
 
     "script.property-title": "Script",
     "script.property-systems": "System functions",
@@ -1002,9 +1023,11 @@
     "report.content-addtext": "Add Text",
     "report.content-addtable": "Add Tags table",
     "report.content-addalarms": "Add Alarms history",
+    "report.content-addchart": "Add Chart",
     "report.content-type-text": "Text",
     "report.content-type-tagstable": "Tags table",
-    "report.content-type-alarmshistory": "Alarms history",    
+    "report.content-type-alarmshistory": "Alarms history",
+    "report.content-type-chart": "Chart",
     "report.content-fontsizeitem": "Font size",
     "report.content-alignitem": "Text alignment",
     "report.content-edit": "Edit",
@@ -1032,6 +1055,10 @@
     "report.item-alarms-title": "Report Alarms",
     "report.alarms-priority": "Alarms priority",
     "report.alarms-column": "Alarms columns",
+    "report.chart-title": "Report Chart",
+    "report.chart-name": "Chart name",
+    "report.chart-width": "Width",
+    "report.chart-height": "Height",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
@@ -1187,5 +1214,6 @@
     "msg.alarms-clear-success": "All alarms have been cancelled!",
     "msg.import-devices-error": "Import devices failed!",
     "msg.report-build-forced": "Send to build Report successful",
-    "msg.report-build-error": "Send to build Report failed!"
+    "msg.report-build-error": "Send to build Report failed!",
+    "msg.device-tags-request-result": "Load {{value}} of {{current}}"
 }

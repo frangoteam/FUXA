@@ -1,10 +1,13 @@
 /*
 * Report: get data, create/send/store pdf
 */
-var utils = require('../utils');
+const utils = require('../utils');
 const Pdfmake = require('pdfmake');
 var fs = require('fs')
 var path = require('path');
+// TODO wait compatibility with arm
+// const imageGenerator = require('./helper/image-generator');
+const { time } = require('console');
 
 'use strict';
 
@@ -46,6 +49,19 @@ function Report(_property, _runtime) {
 
     this.getProperty = function () {
         return property;
+    }
+
+    this.getChartImage = function (itemChart, values) {
+        return _getChartImage(itemChart, values);
+    }
+
+    var _getSampleValues = function (lines, timeRange) {
+        let result = {};
+        lines.forEach(line => {
+            result[line.id] = [{x: timeRange.begin, y: Math.floor(Math.random() * 100)},
+                {x: timeRange.end, y: Math.floor(Math.random() * 100)}];
+        });
+        return result;
     }
 
     var _isToExecute = function (date) {
@@ -114,6 +130,10 @@ function Report(_property, _runtime) {
                                 style: [{ fontSize: item.size }] });
                             docDefinition['content'].push(itemAlarms);
                         });
+                    } else if (item.type === 'chart') {
+                        await _getChartContent(item).then(itemChart => {
+                            docDefinition['content'].push(itemChart);
+                        });
                     }
                 }
                 resolve(docDefinition);
@@ -162,17 +182,68 @@ function Report(_property, _runtime) {
         });
     }
 
-    
+    var _getChartContent = function (itemChart) {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let values = {};
+                let tagsids = itemChart.chart.lines.map(line => line.id);
+                let timeRange = _getDateRange(itemChart.range);
+                await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), null).then(result => {
+                    if (!result) {
+                        values = {};
+                    } else {
+                        values = result;
+                    }
+                }).catch(function (err) {
+                    values = {};
+                });
+                await _getChartImage(itemChart, values).then((imageData) => {
+                    content = {
+                        layout: 'lightHorizontalLines',
+                        image: `data:image/png;base64,${imageData.toString('base64')}`,
+                        // if you specify both width and height - image will be stretched
+                        width: itemChart.width || 500,
+                        height: itemChart.height || 350,
+                        // height: 70
+                    }
+                    resolve(content);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } catch (err) {
+                reject(err);
+            }                
+        });
+    }
+
+    var _getChartImage = function (itemChart, values) {
+        return new Promise(async function (resolve, reject) {
+            const timeRange = _getDateRange(itemChart.range);
+            if (!values) {
+                values = _getSampleValues(itemChart.chart.lines, timeRange);
+            }
+            reject('TODO node create image from canvas is not supported!');
+
+            // TODO wait compatibility with arm
+            // imageGenerator.createImage(itemChart, values).then((content) => {
+            //     resolve(content.toString('base64'));
+            // }).catch(function (err) {
+            //     reject(err);
+            //     logger.error("createImage: " + err);
+            // });
+        });
+    }
+
     var _getDateRange = function (dateRange) {
         if (dateRange === ReportDateRangeType.day) {
-            var yesterday = new Date(currentTime);
+            var yesterday = new Date(currentTime || Date.now());
             yesterday.setDate(yesterday.getDate() - 1);
             return { 
                 begin: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()), 
                 end: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59)
             };
         } else if (dateRange === ReportDateRangeType.week) {
-            var lastWeek = new Date(currentTime);
+            var lastWeek = new Date(currentTime || Date.now());
             lastWeek = new Date(lastWeek.setDate(lastWeek.getDate() - 7 - (lastWeek.getDay() + 6 ) % 7));
             var diff = lastWeek.getDate() - lastWeek.getDay() + (lastWeek.getDay() == 0 ? -6 : 1); // adjust when day is sunday
             lastWeek = new Date(lastWeek.setDate(diff));
@@ -181,7 +252,7 @@ function Report(_property, _runtime) {
                 end: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate() + 6, 23, 59, 59)
             };
         } else if (dateRange === ReportDateRangeType.month) {
-            var lastMonth = new Date(currentTime);
+            var lastMonth = new Date(currentTime || Date.now());
             lastMonth.setMonth(lastMonth.getMonth() - 1);
             lastMonth.setDate(-1);
             return { 
@@ -190,8 +261,8 @@ function Report(_property, _runtime) {
             };
         } else {
             return { 
-                begin: new Date(currentTime), 
-                end: new Date(currentTime)
+                begin: new Date(currentTime || Date.now()), 
+                end: new Date(currentTime || Date.now())
             };
         }
     }
