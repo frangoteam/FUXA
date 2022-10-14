@@ -78,10 +78,10 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
                 select.value = val;
 
                 // Set text and background color based on settings
-                let res = ga.property.ranges.find(e => e.min == val);
-                if(res){
-                    select.style.background = res.color;
-                    select.style.color = res.stroke;
+                let range = ga.property.ranges.find(e => e.min == val);
+                if (range){
+                    select.style.background = range.color;
+                    select.style.color = range.stroke;
                 }
 
                 // check actions

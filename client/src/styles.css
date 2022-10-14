@@ -130,12 +130,12 @@ body {
 }
 
 /* Make sure that SVG rectangles are "crisp" independenlty of their alignment/position */
-svg rect{
+svg rect {
     shape-rendering: crispEdges
 }
 
 /* Read-only select gauge is "disabled". Make sure browser does not "dim" it */
-select:disabled{
+select:disabled {
     opacity: 1;
 }
 
