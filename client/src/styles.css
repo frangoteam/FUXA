@@ -129,6 +129,16 @@ body {
     background-color: white;
 }
 
+/* Make sure that SVG rectangles are "crisp" independenlty of their alignment/position */
+svg rect{
+    shape-rendering: crispEdges
+}
+
+/* Read-only select gauge is "disabled". Make sure browser does not "dim" it */
+select:disabled{
+    opacity: 1;
+}
+
 * {
     /* font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif; */
     text-decoration: none;
