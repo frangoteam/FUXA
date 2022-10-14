@@ -141,26 +141,28 @@ export class NgxFabButtonComponent implements AfterContentInit, OnDestroy, OnCha
     private animateButtons(eventType) {
         this.buttons.toArray().forEach((btn, i) => {
             i += 1;
-            const style = btn.elementref.nativeElement.style;
+            if (btn.elementref) {
+                const style = btn.elementref.nativeElement.style;
 
-            if (eventType !== 'directionChanged' && this.state.getValue().display) {
-                style['transform'] = 'scale(1)';
-                style['transition-duration'] = '0s';
+                if (eventType !== 'directionChanged' && this.state.getValue().display) {
+                    style['transform'] = 'scale(1)';
+                    style['transition-duration'] = '0s';
 
-                if (btn.timeout) {
-                    clearTimeout(btn.timeout);
+                    if (btn.timeout) {
+                        clearTimeout(btn.timeout);
+                    }
                 }
-            }
 
-            setTimeout(() => {
-                style['transition-duration'] = this.state.getValue().display ? `${90 + (100 * i)}ms` : '';
-                style['transform'] = this.state.getValue().display ? this.getTranslate(i) : '';
-            }, 50);
+                setTimeout(() => {
+                    style['transition-duration'] = this.state.getValue().display ? `${90 + (100 * i)}ms` : '';
+                    style['transform'] = this.state.getValue().display ? this.getTranslate(i) : '';
+                }, 50);
 
-            if (eventType !== 'directionChanged' && !this.state.getValue().display) {
-                btn.timeout = setTimeout(() => {
-                    style['transform'] = 'scale(0)';
-                }, 90 + (100 * i));
+                if (eventType !== 'directionChanged' && !this.state.getValue().display) {
+                    btn.timeout = setTimeout(() => {
+                        style['transform'] = 'scale(0)';
+                    }, 90 + (100 * i));
+                }
             }
         });
     }
