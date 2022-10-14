@@ -78,16 +78,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
-    }
-
-    ngAfterViewInit() {
         try {
-            let hmi = this.projectService.getHmi();
-            if (hmi) {
-                this.loadHmi();
-            }
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-                this.loadHmi();
+                let hmi = this.projectService.getHmi();
+                if (hmi) {
+                    this.loadHmi();
+                }
             }, error => {
                 console.error('Error loadHMI');
             });
@@ -97,7 +93,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe(viewName => {
                 this.onGoToPage(this.projectService.getViewId(viewName));
             });
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
 
+    ngAfterViewInit() {
+        try {
+            this.projectService.notifyToLoadHmi();
             this.hmiService.askAlarmsStatus();
             this.changeDetector.detectChanges();
         }

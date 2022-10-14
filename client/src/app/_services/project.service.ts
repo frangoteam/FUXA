@@ -811,7 +811,7 @@ export class ProjectService {
 
     //#region Notify
 
-    private notifyToLoadHmi() {
+    public notifyToLoadHmi() {
         this.onLoadHmi.emit(true);
     }
 
