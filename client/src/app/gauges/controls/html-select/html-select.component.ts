@@ -76,6 +76,14 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
                     val = parseFloat(val.toFixed(5));
                 }
                 select.value = val;
+
+                // Set text and background color based on settings
+                let range = ga.property.ranges.find(e => e.min == val);
+                if (range){
+                    select.style.background = range.color;
+                    select.style.color = range.stroke;
+                }
+
                 // check actions
                 if (ga.property.actions) {
                     ga.property.actions.forEach(act => {

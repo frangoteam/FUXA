@@ -7,7 +7,8 @@
 						<mat-icon *ngIf="node.expanded">expand_more</mat-icon>
 						<mat-icon *ngIf="!node.expanded">chevron_right</mat-icon>
 					</button>
-					<div *ngIf="!node.childs.length" class="item-waiting" style="width:40px" [ngStyle]="{'display': (node.expanded) ? 'inline-block' : 'none'}">
+					<div *ngIf="!node.childs.length" class="item-waiting" style="width:40px"
+						[ngStyle]="{'display': (node.expanded) ? 'inline-block' : 'none'}">
 						<mat-spinner diameter="20"></mat-spinner>
 					</div>
 					<button mat-icon-button enabled="false" *ngIf="node.class === nodeType.Variable">
@@ -19,7 +20,9 @@
 					{{node.property}}
 				</div>
 				<div class="item-check">
-					<mat-checkbox [(ngModel)]="node.checked" *ngIf="node.class == nodeType.Variable" [disabled]="!node.enabled" (change)="changeStatus(node,$event)"></mat-checkbox>
+					<mat-checkbox [(ngModel)]="node.checked"
+						*ngIf="(node.class === nodeType.Variable) || (node.class === nodeType.Object && node.expanded)"
+						[disabled]="!node.enabled" (change)="changeStatus(node,$event)"></mat-checkbox>
 				</div>
 			</div>
 			<div *ngSwitchCase="TypeOfTree.ToDefine">
@@ -39,12 +42,13 @@
 								{{ key }}
 							</mat-option>
 						</mat-select>
-						<span style="margin-left: 15px;margin-right: 5px;">{{'device.tag-array-value' | translate}}</span>
+						<span style="margin-left: 15px;margin-right: 5px;">{{'device.tag-array-value' |
+							translate}}</span>
 						<mat-select [(value)]="node.todefine.value" style="width: 120px">
 							<mat-option *ngFor="let key of node.todefine.options" [value]="key">
 								{{ key }}
 							</mat-option>
-						</mat-select>						
+						</mat-select>
 					</div>
 				</div>
 				<div class="item-info" [style.left.px]="node.childPos * 15">
@@ -55,7 +59,7 @@
 					<mat-checkbox [(ngModel)]="node.checked" *ngIf="node.text && (node.class == nodeType.Variable)"
 						[disabled]="!node.enabled" (change)="changeStatus(node,$event)"></mat-checkbox>
 				</div>
-			</div>			
+			</div>
 		</div>
 	</div>
 </div>
