@@ -109,6 +109,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 export class DialogUser {
 	selectedGroups = [];
 	groups = UserGroups.Groups;
+	showPassword: boolean;
 
 	@ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 

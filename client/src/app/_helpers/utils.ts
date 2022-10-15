@@ -313,7 +313,7 @@ export class Utils {
 })
 export class EnumToArrayPipe implements PipeTransform {
 
-    transform(value, args: string[]): any {
+    transform(value): any {
         let result = [];
         var keys = Object.keys(value);
         var values = Object.values(value);

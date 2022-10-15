@@ -33,7 +33,7 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(private projectService: ProjectService,
         private appService: AppService,
-        private gaugesManager: GaugesManager,
+        public gaugesManager: GaugesManager,
         private changeDetector: ChangeDetectorRef,        
         private testerService: TesterService) {
     }

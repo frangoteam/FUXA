@@ -72,7 +72,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router,
         private hmiService: HmiService,
         private authService: AuthService,
-        private gaugesManager: GaugesManager) {
+        public gaugesManager: GaugesManager) {
         this.gridOptions.draggable = { enabled: false };
         this.gridOptions.resizable = { enabled: false };
     }

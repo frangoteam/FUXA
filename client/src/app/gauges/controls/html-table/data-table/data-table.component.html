@@ -56,7 +56,7 @@
         [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
 </mat-table>
 <div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
-    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="tableOptions.header.color">
+    <button mat-icon-button (click)="onRefresh()" class="small-icon-button default-color" [style.color]="tableOptions.header.color">
         <mat-icon [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
     </button>
 </div>

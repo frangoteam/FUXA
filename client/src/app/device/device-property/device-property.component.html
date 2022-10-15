@@ -17,7 +17,7 @@
             </div>
             <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;" *ngIf="!isFuxaServer">
                 <span>{{'device.property-type' | translate}}</span>
-                <mat-select [(value)]="data.device.type" (selectionChange)="onDeviceTypeChanged($event)" #devicetype style="width: 160px" [disabled]="isFuxaServer">
+                <mat-select [(value)]="data.device.type" (selectionChange)="onDeviceTypeChanged()" #devicetype style="width: 160px" [disabled]="isFuxaServer">
                     <mat-option *ngFor="let type of deviceType | enumToArray" [value]="type.key">
                         {{ type.value }}
                     </mat-option>

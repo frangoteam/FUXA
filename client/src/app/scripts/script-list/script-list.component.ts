@@ -61,7 +61,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.editScript(script, 1);
     }
 
-    onEditScript(script: Script, toAdd: number) {
+    onEditScript(script: Script) {
 		this.editScript(script, 0);
     }
 

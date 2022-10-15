@@ -247,7 +247,7 @@
                                 <div style="display: block; padding-bottom: 5px;">
                                     <div class="my-form-field" style="width: 300px;">
                                         <span>{{'alarm.property-action-type' | translate}}</span>
-                                        <mat-select [(value)]="item.type" (selectionChange)="onCheckActionType(item.type, item)">
+                                        <mat-select [(value)]="item.type">
                                             <mat-option *ngFor="let ev of actionsType | enumToArray" [value]="ev.key">
                                                 {{ ev.value }}
                                             </mat-option>

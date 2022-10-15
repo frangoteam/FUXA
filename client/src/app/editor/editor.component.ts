@@ -125,7 +125,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         public dialog: MatDialog,
         private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
-        private gaugesManager: GaugesManager,
+        public gaugesManager: GaugesManager,
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private mdIconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
@@ -357,7 +357,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
      * @param ele gauge id
      */
-    private getGaugeSettings(ele) {
+    getGaugeSettings(ele) {
         if (ele && this.currentView) {
             if (this.currentView.items[ele.id]) {
                 return this.currentView.items[ele.id];
@@ -1029,7 +1029,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * select the view, save current vieww before
      * @param view selected view to load resource
      */
-    private onSelectView(view) {
+    onSelectView(view) {
         if (this.currentView) {
             this.currentView.svgcontent = this.getContent();
             // this.hmi.views[this.currentView].svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();

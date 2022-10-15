@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
+import { Utils } from '../../../_helpers/utils';
 
 import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink, GaugeActionRotate } from '../../../_models/hmi';
 
@@ -21,6 +22,7 @@ export class FlexActionComponent implements OnInit {
     actionRotate = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.rotate);
     itemtype: any;
     slideView = true;
+    defaultColor = Utils.defaultColor;
 
     constructor(private translateService: TranslateService) { }
 

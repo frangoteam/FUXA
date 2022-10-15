@@ -128,10 +128,6 @@ export class AlarmPropertyComponent implements OnInit {
         this.data.alarm.actions.values.splice(index, 1);
     }
 
-    onCheckActionType() {
-        // console.error('Not supported!');
-    }
-
     setActionVariable(action: AlarmAction, event) {
         action.variableId = event.variableId;
     }

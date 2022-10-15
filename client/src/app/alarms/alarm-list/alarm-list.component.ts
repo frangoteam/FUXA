@@ -55,7 +55,7 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.editAlarm(alarm, 1);
     }
 
-    onEditAlarm(alarm: Alarm, toAdd: number) {
+    onEditAlarm(alarm: Alarm) {
 		this.editAlarm(alarm, 0);
     }
 

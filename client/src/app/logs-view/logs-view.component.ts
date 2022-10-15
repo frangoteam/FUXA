@@ -51,7 +51,7 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
         this.loadLogs(this.logs.selected);
     }
 
-    private loadLogs(logfile: string) {
+    loadLogs(logfile: string) {
         this.appService.showLoading(true);
         this.diagnoseService.getLogs(<LogsRequest>{ file: logfile }).subscribe(result => {
             this.content = result.body.replace(new RegExp('\n', 'g'), "<br />");

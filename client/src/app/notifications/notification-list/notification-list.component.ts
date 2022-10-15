@@ -63,7 +63,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
 		this.editNotification(notification, 1);
     }
 
-    onEditNotification(notification: Notification, toAdd: number) {
+    onEditNotification(notification: Notification) {
 		this.editNotification(notification, 0);
     }
 

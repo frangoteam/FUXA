@@ -6,7 +6,7 @@
                     <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
                 </div>
                 <div *ngSwitchCase="widgetAlarms">
-                    <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
+                    <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true"></app-alarm-view>
                 </div>
                 <div *ngSwitchCase="widgetIframe">
                     <!-- <app-iframe [link]="item.card.data" [style.height]="iframe.height + 'px'" [style.transform]="'scale(' + iframe.scale + ')'" [style.width]="iframe.width + 'px'"

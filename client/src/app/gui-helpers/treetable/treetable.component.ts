@@ -37,7 +37,7 @@ export class TreetableComponent implements OnInit {
         }
     }
 
-    onExpandToggle(node: Node, event: any) {
+    onExpandToggle(node: Node) {
         const currentPosition = this.treetable.nativeElement.scrollTop;
         node.expanded = (node.expanded) ? false : true;
         if (node.expanded) {
