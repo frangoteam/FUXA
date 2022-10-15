@@ -108,7 +108,7 @@ export class TreetableComponent implements OnInit {
     changeStatus(node: Node, $event) {
         if ((node.childs) && (node.childs.length > 0)) {
             node.childs.forEach((child) => {
-                if (child.enabled && child.class == this.nodeType.Variable) {
+                if (child.enabled && child.class === this.nodeType.Variable) {
                     child.checked = node.checked;
                 }
             });
