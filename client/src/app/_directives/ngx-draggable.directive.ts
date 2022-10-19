@@ -1,3 +1,4 @@
+/* eslint @angular-eslint/no-host-metadata-property: off */
 import { Directive, ElementRef, Renderer2, OnDestroy, OnInit, AfterViewInit, Input } from '@angular/core';
 
 
@@ -10,10 +11,10 @@ import { Directive, ElementRef, Renderer2, OnDestroy, OnInit, AfterViewInit, Inp
     }
 })
 export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
-    private dx: number = 0;
-    private dy: number = 0;
+    private dx = 0;
+    private dy = 0;
 
-    private canDrag: string = '';
+    private canDrag = '';
     private active = false;
 
     @Input('draggable')

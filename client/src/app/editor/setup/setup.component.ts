@@ -16,19 +16,13 @@ import { AppSettingsComponent } from '../../editor/app-settings/app-settings.com
     templateUrl: './setup.component.html',
     styleUrls: ['./setup.component.scss']
 })
-export class SetupComponent implements OnInit, AfterViewInit {
+export class SetupComponent {
 
     constructor(private router: Router,
         private appService: AppService,
         public dialog: MatDialog,
         private projectService: ProjectService,
         public dialogRef: MatDialogRef<SetupComponent>) { }
-
-    ngOnInit() {
-    }
-
-    ngAfterViewInit() {
-    }
 
     onNoClick() {
         this.dialogRef.close();

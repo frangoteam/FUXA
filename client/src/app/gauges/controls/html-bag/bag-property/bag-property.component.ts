@@ -15,7 +15,7 @@ import { Define } from '../../../../_helpers/define';
     templateUrl: './bag-property.component.html',
     styleUrls: ['./bag-property.component.css']
 })
-export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
+export class BagPropertyComponent implements AfterViewInit {
 
     @ViewChild("ngauge", {static: false}) ngauge: NgxGaugeComponent;
 	@ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
@@ -47,9 +47,6 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
         if (!this.property) {
 			this.property = new GaugeProperty();
         }
-    }
-
-    ngOnInit() { 
     }
 
     ngAfterViewInit() {
@@ -94,9 +91,6 @@ export class BagPropertyComponent implements OnInit, AfterViewInit, OnChanges {
 			}
 		});
 	}
-
-    ngOnChanges(changes: SimpleChanges) {
-    }
 
     onGaugeChange(type: GaugeType) {
         if (type === GaugeType.Donut) {

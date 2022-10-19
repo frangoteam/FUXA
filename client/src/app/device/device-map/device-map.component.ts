@@ -62,7 +62,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     plugins = [];
 
     devicesStatus = {};
-    dirty: boolean = false;
+    dirty = false;
     domArea: any;
 
     constructor(private dialog: MatDialog,

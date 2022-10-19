@@ -17,7 +17,7 @@ declare var Raphael: any;
     styleUrls: ['lab.component.css']
 })
 
-export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LabComponent implements AfterViewInit, OnDestroy {
 
     @ViewChild('messagecontainer', { read: ViewContainerRef, static: false }) entry: ViewContainerRef;
     @ViewChild('tester', {static: false}) tester: TesterComponent;
@@ -36,10 +36,6 @@ export class LabComponent implements OnInit, AfterViewInit, OnDestroy {
         private gaugesManager: GaugesManager,
         private changeDetector: ChangeDetectorRef,        
         private testerService: TesterService) {
-    }
-
-    ngOnInit() {
-
     }
 
     ngAfterViewInit() {

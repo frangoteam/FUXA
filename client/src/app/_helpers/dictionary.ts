@@ -11,7 +11,7 @@ export interface IDictionary<T> {
 export class Dictionary<T> implements IDictionary<T> {
     private items: { [index: string]: T } = {};
  
-    private count: number = 0;
+    private count = 0;
  
     public ContainsKey(key: string): boolean {
         return this.items.hasOwnProperty(key);

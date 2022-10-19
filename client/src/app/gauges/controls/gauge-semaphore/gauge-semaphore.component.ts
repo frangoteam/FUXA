@@ -10,7 +10,7 @@ declare var SVG: any;
     templateUrl: './gauge-semaphore.component.html',
     styleUrls: ['./gauge-semaphore.component.css']
 })
-export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnInit {
+export class GaugeSemaphoreComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -21,9 +21,6 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent implements OnIni
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

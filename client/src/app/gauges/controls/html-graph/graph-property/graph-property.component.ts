@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, AfterViewInit, Input, ElementRef, ViewChild, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, AfterViewInit, Input, ElementRef, ViewChild, Output, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
@@ -18,7 +18,7 @@ import { Utils } from '../../../../_helpers/utils';
     templateUrl: './graph-property.component.html',
     styleUrls: ['./graph-property.component.css']
 })
-export class GraphPropertyComponent implements OnInit, AfterViewInit {
+export class GraphPropertyComponent implements OnInit, OnDestroy {
 
     @Input() data: any;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
@@ -63,9 +63,6 @@ export class GraphPropertyComponent implements OnInit, AfterViewInit {
             });
         }
         this._reload();
-    }
-
-    ngAfterViewInit() {
     }
 
     ngOnDestroy() {

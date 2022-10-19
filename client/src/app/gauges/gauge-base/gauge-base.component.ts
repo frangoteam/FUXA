@@ -11,16 +11,13 @@ import { PropertyType } from '../gauge-property/flex-input/flex-input.component'
     templateUrl: './gauge-base.component.html',
     styleUrls: ['./gauge-base.component.css']
 })
-export class GaugeBaseComponent implements OnInit {
+export class GaugeBaseComponent {
 
     @Input() data: any;
     @Input() settings: GaugeSettings;
     @Output() edit: EventEmitter<any> = new EventEmitter();
 
     constructor() { }
-
-    ngOnInit() {
-    }
 
     onEdit() {
         this.edit.emit(this.settings);

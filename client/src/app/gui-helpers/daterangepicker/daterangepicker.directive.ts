@@ -1,3 +1,5 @@
+/* eslint-disable @angular-eslint/no-conflicting-lifecycle */
+/* eslint @angular-eslint/no-host-metadata-property: off */
 import {
   Directive,
   ViewContainerRef,
@@ -93,14 +95,14 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
   @Input()
   showRangeLabelOnInput: boolean;
   @Input()
-  showCancel: boolean = false;
+  showCancel = false;
   // timepicker variables
   @Input()
   timePicker: Boolean = false;
   @Input()
   timePicker24Hour: Boolean = false;
   @Input()
-  timePickerIncrement: number = 1;
+  timePickerIncrement = 1;
   @Input()
   timePickerSeconds: Boolean = false;
   _locale: LocaleConfig = {};
@@ -111,8 +113,8 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
     return this._locale;
   }
   @Input()
-  private _endKey: string = 'endDate';
-  private _startKey: string = 'startDate';
+  private _endKey = 'endDate';
+  private _startKey = 'startDate';
   @Input() set startKey(value) {
     if (value !== null) {
       this._startKey = value;

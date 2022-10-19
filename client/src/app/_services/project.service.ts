@@ -40,7 +40,7 @@ export class ProjectService {
     private storage: ResourceStorageService;
     public intervals: any [] = [];
 
-    private projectOld: string = '';
+    private projectOld = '';
     private ready = false;
 
     constructor(private resewbApiService: ResWebApiService,

@@ -5,7 +5,7 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 })
 export class NumberOnlyDirective {
     // Allow decimal numbers and negative values
-    private regex: RegExp = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);///^-?[0-9]+(\.[0-9]*){0,1}$/g);
+    private regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);///^-?[0-9]+(\.[0-9]*){0,1}$/g);
     // Allow key codes for special events. Reflect :
     // Backspace, tab, end, home
     private specialKeys: Array<string> = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
@@ -20,7 +20,7 @@ export class NumberOnlyDirective {
             return;
         }
         let current: string = this.el.nativeElement.value;
-        let next: string = '';
+        let next = '';
         if (event.key === '-') {
             event.preventDefault();
             if (!current.startsWith('-')) {
@@ -45,7 +45,7 @@ export class NumberOnlyDirective {
 })
 export class NumberOrNullOnlyDirective {
     // Allow decimal numbers and negative values
-    private regex: RegExp = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);///^-?[0-9]+(\.[0-9]*){0,1}$/g);
+    private regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);///^-?[0-9]+(\.[0-9]*){0,1}$/g);
     // Allow key codes for special events. Reflect :
     // Backspace, tab, end, home
     private specialKeys: Array<string> = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
@@ -60,7 +60,7 @@ export class NumberOrNullOnlyDirective {
             return;
         }
         let current: string = this.el.nativeElement.value;
-        let next: string = '';
+        let next = '';
         if (event.key === '-') {
             event.preventDefault();
             if (!current.startsWith('-')) {

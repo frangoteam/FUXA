@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, AfterViewInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,7 +12,7 @@ import { Utils } from '../../../../_helpers/utils';
     templateUrl: './table-customizer.component.html',
     styleUrls: ['./table-customizer.component.css']
 })
-export class TableCustomizerComponent implements OnInit, AfterViewInit {
+export class TableCustomizerComponent implements OnInit {
 
     tableType = TableType;
     displayedColumns = [];
@@ -26,9 +27,6 @@ export class TableCustomizerComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.loadData();
-    }
-
-    ngAfterViewInit() {
     }
 
     private loadData() {

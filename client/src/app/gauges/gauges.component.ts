@@ -104,9 +104,6 @@ export class GaugesManager {
         });
     }
 
-    ngOnDestroy() {
-    }
-
     createSettings(id: string, type: string) {
         let gs: GaugeSettings = null;
         if (type) {

@@ -11,7 +11,7 @@ declare var SVG: any;
     templateUrl: './html-select.component.html',
     styleUrls: ['./html-select.component.css']
 })
-export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
+export class HtmlSelectComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -23,9 +23,6 @@ export class HtmlSelectComponent extends GaugeBaseComponent implements OnInit {
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

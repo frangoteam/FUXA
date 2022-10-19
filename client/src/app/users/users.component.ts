@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Inject, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
@@ -103,7 +104,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 }
 
 @Component({
-	selector: 'dialog-user',
+	selector: 'app-dialog-user',
 	templateUrl: './user.dialog.html',
 })
 export class DialogUser {

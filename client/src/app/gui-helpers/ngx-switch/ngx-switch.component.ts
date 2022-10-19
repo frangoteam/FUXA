@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
@@ -69,18 +70,18 @@ export class NgxSwitchComponent implements AfterViewInit {
 }
 
 export class SwitchOptions {
-    offValue: number = 0;
-    onValue: number = 1;
-    offBackground: string = '#ccc';
-    onBackground: string = '#ccc';
-    offText: string = '';
-    onText: string = '';
-    offSliderColor: string = '#fff';
-    onSliderColor: string = '#0CC868';
-    offTextColor: string = '#000'
-    onTextColor: string = '#fff'
-    fontSize: number = 12
-    fontFamily: string = ''
-    radius: number = 0;
+    offValue = 0;
+    onValue = 1;
+    offBackground = '#ccc';
+    onBackground = '#ccc';
+    offText = '';
+    onText = '';
+    offSliderColor = '#fff';
+    onSliderColor = '#0CC868';
+    offTextColor = '#000'
+    onTextColor = '#fff'
+    fontSize = 12
+    fontFamily = ''
+    radius = 0;
     height: number;
 }

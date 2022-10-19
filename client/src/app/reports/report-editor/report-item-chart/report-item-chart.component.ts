@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import { Chart } from '../../../_models/chart';
     templateUrl: './report-item-chart.component.html',
     styleUrls: ['./report-item-chart.component.scss']
 })
-export class ReportItemChartComponent implements OnInit {
+export class ReportItemChartComponent implements OnInit, OnDestroy {
 
     public chartCtrl: FormControl = new FormControl();
     public chartFilterCtrl: FormControl = new FormControl();

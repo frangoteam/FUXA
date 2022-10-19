@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { isNull } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
 
@@ -11,7 +12,7 @@ declare const placement: any;
     templateUrl: './ngx-uplot.component.html',
     styleUrls: ['./ngx-uplot.component.css']
 })
-export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NgxUplotComponent implements OnInit, OnDestroy {
 
     @Input() public id: string;
     @Input() public options: NgxOptions;
@@ -154,9 +155,6 @@ export class NgxUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         this.options = this.defOptions;
         this.uplot = new uPlot(this.defOptions, this.sampleData, this.graph.nativeElement);
-    }
-
-    ngAfterViewInit() {
     }
 
     ngOnDestroy() {

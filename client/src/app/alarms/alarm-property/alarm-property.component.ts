@@ -11,7 +11,7 @@ import { AlarmProperty, AlarmAckMode, AlarmSubProperty, AlarmSubActions, AlarmAc
     templateUrl: './alarm-property.component.html',
     styleUrls: ['./alarm-property.component.css']
 })
-export class AlarmPropertyComponent implements OnInit {
+export class AlarmPropertyComponent {
 
 	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
     @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
@@ -93,9 +93,6 @@ export class AlarmPropertyComponent implements OnInit {
                 if (item.info.group && this.existgroups.indexOf(item.info.group) === -1) this.existgroups.push(item.info.group);
             });
         }
-    }
-
-    ngOnInit() {
     }
 
     onNoClick(): void {

@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from "rxjs";
@@ -20,7 +21,7 @@ import { Utils } from '../_helpers/utils';
     templateUrl: './device.component.html',
     styleUrls: ['./device.component.css']
 })
-export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DeviceComponent implements OnInit, OnDestroy {
 
     @ViewChild('devicelist', {static: true}) deviceList: DeviceListComponent;
     @ViewChild('devicemap', {static: true}) deviceMap: DeviceMapComponent;
@@ -72,9 +73,6 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
             this.hmiService.askDeviceStatus();
         }, 10000);
         this.hmiService.askDeviceStatus();
-    }
-
-    ngAfterViewInit() {
     }
 
     ngOnDestroy() {
@@ -199,7 +197,7 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     templateUrl: './device-tag.dialog.html',
     styleUrls: ['./device.component.css']
 })
-export class DeviceTagDialog implements OnInit {
+export class DeviceTagDialog implements OnInit, AfterViewInit {
 
     @ViewChild(MatTable, {static: false}) table: MatTable<any>;
     @ViewChild(MatSort, {static: false}) sort: MatSort;

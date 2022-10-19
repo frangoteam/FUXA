@@ -9,16 +9,13 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
     templateUrl: './html-iframe.component.html',
     styleUrls: ['./html-iframe.component.css']
 })
-export class HtmlIframeComponent extends GaugeBaseComponent implements OnInit {
+export class HtmlIframeComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-own_ctrl-iframe';
     static LabelTag = 'HtmlIframe';
     static prefixD = 'D-OXC_';
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getDialogType(): GaugeDialogType {
