@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -191,7 +192,6 @@ export enum GaugeDialogType {
     templateUrl: './gauge-permission.dialog.html',
 })
 export class DialogGaugePermission {
-    // defaultColor = Utils.defaultColor;
     selectedGroups = [];
     extensionGroups = [];
     groups = UserGroups.Groups;

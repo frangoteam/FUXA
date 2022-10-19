@@ -8,16 +8,13 @@ import { IDateRange } from '../../_models/hmi';
     templateUrl: './daterange-dialog.component.html',
     styleUrls: ['./daterange-dialog.component.css']
 })
-export class DaterangeDialogComponent implements OnInit {
+export class DaterangeDialogComponent {
 
     @ViewChild('dtrange', {static: false}) public dtrange: DaterangepickerComponent;
 
     options = { };
 
     constructor(public dialogRef: MatDialogRef<DaterangeDialogComponent>) { }
-
-    ngOnInit() {
-    }
 
     onOkClick() {
         let dateRange = <IDateRange> { start: this.dtrange.startDate.toDate().getTime(), 

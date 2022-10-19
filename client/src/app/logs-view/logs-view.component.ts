@@ -14,7 +14,7 @@ import { LogsRequest } from '../_models/diagnose';
     templateUrl: './logs-view.component.html',
     styleUrls: ['./logs-view.component.css']
 })
-export class LogsViewComponent implements OnInit, AfterViewInit {
+export class LogsViewComponent implements AfterViewInit {
 
     @ViewChild(MatTable, {static: false}) table: MatTable<any>;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
@@ -37,9 +37,6 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
 
     constructor(private diagnoseService: DiagnoseService,
                 private appService: AppService) { }
-
-    ngOnInit() {
-    }
 
     ngAfterViewInit() {
         this.diagnoseService.getLogsDir().subscribe(result => {

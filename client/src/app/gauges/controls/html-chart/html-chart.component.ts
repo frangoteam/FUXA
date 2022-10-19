@@ -11,7 +11,7 @@ import { ChartUplotComponent, ChartOptions } from './chart-uplot/chart-uplot.com
     templateUrl: "./html-chart.component.html",
     styleUrls: ["./html-chart.component.css"]
 })
-export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
+export class HtmlChartComponent extends GaugeBaseComponent {
     static TypeTag = "svg-ext-html_chart";
     static LabelTag = "HtmlChart";
     static prefixD = "D-HXC_";
@@ -19,8 +19,6 @@ export class HtmlChartComponent extends GaugeBaseComponent implements OnInit {
     constructor(private resolver: ComponentFactoryResolver) {
         super();
     }
-
-    ngOnInit() { }
 
     static getSignals(pro: any) {
         return pro.variableIds;

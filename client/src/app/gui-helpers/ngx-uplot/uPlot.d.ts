@@ -280,9 +280,9 @@ declare namespace uPlot {
 
 		export type Fill   = CSSStyleDeclaration['background']  | ((self: uPlot, seriesIdx: number) => CSSStyleDeclaration['background']);
 
-		export type Value  = {
+		export interface Value {
 			[key: string]: string | number;
-		};
+		}
 
 		export type Values = Value[];
 	}

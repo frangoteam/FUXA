@@ -13,7 +13,7 @@ import { Tag, TAG_PREFIX } from '../../_models/device';
     templateUrl: './topic-property.component.html',
     styleUrls: ['./topic-property.component.css']
 })
-export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TopicPropertyComponent implements OnInit, OnDestroy {
 
     @ViewChild('grptabs', {static: true}) grptabs: MatTabGroup;
     @ViewChild('tabsub', {static: true}) tabsub: MatTab;
@@ -103,10 +103,6 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
         }
         this.loadSelectedSubTopic();
         this.stringifyPublishItem();
-    }
-
-    ngAfterViewInit() {
-
     }
 
     ngOnDestroy() {

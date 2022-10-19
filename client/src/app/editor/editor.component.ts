@@ -1,4 +1,5 @@
-﻿import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
+﻿/* eslint-disable @angular-eslint/component-class-suffix */
+import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
@@ -91,7 +92,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     hmi: Hmi = new Hmi();// = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
     currentMode = '';
     imagefile: string;
-    gridOn: boolean = false;
+    gridOn = false;
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
     panelsState = {
@@ -464,7 +465,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (view) {
             this.clearEditor();
             if (this.editorMode !== EditorModeType.CARDS) {
-                let svgcontent: string = '';
+                let svgcontent = '';
                 let v = this.getView(view.name)
                 if (v) {
                     svgcontent = v.svgcontent;

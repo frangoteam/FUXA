@@ -10,7 +10,7 @@ import { GraphType, GraphSource } from '../../../../_models/graph';
     templateUrl: './graph-pie.component.html',
     styleUrls: ['./graph-pie.component.css']
 })
-export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnDestroy {
+export class GraphPieComponent extends GraphBaseComponent implements OnDestroy {
     @ViewChild(BaseChartDirective, {static: false}) public chart?: BaseChartDirective;
     @Input() height = 240;
     @Input() width = 380;
@@ -30,9 +30,6 @@ export class GraphPieComponent extends GraphBaseComponent implements OnInit, OnD
     };
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     ngOnDestroy() {

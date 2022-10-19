@@ -13,7 +13,7 @@ declare var SVG: any;
     templateUrl: './proc-eng.component.html',
     styleUrls: ['./proc-eng.component.css']
 })
-export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
+export class ProcEngComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -26,9 +26,6 @@ export class ProcEngComponent extends GaugeBaseComponent implements OnInit {
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

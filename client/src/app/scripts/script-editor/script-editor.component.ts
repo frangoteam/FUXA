@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, AfterViewInit, Inject, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
@@ -18,7 +19,7 @@ import { DevicesUtils, DeviceType, Tag } from '../../_models/device';
     templateUrl: './script-editor.component.html',
     styleUrls: ['./script-editor.component.css']
 })
-export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ScriptEditorComponent implements OnInit, OnDestroy {
     @ViewChild(CodemirrorComponent, {static: true}) CodeMirror: CodemirrorComponent;
     codeMirrorContent: string;
     codeMirrorOptions = { 
@@ -70,9 +71,6 @@ export class ScriptEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.console.push(scriptConsole.msg);
         });
         this.loadTestParameter();
-    }
-
-    ngAfterViewInit() {
     }
     
     ngOnDestroy() {
@@ -289,6 +287,7 @@ export class DialogScriptParam {
 
     onNoClick(): void {
         this.dialogRef.close();
+        
     }
 
     isValid(name): boolean {

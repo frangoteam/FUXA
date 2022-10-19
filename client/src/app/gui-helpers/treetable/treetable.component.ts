@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
 @Component({
@@ -134,21 +135,21 @@ export class TreetableComponent implements OnInit {
 
 export class Node {
     static readonly SEPARATOR = '>';
-    id: string = '';
-    path: string = '';
-    text: string = '';
+    id = '';
+    path = '';
+    text = '';
     class: NodeType;
-    childPos: number = 0;
-    expandable: boolean = true;
-    expanded: boolean = false;
-    visible: boolean = true;
+    childPos = 0;
+    expandable = true;
+    expanded = false;
+    visible = true;
     parent: Node = null;
-    property: string = '';
-    type: string = '';          // boolean, int ...
-    checked: boolean = false;
+    property = '';
+    type = '';          // boolean, int ...
+    checked = false;
     childs: Node[] = [];
-    waiting: boolean = true;
-    enabled: boolean = true;
+    waiting = true;
+    enabled = true;
     todefine: any = null;
 
     constructor(id: string, text: string) {

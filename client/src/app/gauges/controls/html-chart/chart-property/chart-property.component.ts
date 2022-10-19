@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Inject, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReplaySubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -20,7 +20,7 @@ import { Utils } from '../../../../_helpers/utils';
     templateUrl: './chart-property.component.html',
     styleUrls: ['./chart-property.component.css']
 })
-export class ChartPropertyComponent implements OnInit {
+export class ChartPropertyComponent implements OnInit, OnDestroy {
     
     @Input() data: any;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();

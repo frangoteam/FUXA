@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, Inject, ChangeDetectionStrategy } from '@angular/core';
+/* eslint-disable @angular-eslint/component-class-suffix */
+import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -26,7 +27,7 @@ import { Utils } from '../../_helpers/utils';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class DeviceListComponent implements OnInit {
+export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'logger', 'options', 'remove'];
     readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
@@ -40,7 +41,7 @@ export class DeviceListComponent implements OnInit {
     dataSource = new MatTableDataSource([]);
     selection = new SelectionModel<Element>(true, []);
     devices: Device[];
-    dirty: boolean = false;
+    dirty = false;
     deviceType = DeviceType;
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
@@ -509,3 +510,7 @@ export class DialogTagName {
 export interface Element extends Tag {
     position: number;
 }
+function ngAfterViewInit() {
+    throw new Error('Function not implemented.');
+}
+

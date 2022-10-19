@@ -8,7 +8,7 @@ import { Script, ScriptScheduling } from '../../_models/script';
     templateUrl: './script-scheduling.component.html',
     styleUrls: ['./script-scheduling.component.css']
 })
-export class ScriptSchedulingComponent implements OnInit {
+export class ScriptSchedulingComponent {
 
     scheduling = <ScriptScheduling> { interval: 0 };
 
@@ -19,9 +19,6 @@ export class ScriptSchedulingComponent implements OnInit {
                 this.scheduling = JSON.parse(JSON.stringify(this.data.scheduling));
             }
         }
-
-    ngOnInit() {
-    }
 
     onNoClick(): void {
         this.dialogRef.close();

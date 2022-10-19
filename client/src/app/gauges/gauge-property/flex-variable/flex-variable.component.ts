@@ -25,19 +25,19 @@ export class FlexVariableComponent implements OnInit {
     @Input() data: any;
     @Input() variableId: string;
     @Input() value: any;
-    @Input() allowManualEdit: boolean = false;
+    @Input() allowManualEdit = false;
     @Input() variableValue: string;
-    @Input() variableLabel: string = 'gauges.property-variable-value';
-    @Input() withStaticValue: boolean = true;
-    @Input() withBitmask: boolean = false;
-    @Input() tagLabel: string = 'gauges.property-tag-label';
-    @Input() tagTitle: string = '';
+    @Input() variableLabel = 'gauges.property-variable-value';
+    @Input() withStaticValue = true;
+    @Input() withBitmask = false;
+    @Input() tagLabel = 'gauges.property-tag-label';
+    @Input() tagTitle = '';
     @Input() bitmask: number;
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
 
-    public manualEdit: boolean = false;
+    public manualEdit = false;
 
     variableList: any = [];
     currentVariable: Variable = null;

@@ -6,12 +6,12 @@ export enum GaugeType {
 }
 
 export class GaugeOptions {
-    minValue: number = 0;
-    maxValue: number = 3000;
-    animationSpeed: number = 40;
-    colorStart: string = '#6fadcf';
-    colorStop: string = '#6fadcf';
-    gradientType: string = '';
+    minValue = 0;
+    maxValue = 3000;
+    animationSpeed = 40;
+    colorStart = '#6fadcf';
+    colorStop = '#6fadcf';
+    gradientType = '';
     strokeColor?: string = '#e0e0e0';
     pointer? = {
         length: 0.5,
@@ -19,20 +19,20 @@ export class GaugeOptions {
         iconScale: 1.0,
         color: '#000000'
     };
-    angle: number = -0.2;
-    lineWidth: number = 0.2;
-    radiusScale: number = 0.9;
-    fontSize: number = 18;
+    angle = -0.2;
+    lineWidth = 0.2;
+    radiusScale = 0.9;
+    fontSize = 18;
     fontFamily: 'Sans-serif';
-    textFilePosition: number = 30;
-    limitMax: boolean = false;
-    limitMin: boolean = false;
-    highDpiSupport: boolean = true;
-    backgroundColor: string = 'rgba(255, 255, 255, 0)';
+    textFilePosition = 30;
+    limitMax = false;
+    limitMin = false;
+    highDpiSupport = true;
+    backgroundColor = 'rgba(255, 255, 255, 0)';
     shadowColor?: string = '#d5d5d5';
     
-    fractionDigits: number = 0;
-    ticksEnabled: boolean = true;
+    fractionDigits = 0;
+    ticksEnabled = true;
     renderTicks = {
         divisions: 5,
         divWidth: 1.1,
@@ -44,9 +44,9 @@ export class GaugeOptions {
         subColor: '#666666'
     };
 
-    staticLabelsText: string = '200;500;2100;2800';
-    staticFontSize: number = 10;
-    staticFontColor: string = '#000000';
+    staticLabelsText = '200;500;2100;2800';
+    staticFontSize = 10;
+    staticFontColor = '#000000';
     staticLabels? = {
         font: '10px sans-serif',
         labels: [200, 500, 2100, 2800],
