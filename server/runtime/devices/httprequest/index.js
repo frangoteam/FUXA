@@ -180,7 +180,8 @@ function HTTPclient(_data, _logger, _events) {
     this.setValue = function (tagId, value) {
         if (apiProperty.ownFlag && data.tags[tagId]) {
             if (apiProperty.postTags) {
-                axios.post(apiProperty.getTags, [{id: tagId, value: value}]).then(res => {
+                data.tags[tagId].value = _parseValue(data.tags[tagId].type, value);
+                axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
                     lastTimestampRequest = new Date().getTime();
                     logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true);
                 }).catch(err => {
@@ -351,6 +352,35 @@ function HTTPclient(_data, _logger, _events) {
         working = check;
         overloading = 0;
         return true;
+    }
+
+    /**
+     * Cheack and parse the value return converted value
+     * @param {*} type as string
+     * @param {*} value as string
+     * return converted value
+     */
+    var _parseValue = function (type, value) {
+        if (type === 'number') {
+            return parseFloat(value); 
+        } else if (type === 'boolean') {
+            return Boolean(value);
+        } else if (type === 'string') {
+            return value;
+        } else {
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            return val;
+        }
     }
 }
 
