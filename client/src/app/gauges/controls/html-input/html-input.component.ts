@@ -12,7 +12,7 @@ declare var SVG: any;
     templateUrl: './html-input.component.html',
     styleUrls: ['./html-input.component.css']
 })
-export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
+export class HtmlInputComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -24,9 +24,6 @@ export class HtmlInputComponent extends GaugeBaseComponent implements OnInit {
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

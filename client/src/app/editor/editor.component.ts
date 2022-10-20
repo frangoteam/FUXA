@@ -1,15 +1,16 @@
-﻿import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
+﻿/* eslint-disable @angular-eslint/component-class-suffix */
+import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDrawer } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDrawer } from '@angular/material/sidenav';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material/icon';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
-import { Output } from '@angular/core/src/metadata/directives';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
 import { ChartPropertyComponent } from '../gauges/controls/html-chart/chart-property/chart-property.component';
 import { GraphPropertyComponent } from '../gauges/controls/html-graph/graph-property/graph-property.component';
@@ -70,10 +71,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     // currentUser: User;
     // users: User[] = [];
     // @ViewChild('fillcolor') fillcolor: ElementRef;
-    @ViewChild('gaugepanel') gaugePanelComponent: GaugeBaseComponent;
-    @ViewChild('viewFileImportInput') viewFileImportInput: any;
-    @ViewChild('cardsview') cardsview: CardsViewComponent;
-    @ViewChild('sidePanel') sidePanel: MatDrawer;
+    @ViewChild('gaugepanel', {static: false}) gaugePanelComponent: GaugeBaseComponent;
+    @ViewChild('viewFileImportInput', {static: false}) viewFileImportInput: any;
+    @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
+    @ViewChild('sidePanel', {static: false}) sidePanel: MatDrawer;
 
     gaugeDialogType = GaugeDialogType;
     gaugeDialog = { type: null, data: null };
@@ -91,7 +92,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     hmi: Hmi = new Hmi();// = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
     currentMode = '';
     imagefile: string;
-    gridOn: boolean = false;
+    gridOn = false;
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
     panelsState = {
@@ -125,7 +126,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         public dialog: MatDialog,
         private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
-        private gaugesManager: GaugesManager,
+        public gaugesManager: GaugesManager,
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private mdIconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
@@ -357,7 +358,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
      * @param ele gauge id
      */
-    private getGaugeSettings(ele) {
+    getGaugeSettings(ele) {
         if (ele && this.currentView) {
             if (this.currentView.items[ele.id]) {
                 return this.currentView.items[ele.id];
@@ -464,7 +465,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (view) {
             this.clearEditor();
             if (this.editorMode !== EditorModeType.CARDS) {
-                let svgcontent: string = '';
+                let svgcontent = '';
                 let v = this.getView(view.name)
                 if (v) {
                     svgcontent = v.svgcontent;
@@ -1029,7 +1030,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * select the view, save current vieww before
      * @param view selected view to load resource
      */
-    private onSelectView(view) {
+    onSelectView(view) {
         if (this.currentView) {
             this.currentView.svgcontent = this.getContent();
             // this.hmi.views[this.currentView].svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();

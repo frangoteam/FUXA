@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/no-host-metadata-property */
 import {
     Component, OnInit, ElementRef, ViewChild, EventEmitter, Output, Input, forwardRef, ViewEncapsulation, ChangeDetectorRef, Inject
 } from '@angular/core';
@@ -70,7 +71,7 @@ export class DaterangepickerComponent implements OnInit {
     @Input()
     timePicker24Hour: Boolean = false;
     @Input()
-    timePickerIncrement: number = 1;
+    timePickerIncrement = 1;
     @Input()
     timePickerSeconds: Boolean = false;
     // end of timepicker variables
@@ -107,17 +108,17 @@ export class DaterangepickerComponent implements OnInit {
     @Input()
     showCustomRangeLabel: boolean;
     @Input()
-    showCancel: boolean = false;
+    showCancel = false;
     @Input()
-    keepCalendarOpeningWithRange: boolean = false;
+    keepCalendarOpeningWithRange = false;
     @Input()
-    showRangeLabelOnInput: boolean = false;
+    showRangeLabelOnInput = false;
     chosenRange: string;
     rangesArray: Array<any> = [];
 
     // some state information
     isShown: Boolean = false;
-    inline: boolean = true;
+    inline = true;
     leftCalendar: any = {};
     rightCalendar: any = {};
     showCalInRanges: Boolean = false;
@@ -128,7 +129,7 @@ export class DaterangepickerComponent implements OnInit {
     @Output('choosedDate') choosedDate: EventEmitter<Object>;
     @Output('rangeClicked') rangeClicked: EventEmitter<Object>;
     @Output('datesUpdated') datesUpdated: EventEmitter<Object>;
-    @ViewChild('pickerContainer') pickerContainer: ElementRef;
+    @ViewChild('pickerContainer', {static: true}) pickerContainer: ElementRef;
 
     constructor(
         private el: ElementRef,

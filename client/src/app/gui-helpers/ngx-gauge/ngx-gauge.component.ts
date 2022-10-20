@@ -15,9 +15,9 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() public id: string;
     @Input() public options: GaugeOptions;
     @Input() public value: any;
-    @ViewChild('panel') public panel: ElementRef;
-    @ViewChild('gauge') public canvas: ElementRef;
-    @ViewChild('gaugetext') public gaugetext: ElementRef;
+    @ViewChild('panel', {static: false}) public panel: ElementRef;
+    @ViewChild('gauge', {static: false}) public canvas: ElementRef;
+    @ViewChild('gaugetext', {static: false}) public gaugetext: ElementRef;
 
     gauge: any;
     type = GaugeType.Gauge;

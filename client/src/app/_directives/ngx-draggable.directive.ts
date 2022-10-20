@@ -1,4 +1,5 @@
-import { Directive, ElementRef, Renderer, OnDestroy, OnInit, AfterViewInit, Input } from '@angular/core';
+/* eslint @angular-eslint/no-host-metadata-property: off */
+import { Directive, ElementRef, Renderer2, OnDestroy, OnInit, AfterViewInit, Input } from '@angular/core';
 
 
 @Directive({
@@ -10,10 +11,10 @@ import { Directive, ElementRef, Renderer, OnDestroy, OnInit, AfterViewInit, Inpu
     }
 })
 export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
-    private dx: number = 0;
-    private dy: number = 0;
+    private dx = 0;
+    private dy = 0;
 
-    private canDrag: string = '';
+    private canDrag = '';
     private active = false;
 
     @Input('draggable')
@@ -25,13 +26,13 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
 
     private mustBePosition: Array<string> = ['absolute', 'fixed', 'relative'];
     constructor(
-        private el: ElementRef, private renderer: Renderer
+        private el: ElementRef, private renderer: Renderer2
     ) {
 
     }
 
     ngOnInit(): void {
-        this.renderer.setElementAttribute(this.el.nativeElement, 'draggable', 'true');
+        this.renderer.setAttribute(this.el.nativeElement, 'draggable', 'true');
     }
     ngAfterViewInit() {
         try {
@@ -44,7 +45,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
         }
     }
     ngOnDestroy(): void {
-        this.renderer.setElementAttribute(this.el.nativeElement, 'draggable', 'false');
+        this.renderer.setAttribute(this.el.nativeElement, 'draggable', 'false');
     }
 
     onDragStart(event: any) {
@@ -75,7 +76,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
 
     doTranslation(x: number, y: number) {
         if (!x || !y) return;
-        this.renderer.setElementStyle(this.el.nativeElement, 'top', (y - this.dy) + 'px');
-        this.renderer.setElementStyle(this.el.nativeElement, 'left', (x - this.dx) + 'px');
+        this.renderer.setStyle(this.el.nativeElement, 'top', (y - this.dy) + 'px');
+        this.renderer.setStyle(this.el.nativeElement, 'left', (x - this.dx) + 'px');
     }
 }

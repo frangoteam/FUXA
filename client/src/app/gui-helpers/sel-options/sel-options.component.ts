@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
 
 @Component({
@@ -5,7 +6,7 @@ import { Component, OnInit, Input, Output, ViewChild, ElementRef, EventEmitter }
     templateUrl: './sel-options.component.html',
     styleUrls: ['./sel-options.component.css']
 })
-export class SelOptionsComponent implements OnInit {
+export class SelOptionsComponent {
 
     @Input() disabled: any;
     @Input() selected = [];
@@ -13,8 +14,5 @@ export class SelOptionsComponent implements OnInit {
     @Input() extSelected;
 
     constructor() { }
-
-    ngOnInit() {
-    }
 
 }

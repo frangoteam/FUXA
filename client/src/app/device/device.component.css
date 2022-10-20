@@ -58,7 +58,7 @@
     font-size: 13px;
 }
 
-.mat-cell /deep/ .mat-checkbox-inner-container {
+.mat-cell ::ng-deep .mat-checkbox-inner-container {
     height: 16px;
     width: 16px;
     margin-left: 2px;
@@ -98,13 +98,13 @@
     flex: 0 0 40px;
 }
 
-.my-header-filter /deep/ .mat-sort-header-button {
+.my-header-filter ::ng-deep .mat-sort-header-button {
     display: block;
     text-align: left;
     margin-top: 5px;
 }
 
-.my-header-filter /deep/ .mat-sort-header-arrow {
+.my-header-filter ::ng-deep .mat-sort-header-arrow {
     /* color: white; */
     top: -12px;
     right: 20px;

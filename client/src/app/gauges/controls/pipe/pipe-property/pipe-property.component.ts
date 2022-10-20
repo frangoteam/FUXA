@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnInit, Inject, ViewChild } from '@angular/core';
 
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { GaugeProperty } from '../../../../_models/hmi';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GaugeProperty, View } from '../../../../_models/hmi';
 import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
 import { FlexAuthComponent } from '../../../gauge-property/flex-auth/flex-auth.component';
 import { FlexEventComponent } from '../../../gauge-property/flex-event/flex-event.component';
@@ -18,12 +18,13 @@ declare var SVG: any;
 })
 export class PipePropertyComponent implements OnInit, AfterViewInit {
 
-	@ViewChild('flexauth') flexAuth: FlexAuthComponent;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
-    @ViewChild('flexevent') flexEvent: FlexEventComponent;
-    @ViewChild('flexaction') flexAction: FlexActionComponent;
+	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
+    @ViewChild('flexevent', {static: false}) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', {static: false}) flexAction: FlexActionComponent;
     property: GaugeProperty;
     options: PipeOptions;
+    views: View[];
     name: string;
 	eventsSupported: boolean;
     actionsSupported: any;

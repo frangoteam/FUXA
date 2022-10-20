@@ -1,7 +1,9 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from "rxjs";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { environment } from '../../environments/environment';
 
@@ -21,11 +23,11 @@ import { EditNameComponent } from '../gui-helpers/edit-name/edit-name.component'
     templateUrl: 'header.component.html',
     styleUrls: ['header.component.css']
 })
-export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HeaderComponent implements AfterViewInit, OnDestroy {
 
-    @ViewChild('sidenav')sidenav: any; 
-    @ViewChild('tutorial') tutorial: TutorialComponent;
-    @ViewChild('fileImportInput') fileImportInput: any;
+    @ViewChild('sidenav', {static: false})sidenav: any; 
+    @ViewChild('tutorial', {static: false}) tutorial: TutorialComponent;
+    @ViewChild('fileImportInput', {static: false}) fileImportInput: any;
 
     darkTheme = true;
     ineditor = false;
@@ -55,9 +57,6 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
         this.themeService.setTheme(this.projectService.getLayoutTheme());
-    }
-
-    ngOnInit() {
     }
 
     ngAfterViewInit() {

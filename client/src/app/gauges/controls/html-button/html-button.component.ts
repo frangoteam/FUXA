@@ -11,7 +11,7 @@ declare var SVG: any;
     templateUrl: './html-button.component.html',
     styleUrls: ['./html-button.component.css']
 })
-export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
+export class HtmlButtonComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -25,9 +25,6 @@ export class HtmlButtonComponent extends GaugeBaseComponent implements OnInit {
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

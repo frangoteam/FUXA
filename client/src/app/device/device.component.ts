@@ -1,7 +1,10 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from "rxjs";
-import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -18,11 +21,11 @@ import { Utils } from '../_helpers/utils';
     templateUrl: './device.component.html',
     styleUrls: ['./device.component.css']
 })
-export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DeviceComponent implements OnInit, OnDestroy {
 
-    @ViewChild('devicelist') deviceList: DeviceListComponent;
-    @ViewChild('devicemap') deviceMap: DeviceMapComponent;
-    @ViewChild('fileImportInput') fileImportInput: any;
+    @ViewChild('devicelist', {static: true}) deviceList: DeviceListComponent;
+    @ViewChild('devicemap', {static: true}) deviceMap: DeviceMapComponent;
+    @ViewChild('fileImportInput', {static: true}) fileImportInput: any;
 
     private subscriptionLoad: Subscription;
     private subscriptionDeviceChange: Subscription;
@@ -70,9 +73,6 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
             this.hmiService.askDeviceStatus();
         }, 10000);
         this.hmiService.askDeviceStatus();
-    }
-
-    ngAfterViewInit() {
     }
 
     ngOnDestroy() {
@@ -197,11 +197,11 @@ export class DeviceComponent implements OnInit, OnDestroy, AfterViewInit {
     templateUrl: './device-tag.dialog.html',
     styleUrls: ['./device.component.css']
 })
-export class DeviceTagDialog implements OnInit {
+export class DeviceTagDialog implements OnInit, AfterViewInit {
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     dataSource = new MatTableDataSource([]);
     nameFilter = new FormControl();

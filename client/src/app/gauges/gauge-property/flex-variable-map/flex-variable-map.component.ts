@@ -6,7 +6,7 @@ import { View } from "../../../_models/hmi";
     templateUrl: './flex-variable-map.component.html',
     styleUrls: ['./flex-variable-map.component.css']
 })
-export class FlexVariableMapComponent implements OnInit, OnChanges {
+export class FlexVariableMapComponent implements OnInit {
     @Input() view: View;
     @Input() data: any;
     @Input() value: any;
@@ -22,9 +22,6 @@ export class FlexVariableMapComponent implements OnInit, OnChanges {
         }
         this.value.from = this.value.from || {}
         this.value.to = this.value.to || {}
-    }
-
-    ngOnChanges(changes: SimpleChanges) {
     }
 
     onValueChange() {

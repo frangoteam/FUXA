@@ -1,5 +1,6 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
@@ -175,7 +176,7 @@ export class DialogMenuItem {
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
     
-    @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
     constructor(public projectService: ProjectService,
         public dialogRef: MatDialogRef<DialogMenuItem>,

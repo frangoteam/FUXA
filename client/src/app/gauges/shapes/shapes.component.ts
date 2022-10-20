@@ -10,7 +10,7 @@ declare var SVG: any;
     templateUrl: './shapes.component.html',
     styleUrls: ['./shapes.component.css']
 })
-export class ShapesComponent extends GaugeBaseComponent implements OnInit {
+export class ShapesComponent extends GaugeBaseComponent {
 
     static TypeId = 'shapes';                                   // Standard shapes (General, Shapes)
     static TypeTag = 'svg-ext-' + ShapesComponent.TypeId;       // used to identify shapes type, binded with the library svgeditor
@@ -21,9 +21,6 @@ export class ShapesComponent extends GaugeBaseComponent implements OnInit {
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

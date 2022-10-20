@@ -16,8 +16,8 @@ import panzoom from 'panzoom';
 })
 export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
-	@ViewChild('container') container: ElementRef;
+    @ViewChild('fuxaview', {static: true}) fuxaview: FuxaViewComponent;
+	@ViewChild('container', {read: ElementRef, static: true}) container: ElementRef;
 
     startView: View = new View();
     hmi: Hmi = new Hmi();

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemChart, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import pdfMake from "pdfmake/build/pdfmake";
@@ -183,7 +183,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         );
     }
 
-    onAddItem(type: ReportItemType, index: number, edit: boolean) {
+    onAddItem(type: string, index: number = 0, edit: boolean = false) {
         let item = <ReportItem>{ type: type, align: 'left', size: 10 };
         if (type === this.itemTextType) {
             item = {...item, ...<ReportItemText> { text: '' }, ... { style: [{ alignment: item.align }]}};

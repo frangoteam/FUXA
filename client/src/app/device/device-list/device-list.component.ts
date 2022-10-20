@@ -1,7 +1,11 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, Inject, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+/* eslint-disable @angular-eslint/component-class-suffix */
+import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, Inject, ChangeDetectionStrategy } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatTable, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -23,7 +27,7 @@ import { Utils } from '../../_helpers/utils';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class DeviceListComponent implements OnInit {
+export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'logger', 'options', 'remove'];
     readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
@@ -37,7 +41,7 @@ export class DeviceListComponent implements OnInit {
     dataSource = new MatTableDataSource([]);
     selection = new SelectionModel<Element>(true, []);
     devices: Device[];
-    dirty: boolean = false;
+    dirty = false;
     deviceType = DeviceType;
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
@@ -48,10 +52,10 @@ export class DeviceListComponent implements OnInit {
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     constructor(private dialog: MatDialog,
         private hmiService: HmiService,
@@ -506,3 +510,7 @@ export class DialogTagName {
 export interface Element extends Tag {
     position: number;
 }
+function ngAfterViewInit() {
+    throw new Error('Function not implemented.');
+}
+

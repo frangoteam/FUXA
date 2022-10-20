@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Injectable, Inject, Output, EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -102,9 +102,6 @@ export class GaugesManager {
         GaugesManager.Gauges.forEach(g => {
             this.gaugesTags.push(g.TypeTag);
         });
-    }
-
-    ngOnDestroy() {
     }
 
     createSettings(id: string, type: string) {

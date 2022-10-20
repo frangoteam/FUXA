@@ -6,6 +6,7 @@ import {
     EventEmitter,
     HostListener,
     Input,
+    OnDestroy,
     OnInit,
     Output,
     ViewChild,
@@ -31,21 +32,21 @@ declare var SVG: any;
     templateUrl: './fuxa-view.component.html',
     styleUrls: ['./fuxa-view.component.css']
 })
-export class FuxaViewComponent implements OnInit, AfterViewInit {
+export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() id: string;
     @Input() variablesMapping: any = [];
     @Input() view: View;
     @Input() hmi: Hmi;
-    @Input() child: boolean = false;
+    @Input() child = false;
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
-    @ViewChild('dataContainer') dataContainer: ElementRef;
-    @ViewChild('inputDialogRef') inputDialogRef: ElementRef;
-    @ViewChild('inputValueRef') inputValueRef: ElementRef;
+    @ViewChild('dataContainer', {static: false}) dataContainer: ElementRef;
+    @ViewChild('inputDialogRef', {static: false}) inputDialogRef: ElementRef;
+    @ViewChild('inputValueRef', {static: false}) inputValueRef: ElementRef;
 
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 

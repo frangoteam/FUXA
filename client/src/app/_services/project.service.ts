@@ -40,7 +40,7 @@ export class ProjectService {
     private storage: ResourceStorageService;
     public intervals: any [] = [];
 
-    private projectOld: string = '';
+    private projectOld = '';
     private ready = false;
 
     constructor(private resewbApiService: ResWebApiService,
@@ -811,7 +811,7 @@ export class ProjectService {
 
     //#region Notify
 
-    private notifyToLoadHmi() {
+    public notifyToLoadHmi() {
         this.onLoadHmi.emit(true);
     }
 

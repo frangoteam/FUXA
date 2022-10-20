@@ -7,13 +7,10 @@ import { ReportItemText } from '../../../_models/report';
     templateUrl: './report-item-text.component.html',
     styleUrls: ['./report-item-text.component.css']
 })
-export class ReportItemTextComponent implements OnInit {
+export class ReportItemTextComponent {
 
     constructor(public dialogRef: MatDialogRef<ReportItemTextComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ReportItemText) {}
-
-    ngOnInit() {
-    }
 
     onNoClick(): void {
         this.dialogRef.close();

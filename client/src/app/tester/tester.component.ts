@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Subscription, Observable, timer } from "rxjs";
 
@@ -12,9 +12,9 @@ import { GaugeSettings, Variable } from '../_models/hmi';
     templateUrl: './tester.component.html',
     styleUrls: ['./tester.component.css']
 })
-export class TesterComponent implements OnInit {
+export class TesterComponent implements OnInit, OnDestroy {
 
-    show: boolean = false;
+    show = false;
     items: Variable[] = [];
     output: string[] = [];
     subscription: Subscription;

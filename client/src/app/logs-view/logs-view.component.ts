@@ -1,7 +1,9 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
-import { MatTable, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 import { DiagnoseService } from '../_services/diagnose.service';
 import { AppService } from '../_services/app.service';
@@ -12,11 +14,11 @@ import { LogsRequest } from '../_models/diagnose';
     templateUrl: './logs-view.component.html',
     styleUrls: ['./logs-view.component.css']
 })
-export class LogsViewComponent implements OnInit, AfterViewInit {
+export class LogsViewComponent implements AfterViewInit {
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     dataSource = new MatTableDataSource([]);
     ontimeFilter = new FormControl();
@@ -36,9 +38,6 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
     constructor(private diagnoseService: DiagnoseService,
                 private appService: AppService) { }
 
-    ngOnInit() {
-    }
-
     ngAfterViewInit() {
         this.diagnoseService.getLogsDir().subscribe(result => {
             this.logs.files = result;
@@ -49,7 +48,7 @@ export class LogsViewComponent implements OnInit, AfterViewInit {
         this.loadLogs(this.logs.selected);
     }
 
-    private loadLogs(logfile: string) {
+    loadLogs(logfile: string) {
         this.appService.showLoading(true);
         this.diagnoseService.getLogs(<LogsRequest>{ file: logfile }).subscribe(result => {
             this.content = result.body.replace(new RegExp('\n', 'g'), "<br />");

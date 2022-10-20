@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-tutorial',
     templateUrl: './tutorial.component.html',
     styleUrls: ['./tutorial.component.css']
 })
-export class TutorialComponent implements OnInit {
+export class TutorialComponent {
 
-    show: boolean = false;
+    show = false;
 
     constructor() { }
-
-    ngOnInit() {
-    }
 
     close() {
         this.show = false;

@@ -10,9 +10,9 @@ export class Hmi {
 
 export class View {
     /** View id, random number */
-    id: string = '';
+    id = '';
     /** View name used as reference in configuration */
-    name: string = '';
+    name = '';
     /** View profile size, background color */
     profile: DocProfile = new DocProfile();
     /** Gauges settings list used in the view  */
@@ -20,7 +20,7 @@ export class View {
     /** Variables (Tags) list used in the view */
     variables: DictionaryVariables = {};
     /** Svg code content of the view  */
-    svgcontent: string = '';
+    svgcontent = '';
     /** Type of view SVG/CARDS */
     type: ViewType;
 }
@@ -34,19 +34,19 @@ export class LayoutSettings {
     /** Auto resize view */
     autoresize?: boolean = false;
     /** Start view (home) */
-    start: string = '';
+    start = '';
     /** Left side navigation menu settings */
     navigation: NavigationSettings = new NavigationSettings();
     /** On top header settings */
     header: HeaderSettings = new HeaderSettings();
     /** Show development blue button (Home, Lab, Editor) */
-    showdev: boolean = true;
+    showdev = true;
     /** Enable zoom in view */
     zoom: ZoomModeType;
     /** Show input dialog for input field */
-    inputdialog: string = 'false';
+    inputdialog = 'false';
     /** Hide navigation Header and sidebarmenu */
-    hidenavigation: boolean = false;
+    hidenavigation = false;
     /** GUI Theme */
     theme = '';
     /** Show login by start */
@@ -59,9 +59,9 @@ export class NavigationSettings {
     /** Menu item show type (text, icon) */
     type: NaviItemType;
     /** Menu background color */
-    bkcolor: string = '#F4F5F7';
+    bkcolor = '#F4F5F7';
     /** Menu item text and icon color */
-    fgcolor: string = '#1D1D1D';
+    fgcolor = '#1D1D1D';
     /** Menu items */
     items: NaviItem[];
     /** Custom logo resource */
@@ -99,8 +99,8 @@ export class HeaderSettings {
     title: string;
     alarms: NotificationModeType;
     infos: NotificationModeType;
-    bkcolor: string = '#ffffff';
-    fgcolor: string = '#000000';
+    bkcolor = '#ffffff';
+    fgcolor = '#000000';
 }
 
 export enum NotificationModeType {
@@ -126,10 +126,10 @@ export enum HeaderBarModeType {
 }
 
 export class DocProfile {
-    width: number = 1024;
-    height: number = 768;
-    bkcolor: string = '#ffffffff';
-    margin: number = 10;
+    width = 1024;
+    height = 768;
+    bkcolor = '#ffffffff';
+    margin = 10;
 }
 
 export class MyItem {
@@ -137,9 +137,9 @@ export class MyItem {
 }
 
 export class GaugeSettings {
-    name: string = '';
+    name = '';
     property: any = null;   // set to GaugeProperty after upgrate
-    label: string = '';     // Gauge type label
+    label = '';     // Gauge type label
     constructor(public id: string, public type: string) {
     }
 }
@@ -204,12 +204,12 @@ export class GaugeActionBlink {
     strokeB: string = null;
     fillA: string = null;
     fillB: string = null;
-    interval: number = 1000;
+    interval = 1000;
 }
 
 export class GaugeActionRotate {
-    minAngle: number = 0;
-    maxAngle: number = 90;
+    minAngle = 0;
+    maxAngle = 90;
 }
 
 export class GaugePropertyColor {
@@ -398,21 +398,21 @@ export class Alarm extends Tag {
 }
 
 export class WindowLink {
-    name: string = '';
-    title: string = '';
+    name = '';
+    title = '';
     type: string;
 }
 
 export class SelElement {
-    type: string = '';
+    type = '';
     ele: any = null;
 }
 
 export class Event {
-    id: string = '';
+    id = '';
     dom: any;
     value: any = null;
-    dbg: string = '';
+    dbg = '';
     type: string;
     ga: GaugeSettings;
 }
@@ -474,7 +474,7 @@ export enum TimeFormatType {
 export class CardWidget {
     data: string;
     type: string;
-    zoom: number = 1;
+    zoom = 1;
     constructor(type: string, data: string) {
         this.type = type;
         this.data = data;

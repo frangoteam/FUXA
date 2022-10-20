@@ -1,5 +1,5 @@
-import { Directive, HostListener, OnInit, AfterViewInit } from '@angular/core';
-import { MatDialogContainer, MatDialogRef } from '@angular/material';
+import { Directive, HostListener, AfterViewInit } from '@angular/core';
+import { MatDialogContainer, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators/takeUntil';
 import 'rxjs/add/observable/fromEvent';
@@ -9,7 +9,7 @@ import { ModalPositionCache, Position } from './modal-position.cache';
 @Directive({
     selector: '[mat-dialog-draggable]'
 })
-export class DialogDraggableDirective implements OnInit, AfterViewInit {
+export class DialogDraggableDirective implements AfterViewInit {
 
     // private _subscription: Subscription;
 
@@ -24,9 +24,6 @@ export class DialogDraggableDirective implements OnInit, AfterViewInit {
         private container: MatDialogContainer,
         // private positionCache: ModalPositionCache
     ) { }
-
-    ngOnInit() {
-    }
 
     ngAfterViewInit() {
         const dialogType = this.matDialogRef.componentInstance.constructor;

@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, Input, Output, EventEmitter, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 
 import { LayoutSettings, NaviItem, NaviModeType, NavigationSettings, LinkType } from '../_models/hmi';
 
@@ -9,7 +9,7 @@ import { LayoutSettings, NaviItem, NaviModeType, NavigationSettings, LinkType } 
     templateUrl: './sidenav.component.html',
     styleUrls: ['./sidenav.component.css']
 })
-export class SidenavComponent implements AfterViewInit, AfterContentChecked {
+export class SidenavComponent implements AfterContentChecked {
 
     @Input() sidenav: MatSidenav;
     @Output() goToPage: EventEmitter<string> = new EventEmitter();
@@ -25,9 +25,6 @@ export class SidenavComponent implements AfterViewInit, AfterContentChecked {
 
     constructor(private router: Router,
         private changeDetector: ChangeDetectorRef) {
-    }
-
-    ngAfterViewInit() {
     }
 
     ngAfterContentChecked(): void {

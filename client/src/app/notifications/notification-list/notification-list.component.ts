@@ -1,5 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Inject, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef, MatTable, MatTableDataSource, MAT_DIALOG_DATA, MatSort, MatMenuTrigger } from '@angular/material';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSort } from '@angular/material/sort';
 import { Subscription } from "rxjs";
 
 import { ProjectService } from '../../_services/project.service';
@@ -26,8 +28,8 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
 
     private subscriptionLoad: Subscription;
 
-    @ViewChild(MatTable) table: MatTable<any>;
-    @ViewChild(MatSort) sort: MatSort;
+    @ViewChild(MatTable, {static: true}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,
@@ -61,7 +63,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
 		this.editNotification(notification, 1);
     }
 
-    onEditNotification(notification: Notification, toAdd: number) {
+    onEditNotification(notification: Notification) {
 		this.editNotification(notification, 0);
     }
 

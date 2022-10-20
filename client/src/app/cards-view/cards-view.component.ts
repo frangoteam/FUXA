@@ -14,7 +14,7 @@ import { Utils } from '../_helpers/utils';
 export class CardsViewComponent implements OnInit, AfterViewInit {
 
     @Input() options: GridsterConfig;
-    @Input() edit: boolean = true;
+    @Input() edit = true;
     @Input() view: View;
     @Input() hmi: Hmi;
     @Input() gaugesManager: GaugesManager;        // gauges.component

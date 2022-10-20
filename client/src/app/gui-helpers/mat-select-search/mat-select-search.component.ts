@@ -5,7 +5,8 @@ import {
     ViewChild
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MatOption, MatSelect } from '@angular/material';
+import { MatSelect } from '@angular/material/select';
+import { MatOption } from '@angular/material/core';
 import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -109,7 +110,7 @@ export class MatSelectSearchComponent implements OnInit, OnDestroy, AfterViewIni
     @Input() noEntriesFoundLabel = '';
 
     /** Reference to the search input field */
-    @ViewChild('searchSelectInput', { read: ElementRef }) searchSelectInput: ElementRef;
+    @ViewChild('searchSelectInput', { read: ElementRef, static: true }) searchSelectInput: ElementRef;
 
     /** Current search value */
     get value(): string {

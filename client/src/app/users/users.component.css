@@ -88,13 +88,13 @@
     position: absolute;
 }
 
-.my-header-filter /deep/ .mat-sort-header-button {
+.my-header-filter ::ng-deep .mat-sort-header-button {
     display: block;
     text-align: left;
     margin-top: 5px;
 }
 
-.my-header-filter /deep/ .mat-sort-header-arrow {
+.my-header-filter ::ng-deep .mat-sort-header-arrow {
     top: -12px;
     right: 20px;
 }

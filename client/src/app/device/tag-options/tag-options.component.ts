@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { Tag, TagDaq } from '../../_models/device';
 
@@ -8,7 +8,7 @@ import { Tag, TagDaq } from '../../_models/device';
     templateUrl: './tag-options.component.html',
     styleUrls: ['./tag-options.component.css']
 })
-export class TagOptionsComponent implements OnInit {
+export class TagOptionsComponent {
 
     tagDaq = new TagDaq(false, true, 60);
 
@@ -51,9 +51,6 @@ export class TagOptionsComponent implements OnInit {
                 this.tagDaq.interval = interval.value;
             }
         }
-    }
-
-    ngOnInit() {
     }
 
     onNoClick(): void {

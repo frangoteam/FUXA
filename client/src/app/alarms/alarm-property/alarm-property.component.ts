@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FlexHeadComponent } from '../../gauges/gauge-property/flex-head/flex-head.component';
 import { FlexAuthComponent } from '../../gauges/gauge-property/flex-auth/flex-auth.component';
@@ -11,10 +11,10 @@ import { AlarmProperty, AlarmAckMode, AlarmSubProperty, AlarmSubActions, AlarmAc
     templateUrl: './alarm-property.component.html',
     styleUrls: ['./alarm-property.component.css']
 })
-export class AlarmPropertyComponent implements OnInit {
+export class AlarmPropertyComponent {
 
-	@ViewChild('flexauth') flexAuth: FlexAuthComponent;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
+	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
 
     property: AlarmProperty;
     ackMode = AlarmAckMode;
@@ -95,9 +95,6 @@ export class AlarmPropertyComponent implements OnInit {
         }
     }
 
-    ngOnInit() {
-    }
-
     onNoClick(): void {
         this.dialogRef.close();
     }
@@ -126,10 +123,6 @@ export class AlarmPropertyComponent implements OnInit {
 
     onAlarmAction(index: number) {
         this.data.alarm.actions.values.splice(index, 1);
-    }
-
-    onCheckActionType() {
-        // console.error('Not supported!');
     }
 
     setActionVariable(action: AlarmAction, event) {

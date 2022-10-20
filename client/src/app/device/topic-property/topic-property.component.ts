@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject, AfterViewInit, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatTabGroup, MatTab } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { Subscription } from "rxjs";
 
 import { HmiService } from '../../_services/hmi.service';
@@ -12,11 +13,11 @@ import { Tag, TAG_PREFIX } from '../../_models/device';
     templateUrl: './topic-property.component.html',
     styleUrls: ['./topic-property.component.css']
 })
-export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TopicPropertyComponent implements OnInit, OnDestroy {
 
-    @ViewChild('grptabs') grptabs: MatTabGroup;
-    @ViewChild('tabsub') tabsub: MatTab;
-    @ViewChild('tabpub') tabpub: MatTab;
+    @ViewChild('grptabs', {static: true}) grptabs: MatTabGroup;
+    @ViewChild('tabsub', {static: true}) tabsub: MatTab;
+    @ViewChild('tabpub', {static: true}) tabpub: MatTab;
 
     private subscriptionBrowse: Subscription;
 
@@ -102,10 +103,6 @@ export class TopicPropertyComponent implements OnInit, AfterViewInit, OnDestroy 
         }
         this.loadSelectedSubTopic();
         this.stringifyPublishItem();
-    }
-
-    ngAfterViewInit() {
-
     }
 
     ngOnDestroy() {

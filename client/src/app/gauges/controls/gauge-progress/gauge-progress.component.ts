@@ -9,7 +9,7 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
     templateUrl: './gauge-progress.component.html',
     styleUrls: ['./gauge-progress.component.css']
 })
-export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit {
+export class GaugeProgressComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -25,9 +25,6 @@ export class GaugeProgressComponent extends GaugeBaseComponent implements OnInit
 
     constructor() {
         super();
-    }
-
-    ngOnInit() {
     }
 
     static getSignals(pro: any) {

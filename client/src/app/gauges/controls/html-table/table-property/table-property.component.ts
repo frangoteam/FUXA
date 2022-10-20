@@ -1,8 +1,8 @@
-import { Component, EventEmitter, OnInit, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Subject, ReplaySubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { MatTabGroup } from '@angular/material';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MatTabGroup } from '@angular/material/tabs';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -16,14 +16,14 @@ import { Utils } from '../../../../_helpers/utils';
     templateUrl: './table-property.component.html',
     styleUrls: ['./table-property.component.css']
 })
-export class TablePropertyComponent implements OnInit {
+export class TablePropertyComponent implements OnInit, OnDestroy {
 
     @Input() data: any;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
     @Input('reload') set reload(b: any) {
         this._reload();
     }
-    @ViewChild('grptabs') grptabs: MatTabGroup;
+    @ViewChild('grptabs', {static: false}) grptabs: MatTabGroup;
 
     tableTypeCtrl: FormControl = new FormControl();
     options = DataTableComponent.DefaultOptions();

@@ -3,7 +3,7 @@ import { ChangeDetectorRef } from '@angular/core';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Utils } from '../../../../_helpers/utils';
 import { GaugeProperty } from '../../../../_models/hmi';
 import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
@@ -18,9 +18,9 @@ import { Define } from '../../../../_helpers/define';
 })
 export class SliderPropertyComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('flexauth') flexAuth: FlexAuthComponent;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
-    @ViewChild('slider') slider: NgxNouisliderComponent;
+    @ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
+    @ViewChild('slider', {static: false}) slider: NgxNouisliderComponent;
     property: GaugeProperty;
     options = new NgxNouisliderOptions();
     defaultColor = Utils.defaultColor;

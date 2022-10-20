@@ -1,7 +1,9 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
+/* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject, Subscription } from "rxjs";
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 
 import { SidenavComponent } from '../sidenav/sidenav.component';
@@ -32,14 +34,14 @@ import panzoom from 'panzoom';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('sidenav') sidenav: SidenavComponent;
-    @ViewChild('matsidenav') matsidenav: MatSidenav;
-    @ViewChild('fuxaview') fuxaview: FuxaViewComponent;
-    @ViewChild('cardsview') cardsview: CardsViewComponent;
-    @ViewChild('alarmsview') alarmsview: AlarmViewComponent;
-    @ViewChild('container') container: ElementRef;
+    @ViewChild('sidenav', {static: false}) sidenav: SidenavComponent;
+    @ViewChild('matsidenav', {static: false}) matsidenav: MatSidenav;
+    @ViewChild('fuxaview', {static: false}) fuxaview: FuxaViewComponent;
+    @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
+    @ViewChild('alarmsview', {static: false}) alarmsview: AlarmViewComponent;
+    @ViewChild('container', {static: false}) container: ElementRef;
 
-    @ViewChild('iframeview') iframeview: IframeComponent;
+    @ViewChild('iframeview', {static: false}) iframeview: IframeComponent;
 
     isLoading = true;
     homeView: View = new View();
@@ -72,22 +74,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router,
         private hmiService: HmiService,
         private authService: AuthService,
-        private gaugesManager: GaugesManager) {
+        public gaugesManager: GaugesManager) {
         this.gridOptions.draggable = { enabled: false };
         this.gridOptions.resizable = { enabled: false };
     }
 
     ngOnInit() {
-    }
-
-    ngAfterViewInit() {
         try {
-            let hmi = this.projectService.getHmi();
-            if (hmi) {
-                this.loadHmi();
-            }
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-                this.loadHmi();
+                let hmi = this.projectService.getHmi();
+                if (hmi) {
+                    this.loadHmi();
+                }
             }, error => {
                 console.error('Error loadHMI');
             });
@@ -97,7 +95,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe(viewName => {
                 this.onGoToPage(this.projectService.getViewId(viewName));
             });
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
 
+    ngAfterViewInit() {
+        try {
+            this.projectService.notifyToLoadHmi();
             this.hmiService.askAlarmsStatus();
             this.changeDetector.detectChanges();
         }

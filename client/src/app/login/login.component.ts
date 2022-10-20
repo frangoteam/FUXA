@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AuthService } from '../_services/auth.service';
 import { ProjectService } from '../_services/project.service';
@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 	templateUrl: './login.component.html',
 	styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
 	loading = false;
 	showPassword = false;
@@ -26,9 +26,6 @@ export class LoginComponent implements OnInit {
 		private translateService: TranslateService,
 		private dialogRef: MatDialogRef<LoginComponent>,
 		@Inject(MAT_DIALOG_DATA) private data: any) { }
-
-	ngOnInit() {
-	}
 
 	onNoClick(): void {
 		this.dialogRef.close();

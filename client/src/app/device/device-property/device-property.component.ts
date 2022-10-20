@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatExpansionPanel } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { Subscription } from "rxjs";
 import { TranslateService } from '@ngx-translate/core';
 
@@ -17,10 +18,11 @@ import { Utils } from '../../_helpers/utils';
 export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	// @Input() name: any;
-	@ViewChild(MatExpansionPanel) panelProperty: MatExpansionPanel;
+	@ViewChild(MatExpansionPanel, {static: false}) panelProperty: MatExpansionPanel;
 	securityRadio: any;
 	mode: any;
 	deviceType: any = {};
+	showPassword: boolean;
 
 	pollingPlcType = [{text: '200 ms', value: 200}, {text: '500 ms', value: 500}, {text: '700 ms', value: 700}, {text: '1 sec', value: 1000}, 
 					{text: '1.5 sec', value: 1500}, {text: '2 sec', value: 2000}, { text: '3 sec', value: 3000}, 

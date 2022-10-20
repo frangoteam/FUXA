@@ -12,7 +12,7 @@ declare var SVG: any;
     templateUrl: './value.component.html',
     styleUrls: ['./value.component.css']
 })
-export class ValueComponent extends GaugeBaseComponent implements OnInit {
+export class ValueComponent extends GaugeBaseComponent {
 
     @Input() data: any;
 
@@ -24,10 +24,7 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
     constructor() {
         super();
     }
-
-    ngOnInit() {
-    }
-
+    
     static getSignals(pro: any) {
         let res: string[] = [];
         if (pro.actions && pro.actions.length) {
@@ -126,6 +123,6 @@ export class ValueComponent extends GaugeBaseComponent implements OnInit {
 }
 
 export class ValueProperty {
-    signalid: string = '';
-    format: string = '##.##'
+    signalid = '';
+    format = '##.##'
 }

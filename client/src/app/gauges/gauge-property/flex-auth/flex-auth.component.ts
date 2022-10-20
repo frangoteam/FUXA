@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { GaugeProperty } from '../../../_models/hmi';
 import { DialogGaugePermission } from '../../gauge-property/gauge-property.component';
@@ -9,17 +9,13 @@ import { DialogGaugePermission } from '../../gauge-property/gauge-property.compo
     templateUrl: './flex-auth.component.html',
     styleUrls: ['./flex-auth.component.css']
 })
-export class FlexAuthComponent implements OnInit {
+export class FlexAuthComponent {
 
     @Input() name: string;
     @Input() permission: number;
 
 
     constructor(public dialog: MatDialog) { }
-
-    ngOnInit() {
-        // this.property = JSON.parse(JSON.stringify(this.data.settings.property));
-    }
 
     onEditPermission() {
         let permission = this.permission;

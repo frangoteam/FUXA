@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -20,13 +20,13 @@ interface Variable {
     styleUrls: ['./flex-head.component.css'],
     encapsulation: ViewEncapsulation.None,
 })
-export class FlexHeadComponent implements OnInit {
+export class FlexHeadComponent implements OnInit, OnDestroy {
 
     @Input() data: any;
     @Input() property: GaugeProperty;
     @Input() withStaticValue = true;
     @Input() withBitmask = false;
-    @ViewChild('flexinput') flexInput: FlexInputComponent;
+    @ViewChild('flexinput', {static: false}) flexInput: FlexInputComponent;
 
     variable: any;
     withProperty = null;
@@ -57,9 +57,6 @@ export class FlexHeadComponent implements OnInit {
         if (!this.property) {
             this.property = new GaugeProperty();
         }
-    }
-
-    ngAfterViewInit() {
     }
 
     ngOnDestroy() {

@@ -1,5 +1,6 @@
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 
@@ -19,9 +20,9 @@ import { PropertyType } from './flex-input/flex-input.component';
 export class GaugePropertyComponent implements OnInit {
 
     @Input() name: any;
-    @ViewChild('flexhead') flexHead: FlexHeadComponent;
-    @ViewChild('flexevent') flexEvent: FlexEventComponent;
-    @ViewChild('flexaction') flexAction: FlexActionComponent;
+    @ViewChild('flexhead', {static: true}) flexHead: FlexHeadComponent;
+    @ViewChild('flexevent', {static: true}) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', {static: true}) flexAction: FlexActionComponent;
 
     slideView = true;
     slideActionView = true;
@@ -191,12 +192,11 @@ export enum GaugeDialogType {
     templateUrl: './gauge-permission.dialog.html',
 })
 export class DialogGaugePermission {
-    // defaultColor = Utils.defaultColor;
     selectedGroups = [];
     extensionGroups = [];
     groups = UserGroups.Groups;
 
-    @ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
     constructor(
         public dialogRef: MatDialogRef<DialogGaugePermission>,

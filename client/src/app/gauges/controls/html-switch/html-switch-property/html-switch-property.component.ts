@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild, AfterContentInit } from '@angular/core';
 
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GaugeProperty } from '../../../../_models/hmi';
 
 import { FlexAuthComponent } from '../../../gauge-property/flex-auth/flex-auth.component';
@@ -17,9 +17,9 @@ import { Utils } from '../../../../_helpers/utils';
 })
 export class HtmlSwitchPropertyComponent implements AfterContentInit {
 
-    @ViewChild('switcher') switcher: NgxSwitchComponent;
-	@ViewChild('flexhead') flexhead: FlexHeadComponent;
-    @ViewChild('flexauth') flexauth: FlexAuthComponent;
+    @ViewChild('switcher', {static: false}) switcher: NgxSwitchComponent;
+	@ViewChild('flexhead', {static: false}) flexhead: FlexHeadComponent;
+    @ViewChild('flexauth', {static: false}) flexauth: FlexAuthComponent;
 
     property: GaugeProperty;
     options: SwitchOptions;

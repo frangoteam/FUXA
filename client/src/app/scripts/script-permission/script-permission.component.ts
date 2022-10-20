@@ -1,5 +1,5 @@
 import { Component, Inject, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { UserGroups } from '../../_models/user';
 
@@ -13,7 +13,7 @@ export class ScriptPermissionComponent {
   selectedGroups = [];
 	groups = UserGroups.Groups;
 
-	@ViewChild(SelOptionsComponent) seloptions: SelOptionsComponent;
+	@ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
 	constructor(public dialogRef: MatDialogRef<ScriptPermissionComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {

@@ -23,7 +23,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	showdev = false;
 	isLoading = false;
 
-	@ViewChild('fabmenu') fabmenu: any;
+	@ViewChild('fabmenu', {static: false}) fabmenu: any;
 	private subscriptionLoad: Subscription;
 	private subscriptionShowLoading: Subscription;
 
@@ -120,5 +120,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	onGoTo(goto) {
 		this.router.navigate([goto]);
 		this.fabmenu.toggle();
+		//TODO!
+        if (!this.location.path().includes(goto) && ['home', 'lab'].indexOf(goto) !== -1) {
+			setTimeout(() => {
+				this.projectService.notifyToLoadHmi();
+			}, 500);
+		}
 	}
 }
