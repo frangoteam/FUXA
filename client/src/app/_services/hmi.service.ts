@@ -74,7 +74,7 @@ export class HmiService {
                 if (device) {
                     this.variables[sigId]['source'] = device.id;
                 }
-                if (device.type === DeviceType.internal) {
+                if (device?.type === DeviceType.internal) {
                     this.setSignalValue(this.variables[sigId]);
                 } else {
                     this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });

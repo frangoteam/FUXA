@@ -137,15 +137,13 @@ export class LazyForDirective implements DoCheck, OnInit {
                 $implicit: this.list[0],
                 index: 0
             });
-            sampleItemElem = <HTMLElement>this.templateElem.nextSibling;
-        }
-
-        if (this.itemHeight === undefined) {
-            this.itemHeight = sampleItemElem.clientHeight;
-        }
-
-        if (this.itemTagName === undefined) {
-            this.itemTagName = sampleItemElem.tagName;
+            sampleItemElem = <HTMLElement>(this.templateElem.nextSibling || this.templateElem.previousSibling);
+            if (this.itemHeight === undefined) {
+                this.itemHeight = sampleItemElem?.clientHeight;
+            }
+            if (this.itemTagName === undefined) {
+                this.itemTagName = sampleItemElem?.tagName;
+            }
         }
 
         this.beforeListElem = document.createElement(this.itemTagName);

@@ -482,7 +482,7 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel id="tool_stroke" class="svg-workarea-fly-p" (opened)="panelFillOpenState = true" (closed)="panelFillOpenState = false" hideToggle="true" expanded="true">
+                    <mat-expansion-panel id="tool_stroke" class="svg-workarea-fly-p" style="left: unset !important" (opened)="panelFillOpenState = true" (closed)="panelFillOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
                                 <mat-icon aria-label="Select" *ngIf="panelFillOpenState">expand_less</mat-icon>
@@ -754,14 +754,14 @@
                         </div>
 
                         <div id="tools_bottom_2" class="colors">
-                            <input readonly [(colorPicker)]="colorFill" class="color-fill" matTooltip="{{'editor.tools-fillcolor-title' | translate}}" [style.background]="colorFill"
-                                [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeFillColor($event)" [cpPresetColors]="defaultColor"
-                                [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'"
-                                [cpOKButtonClass]="'cpOKButtonClass'" />
-                            <input readonly [(colorPicker)]="colorStroke" class="color-stroke" matTooltip="{{'editor.tools-strokecolor-title' | translate}}"
-                                [style.background]="colorStroke" [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeStrokeColor($event)"
-                                [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
-                                [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
+                            <input readonly [(colorPicker)]="colorFill" class="color-fill" [style.background]="colorFill"
+                                [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeFillColor($event)"
+                                [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
+                            <input readonly [(colorPicker)]="colorStroke" class="color-stroke" [style.background]="colorStroke"
+                                [cpAlphaChannel]="'always'" [cpPosition]="'top'" (colorPickerChange)="onChangeStrokeColor($event)"
+                                [cpPresetColors]="defaultColor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButton]="true" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
                             <div class="color_tool" id="tool_fill" hidden>
                                 <label class="icon_label" for="fill_color" matTooltip="{{'editor.tools-fillcolor-title' | translate}}"></label>
                                 <div class="color_block">

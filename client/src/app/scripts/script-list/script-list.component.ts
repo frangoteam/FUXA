@@ -25,8 +25,8 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionLoad: Subscription;
 
-    @ViewChild(MatTable, {static: true}) table: MatTable<any>;
-    @ViewChild(MatSort, {static: true}) sort: MatSort;
+    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
+    @ViewChild(MatSort, {static: false}) sort: MatSort;
 
     constructor(public dialog: MatDialog,
         private translateService: TranslateService,

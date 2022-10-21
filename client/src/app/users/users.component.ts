@@ -21,8 +21,8 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
 	users: User[];
 
-	@ViewChild(MatTable, {static: true}) table: MatTable<any>;
-	@ViewChild(MatSort, {static: true}) sort: MatSort;
+	@ViewChild(MatTable, {static: false}) table: MatTable<any>;
+	@ViewChild(MatSort, {static: false}) sort: MatSort;
 
 	constructor(private dialog: MatDialog,
 		private userService: UserService) { }

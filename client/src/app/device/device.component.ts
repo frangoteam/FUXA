@@ -23,9 +23,9 @@ import { Utils } from '../_helpers/utils';
 })
 export class DeviceComponent implements OnInit, OnDestroy {
 
-    @ViewChild('devicelist', {static: true}) deviceList: DeviceListComponent;
-    @ViewChild('devicemap', {static: true}) deviceMap: DeviceMapComponent;
-    @ViewChild('fileImportInput', {static: true}) fileImportInput: any;
+    @ViewChild('devicelist', {static: false}) deviceList: DeviceListComponent;
+    @ViewChild('devicemap', {static: false}) deviceMap: DeviceMapComponent;
+    @ViewChild('fileImportInput', {static: false}) fileImportInput: any;
 
     private subscriptionLoad: Subscription;
     private subscriptionDeviceChange: Subscription;
