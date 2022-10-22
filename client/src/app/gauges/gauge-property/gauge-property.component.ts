@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, AfterViewInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
@@ -17,12 +17,12 @@ import { PropertyType } from './flex-input/flex-input.component';
     templateUrl: './gauge-property.component.html',
     styleUrls: ['./gauge-property.component.css']
 })
-export class GaugePropertyComponent implements OnInit {
+export class GaugePropertyComponent implements AfterViewInit {
 
     @Input() name: any;
-    @ViewChild('flexhead', {static: true}) flexHead: FlexHeadComponent;
-    @ViewChild('flexevent', {static: true}) flexEvent: FlexEventComponent;
-    @ViewChild('flexaction', {static: true}) flexAction: FlexActionComponent;
+    @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
+    @ViewChild('flexevent', {static: false}) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', {static: false}) flexAction: FlexActionComponent;
 
     slideView = true;
     slideActionView = true;
@@ -41,7 +41,7 @@ export class GaugePropertyComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any) {
     }
 
-    ngOnInit() {
+    ngAfterViewInit() {
         this.dialogType = this.data.dlgType;
         this.eventsSupported = this.data.withEvents;
         this.actionsSupported = this.data.withActions;

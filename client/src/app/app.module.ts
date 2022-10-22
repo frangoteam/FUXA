@@ -8,7 +8,6 @@ import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorPickerModule } from 'ngx-color-picker';
 
-import { Ng5SliderModule } from 'ng5-slider';
 import { ToastrModule } from 'ngx-toastr';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -302,7 +301,6 @@ export function createTranslateLoader(http: HttpClient) {
         MaterialModule,
         BrowserAnimationsModule,
         ColorPickerModule,
-        Ng5SliderModule,
         AngularDraggableModule,
         MatSelectSearchModule,
         ToastrModule.forRoot({

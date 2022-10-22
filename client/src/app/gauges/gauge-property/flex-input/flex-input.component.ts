@@ -1,6 +1,4 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Options } from 'ng5-slider';
-
 import { GaugeProperty, GaugeRangeProperty, InputOptionsProperty } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
@@ -27,10 +25,6 @@ export class FlexInputComponent implements OnInit {
     withValue = true;
     slideView = true;
     defaultColor = Utils.defaultColor;
-    options: Options = {
-        floor: 0,
-        ceil: 100
-    };
     valueresult = '123';
 
     constructor() {
@@ -122,17 +116,6 @@ export class FlexInputComponent implements OnInit {
 
     changeTag(_tag) {
         this.tag = _tag;
-        if (this.tag) {
-            const newOptions: Options = Object.assign({}, this.options);
-            for (let i = 0; i < this.ranges.length; i++) {
-                if (!this.ranges[i].min || this.ranges[i].min <= newOptions.floor) {
-                    this.ranges[i].min = newOptions.floor;
-                }
-                if (!this.ranges[i].max || this.ranges[i].max >= newOptions.ceil) {
-                    this.ranges[i].max = newOptions.ceil;
-                }
-            }
-        }
         if (this.isOutputCtrl()) {
             let device = DevicesUtils.getDeviceFromTagId(this.data.devices, _tag.id);
             if (device) {

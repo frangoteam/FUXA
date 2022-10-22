@@ -1,9 +1,8 @@
 import { Directive, HostListener, AfterViewInit } from '@angular/core';
 import { MatDialogContainer, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, Observable } from 'rxjs';
-import { takeUntil } from 'rxjs/operators/takeUntil';
-import 'rxjs/add/observable/fromEvent';
-import { take } from 'rxjs/operators/take';
+import { Subscription, Observable, fromEvent } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { ModalPositionCache, Position } from './modal-position.cache';
 
 @Directive({
@@ -40,10 +39,10 @@ export class DialogDraggableDirective implements AfterViewInit {
         this.offset = this._getOffset();
         this.mouseStart = { x: event.pageX, y: event.pageY };
 
-        const mouseup$ = Observable.fromEvent(document, 'mouseup');
+        const mouseup$ = fromEvent(document, 'mouseup');
         // this._subscription = mouseup$.subscribe(() => this.onMouseup());
 
-        const mousemove$ = Observable.fromEvent(document, 'mousemove')
+        const mousemove$ = fromEvent(document, 'mousemove')
             .pipe(takeUntil(mouseup$))
             .subscribe((e: MouseEvent) => this.onMouseMove(e));
 

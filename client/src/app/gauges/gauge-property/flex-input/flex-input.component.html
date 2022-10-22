@@ -4,9 +4,6 @@
             <div *ngIf="slideView" class="item-range">
                 <range-number [range]="item"></range-number>
             </div>
-            <div class="item-range input-slider" *ngIf="!slideView">
-                <ng5-slider [(value)]="item.min" [(highValue)]="item.max" [options]="options"></ng5-slider>
-            </div>
             <div *ngIf="isWithRangeColor()" style="display: inline-block;">
                 <div class="my-form-field">
                     <span>{{'gauges.property-input-color' | translate}}</span>
