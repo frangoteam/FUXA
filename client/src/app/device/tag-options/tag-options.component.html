@@ -1,24 +1,24 @@
-<div>
+<form [formGroup]="formGroup">
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'device.tag-options-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <div style="display: block;margin-bottom: 10px; text-align: center;">
             <div class="my-form-field" style="float: left;">
                 <span>{{'device.tag-daq-enabled' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="tagDaq.enabled"></mat-slide-toggle>
+                <mat-slide-toggle color="primary" formControlName="enabled"></mat-slide-toggle>
             </div>
             <div class="my-form-field" style="display: inline-block;">
                 <span>{{'device.tag-daq-changed' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="tagDaq.changed" [disabled]="true"></mat-slide-toggle>
+                <mat-slide-toggle color="primary" formControlName="changed"></mat-slide-toggle>
             </div>
         </div>
         <div class="my-form-field" style="display: block;">
             <span>{{'device.tag-daq-interval' | translate}}</span>
-            <input numberOnly [(ngModel)]="tagDaq.interval" min="1" type="text" style="width:300px" [disabled]="true">
+            <input numberOnly formControlName="interval" min="1" type="text" style="width:300px">
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
-        <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="formGroup.invalid">{{'dlg.ok' | translate}}</button>
     </div>
-</div>
+</form>

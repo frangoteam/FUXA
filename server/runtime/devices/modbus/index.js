@@ -5,6 +5,8 @@
 'use strict';
 var ModbusRTU;
 const datatypes = require('./datatypes');
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 const TOKEN_LIMIT = 100;
 
 function MODBUSclient(_data, _logger, _events) {
@@ -18,8 +20,6 @@ function MODBUSclient(_data, _logger, _events) {
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var memItemsMap = {};               // Mapped Signale name with MemoryItem to find for set value
     var mixItemsMap = {};               // Map the fragmented Signale { key = start address, value = MemoryItems }
-    var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
-    var lastDaqInterval = 0;            // Help to check daqInterval
     var overloading = 0;                // Overloading counter to mange the break connection
     var lastTimestampValue;             // Last Timestamp of asked values
     var type;
@@ -109,7 +109,7 @@ function MODBUSclient(_data, _logger, _events) {
 
     /**
      * Read values in polling mode 
-     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
         if (_checkWorking(true)) {
@@ -142,13 +142,7 @@ function MODBUSclient(_data, _logger, _events) {
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq) {
-                        var current = new Date().getTime();
-                        if (current - daqInterval > lastDaqInterval) {
-                            this.addDaq(varsValue, data.name);
-                            lastDaqInterval = current;
-                        } else if (varsValueChanged) {
-                            this.addDaq(varsValueChanged, data.name);
-                        }
+                        this.addDaq(varsValueChanged, data.name);
                     }
                 } else {
                     // console.error('then error');
@@ -314,11 +308,10 @@ function MODBUSclient(_data, _logger, _events) {
     }
 
     /**
-     * Bind the DAQ store function and default daqInterval value in milliseconds
+     * Bind the DAQ store function
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
 
     this.addDaq = null;      
@@ -363,77 +356,65 @@ function MODBUSclient(_data, _logger, _events) {
             // define read function
             if (memoryAddress === ModbusMemoryAddress.CoilStatus) {                      // Coil Status (Read/Write 000001-065536)
                 client.readCoils(start, size).then( res => {
-                    let changed = [];
                     if (res.data) {
                         vars.map(v => {
                             let bitoffset = Math.trunc((v.offset - start) / 8);
                             let bit = (v.offset - start) % 8;
                             let value = datatypes[v.type].parser(res.buffer, bitoffset, bit);
-                            if (value !== v.value) {
-                                changed.push(v);
-                            }
+                            v.changed = value !== v.value;
                             v.value = value;
                         });
                     }
-                    resolve(changed);
+                    resolve(vars);
                 }, reason => {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.DigitalInputs) {          // Digital Inputs (Read 100001-165536)
                 client.readDiscreteInputs(start, size).then( res => {
-                    let changed = [];
                     if (res.data) {
                         vars.map(v => {
                             let bitoffset = Math.trunc((v.offset - start) / 8);
                             let bit = (v.offset - start) % 8;
                             let value = datatypes[v.type].parser(res.buffer, bitoffset, bit);
-                            if (value !== v.value) {
-                                changed.push(v);
-                            }
+                            v.changed = value !== v.value;
                             v.value = value;
                         });
                     }
-                    resolve(changed);
+                    resolve(vars);
                 }, reason => {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
                 client.readInputRegisters(start, size).then( res => {
-                    let changed = [];
                     if (res.data) {
                         vars.map(v => {
                             try {
                                 let byteoffset = (v.offset - start) * 2;
                                 let buffer = Buffer.from(res.buffer.slice(byteoffset, byteoffset + datatypes[v.type].bytes))
                                 let value = datatypes[v.type].parser(buffer);
-                                if (value !== v.value) {
-                                    changed.push(v);
-                                }
-                                v.value = value;    
+                                v.changed = value !== v.value;
+                                v.value = value;
                             } catch (err) {
                                 console.error(err);
                             }
                         });
                     }
-                    resolve(changed);
+                    resolve(vars);
                 }, reason => {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {          // Holding Registers (Read/Write  400001-465535)
                 client.readHoldingRegisters(start, size).then( res => {
-                    let changed = [];
                     if (res.data) {
                         vars.map(v => {
                             let byteoffset = (v.offset - start) * 2;
                             let buffer = Buffer.from(res.buffer.slice(byteoffset, byteoffset + datatypes[v.type].bytes))
                             let value = datatypes[v.type].parser(buffer);
-                            if (value !== v.value) {
-                                changed.push(v);
-                            }
+                            v.changed = value !== v.value;
                             v.value = value;
                         });
                     }
-                    resolve(changed);
+                    resolve(vars);
                 }, reason => {
                     console.error(reason);
                     reject(reason);
@@ -494,35 +475,38 @@ function MODBUSclient(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = function (vars) {
+    var _updateVarsValue = (vars) => {
         var someval = false;
-        var changed = [];
-        var result = [];
+        var tempTags = {};
         for (var vid in vars) {
             let items = vars[vid];
             for (var itemidx in items) {
+                const changed = items[itemidx].changed;
                 if (items[itemidx] instanceof MemoryItem) {
                     let type = items[itemidx].type;
                     let value = items[itemidx].value;
                     let tags = items[itemidx].Tags;
                     tags.forEach(tag => {
-                        result[tag.id] = { id: tag.id, value: convertValue(value, tag.divisor), type: type, daq: tag.daq };
+                        tempTags[tag.id] = { id: tag.id, value: convertValue(value, tag.divisor), type: type, daq: tag.daq, changed: changed };
                         someval = true;
                     });
                 } else {
-                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq };
+                    tempTags[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq, changed: changed };
                     someval = true;
                 }
             }
         }
         if (someval) {
-            for (var id in result) {
-                if (varsValue[id] !== result[id]) {
-                    changed[id] = result[id];
+            const timestamp = new Date().getTime();
+            var result = {};
+            for (var id in tempTags) {
+                if (this.addDaq && !utils.isNullOrUndefined(tempTags[id].value) && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
+                    result[id] = tempTags[id];
                 }
-                varsValue[id] = result[id];
+                varsValue[id] = tempTags[id];
+                varsValue[id].changed = false;
             }
-            return changed;
+            return result;
         }
         return null;
     }

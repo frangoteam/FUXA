@@ -4,6 +4,8 @@
 
 var snap7;
 var datatypes;
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function S7client(_data, _logger, _events) {
 
@@ -17,8 +19,6 @@ function S7client(_data, _logger, _events) {
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var dbItemsMap = {};                // DB Mapped Signale name with DbItem to find for set value
     var mixItemsMap = {};               // E/I/A/Q/M Mapped Signale name to find for read in polling and set value
-    var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
-    var lastDaqInterval = 0;            // Help to check daqInterval
     var overloading = 0;                // Overloading counter to mange the break connection
     var lastTimestampValue;             // Last Timestamp of asked values
 
@@ -91,7 +91,7 @@ function S7client(_data, _logger, _events) {
 
     /**
      * Read values in polling mode 
-     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = function () {
         if (_checkWorking(true)) {
@@ -109,13 +109,7 @@ function S7client(_data, _logger, _events) {
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq) {
-                        var current = new Date().getTime();
-                        if (current - daqInterval > lastDaqInterval) {
-                            this.addDaq(varsValue, data.name);
-                            lastDaqInterval = current;
-                        } else if (varsValueChanged) {
-                            this.addDaq(varsValueChanged, data.name);
-                        }
+                        this.addDaq(varsValueChanged, data.name);
                     }
                 } else {
                     // console.error('not');
@@ -245,11 +239,10 @@ function S7client(_data, _logger, _events) {
     }
 
     /**
-     * Bind the DAQ store function and default daqInterval value in milliseconds
+     * Bind the DAQ store function
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
 
     this.addDaq = null;                             // Add the DAQ value to db history
@@ -277,13 +270,13 @@ function S7client(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = function (vars) {
+    var _updateVarsValue = (vars) => {
         var someval = false;
-        var changed = [];
-        var result = [];
+        var tempTags = {};
         for (var vid in vars) {
             let items = vars[vid];
             for (var itemidx in items) {
+                const changed = items[itemidx].changed;
                 if (items[itemidx] instanceof DbItem) {
                     let type = items[itemidx].type;
                     let value = items[itemidx].value;
@@ -292,10 +285,10 @@ function S7client(_data, _logger, _events) {
                         if (type === 'BOOL') {
                             try {
                                 let pos = parseInt(tag.address.charAt(tag.address.length - 1));
-                                result[tag.id] = { id: tag.id, value: (_getBit(value, pos)) ? 1 : 0, type: type, daq: tag.daq };
+                                tempTags[tag.id] = { id: tag.id, value: _getBit(value, pos) ? 1 : 0, type: type, daq: tag.daq, changed: changed };
                             } catch (err) { }
                         } else {
-                            result[tag.id] = { id: tag.id, value: value, type: type, daq: tag.daq };
+                            tempTags[tag.id] = { id: tag.id, value: value, type: type, daq: tag.daq, changed: changed };
                         }
                         someval = true;
                     });
@@ -305,19 +298,22 @@ function S7client(_data, _logger, _events) {
                             items[itemidx].value = (_getBit(items[itemidx].value, items[itemidx].bit)) ? 1 : 0;
                         } catch (err) { }
                     }
-                    result[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq };
+                    tempTags[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq, changed: changed };
                     someval = true;
                 }
             }
         }
         if (someval) {
-            for (var id in result) {
-                if (varsValue[id] !== result[id]) {
-                    changed[id] = result[id];
+            const timestamp = new Date().getTime();
+            var result = {};
+            for (var id in tempTags) {
+                if (this.addDaq && !utils.isNullOrUndefined(tempTags[id].value) && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
+                    result[id] = tempTags[id];
                 }
-                varsValue[id] = result[id];
+                varsValue[id] = tempTags[id];
+                varsValue[id].changed = false;
             }
-            return changed;
+            return result;
         }
         return null;
     }
@@ -400,7 +396,6 @@ function S7client(_data, _logger, _events) {
             });
             s7client.DBRead(DBNr, offset, end - offset, (err, res) => {
                 if (err) return _getErr(err);
-                let changed = [];
                 vars.map(v => {
                     let value = null;
                     if (v.type === 'BOOL') {
@@ -409,13 +404,11 @@ function S7client(_data, _logger, _events) {
                     } else {
                         value = datatypes[v.type].parser(res, v.Start - offset, v.bit);
                     }
-                    if (value !== v.value) {
-                        changed.push(v);
-                    }
+                    v.changed = value !== v.value;
                     v.value = value;
                     return v;
                 });
-                resolve(changed);
+                resolve(vars);
             });
         });
     }
@@ -428,9 +421,7 @@ function S7client(_data, _logger, _events) {
         return new Promise((resolve, reject) => {
             s7client.ReadMultiVars(vars, (err, res) => {
                 if (err) return _getErr(err);
-                let changed = [];
                 let errs = [];
-
                 res = vars.map((v, i) => {
                     let value = null;
                     if (res[i].Result !== 0)
@@ -441,14 +432,12 @@ function S7client(_data, _logger, _events) {
                     } else {
                         value = datatypes[v.type].parser(res[i].Data);
                     }
-                    if (value !== v.value) {
-                        changed.push(v);
-                    }
+                    v.changed = value !== v.value;
                     v.value = value;
                     return v;
                 });
                 if (errs.length) return reject(_getErr(errs));
-                resolve(changed);
+                resolve(vars);
             });
         });
     }

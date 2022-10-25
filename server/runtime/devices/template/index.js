@@ -39,7 +39,7 @@ function DeviceTemplate(_data, _logger, _events) {
 
     /**
      * Read values in polling mode 
-     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
         console.error('Not supported!');
@@ -98,9 +98,8 @@ function DeviceTemplate(_data, _logger, _events) {
     /**
      * Bind the DAQ store function and default daqInterval value in milliseconds
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
 }
 

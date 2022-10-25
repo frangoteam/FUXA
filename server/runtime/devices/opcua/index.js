@@ -4,6 +4,8 @@
 var opcua;
 
 const async = require('async');
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function OpcUAclient(_data, _logger, _events) {
 
@@ -21,8 +23,6 @@ function OpcUAclient(_data, _logger, _events) {
     const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === 'DataType' || x === 'AccessLevel' || x === 'UserAccessLevel');//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
-    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var getProperty = null;             // Function to ask property (security)
     var lastTimestampValue;             // Last Timestamp of asked values
     var tagsIdMap = {};                 // Map of tag id with opc nodeId
@@ -318,18 +318,12 @@ function OpcUAclient(_data, _logger, _events) {
                 _checkWorking(false);
             } else if (the_session && client) {
                 try {
-                    var varsValueChanged = _clearVarsChanged();
+                    var varsValueChanged = _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
                     if (this.addDaq) {
-                        var current = new Date().getTime();
-                        if (current - daqInterval > lastDaqInterval) {
-                            this.addDaq(data.tags, data.name);
-                            lastDaqInterval = current;
-                        } else if (Object.keys(varsValueChanged).length) {
-                            this.addDaq(varsValueChanged, data.name);
-                        }
+                        this.addDaq(varsValueChanged, data.name);
                     }
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);
@@ -429,9 +423,8 @@ function OpcUAclient(_data, _logger, _events) {
     /**
      * Set the callback to set value to DAQ
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                          // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
     this.addDaq = null;                             // Callback to add the DAQ value to db history
     
@@ -545,15 +538,16 @@ function OpcUAclient(_data, _logger, _events) {
     }
 
     /**
-     * Return the Tags that have value changed and clear value changed flag of all Tags 
+     * Return the Tags that have value changed and clear value changed flag of all Tags
      */
-    var _clearVarsChanged = function () {
+    var _checkVarsChanged = () => {
+        const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            if (data.tags[id].changed) {
-                data.tags[id].changed = false;
+            if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }
+            data.tags[id].changed = false;
             varsValue[id] = data.tags[id];
         }
         return result;

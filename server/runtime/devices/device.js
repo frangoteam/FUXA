@@ -17,7 +17,6 @@ var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
-var DEVICE_DAQ_MIN_INTERVAL = 60000;            // with DAQ enabled, interval to save DAQ value anyway !!bigger as DEVICE_POLLING_INTERVAL
 
 function Device(data, runtime) {
     var property = { id: data.id, name: data.name };        // Device property (name, id)
@@ -277,7 +276,7 @@ function Device(data, runtime) {
      * Call Device to bind the DAQ store function
      */
     this.bindSaveDaqValue = function (fnc) {
-        comm.bindAddDaq(fnc, DEVICE_DAQ_MIN_INTERVAL);
+        comm.bindAddDaq(fnc);
         //return comm.addDaq = fnc;
     }
 

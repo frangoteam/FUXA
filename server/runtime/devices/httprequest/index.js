@@ -3,6 +3,8 @@
  */
 'use strict';
 const axios = require('axios');
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function HTTPclient(_data, _logger, _events) {
     var data = _data;                   // Current webapi data
@@ -14,8 +16,6 @@ function HTTPclient(_data, _logger, _events) {
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
     var overloading = 0;                // Overloading counter to mange the break connection
-    var daqInterval = 0;                // Min save DAQ value interval, used to store DAQ too if the value don't change (milliseconds)
-    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampRequest;           // Last Timestamp request
     var lastTimestampValue;             // Last Timestamp of asked values
     var newItemsCount;                  // Count of new items, between load and received
@@ -75,7 +75,7 @@ function HTTPclient(_data, _logger, _events) {
 
     /**
      * Read values in polling mode 
-     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = function () {
         if (_checkWorking(true)) {
@@ -92,13 +92,7 @@ function HTTPclient(_data, _logger, _events) {
                         lastTimestampValue = new Date().getTime();
                         _emitValues(varsValue);
                         if (this.addDaq) {
-                            var current = new Date().getTime();
-                            if (current - daqInterval > lastDaqInterval) {
-                                this.addDaq(varsValue, data.name);
-                                lastDaqInterval = current;
-                            } else if (varsValueChanged) {
-                                this.addDaq(varsValueChanged, data.name);
-                            }
+                            this.addDaq(varsValueChanged, data.name);
                         }
                         if (lastStatus !== 'connect-ok') {
                             _emitStatus('connect-ok');                    
@@ -128,9 +122,8 @@ function HTTPclient(_data, _logger, _events) {
     /**
      * Set the callback to set value to DAQ
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                          // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
     this.addDaq = null;                             // Callback to add the DAQ value to db history
 
@@ -269,8 +262,9 @@ function HTTPclient(_data, _logger, _events) {
      * For WebAPI NotOwn: first convert the request data to a flat struct
      * @param {*} reqdata 
      */
-    var _updateVarsValue = function (reqdata) {
-        var changed = [];
+    var _updateVarsValue = (reqdata) => {
+        const timestamp = new Date().getTime();
+        var changed = {};
         if (apiProperty.ownFlag) {
             var newItems = 0;
             for (var i = 0; i < reqdata.length; i++) {
@@ -278,19 +272,23 @@ function HTTPclient(_data, _logger, _events) {
                 if (id) {
                     if (!data.tags[id]) {
                         newItems++;
+                    } else {
+                        reqdata[i].daq = data.tags[id].daq;
                     }
                     requestItemsMap[id] = [reqdata[i]];
-                    if (varsValue[id] !== reqdata[i].value) {
-                        changed[id] = reqdata[i].id;
+                    reqdata[i].changed = varsValue[id] && reqdata[i].value !== varsValue[id].value;
+                    if (this.addDaq && !utils.isNullOrUndefined(reqdata[i].value) && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
+                        changed[id] = reqdata[i];
                     }
-                    varsValue[id] = reqdata[i];                
+                    reqdata[i].changed = false;
+                    varsValue[id] = reqdata[i];
                 }
             }
             newItemsCount = newItems;
             return changed;
         } else {
             var someval = false;
-            var result = [];
+            var result = {};
             var items = dataToFlat(reqdata, apiProperty);
             for (var key in items) {
                 if (requestItemsMap[key]) {
@@ -305,9 +303,11 @@ function HTTPclient(_data, _logger, _events) {
             }
             if (someval) {
                 for (var id in result) {
-                    if (varsValue[id] !== result[id]) {
+                    result[id].changed = varsValue[id] && result[id].value !== varsValue[id].value;
+                    if (this.addDaq && !utils.isNullOrUndefined(result[id].value) && deviceUtils.tagDaqToSave(result[id], timestamp)) {
                         changed[id] = result[id];
-                    }
+                    }                    
+                    result[id].changed = false;
                     varsValue[id] = result[id];
                 }
                 return changed;

@@ -3,7 +3,8 @@
  */
  'use strict';
 
-var utils = require('../../utils');
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
  function FuxaServer(_data, _logger, _events) {
 
@@ -12,8 +13,6 @@ var utils = require('../../utils');
     var working = false;                // Working flag to manage overloading polling and connection
     var events = _events;               // Events to commit change to runtime
     var varsValue = {};                 // Tags to send to frontend { id, type, value }
-    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
-    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of values
     var tagsMap = {};                   // Map of tag id
     var overloading = 0;                // Overloading counter to mange the break connection
@@ -50,24 +49,17 @@ var utils = require('../../utils');
 
     /**
      * Read values in polling mode 
-     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
         if (_checkWorking(true)) {
             try {
                 if (tocheck) {
-                    var varsValueChanged = _clearVarsChanged();
+                    var varsValueChanged = _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
-
                     if (this.addDaq) {
-                        var current = new Date().getTime();
-                        if (current - daqInterval > lastDaqInterval) {
-                            this.addDaq(data.tags, data.name);
-                            lastDaqInterval = current;
-                        } else if (Object.keys(varsValueChanged).length) {
-                            this.addDaq(varsValueChanged, data.name);
-                        }
+                        this.addDaq(varsValueChanged, data.name);
                     }
                 }
             } catch (err) {
@@ -138,6 +130,7 @@ var utils = require('../../utils');
         if (data.tags[id]) {
             var val = _parseValue(value);
             varsValue[id].value = val;
+            varsValue[id].changed = true;
             logger.info(`'${data.name}' setValue(${id}, ${value})`, true);
         }
     }
@@ -150,11 +143,10 @@ var utils = require('../../utils');
     }
 
     /**
-     * Bind the DAQ store function and default daqInterval value in milliseconds
+     * Bind the DAQ store function
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
     this.addDaq = null;      
 
@@ -190,18 +182,18 @@ var utils = require('../../utils');
     /**
      * Return the Tags that have value changed and clear value changed flag of all Tags 
      */
-     var _clearVarsChanged = function () {
+    var _checkVarsChanged = () => {
+        const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            if (data.tags[id].changed) {
-                data.tags[id].changed = false;
+            if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }
+            data.tags[id].changed = false;
             varsValue[id] = data.tags[id];
         }
         return result;
     }
-
     /**
      * Emit the Tags values array { id: <name>, value: <value>, type: <type> }
      * @param {*} values 

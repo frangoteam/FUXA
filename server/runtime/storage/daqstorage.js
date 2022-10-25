@@ -56,7 +56,7 @@ function getNodeValues(tagid, fromts, tots) {
         if (daqnode) {
             resolve(daqnode.getDaqValue(tagid, fromts, tots));
         } else {
-            reject();
+            resolve([]);
         }
     });
 }

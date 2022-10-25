@@ -5,6 +5,8 @@
 
 'use strict';
 var EthernetIp;
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function EthernetIPclient(_data, _logger, _events) {
 
@@ -14,7 +16,6 @@ function EthernetIPclient(_data, _logger, _events) {
     var lastStatus = '';                // Last Device status     
     var working = false;                // Working flag to manage overloading polling and connection
     var conn = new EthernetIp;
-    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
     var doneReading = false;
     var doneWriting = false;
     var overloading = 0;                // Overloading counter to mange the break connection
@@ -22,7 +23,6 @@ function EthernetIPclient(_data, _logger, _events) {
     var itemsMap = {};                  // Items Mapped Tag name with Item path to find for set value
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
     var lastTimestampValue;             // Last Timestamp of asked values
-    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     /**
      * initialize the device type 
      */
@@ -109,7 +109,7 @@ function EthernetIPclient(_data, _logger, _events) {
 
     /**
      * Read values in polling mode 
-     * Update the tags values list, save in DAQ if value changed or for daqInterval and emit values to clients
+     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
         if (_checkWorking(true)) {
@@ -122,13 +122,7 @@ function EthernetIPclient(_data, _logger, _events) {
                             lastTimestampValue = new Date().getTime();
                             _emitValues(varsValue);
                             if (this.addDaq) {
-                                var current = new Date().getTime();
-                                if (current - daqInterval > lastDaqInterval) {
-                                    this.addDaq(varsValue, data.name);
-                                    lastDaqInterval = current;
-                                } else if (varsValueChanged) {
-                                    this.addDaq(varsValueChanged, data.name);
-                                }
+                                this.addDaq(varsValueChanged, data.name);
                             }
                         } else {
                             // console.error('then error');
@@ -230,11 +224,10 @@ function EthernetIPclient(_data, _logger, _events) {
     }
 
     /**
-     * Bind the DAQ store function and default daqInterval value in milliseconds
+     * Bind the DAQ store function
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
     this.addDaq = null;
 
@@ -268,17 +261,19 @@ function EthernetIPclient(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = function (vars) {
-        var changed = [];
+    var _updateVarsValue = (vars) => {
+        const timestamp = new Date().getTime();
+        var changed = {};
         Object.keys(itemsMap).forEach(key => {
             if (vars[key]) {
                 var id = itemsMap[key].id;
-                var diff = (itemsMap[key].value != vars[key]);
+                var valueChanged = itemsMap[key].value !== vars[key];
                 itemsMap[key].value = vars[key];
-                varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq };
-                if (diff) {
+                varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq, changed: valueChanged };
+                if (this.addDaq && !utils.isNullOrUndefined(varsValue[id].value) && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
                     changed[id] = varsValue[id];
                 }
+                varsValue[id].changed = false;
             }
         });
         return changed;

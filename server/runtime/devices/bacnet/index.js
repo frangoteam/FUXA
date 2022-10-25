@@ -4,6 +4,8 @@
 
 'use strict';
 var bacnet;
+const utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function BACNETclient(_data, _logger, _events) {
 
@@ -17,8 +19,6 @@ function BACNETclient(_data, _logger, _events) {
 
     var varsValue = {};                 // Signale to send to frontend { id, type, value }
     var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
-    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
-    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     // var getProperty = null;             // Function to ask property
     var lastTimestampValue;             // Last Timestamp of asked values
 
@@ -171,13 +171,7 @@ function BACNETclient(_data, _logger, _events) {
                                     lastTimestampValue = new Date().getTime();
                                     _emitValues(Object.values(varsValue));
                                     if (this.addDaq) {
-                                        var current = new Date().getTime();
-                                        if (current - daqInterval > lastDaqInterval) {
-                                            this.addDaq(varsValue, data.name);
-                                            lastDaqInterval = current;
-                                        } else if (varsValueChanged) {
-                                            this.addDaq(varsValueChanged, data.name);
-                                        }
+                                        this.addDaq(varsValueChanged, data.name);
                                     }
                                 }
                             }
@@ -284,9 +278,8 @@ function BACNETclient(_data, _logger, _events) {
     /**
      * Set the callback to set value to DAQ
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                          // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
     this.addDaq = null;                             // Callback to add the DAQ value to db history
 
@@ -566,6 +559,7 @@ function BACNETclient(_data, _logger, _events) {
      * @param {*} vars 
      */
     var _updateVarsValue = function (vars) {
+        const timestamp = new Date().getTime();
         var someval = false;
         var changed = {};
         for (var index in vars) {
@@ -573,9 +567,14 @@ function BACNETclient(_data, _logger, _events) {
             if (requestItemsMap[address]) {
                 for (var index in requestItemsMap[address]) {
                     var tag = requestItemsMap[address][index];
-                    if (!varsValue[tag.id] || varsValue[tag.id].value !== vars[index].value) {
-                        changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type, daq: tag.daq };
-                        varsValue[tag.id] = changed[tag.id];
+                    if (!varsValue[tag.id]) {
+                        varsValue[tag.id].changed = varsValue[tag.id].value !== vars[index].value;
+                        varsValue[tag.id].value = vars[index].value;
+                        if (this.addDaq && !utils.isNullOrUndefined(varsValue[tag.id].value) && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
+                            changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type, daq: tag.daq };
+                            varsValue[tag.id] = changed[tag.id];
+                        }
+                        varsValue[tag.id].changed = false;
                         someval = true;
                     }
                 }

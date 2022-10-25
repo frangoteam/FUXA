@@ -4,6 +4,7 @@
 'use strict';
 const mqtt = require('mqtt');
 var utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function MQTTclient(_data, _logger, _events) {
     var data = _data;                   // Current data
@@ -13,8 +14,6 @@ function MQTTclient(_data, _logger, _events) {
     var lastStatus = '';                // Last connections status
     var varsValue = {};                 // Tags to send to frontend { id, type, value }
     var overloading = 0;                // Overloading counter to mange the break connection
-    var daqInterval = 0;                // To manage minimum interval to save a DAQ value
-    var lastDaqInterval = 0;            // To manage minimum interval to save a DAQ value
     var lastTimestampValue;             // Last Timestamp of asked values
     var getProperty = null;             // Function to ask property (security)
     var options = {};                   // MQTT client Connection options
@@ -138,18 +137,12 @@ function MQTTclient(_data, _logger, _events) {
         if (_checkWorking(true)) {
             if (client) {
                 try {
-                    var varsValueChanged = _clearVarsChanged();
+                    var varsValueChanged = _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
                     if (this.addDaq) {
-                        var current = new Date().getTime();
-                        if (current - daqInterval > lastDaqInterval) {
-                            this.addDaq(data.tags, data.name);
-                            lastDaqInterval = current;
-                        } else if (Object.keys(varsValueChanged).length) {
-                            this.addDaq(varsValueChanged, data.name);
-                        }
+                        this.addDaq(varsValueChanged, data.name);
                     }
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);
@@ -214,11 +207,10 @@ function MQTTclient(_data, _logger, _events) {
     }
 
     /**
-     * Bind the DAQ store function and default daqInterval value in milliseconds
+     * Bind the DAQ store function
      */
-    this.bindAddDaq = function (fnc, intervalToSave) {
+    this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
-        daqInterval = intervalToSave;
     }
     this.addDaq = null;
 
@@ -347,7 +339,7 @@ function MQTTclient(_data, _logger, _events) {
                                     var oldvalue = data.tags[id].value;
                                     data.tags[id].value = msg.toString();
                                     data.tags[id].timestamp = new Date().getTime();
-                                    data.tags[id].changed = true;
+                                    data.tags[id].changed = oldvalue !== data.tags[id].value;
                                     if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
                                         try {
                                             var subitems = JSON.parse(data.tags[id].value);
@@ -427,13 +419,14 @@ function MQTTclient(_data, _logger, _events) {
     /**
      * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
      */
-    var _clearVarsChanged = function () {
+     var _checkVarsChanged = () => {
+        const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            if (data.tags[id].changed) {
-                data.tags[id].changed = false;
+            if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }
+            data.tags[id].changed = false;
             varsValue[id] = data.tags[id];
         }
         return result;
