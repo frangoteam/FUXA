@@ -11,21 +11,24 @@ export class IframeComponent implements OnInit, OnDestroy {
 
     private subscription: any;
     urlSafe: SafeResourceUrl;
-
-    @Input() link: string;
+    private _link: string;
+    @Input() set link(value: string) {
+        this._link = value;
+        this.loadLink(value);
+    }
 
     constructor(private activeroute: ActivatedRoute,
         public sanitizer: DomSanitizer) { }
 
     ngOnInit() {
-        if (this.link) {
+        if (this._link) {
             // input
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this._link);
         } else {
             this.subscription = this.activeroute.params.subscribe(params => {
                 // routing
-                this.link = params['url'];
-                this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
+                this._link = params['url'];
+                this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this._link);
             });
         }
     }
@@ -37,9 +40,9 @@ export class IframeComponent implements OnInit, OnDestroy {
     }
 
     loadLink(link: string) {
-        this.link = link;
-        if (this.link) {
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this.link);
+        this._link = link;
+        if (this._link) {
+            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this._link);
         }
     }
 }

@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
-import { IframeComponent } from '../iframe/iframe.component';
 
 import { HmiService } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
@@ -40,9 +39,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
     @ViewChild('alarmsview', {static: false}) alarmsview: AlarmViewComponent;
     @ViewChild('container', {static: false}) container: ElementRef;
-
-    @ViewChild('iframeview', {static: false}) iframeview: IframeComponent;
-
+    
+    iframes: IiFrame[] = [];
     isLoading = true;
     homeView: View = new View();
     hmi: Hmi = new Hmi();
@@ -87,7 +85,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.loadHmi();
                 }
             }, error => {
-                console.error('Error loadHMI');
+                console.error(`Error loadHMI: ${error}`);
             });
             this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
                 this.setAlarmsStatus(event);
@@ -103,7 +101,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         try {
-            this.projectService.notifyToLoadHmi();
+            // TODO
+            setTimeout(() => {
+                this.projectService.notifyToLoadHmi();
+            }, 0);
             this.hmiService.askAlarmsStatus();
             this.changeDetector.detectChanges();
         }
@@ -134,6 +135,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onAlarmsShowMode('expand');
         } else {
             const view = this.hmi.views.find(x => x.id === event);
+            this.setIframe();
             this.showHomeLink = false;
             this.changeDetector.detectChanges();
             if (view) {
@@ -156,7 +158,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (event.indexOf('://') >= 0) {
             this.showHomeLink = true;
             this.changeDetector.detectChanges();
-            this.iframeview.loadLink(event);
+            this.setIframe(event);
 
         } else {
             this.router.navigate([event]).then(data => {
@@ -166,6 +168,29 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
         this.checkToCloseSideNav();
+    }
+
+    setIframe(link: string = null) {
+        let currentLink: string;
+        this.iframes.forEach(iframe => {
+            if (!iframe.hide) {
+                currentLink = iframe.link;
+            }
+            iframe.hide = true;
+        })
+        if (link) {
+            let iframe = this.iframes.find(f => f.link === link);
+            if (!iframe) {
+                this.iframes.push({link: link, hide: false});
+            } else {
+                iframe.hide = false;
+                if (currentLink === link) {     // to refresh
+                    iframe.link = '';
+                    this.changeDetector.detectChanges();
+                    iframe.link = link;
+                }
+            }
+        }
     }
 
     checkToCloseSideNav() {
@@ -350,6 +375,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
     }
+}
+
+export interface IiFrame {
+    link: string;
+    hide: boolean;
 }
 
 @Component({
