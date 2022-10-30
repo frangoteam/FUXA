@@ -696,6 +696,12 @@ export class GaugesManager {
             return 'gauge_';
         } else if (type.startsWith(HtmlSwitchComponent.TypeTag)) {
             return 'switch_';
+        } else if (type.startsWith(HtmlIframeComponent.TypeTag)) {
+            return 'iframe_';
+        } else if (type.startsWith(ValueComponent.TypeTag)) {
+            return 'output_';
+        } else if (type.startsWith(HtmlTableComponent.TypeTag)) {
+            return 'table_';
         }
         return 'shape_';
     }

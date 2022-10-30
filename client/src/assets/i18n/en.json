@@ -180,6 +180,7 @@
     "chart.property-data": "Data",
     "chart.property-props": "Property",
     "chart.property-layout": "Layout",
+    "chart.property-name": "Name",
     "chart.property-chart": "Chart to show",
     "chart.property-newchart": "New Chart...",
     "chart.property-chart-type": "Show mode",
@@ -311,6 +312,7 @@
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
     "table.property-date-last-range": "Date range",
+    "table.property-name": "Name",
     "table.property-type": "Type",
     "table.property-header": "Header",
     "table.property-header-height": "Height",
@@ -558,6 +560,9 @@
     "editor.tools-alignbottom-title": "Align Bottom",
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
+    "editor.tools-svg-selector": "Item list selector",
+
+    "svg.selector.property-title": "View item list",
 
     "tutorial.editor-keyboard-shortcuts": "Editor Keyboard Shortcuts",
 

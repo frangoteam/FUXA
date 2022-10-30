@@ -1,3 +1,11 @@
+.editor-sidenav {
+    position: fixed;
+    margin-top: 36px;
+    height: calc(100% - 74px);
+    padding: 7px;
+    width: 350px;
+}
+
 #svg_editor_container {
     background: #aaa;
     height: 100%;
@@ -125,6 +133,14 @@
 .svg-workarea-container {
     display: block;
     height: 100%;
+}
+
+.svg-preview {
+    background-color: #3058af36;
+    height: 0px;
+    width: 0px;
+    z-index: 1;
+    position: absolute;
 }
 
 #rulers > div {
@@ -263,6 +279,10 @@
     margin: 5px 3px;
     padding: 0;
     height: 24px;
+}
+
+.svg-element-selected {
+    display: inline-flex;
 }
 
 /* --------------- */

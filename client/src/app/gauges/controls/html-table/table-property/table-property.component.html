@@ -7,6 +7,10 @@
             <span>{{'table.property-data' | translate}}</span>
         </div>
         <div class="_section-newline">
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'table.property-name' | translate}}</span>
+                <input [(ngModel)]="data.settings.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text">
+            </div>
             <div class="my-form-field" style="width: 140px">
                 <span>{{'table.property-type' | translate}}</span>
                 <mat-select [formControl]="tableTypeCtrl" (selectionChange)="onTableChanged()">

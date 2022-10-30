@@ -405,6 +405,7 @@ export class WindowLink {
 
 export class SelElement {
     type = '';
+    id: string;
     ele: any = null;
 }
 
@@ -498,4 +499,9 @@ export const DEVICE_READONLY = 'rodevice';
 export interface IDateRange {
     start;
     end;
+}
+
+export interface ISvgElement {
+    id: string;
+    name: string;
 }

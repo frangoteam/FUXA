@@ -94,7 +94,6 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
     onGraphChanged() {
         this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
         if (this.graphCtrl.value) {
-            this.data.settings.name = this.graphCtrl.value.name;
             this.data.settings.property.id = this.graphCtrl.value.id;
             this.data.settings.property.type = this.graphCtrl.value.type;
             if (!this.isDateTime(this.graphCtrl.value)) {
@@ -105,8 +104,6 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
                 this.options.lastRange = <GraphRangeType>Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d);
                 this.options.dateGroup = <GraphDateGroupType>Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
             }
-        } else {
-            this.data.settings.name = '';
         }
         if (this.options.theme === this.themeType.light) {
             this.options.yAxes.fontColor = '#666';
