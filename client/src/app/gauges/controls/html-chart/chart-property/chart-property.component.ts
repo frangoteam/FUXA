@@ -92,10 +92,7 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     onChartChanged() {
         this.data.settings.property = <GaugeChartProperty>{ id: null, type: this.chartViewValue, options: JSON.parse(JSON.stringify(this.options)) };
         if (this.chartCtrl.value) {
-            this.data.settings.name = this.chartCtrl.value.name;
             this.data.settings.property.id = this.chartCtrl.value.id;
-        } else {
-            this.data.settings.name = '';
         }
         this.onPropChanged.emit(this.data.settings);
     }

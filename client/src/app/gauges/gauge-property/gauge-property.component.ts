@@ -37,11 +37,8 @@ export class GaugePropertyComponent implements AfterViewInit {
     scripts: Script[];
 
     constructor(public dialog: MatDialog,
-        public dialogRef: MatDialogRef<GaugePropertyComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-    }
-
-    ngAfterViewInit() {
+                public dialogRef: MatDialogRef<GaugePropertyComponent>,
+                @Inject(MAT_DIALOG_DATA) public data: any) {
         this.dialogType = this.data.dlgType;
         this.eventsSupported = this.data.withEvents;
         this.actionsSupported = this.data.withActions;
@@ -51,10 +48,11 @@ export class GaugePropertyComponent implements AfterViewInit {
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
             this.property = new GaugeProperty();
-        }
+        }        
+    }
 
+    ngAfterViewInit() {
         this.defaultValue = this.data.default;
-
         if (this.dialogType === GaugeDialogType.Input) {
             this.flexHead.withProperty = PropertyType.input;
         } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {

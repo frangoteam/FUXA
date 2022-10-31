@@ -2,7 +2,13 @@
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
-<mat-drawer #sidePanel class="example-sidenav" mode="side" position="end" style="position:fixed;margin-top: 36px;height: calc(100% - 74px);padding: 7px; width:350px">
+<mat-drawer #svgSelectorPanel class="editor-sidenav" mode="side" position="end">
+    <button mat-icon-button (click)="svgSelectorPanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
+        <mat-icon>close</mat-icon>
+    </button>
+    <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
+</mat-drawer>
+<mat-drawer #sidePanel class="editor-sidenav" mode="side" position="end">
     <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
     </button>
@@ -482,7 +488,7 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel id="tool_stroke" class="svg-workarea-fly-p" style="left: unset !important" (opened)="panelFillOpenState = true" (closed)="panelFillOpenState = false" hideToggle="true" expanded="true">
+                    <mat-expansion-panel id="tool_stroke" class="svg-workarea-fly-p" (opened)="panelFillOpenState = true" (closed)="panelFillOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
                                 <mat-icon aria-label="Select" *ngIf="panelFillOpenState">expand_less</mat-icon>
@@ -721,10 +727,14 @@
                                 <span class="ungroup"></span>
                             </button>
                         </div>
+                        <div class="svg-element-selected">
+                            <button mat-button matTooltip="{{'editor.tools-svg-selector' | translate}}" (click)="svgSelectorPanel.toggle()" class="main-btn">
+                                <mat-icon style="font-size: 28px;">list</mat-icon>
+                            </button>
+                        </div>
                     </div>
                     <!-- tools_top -->
                     <div id="cur_context_panel">
-
                     </div>
 
                     <!-- tool bottom -->
@@ -1072,4 +1082,5 @@
         </li>
     </ul>
     <!-- layers context menu END -->
+    <div #svgpreview class="svg-preview"></div>
 </div>

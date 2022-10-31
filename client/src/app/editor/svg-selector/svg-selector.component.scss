@@ -1,0 +1,37 @@
+.svg-selector-list {
+    position: absolute;
+    top: 35px;
+    bottom: 0px;
+    overflow: auto;
+    margin-top: 10px;
+    right: 0px;
+    left: 5px;
+}
+
+.svg-selector-item {
+    font-size: 12px;
+    line-height: 24px;
+    cursor: pointer;
+    padding-left: 5px;
+    display: block;
+    .name {
+        display: inline-block;
+        min-width: 170px;
+        font-size: 13px;
+    }
+
+    .id {
+        display: inline-block;
+        margin-left: 10px;
+        color:darkgray;
+        width: 150px;
+    }
+}
+
+.svg-selector-item:hover {
+    background-color: #9c9c9c36;
+}
+
+.svg-selector-active {
+    background-color: rgba(48,89,175,1);
+}

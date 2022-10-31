@@ -163,6 +163,7 @@ import { ReportItemAlarmsComponent } from './reports/report-editor/report-item-a
 import { ReportItemChartComponent } from './reports/report-editor/report-item-chart/report-item-chart.component';
 import { ScriptModeComponent } from './scripts/script-mode/script-mode.component';
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
+import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -213,6 +214,7 @@ export function createTranslateLoader(http: HttpClient) {
         GaugeSemaphoreComponent,
         GaugePropertyComponent,
         DialogGaugePermission,
+        SvgSelectorComponent,
         ChartPropertyComponent,
         BagPropertyComponent,
         PipePropertyComponent,
@@ -364,6 +366,7 @@ export function createTranslateLoader(http: HttpClient) {
         DeviceTagDialog,
         GaugePropertyComponent,
         DialogGaugePermission,
+        SvgSelectorComponent,
         ChartPropertyComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,

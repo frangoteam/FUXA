@@ -9,11 +9,9 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService, SaveMode } from '../_services/project.service';
-import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType } from '../_models/hmi';
+import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType, ISvgElement } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
-import { ChartPropertyComponent } from '../gauges/controls/html-chart/chart-property/chart-property.component';
-import { GraphPropertyComponent } from '../gauges/controls/html-graph/graph-property/graph-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component'
@@ -37,29 +35,19 @@ import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html
 import { GridsterItem } from 'angular-gridster2';
 import { CardConfigComponent } from './card-config/card-config.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
+import { IElementPreview } from './svg-selector/svg-selector.component';
 
 declare var Gauge: any;
 
 declare var $: any;
-declare var svgEditor: any;
 declare var mypathseg: any;         ///< svg-editor component
-declare var initPathSeg: any;
 declare var mybrowser: any;
-declare var initBrowser: any;
 declare var mysvgutils: any;
-declare var initSvgutils: any;
 declare var myselect: any;
-declare var initSelect: any;
 declare var mydraw: any;
-declare var initDraw: any;
-declare var mylocal: any;
-declare var initLocale: any;
-declare var mycontextmenu: any;
 declare var initContextmenu: any;
 declare var mysvgcanvas: any;
-declare var initSvgCanvas: any;
 declare var mysvgeditor: any;
-declare var initSvgEditor: any;
 
 @Component({
     moduleId: module.id,
@@ -68,14 +56,15 @@ declare var initSvgEditor: any;
 })
 
 export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
-    // currentUser: User;
-    // users: User[] = [];
-    // @ViewChild('fillcolor') fillcolor: ElementRef;
     @ViewChild('gaugepanel', {static: false}) gaugePanelComponent: GaugeBaseComponent;
     @ViewChild('viewFileImportInput', {static: false}) viewFileImportInput: any;
     @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
     @ViewChild('sidePanel', {static: false}) sidePanel: MatDrawer;
-
+    @ViewChild('svgSelectorPanel', {static: false}) svgSelectorPanel: MatDrawer;
+    @ViewChild('svgpreview', {static: false}) svgPreview: ElementRef;
+    
+    svgElementSelected: ISvgElement = null;
+    svgElements: ISvgElement[] = [];
     gaugeDialogType = GaugeDialogType;
     gaugeDialog = { type: null, data: null };
     reloadGaugeDialog: boolean;
@@ -207,7 +196,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 (selected) => {
                     this.isAnySelected = (selected);
                     this.onSelectedElement(selected);
-                    let ga: GaugeSettings = this.getGaugeSettings(selected);
+                    this.getGaugeSettings(selected);
                 },
                 (type, args) => {
                     this.onExtensionLoaded(args);
@@ -232,10 +221,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     setTimeout(() => {
                         this.setMode('select', false);
                     }, 700);
+                    this.checkSvgElementsMap(true);
                     // this.hmiService.addGauge(this.hmi, eleadded);
                 },
                 (eleremoved) => {
                     this.onRemoveElement(eleremoved);
+                    this.checkSvgElementsMap(true);
                 },
                 (eleresized) => {
                     if (eleresized && eleresized.id) {
@@ -271,6 +262,40 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.setFillColor(this.colorFill);
         this.setFillColor(this.colorStroke);
+    }
+
+    /**
+     * Search SVG elements in View, fill into select box and select the current svg element selected
+     * @param loadSvgElement
+     */
+    private checkSvgElementsMap(loadSvgElement = false) {
+        if (loadSvgElement) {
+            this.svgElements = Array.from(document.querySelectorAll('g, text, line, rect, image, path, circle, ellipse'))
+                                    .filter((svg: any) => svg.attributes?.type?.value?.startsWith('svg-ext') || 
+                                                          (svg.id?.startsWith('svg_') && !svg.parentNode?.attributes?.type?.value?.startsWith('svg-ext')))
+                                    .map(ele => <ISvgElement>{id: ele.id, name: this.currentView.items[ele.id]?.name});
+        }
+        this.svgElementSelected = this.svgElements.find(se => se.id === this.selectedElement?.id);
+    }
+
+    /**
+     * Selected in select box will be selected in editor
+     */
+    onSvgElementSelected(value: ISvgElement) {
+        this.clearSelection();
+        this.winRef.nativeWindow.svgEditor.selectOnly([document.getElementById(value.id)], true);
+    }
+
+    onSvgElementPreview(value: IElementPreview) {//value: ISvgElement, preview: boolean) {
+        let elem = document.getElementById(value.element?.id);
+        let rect: DOMRect = elem.getBoundingClientRect();
+        if (elem && rect) {
+            this.svgPreview.nativeElement.style.width = `${rect.width}px`;
+            this.svgPreview.nativeElement.style.height = `${rect.height}px`;
+            this.svgPreview.nativeElement.style.top = `${rect.top}px`;
+            this.svgPreview.nativeElement.style.left = `${rect.left}px`;
+        }
+        this.svgPreview.nativeElement.style.display = (value.preview) ? 'flex' : 'none';
     }
 
     /**
@@ -489,6 +514,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.checkGaugeAdded(ga);
                     }
                     this.winRef.nativeWindow.svgEditor.refreshCanvas();
+                    this.checkSvgElementsMap(true);
                 }, 500);
             } else if (this.cardsview) {
                 this.cardsview.view = view;
@@ -606,6 +632,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.checkGaugeInView(this.selectedElement);
             }
         }
+        this.checkSvgElementsMap(false)
         if (this.sidePanel.opened) {
             this.sidePanel.toggle();
         }
