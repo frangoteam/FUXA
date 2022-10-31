@@ -268,7 +268,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Search SVG elements in View, fill into select box and select the current svg element selected
      * @param loadSvgElement
      */
-    private checkSvgElementsMap(loadSvgElement = false) {
+    checkSvgElementsMap(loadSvgElement = false) {
         if (loadSvgElement) {
             this.svgElements = Array.from(document.querySelectorAll('g, text, line, rect, image, path, circle, ellipse'))
                                     .filter((svg: any) => svg.attributes?.type?.value?.startsWith('svg-ext') || 
@@ -1327,6 +1327,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     callback(result.settings);
                     this.saveView(this.currentView);
                 }
+                this.checkSvgElementsMap(true);
             }
         });
     }
