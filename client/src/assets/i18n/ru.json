@@ -180,6 +180,7 @@
     "chart.property-data": "Данные",
     "chart.property-props": "Свойства",
     "chart.property-layout": "Вид",
+	"chart.property-name": "Название",
     "chart.property-chart": "График для отображения",
     "chart.property-newchart": "Новый график...",
     "chart.property-chart-type": "Режим отображения",
@@ -311,6 +312,7 @@
     "table.property-title": "Настройки таблиц",
     "table.property-data": "Данные",
     "table.property-date-last-range": "Диапазон времени",
+	"table.property-name": "Name",
     "table.property-type": "Вид",
     "table.property-header": "Заголовок",
     "table.property-header-height": "Высота",
@@ -562,6 +564,9 @@
     "editor.tools-alignbottom-title": "Выровнять по нижнему краю",
     "editor.tools-ungroup-title": "Разгруппировать элементы [G]",
     "editor.tools-hyperlink-title": "Создать гиперссылку",
+	"editor.tools-svg-selector": "Выбор элемента из списка",
+	
+	"svg.selector.property-title": "Список элементов",
 
     "tutorial.editor-keyboard-shortcuts": "Горячие клавиши",
 
