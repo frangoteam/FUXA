@@ -15,7 +15,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatOptionModule } from '@angular/material/core';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
+import { CustomMatPaginatorIntl } from './paginator/paginator-intl';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -99,6 +100,10 @@ import { CdkTableModule } from '@angular/cdk/table';
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
-    ]
+    ],
+    providers: [{
+        provide: MatPaginatorIntl,
+        useClass: CustomMatPaginatorIntl
+    }]
 })
 export class MaterialModule { }
