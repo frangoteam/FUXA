@@ -33,13 +33,13 @@ import panzoom from 'panzoom';
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('sidenav', {static: false}) sidenav: SidenavComponent;
-    @ViewChild('matsidenav', {static: false}) matsidenav: MatSidenav;
-    @ViewChild('fuxaview', {static: false}) fuxaview: FuxaViewComponent;
-    @ViewChild('cardsview', {static: false}) cardsview: CardsViewComponent;
-    @ViewChild('alarmsview', {static: false}) alarmsview: AlarmViewComponent;
-    @ViewChild('container', {static: false}) container: ElementRef;
-    
+    @ViewChild('sidenav', { static: false }) sidenav: SidenavComponent;
+    @ViewChild('matsidenav', { static: false }) matsidenav: MatSidenav;
+    @ViewChild('fuxaview', { static: false }) fuxaview: FuxaViewComponent;
+    @ViewChild('cardsview', { static: false }) cardsview: CardsViewComponent;
+    @ViewChild('alarmsview', { static: false }) alarmsview: AlarmViewComponent;
+    @ViewChild('container', { static: false }) container: ElementRef;
+
     iframes: IiFrame[] = [];
     isLoading = true;
     homeView: View = new View();
@@ -54,7 +54,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     infos = { show: false, count: 0, mode: '' };
     headerButtonMode = NotificationModeType;
     layoutHeader = new HeaderSettings();
-	showNavigation = true;
+    showNavigation = true;
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
 
@@ -181,7 +181,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (link) {
             let iframe = this.iframes.find(f => f.link === link);
             if (!iframe) {
-                this.iframes.push({link: link, hide: false});
+                this.iframes.push({ link: link, hide: false });
             } else {
                 iframe.hide = false;
                 if (currentLink === link) {     // to refresh
@@ -242,7 +242,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onAlarmsShowMode(mode: string) {
         if (Utils.getEnumKey(NaviModeType, NaviModeType.fix) === this.hmi.layout.navigation.mode && this.matsidenav) {
-            this.alarmPanelWidth = `calc(100% - ${this.matsidenav._width}px)`;
+            this.alarmPanelWidth = `calc(100% - ${this.matsidenav._getWidth()}px)`;
         }
         let ele = document.getElementById("alarms-panel");
         if (mode === 'expand') {
@@ -270,21 +270,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.hmi = hmi;
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
-			let viewToShow = null;
-			if (this.hmi.layout && this.hmi.layout.start) {
-				viewToShow = this.hmi.views.find(x => x.id === this.hmi.layout.start);
-			}
-			if (!viewToShow) {
-				viewToShow = this.hmi.views[0];
-			}
-			this.homeView = viewToShow;
+            let viewToShow = null;
+            if (this.hmi.layout && this.hmi.layout.start) {
+                viewToShow = this.hmi.views.find(x => x.id === this.hmi.layout.start);
+            }
+            if (!viewToShow) {
+                viewToShow = this.hmi.views[0];
+            }
+            this.homeView = viewToShow;
             this.setBackground();
             // check sidenav
             this.showSidenav = null;
             if (this.hmi.layout) {
                 if (Utils.Boolify(this.hmi.layout.hidenavigation)) {
-					this.showNavigation = false;
-				}
+                    this.showNavigation = false;
+                }
                 let nvoid = NaviModeType[this.hmi.layout.navigation.mode];
                 if (this.hmi.layout && nvoid !== NaviModeType.void) {
                     if (nvoid === NaviModeType.over) {

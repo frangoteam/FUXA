@@ -42,7 +42,6 @@
     "core-js": "^2.5.4",
     "fecha": "^4.2.3",
     "file-saver": "2.0.5",
-    "hammerjs": "^2.0.8",
     "material-design-icons": "^3.0.1",
     "moment": "^2.29.4",
     "ng2-charts": "^2.4.3",
