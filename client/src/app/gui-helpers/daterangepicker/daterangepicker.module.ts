@@ -29,7 +29,7 @@ import { LocaleService } from './locale.service';
 export class NgxDaterangepickerMd {
   constructor() {
   }
-  static forRoot(config: LocaleConfig = {}): ModuleWithProviders {
+  static forRoot(config: LocaleConfig = {}): ModuleWithProviders<any> {
     return {
       ngModule: NgxDaterangepickerMd,
       providers: [

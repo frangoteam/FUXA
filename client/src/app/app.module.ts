@@ -11,8 +11,6 @@ import { ColorPickerModule } from 'ngx-color-picker';
 import { ToastrModule } from 'ngx-toastr';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
-import { GestureConfig } from '@angular/material/core';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { NgxDaterangepickerMd } from './gui-helpers/daterangepicker';
@@ -170,7 +168,7 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 @NgModule({
-    declarations: [	
+    declarations: [
         HomeComponent,
         EditorComponent,
         HeaderComponent,
@@ -293,7 +291,7 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
         ReportItemChartComponent
-   ],
+    ],
     imports: [
         BrowserModule,
         FormsModule,
@@ -352,8 +350,7 @@ export function createTranslateLoader(http: HttpClient) {
         Dictionary,
         ModalPositionCache,
         Define,
-        AuthGuard,
-        { provide: HAMMER_GESTURE_CONFIG, useClass: GestureConfig }
+        AuthGuard
     ],
     entryComponents: [
         DialogDocProperty,
