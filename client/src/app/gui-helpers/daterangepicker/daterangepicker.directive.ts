@@ -48,9 +48,9 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
   private _value: any;
   private localeDiffer: KeyValueDiffer<string, any>;
   @Input()
-  minDate: _moment.Moment
+  minDate: _moment.Moment;
   @Input()
-  maxDate: _moment.Moment
+  maxDate: _moment.Moment;
   @Input()
   autoApply: boolean;
   @Input()
@@ -220,7 +220,7 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
     this.picker.show(event);
     setTimeout(() => {
       this.setPosition();
-    })
+    });
   }
 
   hide(e?) {
@@ -251,10 +251,10 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
   private setValue(val: any) {
     if (val) {
       if (val[this._startKey]) {
-        this.picker.setStartDate(val[this._startKey])
+        this.picker.setStartDate(val[this._startKey]);
       }
       if (val[this._endKey]) {
-        this.picker.setEndDate(val[this._endKey])
+        this.picker.setEndDate(val[this._endKey]);
       }
       this.picker.calculateChosenLabel();
       if (this.picker.chosenLabel) {
@@ -295,7 +295,7 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
             top: containerTop,
             left: element.offsetLeft  + 'px',
             right: 'auto'
-          }
+          };
       }
       if (style) {
         this._renderer.setStyle(container, 'top', style.top);
@@ -319,7 +319,7 @@ export class DaterangepickerDirective implements OnInit, OnChanges, DoCheck {
       }
       const clickedInside = this._el.nativeElement.contains(targetElement);
       if (!clickedInside) {
-         this.hide()
+         this.hide();
       }
   }
 }

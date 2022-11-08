@@ -28,7 +28,7 @@ export class ResourcesService {
             headers: header,
             params: { param: JSON.stringify(imageProperty) },
             // observe: 'response'
-        }
+        };
         return this.http.get<any>(this.endPointConfig + '/api/resources/generateImage', requestOptions);
     }
 }

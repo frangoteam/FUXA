@@ -42,13 +42,13 @@ export class FlexEventComponent implements OnInit {
 
     ngOnInit() {
         Object.keys(this.eventType).forEach(key => {
-            this.translateService.get(this.eventType[key]).subscribe((txt: string) => { this.eventType[key] = txt });
+            this.translateService.get(this.eventType[key]).subscribe((txt: string) => { this.eventType[key] = txt; });
         });
         Object.keys(this.actionType).forEach(key => {
-            this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt });
+            this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt; });
         });
         Object.keys(this.setValueType).forEach(key => {
-            this.translateService.get(this.setValueType[key]).subscribe((txt: string) => { this.setValueType[key] = txt });
+            this.translateService.get(this.setValueType[key]).subscribe((txt: string) => { this.setValueType[key] = txt; });
         });
 
         if (this.property) {
@@ -146,9 +146,9 @@ export class FlexEventComponent implements OnInit {
     }
 
     getView(viewId: any) {
-        return this.views.find(function (item) {
-            return item.id == viewId
-        })
+        return this.views.find(function(item) {
+            return item.id == viewId;
+        });
     }
 
     setScriptParam(scriptParam: ScriptParam, event) {

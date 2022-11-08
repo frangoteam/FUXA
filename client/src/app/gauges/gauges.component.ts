@@ -155,8 +155,8 @@ export class GaugesManager {
 
     /**
      * Return if is a gauge by check the svg attribute 'type' = 'svg-ext-...'
-     * @param type 
-     * @returns 
+     * @param type
+     * @returns
      */
     isGauge(type: string) {
         for (let tag in this.gaugesTags) {
@@ -207,8 +207,8 @@ export class GaugesManager {
 
     /**
      * emit the signal value to the frontend, used for user_defined variable to make logic in frontend
-     * @param sigId 
-     * @param value 
+     * @param sigId
+     * @param value
      */
     setSignalValue(sigId: string, value: any) {
         let variable = new Variable(sigId, null, null);
@@ -268,7 +268,7 @@ export class GaugesManager {
             // add pointer
             let ele = document.getElementById(ga.id);
             if (ele) {
-                ele.style.cursor = "pointer";
+                ele.style.cursor = 'pointer';
             }
         }
         let htmlEvents = this.getHtmlEvents(ga);
@@ -398,10 +398,10 @@ export class GaugesManager {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
                 if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                     if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                        let sigs = this.hmiService.getChartSignal(ga.property.id)
+                        let sigs = this.hmiService.getChartSignal(ga.property.id);
                         return sigs;
                     } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
-                        let sigs = this.hmiService.getGraphSignal(ga.property.id)
+                        let sigs = this.hmiService.getGraphSignal(ga.property.id);
                         return sigs;
                     } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
                         return GaugesManager.Gauges[i]['getSignals'](ga.property);
@@ -651,7 +651,7 @@ export class GaugesManager {
      * @param elements
      */
     static initElementColor(bkcolor, color, elements) {
-        var elems = elements.filter(function (el) { return el; });
+        var elems = elements.filter(function(el) { return el; });
         for (let i = 0; i < elems.length; i++) {
             let type = elems[i].getAttribute('type');
             if (type) {
@@ -730,7 +730,7 @@ export class GaugesManager {
             // prepare attribute
             let chartRange = ChartRangeType;
             Object.keys(chartRange).forEach(key => {
-                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
+                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt; });
             });
             let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
             if (gauge) {
@@ -790,7 +790,7 @@ export class GaugesManager {
                 this.mapGauges[ga.id] = gauge;
                 if (isview) {
                     gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1h));
-                }                
+                }
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
@@ -801,9 +801,9 @@ export class GaugesManager {
 
     /**
      * add the chart settings (line) and property options to the gauge
-     * @param gauge 
-     * @param chart 
-     * @param property 
+     * @param gauge
+     * @param chart
+     * @param property
      */
     private setChartPropety(gauge: ChartUplotComponent, property: any) {
         if (property) {
@@ -866,5 +866,5 @@ export class GaugesManager {
 }
 
 interface MapGaugesSetting {
-    [x: string]: GaugeSettings
+    [x: string]: GaugeSettings;
 }

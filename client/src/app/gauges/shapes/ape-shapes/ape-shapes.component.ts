@@ -2,7 +2,7 @@
  * Shape extension
  */
 import { Component } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { Utils } from '../../../_helpers/utils';
@@ -64,7 +64,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
     static isBitmaskSupported(): boolean {
         return true;
     }
-    
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
@@ -125,7 +125,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
                 ApeShapesComponent.runMyAction(element, act.type, gaugeStatus);
-            }    
+            }
         }
     }
 
@@ -142,7 +142,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             let eletoanim = Utils.searchTreeStartWith(element.node, 'pm');
             if (eletoanim) {
                 element = SVG.adopt(eletoanim);
-                let elebox = eletoanim.getBBox();                
+                let elebox = eletoanim.getBBox();
 				var movefrom = { x: elebox.x, y: elebox.y };
                 if (gaugeStatus.actionRef && gaugeStatus.actionRef.spool) {
                     movefrom = gaugeStatus.actionRef.spool;

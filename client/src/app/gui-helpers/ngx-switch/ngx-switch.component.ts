@@ -15,7 +15,7 @@ export class NgxSwitchComponent implements AfterViewInit {
     checked = false;
     onUpdate: any;
 
-    constructor() { 
+    constructor() {
     }
 
     ngAfterViewInit() {
@@ -78,10 +78,10 @@ export class SwitchOptions {
     onText = '';
     offSliderColor = '#fff';
     onSliderColor = '#0CC868';
-    offTextColor = '#000'
-    onTextColor = '#fff'
-    fontSize = 12
-    fontFamily = ''
+    offTextColor = '#000';
+    onTextColor = '#fff';
+    fontSize = 12;
+    fontFamily = '';
     radius = 0;
     height: number;
 }

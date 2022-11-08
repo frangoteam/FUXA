@@ -47,7 +47,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     tagsMap = {};
     deviceSelected: Device = null;
     isDeviceToEdit = true;
-    
+
     @Input() readonly = false;
     @Output() save = new EventEmitter();
     @Output() goto = new EventEmitter();
@@ -87,7 +87,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             if (d.tags) {
                 Object.values(d.tags).forEach((t: Tag) => {
                     this.tagsMap[t.id] = t;
-                })
+                });
             }
         });
         this.setSelectedDevice(this.deviceSelected);
@@ -112,7 +112,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (!device) {
             return;
         }
-        this.isDeviceToEdit = !Device.isWebApiProperty(device)
+        this.isDeviceToEdit = !Device.isWebApiProperty(device);
         Object.values(this.devices).forEach(d => {
             if (d.name === device.name) {
                 this.deviceSelected = d;
@@ -143,7 +143,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     onRemoveAll() {
         let msg = '';
-        this.translateService.get('msg.tags-remove-all').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.tags-remove-all').subscribe((txt: string) => { msg = txt; });
         let dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: { msg: msg },
             position: { top: '60px' }
@@ -351,7 +351,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             } else if (device.tags[key].name === tag.name) {
                 exist = true;
             }
-        })
+        });
         if (!exist || overwrite) {
             device.tags[tag.id] = tag;
         }
@@ -381,7 +381,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     editTopics(topic: Tag = null) {
         if (topic && topic.options && topic.options.subs) {
             // edit only name (subscription)
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) return t }).map((t: Tag) => { return t.name });
+            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) {return t;} }).map((t: Tag) => t.name);
             let dialogRef = this.dialog.open(DialogTagName, {
                 position: { top: '60px' },
                 data: { name: topic.name, exist: existNames }
@@ -410,12 +410,12 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     private addTopicSubscription(oldTopic: Tag, topics: Tag[]) {
         if (topics) {
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) return t.name }).map((t: Tag) => { return t.name });
+            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
             topics.forEach((topic: Tag) => {
                 // check if name exist
                 if (existNames.indexOf(topic.name) !== -1) {
                     let msg = '';
-                    this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt; });
                     this.notifyError(msg);
                 } else {
                     // check if subscriptions address exist for new topic
@@ -426,11 +426,11 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                                 this.deviceSelected.tags[key].id != topic.id && this.deviceSelected.tags[key].options.subs) {
                                 exist = DeviceListComponent.formatAddress(topic.address, topic.memaddress);
                             }
-                        })
+                        });
                     }
                     if (exist) {
                         let msg = '';
-                        this.translateService.get('device.topic-subs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt });
+                        this.translateService.get('device.topic-subs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt; });
                         this.notifyError(msg);
                     } else {
                         this.deviceSelected.tags[topic.id] = topic;
@@ -445,11 +445,11 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     private addTopicToPublish(oldTopic: Tag, topic: Tag) {
         if (topic) {
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) return t.name }).map((t: Tag) => { return t.name });
+            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
             // check if name exist
             if (existNames.indexOf(topic.name) !== -1) {
                 let msg = '';
-                this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt });
+                this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt; });
                 this.notifyError(msg);
             } else {
                 // check if publish address exist
@@ -458,10 +458,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].id != topic.id) {
                         exist = topic.address;
                     }
-                })
+                });
                 if (exist) {
                     let msg = '';
-                    this.translateService.get('device.topic-pubs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('device.topic-pubs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt; });
                     this.notifyError(msg);
                 } else {
                     this.deviceSelected.tags[topic.id] = topic;

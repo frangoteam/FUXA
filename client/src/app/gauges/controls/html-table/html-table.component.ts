@@ -50,7 +50,7 @@ export class HtmlTableComponent {
                 // }
                 if (!gab.property) {
                     gab.property = <GaugeTableProperty>{ id: null, type: TableType.data, options: DataTableComponent.DefaultOptions() };
-                }                
+                }
                 htmlTable.innerHTML = '';
                 (<DataTableComponent>componentRef.instance).isEditor = !isview;
 
@@ -72,7 +72,7 @@ export class HtmlTableComponent {
 
     static detectChange(gab: GaugeSettings, res: any, ref: any): DataTableComponent{
         return HtmlTableComponent.initElement(gab, res, ref, false);
-    }    
+    }
 }
 
 interface ITableProperty {

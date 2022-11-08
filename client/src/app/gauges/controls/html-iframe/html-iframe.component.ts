@@ -51,5 +51,5 @@ export class HtmlIframeComponent extends GaugeBaseComponent {
 
     static detectChange(gab: GaugeSettings): void {
         return HtmlIframeComponent.initElement(gab, false);
-    }  
+    }
 }

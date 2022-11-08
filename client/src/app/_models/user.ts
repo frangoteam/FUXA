@@ -17,13 +17,13 @@ export class UserGroups {
             {id: 64, label: 'G'},
             {id: 128, label: 'Administrator'}];
 
-    static GroupsToValue (grps: any, extended?: boolean): number {
+    static GroupsToValue(grps: any, extended?: boolean): number {
         let result = 0;
         if (grps) {
             for (let i = 0; i < grps.length; i++) {
                 result += grps[i].id;
             }
-        } 
+        }
         let shift = (extended) ? this.EXTENSION : 0;
         return result << shift;
     }

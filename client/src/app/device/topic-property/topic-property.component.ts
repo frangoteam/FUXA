@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Inject, AfterViewInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -73,7 +73,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         });
 
         Object.keys(this.itemType).forEach(key => {
-            this.translateService.get(this.itemType[key]).subscribe((txt: string) => { this.itemType[key] = txt });
+            this.translateService.get(this.itemType[key]).subscribe((txt: string) => { this.itemType[key] = txt; });
         });
 
         // check if edit the topic
@@ -88,7 +88,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     this.editMode = true;
                     this.selectTopic({ name: tag.name, key: tag.address, value: { content: tag.value }, subs: tag.options.subs });
                 } else {
-                    // publish topic 
+                    // publish topic
                     this.grptabs.selectedIndex = 1;
                     this.tabsub.disabled = true;
                     this.publishTopicPath = tag.address;
@@ -129,7 +129,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         this.discoveryWait = true;
 		this.discoveryTimer = setTimeout(() => {
             this.discoveryWait = false;
-		}, 10000);        
+		}, 10000);
         this.hmiService.askDeviceBrowse(this.data.device.id, source);
     }
 
@@ -202,7 +202,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     topic.type = this.topicSelectedSubType;
                     topic.address = this.selectedTopic.key;
                     topic.memaddress = this.topicContent[i].key;
-                    topic.options = { subs: this.topicContent.map((tcnt) => { return tcnt.key }) };
+                    topic.options = { subs: this.topicContent.map((tcnt) => tcnt.key) };
                     if (this.topicContent[i].name) {
                         topic.name = this.topicContent[i].name;
                     } else {
@@ -300,9 +300,9 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     let keys = item.key.split('.');
                     let robj = obj;
                     for (let y = 0; y < keys.length; y++) {
-                        if (!robj[keys[y]]) { 
+                        if (!robj[keys[y]]) {
                             robj[keys[y]] = {};
-                        } 
+                        }
                         if (y >= keys.length - 1) {
                             robj[keys[y]] = ivalue;
                         }

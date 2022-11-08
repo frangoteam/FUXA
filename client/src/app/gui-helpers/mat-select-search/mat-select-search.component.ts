@@ -206,8 +206,8 @@ export class MatSelectSearchComponent implements OnInit, OnDestroy, AfterViewIni
 
     ngAfterViewInit() {
         this.setOverlayClass();
-        this.translateService.get('general.search').subscribe((txt: string) => { this.placeholderLabel = txt });
-        this.translateService.get('general.search-notfound').subscribe((txt: string) => { this.noEntriesFoundLabel = txt });
+        this.translateService.get('general.search').subscribe((txt: string) => { this.placeholderLabel = txt; });
+        this.translateService.get('general.search-notfound').subscribe((txt: string) => { this.noEntriesFoundLabel = txt; });
     }
 
     /**

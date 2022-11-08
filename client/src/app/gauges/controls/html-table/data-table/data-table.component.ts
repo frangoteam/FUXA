@@ -47,25 +47,25 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     reloadActive = false;
     private lastDaqQuery = new DaqQuery();
     private destroy$ = new Subject<void>();
-    
+
     constructor(
         private dataService: DataConverterService,
-        public dialog: MatDialog, 
+        public dialog: MatDialog,
         private translateService: TranslateService) { }
 
     ngOnInit() {
         this.dataSource.data = this.data;
         Object.keys(this.lastRangeType).forEach(key => {
-            this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+            this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
         });
         this.dataSource.filterPredicate = (match: any, filter: string) => {
             const cells = Object.values(match).map((c: TableCellData) => c.stringValue);
             for (let i = 0; i < cells.length; i++) {
                 if (cells[i].toLowerCase().includes(filter))
-                return true;
+                {return true;}
             }
             return false;
-        };        
+        };
     }
 
     ngAfterViewInit() {
@@ -115,7 +115,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onDaqQuery();
             }
         });
-    }  
+    }
 
     onDaqQuery() {
         this.onTimeRange.emit(this.lastDaqQuery);
@@ -169,7 +169,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 xmap[t][i] = values[i][x].value;
             }
         }
-        data[0].sort(function (a, b) { return b - a });
+        data[0].sort(function(a, b) { return b - a; });
         for (var i = 0; i < data[0].length; i++) {
             let t = data[0][i];
             for (var x = 1; x < data.length; x++) {
@@ -211,8 +211,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
         this.dataSource.filter = filterValue;
     }
-    
-    setLoading(load: boolean) {        
+
+    setLoading(load: boolean) {
         if (load) {
             timer(10000).pipe(
                 takeUntil(this.destroy$)
@@ -257,7 +257,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.addColumnToMap(cn);
                 }
             }
-        })
+        });
         this.displayedColumns = columnIds;
 
         if (this.type === TableType.data) {
@@ -284,7 +284,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (cell.variableId) {
                 if (this.isEditor) {
                     cell.stringValue = numeral('123.56').format(cell.valueFormat);
-                }                
+                }
                 this.addVariableToMap(cell);
             }
         } else if (cell.type === TableCellType.timestamp) {
@@ -322,27 +322,27 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public static DefaultOptions() {
-        let options = <TableOptions> { 
-            paginator: { 
-                show: false 
+        let options = <TableOptions> {
+            paginator: {
+                show: false
             },
-            filter: { 
-                show: false 
+            filter: {
+                show: false
             },
-            daterange: { 
-                show: false 
-            },            
+            daterange: {
+                show: false
+            },
             lastRange: Utils.getEnumKey(TableRangeType, TableRangeType.last1h),
             gridColor: '#E0E0E0',
-            header: { 
+            header: {
                 show: true,
-                height: 30, 
+                height: 30,
                 fontSize: 12,
                 background: '#F0F0F0',
                 color: '#757575',
-            }, 
-            row: { 
-                height: 30, 
+            },
+            row: {
+                height: 30,
                 fontSize: 10,
                 background: '#F9F9F9',
                 color: '#000000',
@@ -367,14 +367,14 @@ interface ITagMap {
 
 
 export class TableRangeConverter {
-    static TableRangeToHours (crt: TableRangeType) {
+    static TableRangeToHours(crt: TableRangeType) {
         let types = Object.keys(TableRangeType);
         if (crt === types[0]) {         // TableRangeType.last1h) {
             return 1;
         } else if (crt === types[1]) {  // TableRangeType.last1d) {
             return 24;
         } else if (crt === types[2]) {  // TableRangeType.last3d) {
-            return 24 * 3; 
+            return 24 * 3;
         }
         return 0;
     }

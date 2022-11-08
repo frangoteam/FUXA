@@ -39,10 +39,10 @@ export class GraphConfigComponent implements OnInit {
 
     ngOnInit() {
         Object.keys(this.barXType).forEach(key => {
-            this.translateService.get(this.barXType[key]).subscribe((txt: string) => { this.barXType[key] = txt });
+            this.translateService.get(this.barXType[key]).subscribe((txt: string) => { this.barXType[key] = txt; });
         });
         Object.keys(this.barDateFunctionType).forEach(key => {
-            this.translateService.get(this.barDateFunctionType[key]).subscribe((txt: string) => { this.barDateFunctionType[key] = txt });
+            this.translateService.get(this.barDateFunctionType[key]).subscribe((txt: string) => { this.barDateFunctionType[key] = txt; });
         });
     }
 
@@ -78,10 +78,10 @@ export class GraphConfigComponent implements OnInit {
         let title = 'dlg.item-title';
         let label = 'dlg.item-name';
         let error = 'dlg.item-name-error';
-        let exist = this.data.graphs.map((g) => { if (!item || item.name !== g.name) return g.name });
-        this.translateService.get(title).subscribe((txt: string) => { title = txt });
-        this.translateService.get(label).subscribe((txt: string) => { label = txt });
-        this.translateService.get(error).subscribe((txt: string) => { error = txt });
+        let exist = this.data.graphs.map((g) => { if (!item || item.name !== g.name) {return g.name;} });
+        this.translateService.get(title).subscribe((txt: string) => { title = txt; });
+        this.translateService.get(label).subscribe((txt: string) => { label = txt; });
+        this.translateService.get(error).subscribe((txt: string) => { error = txt; });
         let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
             data: { name: (item) ? item.name : '', title: title, label: label, exist: exist, error: error }
@@ -117,10 +117,10 @@ export class GraphConfigComponent implements OnInit {
                     let device = DevicesUtils.getDeviceFromTagId(this.data.devices, id);
                     let tag = DevicesUtils.getTagFromTagId([device], id);
                     if (tag) {
-                        let exist = graph.sources.find(source => source.id === tag.id)
+                        let exist = graph.sources.find(source => source.id === tag.id);
                         if (!exist) {
                             let color = this.getNextColor();
-                            const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name, 
+                            const myCopiedObject: GraphSource = {id: tag.id, name: this.getTagLabel(tag), device: device.name,
                                 label: this.getTagLabel(tag), color: color, fill: color };
                             graph.sources.push(myCopiedObject);
                         }
@@ -132,7 +132,7 @@ export class GraphConfigComponent implements OnInit {
 
     onRemoveGraph(index: number) {
         let msg = '';
-        this.translateService.get('msg.graph-remove', { value: this.data.graphs[index].name }).subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.graph-remove', { value: this.data.graphs[index].name }).subscribe((txt: string) => { msg = txt; });
         let dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: { msg: msg },
             position: { top: '60px' }
@@ -259,7 +259,7 @@ export class DialogGraphSource {
 
     constructor(
         public dialogRef: MatDialogRef<DialogGraphSource>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { 
+        @Inject(MAT_DIALOG_DATA) public data: any) {
     }
 
     onNoClick(): void {

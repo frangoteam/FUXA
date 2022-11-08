@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { environment } from '../../environments/environment';
@@ -25,7 +25,7 @@ import { EditNameComponent } from '../gui-helpers/edit-name/edit-name.component'
 })
 export class HeaderComponent implements AfterViewInit, OnDestroy {
 
-    @ViewChild('sidenav', {static: false})sidenav: any; 
+    @ViewChild('sidenav', {static: false})sidenav: any;
     @ViewChild('tutorial', {static: false}) tutorial: TutorialComponent;
     @ViewChild('fileImportInput', {static: false}) fileImportInput: any;
 
@@ -34,7 +34,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
     savededitor = false;
     private subscriptionShowHelp: Subscription;
     private subscriptionLoad: Subscription;
-    
+
     constructor(private router: Router,
                 public dialog: MatDialog,
                 private translateService: TranslateService,
@@ -43,11 +43,11 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
 
         this.router.events.subscribe(()=> {
             this.editorMode = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0 ||
-                                this.router.url.indexOf('users') >= 0 || this.router.url.indexOf('text') >= 0 || 
+                                this.router.url.indexOf('users') >= 0 || this.router.url.indexOf('text') >= 0 ||
                                 this.router.url.indexOf('messages') >= 0 || this.router.url.indexOf('events') >= 0 ||
                                 this.router.url.indexOf('notifications') >= 0 || this.router.url.indexOf('scripts') >= 0 ||
                                 this.router.url.indexOf('reports') >= 0) ? true : false;
-            this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 || 
+            this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 ||
                                 this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0 ||
                                 this.router.url.indexOf('events') >= 0 || this.router.url.indexOf('notifications') >= 0 ||
                                 this.router.url.indexOf('scripts') >= 0 || this.router.url.indexOf('reports') >= 0) ? true : false;
@@ -73,7 +73,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
         try {
             if (this.subscriptionShowHelp) {
                 this.subscriptionShowHelp.unsubscribe();
-            } 
+            }
             if (this.subscriptionLoad) {
                 this.subscriptionLoad.unsubscribe();
             }
@@ -116,7 +116,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
         });
     }
 
-    goTo(destination:string) {
+    goTo(destination: string) {
         this.router.navigate([destination]);//, this.ID]);
     }
 
@@ -134,7 +134,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
     onNewProject() {
         try {
             let msg = '';
-            this.translateService.get('msg.project-save-ask').subscribe((txt: string) => { msg = txt });
+            this.translateService.get('msg.project-save-ask').subscribe((txt: string) => { msg = txt; });
             if (window.confirm(msg)) {
                 this.projectService.setNewProject();
                 this.onRenameProject();
@@ -145,7 +145,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
     }
 
     /**
-     * Aave Project as JSON file and Download in Browser 
+     * Aave Project as JSON file and Download in Browser
      */
     onSaveProjectAs() {
         try {
@@ -165,7 +165,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
     }
 
     /**
-     * open Project event file loaded 
+     * open Project event file loaded
      * @param event file resource
      */
     onFileChangeListener(event) {
@@ -176,9 +176,9 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
         reader.onload = (data) => {
             let prj = JSON.parse(reader.result.toString());
             this.projectService.setProject(prj, true);
-        }
+        };
 
-        reader.onerror = function () {
+        reader.onerror = function() {
             let msg = 'Unable to read ' + input.files[0];
             // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
             alert(msg);
@@ -188,7 +188,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
     }
 
     /**
-     * save Project and Download in Browser 
+     * save Project and Download in Browser
      */
     onSaveProject() {
         try {
@@ -203,7 +203,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
      */
     onRenameProject() {
         let title = '';
-        this.translateService.get('project.name').subscribe((txt: string) => { title = txt });
+        this.translateService.get('project.name').subscribe((txt: string) => { title = txt; });
         let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
             data: { name: this.projectService.getProjectName(), title: title }
@@ -212,7 +212,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
             if (result && result.name !== this.projectService.getProjectName()) {
                 this.projectService.setProjectName(result.name.replace(/ /g,''));
             }
-        });        
+        });
     }
     //#endregion
 }

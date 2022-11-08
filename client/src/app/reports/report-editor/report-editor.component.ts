@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemChart, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";  
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { Utils } from '../../_helpers/utils';
 import { ReportItemTextComponent } from './report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './report-item-table/report-item-table.component';
@@ -15,7 +15,7 @@ import { ReportItemChartComponent } from './report-item-chart/report-item-chart.
 import { ResourcesService } from '../../_services/resources.service';
 import { forkJoin, Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;   
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
     selector: 'app-report-editor',
@@ -33,7 +33,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     fontSize = [6, 8, 10, 12, 14, 16, 18, 20];
     report: Report;
     schedulingType = ReportSchedulingType;
-    
+
     private imagesList = {};
 
     constructor(public dialogRef: MatDialogRef<ReportEditorComponent>,
@@ -58,7 +58,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         Object.keys(this.schedulingType).forEach(key => {
-            this.translateService.get(this.schedulingType[key]).subscribe((txt: string) => { this.schedulingType[key] = txt });
+            this.translateService.get(this.schedulingType[key]).subscribe((txt: string) => { this.schedulingType[key] = txt; });
         });
     }
 
@@ -96,9 +96,9 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     onReportChanged() {
-        this.report.docproperty.pageMargins = [this.myForm.controls.marginLeft.value, 
-                                                this.myForm.controls.marginTop.value, 
-                                                this.myForm.controls.marginRight.value, 
+        this.report.docproperty.pageMargins = [this.myForm.controls.marginLeft.value,
+                                                this.myForm.controls.marginTop.value,
+                                                this.myForm.controls.marginRight.value,
                                                 this.myForm.controls.marginBottom.value];
         this.getPdfContent(this.report).subscribe(content => {
             const pdfDocGenerator = pdfMake.createPdf(content);
@@ -115,9 +115,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         return new Observable((observer) => {
             let docDefinition = {...report.docproperty };
             docDefinition['header'] = { text: 'FUXA by frangoteam', style:[{fontSize: 6}]};
-            docDefinition['footer'] = (currentPage, pageCount) => {
-                return { text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]};
-            };
+            docDefinition['footer'] = (currentPage, pageCount) => ({ text: currentPage.toString() + ' / ' + pageCount, style:[{alignment: 'right', fontSize: 8}]});
             // first resolve async images from server
             this.checkImages(report.content.items.filter(item => item.type === this.itemChartType)).subscribe((images: ImageItem[] ) => {
                 images.forEach((item: ImageItem) => {
@@ -172,9 +170,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             const chartItem = <ReportItemChart>item;
             if (chartItem.chart && !this.imagesList[chartItem.chart.id]) {
                 source.push(this.resourcesService.generateImage(<ReportItemChart>item).pipe(
-                    map(result => {
-                        return { id: (<ReportItemChart>item).chart.id, content: result };
-                    })
+                    map(result => ({ id: (<ReportItemChart>item).chart.id, content: result }))
                 ));
             }
         });
@@ -228,7 +224,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         }
 
 
-        dialogRef.afterClosed().subscribe(result => {    
+        dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (index <= this.report.content.items.length) {
                     if (edit) {
@@ -263,10 +259,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     }
 
     static getTableContent(item: ReportItemTable) {
-        let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional        
-        let header = item.columns.map<any>(col => { 
-            return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
-        });
+        let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
+        let header = item.columns.map<any>(col => ({ text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }));
         let values = item.columns.map(col => col.tag.address || '...');
         content['table'] = {
             // headers are automatically repeated if the table spans over multiple pages
@@ -277,15 +271,13 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                 header,
                 values
             ]
-        }
+        };
         return content;
     }
 
     static getAlarmsContent(item: ReportItemAlarms) {
         let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
-        let header = Object.values(item.propertyText).map<any>(col => { 
-            return { text: col, bold: true, style: [{ alignment: 'left' }] }
-        });
+        let header = Object.values(item.propertyText).map<any>(col => ({ text: col, bold: true, style: [{ alignment: 'left' }] }));
         let values = Object.values(item.propertyText).map(col => '...');
         content['table'] = {
             // headers are automatically repeated if the table spans over multiple pages
@@ -296,7 +288,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
                 header,
                 values
             ]
-        }
+        };
         return content;
     }
 
@@ -304,17 +296,17 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         if (this.report.content.items[index] && this.report.content.items[index].type === this.itemChartType) {
             const reportChart = <ReportItemChart>this.report.content.items[index];
             if (reportChart.chart) {
-                delete this.imagesList[reportChart.chart.id];    
+                delete this.imagesList[reportChart.chart.id];
             }
         }
     }
 
-    private static getDateRange (dateRange: ReportDateRangeType) : DateTimeRange {
+    private static getDateRange(dateRange: ReportDateRangeType): DateTimeRange {
         if (dateRange === Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.day)) {
             var yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
-            return { 
-                begin: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()), 
+            return {
+                begin: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()),
                 end: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59)
             };
         } else if (dateRange === Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.week)) {
@@ -322,21 +314,21 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             lastWeek = new Date(lastWeek.setDate(lastWeek.getDate() - 7 - (lastWeek.getDay() + 6 ) % 7));
             var diff = lastWeek.getDate() - lastWeek.getDay() + (lastWeek.getDay() == 0 ? -6 : 1); // adjust when day is sunday
             lastWeek = new Date(lastWeek.setDate(diff));
-            return { 
-                begin: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate()), 
+            return {
+                begin: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate()),
                 end: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate() + 6, 23, 59, 59)
             };
         } else if (dateRange === Utils.getEnumKey(ReportDateRangeType, ReportDateRangeType.month)) {
             var lastMonth = new Date();
             lastMonth.setMonth(lastMonth.getMonth() - 1);
             lastMonth.setDate(-1);
-            return { 
-                begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1), 
+            return {
+                begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1),
                 end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), lastMonth.getDate(), 23, 59, 59)
             };
         } else {
-            return { 
-                begin: new Date(), 
+            return {
+                begin: new Date(),
                 end: new Date()
             };
         }
@@ -344,11 +336,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 }
 
 interface DateTimeRange {
-    begin: Date,
-    end: Date
+    begin: Date;
+    end: Date;
 }
 
 interface ImageItem {
-    id: string,
-    content: string,
+    id: string;
+    content: string;
 }

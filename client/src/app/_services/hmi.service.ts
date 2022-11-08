@@ -1,5 +1,5 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable } from "rxjs";
+import { Observable } from 'rxjs';
 import * as io from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
@@ -35,7 +35,7 @@ export class HmiService {
     alarms = { highhigh: 0, high: 0, low: 0, info: 0 };
     private socket;
     private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
-    private bridge: any = null;     
+    private bridge: any = null;
 
     private addFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.add);
     private removeFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.remove);
@@ -95,12 +95,12 @@ export class HmiService {
 
     /**
      * return the value calculated with the function if defined
-     * @param value 
-     * @param fnc 
+     * @param value
+     * @param fnc
      */
     private getValueInFunction(current: any, value: string, fnc: string) {
         try {
-            if (!fnc) return value;
+            if (!fnc) {return value;}
             if (!current) {
                 current = 0;
             }
@@ -108,7 +108,7 @@ export class HmiService {
                 return parseFloat(current) + parseFloat(value);
             } else if (fnc === this.removeFunctionType) {
                 return parseFloat(current) - parseFloat(value);
-            }     
+            }
         } catch (err) {
             console.error(err);
         }
@@ -118,11 +118,11 @@ export class HmiService {
     //#region Communication Socket.io and Bridge
     /**
      * Init the bridge for client communication
-     * @param bridge 
-     * @returns 
+     * @param bridge
+     * @returns
      */
     initClient(bridge?: any) {
-        if (!bridge) return false;
+        if (!bridge) {return false;}
         this.bridge = bridge;
         if (this.bridge) {
             this.bridge.onDeviceValues = (tags: Variable[]) => this.onDeviceValues(tags);
@@ -157,9 +157,9 @@ export class HmiService {
                 if (message.status === 'connect-error') {
                     let name = message.id;
                     let device = this.projectService.getDeviceFromId(message.id);
-                    if (device) name = device.name;
+                    if (device) {name = device.name;}
                     let msg = '';
-                    this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
                     this.toastr.error(msg, '', {
                         timeOut: 3000,
                         closeButton: true,
@@ -206,7 +206,7 @@ export class HmiService {
             });
             this.socket.on(IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
                 this.onDeviceTagsRequest.emit(message);
-            });            
+            });
             // scripts
             this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
                 this.onScriptConsole.emit(message);
@@ -360,9 +360,9 @@ export class HmiService {
         sigsIdremoved.forEach(sigid => {
             let gaugesSettings: GaugeSettings[] = this.viewSignalGaugeMap.signalsGauges(domViewId, sigid);
             if (gaugesSettings) {
-                result[sigid] = gaugesSettings.map(gs => { return gs.id });
+                result[sigid] = gaugesSettings.map(gs => gs.id);
             }
-        })
+        });
         this.viewSignalGaugeMap.remove(domViewId);
         return result;
     }
@@ -407,8 +407,8 @@ export class HmiService {
      * @param fulltext
      */
     getMappedVariable(sigid: string, fulltext: boolean): Variable {
-        if (!this.variables[sigid]) return null;
-        
+        if (!this.variables[sigid]) {return null;}
+
         if (this.variables[sigid]) {
             let result = this.variables[sigid];
             if (fulltext) {
@@ -568,9 +568,9 @@ export enum IoEventTypes {
 
 const ScriptCommandEnum = {
     SETVIEW: 'SETVIEW',
-}
+};
 
 interface ScriptCommandMessage {
-    command: string,
-    params: any[]
+    command: string;
+    params: any[];
 }

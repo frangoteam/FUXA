@@ -5,14 +5,14 @@ export class Graph {
     property: any;
     sources: GraphSource[] = [];
 
-    constructor (_type: GraphType, _id?: string, _name?: string) {
+    constructor(_type: GraphType, _id?: string, _name?: string) {
         this.type = _type;
         this.id = _id;
         this.name = _name;
         if (this.type === GraphType.bar) {
             this.property = new GraphBarProperty();
         }
-    } 
+    }
 }
 
 export enum GraphRangeType {
@@ -30,7 +30,7 @@ export enum GraphDateGroupType {
 export class GraphBarProperty {
     xtype: GraphBarXType;
     function: GraphBarFunction;
-    constructor (_xtype?: GraphBarXType) {
+    constructor(_xtype?: GraphBarXType) {
         if (_xtype) {
             this.xtype = _xtype;
         } else {

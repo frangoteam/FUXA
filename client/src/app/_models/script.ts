@@ -1,4 +1,4 @@
-import { expand } from "rxjs/operators";
+import { expand } from 'rxjs/operators';
 
 export class Script {
     id: string;
@@ -10,7 +10,7 @@ export class Script {
     mode: ScriptMode = ScriptMode.SERVER;
     constructor(_id: string) {
         this.id = _id;
-    }    
+    }
 }
 
 export class ScriptTest extends Script {
@@ -52,7 +52,7 @@ export interface ScriptScheduling {
     interval: number;
 }
 
-export class SystemFunctions {    
+export class SystemFunctions {
     functions = <SystemFunction[]>[{
         name: '$setTag', text: 'script.sys-fnc-settag-text', tooltip: 'script.sys-fnc-settag-tooltip', params: [true, false]
     },
@@ -65,10 +65,10 @@ export class SystemFunctions {
 }
 
 export interface SystemFunction {
-    name: string,       // javascript function defined in backend
-    text: string,       // button text
+    name: string;       // javascript function defined in backend
+    text: string;       // button text
     tooltip: string;    // description
-    params: [boolean],  // array of function parameter where true is for tag and false for any (value)
+    params: [boolean];  // array of function parameter where true is for tag and false for any (value)
 }
 
 export enum ScriptMode {

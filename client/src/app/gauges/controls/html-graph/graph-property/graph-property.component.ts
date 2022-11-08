@@ -22,8 +22,8 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
 
     @Input() data: any;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
-    @Input('reload') set reload(b: any) { 
-        this._reload(); 
+    @Input('reload') set reload(b: any) {
+        this._reload();
     }
 
     themeType = GraphThemeType;
@@ -43,7 +43,7 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
 
     constructor(
         public dialog: MatDialog,
-        private translateService: TranslateService) { 
+        private translateService: TranslateService) {
         }
 
     ngOnInit() {
@@ -51,15 +51,15 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             this.graphType = GraphType.bar;
             if (!this.data.settings.property) {
                 this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
-            } 
+            }
             if (!this.data.settings.property.options) {
                 this.data.settings.property.options = GraphBarComponent.DefaultOptions();
             }
             Object.keys(this.lastRangeType).forEach(key => {
-                this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+                this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
             });
             Object.keys(this.dateGroupType).forEach(key => {
-                this.translateService.get(this.dateGroupType[key]).subscribe((txt: string) => { this.dateGroupType[key] = txt });
+                this.translateService.get(this.dateGroupType[key]).subscribe((txt: string) => { this.dateGroupType[key] = txt; });
             });
         }
         this._reload();
@@ -155,7 +155,7 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             });
         if (toset) {
             let idx = -1;
-            this.data.graphs.every(function (value, index, _arr) {
+            this.data.graphs.every(function(value, index, _arr) {
                 if (value.id === toset) {
                     idx = index;
                     return false;

@@ -12,8 +12,8 @@ export class AuthGuard implements CanActivate {
     constructor(private authService: AuthService,
         private translateService: TranslateService,
         private toastr: ToastrService,
-        private projectService: ProjectService, 
-        private router: Router) { 
+        private projectService: ProjectService,
+        private router: Router) {
         }
 
     canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
 
     private notifySaveError() {
         let msg = '';
-        this.translateService.get('msg.signin-failed').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.signin-failed').subscribe((txt: string) => { msg = txt; });
         this.toastr.error(msg, '', {
             timeOut: 3000,
             closeButton: true,

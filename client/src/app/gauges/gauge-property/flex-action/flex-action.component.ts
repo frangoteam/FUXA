@@ -37,7 +37,7 @@ export class FlexActionComponent implements OnInit {
         if (this.data.withActions) {
 			this.actionsSupported = this.data.withActions;
 			Object.keys(this.actionsSupported).forEach(key => {
-				this.translateService.get(this.actionsSupported[key]).subscribe((txt: string) => { this.actionsSupported[key] = txt });
+				this.translateService.get(this.actionsSupported[key]).subscribe((txt: string) => { this.actionsSupported[key] = txt; });
 			});
 		}
     }
@@ -87,6 +87,6 @@ export class FlexActionComponent implements OnInit {
             ga.options = new GaugeActionBlink();
         } else if (type === this.actionRotate && typeof(ga.options) !== typeof(GaugeActionRotate)) {
             ga.options = new GaugeActionRotate();
-        } 
+        }
     }
 }

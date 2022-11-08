@@ -69,14 +69,14 @@ declare class uPlot {
 	setScale(scaleKey: string, limits: { min: number; max: number }): void;
 
 	/** sets the cursor position (relative to plotting area) */
-	setCursor(opts: {left: number, top: number}): void;
+	setCursor(opts: {left: number; top: number}): void;
 
 	/** sets the legend to the values of the specified idx */
 	setLegend(opts: {idx: number}, fireHook?: boolean): void;
 
 	// TODO: include other series style opts which are dynamically pulled?
 	/** toggles series visibility or focus */
-	setSeries(seriesIdx: number | null, opts: {show?: boolean, focus?: boolean}): void;
+	setSeries(seriesIdx: number | null, opts: {show?: boolean; focus?: boolean}): void;
 
 	/** adds a series */
 	addSeries(opts: uPlot.Series, seriesIdx?: number): void;
@@ -85,7 +85,7 @@ declare class uPlot {
 	delSeries(seriesIdx: number): void;
 
 	/** sets visually selected region without triggering setScale (zoom). (default fireHook = true) */
-	setSelect(opts: {left: number, top: number, width: number, height: number}, fireHook?: boolean): void;
+	setSelect(opts: {left: number; top: number; width: number; height: number}, fireHook?: boolean): void;
 
 	/** sets the width & height of the plotting area + axes (excludes title & legend height) */
 	setSize(opts: { width: number; height: number }): void;
@@ -197,7 +197,7 @@ declare namespace uPlot {
 	export type AlignedData = [
 		number[],
 		(number | null)[][]
-	]
+	];
 
 	export interface DateNames {
 		/** long month names */
@@ -582,9 +582,9 @@ declare namespace uPlot {
 		}
 
 		export interface BarsPathBuilderOpts {
-			align?: -1 | 0 | 1, // 0
+			align?: -1 | 0 | 1; // 0
 
-			size?: [number, number]
+			size?: [number, number];
 		}
 
 		export type LinearPathBuilderFactory  = () => Series.PathBuilder;
@@ -917,11 +917,11 @@ declare namespace uPlot {
 
 		export type Arrays = {
 			[P in keyof Defs]: Defs[P][]
-		}
+		};
 
 		export type ArraysOrFuncs = {
 			[P in keyof Defs]: Defs[P][] | Defs[P]
-		}
+		};
 	}
 
 	export interface Plugin {

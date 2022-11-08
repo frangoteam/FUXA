@@ -28,7 +28,7 @@ export class View {
 export enum ViewType {
     svg = 'editor.view-svg',
     cards ='editor.view-cards'
-} 
+}
 
 export class LayoutSettings {
     /** Auto resize view */
@@ -65,7 +65,7 @@ export class NavigationSettings {
     /** Menu items */
     items: NaviItem[];
     /** Custom logo resource */
-    logo?: boolean = false;    
+    logo?: boolean = false;
     constructor() {
         this.mode = Object.keys(NaviModeType).find(key => NaviModeType[key] === NaviModeType.over) as NaviModeType;
         this.type = Object.keys(NaviItemType).find(key => NaviItemType[key] === NaviItemType.block) as NaviItemType;
@@ -297,32 +297,32 @@ export enum TableType {
 }
 
 export interface TableOptions {
-    paginator?: { 
-        show: boolean 
-    },
-    filter?: { 
-        show: boolean 
-    },
-    daterange: { 
-        show: boolean
-    },
-    lastRange?: TableRangeType,
-    gridColor?: string,
-    header?: { 
-        show: boolean,
-        height: number,
-        fontSize?: number,
-        color?: string,
-        background?: string,
-    }
-    row?: { 
-        height: number,
-        fontSize?: number,
-        color?: string,
-        background?: string,
-    }
-    columns: TableColumn[],
-    rows: TableRow[],
+    paginator?: {
+        show: boolean;
+    };
+    filter?: {
+        show: boolean;
+    };
+    daterange: {
+        show: boolean;
+    };
+    lastRange?: TableRangeType;
+    gridColor?: string;
+    header?: {
+        show: boolean;
+        height: number;
+        fontSize?: number;
+        color?: string;
+        background?: string;
+    };
+    row?: {
+        height: number;
+        fontSize?: number;
+        color?: string;
+        background?: string;
+    };
+    columns: TableColumn[];
+    rows: TableRow[];
 }
 
 export enum TableCellType {
@@ -339,7 +339,7 @@ export class TableCell {
     valueFormat: string;
     bitmask: number;
     type: TableCellType;
-    
+
     constructor(id: string, type?: TableCellType, label?: string) {
         this.id = id;
         this.type = type || TableCellType.label;
@@ -427,7 +427,7 @@ export class DaqQuery {
 }
 
 export interface DaqValue {
-    id: string,
+    id: string;
     ts: number;
     value: any;
 }
@@ -445,18 +445,18 @@ export class HelpData {
 export class Size {
     height: number;
     width: number;
-    constructor (h: number, w: number) {
+    constructor(h: number, w: number) {
         this.height = h;
         this.width = w;
     }
 }
 
 interface DictionaryGaugeSettings {
-    [x: string]: GaugeSettings
+    [x: string]: GaugeSettings;
 }
 
 interface DictionaryVariables {
-    [id: string]: Variable
+    [id: string]: Variable;
 }
 
 export enum DateFormatType {

@@ -31,11 +31,11 @@ export class ScriptService {
                     });
                 } else {
                     observer.next();
-                }    
+                }
             } else {
                 if (script.parameters && script.parameters.length > 0) {
-                    console.warn('TODO: Script with mode CLIENT not work with parameters.')
-                } 
+                    console.warn('TODO: Script with mode CLIENT not work with parameters.');
+                }
                 eval(script.code);
             }
         });

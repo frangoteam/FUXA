@@ -30,7 +30,7 @@ export class DiagnoseService {
             headers: header,
             params: logReq,
             observe: 'response'
-        }
+        };
         return this.http.get<any>(this.endPointConfig + '/api/logs', requestOptions);
     }
 
@@ -44,7 +44,7 @@ export class DiagnoseService {
                 }, err => {
                     console.error(err);
                     observer.error(err);
-                });                
+                });
             } else {
                 observer.next();
             }

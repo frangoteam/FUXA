@@ -15,7 +15,7 @@ export class ScriptSchedulingComponent {
     constructor(
         public dialogRef: MatDialogRef<ScriptSchedulingComponent>,
         @Inject(MAT_DIALOG_DATA) public data: SchedulingData) {
-            if (this.data.scheduling) { 
+            if (this.data.scheduling) {
                 this.scheduling = JSON.parse(JSON.stringify(this.data.scheduling));
             }
         }

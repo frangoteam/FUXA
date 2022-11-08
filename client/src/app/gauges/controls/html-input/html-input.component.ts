@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, Variable, GaugeStatus, GaugeAction, Event, GaugeActionsType } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
@@ -35,7 +35,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
             pro.actions.forEach(act => {
                 res.push(act.variableId);
             });
-        }        
+        }
         return res;
     }
 
@@ -70,7 +70,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     let val: any = parseFloat(sig.value);
                     let unit;
                     let digit;
-                    
+
                     if (ga.property.ranges) {
                         unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
                         digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
@@ -99,7 +99,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                                 HtmlInputComponent.processAction(act, svgele, input, val, gaugeStatus);
                             }
                         });
-                    }                
+                    }
                 }
             }
         } catch (err) {
@@ -109,7 +109,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
 
     static initElement(gab: GaugeSettings, isview: boolean) {
         if (isview) {
-            let ele = document.getElementById(gab.id);        
+            let ele = document.getElementById(gab.id);
             if (ele && gab.property) {
                 let input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
@@ -133,7 +133,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
             // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
             let fobj = ele.getElementsByTagName('foreignObject');
             if(fobj){
-                fobj[0].style.paddingLeft = '1px'; 
+                fobj[0].style.paddingLeft = '1px';
             }
 
             // Set the border on the surrounding svg rect
@@ -143,7 +143,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
             }
         }
     }
-    
+
     static initElementColor(bkcolor, color, ele) {
         let htmlInput = Utils.searchTreeStartWith(ele, this.prefix);
         if (htmlInput) {
@@ -190,7 +190,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
         }
     }
 
-    static validateValue(value: any, ga: GaugeSettings) : {valid: boolean, errorText: string, min: number, max: number} {
+    static validateValue(value: any, ga: GaugeSettings): {valid: boolean; errorText: string; min: number; max: number} {
         if(ga.property.options && ga.property.options.numeric){
             if(!Utils.isNullOrUndefined(ga.property.options.min) && !Utils.isNullOrUndefined(ga.property.options.max)){
                 if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
@@ -199,7 +199,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                 else {
                     let numVal = parseFloat(value);
                     if(numVal < ga.property.options.min || numVal > ga.property.options.max){
-                        return { valid: false, errorText: 'html-input.out-of-range', 
+                        return { valid: false, errorText: 'html-input.out-of-range',
                                 min: ga.property.options.min, max: ga.property.options.max };
                     }
                 }

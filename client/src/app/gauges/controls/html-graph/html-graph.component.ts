@@ -9,9 +9,9 @@ import { GraphBaseComponent, GraphOptions } from './graph-base/graph-base.compon
 
 
 @Component({
-    selector: "html-graph",
-    templateUrl: "./html-graph.component.html",
-    styleUrls: ["./html-graph.component.css"]
+    selector: 'html-graph',
+    templateUrl: './html-graph.component.html',
+    styleUrls: ['./html-graph.component.css']
 })
 export class HtmlGraphComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-html_graph';

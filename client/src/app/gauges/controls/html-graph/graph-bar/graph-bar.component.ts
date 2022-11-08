@@ -43,7 +43,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     sourceCount = 0;
     xTypeValue = Utils.getEnumKey(GraphBarXType, GraphBarXType.value);
     xTypeDate = Utils.getEnumKey(GraphBarXType, GraphBarXType.date);
-    
+
     fncSumHourIntegral = Utils.getEnumKey(GraphBarDateFunctionType, GraphBarDateFunctionType.sumHourIntegral);
     fncValueIntegral = Utils.getEnumKey(GraphBarDateFunctionType, GraphBarDateFunctionType.sumValueIntegral);
 
@@ -69,7 +69,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             }
         }
     }
-    
+
     ngAfterViewInit() {
         if (this.barChartOptions.panel) {
             this.resize(this.barChartOptions.panel.height, this.barChartOptions.panel.width);
@@ -135,7 +135,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     this.dateGroupTemplate = this.getFunctionValues(this.property.function, [<TimeValue>{dt: this.currentQuery.from, value: 0}, <TimeValue>{dt: this.currentQuery.to, value: 0}]);
                     this.barChartLabels = this.getDateLabels(this.dateGroupTemplate);
                 } else {
-                    this.barChartLabels = this.barChartData.map(ds => { return ds.label });
+                    this.barChartLabels = this.barChartData.map(ds => ds.label);
                 }
             }
 
@@ -150,8 +150,8 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         }
     }
 
-    onRefresh(user?: boolean) {      
-        if (this.isEditor || !this.property) return false;
+    onRefresh(user?: boolean) {
+        if (this.isEditor || !this.property) {return false;}
         this.currentQuery = this.getQuery();
         this.onReload.emit(this.currentQuery);
         if (user) {
@@ -216,7 +216,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     }
 
     private setDemo() {
-        if (!this.isEditor) return false;
+        if (!this.isEditor) {return false;}
         this.barChartData = [];
         for (let key in this.sourceMap) {
             let dataset = this.sourceMap[key];
@@ -224,7 +224,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 dataset.data = [Utils.rand(10, 100)];
             } else if (this.dateGroupTemplate && this.property.xtype === this.xTypeDate) {
                 let datacount = Object.keys(this.dateGroupTemplate).length;
-                if (datacount === dataset.data.length) return false;
+                if (datacount === dataset.data.length) {return false;}
                 dataset.data = GraphBarComponent.demoValues.slice(0, datacount);
                 this.fullDataSetAttribute(dataset);
             }
@@ -308,8 +308,8 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             gridLinesShow: true,                // to set in property
             yAxes: {                            // to set in property
                 display: true,
-                min: '0', 
-                // max: '100', 
+                min: '0',
+                // max: '100',
                 stepSize: 20,
                 fontSize: 12,
             },

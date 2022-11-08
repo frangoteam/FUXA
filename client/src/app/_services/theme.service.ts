@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { THEMES } from '../_config/theme.config';
 
 @Injectable({
-    providedIn: "root"
+    providedIn: 'root'
 })
 export class ThemeService {
     constructor(@Inject(DOCUMENT) private document: Document) { }

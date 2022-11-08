@@ -13,7 +13,7 @@ export class Notification {
 
     constructor(_id: string) {
         this.id = _id;
-    }    
+    }
 }
 
 export enum NotificationsType {

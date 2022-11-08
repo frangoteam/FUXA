@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -48,7 +48,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
         if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
             this.readonly = true;
         }
-        this.showMode = localStorage.getItem("@frango.devicesview") || this.devicesViewMap;
+        this.showMode = localStorage.getItem('@frango.devicesview') || this.devicesViewMap;
     }
 
     ngOnInit() {
@@ -110,7 +110,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
             } catch (e) {
             }
         } else {
-            localStorage.setItem("@frango.devicesview", this.showMode);
+            localStorage.setItem('@frango.devicesview', this.showMode);
         }
     }
 
@@ -123,7 +123,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
             }
             return;
         }
-        let mode = localStorage.getItem("@frango.devicesview") || this.devicesViewMap;
+        let mode = localStorage.getItem('@frango.devicesview') || this.devicesViewMap;
         this.show(mode);
     }
 
@@ -163,7 +163,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * open Project event file loaded 
+     * open Project event file loaded
      * @param event file resource
      */
     onFileChangeListener(event) {
@@ -176,13 +176,13 @@ export class DeviceComponent implements OnInit, OnDestroy {
                 devices = JSON.parse(reader.result.toString());
             } else {
                 // CSV
-                devices = DevicesUtils.csvToDevices(reader.result.toString());   
+                devices = DevicesUtils.csvToDevices(reader.result.toString());
             }
             this.projectService.importDevices(devices);
             setTimeout(() => { this.projectService.onRefreshProject(); }, 2000);
-        }
+        };
 
-        reader.onerror = function () {
+        reader.onerror = function() {
             let msg = 'Unable to read ' + input.files[0];
             // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
             alert(msg);
@@ -220,7 +220,7 @@ export class DeviceTagDialog implements OnInit, AfterViewInit {
         if (this.data.devices) {
             this.data.devices.forEach((device: Device) => {
                 if (data.deviceFilter && data.deviceFilter.indexOf(device.type) !== -1) {
-                    // filtered device 
+                    // filtered device
                 } else if (device.tags) {
                     Object.values(device.tags).forEach((t: Tag) => this.tags.push(<TagElement> {
                             id: t.id, name: t.name, address: t.address,
@@ -229,7 +229,7 @@ export class DeviceTagDialog implements OnInit, AfterViewInit {
                     ));
                 }
             }
-            )
+            );
         }
         this.dataSource = new MatTableDataSource(this.tags);
     }
@@ -259,7 +259,7 @@ export class DeviceTagDialog implements OnInit, AfterViewInit {
             return (!data.name || data.name.toString().trim().toLowerCase().indexOf(searchString.name.toLowerCase()) !== -1) &&
                 (!data.address || data.address.toString().trim().toLowerCase().indexOf(searchString.address.toLowerCase()) !== -1) &&
                 data.device.toString().trim().toLowerCase().indexOf(searchString.device.toLowerCase()) !== -1;
-        }
+        };
         return myFilterPredicate;
     }
 

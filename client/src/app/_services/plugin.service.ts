@@ -17,10 +17,10 @@ export class PluginService {
 
     constructor(private http: HttpClient,
         private translateService: TranslateService,
-        private toastr: ToastrService) { 
+        private toastr: ToastrService) {
 
     }
-    
+
     getPlugins() {
         return this.http.get<Plugin[]>(this.endPointConfig + '/api/plugins');
     }
@@ -35,7 +35,7 @@ export class PluginService {
                 }, err => {
                     console.error(err);
                     observer.error(err);
-                });                
+                });
             } else {
                 observer.next();
             }
@@ -52,7 +52,7 @@ export class PluginService {
                 }, err => {
                     console.error(err);
                     observer.error(err);
-                });                
+                });
             } else {
                 observer.next();
             }

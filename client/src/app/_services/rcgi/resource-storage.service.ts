@@ -1,5 +1,5 @@
-import { forwardRef } from "@angular/core";
-import { Injectable } from "@angular/core";
+import { forwardRef } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ResWebApiService } from './reswebapi.service';
@@ -10,15 +10,15 @@ import { DaqQuery } from '../../_models/hmi';
 
 @Injectable()
 export abstract class ResourceStorageService {
-    
+
     public static prjresource = 'prj-data';
 
     public abstract init(bridge?: any): boolean;
 
     public abstract onRefreshProject(): boolean;
-    
+
     public abstract getDemoProject(): Observable<any>;
-    
+
     public abstract getStorageProject(): Observable<any>;
 
     public abstract setServerProject(prj: ProjectData);
@@ -34,7 +34,7 @@ export abstract class ResourceStorageService {
     public abstract getAlarmsValues(): Observable<any>;
 
     public abstract getAlarmsHistory(query: AlarmQuery): Observable<any>;
-    
+
     public abstract setAlarmAck(name: string): Observable<any>;
 
     public abstract checkServer(): Observable<any>;
@@ -42,9 +42,9 @@ export abstract class ResourceStorageService {
     public abstract getAppId(): string;
 
     public abstract getDaqValues(query: DaqQuery): Observable<any>;
-    
+
     public static defileProject(source: ProjectData): ProjectData {
-        if (!source) return source;
+        if (!source) {return source;}
         let destination = JSON.parse(JSON.stringify(source));
         let devices = {};
         for (let i = 0; i < destination.devices.length; i++) {

@@ -43,7 +43,7 @@ export class GraphPieComponent extends GraphBaseComponent implements OnDestroy {
 
     }
 
-    setValue (sigid: string, timestamp: any, sigvalue: any) {
-        
+    setValue(sigid: string, timestamp: any, sigvalue: any) {
+
     }
 }

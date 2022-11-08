@@ -27,7 +27,7 @@ export class CommandService {
                 this.http.post<any>(this.endPointConfig + '/api/buildreport', { headers: header, params: params }).subscribe(result => {
                     observer.next();
                     var msg = '';
-                    this.translateService.get('msg.report-build-forced').subscribe((txt: string) => { msg = txt });
+                    this.translateService.get('msg.report-build-forced').subscribe((txt: string) => { msg = txt; });
                     this.toastr.success(msg);
                 }, err => {
                     console.error(err);
@@ -42,11 +42,11 @@ export class CommandService {
 
     private notifyError(err: any) {
         var msg = '';
-        this.translateService.get('msg.report-build-error').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.report-build-error').subscribe((txt: string) => { msg = txt; });
         this.toastr.error(msg, '', {
             timeOut: 3000,
             closeButton: true,
             disableTimeOut: true
         });
-    }    
+    }
 }

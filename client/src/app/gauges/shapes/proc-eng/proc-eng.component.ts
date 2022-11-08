@@ -2,7 +2,7 @@
  * Shape extension
  */
 import { Component, OnInit, Input } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType, GaugeActionStatus, GaugePropertyColor, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -21,7 +21,7 @@ export class ProcEngComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-' + ProcEngComponent.TypeId;
     static LabelTag = 'Proc-Eng';
 
-    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop, 
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
         clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
 
     constructor() {
@@ -55,7 +55,7 @@ export class ProcEngComponent extends GaugeBaseComponent {
     static isBitmaskSupported(): boolean {
         return true;
     }
-    
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
@@ -86,7 +86,7 @@ export class ProcEngComponent extends GaugeBaseComponent {
                                 ProcEngComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
                             }
                         });
-                    }   
+                    }
                 }
             }
         } catch (err) {
@@ -94,7 +94,7 @@ export class ProcEngComponent extends GaugeBaseComponent {
         }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?:GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
         let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= actValue && act.range.max >= actValue) {
@@ -114,7 +114,7 @@ export class ProcEngComponent extends GaugeBaseComponent {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
                 ProcEngComponent.runMyAction(element, act.type, gaugeStatus);
-            }    
+            }
         }
     }
 

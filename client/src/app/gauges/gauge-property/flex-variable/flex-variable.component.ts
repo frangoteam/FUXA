@@ -49,7 +49,7 @@ export class FlexVariableComponent implements OnInit {
         if (!this.value) {
             this.value = {
                 variableId: this.variableId
-            }
+            };
         } else if (this.value.variableId) {
             this.variableId = this.value.variableId;
         }
@@ -69,7 +69,7 @@ export class FlexVariableComponent implements OnInit {
             let result = tag.label || tag.name;
             if (result && tag.address && result !== tag.address) {
                 return result + ' - ' + tag.address;
-            } 
+            }
             if (tag.address) {
                 return tag.address;
             }
@@ -95,7 +95,7 @@ export class FlexVariableComponent implements OnInit {
             this.value.variableRaw = null;
         }
         if (this.withBitmask) {
-            this.value.bitmask = this.bitmask
+            this.value.bitmask = this.bitmask;
         }
         this.value.variableValue = this.variableValue;
         this.onchange.emit(this.value);   // Legacy

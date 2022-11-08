@@ -43,7 +43,7 @@ export class ResWebApiService implements ResourceStorageService {
         let params = { cmd: cmd, data: data };
         return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
     }
-    
+
     uploadFile(resource: any): Observable<UploadFile> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = resource;
@@ -65,10 +65,10 @@ export class ResWebApiService implements ResourceStorageService {
     getAlarmsValues(): Observable<any> {
         return this.http.get<any>(this.endPointConfig + '/api/alarms', {});
     }
-    
+
     getAlarmsHistory(query: AlarmQuery): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { query: JSON.stringify(query) };        
+        let params = { query: JSON.stringify(query) };
         return this.http.get<any>(this.endPointConfig + '/api/alarmsHistory', { headers: header, params: params });
     }
 
@@ -79,7 +79,7 @@ export class ResWebApiService implements ResourceStorageService {
                 observer.next();
             }, err => {
                 observer.error(err);
-            });                
+            });
         });
     }
 
@@ -93,7 +93,7 @@ export class ResWebApiService implements ResourceStorageService {
 
     getDaqValues(query: DaqQuery): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { query: JSON.stringify(query) };        
+        let params = { query: JSON.stringify(query) };
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 }

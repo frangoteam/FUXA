@@ -10,7 +10,7 @@ export class EditNameComponent {
     error = '';
     constructor(public dialogRef: MatDialogRef<EditNameComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any) { }
-    
+
     onNoClick(): void {
         this.dialogRef.close();
     }

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef, Input, ViewChild } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -81,7 +81,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             this.loadAvailableType();
         });
         Object.keys(this.deviceStatusType).forEach(key => {
-            this.translateService.get(this.deviceStatusType[key]).subscribe((txt: string) => { this.deviceStatusType[key] = txt });
+            this.translateService.get(this.deviceStatusType[key]).subscribe((txt: string) => { this.deviceStatusType[key] = txt; });
         });
     }
 
@@ -393,7 +393,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         let result = '';
         if (device.property) {
             if (device.type === DeviceType.OPCUA) {
-                result = 'OPC-UA'
+                result = 'OPC-UA';
             } else if (device.type === DeviceType.SiemensS7) {
                 result = 'Port: ';
                 if (device.property.port) {
@@ -462,7 +462,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     editDevice(device: Device, toremove: boolean) {
-        let exist = Object.values(this.devices).filter((d: Device) => d.id !== device.id).map((d: Device) => { return d.name });
+        let exist = Object.values(this.devices).filter((d: Device) => d.id !== device.id).map((d: Device) => d.name);
         exist.push('server');
         let tempdevice = JSON.parse(JSON.stringify(device));
         let dialogRef = this.dialog.open(DevicePropertyComponent, {

@@ -17,7 +17,7 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const authService = this.injector.get(AuthService)
+        const authService = this.injector.get(AuthService);
         if (authService.getUserToken) {
             const token = authService.getUserToken();
             if (token != null) {
@@ -41,7 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
                     if (err.status === 403) {
                         // redirect to the login route or show a modal
                         authService.signOut();
-                        const projectService = this.injector.get(ProjectService)
+                        const projectService = this.injector.get(ProjectService);
                         projectService.reload();
                     }
                 }

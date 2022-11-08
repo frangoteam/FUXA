@@ -14,9 +14,11 @@
             },
             "extends": [
                 "plugin:@angular-eslint/recommended",
+                "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
                 "plugin:@angular-eslint/template/process-inline-templates"
             ],
             "rules": {
+                "max-len": "off",
                 "@angular-eslint/no-output-on-prefix": "off",
                 "@typescript-eslint/member-ordering": "off",
                 "@angular-eslint/no-input-rename": "off",

@@ -17,12 +17,12 @@ import { Define } from '../../../../_helpers/define';
 })
 export class BagPropertyComponent implements AfterViewInit {
 
-    @ViewChild("ngauge", {static: false}) ngauge: NgxGaugeComponent;
+    @ViewChild('ngauge', {static: false}) ngauge: NgxGaugeComponent;
 	@ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
 
     gauge = {
         value: 30
-    }
+    };
 
 	property: GaugeProperty;
     gaugeTypeEnum = GaugeType;
@@ -38,7 +38,7 @@ export class BagPropertyComponent implements AfterViewInit {
     constructor(private cdRef: ChangeDetectorRef,
                 public dialog: MatDialog,
                 public dialogRef: MatDialogRef<BagPropertyComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: any) { 
+                @Inject(MAT_DIALOG_DATA) public data: any) {
         this.optionsGauge = this.getDefaultOptions(GaugeType.Gauge);
         this.optionsDonut = this.getDefaultOptions(GaugeType.Donut);
         this.optionsZones = this.getDefaultOptions(GaugeType.Zones);
@@ -64,7 +64,7 @@ export class BagPropertyComponent implements AfterViewInit {
                 }
             }
             this.onGaugeChange(this.gaugeType);
-            this.cdRef.detectChanges();    
+            this.cdRef.detectChanges();
         }, 500);
     }
 
@@ -163,7 +163,7 @@ export class BagPropertyComponent implements AfterViewInit {
                     let v = parseFloat(tk);
                     if (!isNaN(v)) {
                         labels.push(v);
-                    }                    
+                    }
                 });
             }
             this.options.staticLabels = { labels: labels, font: this.options.staticFontSize + 'px Sans-serif', color: this.options.staticFontColor };
@@ -211,7 +211,7 @@ export class BagPropertyComponent implements AfterViewInit {
         this.onGaugeChange(this.gaugeType);
     }
 
-    
+
     onChangeStaticZones() {
         this.options.staticZones = this.optcfg.staticZones;
         this.setGaugeOptions();

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, GaugeStatus, Variable, GaugeActionsType, GaugeAction } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -43,7 +43,7 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent {
     static getActions() {
         return this.actionsType;
     }
-    
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {

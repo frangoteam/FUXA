@@ -35,7 +35,7 @@ export class BitmaskComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
-    getValue (): number {
+    getValue(): number {
         let result = 0;
         for (let i = 0; i < this.selected.length; i++) {
             result += this.selected[i].id;

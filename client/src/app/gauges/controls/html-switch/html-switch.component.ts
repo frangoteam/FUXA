@@ -1,6 +1,6 @@
 import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -37,7 +37,7 @@ export class HtmlSwitchComponent {
         return GaugeDialogType.Switch;
     }
 
-    static bindEvents(ga: GaugeSettings, slider?: NgxSwitchComponent, callback?:any): Event {
+    static bindEvents(ga: GaugeSettings, slider?: NgxSwitchComponent, callback?: any): Event {
         if (slider) {
             slider.bindUpdate((val) => {
                 let event = new Event();

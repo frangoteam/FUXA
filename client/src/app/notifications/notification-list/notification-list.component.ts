@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Inject, ViewChild } from '
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -41,7 +41,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
             this.loadNotifications();
         });
         Object.values(this.alarmsEnum).forEach(key => {
-            this.translateService.get('alarm.property-' + key).subscribe((txt: string) => { this.alarmsType[key] = txt });
+            this.translateService.get('alarm.property-' + key).subscribe((txt: string) => { this.alarmsType[key] = txt; });
         });
     }
 
@@ -98,7 +98,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
                 let result = '';
                 Object.keys(notification.subscriptions).forEach(key => {
                     if (notification.subscriptions[key]) {
-                        if (result) result += ', ';
+                        if (result) {result += ', ';}
                         result += this.alarmsType[key];
                     }
                 });
@@ -109,6 +109,6 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     private loadNotifications() {
-        this.dataSource.data = this.projectService.getNotifications(); 
+        this.dataSource.data = this.projectService.getNotifications();
 	}
 }

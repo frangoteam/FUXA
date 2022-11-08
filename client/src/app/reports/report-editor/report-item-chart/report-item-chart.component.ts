@@ -24,19 +24,19 @@ export class ReportItemChartComponent implements OnInit, OnDestroy {
 
     private _onDestroy = new Subject<void>();
 
-    constructor(        
+    constructor(
         public dialogRef: MatDialogRef<ReportItemChartComponent>,
         private translateService: TranslateService,
         private projectService: ProjectService,
-        @Inject(MAT_DIALOG_DATA) public data: ReportItemChart) { 
+        @Inject(MAT_DIALOG_DATA) public data: ReportItemChart) {
             this.charts = this.projectService.getCharts();
         }
 
     ngOnInit() {
         Object.keys(this.dateRangeType).forEach(key => {
-            this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt });
+            this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt; });
         });
-        
+
         this.loadChart();
         let chart = null;
         if (this.data.chart) {
@@ -81,7 +81,7 @@ export class ReportItemChartComponent implements OnInit, OnDestroy {
             });
         if (toset) {
             let idx = -1;
-            this.charts.every(function (value, index, _arr) {
+            this.charts.every(function(value, index, _arr) {
                 if (value.id === toset) {
                     idx = index;
                     return false;

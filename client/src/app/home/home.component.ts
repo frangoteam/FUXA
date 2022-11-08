@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject, Subscription } from "rxjs";
+import { Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 
@@ -177,7 +177,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 currentLink = iframe.link;
             }
             iframe.hide = true;
-        })
+        });
         if (link) {
             let iframe = this.iframes.find(f => f.link === link);
             if (!iframe) {
@@ -244,10 +244,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (Utils.getEnumKey(NaviModeType, NaviModeType.fix) === this.hmi.layout.navigation.mode && this.matsidenav) {
             this.alarmPanelWidth = `calc(100% - ${this.matsidenav._getWidth()}px)`;
         }
-        let ele = document.getElementById("alarms-panel");
+        let ele = document.getElementById('alarms-panel');
         if (mode === 'expand') {
-            ele.classList.add("is-full-active");
-            // ele.classList.remove('is-active');			
+            ele.classList.add('is-full-active');
+            // ele.classList.remove('is-active');
             this.alarmsview.startAskAlarmsValues();
         } else if (mode === 'collapse') {
             ele.classList.add('is-active');
@@ -291,7 +291,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.showSidenav = 'over';
                     } else if (nvoid === NaviModeType.fix) {
                         this.showSidenav = 'side';
-                        if (this.matsidenav) this.matsidenav.open();
+                        if (this.matsidenav) {this.matsidenav.open();}
                     } else if (nvoid === NaviModeType.push) {
                         this.showSidenav = 'push';
                     }

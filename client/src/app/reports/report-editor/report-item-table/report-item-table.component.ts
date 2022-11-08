@@ -24,10 +24,10 @@ export class ReportItemTableComponent implements OnInit {
         public dialog: MatDialog,
         private translateService: TranslateService,
         private projectService: ProjectService,
-        @Inject(MAT_DIALOG_DATA) public data: ReportItemTable) { 
+        @Inject(MAT_DIALOG_DATA) public data: ReportItemTable) {
             if (this.data.columns.length <= 0) {
-                this.data.columns = [ <ReportTableColumn>{ 
-                    type: ReportTableColumnType.timestamp, 
+                this.data.columns = [ <ReportTableColumn>{
+                    type: ReportTableColumnType.timestamp,
                     tag: <Tag>{ label: 'Timestamp' },
                     align: 'left',
                     width: 'auto'
@@ -38,22 +38,22 @@ export class ReportItemTableComponent implements OnInit {
 
     ngOnInit() {
         Object.keys(this.dateRangeType).forEach(key => {
-            this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt });
+            this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt; });
         });
         Object.keys(this.intervalType).forEach(key => {
-            this.translateService.get(this.intervalType[key]).subscribe((txt: string) => { this.intervalType[key] = txt });
+            this.translateService.get(this.intervalType[key]).subscribe((txt: string) => { this.intervalType[key] = txt; });
         });
         Object.keys(this.functionType).forEach(key => {
-            this.translateService.get(this.functionType[key]).subscribe((txt: string) => { this.functionType[key] = txt });
+            this.translateService.get(this.functionType[key]).subscribe((txt: string) => { this.functionType[key] = txt; });
         });
     }
 
     onAddItem(index: number) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
-            data: { 
-                variableId: null, 
-                devices: Object.values(this.projectService.getDevices()), 
+            data: {
+                variableId: null,
+                devices: Object.values(this.projectService.getDevices()),
                 multiSelection: true,
                 deviceFilter: [ DeviceType.internal ]
             }
@@ -63,13 +63,13 @@ export class ReportItemTableComponent implements OnInit {
             if (result) {
                 let varsId = result.variablesId || [result.variableId];
                 varsId.forEach(tagId => {
-                    this.columns.splice(++index, 0, <ReportTableColumn>{ 
+                    this.columns.splice(++index, 0, <ReportTableColumn>{
                         tag: this.projectService.getTagFromId(tagId),
                         width: 'auto',
                         align: 'left',
                         function: Utils.getEnumKey(ReportFunctionType, ReportFunctionType.average)
                     });
-                })
+                });
             }
         });
     }

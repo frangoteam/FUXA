@@ -47,7 +47,7 @@ export class SetupComponent {
 
     /**
      * edit the graph configuration, bar and pie
-     * @param type 
+     * @param type
      */
     onGraphConfig(type: string) {
         this.onNoClick();

@@ -18,7 +18,7 @@ export class IframePropertyComponent implements OnInit {
 
     property: GaugeIframeProperty ;
 
-    constructor(private translateService: TranslateService) { 
+    constructor(private translateService: TranslateService) {
     }
 
     ngOnInit() {
@@ -32,7 +32,7 @@ export class IframePropertyComponent implements OnInit {
     private _reload() {
         if (!this.data.settings.property) {
             this.data.settings.property = <GaugeIframeProperty>{ address: null };
-        } 
+        }
         this.property = this.data.settings.property;
     }
 }

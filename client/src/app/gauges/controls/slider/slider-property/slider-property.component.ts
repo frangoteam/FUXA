@@ -32,7 +32,7 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
     orientationType = { horizontal: 'horizontal', vertical: 'vertical' };
     directionType = { ltr: 'ltr', rtl: 'rtl' };
     tooltipType = { none: 'none', hide: 'hide', show: 'show' };
-    staticScala = "";
+    staticScala = '';
 
 
     constructor(public dialogRef: MatDialogRef<SliderPropertyComponent>,
@@ -53,13 +53,13 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         Object.keys(this.orientationType).forEach(key => {
-            this.translateService.get('slider.property-' + this.orientationType[key]).subscribe((txt: string) => { this.orientationType[key] = txt });
+            this.translateService.get('slider.property-' + this.orientationType[key]).subscribe((txt: string) => { this.orientationType[key] = txt; });
         });
         Object.keys(this.directionType).forEach(key => {
-            this.translateService.get('slider.property-' + this.directionType[key]).subscribe((txt: string) => { this.directionType[key] = txt });
+            this.translateService.get('slider.property-' + this.directionType[key]).subscribe((txt: string) => { this.directionType[key] = txt; });
         });
         Object.keys(this.tooltipType).forEach(key => {
-            this.translateService.get('slider.property-tooltip-' + this.tooltipType[key]).subscribe((txt: string) => { this.tooltipType[key] = txt });
+            this.translateService.get('slider.property-tooltip-' + this.tooltipType[key]).subscribe((txt: string) => { this.tooltipType[key] = txt; });
         });
         this.sliderLayout = (this.options.orientation === 'vertical') ? this.layoutVertical : this.layoutHorizontal;
         this.options.pips.values.forEach(k => {
@@ -67,12 +67,12 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
                 this.staticScala += ';';
             }
             this.staticScala += k.toString();
-        });  
+        });
     }
 
     ngAfterViewInit() {
         this.setSliderOptions();
-    }    
+    }
 
     onNoClick(): void {
         this.dialogRef.close();
@@ -98,7 +98,7 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
                     let v = parseFloat(tk);
                     if (!isNaN(v)) {
                         this.options.pips.values.push(v);
-                    }                    
+                    }
                 });
             }
         } else if (opt === 'tooltipType') {
@@ -120,5 +120,5 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
         this.slider.setOptions(opt);
         this.slider.resize(this.sliderLayout.height, this.sliderLayout.width);
     }
-    
+
 }

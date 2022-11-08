@@ -31,7 +31,7 @@ export class TagOptionsComponent {
                 this.formGroup.controls.interval.disable();
                 this.formGroup.controls.changed.disable();
             }
-        })
+        });
 
         // check if edit a group
         if (this.data.tags.length > 0) {

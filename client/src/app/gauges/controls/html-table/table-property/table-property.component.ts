@@ -37,12 +37,12 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
 
     constructor(
         private dialog: MatDialog,
-        private translateService: TranslateService) { 
+        private translateService: TranslateService) {
         }
 
     ngOnInit() {
         Object.keys(this.lastRangeType).forEach(key => {
-            this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt });
+            this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
         });
         this._reload();
     }
@@ -75,20 +75,20 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         // }
 
         let dialogRef = this.dialog.open(TableCustomizerComponent, {
-            data: <ITableCustom> { 
-                columns: JSON.parse(JSON.stringify(this.options.columns)), 
+            data: <ITableCustom> {
+                columns: JSON.parse(JSON.stringify(this.options.columns)),
                 rows: JSON.parse(JSON.stringify(this.options.rows)),
                 type: <TableType>this.data.settings.property.type
             },
             position: { top: '60px' }
         });
 
-        dialogRef.afterClosed().subscribe((result: ITableCustom) => {    
+        dialogRef.afterClosed().subscribe((result: ITableCustom) => {
             if (result) {
                 this.options.columns = result.columns;
                 this.options.rows = result.rows;
                 this.onTableChanged();
-            } 
-        });   
+            }
+        });
     }
 }

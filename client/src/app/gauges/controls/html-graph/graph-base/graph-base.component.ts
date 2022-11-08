@@ -9,7 +9,7 @@ import { DaqQuery } from '../../../../_models/hmi';
 })
 export class GraphBaseComponent {
     @Output() onReload: EventEmitter<DaqQuery> = new EventEmitter();
-    
+
     id: string;
     isEditor: boolean;
     public static VerticalBarChartType: ChartType = 'bar';
@@ -18,7 +18,7 @@ export class GraphBaseComponent {
     setOptions? (options: any): void;
     setValue?(sigid: string, timestamp: any, sigvalue: any): void;
     setValues?(sigsid: string[], sigsvalues: any): void;
-    isOffline (): boolean { return false; }
+    isOffline(): boolean { return false; }
 
     public static getGridLines(options: GraphOptions): GridLineOptions {
         let result = <GridLineOptions>{ display: options.gridLinesShow };
@@ -57,43 +57,43 @@ export class GraphBaseComponent {
     }
 }
 
-export enum GraphThemeType { 
+export enum GraphThemeType {
     customise = 'customise',
-    dark = 'dark', 
+    dark = 'dark',
     light = 'light'
 }
 
 export interface GraphOptions extends ChartOptions {
-    panel?: { height: number, width: number };
-    type?: ChartType,
-    theme?: string,
-    offline?: boolean,
-    decimals?: number,
-    lastRange?: GraphRangeType,
-    dateGroup?: GraphDateGroupType,
-    borderWidth?: number,
-    gridLinesShow?: boolean,
-    gridLinesColor?: string,
+    panel?: { height: number; width: number };
+    type?: ChartType;
+    theme?: string;
+    offline?: boolean;
+    decimals?: number;
+    lastRange?: GraphRangeType;
+    dateGroup?: GraphDateGroupType;
+    borderWidth?: number;
+    gridLinesShow?: boolean;
+    gridLinesColor?: string;
     yAxes?: {
-        display?: boolean,
-        min: string
-        max: string,
-        stepSize: number,
-        fontSize: number,
-        fontColor: string
-    },
+        display?: boolean;
+        min: string;
+        max: string;
+        stepSize: number;
+        fontSize: number;
+        fontColor: string;
+    };
     xAxes?: {
-        display?: boolean,
-        fontSize: number,
-        fontColor: string
-    },
+        display?: boolean;
+        fontSize: number;
+        fontColor: string;
+    };
     legend?: {
-        display?: boolean,
-        position?: any,
-        align?: any,
+        display?: boolean;
+        position?: any;
+        align?: any;
         labels?: {
-            fontColor?: ChartColor,
-            fontSize?: number
-        }
-    }
+            fontColor?: ChartColor;
+            fontSize?: number;
+        };
+    };
 }

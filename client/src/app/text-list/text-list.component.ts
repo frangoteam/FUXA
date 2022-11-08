@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../_services/project.service';
 import { Text } from '../_models/text';
@@ -38,7 +38,7 @@ export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
 		this.dataSource.sort = this.sort;
     }
-    
+
     ngOnDestroy() {
 		try {
 			if (this.subscriptionLoad) {
@@ -47,7 +47,7 @@ export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
 		} catch (e) {
 		}
     }
-    
+
     onAddText() {
 		let text = new Text();
 		this.editText(text, 1);
@@ -60,7 +60,7 @@ export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
     onRemoveText(text: Text) {
 		this.editText(text, -1);
 	}
-    
+
     editText(text: Text, toAdd: number) {
 		let mtext: Text = JSON.parse(JSON.stringify(text));
         let dialogRef = this.dialog.open(DialogItemText, {
@@ -80,7 +80,7 @@ export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadTexts() {
-        this.dataSource.data = this.projectService.getTexts(); 
+        this.dataSource.data = this.projectService.getTexts();
 	}
 }
 
@@ -97,7 +97,7 @@ export class DialogItemText {
 
     constructor(
         public dialogRef: MatDialogRef<DialogItemText>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { 
+        @Inject(MAT_DIALOG_DATA) public data: any) {
             if (data.editmode > 0) {
                 data.text.name = this.getNextTextId();
             }
@@ -112,7 +112,7 @@ export class DialogItemText {
 
     onOkClick(): void {
         if (this.data.editmode < 0 || this.checkValid())
-            this.dialogRef.close(this.data.text);
+            {this.dialogRef.close(this.data.text);}
     }
 
     checkValid() {

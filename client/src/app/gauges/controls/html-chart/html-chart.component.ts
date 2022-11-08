@@ -7,15 +7,15 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { ChartUplotComponent, ChartOptions } from './chart-uplot/chart-uplot.component';
 
 @Component({
-    selector: "html-chart",
-    templateUrl: "./html-chart.component.html",
-    styleUrls: ["./html-chart.component.css"]
+    selector: 'html-chart',
+    templateUrl: './html-chart.component.html',
+    styleUrls: ['./html-chart.component.css']
 })
 export class HtmlChartComponent extends GaugeBaseComponent {
-    static TypeTag = "svg-ext-html_chart";
-    static LabelTag = "HtmlChart";
-    static prefixD = "D-HXC_";
-    
+    static TypeTag = 'svg-ext-html_chart';
+    static LabelTag = 'HtmlChart';
+    static prefixD = 'D-HXC_';
+
     constructor(private resolver: ComponentFactoryResolver) {
         super();
     }

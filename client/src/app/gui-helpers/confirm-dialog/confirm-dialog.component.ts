@@ -12,7 +12,7 @@ export class ConfirmDialogComponent {
 
     constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any) {
-    
+
         this.msgtoconfirm = this.data.msg;
     }
 

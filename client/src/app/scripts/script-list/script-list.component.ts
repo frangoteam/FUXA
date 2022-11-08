@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Inject, ViewChild } from '
 import { MatDialog } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
@@ -97,7 +97,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         if (script.parameters) {
             let result = '';
             Object.values(script.parameters).forEach(param => {
-                if (result) result += ', ';
+                if (result) {result += ', ';}
                 result += `${param.name}: ${param.type}`;
             });
             return result;
@@ -143,7 +143,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
                 script.permission = result.permission;
                 this.projectService.setScript(script, null).subscribe(() => {
                     this.loadScripts();
-                });                
+                });
             }
         });
     }
@@ -159,12 +159,12 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
                 script.mode = result.mode;
                 this.projectService.setScript(script, null).subscribe(() => {
                     this.loadScripts();
-                });                
+                });
             }
         });
     }
 
     private loadScripts() {
-        this.dataSource.data = this.projectService.getScripts(); 
+        this.dataSource.data = this.projectService.getScripts();
 	}
 }

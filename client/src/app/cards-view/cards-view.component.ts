@@ -18,7 +18,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     @Input() view: View;
     @Input() hmi: Hmi;
     @Input() gaugesManager: GaugesManager;        // gauges.component
-    @Output() editCard: EventEmitter<CardWidget> = new EventEmitter()
+    @Output() editCard: EventEmitter<CardWidget> = new EventEmitter();
 
     gridOptions: GridsterConfig;
     dashboard: Array<GridsterItem> = [];
@@ -28,7 +28,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
     widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
 
-    constructor(private changeDetector: ChangeDetectorRef) { 
+    constructor(private changeDetector: ChangeDetectorRef) {
         this.gridOptions = <GridsterConfig> new GridOptions();
         this.gridOptions.itemChangeCallback = this.itemChange;
         this.gridOptions.itemResizeCallback = this.itemChange;
@@ -101,7 +101,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 }
                 this.changeDetector.detectChanges();
             }
-        }
+        };
         this.dashboard.push(item);
     }
 
@@ -115,7 +115,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
 
     getWindgetViewName() {
         let widgetType = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
-        let viewsName = this.dashboard.filter((c) => c.card.type === widgetType && c.card.data).map((c) => { return c.card.data })
+        let viewsName = this.dashboard.filter((c) => c.card.type === widgetType && c.card.data).map((c) => c.card.data);
         return viewsName;
     }
 
@@ -132,7 +132,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
             let widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
             let widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
             if (item.card.type === widgetAlarms || item.card.type === widgetIframe) {
-                itemComponent.el.classList.add("card-html");
+                itemComponent.el.classList.add('card-html');
             }
         }
     }
@@ -147,7 +147,7 @@ export class NgxNouisliderOptions {
     range = { min: 0, max: 100 };
     step = 1;
     pips = { mode: 'values', values: [0, 50, 100], density: 4 };
-    tooltip = { type: 'none', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 }
+    tooltip = { type: 'none', decimals: 0, background: '#FFF', color: '#000', fontSize: 12 };
 }
 
 export class GridOptions {

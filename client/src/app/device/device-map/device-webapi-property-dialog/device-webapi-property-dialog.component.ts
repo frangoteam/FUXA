@@ -23,7 +23,7 @@ export class DeviceWebapiPropertyDialogComponent implements OnInit, OnDestroy {
         private hmiService: HmiService,
         private translateService: TranslateService,
 		public dialogRef: MatDialogRef<DeviceWebapiPropertyDialogComponent>,
-		@Inject(MAT_DIALOG_DATA) public data: IDataDevice) { 
+		@Inject(MAT_DIALOG_DATA) public data: IDataDevice) {
         }
 
     ngOnInit() {
@@ -31,7 +31,7 @@ export class DeviceWebapiPropertyDialogComponent implements OnInit, OnDestroy {
 
         this.subscriptionDeviceTagsRequest = this.hmiService.onDeviceTagsRequest.subscribe(res => {
 			if (res.result && res.result.tags) {
-                this.translateService.get('msg.device-tags-request-result', { value: res.result.newTagsCount, current: res.result.tags.length }).subscribe((txt: string) => { this.message = txt });
+                this.translateService.get('msg.device-tags-request-result', { value: res.result.newTagsCount, current: res.result.tags.length }).subscribe((txt: string) => { this.message = txt; });
                 if (res.result.newTagsCount) {
                     for (let i = 0; i < res.result.tags.length; i++) {
                         this.data.device.tags[res.result.tags[i][0].id] = res.result.tags[i][0];
@@ -70,5 +70,5 @@ export class DeviceWebapiPropertyDialogComponent implements OnInit, OnDestroy {
 }
 
 export interface IDataDevice {
-    device: Device,
+    device: Device;
 }

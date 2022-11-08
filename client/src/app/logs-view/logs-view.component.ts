@@ -51,7 +51,7 @@ export class LogsViewComponent implements AfterViewInit {
     loadLogs(logfile: string) {
         this.appService.showLoading(true);
         this.diagnoseService.getLogs(<LogsRequest>{ file: logfile }).subscribe(result => {
-            this.content = result.body.replace(new RegExp('\n', 'g'), "<br />");
+            this.content = result.body.replace(new RegExp('\n', 'g'), '<br />');
             this.appService.showLoading(false);
         }, err => {
             this.appService.showLoading(false);

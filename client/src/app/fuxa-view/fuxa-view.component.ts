@@ -12,7 +12,7 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType } from '../_models/hmi';
@@ -78,8 +78,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             if (this.variablesMapping) {
                 this.variablesMapping.forEach(variableMapping => {
-                    this.plainVariableMapping[variableMapping.from.variableId] = variableMapping.to.variableId
-                })
+                    this.plainVariableMapping[variableMapping.from.variableId] = variableMapping.to.variableId;
+                });
             }
         } catch (err) {
             console.error(err);
@@ -95,7 +95,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(
                 load => {this.projectService.initScheduledScripts();
-            });             
+            });
         }
         try {
             this.gaugesManager.emitBindedSignals(this.id);
@@ -175,7 +175,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.changeDetector.detectChanges();
         this.loadWatch(this.view);
-        // // @ts-ignore 
+        // // @ts-ignore
         // window.dispatchEvent(new window.Event('resize'));
     }
 
@@ -320,7 +320,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             this.applyVariableMappingTo(event.actoptions);
                         }
                     }
-                })
+                });
             }
 
             if (property.ranges) {
@@ -328,7 +328,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     if (range.textId) {
                         this.applyVariableMappingTo(range.textId);
                     }
-                })
+                });
             }
         }
         return items;
@@ -374,23 +374,23 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (svgele) {
             let clickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
             if (clickEvents && clickEvents.length > 0) {
-                svgele.click(function (ev) {
+                svgele.click(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                 });
-                svgele.touchstart(function (ev) {
+                svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                 });
-                
+
             }
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
             if (mouseDownEvents && mouseDownEvents.length > 0) {
-                svgele.mousedown(function (ev) {
+                svgele.mousedown(function(ev) {
                     self.runEvents(self, ga, ev, mouseDownEvents);
                 });
             }
             let mouseUpEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
             if (mouseUpEvents && mouseUpEvents.length > 0) {
-                svgele.mouseup(function (ev) {
+                svgele.mouseup(function(ev) {
                     self.runEvents(self, ga, ev, mouseUpEvents);
                 });
             }
@@ -450,7 +450,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         let self = this;
         // let htmlevent = this.getHtmlElement(ga.id);
         if (htmlevent.type === 'key-enter') {
-            htmlevent.dom.onkeydown = function (ev) {
+            htmlevent.dom.onkeydown = function(ev) {
                 if (ev.key == 'Enter') {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
@@ -469,7 +469,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             };
             if (this.hmi.layout.inputdialog === 'true') {
-                htmlevent.dom.onfocus = function (ev) {
+                htmlevent.dom.onfocus = function(ev) {
                     if (ev.currentTarget) {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
 
@@ -487,12 +487,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             self.inputValueRef.nativeElement.focus();
                         }, 300);
                     }
-                }
+                };
             }else{
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
 
-                htmlevent.dom.onfocus = function (ev) {
+                htmlevent.dom.onfocus = function(ev) {
                     if(htmlevent.ga.property){
                         let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
                         if(unit && htmlevent.dom.value.endsWith(unit)){
@@ -501,9 +501,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                         htmlevent.dom.select();
                     }
-                }
+                };
 
-                htmlevent.dom.onblur = function (ev) {
+                htmlevent.dom.onblur = function(ev) {
                     // Update variable value in case it has changed while input had focus
                     let variables = self.gaugesManager.getBindSignalsValue(htmlevent.ga);
                     let svgeles = FuxaViewComponent.getSvgElements(htmlevent.ga.id);
@@ -513,15 +513,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
-                }
+                };
 
                 htmlevent.dom.oninput = function(ev){
-                    // Remove any error message when input changes 
+                    // Remove any error message when input changes
                     htmlevent.dom.setCustomValidity('');
-                }
+                };
             }
         } else if (htmlevent.type === 'change') {
-            htmlevent.dom.onchange = function (ev) {
+            htmlevent.dom.onchange = function(ev) {
                 htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                 htmlevent.id = htmlevent.dom.id;
                 htmlevent.value = htmlevent.dom.value;
@@ -727,7 +727,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 }
                 if (input && !Utils.isNullOrUndefined(input.value)) {
-                    let variableId = this.fetchVariableId(event) || ga.property.variableId
+                    let variableId = this.fetchVariableId(event) || ga.property.variableId;
                     this.gaugesManager.putSignalValue(variableId, input.value);
                 }
             }
@@ -803,7 +803,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     inputOnChange(){
-        // Remove any error message when input changes 
+        // Remove any error message when input changes
         this.inputValueRef.nativeElement.setCustomValidity('');
     }
 

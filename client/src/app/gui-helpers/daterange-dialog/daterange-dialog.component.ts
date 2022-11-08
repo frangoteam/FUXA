@@ -17,7 +17,7 @@ export class DaterangeDialogComponent {
     constructor(public dialogRef: MatDialogRef<DaterangeDialogComponent>) { }
 
     onOkClick() {
-        let dateRange = <IDateRange> { start: this.dtrange.startDate.toDate().getTime(), 
+        let dateRange = <IDateRange> { start: this.dtrange.startDate.toDate().getTime(),
             end: this.dtrange.endDate.toDate().getTime() };
         this.dialogRef.close(dateRange);
     }

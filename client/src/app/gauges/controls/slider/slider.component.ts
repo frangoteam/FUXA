@@ -34,7 +34,7 @@ export class SliderComponent {
         return GaugeDialogType.Slider;
     }
 
-    static bindEvents(ga: GaugeSettings, slider?: NgxNouisliderComponent, callback?:any): Event {
+    static bindEvents(ga: GaugeSettings, slider?: NgxNouisliderComponent, callback?: any): Event {
         if (slider) {
             slider.bindUpdate((val) => {
                 let event = new Event();
@@ -98,7 +98,7 @@ export class SliderComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
             let htmlSlider = Utils.searchTreeStartWith(ele, this.prefix);
-            if (htmlSlider) {        
+            if (htmlSlider) {
                 const factory = resolver.resolveComponentFactory(NgxNouisliderComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
                 htmlSlider.innerHTML = '';

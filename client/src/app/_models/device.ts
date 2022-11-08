@@ -1,4 +1,4 @@
-import { Utils } from "../_helpers/utils";
+import { Utils } from '../_helpers/utils';
 
 export class Device {
     /** Device id, GUID */
@@ -78,11 +78,11 @@ export class Tag {
         divisor: 'Value divisor, used by Modbus',
         options: 'Options is a string JSON object, used for WebAPI and MQTT, pubs: items to publish | subs: items to subscribe',
         init: 'Init value',
-        daq: { 
-            enabled: 'Daq enabled storage', 
-            interval: 'min storage interval (without change value)' 
+        daq: {
+            enabled: 'Daq enabled storage',
+            interval: 'min storage interval (without change value)'
         },
-    }
+    };
 }
 
 export class TagDaq {
@@ -92,7 +92,7 @@ export class TagDaq {
     interval: number;
     /** Save if the value was changed, the check is in device polling interval */
     changed: boolean;
-    
+
     constructor(_enabled: boolean, _changed: boolean, _interval: number) {
         this.enabled = _enabled;
         this.changed = _changed;
@@ -139,7 +139,7 @@ export class DeviceNetProperty {
         // options: 'Options settings used for Modbus tockenized frame if "true" frames without unassigned address. In EthernetIP routing rack/slot',
         // method: 'Method flag used for WebAPI (GET/POST)',
         // format: 'Data format flag used for WebAPI (CSV/JSON)',
-    }
+    };
 }
 
 export class DeviceWebApiProperty {
@@ -251,7 +251,7 @@ export const DEVICE_PREFIX = 'd_';
 export const TAG_PREFIX = 't_';
 
 export class DevicesUtils {
-    static getDeviceTagText (devices: Device[], id: string): string {
+    static getDeviceTagText(devices: Device[], id: string): string {
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags[id]) {
                 return `${devices[i].name} - ${devices[i].tags[id].name}`;
@@ -260,7 +260,7 @@ export class DevicesUtils {
         return '';
     }
 
-    static getDeviceFromTagId (devices: Device[], id: string): Device {
+    static getDeviceFromTagId(devices: Device[], id: string): Device {
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags[id]) {
                 return devices[i];
@@ -269,7 +269,7 @@ export class DevicesUtils {
         return null;
     }
 
-    static getTagFromTagId (devices: Device[], id: string): Tag {
+    static getTagFromTagId(devices: Device[], id: string): Tag {
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags[id]) {
                 return devices[i].tags[id];
@@ -278,7 +278,7 @@ export class DevicesUtils {
         return null;
     }
 
-    static getTagFromTagAddress (device: Device, address: string): Tag {
+    static getTagFromTagAddress(device: Device, address: string): Tag {
         return <Tag>Object.values(device.tags).find((tag: Tag) => tag.address === address);
     }
 
@@ -293,11 +293,11 @@ export class DevicesUtils {
 
     /**
      * converter of devices array to CSV format
-     * @param devices 
-     * @returns 
+     * @param devices
+     * @returns
      */
     static devicesToCsv(devices: Device[]): string {
-        let result = '';        
+        let result = '';
         // devices list
         let devicesHeaderDescription = `!! CSV separator property convertion to "~"${DevicesUtils.lineDelimiter}`;
         let devicesHeader = `${DevicesUtils.lineSectionHeader}header${DevicesUtils.columnDelimiter}`;
@@ -353,13 +353,13 @@ export class DevicesUtils {
         }
         result += `${tagsHeaderDescription}${DevicesUtils.lineDelimiter}`;
         result += `${tagsHeader}${DevicesUtils.lineDelimiter}${tagsData}`;
-        result += `${DevicesUtils.lineDelimiter}`;        
+        result += `${DevicesUtils.lineDelimiter}`;
         return result;
     }
 
     /**
      * convert string source of CSV to Device array
-     * @param source 
+     * @param source
      */
     static csvToDevices(source: string): Device[] {
         try {
@@ -376,7 +376,7 @@ export class DevicesUtils {
                     devices[device.id] = device;
                 } else if (line.startsWith(DevicesUtils.lineTag)) {
                     // Tag
-                    let result = DevicesUtils.line2Tag(line, tagKeyLength);                    
+                    let result = DevicesUtils.line2Tag(line, tagKeyLength);
                     if (!devices[result.deviceId]) {
                         throw new Error(`Device don't exist: ${line}`);
                     }
@@ -418,9 +418,9 @@ export class DevicesUtils {
         device.name = items[2].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
         device.enabled = items[3].toLowerCase() === 'true' ? true : false;
         device.type = <DeviceType>items[4];
-        device.polling = parseInt(items[5]) || 1000, 
-        device.property = <DeviceNetProperty> { 
-            address: items[6], 
+        device.polling = parseInt(items[5]) || 1000,
+        device.property = <DeviceNetProperty> {
+            address: items[6],
             port: items[7],
             slot: items[8],
             rack: items[9],
@@ -432,7 +432,7 @@ export class DevicesUtils {
             options: items[15],
             method: items[16],
             format: items[17]
-        }
+        };
         device.tags = {};
         return device;
     }
@@ -450,7 +450,7 @@ export class DevicesUtils {
         return result;
     }
 
-    static line2Tag(line: string, tagKeyLength: number): { tag: Tag, deviceId: string } {
+    static line2Tag(line: string, tagKeyLength: number): { tag: Tag; deviceId: string } {
         const items = line.split(DevicesUtils.columnDelimiter);
         if (items.length < tagKeyLength - 1) {
             throw new Error(`Format Error: ${items.length}/${tagKeyLength} ${line}`);
@@ -472,7 +472,7 @@ export class DevicesUtils {
             enabled: items[11] === 'true' ? true : false,
             changed: true,
             interval: parseInt(items[12]) || 60
-        }
+        };
         return { tag, deviceId };
     }
     //#endregion

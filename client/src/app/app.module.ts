@@ -305,7 +305,7 @@ export function createTranslateLoader(http: HttpClient) {
         MatSelectSearchModule,
         ToastrModule.forRoot({
             timeOut: 3000,
-            positionClass: "toast-bottom-right",
+            positionClass: 'toast-bottom-right',
             preventDuplicates: false
         }),
         TranslateModule.forRoot({

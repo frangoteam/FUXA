@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { View } from "../../../_models/hmi";
+import { View } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-variable-map',
@@ -20,8 +20,8 @@ export class FlexVariableMapComponent implements OnInit {
         if (!this.value) {
             this.value = {};
         }
-        this.value.from = this.value.from || {}
-        this.value.to = this.value.to || {}
+        this.value.from = this.value.from || {};
+        this.value.to = this.value.to || {};
     }
 
     onValueChange() {

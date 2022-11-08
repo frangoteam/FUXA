@@ -186,7 +186,7 @@ export class Node {
 }
 
 export enum NodeType {
-    Unspecified = 0,    // 
+    Unspecified = 0,    //
     Object = 1,         // OPCUA 'Object',
     Variable = 2,       // OPCUA 'Variable',
     Methode = 4,        // OPCUA 'Methode'
@@ -201,6 +201,6 @@ export enum NodeType {
 }
 
 export enum TreeType {
-    Standard = 'standard',  // ask expand, 
+    Standard = 'standard',  // ask expand,
     ToDefine = 'todefine'   // property to define (key and value)
 }

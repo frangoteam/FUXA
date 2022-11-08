@@ -30,9 +30,9 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
     actionsSupported: any;
     defaultColor = Utils.defaultColor;
     pipepath = { bk: null, fg: null, hp: null };
-    
+
     constructor(public dialogRef: MatDialogRef<PipePropertyComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: any) { 
+                @Inject(MAT_DIALOG_DATA) public data: any) {
     }
 
     ngOnInit() {

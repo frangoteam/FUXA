@@ -38,7 +38,7 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         Object.keys(this.schedulingType).forEach(key => {
-            this.translateService.get(this.schedulingType[key]).subscribe((txt: string) => { this.schedulingType[key] = txt });
+            this.translateService.get(this.schedulingType[key]).subscribe((txt: string) => { this.schedulingType[key] = txt; });
         });
     }
 
@@ -101,6 +101,6 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadReports() {
-        this.dataSource.data = this.projectService.getReports().sort((a:Report, b:Report) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+        this.dataSource.data = this.projectService.getReports().sort((a: Report, b: Report) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
     }
 }

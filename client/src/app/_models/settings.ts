@@ -31,7 +31,7 @@ export class SmtpSettings {
             this.port = smtp.port;
             this.mailsender = smtp.mailsender;
             this.username = smtp.username;
-            this.password = smtp.password;    
+            this.password = smtp.password;
         }
     }
 }

@@ -20,14 +20,14 @@ export class SettingsService {
     constructor(private http: HttpClient,
         private fuxaLanguage: TranslateService,
         private translateService: TranslateService,
-        private toastr: ToastrService) { 
+        private toastr: ToastrService) {
     }
-    
+
     init() {
         // this language will be used as a fallback when a translation isn't found in the current language
 		this.fuxaLanguage.setDefaultLang('en');
 		// the lang to use, if the lang isn't available, it will use the current loader to get them
-		this.fuxaLanguage.use('en');        
+		this.fuxaLanguage.use('en');
         // to load saved settings
         if (environment.serverEnabled) {
             this.http.get<any>(this.endPointConfig + '/api/settings').subscribe(result => {
@@ -59,8 +59,8 @@ export class SettingsService {
             this.appSettings.tokenExpiresIn = settings.tokenExpiresIn;
             dirty = true;
         }
-        if (settings.smtp && !(settings.smtp.host === this.appSettings.smtp.host && settings.smtp.port === this.appSettings.smtp.port && 
-                settings.smtp.mailsender === this.appSettings.smtp.mailsender && settings.smtp.username === this.appSettings.smtp.username && 
+        if (settings.smtp && !(settings.smtp.host === this.appSettings.smtp.host && settings.smtp.port === this.appSettings.smtp.port &&
+                settings.smtp.mailsender === this.appSettings.smtp.mailsender && settings.smtp.username === this.appSettings.smtp.username &&
                 settings.smtp.password === this.appSettings.smtp.password)) {
             this.appSettings.smtp = new SmtpSettings(settings.smtp);
             dirty = true;
@@ -87,7 +87,7 @@ export class SettingsService {
             let header = new HttpHeaders({ 'Content-Type': 'application/json' });
             this.http.post<any>(this.endPointConfig + '/api/alarmsClear', { headers: header, params: all }).subscribe(result => {
                 var msg = '';
-                this.translateService.get('msg.alarms-clear-success').subscribe((txt: string) => { msg = txt });
+                this.translateService.get('msg.alarms-clear-success').subscribe((txt: string) => { msg = txt; });
                 this.toastr.success(msg);
             }, err => {
                 console.error(err);
@@ -98,9 +98,9 @@ export class SettingsService {
 
     private notifySaveError(err: any) {
         let msg = '';
-        this.translateService.get('msg.settings-save-error').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.settings-save-error').subscribe((txt: string) => { msg = txt; });
         if (err.status === 401) {
-            this.translateService.get('msg.settings-save-unauthorized').subscribe((txt: string) => { msg = txt });
+            this.translateService.get('msg.settings-save-unauthorized').subscribe((txt: string) => { msg = txt; });
         }
         this.toastr.error(msg, '', {
             timeOut: 3000,
@@ -124,7 +124,7 @@ export class SettingsService {
 
     notifyEditorLocked() {
         var msg = '';
-        this.translateService.get('msg.editor-mode-locked').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.editor-mode-locked').subscribe((txt: string) => { msg = txt; });
         this.toastr.warning(msg, '', {
             timeOut: 3000,
             closeButton: true,
