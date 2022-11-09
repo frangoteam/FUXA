@@ -126,6 +126,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "sourceMap": false,
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
