@@ -1,5 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {FlexVariableMapComponent} from './flex-variable-map.component';
 
@@ -7,7 +7,7 @@ describe('FlexVariableMapComponent', () => {
   let component: FlexVariableMapComponent;
   let fixture: ComponentFixture<FlexVariableMapComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FlexVariableMapComponent]
     })
