@@ -49,7 +49,7 @@
     "ngx-toastr": "^13.2.0",
     "panzoom": "^9.4.3",
     "pdfmake": "^0.2.6",
-    "rxjs": "~6.5.4",
+    "rxjs": "~6.6.7",
     "socket.io-client": "^2.5.0",
     "tslib": "^2.0.0",
     "uplot": "1.6.15",
