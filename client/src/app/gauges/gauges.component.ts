@@ -89,10 +89,10 @@ export class GaugesManager {
             try {
                 if (this.mapChart[message.gid]) {
                     let gauge: ChartUplotComponent = this.mapChart[message.gid];
-                    gauge.setValues(message.values);
+                    gauge.setValues(message.result);
                 } else if (this.mapTable[message.gid]) {
                     let gauge: DataTableComponent = this.mapTable[message.gid];
-                    gauge.setValues(message.values);
+                    gauge.setValues(message.result);
                 }
             } catch (err) {
 
