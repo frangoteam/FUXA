@@ -26,7 +26,7 @@ export class HmiService {
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
-    @Output() onGoTo: EventEmitter<string> = new EventEmitter();
+    @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
 
     public static separator = '^~^';
     public hmi: Hmi;
@@ -498,7 +498,7 @@ export class HmiService {
         switch (message.command) {
             case ScriptCommandEnum.SETVIEW:
                 if (message.params && message.params.length) {
-                    this.onGoTo.emit(message.params[0]);
+                    this.onGoTo.emit(<ScriptSetView>{ viewName: message.params[0], force: message.params[1] });
                 }
                 break;
         }
@@ -573,4 +573,9 @@ const ScriptCommandEnum = {
 interface ScriptCommandMessage {
     command: string;
     params: any[];
+}
+
+export interface ScriptSetView {
+    viewName: string;
+    force: boolean;
 }
