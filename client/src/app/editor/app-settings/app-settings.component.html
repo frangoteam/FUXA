@@ -24,7 +24,7 @@
                     <div class="blk mt20">
                         <div class="my-form-field">
                             <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
-                            <mat-icon class="my-form-field-info" matTooltip="{{authenticationTooltip}}">info</mat-icon>
+                            <mat-icon class="my-form-field-info" matTooltip="{{authenticationTooltip}}">error_outline</mat-icon>
                             <mat-select [(value)]="authentication" style="width: 320px; display: block;">
                                 <mat-option *ngFor="let auth of authType" [value]="auth.value">
                                     {{ auth.text }}
