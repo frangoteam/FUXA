@@ -188,8 +188,8 @@ function ScriptsManager(_runtime) {
         return sysFncs;
     }
 
-    var _setCommandView = function (view) {
-        let command = { command: ScriptCommandEnum.SETVIEW, params: [view] };
+    var _setCommandView = function (view, force) {
+        let command = { command: ScriptCommandEnum.SETVIEW, params: [view, force] };
         runtime.scriptSendCommand(command);
     }
 }

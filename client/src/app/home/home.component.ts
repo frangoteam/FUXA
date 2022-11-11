@@ -10,7 +10,7 @@ import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 
-import { HmiService } from '../_services/hmi.service';
+import { HmiService, ScriptSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
@@ -90,8 +90,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionAlarmsStatus = this.hmiService.onAlarmsStatus.subscribe(event => {
                 this.setAlarmsStatus(event);
             });
-            this.subscriptiongoTo = this.hmiService.onGoTo.subscribe(viewName => {
-                this.onGoToPage(this.projectService.getViewId(viewName));
+            this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
+                this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
         }
         catch (err) {
@@ -130,11 +130,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onGoToPage(event: string) {
-        if (event === this.viewAsAlarms) {
+    onGoToPage(viewId: string, force: boolean = false) {
+        if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
-        } else {
-            const view = this.hmi.views.find(x => x.id === event);
+            this.checkToCloseSideNav();
+        } else if (viewId !== this.homeView.id || force) {
+            const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
             this.changeDetector.detectChanges();
@@ -150,8 +151,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
             this.onAlarmsShowMode('close');
+            this.checkToCloseSideNav();
         }
-        this.checkToCloseSideNav();
     }
 
     onGoToLink(event: string) {
