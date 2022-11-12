@@ -1,12 +1,10 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { FlexInputComponent } from '../flex-input/flex-input.component';
 import { GaugeProperty, IPropertyVariable } from '../../../_models/hmi';
 import { Device, Tag } from '../../../_models/device';
-import { HmiService } from '../../../_services/hmi.service';
 import { Utils } from '../../../_helpers/utils';
 
 interface Variable {

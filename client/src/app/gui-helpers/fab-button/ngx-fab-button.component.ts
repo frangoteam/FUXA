@@ -1,11 +1,10 @@
-import { Observable, Subject, Subscription, BehaviorSubject } from 'rxjs';
+import { Subject, Subscription, BehaviorSubject } from 'rxjs';
 import { NgxFabItemButtonComponent } from './ngx-fab-item-button.component';
 import {
     Component,
     Input,
     ContentChildren,
     ElementRef,
-    HostListener,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     AfterContentInit,

@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule, Provider } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -65,7 +65,6 @@ import { ResourcesService } from './_services/resources.service';
 import { ResWebApiService } from './_services/rcgi/reswebapi.service';
 import { ResDemoService } from './_services/rcgi/resdemo.service';
 import { ResClientService } from './_services/rcgi/resclient.service';
-import { ResourceStorageService } from './_services/rcgi/resource-storage.service';
 import { ProjectService } from './_services/project.service';
 import { HmiService } from './_services/hmi.service';
 import { AppService } from './_services/app.service';
@@ -141,7 +140,6 @@ import { ChartUplotComponent } from './gauges/controls/html-chart/chart-uplot/ch
 import { GridsterModule } from 'angular-gridster2';
 
 import { httpInterceptorProviders } from './_helpers/auth-interceptor';
-import { environment } from '../environments/environment';
 import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-bar.component';
 import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
 import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';

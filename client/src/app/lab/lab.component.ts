@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../_services/project.service';
 import { AppService } from '../_services/app.service';
-import { Hmi, View, GaugeSettings } from '../_models/hmi';
+import { Hmi, View } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { TesterService } from '../tester/tester.service';
 import { TesterComponent } from '../tester/tester.component';

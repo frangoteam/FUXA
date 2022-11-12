@@ -9,12 +9,11 @@ import { Utils } from '../../_helpers/utils';
 import { ReportItemTextComponent } from './report-item-text/report-item-text.component';
 import { ReportItemTableComponent } from './report-item-table/report-item-table.component';
 import { ReportItemAlarmsComponent } from './report-item-alarms/report-item-alarms.component';
-import { utils } from 'protractor';
 import { AlarmPropertyType, AlarmsType } from '../../_models/alarm';
 import { ReportItemChartComponent } from './report-item-chart/report-item-chart.component';
 import { ResourcesService } from '../../_services/resources.service';
 import { forkJoin, Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({

@@ -1,9 +1,8 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Input } from '@angular/core';
+import { Component, ViewChild, OnDestroy, Input } from '@angular/core';
 
-import { ChartData, ChartOptions } from 'chart.js';
 import { GraphBaseComponent } from '../graph-base/graph-base.component';
-import { Label, BaseChartDirective } from 'ng2-charts';
-import { GraphType, GraphSource } from '../../../../_models/graph';
+import { BaseChartDirective } from 'ng2-charts';
+import { GraphSource } from '../../../../_models/graph';
 
 @Component({
     selector: 'app-graph-pie',

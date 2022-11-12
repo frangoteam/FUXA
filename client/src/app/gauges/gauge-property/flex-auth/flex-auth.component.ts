@@ -1,7 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import { GaugeProperty } from '../../../_models/hmi';
 import { DialogGaugePermission } from '../../gauge-property/gauge-property.component';
 
 @Component({

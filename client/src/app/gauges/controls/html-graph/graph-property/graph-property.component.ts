@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, AfterViewInit, Input, ElementRef, ViewChild, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input, Output, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';

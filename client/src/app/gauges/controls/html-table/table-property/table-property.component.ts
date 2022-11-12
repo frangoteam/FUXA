@@ -1,12 +1,12 @@
 import { Component, EventEmitter, OnInit, Input, Output, ViewChild, OnDestroy } from '@angular/core';
-import { Subject, ReplaySubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { TableType, TableOptions, TableColumn, TableRow, TableCellType, TableCellAlignType, TableRangeType } from '../../../../_models/hmi';
+import { TableType, TableCellType, TableCellAlignType, TableRangeType } from '../../../../_models/hmi';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { TableCustomizerComponent, ITableCustom } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
