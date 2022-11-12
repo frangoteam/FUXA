@@ -1,4 +1,4 @@
-@import "~material-design-icons/iconfont/material-icons.css";
+@import 'material-icons/iconfont/material-icons.css';
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~ngx-toastr/toastr.css";
 @import "~angular2-draggable/css/resizable.min.css";
@@ -506,14 +506,14 @@ app-root {
     background-color: var(--formInputBackground);
 }
 
+
 .my-form-field-info {
-    color:rgba(0, 0, 0, 0.28);
+    color:rgba(210, 210, 210, 0.5);
     padding-left: 10px;
-    display: inline-block !important;
-    height: 18px !important;
-    width: 18x !important;
+    display: inline-block;
+    height: 18px;
+    width: 18x;
     font-size: 18px;
-    vertical-align: top;
 }
 
 .my-form-readonly-input {
