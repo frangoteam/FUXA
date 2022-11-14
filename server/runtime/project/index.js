@@ -130,7 +130,7 @@ function load() {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.REPORTS}' ${err}`);
                                 callback(err);
                             }); 
-                        }                        
+                        }
                     ],
                     async function (err) {
                         if (err) {
@@ -610,7 +610,7 @@ function setProject(prjcontent) {
                             for (var i = 0; i < scripts.length; i++) {
                                 scs.push({ table: prjstorage.TableType.SCRIPTS, name: scripts[i].id, value: scripts[i] });
                             }
-                        }     
+                        }
                     } else if (key === 'reports') {
                         // reports
                         var reports = prjcontent[key];
@@ -618,7 +618,7 @@ function setProject(prjcontent) {
                             for (var i = 0; i < reports.length; i++) {
                                 scs.push({ table: prjstorage.TableType.REPORTS, name: reports[i].id, value: reports[i] });
                             }
-                        }     
+                        }
                     } else {
                         // charts, graphs, version
                         scs.push({ table: prjstorage.TableType.GENERAL, name: key, value: prjcontent[key] });
@@ -926,7 +926,7 @@ const ProjectDataCmdType = {
     SetScript: 'set-script',
     DelScript: 'del-script',
     SetReport: 'set-report',
-    DelReport: 'del-report',    
+    DelReport: 'del-report',
 }
 
 module.exports = {
