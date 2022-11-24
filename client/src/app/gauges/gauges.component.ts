@@ -728,11 +728,7 @@ export class GaugesManager {
         }
         if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
             // prepare attribute
-            let chartRange = ChartRangeType;
-            Object.keys(chartRange).forEach(key => {
-                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt; });
-            });
-            let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
+            let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, ChartRangeType);
             if (gauge) {
                 this.setChartPropety(gauge, ga.property);
                 this.mapChart[ga.id] = gauge;
