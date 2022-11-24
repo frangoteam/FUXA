@@ -32,7 +32,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private projectService: ProjectService,
 		private settingsService: SettingsService,
 		private translateService: TranslateService,
-		location: Location) {
+		location: Location
+		) {
 		this.location = location;
 	}
 
@@ -122,9 +123,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.fabmenu.toggle();
 		//TODO!
         if (!this.location.path().includes(goto) && ['home', 'lab'].indexOf(goto) !== -1) {
-			setTimeout(() => {
-				this.projectService.notifyToLoadHmi();
-			}, 500);
+			if (goto === 'lab') {
+				this.router.navigate(['']);
+				setTimeout(() => {
+					this.router.navigate([goto]);
+				}, 0);
+			}
 		}
 	}
 }
