@@ -234,19 +234,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.gaugesManager.checkElementToResize(ga, this.resolver, this.viewContainerRef, eleresized.size);
                     }
                 },
-                (copiedpasted) => {
-                    if (copiedpasted && copiedpasted.copy && copiedpasted.past) {
-                        copiedpasted.copy = copiedpasted.copy.filter(function(e) { return e; });
-                        if (copiedpasted.copy.length == copiedpasted.past.length) {
-                            for (let i = 0; i < copiedpasted.copy.length; i++) {
-                                let srctype = copiedpasted.copy[i].getAttribute('type');
-                                let srcid = copiedpasted.copy[i].getAttribute('id');
-                                if (srcid && srctype) {
-                                    let gasrc: GaugeSettings = this.searchGaugeSettings({ id: srcid, type: srctype });
-                                    let gadest: GaugeSettings = this.gaugesManager.createSettings(copiedpasted.past[i].id, gasrc.type);
-                                    gadest.property = JSON.parse(JSON.stringify(gasrc.property));
-                                    this.setGaugeSettings(gadest);
-                                    this.checkGaugeAdded(gadest);
+                (copiedPasted) => {
+                    if (copiedPasted && copiedPasted.copy && copiedPasted.past) {
+                        copiedPasted.copy = copiedPasted.copy.filter(function(e) { return e; });
+                        if (copiedPasted.copy.length == copiedPasted.past.length) {
+                            for (let i = 0; i < copiedPasted.copy.length; i++) {
+                                let srcType = copiedPasted.copy[i].getAttribute('type');
+                                let srcId = copiedPasted.copy[i].getAttribute('id');
+                                if (srcId) {
+                                    let gaSrc: GaugeSettings = this.searchGaugeSettings({ id: srcId, type: srcType });
+                                    let gaDest: GaugeSettings = this.gaugesManager.createSettings(copiedPasted.past[i].id, gaSrc.type);
+                                    gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
+                                    this.setGaugeSettings(gaDest);
+                                    this.checkGaugeAdded(gaDest);
                                 }
                             }
                         }
