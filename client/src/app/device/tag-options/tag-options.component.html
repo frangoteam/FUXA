@@ -12,9 +12,13 @@
                 <mat-slide-toggle color="primary" formControlName="changed"></mat-slide-toggle>
             </div>
         </div>
-        <div class="my-form-field" style="display: block;">
+        <div class="my-form-field block">
             <span>{{'device.tag-daq-interval' | translate}}</span>
             <input numberOnly formControlName="interval" min="1" type="text" style="width:300px">
+        </div>
+        <div class="my-form-field block mt10">
+            <span>{{'device.tag-format' | translate}}</span>
+            <input formControlName="format" type="text" style="width:300px">
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

@@ -569,10 +569,12 @@ function BACNETclient(_data, _logger, _events) {
                     var tag = requestItemsMap[address][index];
                     if (!varsValue[tag.id]) {
                         varsValue[tag.id].changed = varsValue[tag.id].value !== vars[index].value;
-                        varsValue[tag.id].value = vars[index].value;
-                        if (this.addDaq && !utils.isNullOrUndefined(varsValue[tag.id].value) && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
-                            changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type, daq: tag.daq };
-                            varsValue[tag.id] = changed[tag.id];
+                        if (!utils.isNullOrUndefined(varsValue[tag.id].value)) {
+                            varsValue[tag.id].value = deviceUtils.tagValueCompose(varsValue[id].value, varsValue[id]);
+                            if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
+                                changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq };
+                                varsValue[tag.id] = changed[tag.id];
+                            }
                         }
                         varsValue[tag.id].changed = false;
                         someval = true;

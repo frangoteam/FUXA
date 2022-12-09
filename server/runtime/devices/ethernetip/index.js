@@ -265,12 +265,12 @@ function EthernetIPclient(_data, _logger, _events) {
         const timestamp = new Date().getTime();
         var changed = {};
         Object.keys(itemsMap).forEach(key => {
-            if (vars[key]) {
+            if (!utils.isNullOrUndefined(vars[key])) {
                 var id = itemsMap[key].id;
                 var valueChanged = itemsMap[key].value !== vars[key];
-                itemsMap[key].value = vars[key];
+                itemsMap[key].value = deviceUtils.tagValueCompose(vars[key], itemsMap[key]);
                 varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq, changed: valueChanged };
-                if (this.addDaq && !utils.isNullOrUndefined(varsValue[id].value) && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
+                if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
                     changed[id] = varsValue[id];
                 }
                 varsValue[id].changed = false;
