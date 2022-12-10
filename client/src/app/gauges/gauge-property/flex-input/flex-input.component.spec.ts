@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {FlexInputComponent} from './flex-input.component';
 
@@ -6,7 +6,7 @@ describe('FlexInputComponent', () => {
   let component: FlexInputComponent;
   let fixture: ComponentFixture<FlexInputComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [FlexInputComponent]
     })
