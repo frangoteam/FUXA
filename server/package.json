@@ -36,7 +36,7 @@
     "nodemailer": "6.7.4",
     "nopt": "5.0.0",
     "pdfmake": "^0.2.5",
-    "socket.io": "2.4.1",
+    "socket.io": "2.5.0",
     "sqlite3": "5.0.11",
     "winston": "3.7.2"
   },
