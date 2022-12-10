@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../_services/project.service';
 import { AppService } from '../_services/app.service';
-import { Hmi, View, GaugeSettings } from '../_models/hmi';
+import { Hmi, View } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { TesterService } from '../tester/tester.service';
 import { TesterComponent } from '../tester/tester.component';
@@ -17,7 +17,7 @@ declare var Raphael: any;
     styleUrls: ['lab.component.css']
 })
 
-export class LabComponent implements AfterViewInit, OnDestroy {
+export class LabComponent implements OnInit, OnDestroy {
 
     @ViewChild('messagecontainer', { read: ViewContainerRef, static: false }) entry: ViewContainerRef;
     @ViewChild('tester', {static: false}) tester: TesterComponent;
@@ -38,7 +38,7 @@ export class LabComponent implements AfterViewInit, OnDestroy {
         private testerService: TesterService) {
     }
 
-    ngAfterViewInit() {
+    ngOnInit() {
         try {
             this.appService.showLoading(true);
             let hmi = this.projectService.getHmi();

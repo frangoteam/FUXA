@@ -1,11 +1,10 @@
-import { Observable, Subject, Subscription, BehaviorSubject } from 'rxjs';
+import { Subject, Subscription, BehaviorSubject } from 'rxjs';
 import { NgxFabItemButtonComponent } from './ngx-fab-item-button.component';
 import {
     Component,
     Input,
     ContentChildren,
     ElementRef,
-    HostListener,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     AfterContentInit,
@@ -190,33 +189,11 @@ export class NgxFabButtonComponent implements AfterContentInit, OnDestroy, OnCha
         return animation;
     }
 
-    /* some problems here */
-    // @HostListener('document:click', ['$event.target']) private clickOutside(target) {
-    //   if (this.state.getValue().display && !this.elementref.contains(target)) {
-    //     this.state.next({
-    //       ...this.state.getValue(),
-    //       display: false,
-    //       event: 'close'
-    //     });
-    //   }
-    // }
     ngAfterContentInit() {
         if (this.direction) {
             // first time to check
             this.checkDirectionType();
         }
-
-        this.buttons.toArray().map(v => {
-            const sub = v.clicked.subscribe(() => {
-                // this.state.next({
-                //   ...this.state.getValue(),
-                //   display: false,
-                //   event: 'close'
-                // });
-            });
-
-            this.subs.push(sub);
-        });
 
         const sub = this.state.subscribe(v => {
             this.animateButtons(v.event);

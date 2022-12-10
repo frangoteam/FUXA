@@ -88,7 +88,7 @@
                     </div>
                 </div>
                 <div mat-dialog-content style="overflow: hidden; width:100%">
-                    <flex-action [data]="data" [property]="property" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px"></flex-action>
+                    <flex-action [data]="data" [property]="property" [withBitmask]="true" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px"></flex-action>
                 </div>
             </div>
         </mat-tab>
