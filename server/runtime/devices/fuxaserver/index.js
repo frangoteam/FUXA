@@ -186,8 +186,11 @@ const deviceUtils = require('../device-utils');
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
-                result[id] = data.tags[id];
+            if (!utils.isNullOrUndefined(data.tags[id].value)) {
+                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
+                if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
+                    result[id] = data.tags[id];
+                }
             }
             data.tags[id].changed = false;
             varsValue[id] = data.tags[id];

@@ -277,8 +277,11 @@ function HTTPclient(_data, _logger, _events) {
                     }
                     requestItemsMap[id] = [reqdata[i]];
                     reqdata[i].changed = varsValue[id] && reqdata[i].value !== varsValue[id].value;
-                    if (this.addDaq && !utils.isNullOrUndefined(reqdata[i].value) && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
-                        changed[id] = reqdata[i];
+                    if (!utils.isNullOrUndefined(reqdata[i].value)) {
+                        reqdata[i].value = deviceUtils.tagValueCompose(reqdata[i].value, data.tags[id]);
+                        if (this.addDaq && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
+                            changed[id] = reqdata[i];
+                        }
                     }
                     reqdata[i].changed = false;
                     varsValue[id] = reqdata[i];
@@ -296,7 +299,13 @@ function HTTPclient(_data, _logger, _events) {
                         var tag = requestItemsMap[key][index];
                         if (tag) {
                             someval = true;
-                            result[tag.id] = { id: tag.id, value: (tag.memaddress) ? items[tag.memaddress] : items[key], type: items[key].type, daq: tag.daq };
+                            result[tag.id] = {
+                                id: tag.id,
+                                value: (tag.memaddress) ? items[tag.memaddress] : items[key],
+                                type: items[key].type,
+                                daq: tag.daq,
+                                tagref: tag
+                            };
                         }
                     }
                 }
@@ -304,9 +313,12 @@ function HTTPclient(_data, _logger, _events) {
             if (someval) {
                 for (var id in result) {
                     result[id].changed = varsValue[id] && result[id].value !== varsValue[id].value;
-                    if (this.addDaq && !utils.isNullOrUndefined(result[id].value) && deviceUtils.tagDaqToSave(result[id], timestamp)) {
-                        changed[id] = result[id];
-                    }                    
+                    if (!utils.isNullOrUndefined(result[id].value)) {
+                        result[id].value = deviceUtils.tagValueCompose(result[id].value, result[id].tagref);
+                        if (this.addDaq && deviceUtils.tagDaqToSave(result[id], timestamp)) {
+                            changed[id] = result[id];
+                        }
+                    }               
                     result[id].changed = false;
                     varsValue[id] = result[id];
                 }
