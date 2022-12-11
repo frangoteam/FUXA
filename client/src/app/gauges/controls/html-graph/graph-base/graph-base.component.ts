@@ -1,6 +1,6 @@
 
 import { Component, Output, EventEmitter } from '@angular/core';
-import { GraphType, GraphSource, GraphRangeType, GraphDateGroupType } from '../../../../_models/graph';
+import { GraphSource, GraphRangeType, GraphDateGroupType } from '../../../../_models/graph';
 import { ChartOptions, GridLineOptions, ChartType, ChartColor, ChartYAxe } from 'chart.js';
 import { Utils } from '../../../../_helpers/utils';
 import { DaqQuery } from '../../../../_models/hmi';

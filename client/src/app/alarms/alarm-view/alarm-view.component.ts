@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Output, 
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subscription, Subject, timer, Observable, empty } from 'rxjs';
+import { Subject, timer, empty } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';

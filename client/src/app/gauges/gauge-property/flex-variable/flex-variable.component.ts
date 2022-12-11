@@ -1,11 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { ReplaySubject, Subject } from 'rxjs';
-import { FormControl } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import { Device, DeviceType, Tag, TAG_PREFIX, DevicesUtils } from '../../../_models/device';
-import { HmiService } from '../../../_services/hmi.service';
+import { Tag, DevicesUtils } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { DeviceTagDialog } from '../../../device/device.component';
 import { BitmaskComponent } from '../../../gui-helpers/bitmask/bitmask.component';

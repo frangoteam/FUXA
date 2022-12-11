@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { Subscription } from 'rxjs';

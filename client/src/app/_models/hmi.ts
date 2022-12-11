@@ -1,5 +1,4 @@
-import { Tag, Device } from './device';
-import { extend } from 'webdriver-js-extender';
+import { Tag } from './device';
 
 export class Hmi {
     /** Layout for navigation menu, header bar, ...  */

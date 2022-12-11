@@ -11,7 +11,6 @@ import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-/* tslint:disable:member-ordering */
 /**
  * Component providing an input field for searching MatSelect options.
  *

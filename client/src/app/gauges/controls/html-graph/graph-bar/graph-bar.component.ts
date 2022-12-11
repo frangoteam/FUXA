@@ -4,7 +4,7 @@ import { GraphBaseComponent, GraphOptions, GraphThemeType } from '../graph-base/
 import { GraphBarProperty, GraphBarXType, GraphSource, GraphRangeType, GraphBarFunction, GraphBarDateFunctionType, GraphDateGroupType } from '../../../../_models/graph';
 import { Utils } from '../../../../_helpers/utils';
 import { Calc, TimeValue, CollectionType } from '../../../../_helpers/calc';
-import { ChartOptions, ChartType, ChartDataSets, ChartColor, ChartPoint } from 'chart.js';
+import { ChartType, ChartDataSets, ChartPoint } from 'chart.js';
 import { Label, BaseChartDirective } from 'ng2-charts';
 import { DaqQuery, DaqValue } from '../../../../_models/hmi';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';

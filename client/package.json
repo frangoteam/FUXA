@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.1.10-981",
+  "version": "1.1.10-983",
   "keywords": [],
   "author": "frangoteam <4frango@gmail.com>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -75,7 +75,8 @@
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-jsdoc": "39.5.0",
     "eslint-plugin-prefer-arrow": "1.2.3",
-    "jasmine-core": "~3.8.0",
+    "eslint-plugin-unused-imports": "^1.1.5",
+    "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~6.4.1",
     "karma-chrome-launcher": "~3.1.1",

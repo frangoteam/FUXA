@@ -19,7 +19,7 @@ import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, 
 import { GaugesManager } from '../gauges/gauges.component';
 import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
-import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
+import { ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { TranslateService } from '@ngx-translate/core';

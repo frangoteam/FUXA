@@ -21,7 +21,7 @@ import { Utils } from '../_helpers/utils';
 import { GridOptions } from '../cards-view/cards-view.component';
 import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 
-import { GridsterConfig, GridType, CompactType } from 'angular-gridster2';
+import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
 // declare var panzoom: any;

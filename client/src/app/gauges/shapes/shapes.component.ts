@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../gauge-base/gauge-base.component';
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugePropertyColor, GaugeProperty } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';

@@ -1,4 +1,4 @@
-import { InjectionToken, Injector } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 import * as _moment from 'moment';
 const moment = _moment;
 
