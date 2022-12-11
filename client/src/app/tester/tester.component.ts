@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Subscription, Observable, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 
 import { HmiService } from '../_services/hmi.service';
 import { TesterService } from '../tester/tester.service';
-import { GaugeSettings, Variable } from '../_models/hmi';
+import { Variable } from '../_models/hmi';
 
 
 @Component({

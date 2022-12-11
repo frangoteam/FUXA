@@ -1,4 +1,3 @@
-import { isNumber } from 'util';
 import { Utils } from '../_helpers/utils';
 
 export class Alarm {

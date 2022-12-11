@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
-import { Script, ScriptMode, ScriptTest } from '../_models/script';
-import { ProjectService } from './project.service';
+import { Script, ScriptMode } from '../_models/script';
 
 @Injectable({
     providedIn: 'root'

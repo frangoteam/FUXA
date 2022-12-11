@@ -1,11 +1,10 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
 import * as io from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
-import { Device, Tag, DeviceType } from '../_models/device';
+import { Tag, DeviceType } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult, GaugeEventSetValueType } from '../_models/hmi';
-import { AlarmEvent, AlarmQuery } from '../_models/alarm';
+import { AlarmQuery } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';

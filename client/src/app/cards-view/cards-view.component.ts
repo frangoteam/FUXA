@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@
 import { ChangeDetectorRef } from '@angular/core';
 
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, CardWidget, CardWidgetType } from '../_models/hmi';
+import { Hmi, View, CardWidget, CardWidgetType } from '../_models/hmi';
 import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
 import { Utils } from '../_helpers/utils';
 

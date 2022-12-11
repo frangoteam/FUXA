@@ -1,7 +1,6 @@
 import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, Event } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 import { NgxSwitchComponent } from '../../../gui-helpers/ngx-switch/ngx-switch.component';

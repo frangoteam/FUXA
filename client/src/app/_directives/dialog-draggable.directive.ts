@@ -1,9 +1,8 @@
 import { Directive, HostListener, AfterViewInit } from '@angular/core';
 import { MatDialogContainer, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, Observable, fromEvent } from 'rxjs';
+import { fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { take } from 'rxjs/operators';
-import { ModalPositionCache, Position } from './modal-position.cache';
+import { Position } from './modal-position.cache';
 
 @Directive({
     selector: '[mat-dialog-draggable]'

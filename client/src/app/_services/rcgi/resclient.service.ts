@@ -1,12 +1,10 @@
 
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
-import { Device } from '../../_models/device';
 import { ResourceStorageService } from './resource-storage.service';
-import { Utils } from '../../_helpers/utils';
 import { AlarmQuery } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 

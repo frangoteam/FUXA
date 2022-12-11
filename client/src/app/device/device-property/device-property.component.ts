@@ -8,7 +8,6 @@ import { HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
 import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy } from './../../_models/device';
-import { Utils } from '../../_helpers/utils';
 
 @Component({
 	selector: 'app-device-property',

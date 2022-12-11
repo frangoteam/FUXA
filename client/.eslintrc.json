@@ -8,6 +8,7 @@
             "files": [
                 "*.ts"
             ],
+            "plugins": ["unused-imports"],
             "parserOptions": {
                 "project": "./tsconfig.json",
                 "createDefaultProgram": true
@@ -41,7 +42,8 @@
                         "prefix": "app",
                         "style": "camelCase"
                     }
-                ]
+                ],
+                "unused-imports/no-unused-imports": "error"
             }
         },
         {

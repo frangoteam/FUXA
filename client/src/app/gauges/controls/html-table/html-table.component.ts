@@ -1,4 +1,4 @@
-import { Component, OnInit, Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
 import { GaugeSettings, Variable, GaugeStatus, TableType, TableOptions, TableCellType, GaugeTableProperty } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';

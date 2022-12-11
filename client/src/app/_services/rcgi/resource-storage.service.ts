@@ -1,8 +1,6 @@
-import { forwardRef } from '@angular/core';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ResWebApiService } from './reswebapi.service';
 import { Device } from '../../_models/device';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { AlarmQuery } from '../../_models/alarm';
