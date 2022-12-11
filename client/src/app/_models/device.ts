@@ -57,7 +57,7 @@ export class Tag {
     /** Options, used for WebAPI and MQTT */
     options: any;
     /** not used yet */
-    format: any;
+    format: string;
     /** Daq settings */
     daq: TagDaq;
     /** Init value */

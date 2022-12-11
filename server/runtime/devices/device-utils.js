@@ -1,4 +1,6 @@
 'use strict';
+const numeral = require('numeral');
+
 module.exports = {
 
     tagDaqToSave: function (tag, timestamp) {
@@ -12,5 +14,16 @@ module.exports = {
             }
         }
         return false;
+    },
+
+    tagValueCompose: function (value, tag) {
+        if (value && tag && tag.format) {
+            try {
+                value = numeral(value).format(tag.format);
+            } catch (err) { 
+                console.error(err);
+            }
+        }
+        return value;
     }
 }

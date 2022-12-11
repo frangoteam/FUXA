@@ -544,6 +544,7 @@ function OpcUAclient(_data, _logger, _events) {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
+            data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
             if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }
