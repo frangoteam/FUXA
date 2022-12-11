@@ -21,7 +21,7 @@ export class TagOptionsComponent {
             interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(1)]],
             changed: [{value: false, disabled: true}],
             enabled: [false],
-            format: [null]
+            format: [Validators.required, Validators.min(0)]
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -99,5 +99,5 @@ export class TagOptionsComponent {
 
 export interface ITagOption {
     daq: TagDaq;
-    format: string;
+    format: number;
 }

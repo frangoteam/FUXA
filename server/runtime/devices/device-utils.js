@@ -1,5 +1,4 @@
 'use strict';
-const numeral = require('numeral');
 
 module.exports = {
 
@@ -19,7 +18,7 @@ module.exports = {
     tagValueCompose: function (value, tag) {
         if (value && tag && tag.format) {
             try {
-                value = numeral(value).format(tag.format);
+                value = +parseFloat(value).toFixed(tag.format);
             } catch (err) { 
                 console.error(err);
             }

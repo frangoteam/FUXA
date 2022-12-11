@@ -14,7 +14,11 @@
         </div>
         <div class="my-form-field block">
             <span>{{'device.tag-daq-interval' | translate}}</span>
-            <input numberOnly formControlName="interval" min="1" type="text" style="width:300px">
+            <input numberOnly formControlName="interval" min="1" type="number" style="width:300px">
+        </div>
+        <div class="my-form-field block mt10">
+            <span>{{'device.tag-format' | translate}}</span>
+            <input numberOnly formControlName="format" min="0" max="10" type="number" style="width:300px">
         </div>
         <div class="my-form-field block mt10">
             <span>{{'device.tag-format' | translate}}</span>

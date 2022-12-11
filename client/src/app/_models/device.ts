@@ -56,8 +56,8 @@ export class Tag {
     access: string;
     /** Options, used for WebAPI and MQTT */
     options: any;
-    /** not used yet */
-    format: string;
+    /** Digits format of value, number of digits to appear after the decimal point */
+    format: number;
     /** Daq settings */
     daq: TagDaq;
     /** Init value */
@@ -82,6 +82,7 @@ export class Tag {
             enabled: 'Daq enabled storage',
             interval: 'min storage interval (without change value)'
         },
+        format: 'Number of digits to appear after the decimal point'
     };
 }
 

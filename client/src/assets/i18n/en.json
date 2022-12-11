@@ -785,6 +785,7 @@
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Save value if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
+    "device.tag-format": "Format digits (2 = #.##)",
     
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
