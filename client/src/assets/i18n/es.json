@@ -732,6 +732,7 @@
     "dlg.app-language-pt": "Portugues",
     "dlg.app-language-tr": "Turco",
     "dlg.app-language-ko": "Coreano",
+    "dlg.app-language-fr": "Frances",
     "dlg.app-settings-server-port": "Servidor esta escuchando el puerto",
     "dlg.app-settings-alarms-clear": "Borrar todas las alarmas y el historias",
     "dlg.app-settings-auth-token": "Autenticación con token",
