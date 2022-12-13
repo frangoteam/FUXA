@@ -9,7 +9,7 @@ import { UserGroups } from '../../_models/user';
   styleUrls: ['./script-permission.component.css']
 })
 export class ScriptPermissionComponent {
-	
+
   selectedGroups = [];
 	groups = UserGroups.Groups;
 

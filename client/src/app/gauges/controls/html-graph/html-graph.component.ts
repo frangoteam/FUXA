@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Component, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
@@ -9,9 +9,9 @@ import { GraphBaseComponent, GraphOptions } from './graph-base/graph-base.compon
 
 
 @Component({
-    selector: "html-graph",
-    templateUrl: "./html-graph.component.html",
-    styleUrls: ["./html-graph.component.css"]
+    selector: 'html-graph',
+    templateUrl: './html-graph.component.html',
+    styleUrls: ['./html-graph.component.css']
 })
 export class HtmlGraphComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-html_graph';

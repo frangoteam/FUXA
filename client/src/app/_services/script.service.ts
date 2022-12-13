@@ -4,8 +4,7 @@ import { Observable } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
-import { Script, ScriptMode, ScriptTest } from '../_models/script';
-import { ProjectService } from './project.service';
+import { Script, ScriptMode } from '../_models/script';
 
 @Injectable({
     providedIn: 'root'
@@ -31,11 +30,11 @@ export class ScriptService {
                     });
                 } else {
                     observer.next();
-                }    
+                }
             } else {
                 if (script.parameters && script.parameters.length > 0) {
-                    console.warn('TODO: Script with mode CLIENT not work with parameters.')
-                } 
+                    console.warn('TODO: Script with mode CLIENT not work with parameters.');
+                }
                 eval(script.code);
             }
         });

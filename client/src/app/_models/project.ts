@@ -10,7 +10,7 @@ import { Script } from './script';
 import { Report } from './report';
 
 export class ProjectData {
-    version = "1.01";
+    version = '1.01';
     /** Project name */
     name?: string;
     /** FUXA Server */

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GaugeSemaphoreComponent } from './gauge-semaphore.component';
 
@@ -6,7 +6,7 @@ describe('GaugeSemaphoreComponent', () => {
   let component: GaugeSemaphoreComponent;
   let fixture: ComponentFixture<GaugeSemaphoreComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GaugeSemaphoreComponent ]
     })

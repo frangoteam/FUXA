@@ -39,7 +39,7 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
             Object.values(this.view.items).forEach((item) => {
                 if (item && item.property) {
                     if (item.property.variableId) {
-                        this.assignVariableTo(item.property, viewVariables)
+                        this.assignVariableTo(item.property, viewVariables);
                     }
                     if (item.property.actions) {
                         Object.values(item.property.actions).forEach((action) => {
@@ -58,25 +58,25 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
                 }
             });
         }
-        this.viewVariables = Object.values(viewVariables)
+        this.viewVariables = Object.values(viewVariables);
         return this.viewVariables;
     }
 
     protected assignVariableTo(object, target) {
         let variable = {
             variableId: object['variableId']
-        }
-        target[variable.variableId] = variable
+        };
+        target[variable.variableId] = variable;
     }
 
     addVariableMapping($event) {
         $event.preventDefault();
-        this.mapping.push({ from: {}, to: {} })
+        this.mapping.push({ from: {}, to: {} });
     }
 
     removeVariableMapping($event, i) {
         $event.preventDefault();
-        this.mapping.splice(i, 1)
+        this.mapping.splice(i, 1);
     }
 
     public onChange() {

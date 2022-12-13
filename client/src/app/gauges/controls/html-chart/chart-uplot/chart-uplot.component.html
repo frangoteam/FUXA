@@ -22,7 +22,7 @@
                     panelClass="my-select-panel-class" (selectionChange)="onRangeChanged($event.source.value)">
                     <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key" [style.color]="options.axisLabelColor" 
                         [style.background-color]="options.colorBackground">
-                        {{ ev.value }}
+                        {{ ev.value | translate }}
                     </mat-option>
                 </mat-select>
                 <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 

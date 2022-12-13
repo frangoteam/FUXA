@@ -7,7 +7,7 @@ import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataConverterService } from '../../../../_services/data-converter.service';
@@ -50,9 +50,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.translateService.get('chart.labels-serie').subscribe((txt: string) => { if (this.nguplot) this.nguplot.languageLabels.serie = txt });
-        this.translateService.get('chart.labels-time').subscribe((txt: string) => { if (this.nguplot) this.nguplot.languageLabels.time = txt });
-        this.translateService.get('chart.labels-title').subscribe((txt: string) => { if (this.nguplot) this.nguplot.languageLabels.title = txt });
+        this.translateService.get('chart.labels-serie').subscribe((txt: string) => { if (this.nguplot) {this.nguplot.languageLabels.serie = txt;} });
+        this.translateService.get('chart.labels-time').subscribe((txt: string) => { if (this.nguplot) {this.nguplot.languageLabels.time = txt;} });
+        this.translateService.get('chart.labels-title').subscribe((txt: string) => { if (this.nguplot) {this.nguplot.languageLabels.title = txt;} });
     }
 
     ngOnDestroy() {
@@ -121,7 +121,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onDaqQuery();
             }
         });
-    }    
+    }
 
     onDaqQuery() {
         this.onTimeRange.emit(this.lastDaqQuery);
@@ -171,7 +171,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.height -= size;    // title
 
             size = Utils.getDomTextHeight(this.options.axisLabelFontSize, this.options.fontFamily);
-            if (size < 10) size = 10;
+            if (size < 10) {size = 10;}
             this.options.height -= size;    // axis
             this.nguplot.resize(this.options.height, this.options.width);
         }
@@ -213,8 +213,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     public addLine(id: string, name: string, line: ChartLine, addYaxisToLabel: boolean) {
         if (!this.mapData[id]) {
             let linelabel = line.label || name;
-            if (addYaxisToLabel) 
-                linelabel = `Y${line.yaxis} - ${linelabel}`;
+            if (addYaxisToLabel)
+                {linelabel = `Y${line.yaxis} - ${linelabel}`;}
             let serie = <NgxSeries>{ label: linelabel, stroke: line.color, spanGaps: true };
             if (line.yaxis > 1) {
                 serie.scale = line.yaxis.toString();
@@ -238,9 +238,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * add value to a realtime chart
-     * @param id 
-     * @param x 
-     * @param y 
+     * @param id
+     * @param x
+     * @param y
      */
     public addValue(id: string, x, y) {
         if (this.mapData[id]) {
@@ -252,7 +252,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
      * set values to a history chart
      * the values is composed of a matrix of array, array of lines values[]<datetime, value> [line][pos]{dt, value}
      * the have to be transform in uplot format. a matrix with array of datetime and arrays of values [datetime[dt], lineN[value]]
-     * @param values 
+     * @param values
      */
     public setValues(values) {
         let result = [];
@@ -269,7 +269,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 xmap[t][i] = values[i][x].value;
             }
         }
-        result[0].sort(function (a, b) { return a - b });
+        result[0].sort(function(a, b) { return a - b; });
         for (var i = 0; i < result[0].length; i++) {
             let t = result[0][i];
             for (var x = 1; x < result.length; x++) {
@@ -301,7 +301,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         };
     }
 
-    private setLoading(load: boolean) {        
+    private setLoading(load: boolean) {
         if (load) {
             timer(10000).pipe(
                 takeUntil(this.destroy$)
@@ -325,7 +325,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.options.axisLabelFontSize) {
                 font = this.options.axisLabelFontSize + 'px';
             }
-            if (this.options.fontFamily) font += ' ' + this.options.fontFamily;
+            if (this.options.fontFamily) {font += ' ' + this.options.fontFamily;}
             this.options.axes[i].font = font;
             this.options.axes[i].labelFont = font;
             this.options.axes[i].ticks = { width: 1 / devicePixelRatio };
@@ -333,7 +333,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.options.axes[i].grid.stroke = this.options.gridLineColor;
                 this.options.axes[i].ticks.stroke = this.options.gridLineColor;
             }
-            if (this.options.axisLabelColor) this.options.axes[i].stroke = this.options.axisLabelColor;
+            if (this.options.axisLabelColor) {this.options.axes[i].stroke = this.options.axisLabelColor;}
         }
 
         let always = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.always);
@@ -342,11 +342,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), width: 1 };
         this.options.tooltip = { show: (this.options.legendMode === always || this.options.legendMode === follow) };
         // Axes label
-        if (this.options.axisLabelX) this.options.axes[0].label = this.options.axisLabelX;
-        if (this.options.axisLabelY1) this.options.axes[1].label = this.options.axisLabelY1;
-        if (this.options.axisLabelY2) this.options.axes[2].label = this.options.axisLabelY2;
-        if (this.options.axisLabelY3) this.options.axes[3].label = this.options.axisLabelY3;
-        if (this.options.axisLabelY4) this.options.axes[4].label = this.options.axisLabelY4;
+        if (this.options.axisLabelX) {this.options.axes[0].label = this.options.axisLabelX;}
+        if (this.options.axisLabelY1) {this.options.axes[1].label = this.options.axisLabelY1;}
+        if (this.options.axisLabelY2) {this.options.axes[2].label = this.options.axisLabelY2;}
+        if (this.options.axisLabelY3) {this.options.axes[3].label = this.options.axisLabelY3;}
+        if (this.options.axisLabelY4) {this.options.axes[4].label = this.options.axisLabelY4;}
     }
 
     private updateDomOptions(ngup: NgxUplotComponent) {
@@ -354,16 +354,16 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (ele) {
             let title = ele[0];
             if (this.options.titleHeight) {
-                if (this.options.axisLabelColor) title.style.color = this.options.axisLabelColor;
-                if (this.options.titleHeight) title.style.fontSize = this.options.titleHeight + "px";
-                if (this.options.fontFamily) title.style.fontFamily = this.options.fontFamily;
+                if (this.options.axisLabelColor) {title.style.color = this.options.axisLabelColor;}
+                if (this.options.titleHeight) {title.style.fontSize = this.options.titleHeight + 'px';}
+                if (this.options.fontFamily) {title.style.fontFamily = this.options.fontFamily;}
             } else {
                 title.style.display = 'none';
             }
         }
         let legend = this.chartPanel.nativeElement.querySelector('.u-legend');
         if (legend) {
-            if (this.options.axisLabelColor) legend.style.color = this.options.axisLabelColor;
+            if (this.options.axisLabelColor) {legend.style.color = this.options.axisLabelColor;}
             legend.style.lineHeight = 0;
         }
         this.chartPanel.nativeElement.style.backgroundColor = this.options.colorBackground;
@@ -372,7 +372,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
 export interface ChartOptions extends NgxOptions {
     /** chart panel size, with from toolbar to legend */
-    panel?: { height: number, width: number };
+    panel?: { height: number; width: number };
     /** when true, null data values will not cause line breaks, Series.spanGaps */
     connectSeparatedPoints?: boolean;
 

@@ -1,6 +1,6 @@
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -17,7 +17,7 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const authService = this.injector.get(AuthService)
+        const authService = this.injector.get(AuthService);
         if (authService.getUserToken) {
             const token = authService.getUserToken();
             if (token != null) {
@@ -41,7 +41,7 @@ export class AuthInterceptor implements HttpInterceptor {
                     if (err.status === 403) {
                         // redirect to the login route or show a modal
                         authService.signOut();
-                        const projectService = this.injector.get(ProjectService)
+                        const projectService = this.injector.get(ProjectService);
                         projectService.reload();
                     }
                 }

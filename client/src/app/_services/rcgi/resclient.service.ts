@@ -1,21 +1,19 @@
 
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
-import { Device } from '../../_models/device';
 import { ResourceStorageService } from './resource-storage.service';
-import { Utils } from '../../_helpers/utils';
 import { AlarmQuery } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
 
-    bridge: any = null;     
+    bridge: any = null;
     id: string = null;
-    get isReady() { return (this.bridge) ? true : false; } 
+    get isReady() { return (this.bridge) ? true : false; }
 
     public onRefreshProject: () => boolean;
 
@@ -31,7 +29,7 @@ export class ResClientService implements ResourceStorageService {
     }
 
     private bindBridge(bridge?: any): boolean {
-        if (!bridge) return false;
+        if (!bridge) {return false;}
         this.bridge = bridge;
         if (this.bridge) {
             this.bridge.onRefreshProject = this.onRefreshProject;
@@ -64,11 +62,11 @@ export class ResClientService implements ResourceStorageService {
     setServerProject(prj: ProjectData) {
         return new Observable((observer) => {
             if (!prj) {
-                observer.next(); 
+                observer.next();
             } else if (this.bridge) {
                 let sprj = ResourceStorageService.sanitizeProject(prj);
                 if (this.bridge.saveProject(sprj, true)) {
-                    observer.next(); 
+                    observer.next();
                 } else {
                     observer.error();
                 }
@@ -82,7 +80,7 @@ export class ResClientService implements ResourceStorageService {
     setServerProjectData(cmd: ProjectDataCmdType, data: any, prj: ProjectData) {
         return new Observable((observer) => {
             if (!prj) {
-                observer.next(); 
+                observer.next();
             } else if (this.bridge) {
                 let sprj = ResourceStorageService.sanitizeProject(prj);
                 if (this.bridge.saveProject(sprj, false)) {
@@ -90,7 +88,7 @@ export class ResClientService implements ResourceStorageService {
                     //     let sdevice = ResourceStorageService.sanitizeDevice(data);
                     //     this.bridge.deviceChange(sdevice);
                     // }
-                    observer.next(); 
+                    observer.next();
                 } else {
                     observer.error();
                 }
@@ -100,7 +98,7 @@ export class ResClientService implements ResourceStorageService {
             }
         });
     }
-    
+
     uploadFile(file: any): Observable<UploadFile> {
         return new Observable((observer) => {
             observer.error('Not supported!');
@@ -134,7 +132,7 @@ export class ResClientService implements ResourceStorageService {
             observer.error('Not supported!');
         });
     }
-   
+
     getAlarmsHistory(query: AlarmQuery): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');

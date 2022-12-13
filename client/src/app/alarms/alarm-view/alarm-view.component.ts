@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Output, 
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { Subscription, Subject, timer, Observable, empty } from 'rxjs';
+import { Subject, timer, empty } from 'rxjs';
 import { takeUntil, switchMap, catchError } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';
@@ -32,7 +32,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() autostart = false;
     @Input() showInContainer = false;
     @Input() fullview = true;
-    @Output() showMode:EventEmitter<string> = new EventEmitter();
+    @Output() showMode: EventEmitter<string> = new EventEmitter();
 
     dataSource = new MatTableDataSource([]);
     @ViewChild(MatTable, {static: false}) table: MatTable<any>;
@@ -47,10 +47,10 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         Object.keys(this.statusText).forEach(key => {
-            this.translateService.get(this.statusText[key]).subscribe((txt: string) => { this.statusText[key] = txt });
+            this.translateService.get(this.statusText[key]).subscribe((txt: string) => { this.statusText[key] = txt; });
         });
         Object.keys(this.priorityText).forEach(key => {
-            this.translateService.get(this.priorityText[key]).subscribe((txt: string) => { this.priorityText[key] = txt });
+            this.translateService.get(this.priorityText[key]).subscribe((txt: string) => { this.priorityText[key] = txt; });
         });
     }
 
@@ -108,7 +108,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
             alr.forEach(alr => {
                 alr.status = this.getStatus(alr.status);
                 alr.type = this.getPriority(alr.type);
-            })
+            });
             this.dataSource.data = alr;
         }
     }
@@ -153,7 +153,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 result.forEach(alr => {
                     alr.status = this.getStatus(alr.status);
                     alr.type = this.getPriority(alr.type);
-                })
+                });
                 this.dataSource.data = result;
             }
         }, err => {

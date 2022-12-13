@@ -48,7 +48,7 @@ export class GaugePropertyComponent implements AfterViewInit {
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
             this.property = new GaugeProperty();
-        }        
+        }
     }
 
     ngAfterViewInit() {
@@ -116,7 +116,7 @@ export class GaugePropertyComponent implements AfterViewInit {
     }
 
     isToolboxToShow() {
-        if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range || this.dialogType === GaugeDialogType.Step || 
+        if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range || this.dialogType === GaugeDialogType.Step ||
             this.dialogType === GaugeDialogType.RangeAndText) {
             return true;
         }

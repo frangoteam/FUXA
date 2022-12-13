@@ -282,13 +282,19 @@ function S7client(_data, _logger, _events) {
                     let value = items[itemidx].value;
                     let tags = items[itemidx].Tags;
                     tags.forEach(tag => {
+                        tempTags[tag.id] = {
+                            id: tag.id,
+                            value: value,
+                            type: type,
+                            daq: tag.daq,
+                            changed: changed,
+                            tagref: tag
+                        };
                         if (type === 'BOOL') {
                             try {
                                 let pos = parseInt(tag.address.charAt(tag.address.length - 1));
-                                tempTags[tag.id] = { id: tag.id, value: _getBit(value, pos) ? 1 : 0, type: type, daq: tag.daq, changed: changed };
+                                tempTags[tag.id].value = _getBit(value, pos) ? 1 : 0;
                             } catch (err) { }
-                        } else {
-                            tempTags[tag.id] = { id: tag.id, value: value, type: type, daq: tag.daq, changed: changed };
                         }
                         someval = true;
                     });
@@ -298,7 +304,14 @@ function S7client(_data, _logger, _events) {
                             items[itemidx].value = (_getBit(items[itemidx].value, items[itemidx].bit)) ? 1 : 0;
                         } catch (err) { }
                     }
-                    tempTags[items[itemidx].id] = { id: items[itemidx].id, value: items[itemidx].value, type: items[itemidx].type, daq: items[itemidx].daq, changed: changed };
+                    tempTags[items[itemidx].id] = {
+                        id: items[itemidx].id,
+                        value: items[itemidx].value,
+                        type: items[itemidx].type,
+                        daq: items[itemidx].daq,
+                        changed: changed,
+                        tagref: items[itemidx]
+                    };
                     someval = true;
                 }
             }
@@ -307,8 +320,11 @@ function S7client(_data, _logger, _events) {
             const timestamp = new Date().getTime();
             var result = {};
             for (var id in tempTags) {
-                if (this.addDaq && !utils.isNullOrUndefined(tempTags[id].value) && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
-                    result[id] = tempTags[id];
+                if (!utils.isNullOrUndefined(tempTags[id].value)) {
+                    tempTags[id].value = deviceUtils.tagValueCompose(tempTags[id].value, tempTags[id].tagref);
+                    if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
+                        result[id] = tempTags[id];
+                    }
                 }
                 varsValue[id] = tempTags[id];
                 varsValue[id].changed = false;

@@ -785,6 +785,7 @@
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Save value if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
+    "device.tag-format": "Format digits (2 = #.##)",
     
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
@@ -1166,7 +1167,7 @@
     "dlg.app-auth-expiration-1h": "Enabled with token expiration in 1 hour.",
     "dlg.app-auth-expiration-3h": "Enabled with token expiration in 3 hours.",
     "dlg.app-auth-expiration-1d": "Enabled with token expiration in 1 day.",
-    "dlg.app-auth-tooltip": "By enabled you have a administrator account 'admin/123456'. Don't forget to change it",
+    "dlg.app-auth-tooltip": "Enabled: you have a administrator account 'admin/123456' (don't forget to change it). Server restart is required!",
 
     "dlg.app-settings-daqstore": "DAQ storage",
     "dlg.app-settings-daqstore-type": "Database type",

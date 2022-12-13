@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { SettingsService } from '../../_services/settings.service';
 import { DiagnoseService } from '../../_services/diagnose.service';
@@ -19,7 +19,7 @@ export class AppSettingsComponent implements OnInit {
                      { text: 'dlg.app-language-ua', value: 'ua' }, { text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
                      { text: 'dlg.app-language-pt', value: 'pt' }, { text: 'dlg.app-language-tr', value: 'tr' },
                      { text: 'dlg.app-language-ko', value: 'ko' }, { text: 'dlg.app-language-es', value: 'es' },
-		    { text: 'dlg.app-language-fr', value: 'fr' },];
+		                 { text: 'dlg.app-language-fr', value: 'fr' },];
     authType = [ { text: 'dlg.app-auth-disabled', value: '' }, { text: 'dlg.app-auth-expiration-15m', value: '15m' }, 
                         { text: 'dlg.app-auth-expiration-1h', value: '1h' }, { text: 'dlg.app-auth-expiration-3h', value: '3h' },
                         { text: 'dlg.app-auth-expiration-1d', value: '1d' }];
@@ -29,10 +29,10 @@ export class AppSettingsComponent implements OnInit {
     smtpTesting = false;
     smtpTestAddress = '';
     showPassword = false;
-    
+
     daqstoreType = DaqStoreType;
     retationType = DaqStoreRetentionType;
-    
+
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,
         private translateService: TranslateService,
@@ -42,12 +42,12 @@ export class AppSettingsComponent implements OnInit {
     ngOnInit() {
         this.settings = JSON.parse(JSON.stringify(this.settingsService.getSettings()));
         for (let i = 0; i < this.languageType.length; i++) {
-            this.translateService.get(this.languageType[i].text).subscribe((txt: string) => { this.languageType[i].text = txt });
+            this.translateService.get(this.languageType[i].text).subscribe((txt: string) => { this.languageType[i].text = txt; });
         }
         for (let i = 0; i < this.authType.length; i++) {
-            this.translateService.get(this.authType[i].text).subscribe((txt: string) => { this.authType[i].text = txt });
+            this.translateService.get(this.authType[i].text).subscribe((txt: string) => { this.authType[i].text = txt; });
         }
-        this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => { this.authenticationTooltip = txt });
+        this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => { this.authenticationTooltip = txt; });
 
         if (this.settings.secureEnabled) {
             this.authentication = this.settings.tokenExpiresIn;
@@ -57,7 +57,7 @@ export class AppSettingsComponent implements OnInit {
         }
         this.settings.daqstore = this.settings.daqstore || new DaqStore();
         if (!this.settings.daqstore.credentials) {
-            this.settings.daqstore.credentials = new StoreCredentials()
+            this.settings.daqstore.credentials = new StoreCredentials();
         }
     }
 
@@ -88,7 +88,7 @@ export class AppSettingsComponent implements OnInit {
         this.diagnoseService.sendMail(msg, this.settings.smtp).subscribe(() => {
             this.smtpTesting = false;
             var msg = '';
-            this.translateService.get('msg.sendmail-success').subscribe((txt: string) => { msg = txt });
+            this.translateService.get('msg.sendmail-success').subscribe((txt: string) => { msg = txt; });
             this.toastr.success(msg);
         }, error => {
             this.smtpTesting = false;
@@ -96,7 +96,7 @@ export class AppSettingsComponent implements OnInit {
                 this.notifyError(error.message);
             } else {
                 var msg = '';
-                this.translateService.get('msg.sendmail-error').subscribe((txt: string) => { msg = txt });
+                this.translateService.get('msg.sendmail-error').subscribe((txt: string) => { msg = txt; });
                 this.notifyError(msg);
             }
         });
@@ -111,10 +111,10 @@ export class AppSettingsComponent implements OnInit {
         }
         if (!this.settings.smtp.username || !this.settings.smtp.username.length) {
             return false;
-        } 
+        }
         if (!this.smtpTestAddress || !this.smtpTestAddress.length) {
             return false;
-        }       
+        }
         return true;
     }
 

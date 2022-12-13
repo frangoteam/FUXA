@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DeviceMapComponent } from './device-map.component';
 
@@ -6,7 +6,7 @@ describe('DeviceMapComponent', () => {
   let component: DeviceMapComponent;
   let fixture: ComponentFixture<DeviceMapComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DeviceMapComponent ]
     })

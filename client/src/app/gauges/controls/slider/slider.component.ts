@@ -1,6 +1,6 @@
 import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
-import { GaugeSettings, Variable, GaugeStatus, WindowLink, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, Event } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -34,7 +34,7 @@ export class SliderComponent {
         return GaugeDialogType.Slider;
     }
 
-    static bindEvents(ga: GaugeSettings, slider?: NgxNouisliderComponent, callback?:any): Event {
+    static bindEvents(ga: GaugeSettings, slider?: NgxNouisliderComponent, callback?: any): Event {
         if (slider) {
             slider.bindUpdate((val) => {
                 let event = new Event();
@@ -98,7 +98,7 @@ export class SliderComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
             let htmlSlider = Utils.searchTreeStartWith(ele, this.prefix);
-            if (htmlSlider) {        
+            if (htmlSlider) {
                 const factory = resolver.resolveComponentFactory(NgxNouisliderComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
                 htmlSlider.innerHTML = '';

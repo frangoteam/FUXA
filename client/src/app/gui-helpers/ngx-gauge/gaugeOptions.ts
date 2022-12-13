@@ -30,7 +30,7 @@ export class GaugeOptions {
     highDpiSupport = true;
     backgroundColor = 'rgba(255, 255, 255, 0)';
     shadowColor?: string = '#d5d5d5';
-    
+
     fractionDigits = 0;
     ticksEnabled = true;
     renderTicks = {
@@ -54,10 +54,10 @@ export class GaugeOptions {
         color: '#000000'
     };
     staticZones? = [
-         {strokeStyle: "#F03E3E", min: 0, max: 200},
-         {strokeStyle: "#FFDD00", min: 200, max: 500},
-         {strokeStyle: "#3F4964", min: 500, max: 2100},
-         {strokeStyle: "#FFDD00", min: 2100, max: 2800},
-         {strokeStyle: "#F03E3E", min: 2800, max: 3000}
-    ]
+         {strokeStyle: '#F03E3E', min: 0, max: 200},
+         {strokeStyle: '#FFDD00', min: 200, max: 500},
+         {strokeStyle: '#3F4964', min: 500, max: 2100},
+         {strokeStyle: '#FFDD00', min: 2100, max: 2800},
+         {strokeStyle: '#F03E3E', min: 2800, max: 3000}
+    ];
 }

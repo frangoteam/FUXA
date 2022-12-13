@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { GaugeBaseComponent } from '../gauge-base/gauge-base.component'
+import { Component } from '@angular/core';
+import { GaugeBaseComponent } from '../gauge-base/gauge-base.component';
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugePropertyColor, GaugeProperty } from '../../_models/hmi';
 import { GaugeDialogType } from '../gauge-property/gauge-property.component';
 
@@ -16,7 +16,7 @@ export class ShapesComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-' + ShapesComponent.TypeId;       // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'Shapes';
 
-    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop, 
+    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
                         clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate };
 
     constructor() {
@@ -71,7 +71,7 @@ export class ShapesComponent extends GaugeBaseComponent {
                                 propertyColor.stroke = ga.property.ranges[idx].stroke;
                             }
                         }
-                        // check if general shape (line/path/fpath/text) to set the stroke 
+                        // check if general shape (line/path/fpath/text) to set the stroke
                         if (propertyColor.fill) {
                             svgele.node.setAttribute('fill', propertyColor.fill);
                         }
@@ -87,15 +87,15 @@ export class ShapesComponent extends GaugeBaseComponent {
                                 ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
                             }
                         });
-                    }                
+                    }
                 }
             }
         } catch (err) {
             console.error(err);
-        }            
+        }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?:GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
         let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= actValue && act.range.max >= actValue) {
@@ -125,13 +125,13 @@ export class ShapesComponent extends GaugeBaseComponent {
             }
             else if(rotation < act.options.minAngle){
                 rotation = act.options.minAngle;
-            } 
+            }
             element.rotate(rotation);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
                 ShapesComponent.runMyAction(element, act.type, gaugeStatus);
-            }    
+            }
         }
     }
 
@@ -149,6 +149,6 @@ export class ShapesComponent extends GaugeBaseComponent {
                 ShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 gaugeStatus.actionRef.type = type;
             }
-        } 
+        }
     }
 }

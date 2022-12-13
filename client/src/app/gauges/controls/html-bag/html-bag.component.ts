@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { Component, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
@@ -12,9 +12,9 @@ import { NgxGaugeComponent } from '../../../gui-helpers/ngx-gauge/ngx-gauge.comp
     styleUrls: ['./html-bag.component.css']
 })
 export class HtmlBagComponent extends GaugeBaseComponent {
-    static TypeTag = "svg-ext-html_bag";
-    static LabelTag = "HtmlBag";
-    static prefixD = "D-BAG_";
+    static TypeTag = 'svg-ext-html_bag';
+    static LabelTag = 'HtmlBag';
+    static prefixD = 'D-BAG_';
 
     constructor(private resolver: ComponentFactoryResolver) {
         super();
@@ -66,7 +66,7 @@ export class HtmlBagComponent extends GaugeBaseComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
             let htmlBag = Utils.searchTreeStartWith(ele, this.prefixD);
-            if (htmlBag) {        
+            if (htmlBag) {
                 const factory = resolver.resolveComponentFactory(NgxGaugeComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
                 htmlBag.innerHTML = '';

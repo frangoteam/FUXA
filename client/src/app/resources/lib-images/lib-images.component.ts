@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription } from "rxjs";
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 import { ResourceGroup, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
@@ -33,7 +33,7 @@ export class LibImagesComponent implements AfterViewInit, OnDestroy {
 
     loadResources() {
         this.subscription = this.resourcesService.getResources(ResourceType.images).subscribe((result: Resources) => {
-            if (result) {                
+            if (result) {
                 this.resImages = result.groups || [];
             }
         }, err => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -35,7 +35,7 @@ export class BitmaskComponent implements OnInit {
         this.dialogRef.close(result);
     }
 
-    getValue (): number {
+    getValue(): number {
         let result = 0;
         for (let i = 0; i < this.selected.length; i++) {
             result += this.selected[i].id;

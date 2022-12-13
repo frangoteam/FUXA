@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { Script, ScriptScheduling } from '../../_models/script';
+import { ScriptScheduling } from '../../_models/script';
 
 @Component({
     selector: 'app-script-scheduling',
@@ -15,7 +15,7 @@ export class ScriptSchedulingComponent {
     constructor(
         public dialogRef: MatDialogRef<ScriptSchedulingComponent>,
         @Inject(MAT_DIALOG_DATA) public data: SchedulingData) {
-            if (this.data.scheduling) { 
+            if (this.data.scheduling) {
                 this.scheduling = JSON.parse(JSON.stringify(this.data.scheduling));
             }
         }

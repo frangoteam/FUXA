@@ -3,14 +3,14 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class Calc {
 
-    static integral(timeserie: TimeValue[], collectionType: CollectionType, unit?:number) {
+    static integral(timeserie: TimeValue[], collectionType: CollectionType, unit?: number) {
 
         let result = [];
         // sort to start with the oldest
-        let sorted = timeserie.sort(function (a, b) {
+        let sorted = timeserie.sort(function(a, b) {
             return a.dt - b.dt;
         });
-    
+
         let addToCollection = (collections: number[], collectionIndex: number, value: number) => {
             if (!collections[collectionIndex]) {
                 collections[collectionIndex] = value;
@@ -18,8 +18,8 @@ export class Calc {
                 collections[collectionIndex] += value;
             }
             // console.log(`add: ${new Date(collectionIndex)} + ${value} = ${collections[collectionIndex]}`);
-        }
-    
+        };
+
         let getCollectionTime = (millyDt: number, collectionType: CollectionType, next) => {
             let dt = new Date(millyDt);
             let toadd = (next) ? 1 : 0;
@@ -38,8 +38,8 @@ export class Calc {
             }
             // console.log(`in:${new Date(millyDt)}   ${dt}`);
             return dt;
-        }
-        
+        };
+
         let lastRecord: TimeValue = null;
         let lastCollectionIndex = null;
         for (let i = 0; i < sorted.length; i++) {
@@ -58,7 +58,7 @@ export class Calc {
                 let delta = sorted[i].dt - lastRecord.dt;
                 addToCollection(result, collectionIndex, sorted[i].value * (delta / 1000));
             }
-    
+
             lastRecord = sorted[i];
             // console.log(`last Record:${new Date(lastRecord.datetime)}`);
             lastCollectionIndex = collectionIndex;

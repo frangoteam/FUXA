@@ -1,15 +1,13 @@
-import { Component, OnInit, OnDestroy, Injectable, Inject, Output, EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Injectable, Output, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
-import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeProperty, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableRangeType } from '../_models/hmi';
+import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableRangeType } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
-import { GaugePropertyComponent, GaugeDialogType } from './gauge-property/gauge-property.component';
+import { GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
 import { HtmlButtonComponent } from './controls/html-button/html-button.component';
 import { HtmlSelectComponent } from './controls/html-select/html-select.component';
@@ -26,11 +24,9 @@ import { PipeComponent } from './controls/pipe/pipe.component';
 import { SliderComponent } from './controls/slider/slider.component';
 
 import { WindowRef } from '../_helpers/windowref';
-import { Dictionary } from '../_helpers/dictionary';
 import { Utils } from '../_helpers/utils';
 import { ChartUplotComponent, ChartOptions } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
-import { GaugeOptions } from '../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
@@ -89,10 +85,10 @@ export class GaugesManager {
             try {
                 if (this.mapChart[message.gid]) {
                     let gauge: ChartUplotComponent = this.mapChart[message.gid];
-                    gauge.setValues(message.values);
+                    gauge.setValues(message.result);
                 } else if (this.mapTable[message.gid]) {
                     let gauge: DataTableComponent = this.mapTable[message.gid];
-                    gauge.setValues(message.values);
+                    gauge.setValues(message.result);
                 }
             } catch (err) {
 
@@ -155,8 +151,8 @@ export class GaugesManager {
 
     /**
      * Return if is a gauge by check the svg attribute 'type' = 'svg-ext-...'
-     * @param type 
-     * @returns 
+     * @param type
+     * @returns
      */
     isGauge(type: string) {
         for (let tag in this.gaugesTags) {
@@ -207,8 +203,8 @@ export class GaugesManager {
 
     /**
      * emit the signal value to the frontend, used for user_defined variable to make logic in frontend
-     * @param sigId 
-     * @param value 
+     * @param sigId
+     * @param value
      */
     setSignalValue(sigId: string, value: any) {
         let variable = new Variable(sigId, null, null);
@@ -268,7 +264,7 @@ export class GaugesManager {
             // add pointer
             let ele = document.getElementById(ga.id);
             if (ele) {
-                ele.style.cursor = "pointer";
+                ele.style.cursor = 'pointer';
             }
         }
         let htmlEvents = this.getHtmlEvents(ga);
@@ -398,10 +394,10 @@ export class GaugesManager {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
                 if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                     if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                        let sigs = this.hmiService.getChartSignal(ga.property.id)
+                        let sigs = this.hmiService.getChartSignal(ga.property.id);
                         return sigs;
                     } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
-                        let sigs = this.hmiService.getGraphSignal(ga.property.id)
+                        let sigs = this.hmiService.getGraphSignal(ga.property.id);
                         return sigs;
                     } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
                         return GaugesManager.Gauges[i]['getSignals'](ga.property);
@@ -651,7 +647,7 @@ export class GaugesManager {
      * @param elements
      */
     static initElementColor(bkcolor, color, elements) {
-        var elems = elements.filter(function (el) { return el; });
+        var elems = elements.filter(function(el) { return el; });
         for (let i = 0; i < elems.length; i++) {
             let type = elems[i].getAttribute('type');
             if (type) {
@@ -728,11 +724,7 @@ export class GaugesManager {
         }
         if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
             // prepare attribute
-            let chartRange = ChartRangeType;
-            Object.keys(chartRange).forEach(key => {
-                this.translateService.get(chartRange[key]).subscribe((txt: string) => { chartRange[key] = txt });
-            });
-            let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, chartRange);
+            let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, ChartRangeType);
             if (gauge) {
                 this.setChartPropety(gauge, ga.property);
                 this.mapChart[ga.id] = gauge;
@@ -790,7 +782,7 @@ export class GaugesManager {
                 this.mapGauges[ga.id] = gauge;
                 if (isview) {
                     gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1h));
-                }                
+                }
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
@@ -801,9 +793,9 @@ export class GaugesManager {
 
     /**
      * add the chart settings (line) and property options to the gauge
-     * @param gauge 
-     * @param chart 
-     * @param property 
+     * @param gauge
+     * @param chart
+     * @param property
      */
     private setChartPropety(gauge: ChartUplotComponent, property: any) {
         if (property) {
@@ -866,5 +858,5 @@ export class GaugesManager {
 }
 
 interface MapGaugesSetting {
-    [x: string]: GaugeSettings
+    [x: string]: GaugeSettings;
 }

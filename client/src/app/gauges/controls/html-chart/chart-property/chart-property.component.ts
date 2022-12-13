@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReplaySubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
@@ -21,11 +21,11 @@ import { Utils } from '../../../../_helpers/utils';
     styleUrls: ['./chart-property.component.css']
 })
 export class ChartPropertyComponent implements OnInit, OnDestroy {
-    
+
     @Input() data: any;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
-    @Input('reload') set reload(b: any) { 
-        this._reload(); 
+    @Input('reload') set reload(b: any) {
+        this._reload();
     }
 
     lastRangeType = ChartRangeType;
@@ -51,12 +51,12 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
         private translateService: TranslateService) { }
 
     ngOnInit() {
-     
+
         Object.keys(this.chartViewType).forEach(key => {
-            this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => { this.chartViewType[key] = txt });
+            this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => { this.chartViewType[key] = txt; });
         });
         Object.keys(this.legendModes).forEach(key => {
-            this.translateService.get(this.legendModes[key]).subscribe((txt: string) => { this.legendModes[key] = txt });
+            this.translateService.get(this.legendModes[key]).subscribe((txt: string) => { this.legendModes[key] = txt; });
         });
     }
 
@@ -96,7 +96,7 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
         }
         this.onPropChanged.emit(this.data.settings);
     }
-    
+
     onEditNewChart() {
         let dialogRef = this.dialog.open(ChartConfigComponent, {
             position: { top: '60px' },
@@ -121,7 +121,7 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
             });
         if (toset) {
             let idx = -1;
-            this.data.charts.every(function (value, index, _arr) {
+            this.data.charts.every(function(value, index, _arr) {
                 if (value.id === toset) {
                     idx = index;
                     return false;

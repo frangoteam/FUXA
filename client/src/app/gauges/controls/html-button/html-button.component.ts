@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { Component, Input } from '@angular/core';
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeAction, GaugeSettings, GaugeStatus, Variable, GaugeActionsType, GaugePropertyColor } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
@@ -145,7 +145,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         return ele.getAttribute('stroke');
     }
 
-    static processAction(act: GaugeAction, svgele: any, button: any, value: any, gaugeStatus: GaugeStatus, propertyColor?:GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, button: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
                 let element = SVG.adopt(svgele.node);

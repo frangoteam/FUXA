@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GaugeProgressComponent } from './gauge-progress.component';
 
@@ -6,7 +6,7 @@ describe('GaugeProgressComponent', () => {
   let component: GaugeProgressComponent;
   let fixture: ComponentFixture<GaugeProgressComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GaugeProgressComponent ]
     })

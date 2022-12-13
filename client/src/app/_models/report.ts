@@ -1,5 +1,5 @@
-import { Utils } from "../_helpers/utils";
-import { Tag } from "./device";
+import { Utils } from '../_helpers/utils';
+import { Tag } from './device';
 import { Chart } from './chart';
 export class Report {
     id: string;
@@ -7,7 +7,7 @@ export class Report {
     receiver?: string;
     scheduling: string;
     docproperty: ReportDocProperty;
-    content?: ReportContent; 
+    content?: ReportContent;
     constructor(_id: string) {
         this.id = _id;
         this.docproperty = this.defaultDocProperty();
@@ -16,12 +16,12 @@ export class Report {
     }
 
     defaultDocProperty() {
-        return <ReportDocProperty> { 
+        return <ReportDocProperty> {
             pageSize: 'A4',
-            pageOrientation: 'portrait',        // landscape 
+            pageOrientation: 'portrait',        // landscape
             pageMargins: [ 60, 40, 40, 40 ],    // [left, top, right, bottom] or [horizontal, vertical] or just a number for equal margins
             fontName: 'Helvetica',
-        }
+        };
     }
 }
 
@@ -44,34 +44,34 @@ export interface ReportDocProperty {
 }
 
 export interface ReportPageMargin {
-    top: number,
-    bottom: number,
-    left: number,
-    right: number
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
 }
 
 export interface ReportItem {
-    type: ReportItemType,
-    align?: string,
-    width?: number,
-    size?: number,
+    type: ReportItemType;
+    align?: string;
+    width?: number;
+    size?: number;
 }
 
 export interface ReportItemText extends ReportItem {
     text: string;
 }
 export interface ReportItemTable extends ReportItem {
-    columns: ReportTableColumn[],
-    range: ReportDateRangeType,
-    interval: ReportIntervalType,
+    columns: ReportTableColumn[];
+    range: ReportDateRangeType;
+    interval: ReportIntervalType;
 }
 
 export interface ReportTableColumn {
-    type: ReportTableColumnType,
-    tag: Tag,
+    type: ReportTableColumnType;
+    tag: Tag;
     align: string;
-    width: string,
-    function: ReportFunctionType,
+    width: string;
+    function: ReportFunctionType;
 }
 
 export enum ReportTableColumnType {
@@ -80,19 +80,19 @@ export enum ReportTableColumnType {
 }
 
 export interface ReportItemAlarms extends ReportItem {
-    priority: {},
-    priorityText: {},
-    property: {},
-    propertyText: {},
-    statusText: {},
-    range: ReportDateRangeType,
+    priority: {};
+    priorityText: {};
+    property: {};
+    propertyText: {};
+    statusText: {};
+    range: ReportDateRangeType;
 }
 
 export interface ReportItemChart extends ReportItem {
-    chart: Chart,
-    range: ReportDateRangeType,
-    width?: number,
-    height?: number,
+    chart: Chart;
+    range: ReportDateRangeType;
+    width?: number;
+    height?: number;
 }
 
 export enum ReportItemType {

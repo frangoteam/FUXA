@@ -52,7 +52,7 @@ export class ResDemoService implements ResourceStorageService {
             observer.next('Not supported!');
         });
     }
-    
+
     uploadFile(file: any): Observable<UploadFile> {
         return new Observable((observer) => {
             observer.error('Not supported!');
@@ -76,7 +76,7 @@ export class ResDemoService implements ResourceStorageService {
             observer.error('Not supported!');
         });
     }
-    
+
     getAlarmsHistory(query: AlarmQuery): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');

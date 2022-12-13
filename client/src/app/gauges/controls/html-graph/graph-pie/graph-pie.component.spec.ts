@@ -1,7 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GraphPieComponent } from './graph-pie.component';
 
@@ -9,7 +7,7 @@ describe('GraphPieComponent', () => {
   let component: GraphPieComponent;
   let fixture: ComponentFixture<GraphPieComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GraphPieComponent ]
     })

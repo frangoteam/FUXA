@@ -1,9 +1,9 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, AfterViewInit, Inject, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ChangeDetectorRef } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 
 import { HmiService } from '../../_services/hmi.service';
 import { ScriptService } from '../../_services/script.service';
@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { DeviceTagDialog } from '../../device/device.component';
 import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage } from '../../_models/script';
-import { DevicesUtils, DeviceType, Tag } from '../../_models/device';
+import { DevicesUtils, DeviceType } from '../../_models/device';
 
 @Component({
     selector: 'app-script-editor',
@@ -22,9 +22,9 @@ import { DevicesUtils, DeviceType, Tag } from '../../_models/device';
 export class ScriptEditorComponent implements OnInit, OnDestroy {
     @ViewChild(CodemirrorComponent, {static: false}) CodeMirror: CodemirrorComponent;
     codeMirrorContent: string;
-    codeMirrorOptions = { 
-        lineNumbers: true, 
-        theme: 'material', 
+    codeMirrorOptions = {
+        lineNumbers: true,
+        theme: 'material',
         mode: 'javascript',
         // lineWrapping: true,
         // foldGutter: true,
@@ -53,7 +53,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         private scriptService: ScriptService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
             this.script = data.script;
-            this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM()}, 0));
+            this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM();}, 0));
         }
 
     ngOnInit() {
@@ -62,17 +62,17 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         }
         this.parameters = this.script.parameters;
         this.codeMirrorContent = this.script.code;
-        this.translateService.get('msg.script-remove', { value: this.script.name }).subscribe((txt: string) => { this.msgRemoveScript = txt });
+        this.translateService.get('msg.script-remove', { value: this.script.name }).subscribe((txt: string) => { this.msgRemoveScript = txt; });
         this.systemFunctions.functions.forEach(fnc => {
-            this.translateService.get(fnc.text).subscribe((txt: string) => { fnc.text = txt });
-            this.translateService.get(fnc.tooltip).subscribe((txt: string) => { fnc.tooltip = txt });
+            this.translateService.get(fnc.text).subscribe((txt: string) => { fnc.text = txt; });
+            this.translateService.get(fnc.tooltip).subscribe((txt: string) => { fnc.tooltip = txt; });
         });
         this.subscriptionScriptConsole = this.hmiService.onScriptConsole.subscribe((scriptConsole: ScriptConsoleMessage) => {
             this.console.push(scriptConsole.msg);
         });
         this.loadTestParameter();
     }
-    
+
     ngOnDestroy() {
         try {
             if (this.subscriptionScriptConsole) {
@@ -90,13 +90,13 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             token: (stream) => {
                 for (let i = 0; i < this.checkSystemFnc.length; i++) {
                     if (stream.match(this.checkSystemFnc[i])) {
-                        return "system-function";
+                        return 'system-function';
                     }
                 }
                 while (stream.next() != null && this.checkSystemFnc.indexOf(stream) !== -1) {}
                 return null;
             }
-        }
+        };
         this.CodeMirror.codeMirror.addOverlay(spellCheckOverlay);
     }
 
@@ -123,10 +123,10 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         let title = 'dlg.item-title';
         let label = 'dlg.item-req-name';
         let error = 'dlg.item-name-error';
-        let exist = this.data.scripts.map((s) => { return s.name });
-        this.translateService.get(title).subscribe((txt: string) => { title = txt });
-        this.translateService.get(label).subscribe((txt: string) => { label = txt });
-        this.translateService.get(error).subscribe((txt: string) => { error = txt });
+        let exist = this.data.scripts.map((s) => s.name);
+        this.translateService.get(title).subscribe((txt: string) => { title = txt; });
+        this.translateService.get(label).subscribe((txt: string) => { label = txt; });
+        this.translateService.get(error).subscribe((txt: string) => { error = txt; });
         let dialogRef = this.dialog.open(EditNameComponent, {
             position: { top: '60px' },
             data: { name: this.script.name, title: title, label: label, exist: exist, error: error, validator: this.validateName }
@@ -140,7 +140,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
 
     onAddFunctionParam() {
         let error = 'dlg.item-name-error';
-        let exist = this.parameters.map(p => { return p.name });
+        let exist = this.parameters.map(p => p.name);
         let dialogRef = this.dialog.open(DialogScriptParam, {
             position: { top: '60px' },
             data: { name: '', exist: exist, error: error, validator: this.validateName  }
@@ -167,16 +167,16 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         if (sysfnc.params.filter((value) => value).length === 1) {
             this.onAddSystemFunctionTag(sysfnc);
         } else {
-            this.insertText(this.getFunctionText(sysfnc, "'MainView'"));
+            this.insertText(this.getFunctionText(sysfnc, '\'MainView\''));
         }
     }
 
     onAddSystemFunctionTag(sysfnc: SystemFunction) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
-            data: { 
-                variableId: null, 
-                devices: this.data.devices, 
+            data: {
+                variableId: null,
+                devices: this.data.devices,
                 multiSelection: false,
                 deviceFilter: [ DeviceType.internal ]
             }
@@ -194,9 +194,9 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     onSetTestTagParam(param: ScriptParam) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
-            data: { 
-                variableId: null, 
-                devices: this.data.devices, 
+            data: {
+                variableId: null,
+                devices: this.data.devices,
                 multiSelection: false,
                 deviceFilter: [ DeviceType.internal ]
             }
@@ -224,7 +224,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     onConsoleClear() {
         this.console = [];
     }
-    
+
     private validateName(name: string) {
         let regName = /^[a-zA-Z]*$/;
         return regName.test(name);
@@ -278,22 +278,22 @@ export class DialogScriptParam {
     paramType = ScriptParamType;
     constructor(public dialogRef: MatDialogRef<DialogScriptParam>,
         private translateService: TranslateService,
-        @Inject(MAT_DIALOG_DATA) public data: any) { 
+        @Inject(MAT_DIALOG_DATA) public data: any) {
         Object.keys(this.paramType).forEach(key => {
-            this.translateService.get(this.paramType[key]).subscribe((txt: string) => {this.paramType[key] = txt});
+            this.translateService.get(this.paramType[key]).subscribe((txt: string) => {this.paramType[key] = txt;});
         });
-        this.translateService.get(this.existError).subscribe((txt: string) => {this.existError = txt});
+        this.translateService.get(this.existError).subscribe((txt: string) => {this.existError = txt;});
     }
 
     onNoClick(): void {
         this.dialogRef.close();
-        
+
     }
 
     isValid(name): boolean {
-        if (this.data.validator && !this.data.validator(name)) return false;
-        if (!this.data.type) return false;
-        if (!this.data.name) return false;
+        if (this.data.validator && !this.data.validator(name)) {return false;}
+        if (!this.data.type) {return false;}
+        if (!this.data.name) {return false;}
         return (this.data.exist.find((n) => n === name)) ? false : true;
     }
 

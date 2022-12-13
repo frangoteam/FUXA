@@ -1,7 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FlexActionComponent } from './flex-action.component';
 
@@ -9,7 +7,7 @@ describe('FlexActionComponent', () => {
   let component: FlexActionComponent;
   let fixture: ComponentFixture<FlexActionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FlexActionComponent ]
     })

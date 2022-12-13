@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { FlexHeadComponent } from '../../gauges/gauge-property/flex-head/flex-head.component';
@@ -41,30 +41,30 @@ export class AlarmPropertyComponent {
         }
         if (!this.data.alarm.highhigh) {
             this.data.alarm.highhigh = new AlarmSubProperty();
-            this.data.alarm.highhigh.bkcolor = "#FF4848";
-            this.data.alarm.highhigh.color = "#FFF";
+            this.data.alarm.highhigh.bkcolor = '#FF4848';
+            this.data.alarm.highhigh.color = '#FFF';
             this.data.alarm.highhigh.enabled = false;
             this.data.alarm.highhigh.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
         }
         if (!this.data.alarm.high) {
             this.data.alarm.high = new AlarmSubProperty();
-            this.data.alarm.high.bkcolor = "#F9CF59";
-            this.data.alarm.high.color = "#000";
+            this.data.alarm.high.bkcolor = '#F9CF59';
+            this.data.alarm.high.color = '#000';
             this.data.alarm.high.enabled = false;
             this.data.alarm.high.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
             // this.data.alarm.info = new AlarmSubProperty();
         }
         if (!this.data.alarm.low) {
             this.data.alarm.low = new AlarmSubProperty();
-            this.data.alarm.low.bkcolor = "#E5E5E5";
-            this.data.alarm.low.color = "#000";
+            this.data.alarm.low.bkcolor = '#E5E5E5';
+            this.data.alarm.low.color = '#000';
             this.data.alarm.low.enabled = false;
             this.data.alarm.low.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.ackactive)];
         }
         if (!this.data.alarm.info) {
             this.data.alarm.info = new AlarmSubProperty();
-            this.data.alarm.info.bkcolor = "#22A7F2";
-            this.data.alarm.info.color = "#FFF";
+            this.data.alarm.info.bkcolor = '#22A7F2';
+            this.data.alarm.info.color = '#FFF';
             this.data.alarm.info.enabled = false;
             this.data.alarm.info.ackmode = <AlarmAckMode>Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)];
         }
@@ -74,23 +74,23 @@ export class AlarmPropertyComponent {
         }
 
         Object.keys(this.ackMode).forEach(key => {
-            this.translateService.get(this.ackMode[key]).subscribe((txt: string) => { this.ackMode[key] = txt });
+            this.translateService.get(this.ackMode[key]).subscribe((txt: string) => { this.ackMode[key] = txt; });
         });
         Object.keys(this.actionsType).forEach(key => {
-            this.translateService.get(this.actionsType[key]).subscribe((txt: string) => { this.actionsType[key] = txt });
+            this.translateService.get(this.actionsType[key]).subscribe((txt: string) => { this.actionsType[key] = txt; });
         });
         if (data.alarms) {
             this.existnames = data.alarms.filter(a => a.name !== data.alarm.name);
             data.alarms.forEach(item => {
-                if (item.highhigh.text && this.existtexts.indexOf(item.highhigh.text) === -1) this.existtexts.push(item.highhigh.text);
-                if (item.high.text && this.existtexts.indexOf(item.high.text) === -1) this.existtexts.push(item.high.text);
-                if (item.low.text && this.existtexts.indexOf(item.low.text) === -1) this.existtexts.push(item.low.text);
-                if (item.info.text && this.existtexts.indexOf(item.info.text) === -1) this.existtexts.push(item.info.text);
+                if (item.highhigh.text && this.existtexts.indexOf(item.highhigh.text) === -1) {this.existtexts.push(item.highhigh.text);}
+                if (item.high.text && this.existtexts.indexOf(item.high.text) === -1) {this.existtexts.push(item.high.text);}
+                if (item.low.text && this.existtexts.indexOf(item.low.text) === -1) {this.existtexts.push(item.low.text);}
+                if (item.info.text && this.existtexts.indexOf(item.info.text) === -1) {this.existtexts.push(item.info.text);}
 
-                if (item.highhigh.group && this.existgroups.indexOf(item.highhigh.group) === -1) this.existgroups.push(item.highhigh.group);
-                if (item.high.group && this.existgroups.indexOf(item.high.group) === -1) this.existgroups.push(item.high.group);
-                if (item.low.group && this.existgroups.indexOf(item.low.group) === -1) this.existgroups.push(item.low.group);
-                if (item.info.group && this.existgroups.indexOf(item.info.group) === -1) this.existgroups.push(item.info.group);
+                if (item.highhigh.group && this.existgroups.indexOf(item.highhigh.group) === -1) {this.existgroups.push(item.highhigh.group);}
+                if (item.high.group && this.existgroups.indexOf(item.high.group) === -1) {this.existgroups.push(item.high.group);}
+                if (item.low.group && this.existgroups.indexOf(item.low.group) === -1) {this.existgroups.push(item.low.group);}
+                if (item.info.group && this.existgroups.indexOf(item.info.group) === -1) {this.existgroups.push(item.info.group);}
             });
         }
     }

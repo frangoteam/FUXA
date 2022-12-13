@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TagDaq } from '../../_models/device';
@@ -21,6 +21,7 @@ export class TagOptionsComponent {
             interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(1)]],
             changed: [{value: false, disabled: true}],
             enabled: [false],
+            format: [Validators.required, Validators.min(0)]
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -31,13 +32,14 @@ export class TagOptionsComponent {
                 this.formGroup.controls.interval.disable();
                 this.formGroup.controls.changed.disable();
             }
-        })
+        });
 
         // check if edit a group
         if (this.data.tags.length > 0) {
             let enabled = { value: null, valid: true };
             let changed = { value: null, valid: true };
             let interval = { value: null, valid: true };
+            let format = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -58,6 +60,11 @@ export class TagOptionsComponent {
                 } else if (interval.value !== daq.interval) {
                     interval.valid = false;
                 }
+                if (!format.value) {
+                    format.value = this.data.tags[i].format;
+                } else if (format.value !== this.data.tags[i].format) {
+                    format.valid = false;
+                }
             }
             if (enabled.valid && enabled.value !== null) {
                 this.formGroup.patchValue({enabled: enabled.value});
@@ -68,6 +75,9 @@ export class TagOptionsComponent {
             if (interval.valid && interval.value) {
                 this.formGroup.patchValue({interval: interval.value});
             }
+            if (format.valid && format.value) {
+                this.formGroup.patchValue({format: format.value});
+            }
         }
     }
 
@@ -76,11 +86,18 @@ export class TagOptionsComponent {
     }
 
     onOkClick(): void {
-        this.dialogRef.close(new TagDaq(
-            this.formGroup.value.enabled,
-            this.formGroup.value.changed,
-            this.formGroup.value.interval
-        ));
-
+        this.dialogRef.close({
+            daq: new TagDaq(
+                this.formGroup.value.enabled,
+                this.formGroup.value.changed,
+                this.formGroup.value.interval
+            ),
+            format: this.formGroup.value.format
+        });
     }
+}
+
+export interface ITagOption {
+    daq: TagDaq;
+    format: number;
 }

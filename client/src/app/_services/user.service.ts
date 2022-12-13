@@ -15,7 +15,7 @@ export class UserService {
 
     constructor(private http: HttpClient,
         private translateService: TranslateService,
-        private toastr: ToastrService) { 
+        private toastr: ToastrService) {
 
     }
 
@@ -35,7 +35,7 @@ export class UserService {
                     console.error(err);
                     this.notifySaveError();
                     observer.error(err);
-                });                
+                });
             } else {
                 observer.next();
             }
@@ -52,7 +52,7 @@ export class UserService {
                     console.error(err);
                     this.notifySaveError();
                     observer.error(err);
-                });                
+                });
             } else {
                 observer.next();
             }
@@ -62,7 +62,7 @@ export class UserService {
     //#region Notify
     private notifySaveError() {
         let msg = '';
-        this.translateService.get('msg.users-save-error').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.users-save-error').subscribe((txt: string) => { msg = txt; });
         this.toastr.error(msg, '', {
             timeOut: 3000,
             closeButton: true,

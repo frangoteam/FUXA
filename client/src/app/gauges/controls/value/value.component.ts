@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, Input, AfterViewInit } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { Component, Input } from '@angular/core';
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, Variable, GaugeStatus, GaugeAction, GaugeActionsType, GaugeRangeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -24,7 +24,7 @@ export class ValueComponent extends GaugeBaseComponent {
     constructor() {
         super();
     }
-    
+
     static getSignals(pro: any) {
         let res: string[] = [];
         if (pro.actions && pro.actions.length) {
@@ -40,7 +40,7 @@ export class ValueComponent extends GaugeBaseComponent {
                 if (range['fractionDigitsId']) {
                     res.push(range['fractionDigitsId']);
                 }
-            })
+            });
         }
         if (pro.variableId) {
             res.push(pro.variableId);
@@ -55,22 +55,22 @@ export class ValueComponent extends GaugeBaseComponent {
     static getActions(type: string) {
         return this.actionsType;
     }
-    
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
                 let g = svgele.node.children[0];
                 let val: any = parseFloat(sig.value);
                 switch(typeof(sig.value)){
-                    case "undefined":
+                    case 'undefined':
                         break;
-                    case "boolean":
+                    case 'boolean':
                         val = Number(sig.value);
                         break;
-                    case "number":
+                    case 'number':
                         val = parseFloat(val.toFixed(5));
                         break;
-                    case "string":
+                    case 'string':
                         val = sig.value;
                         break;
                     default: break;
@@ -95,7 +95,7 @@ export class ValueComponent extends GaugeBaseComponent {
                                 ValueComponent.processAction(act, svgele, parseFloat(val), gaugeStatus);
                             }
                         });
-                    }      
+                    }
                 }
             }
         } catch (err) {
@@ -124,5 +124,5 @@ export class ValueComponent extends GaugeBaseComponent {
 
 export class ValueProperty {
     signalid = '';
-    format = '##.##'
+    format = '##.##';
 }

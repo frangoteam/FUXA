@@ -1,11 +1,10 @@
 
-import { Injectable, Output, EventEmitter, Inject, Optional } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
-import { Hmi, View, LayoutSettings, DaqQuery } from '../_models/hmi';
+import { View, LayoutSettings, DaqQuery } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
 import { Alarm, AlarmQuery } from '../_models/alarm';
@@ -13,7 +12,6 @@ import { Notification } from '../_models/notification';
 import { Script, ScriptMode } from '../_models/script';
 import { Text } from '../_models/text';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag } from '../_models/device';
-import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceStorageService } from './rcgi/resource-storage.service';
@@ -58,8 +56,8 @@ export class ProjectService {
             this.storage = resClientService;
         }
         // console.log("mode:", environment.type);
-        this.storage.getAppId = () => { return this.getAppId(); }
-        this.storage.onRefreshProject = (): boolean => { return this.onRefreshProject() };
+        this.storage.getAppId = () => this.getAppId();
+        this.storage.onRefreshProject = (): boolean => this.onRefreshProject();
         this.storage.checkServer().subscribe(result => {
             if (!environment.serverEnabled || result) {
                 this.serverSettings = result;
@@ -93,7 +91,7 @@ export class ProjectService {
                 this.notifyToLoadHmi();
             } else {
                 let msg = '';
-                this.translateService.get('msg.get-project-void').subscribe((txt: string) => { msg = txt });
+                this.translateService.get('msg.get-project-void').subscribe((txt: string) => { msg = txt; });
                 console.warn(msg);
                 // this.notifySaveError(msg);
             }
@@ -141,12 +139,12 @@ export class ProjectService {
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
             var msg = '';
-            this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt });
+            this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt; });
             this.toastr.success(msg);
         }, err => {
             console.error(err);
             var msg = '';
-            this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+            this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt; });
             this.toastr.error(msg, '', {
                 timeOut: 3000,
                 closeButton: true,
@@ -191,7 +189,7 @@ export class ProjectService {
                 if (device.id && device.name) {
                     this.setDevice(device, null, null);
                 }
-            })
+            });
         }
     }
 
@@ -313,8 +311,8 @@ export class ProjectService {
     }
 
     /**
-     * 
-     * @returns 
+     *
+     * @returns
      */
     getViews(): View[] {
         return (this.projectData) ? this.projectData.hmi.views : [];
@@ -420,7 +418,7 @@ export class ProjectService {
     //#region Graph resource
     /**
      * get graphs list
-     * @returns 
+     * @returns
      */
     getGraphs(): Graph[] {
         return (this.projectData) ? (this.projectData.graphs) ? this.projectData.graphs : [] : null;
@@ -428,8 +426,8 @@ export class ProjectService {
 
     /**
      * get the graph of id
-     * @param id 
-     * @returns 
+     * @param id
+     * @returns
      */
     getGraph(id: string) {
         if (this.projectData.graphs) {
@@ -456,7 +454,7 @@ export class ProjectService {
     }
     //#endregion
 
-    //#region Alarms resource    
+    //#region Alarms resource
     /**
      * get alarms resource
      */
@@ -536,7 +534,7 @@ export class ProjectService {
     }
     //#endregion
 
-    //#region Notifications resource    
+    //#region Notifications resource
     /**
      * get notifications resource
      */
@@ -613,21 +611,21 @@ export class ProjectService {
                 if (script.mode == ScriptMode.CLIENT && script.scheduling && script.scheduling.interval > 0) {
                     this.intervals.push(setInterval(
                         () => {
-                            this.scriptService.runScript(script).subscribe(() => { })
+                            this.scriptService.runScript(script).subscribe(() => { });
                         }, script.scheduling.interval * 1000));
                 }
-            })
+            });
         }
     }
 
     clearScheduledScripts() {
         /* clear all intervals from scripts with client mode */
-        this.intervals.forEach(interval => {clearInterval(interval)});
+        this.intervals.forEach(interval => {clearInterval(interval);});
         this.intervals = [];
     }
-    
 
-    
+
+
     //#region Scripts resource
     /**
      * get scripts
@@ -790,7 +788,7 @@ export class ProjectService {
 
     /**
      * remove the text from project
-     * @param text 
+     * @param text
      */
     removeText(text: Text) {
         if (this.projectData.texts) {
@@ -818,9 +816,9 @@ export class ProjectService {
     private notifySaveError(err: any) {
         console.error('FUXA notifySaveError error', err);
         let msg = null;
-        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt; });
         if (err.status === 401) {
-            this.translateService.get('msg.project-save-unauthorized').subscribe((txt: string) => { msg = txt });
+            this.translateService.get('msg.project-save-unauthorized').subscribe((txt: string) => { msg = txt; });
         }
         if (msg) {
             this.toastr.error(msg, '', {
@@ -834,7 +832,7 @@ export class ProjectService {
     private notifyServerError() {
         console.error('FUXA notifyServerError error');
         let msg = null;
-        this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt });
+        this.translateService.get('msg.server-connection-error').subscribe((txt: string) => { msg = txt; });
         if (msg) {
             this.toastr.error(msg, '', {
                 timeOut: 3000,
@@ -845,7 +843,7 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        this.translateService.get(msgCode).subscribe((txt: string) => { msgCode = txt });
+        this.translateService.get(msgCode).subscribe((txt: string) => { msgCode = txt; });
         if (msgCode) {
             console.error(`FUXA Error: ${msgCode}`);
             this.toastr.error(msgCode, '', {
@@ -960,7 +958,7 @@ export class ProjectService {
 
     /**
      * Send Save Project to to editor component
-     * @param saveas 
+     * @param saveas
      */
     saveProject(mode = SaveMode.Save) {
         this.onSaveCurrent.emit(mode);
@@ -994,8 +992,8 @@ export class ProjectService {
                     if (p === 'svgcontent') {
                         // the xml have to be transform in json
                         const parser = new DOMParser();  // initialize dom parser
-                        const aDOM = parser.parseFromString(x[p], "text/xml")
-                        const bDOM = parser.parseFromString(y[p], "text/xml")
+                        const aDOM = parser.parseFromString(x[p], 'text/xml');
+                        const bDOM = parser.parseFromString(y[p], 'text/xml');
                         let a = this._xml2json(aDOM);
                         let b = this._xml2json(bDOM);
                         return this._deepEquals(a, b);
@@ -1021,8 +1019,8 @@ export class ProjectService {
     }
 
     /**
-     * This function coverts a DOM Tree into JavaScript Object. 
-     * @param srcDOM: DOM Tree to be converted. 
+     * This function coverts a DOM Tree into JavaScript Object.
+     * @param srcDOM: DOM Tree to be converted.
      */
     private _xml2json(xml) {
         // Create the return object
@@ -1031,10 +1029,10 @@ export class ProjectService {
         if (xml.nodeType == 1) { // element
             // do attributes
             if (xml.attributes.length > 0) {
-                obj["@attributes"] = {};
+                obj['@attributes'] = {};
                 for (var j = 0; j < xml.attributes.length; j++) {
                     var attribute = xml.attributes.item(j);
-                    obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
+                    obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
                 }
             }
         } else if (xml.nodeType == 3) { // text
@@ -1046,10 +1044,10 @@ export class ProjectService {
             for (var i = 0; i < xml.childNodes.length; i++) {
                 var item = xml.childNodes.item(i);
                 var nodeName = item.nodeName;
-                if (typeof (obj[nodeName]) == "undefined") {
+                if (typeof (obj[nodeName]) == 'undefined') {
                     obj[nodeName] = this._xml2json(item);
                 } else {
-                    if (typeof (obj[nodeName].push) == "undefined") {
+                    if (typeof (obj[nodeName].push) == 'undefined') {
                         var old = obj[nodeName];
                         obj[nodeName] = [];
                         obj[nodeName].push(old);

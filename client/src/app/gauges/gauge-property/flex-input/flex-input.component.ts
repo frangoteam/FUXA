@@ -55,7 +55,7 @@ export class FlexInputComponent implements OnInit {
                 this.withValue = this.ranges[0].style[1];
             }
         } else if (this.isOutputCtrl()) {
-        } 
+        }
         if (this.isInputCtrl()) {
             this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
         }

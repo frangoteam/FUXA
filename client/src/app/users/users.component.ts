@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Inject, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -77,13 +77,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
 		muser.password = '';
 		let dialogRef = this.dialog.open(DialogUser, {
 			position: { top: '60px' },
-			data: { user: muser, current: current, users: this.users.map((u: User) => { return u.username }) }
+			data: { user: muser, current: current, users: this.users.map((u: User) => u.username) }
 		});
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {
 				if (!current) {
 					this.userService.removeUser(result).subscribe(result => {
-						this.users = this.users.filter(function (el) { return el.username !== muser.username; });
+						this.users = this.users.filter(function(el) { return el.username !== muser.username; });
 						this.bindToTable(this.users);
 					}, err => {
 					});

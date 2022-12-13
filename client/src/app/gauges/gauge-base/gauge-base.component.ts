@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { GaugeSettings, GaugeProperty, GaugeEvent, GaugeEventType, GaugeStatus, GaugeActionStatus, GaugePropertyColor, GaugeAction } from '../../_models/hmi';
 
 import { Utils } from '../../_helpers/utils';
@@ -27,7 +27,7 @@ export class GaugeBaseComponent {
         var pattern = /([ml])\s*(-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)/ig,
             coords = [];
 
-        relativePath.replace(pattern, function (match, command, x, y) {
+        relativePath.replace(pattern, function(match, command, x, y) {
             var prev;
 
             x = parseFloat(x);
@@ -75,7 +75,7 @@ export class GaugeBaseComponent {
             if (pro.ranges && pro.ranges.length > 0) {
                 if (pro.ranges[0]['fractionDigitsId'] && !Utils.isNullOrUndefined(gaugeStatus.variablesValue[pro.ranges[0]['fractionDigitsId']])) {
                     pro.ranges[0]['fractionDigits'] = gaugeStatus.variablesValue[pro.ranges[0]['fractionDigitsId']];
-                } 
+                }
                 if (pro.ranges[0]['fractionDigits']) {
                     return pro.ranges[0]['fractionDigits'];
                 }
@@ -102,7 +102,7 @@ export class GaugeBaseComponent {
         gaugeStatus.actionRef = actionRef;
     }
 
-    static checkActionBlink(element: any, act: GaugeAction, gaugeStatus: GaugeStatus, toEnable: boolean, dom: boolean, propertyColor?:GaugePropertyColor) {
+    static checkActionBlink(element: any, act: GaugeAction, gaugeStatus: GaugeStatus, toEnable: boolean, dom: boolean, propertyColor?: GaugePropertyColor) {
         if (!gaugeStatus.actionRef) {
             gaugeStatus.actionRef = new GaugeActionStatus(act.type);
         }
@@ -113,8 +113,8 @@ export class GaugeBaseComponent {
             // save action (dummy) id and colors to restore on break
             try {
                 const actId = GaugeBaseComponent.getBlinkActionId(act);
-                if (dom) gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };
-                else gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };
+                if (dom) {gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };}
+                else {gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };}
             } catch (err) {
                 console.error(err);
             }
@@ -152,8 +152,8 @@ export class GaugeBaseComponent {
                     }
                     // check to overwrite with property color
                     if (propertyColor) {
-                        if (propertyColor.fill) gaugeStatus.actionRef.spool.bk = propertyColor.fill;
-                        if (propertyColor.stroke) gaugeStatus.actionRef.spool.clr = propertyColor.stroke;
+                        if (propertyColor.fill) {gaugeStatus.actionRef.spool.bk = propertyColor.fill;}
+                        if (propertyColor.stroke) {gaugeStatus.actionRef.spool.clr = propertyColor.stroke;}
                     }
                     if (dom) {
                         element.style.backgroundColor = gaugeStatus.actionRef.spool.bk;
@@ -163,7 +163,7 @@ export class GaugeBaseComponent {
                         element.node.setAttribute('stroke', gaugeStatus.actionRef.spool.clr);
                     }
                 }
-            } catch (err) { 
+            } catch (err) {
                 console.error(err);
             }
         }

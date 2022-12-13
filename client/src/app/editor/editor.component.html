@@ -57,10 +57,10 @@
                         <div *ngFor="let item of getViewsSorted()" (click)="onSelectView(item)" [ngClass]="{'leftbar-item-active': isViewActive(item)}"
                             class="leftbar-item mycursor-pointer">
                             <mat-icon *ngIf="!item.type || item.type === svgViewType" matTooltip="{{'editor.view-svg' | translate}}" class="leftbar-item-type">
-                                insert_drive_file
+                                wysiwyg
                             </mat-icon>
                             <mat-icon *ngIf="item.type === cardViewType" matTooltip="{{'editor.view-cards' | translate}}" class="leftbar-item-type">
-                                dashboard
+                                grid_view
                             </mat-icon>
                             <span>{{item.name}}</span>
                             <mat-icon aria-label="More" [matMenuTriggerFor]="menuview">more_vert</mat-icon>
@@ -186,7 +186,7 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-table' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-table')}"
                                 (click)="setMode('own_ctrl-table')">
                                 <span class="icon-tool icon-table"></span>
-                            </div>                            
+                            </div>
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-iframe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-iframe')}"
                                 (click)="setMode('own_ctrl-iframe')">
                                 <span class="icon-tool icon-iframe"></span>
@@ -209,7 +209,7 @@
                                 <span class="icon-tool" [style.backgroundImage]="'url(' + shape.ico + ')'"> </span>
                             </div>
                         </div>
-                    </mat-expansion-panel>  
+                    </mat-expansion-panel>
                     <!-- RESOURCES -->
                     <mat-expansion-panel class="svg-workarea-leftbar-p" hideToggle="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h" style="max-height: 32px;height: 32px">
@@ -220,7 +220,7 @@
                             <mat-icon aria-label="Add" matTooltip="{{'editor.image-add' | translate}}" class="leftbar-edit-btn" (click)="onAddResource();$event.stopPropagation()">add
                             </mat-icon>
                         </mat-expansion-panel-header>
-                    </mat-expansion-panel>              
+                    </mat-expansion-panel>
                 </div>
             </mat-accordion>
         </mat-drawer>
@@ -1060,7 +1060,7 @@
             <a id="#move_back">{{'editor.cmenu-send-back' | translate}}
                 <span class="shortcut">SHFT+CTRL+[</span>
             </a>
-        </li>        
+        </li>
         <li>
             <a id="#move_down">{{'editor.cmenu-send-backward' | translate}}
                 <span class="shortcut">CTRL+[</span>

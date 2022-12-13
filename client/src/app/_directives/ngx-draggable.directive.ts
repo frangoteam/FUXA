@@ -19,7 +19,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
 
     @Input('draggable')
     set draggable(val: any) {
-        if (val === undefined || val === null || val === '') return;
+        if (val === undefined || val === null || val === '') {return;}
         this.canDrag = val;
     }
     @Input() draggableHeight: number;
@@ -49,7 +49,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
     }
 
     onDragStart(event: any) {
-        event.dataTransfer.setData("text/plain", event.target.id);
+        event.dataTransfer.setData('text/plain', event.target.id);
         this.active = false;
         if (this.draggableHeight && this.draggableHeight < event.offsetY) {
             return;
@@ -75,7 +75,7 @@ export class DraggableDirective implements OnDestroy, OnInit, AfterViewInit {
     }
 
     doTranslation(x: number, y: number) {
-        if (!x || !y) return;
+        if (!x || !y) {return;}
         this.renderer.setStyle(this.el.nativeElement, 'top', (y - this.dy) + 'px');
         this.renderer.setStyle(this.el.nativeElement, 'left', (x - this.dx) + 'px');
     }

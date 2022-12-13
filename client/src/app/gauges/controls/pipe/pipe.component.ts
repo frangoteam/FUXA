@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType } from '../../../_models/hmi';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component'
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { Utils } from '../../../_helpers/utils';
 
@@ -20,7 +20,7 @@ export class PipeComponent {
     static LabelTag = 'Pipe';
     static prefixB = 'PIE_';
 
-    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, 
+    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise,
                             hidecontent: PipeActionsType.hidecontent };
 
     static getSignals(pro: any) {
@@ -45,6 +45,10 @@ export class PipeComponent {
 
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.Pipe;
+    }
+
+    static isBitmaskSupported(): boolean {
+        return true;
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
@@ -75,10 +79,11 @@ export class PipeComponent {
     }
 
     static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
-        if (act.range.min <= value && act.range.max >= value) {
+        let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
+        if (act.range.min <= actValue && act.range.max >= actValue) {
             var element = SVG.adopt(svgele.node);
             PipeComponent.runMyAction(element, act.type, gaugeStatus);
-        }    
+        }
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
@@ -101,7 +106,7 @@ export class PipeComponent {
                 if (PipeComponent.actionsType[type] === PipeComponent.actionsType.clockwise) {
                     eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
-                        if (len < 0) len = 1000;
+                        if (len < 0) {len = 1000;}
                         eletoanim.style.strokeDashoffset = len;
                         len--;
                     }, 20);
@@ -109,7 +114,7 @@ export class PipeComponent {
                 } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.anticlockwise) {
                     eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
-                        if (len > 1000) len = 0;
+                        if (len > 1000) {len = 0;}
                         eletoanim.style.strokeDashoffset = len;
                         len++;
                     }, 20);

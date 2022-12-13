@@ -1,6 +1,5 @@
 /* eslint-disable @angular-eslint/component-selector */
-import { isNull } from '@angular/compiler/src/output/output_ast';
-import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
 
 import { Series, Options, Legend } from './uPlot';
 
@@ -34,82 +33,82 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     private getShortTimeFormat(min: boolean = true) {
         if (this.options && this.options.timeFormat === 'hh_mm_ss_AA') {
-            if (min) return "{h}:{mm} {AA}";
-            return "{h} {AA}";
+            if (min) {return '{h}:{mm} {AA}';}
+            return '{h} {AA}';
         }
-        if (min) return "{HH}:{mm}";
-        return "{HH}";
+        if (min) {return '{HH}:{mm}';}
+        return '{HH}';
     }
 
-    private xTimeFormat = { hh_mm_ss: "{HH}:{mm}:{ss}", hh_mm_ss_AA: "{h}:{mm}:{ss} {AA}" };
+    private xTimeFormat = { hh_mm_ss: '{HH}:{mm}:{ss}', hh_mm_ss_AA: '{h}:{mm}:{ss} {AA}' };
     private xDateFormat = { };
 
     private checkDateFormat() {
         this.xDateFormat = {
-            YYYY_MM_DD: { 
+            YYYY_MM_DD: {
                 legendDate: '{YYYY}/{MM}/{DD}',
                 values: [
                     // tick incr default: year (3600 * 24 * 365), month(3600 * 24 * 28), day(3600 * 24), hour, min, sec, mode
-                    [31536000, "{YYYY}", null, null, null, null, null, null, 1],
-                    [2419200, "{MMM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [86400, "{DD}/{MM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [3600, "" + this.getShortTimeFormat(false), "\n{YYYY}/{MM}/{DD}", null, "\n{DD}/{MM}", null, null, null, 1],
-                    [60, "" + this.getShortTimeFormat(), "\n{YYYY}/{MM}/{DD}", null, "\n{DD}/{MM}", null, null, null, 1],
-                    [1, ":{ss}", "\n{YYYY}/{MM}/{DD} " + this.getShortTimeFormat(), null, "\n{DD}/{MM} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1],
-                    [0.001, ":{ss}.{fff}", "\n{YYYY}/{MM}/{DD} " + this.getShortTimeFormat(), null, "\n{DD}/{MM} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1]]
+                    [31536000, '{YYYY}', null, null, null, null, null, null, 1],
+                    [2419200, '{MMM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [86400, '{DD}/{MM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [3600, '' + this.getShortTimeFormat(false), '\n{YYYY}/{MM}/{DD}', null, '\n{DD}/{MM}', null, null, null, 1],
+                    [60, '' + this.getShortTimeFormat(), '\n{YYYY}/{MM}/{DD}', null, '\n{DD}/{MM}', null, null, null, 1],
+                    [1, ':{ss}', '\n{YYYY}/{MM}/{DD} ' + this.getShortTimeFormat(), null, '\n{DD}/{MM} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1],
+                    [0.001, ':{ss}.{fff}', '\n{YYYY}/{MM}/{DD} ' + this.getShortTimeFormat(), null, '\n{DD}/{MM} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1]]
             },
             MM_DD_YYYY: {
                 legendDate: '{MM}/{DD}/{YYYY}',
                 values: [
                     // tick incr default: year (3600 * 24 * 365), month(3600 * 24 * 28), day(3600 * 24), hour, min, sec, mode
-                    [31536000, "{YYYY}", null, null, null, null, null, null, 1],
-                    [2419200, "{MMM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [86400, "{MM}/{DD}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [3600, "" + this.getShortTimeFormat(false), "\n{MM}/{DD}/{YYYY}", null, "\n{MM}/{DD}", null, null, null, 1],
-                    [60, "" + this.getShortTimeFormat(), "\n{MM}/{DD}/{YYYY}", null, "\n{MM}/{DD}", null, null, null, 1],
-                    [1, ":{ss}", "\n{MM}/{DD}/{YYYY} " + this.getShortTimeFormat(), null, "\n{MM}/{DD} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1],
-                    [0.001, ":{ss}.{fff}", "\n{MM}/{DD}/{YYYY} " + this.getShortTimeFormat(), null, "\n{MM}/{DD} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1]]
+                    [31536000, '{YYYY}', null, null, null, null, null, null, 1],
+                    [2419200, '{MMM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [86400, '{MM}/{DD}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [3600, '' + this.getShortTimeFormat(false), '\n{MM}/{DD}/{YYYY}', null, '\n{MM}/{DD}', null, null, null, 1],
+                    [60, '' + this.getShortTimeFormat(), '\n{MM}/{DD}/{YYYY}', null, '\n{MM}/{DD}', null, null, null, 1],
+                    [1, ':{ss}', '\n{MM}/{DD}/{YYYY} ' + this.getShortTimeFormat(), null, '\n{MM}/{DD} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1],
+                    [0.001, ':{ss}.{fff}', '\n{MM}/{DD}/{YYYY} ' + this.getShortTimeFormat(), null, '\n{MM}/{DD} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1]]
             },
             DD_MM_YYYY: {
                 legendDate: '{DD}/{MM}/{YYYY}',
                 values: [
                     // tick incr default: year (3600 * 24 * 365), month(3600 * 24 * 28), day(3600 * 24), hour, min, sec, mode
-                    [31536000, "{YYYY}", null, null, null, null, null, null, 1],
-                    [2419200, "{MMM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [86400, "{DD}/{MM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [3600, "" + this.getShortTimeFormat(false), "\n{DD}/{MM}/{YYYY}", null, "\n{DD}/{MM}", null, null, null, 1],
-                    [60, "" + this.getShortTimeFormat(), "\n{DD}/{MM}/{YYYY}", null, "\n{DD}/{MM}", null, null, null, 1],
-                    [1, ":{ss}", "\n{DD}/{MM}/{YYYY} " + this.getShortTimeFormat(), null, "\n{DD}/{MM} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1],
-                    [0.001, ":{ss}.{fff}", "\n{DD}/{MM}/{YYYY} " + this.getShortTimeFormat(), null, "\n{DD}/{MM} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1]]
+                    [31536000, '{YYYY}', null, null, null, null, null, null, 1],
+                    [2419200, '{MMM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [86400, '{DD}/{MM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [3600, '' + this.getShortTimeFormat(false), '\n{DD}/{MM}/{YYYY}', null, '\n{DD}/{MM}', null, null, null, 1],
+                    [60, '' + this.getShortTimeFormat(), '\n{DD}/{MM}/{YYYY}', null, '\n{DD}/{MM}', null, null, null, 1],
+                    [1, ':{ss}', '\n{DD}/{MM}/{YYYY} ' + this.getShortTimeFormat(), null, '\n{DD}/{MM} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1],
+                    [0.001, ':{ss}.{fff}', '\n{DD}/{MM}/{YYYY} ' + this.getShortTimeFormat(), null, '\n{DD}/{MM} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1]]
             },
             MM_DD_YY: {
                 legendDate: '{MM}/{DD}/{YY}',
                 values: [
                     // tick incr default: year (3600 * 24 * 365), month(3600 * 24 * 28), day(3600 * 24), hour, min, sec, mode
-                    [31536000, "{YYYY}", null, null, null, null, null, null, 1],
-                    [2419200, "{MMM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [86400, "{MM}/{DD}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [3600, "" + this.getShortTimeFormat(false), "\n{MM}/{DD}/{YY}", null, "\n{MM}/{DD}", null, null, null, 1],
-                    [60, "" + this.getShortTimeFormat(), "\n{MM}/{DD}/{YY}", null, "\n{MM}/{DD}", null, null, null, 1],
-                    [1, ":{ss}", "\n{MM}/{DD}/{YY} " + this.getShortTimeFormat(), null, "\n{MM}/{DD} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1],
-                    [0.001, ":{ss}.{fff}", "\n{MM}/{DD}/{YY} " + this.getShortTimeFormat(), null, "\n{MM}/{DD} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1]]
+                    [31536000, '{YYYY}', null, null, null, null, null, null, 1],
+                    [2419200, '{MMM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [86400, '{MM}/{DD}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [3600, '' + this.getShortTimeFormat(false), '\n{MM}/{DD}/{YY}', null, '\n{MM}/{DD}', null, null, null, 1],
+                    [60, '' + this.getShortTimeFormat(), '\n{MM}/{DD}/{YY}', null, '\n{MM}/{DD}', null, null, null, 1],
+                    [1, ':{ss}', '\n{MM}/{DD}/{YY} ' + this.getShortTimeFormat(), null, '\n{MM}/{DD} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1],
+                    [0.001, ':{ss}.{fff}', '\n{MM}/{DD}/{YY} ' + this.getShortTimeFormat(), null, '\n{MM}/{DD} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1]]
             },
             DD_MM_YY: {
                 legendDate: '{DD}/{MM}/{YY}',
                 values: [
                     // tick incr default: year (3600 * 24 * 365), month(3600 * 24 * 28), day(3600 * 24), hour, min, sec, mode
-                    [31536000, "{YYYY}", null, null, null, null, null, null, 1],
-                    [2419200, "{MMM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [86400, "{DD}/{MM}", "\n{YYYY}", null, null, null, null, null, 1],
-                    [3600, "" + this.getShortTimeFormat(false), "\n{DD}/{MM}/{YY}", null, "\n{DD}/{MM}", null, null, null, 1],
-                    [60, "" + this.getShortTimeFormat(), "\n{DD}/{MM}/{YY}", null, "\n{DD}/{MM}", null, null, null, 1],
-                    [1, ":{ss}", "\n{DD}/{MM}/{YY} " + this.getShortTimeFormat(), null, "\n{DD}/{MM} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1],
-                    [0.001, ":{ss}.{fff}", "\n{DD}/{MM}/{YY} " + this.getShortTimeFormat(), null, "\n{DD}/{MM} " + this.getShortTimeFormat(), null, "\n" + this.getShortTimeFormat(), null, 1]]
+                    [31536000, '{YYYY}', null, null, null, null, null, null, 1],
+                    [2419200, '{MMM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [86400, '{DD}/{MM}', '\n{YYYY}', null, null, null, null, null, 1],
+                    [3600, '' + this.getShortTimeFormat(false), '\n{DD}/{MM}/{YY}', null, '\n{DD}/{MM}', null, null, null, 1],
+                    [60, '' + this.getShortTimeFormat(), '\n{DD}/{MM}/{YY}', null, '\n{DD}/{MM}', null, null, null, 1],
+                    [1, ':{ss}', '\n{DD}/{MM}/{YY} ' + this.getShortTimeFormat(), null, '\n{DD}/{MM} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1],
+                    [0.001, ':{ss}.{fff}', '\n{DD}/{MM}/{YY} ' + this.getShortTimeFormat(), null, '\n{DD}/{MM} ' + this.getShortTimeFormat(), null, '\n' + this.getShortTimeFormat(), null, 1]]
             },
-        }
+        };
     }
 
-    fmtDate = uPlot.fmtDate("{DD}/{MM}/{YY} {HH}:{mm}:{ss}");
+    fmtDate = uPlot.fmtDate('{DD}/{MM}/{YY} {HH}:{mm}:{ss}');
 
     sampleSerie = [
         {
@@ -120,20 +119,20 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             show: true,
             spanGaps: false,
             // // in-legend display
-            label: "Serie",
+            label: 'Serie',
             value: (self, rawValue) => rawValue.toFixed(this.options.decimalsPrecision),
             // // series style
-            stroke: "red",
+            stroke: 'red',
             width: 1,
-            fill: "rgba(255, 0, 0, 0.3)",
+            fill: 'rgba(255, 0, 0, 0.3)',
             dash: [10, 5],
         }
     ];
 
     defOptions: Options = {
-        title: "Default Chart",
-        id: "defchart",
-        class: "my-chart",
+        title: 'Default Chart',
+        id: 'defchart',
+        class: 'my-chart',
         width: 800,
         height: 600,
         legend: { show: true, width: 1 },
@@ -144,9 +143,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         },
         series: this.sampleSerie,
         cursor: {
-            dataIdx: (self, seriesIdx, hoveredIdx, cursorXVal) => { 
-                return this._proximityIndex(self, seriesIdx, hoveredIdx, cursorXVal);
-            },
+            dataIdx: (self, seriesIdx, hoveredIdx, cursorXVal) => this._proximityIndex(self, seriesIdx, hoveredIdx, cursorXVal),
         },
     };
     languageLabels = { time: 'Time', serie: 'Serie', title: 'Title' };
@@ -169,8 +166,8 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     }
 
     resize(height?, width?) {
-        let chart = this.graph.nativeElement;        
-        if (!height) { 
+        let chart = this.graph.nativeElement;
+        if (!height) {
             height = chart.clientHeight;
         }
         if (!width) {
@@ -300,27 +297,27 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             bTop = bbox.top;
         }
 
-        this.overlay = document.createElement("div");
+        this.overlay = document.createElement('div');
         let overlay = this.overlay;
-        overlay.id = "overlay";
-        overlay.style.display = "none";
-        overlay.style.position = "absolute";
+        overlay.id = 'overlay';
+        overlay.style.display = 'none';
+        overlay.style.position = 'absolute';
         document.body.appendChild(overlay);
 
         return {
             hooks: {
                 init: u => {
-                    over = u.root.querySelector(".u-over");
+                    over = u.root.querySelector('.u-over');
 
                     bound = over;
                     //	bound = document.body;
 
                     over.onmouseenter = () => {
-                        overlay.style.display = "block";
+                        overlay.style.display = 'block';
                     };
 
                     over.onmouseleave = () => {
-                        overlay.style.display = "none";
+                        overlay.style.display = 'none';
                     };
                 },
                 setSize: u => {
@@ -348,7 +345,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                         series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
                     }
                     overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
-                    placement(overlay, anchor, "right", "start", { bound });
+                    placement(overlay, anchor, 'right', 'start', { bound });
                 }
             }
         };
@@ -365,13 +362,13 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             i = hoveredIdx;
             while (nonNullLft == null && i-- > 0) {
                 if (seriesData[i] != null)
-                    nonNullLft = i;
+                    {nonNullLft = i;}
             }
 
             i = hoveredIdx;
             while (nonNullRgt == null && i++ < seriesData.length) {
                 if (seriesData[i] != null)
-                    nonNullRgt = i;
+                    {nonNullRgt = i;}
             }
 
             let xVals = self.data[0];
@@ -385,11 +382,11 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
             if (lftDelta <= rgtDelta) {
                 if (lftDelta <= hoverProximityPx)
-                    hoveredIdx = nonNullLft;
+                    {hoveredIdx = nonNullLft;}
             }
             else {
                 if (rgtDelta <= hoverProximityPx)
-                    hoveredIdx = nonNullRgt;
+                    {hoveredIdx = nonNullRgt;}
             }
         }
 

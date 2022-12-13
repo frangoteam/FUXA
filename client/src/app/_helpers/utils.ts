@@ -45,27 +45,27 @@ export class Utils {
     }
 
     static getGUID(prefix: string = ''): string {
-        var uuid = "", i, random;
+        var uuid = '', i, random;
         for (i = 0; i < 16; i++) {
             random = Math.random() * 16 | 0;
             if (i == 8) {
-                uuid += "-"
+                uuid += '-';
             }
             uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
         }
-        return prefix + uuid; 
+        return prefix + uuid;
     };
 
     static getShortGUID(prefix: string = ''): string {
-        var uuid = "", i, random;
+        var uuid = '', i, random;
         for (i = 0; i < 12; i++) {
             random = Math.random() * 16 | 0;
             if (i == 8) {
-                uuid += "-"
+                uuid += '-';
             }
             uuid += (i == 4 ? 4 : (i == 6 ? (random & 3 | 8) : random)).toString(12);
         }
-        return prefix + uuid; 
+        return prefix + uuid;
     }
 
     static getNextName(prefix: string, inuse: string[]) {
@@ -88,18 +88,18 @@ export class Utils {
 
     static getTextHeight(font) {
         // re-use canvas object for better performance
-        var canvas = document.createElement("canvas");
-        var context = canvas.getContext("2d");
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
         context.font = font;
         var metrics = context.measureText('M');
         return metrics.width;
     }
 
     static getDomTextHeight(size: number, font: string) {
-        let text = document.createElement("span");
+        let text = document.createElement('span');
         document.body.appendChild(text);
         text.style.font = font;
-        text.style.fontSize = size + "px";
+        text.style.fontSize = size + 'px';
         text.style.height = 'auto';
         text.style.width = 'auto';
         text.style.position = 'absolute';
@@ -123,7 +123,7 @@ export class Utils {
             }
 
         } catch (e) {
-        }        
+        }
         return false;
     }
 
@@ -142,7 +142,7 @@ export class Utils {
 
     /**
      * check boolean and convert to number
-     * @param value 
+     * @param value
      */
     static toNumber(value: any) {
         const b = Utils.Boolify(value);
@@ -160,15 +160,15 @@ export class Utils {
         } catch (e) {
             console.error(e);
         }
-        return value;        
+        return value;
     }
 
     static arrayToObject = (array, keyField) => {
         array.reduce((obj, item) => {
-            obj[item[keyField]] = item
-            return obj
+            obj[item[keyField]] = item;
+            return obj;
         }, {});
-    }
+    };
 
     static rand(min, max) {
         min = min || 0;
@@ -180,86 +180,86 @@ export class Utils {
     static randNumbers(count, min, max) {
         let result = [];
         for (let i = 0; i < count; ++i) {
-            result.push(this.rand(min, max))
+            result.push(this.rand(min, max));
         }
         return result;
     }
 
     static formatDate(date, format, utc?) {
-        var MMMM = ["\x00", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        var MMM = ["\x01", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        var dddd = ["\x02", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        var ddd = ["\x03", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        
-        let ii = (i, len?) => { var s = i + ""; len = len || 2; while (s.length < len) s = "0" + s; return s; }
+        var MMMM = ['\x00', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var MMM = ['\x01', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var dddd = ['\x02', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var ddd = ['\x03', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        let ii = (i, len?) => { var s = i + ''; len = len || 2; while (s.length < len) {s = '0' + s;} return s; };
 
         var y = utc ? date.getUTCFullYear() : date.getFullYear();
-        format = format.replace(/(^|[^\\])yyyy+/g, "$1" + y);
-        format = format.replace(/(^|[^\\])yy/g, "$1" + y.toString().substr(2, 2));
-        format = format.replace(/(^|[^\\])y/g, "$1" + y);
+        format = format.replace(/(^|[^\\])yyyy+/g, '$1' + y);
+        format = format.replace(/(^|[^\\])yy/g, '$1' + y.toString().substr(2, 2));
+        format = format.replace(/(^|[^\\])y/g, '$1' + y);
 
         var M = (utc ? date.getUTCMonth() : date.getMonth()) + 1;
-        format = format.replace(/(^|[^\\])MMMM+/g, "$1" + MMMM[0]);
-        format = format.replace(/(^|[^\\])MMM/g, "$1" + MMM[0]);
-        format = format.replace(/(^|[^\\])MM/g, "$1" + ii(M));
-        format = format.replace(/(^|[^\\])M/g, "$1" + M);
+        format = format.replace(/(^|[^\\])MMMM+/g, '$1' + MMMM[0]);
+        format = format.replace(/(^|[^\\])MMM/g, '$1' + MMM[0]);
+        format = format.replace(/(^|[^\\])MM/g, '$1' + ii(M));
+        format = format.replace(/(^|[^\\])M/g, '$1' + M);
 
         var d = utc ? date.getUTCDate() : date.getDate();
-        format = format.replace(/(^|[^\\])dddd+/g, "$1" + dddd[0]);
-        format = format.replace(/(^|[^\\])ddd/g, "$1" + ddd[0]);
-        format = format.replace(/(^|[^\\])dd/g, "$1" + ii(d));
-        format = format.replace(/(^|[^\\])d/g, "$1" + d);
+        format = format.replace(/(^|[^\\])dddd+/g, '$1' + dddd[0]);
+        format = format.replace(/(^|[^\\])ddd/g, '$1' + ddd[0]);
+        format = format.replace(/(^|[^\\])dd/g, '$1' + ii(d));
+        format = format.replace(/(^|[^\\])d/g, '$1' + d);
 
         var H = utc ? date.getUTCHours() : date.getHours();
-        format = format.replace(/(^|[^\\])HH+/g, "$1" + ii(H));
-        format = format.replace(/(^|[^\\])H/g, "$1" + H);
+        format = format.replace(/(^|[^\\])HH+/g, '$1' + ii(H));
+        format = format.replace(/(^|[^\\])H/g, '$1' + H);
 
         var h = H > 12 ? H - 12 : H == 0 ? 12 : H;
-        format = format.replace(/(^|[^\\])hh+/g, "$1" + ii(h));
-        format = format.replace(/(^|[^\\])h/g, "$1" + h);
+        format = format.replace(/(^|[^\\])hh+/g, '$1' + ii(h));
+        format = format.replace(/(^|[^\\])h/g, '$1' + h);
 
         var m = utc ? date.getUTCMinutes() : date.getMinutes();
-        format = format.replace(/(^|[^\\])mm+/g, "$1" + ii(m));
-        format = format.replace(/(^|[^\\])m/g, "$1" + m);
+        format = format.replace(/(^|[^\\])mm+/g, '$1' + ii(m));
+        format = format.replace(/(^|[^\\])m/g, '$1' + m);
 
         var s = utc ? date.getUTCSeconds() : date.getSeconds();
-        format = format.replace(/(^|[^\\])ss+/g, "$1" + ii(s));
-        format = format.replace(/(^|[^\\])s/g, "$1" + s);
+        format = format.replace(/(^|[^\\])ss+/g, '$1' + ii(s));
+        format = format.replace(/(^|[^\\])s/g, '$1' + s);
 
         var f = utc ? date.getUTCMilliseconds() : date.getMilliseconds();
-        format = format.replace(/(^|[^\\])fff+/g, "$1" + ii(f, 3));
+        format = format.replace(/(^|[^\\])fff+/g, '$1' + ii(f, 3));
         f = Math.round(f / 10);
-        format = format.replace(/(^|[^\\])ff/g, "$1" + ii(f));
+        format = format.replace(/(^|[^\\])ff/g, '$1' + ii(f));
         f = Math.round(f / 10);
-        format = format.replace(/(^|[^\\])f/g, "$1" + f);
+        format = format.replace(/(^|[^\\])f/g, '$1' + f);
 
-        var T = H < 12 ? "AM" : "PM";
-        format = format.replace(/(^|[^\\])TT+/g, "$1" + T);
-        format = format.replace(/(^|[^\\])T/g, "$1" + T.charAt(0));
+        var T = H < 12 ? 'AM' : 'PM';
+        format = format.replace(/(^|[^\\])TT+/g, '$1' + T);
+        format = format.replace(/(^|[^\\])T/g, '$1' + T.charAt(0));
 
         var t = T.toLowerCase();
-        format = format.replace(/(^|[^\\])tt+/g, "$1" + t);
-        format = format.replace(/(^|[^\\])t/g, "$1" + t.charAt(0));
+        format = format.replace(/(^|[^\\])tt+/g, '$1' + t);
+        format = format.replace(/(^|[^\\])t/g, '$1' + t.charAt(0));
 
         var tz = -date.getTimezoneOffset();
-        var K = utc || !tz ? "Z" : tz > 0 ? "+" : "-";
+        var K = utc || !tz ? 'Z' : tz > 0 ? '+' : '-';
         if (!utc)
         {
             tz = Math.abs(tz);
             var tzHrs = Math.floor(tz / 60);
             var tzMin = tz % 60;
-            K += ii(tzHrs) + ":" + ii(tzMin);
+            K += ii(tzHrs) + ':' + ii(tzMin);
         }
-        format = format.replace(/(^|[^\\])K/g, "$1" + K);
+        format = format.replace(/(^|[^\\])K/g, '$1' + K);
 
         var day = (utc ? date.getUTCDay() : date.getDay()) + 1;
-        format = format.replace(new RegExp(dddd[0], "g"), dddd[day]);
-        format = format.replace(new RegExp(ddd[0], "g"), ddd[day]);
+        format = format.replace(new RegExp(dddd[0], 'g'), dddd[day]);
+        format = format.replace(new RegExp(ddd[0], 'g'), ddd[day]);
 
-        format = format.replace(new RegExp(MMMM[0], "g"), MMMM[M]);
-        format = format.replace(new RegExp(MMM[0], "g"), MMM[M]);
+        format = format.replace(new RegExp(MMMM[0], 'g'), MMMM[M]);
+        format = format.replace(new RegExp(MMM[0], 'g'), MMM[M]);
 
-        format = format.replace(/\\(.)/g, "$1");
+        format = format.replace(/\\(.)/g, '$1');
 
         return format;
     };
@@ -276,26 +276,20 @@ export class Utils {
 
     /**
      * set object values to target
-     * @param target 
-     * @param sources 
-     * @returns 
+     * @param target
+     * @param sources
+     * @returns
      */
     static assign = (target: { [key: string]: any }, ...sources: object[]) => {
-        sources.forEach((source) => {
-          return Object.keys(source).forEach((key) => {
-            target[key] = source[key as keyof Object]
-          })
-        })
-        return target
-    }
+        sources.forEach((source) => Object.keys(source).forEach((key) => {
+            target[key] = source[key as keyof Object];
+          }));
+        return target;
+    };
 
-    static clone = (obj) => { return JSON.parse(JSON.stringify(obj)); }
+    static clone = (obj) => JSON.parse(JSON.stringify(obj));
 
-    static convertArrayToObject  = (array, value) => {
-        return array.reduce((accumulator, key) => {
-            return {...accumulator, [key]: value};
-        }, {});
-    }
+    static convertArrayToObject  = (array, value) => array.reduce((accumulator, key) => ({...accumulator, [key]: value}), {});
 
     static resizeView = (selector) => {
         document.querySelectorAll(selector).forEach((scaled: any) => {
@@ -304,8 +298,8 @@ export class Utils {
             ratioHeight = (parent.offsetHeight / scaled.offsetHeight);
             scaled.style.transform = 'scale(' + Math.min(ratioWidth, ratioHeight) + ')';
             scaled.style.transformOrigin = 'top left';
-        })
-      }    
+        });
+      };
 }
 
 @Pipe({

@@ -10,6 +10,6 @@ export class LocaleService {
       return DefaultLocaleConfig;
     }
 
-    return {... DefaultLocaleConfig, ...this._config}
+    return {... DefaultLocaleConfig, ...this._config};
   }
 }

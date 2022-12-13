@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
 import { ProjectService } from '../_services/project.service';
@@ -80,7 +80,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         panzoom(element, {
                             bounds: true,
                             boundsPadding: 0.05,
-                        });		
+                        });
                         this.container.nativeElement.style.overflow = 'hidden';
                     }
                 }, 1000);
@@ -90,7 +90,7 @@ export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private setBackground() {
 		if (this.startView && this.startView.profile) {
-			document.getElementById("main-container").style.backgroundColor = this.startView.profile.bkcolor;
+			document.getElementById('main-container').style.backgroundColor = this.startView.profile.bkcolor;
 		}
 	}
 }

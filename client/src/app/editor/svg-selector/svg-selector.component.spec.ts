@@ -1,7 +1,5 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SvgSelectorComponent } from './svg-selector.component';
 
@@ -9,7 +7,7 @@ describe('SvgSelectorComponent', () => {
   let component: SvgSelectorComponent;
   let fixture: ComponentFixture<SvgSelectorComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SvgSelectorComponent ]
     })

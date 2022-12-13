@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef, Input, ViewChild } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -9,9 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DevicePropertyComponent } from './../device-property/device-property.component';
 import { ProjectService } from '../../_services/project.service';
 import { PluginService } from '../../_services/plugin.service';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DeviceViewModeType, DeviceConnectionStatusType, DeviceWebApiProperty } from './../../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DeviceViewModeType, DeviceConnectionStatusType } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
-import { Plugin } from '../../_models/plugin';
 import { AppService } from '../../_services/app.service';
 import { DeviceWebapiPropertyDialogComponent } from './device-webapi-property-dialog/device-webapi-property-dialog.component';
 
@@ -81,7 +80,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             this.loadAvailableType();
         });
         Object.keys(this.deviceStatusType).forEach(key => {
-            this.translateService.get(this.deviceStatusType[key]).subscribe((txt: string) => { this.deviceStatusType[key] = txt });
+            this.translateService.get(this.deviceStatusType[key]).subscribe((txt: string) => { this.deviceStatusType[key] = txt; });
         });
     }
 
@@ -393,7 +392,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         let result = '';
         if (device.property) {
             if (device.type === DeviceType.OPCUA) {
-                result = 'OPC-UA'
+                result = 'OPC-UA';
             } else if (device.type === DeviceType.SiemensS7) {
                 result = 'Port: ';
                 if (device.property.port) {
@@ -462,7 +461,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     editDevice(device: Device, toremove: boolean) {
-        let exist = Object.values(this.devices).filter((d: Device) => d.id !== device.id).map((d: Device) => { return d.name });
+        let exist = Object.values(this.devices).filter((d: Device) => d.id !== device.id).map((d: Device) => d.name);
         exist.push('server');
         let tempdevice = JSON.parse(JSON.stringify(device));
         let dialogRef = this.dialog.open(DevicePropertyComponent, {

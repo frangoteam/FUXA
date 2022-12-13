@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
 import * as FileSaver from 'file-saver';
-import { DataTableComponent } from '../gauges/controls/html-table/data-table/data-table.component';
 
 @Injectable({
     providedIn: 'root'

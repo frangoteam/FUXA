@@ -51,7 +51,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         let canvas = this.canvas.nativeElement;
         let w = canvas.parentNode.clientWidth;
         let h = canvas.parentNode.clientHeight;
-        if (w < h) h = w;
+        if (w < h) {h = w;}
         this.canvas.nativeElement.height = h;
         this.canvas.nativeElement.width = w;
         this.reini();
@@ -119,13 +119,13 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     init(type: GaugeType) {
         this.type = type;
         if (type === GaugeType.Gauge) {
-            this.gauge = new Gauge(this.canvas.nativeElement);        
+            this.gauge = new Gauge(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         } else if (type === GaugeType.Zones) {
-            this.gauge = new Gauge(this.canvas.nativeElement);        
+            this.gauge = new Gauge(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         } else if (type === GaugeType.Donut) {
-            this.gauge = new Donut(this.canvas.nativeElement);        
+            this.gauge = new Donut(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         }
         this.setOptions(this.options);

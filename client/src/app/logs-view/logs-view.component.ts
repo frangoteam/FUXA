@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
 
 import { FormControl } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -51,7 +51,7 @@ export class LogsViewComponent implements AfterViewInit {
     loadLogs(logfile: string) {
         this.appService.showLoading(true);
         this.diagnoseService.getLogs(<LogsRequest>{ file: logfile }).subscribe(result => {
-            this.content = result.body.replace(new RegExp('\n', 'g'), "<br />");
+            this.content = result.body.replace(new RegExp('\n', 'g'), '<br />');
             this.appService.showLoading(false);
         }, err => {
             this.appService.showLoading(false);

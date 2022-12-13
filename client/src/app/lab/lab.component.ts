@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
-import { Subscription } from "rxjs";
+import { Component, OnInit, OnDestroy, ViewChild, ViewContainerRef, ChangeDetectorRef  } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../_services/project.service';
 import { AppService } from '../_services/app.service';
-import { Hmi, View, GaugeSettings } from '../_models/hmi';
+import { Hmi, View } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { TesterService } from '../tester/tester.service';
 import { TesterComponent } from '../tester/tester.component';
@@ -17,7 +17,7 @@ declare var Raphael: any;
     styleUrls: ['lab.component.css']
 })
 
-export class LabComponent implements AfterViewInit, OnDestroy {
+export class LabComponent implements OnInit, OnDestroy {
 
     @ViewChild('messagecontainer', { read: ViewContainerRef, static: false }) entry: ViewContainerRef;
     @ViewChild('tester', {static: false}) tester: TesterComponent;
@@ -34,11 +34,11 @@ export class LabComponent implements AfterViewInit, OnDestroy {
     constructor(private projectService: ProjectService,
         private appService: AppService,
         public gaugesManager: GaugesManager,
-        private changeDetector: ChangeDetectorRef,        
+        private changeDetector: ChangeDetectorRef,
         private testerService: TesterService) {
     }
 
-    ngAfterViewInit() {
+    ngOnInit() {
         try {
             this.appService.showLoading(true);
             let hmi = this.projectService.getHmi();
@@ -81,7 +81,7 @@ export class LabComponent implements AfterViewInit, OnDestroy {
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             this.currentView = this.hmi.views[0];
             this.labView = this.hmi.views[0];
-            let oldsel = localStorage.getItem("@frango.webeditor.currentview");
+            let oldsel = localStorage.getItem('@frango.webeditor.currentview');
             if (oldsel) {
                 for (let i = 0; i < this.hmi.views.length; i++) {
                     if (this.hmi.views[i].name === oldsel) {

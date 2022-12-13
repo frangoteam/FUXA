@@ -442,7 +442,7 @@ function DaqNode(_settings, _log, _id) {
         if (fs.existsSync(archive)) {
             fs.readdirSync(archive).forEach(file => {
                 const fromTo = _suffixToTimestamp(file);
-                if (file.indexOf(id) > 0 && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
+                if (file.indexOf(`_${id}_`) > 0 && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
                     result.push(path.join(archive, file));
                 }
             });
