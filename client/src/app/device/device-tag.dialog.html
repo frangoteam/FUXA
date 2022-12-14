@@ -19,7 +19,7 @@
         <!-- Name Column -->
         <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter"> 
-                {{'device.list-name' | translate}}
+                <span>{{'device.list-name' | translate}}</span>
                 <input (click)="$event.stopPropagation()" [formControl]="nameFilter" style="width: 200px" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
@@ -27,7 +27,7 @@
         <!-- Address Column -->
         <ng-container matColumnDef="address">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter"> 
-                {{'device.list-address' | translate}} 
+                <span>{{'device.list-address' | translate}}</span> 
                 <input (click)="$event.stopPropagation()" [formControl]="addressFilter" style="width: 360px" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
@@ -35,7 +35,7 @@
         <!-- Device Column -->
         <ng-container matColumnDef="device">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter"> 
-                {{'device.list-device' | translate}} 
+                <span>{{'device.list-device' | translate}}</span> 
                 <input (click)="$event.stopPropagation()" [formControl]="deviceFilter" style="width: 200px" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.device}} </mat-cell>

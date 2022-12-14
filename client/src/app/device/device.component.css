@@ -74,7 +74,7 @@
 }
 .mat-header-cell {
     /* color: white; */
-    font-size: 13px;
+    font-size: 11px;
 }
 
 .mat-column-toogle {
@@ -98,15 +98,25 @@
     flex: 0 0 40px;
 }
 
+.my-header-filter ::ng-deep .mat-sort-header-content {
+    display: unset;
+    text-align: left;
+}
+
 .my-header-filter ::ng-deep .mat-sort-header-button {
     display: block;
     text-align: left;
     margin-top: 5px;
 }
 
+.my-header-filter span {
+    padding-left: 5px;
+
+}
+
 .my-header-filter ::ng-deep .mat-sort-header-arrow {
     /* color: white; */
-    top: -12px;
+    top: -14px;
     right: 20px;
 }
 
