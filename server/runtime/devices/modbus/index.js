@@ -282,20 +282,36 @@ function MODBUSclient(_data, _logger, _events) {
      * Set the Tag value
      * Read the current Tag object, write the value in object and send to SPS 
      */
-    this.setValue = function (sigid, value) {
+    this.setValue = async function (sigid, value) {
         if (data.tags[sigid]) {
             var memaddr = data.tags[sigid].memaddress;
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
             var val = datatypes[data.tags[sigid].type].formatter(convertValue(value, data.tags[sigid].divisor, true));
-            _writeMemory(parseInt(memaddr), offset, val).then(result => {
-                logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
-            }, reason => {
-                if (reason && reason.stack) {
-                    logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
-                } else {
-                    logger.error(`'${data.name}' _writeMemory error! ${reason}`);
+            if (type === ModbusTypes.RTU) {
+                const start = Date.now();
+                let now = start;
+                while ((now - start) < 3000 && working) {  // wait max 3 seconds
+                    now = Date.now();
+                    await delay(20);
                 }
-            });
+                _checkWorking(true);
+            }
+            try {
+                await _writeMemory(parseInt(memaddr), offset, val).then(result => {
+                    logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
+                }, reason => {
+                    if (reason && reason.stack) {
+                        logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
+                    } else {
+                        logger.error(`'${data.name}' _writeMemory error! ${reason}`);
+                    }
+                });
+                if (type === ModbusTypes.RTU) {
+                    _checkWorking(false);
+                }
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 
@@ -552,9 +568,11 @@ function MODBUSclient(_data, _logger, _events) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
             // !The driver don't give the break connection
             if (overloading >= 3) {
+                if (type !== ModbusTypes.RTU) {
+                    logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
+                }
                 client.close();
             } else {
                 return false;
