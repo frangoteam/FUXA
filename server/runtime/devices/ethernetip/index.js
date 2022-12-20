@@ -204,13 +204,14 @@ function EthernetIPclient(_data, _logger, _events) {
      * Set the Tag value to device
      * take the address from
      */
-    this.setValue = function (tagid, value) {
-        if (data.tags[tagid]) {
-            conn.writeItems([data.tags[tagid].address], [parseFloat(value)], (error) => {
+    this.setValue = function (tagId, value) {
+        if (data.tags[tagId]) {
+            let valueToSend = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
+            conn.writeItems([data.tags[tagId].address], [parseFloat(valueToSend)], (error) => {
                 if (error) {
-                    logger.error(`'${data.tags[tagid].name}' setValue error! ${error}`);
+                    logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
                 } else {
-                    logger.info(`'${data.tags[tagid].name}' setValue(${tagid}, ${value})`, true);
+                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true);
                 }
             });
         }
@@ -268,6 +269,7 @@ function EthernetIPclient(_data, _logger, _events) {
             if (!utils.isNullOrUndefined(vars[key])) {
                 var id = itemsMap[key].id;
                 var valueChanged = itemsMap[key].value !== vars[key];
+                itemsMap[key].rawValue = vars[key];
                 itemsMap[key].value = deviceUtils.tagValueCompose(vars[key], itemsMap[key]);
                 varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq, changed: valueChanged };
                 if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {

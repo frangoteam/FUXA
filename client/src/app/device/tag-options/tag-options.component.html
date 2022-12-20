@@ -2,7 +2,7 @@
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'device.tag-options-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div style="display: block;margin-bottom: 10px; text-align: center;">
+        <div class="block mt10" style="text-align: center;">
             <div class="my-form-field" style="float: left;">
                 <span>{{'device.tag-daq-enabled' | translate}}</span>
                 <mat-slide-toggle color="primary" formControlName="enabled"></mat-slide-toggle>
@@ -20,6 +20,36 @@
             <span>{{'device.tag-format' | translate}}</span>
             <input numberOnly formControlName="format" min="0" max="10" type="number" style="width:300px">
         </div>
+        <div class="my-form-field block mt10">
+            <span>{{'device.tag-scale' | translate}}</span>
+            <mat-select formControlName="scaleMode" style="width: 300px">
+                <mat-option *ngFor="let ev of scaleModeType | enumToArray" matTooltip="{{ev.value + '-tooltip' | translate}}" [value]="ev.key">
+                    {{ ev.value | translate }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <ng-container *ngIf="formGroup.controls.scaleMode.value !== 'undefined'">
+            <div class="block mt5">
+                <div class="my-form-field">
+                    <span>{{'device.tag-raw-low' | translate}}</span>
+                    <input formControlName="rawLow" type="number" style="width:140px">
+                </div>
+                <div class="my-form-field ftr">
+                    <span>{{'device.tag-raw-high' | translate}}</span>
+                    <input formControlName="rawHigh" type="number" style="width:140px">
+                </div>
+            </div>
+            <div class="block mt5">
+                <div class="my-form-field">
+                    <span>{{'device.tag-scaled-low' | translate}}</span>
+                    <input formControlName="scaledLow" type="number" style="width:140px">
+                </div>
+                <div class="my-form-field ftr">
+                    <span>{{'device.tag-scaled-high' | translate}}</span>
+                    <input formControlName="scaledHigh" type="number" style="width:140px">
+                </div>
+            </div>
+        </ng-container>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

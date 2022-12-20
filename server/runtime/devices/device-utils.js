@@ -16,9 +16,29 @@ module.exports = {
     },
 
     tagValueCompose: function (value, tag) {
-        if (value && tag && tag.format) {
+        if (value && tag) {
             try {
-                value = +parseFloat(value).toFixed(tag.format);
+                value = parseFloat(value);
+                if (tag.scale && tag.scale.mode === 'linear') {
+                    value = (tag.scale.scaledHigh - tag.scale.scaledLow) * (value - tag.scale.rawLow) / (tag.scale.rawHigh - tag.scale.rawLow) + tag.scale.scaledLow;
+                }
+                if (tag.format) {
+                    value = +value.toFixed(tag.format);
+                }
+            } catch (err) { 
+                console.error(err);
+            }
+        }
+        return value;
+    },
+
+    tagRawCalculator: function (value, tag) {
+        if (value && tag) {
+            try {
+                value = parseFloat(value);
+                if (tag.scale && tag.scale.mode === 'linear') {
+                    value = tag.scale.rawLow + ((tag.scale.rawHigh - tag.scale.rawLow) * (value - tag.scale.scaledLow)) / (tag.scale.scaledHigh - tag.scale.scaledLow);
+                }
             } catch (err) { 
                 console.error(err);
             }

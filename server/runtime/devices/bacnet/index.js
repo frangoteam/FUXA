@@ -162,7 +162,11 @@ function BACNETclient(_data, _logger, _events) {
                                         if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTag.ERROR) {
                                             errors.push({ address: address, value: data.values[0].value.value, type:  data.objectId.type });    
                                         } else {
-                                            result.push({ address: address, value: data.values[0].value[0].value, type:  data.objectId.type });    
+                                            result.push({ 
+                                                address: address,
+                                                rawValue: data.values[0].value[0].value,
+                                                type: data.objectId.type
+                                            });    
                                         }
                                     }
                                 });
@@ -253,11 +257,12 @@ function BACNETclient(_data, _logger, _events) {
     /**
      * Set Tag value, used to set value from frontend
      */
-    this.setValue = function (sigid, value) {
-        if (data.tags[sigid]) {
-            var obj = _extractId(data.tags[sigid].address);
+    this.setValue = function (tagId, value) {
+        if (data.tags[tagId]) {
+            var obj = _extractId(data.tags[tagId].address);
+            value = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
             _writeProperty(obj, value).then(result => {
-                logger.info(`'${data.name}' setValue(${sigid}, ${result})`, true);
+                logger.info(`'${data.name}' setValue(${tagId}, ${result})`, true);
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeProperty error! ${reason.stack}`);
@@ -568,9 +573,11 @@ function BACNETclient(_data, _logger, _events) {
                 for (var index in requestItemsMap[address]) {
                     var tag = requestItemsMap[address][index];
                     if (!varsValue[tag.id]) {
-                        varsValue[tag.id].changed = varsValue[tag.id].value !== vars[index].value;
-                        if (!utils.isNullOrUndefined(varsValue[tag.id].value)) {
-                            varsValue[tag.id].value = deviceUtils.tagValueCompose(varsValue[id].value, varsValue[id]);
+                        varsValue[tag.id].changed = varsValue[tag.id].rawValue !== vars[index].rawValue;
+                        if (!utils.isNullOrUndefined(vars[index].rawValue)) {
+                            varsValue[tag.id].rawValue = vars[index].rawValue;
+                            varsValue[tag.id].value = deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[id]);
+                            vars[index].value = varsValue[tag.id].value;
                             if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
                                 changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq };
                                 varsValue[tag.id] = changed[tag.id];

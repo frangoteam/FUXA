@@ -1,5 +1,7 @@
 import { Utils } from '../_helpers/utils';
 
+export const FuxaServer = {id: '0', name: 'FUXA' };
+
 export class Device {
     /** Device id, GUID */
     id: string;
@@ -62,6 +64,8 @@ export class Tag {
     daq: TagDaq;
     /** Init value */
     init: string;
+    /** Value scaling properties */
+    scale: TagScale;
 
     constructor(_id: string) {
         this.id = _id;
@@ -499,4 +503,18 @@ export enum ServerTagType {
     number = 'number',
     boolean = 'boolean',
     string = 'string'
+}
+
+
+export class TagScale {
+    mode: TagScaleModeType;
+    rawLow: number;
+    rawHigh: number;
+    scaledLow: number;
+    scaledHigh: number;
+}
+
+export enum TagScaleModeType {
+    undefined = 'device.tag-scale-mode-undefined',
+    linear = 'device.tag-scale-mode-linear',
 }
