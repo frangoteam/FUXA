@@ -11,7 +11,7 @@ import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script, ScriptMode } from '../_models/script';
 import { Text } from '../_models/text';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag } from '../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer } from '../_models/device';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceStorageService } from './rcgi/resource-storage.service';
@@ -883,8 +883,8 @@ export class ProjectService {
     setNewProject() {
         this.projectData = new ProjectData();
         let server = new Device(Utils.getGUID(DEVICE_PREFIX));
-        server.name = 'FUXA';
-        server.id = '0';
+        server.name = FuxaServer.name;
+        server.id = FuxaServer.id;
         server.type = DeviceType.FuxaServer;
         server.enabled = true;
         server.property = new DeviceNetProperty();

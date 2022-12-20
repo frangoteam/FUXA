@@ -639,6 +639,7 @@ mat-toolbar-row {
 
 .mat-tooltip {
     font-size: 14px !important;
+    white-space: pre-line;
 }
 
 .mat-button-sm {
@@ -983,6 +984,10 @@ mat-toolbar-row {
     display: block;
 }
 
+.mt5 {
+    margin-top: 5px;
+}
+
 .mt10 {
     margin-top: 10px;
 }
@@ -1029,4 +1034,12 @@ mat-toolbar-row {
 
 .mb20 {
     margin-bottom: 20px;
+}
+
+.ftl {
+    float: left;
+}
+
+.ftr {
+    float: right;
 }

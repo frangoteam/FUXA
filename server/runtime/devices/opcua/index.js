@@ -387,18 +387,19 @@ function OpcUAclient(_data, _logger, _events) {
     /**
      * Set Tag value, used to set value from frontend
      */
-    this.setValue = function (sigid, value) {
-        if (the_session && data.tags[sigid]) {
-            let opctype = _toDataType(data.tags[sigid].type);
-            let valtosend = _toValue(opctype, value);
+    this.setValue = function (tagId, value) {
+        if (the_session && data.tags[tagId]) {
+            let opctype = _toDataType(data.tags[tagId].type);
+            let valueToSend = _toValue(opctype, value);
+            valueToSend = deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId]);
             var nodesToWrite = [
                 {
-                    nodeId: data.tags[sigid].address,
+                    nodeId: data.tags[tagId].address,
                     attributeId: opcua.AttributeIds.Value,
                     value: /*new DataValue(*/{
                         value: {/* Variant */
                             dataType: opctype,
-                            value: valtosend
+                            value: valueToSend
                         }
                     }
                 }
@@ -519,7 +520,7 @@ function OpcUAclient(_data, _logger, _events) {
                 // console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
                 let id = tagsIdMap[nodeId];
                 if (data.tags[id]) {
-                    data.tags[id].value = dataValue.value.value;
+                    data.tags[id].rawValue = dataValue.value.value;
                     data.tags[id].timestamp = dataValue.serverTimestamp.toString();
                     data.tags[id].changed = true;
                 }
@@ -544,7 +545,7 @@ function OpcUAclient(_data, _logger, _events) {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
+            data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
             if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }

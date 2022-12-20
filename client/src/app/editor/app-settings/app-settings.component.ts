@@ -20,7 +20,7 @@ export class AppSettingsComponent implements OnInit {
                      { text: 'dlg.app-language-pt', value: 'pt' }, { text: 'dlg.app-language-tr', value: 'tr' },
                      { text: 'dlg.app-language-ko', value: 'ko' }, { text: 'dlg.app-language-es', value: 'es' },
 		                 { text: 'dlg.app-language-fr', value: 'fr' },];
-    authType = [ { text: 'dlg.app-auth-disabled', value: '' }, { text: 'dlg.app-auth-expiration-15m', value: '15m' }, 
+    authType = [ { text: 'dlg.app-auth-disabled', value: '' }, { text: 'dlg.app-auth-expiration-15m', value: '15m' },
                         { text: 'dlg.app-auth-expiration-1h', value: '1h' }, { text: 'dlg.app-auth-expiration-3h', value: '3h' },
                         { text: 'dlg.app-auth-expiration-1d', value: '1d' }];
     settings = new AppSettings();

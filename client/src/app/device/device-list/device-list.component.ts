@@ -336,6 +336,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 for (let i = 0; i < tags.length; i++) {
                     tags[i].daq = tagOption.daq;
                     tags[i].format = tagOption.format;
+                    tags[i].scale = tagOption.scale;
                 }
                 this.projectService.setDeviceTags(this.deviceSelected);
             }
