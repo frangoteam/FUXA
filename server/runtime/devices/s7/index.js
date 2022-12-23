@@ -217,6 +217,7 @@ function S7client(_data, _logger, _events) {
     this.setValue = function (sigid, value) {
         var item = _getTagItem(data.tags[sigid]);
         if (item) {
+            value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
             item.value = value;
             _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true);
