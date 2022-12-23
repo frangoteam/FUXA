@@ -277,23 +277,23 @@ function MQTTclient(_data, _logger, _events) {
     /**
      * Set the Topic value, publish to broker (coming from frontend)
      */
-    this.setValue = function (tagid, value) {
+    this.setValue = function (tagId, value) {
         if (client && client.connected) {
-            var tag = data.tags[tagid];
+            var tag = data.tags[tagId];
             if (tag) {
                 if (tag.options) {
                     if (tag.options.pubs) {
                         tag.options.pubs.forEach(item => {
                             if (item.type === 'value') {
-                                item.value = value;
+                                item.value = deviceUtils.tagRawCalculator(value, tag);
                             }
                         })
                     } else if (tag.options.subs && tag.options.subs.indexOf(tag.memaddress) !== -1) {
-                        tag.value = value;
+                        tag.value = deviceUtils.tagRawCalculator(value, tag);
                     }
                 }
                 if (tag.type === 'raw') {
-                    tag['value'] = value;
+                    tag['value'] = deviceUtils.tagRawCalculator(value, tag);
                 }
                 tag.changed = true;
                 _publishValues([tag]);
@@ -336,17 +336,17 @@ function MQTTclient(_data, _logger, _events) {
                             if (topicsMap[topicAddr]) {
                                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
                                     var id = topicsMap[topicAddr][i].id;
-                                    var oldvalue = data.tags[id].value;
-                                    data.tags[id].value = msg.toString();
+                                    var oldvalue = data.tags[id].rawValue;
+                                    data.tags[id].rawValue = msg.toString();
                                     data.tags[id].timestamp = new Date().getTime();
-                                    data.tags[id].changed = oldvalue !== data.tags[id].value;
+                                    data.tags[id].changed = oldvalue !== data.tags[id].rawValue;
                                     if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
                                         try {
-                                            var subitems = JSON.parse(data.tags[id].value);
+                                            var subitems = JSON.parse(data.tags[id].rawValue);
                                             if (!utils.isNullOrUndefined(subitems[data.tags[id].memaddress])) {
-                                                data.tags[id].value = subitems[data.tags[id].memaddress];
+                                                data.tags[id].rawValue = subitems[data.tags[id].memaddress];
                                             } else {
-                                                data.tags[id].value = oldvalue;
+                                                data.tags[id].rawValue = oldvalue;
                                             }
                                         } catch (err) {
                                             console.error(err);
@@ -423,8 +423,8 @@ function MQTTclient(_data, _logger, _events) {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            if (!utils.isNullOrUndefined(data.tags[id].value)) {
-                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
+            if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
+                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
                 if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                     result[id] = data.tags[id];
                 }

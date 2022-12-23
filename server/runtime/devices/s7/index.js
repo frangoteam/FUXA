@@ -217,6 +217,7 @@ function S7client(_data, _logger, _events) {
     this.setValue = function (sigid, value) {
         var item = _getTagItem(data.tags[sigid]);
         if (item) {
+            value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
             item.value = value;
             _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true);
@@ -284,7 +285,7 @@ function S7client(_data, _logger, _events) {
                     tags.forEach(tag => {
                         tempTags[tag.id] = {
                             id: tag.id,
-                            value: value,
+                            rawValue: value,
                             type: type,
                             daq: tag.daq,
                             changed: changed,
@@ -293,7 +294,7 @@ function S7client(_data, _logger, _events) {
                         if (type === 'BOOL') {
                             try {
                                 let pos = parseInt(tag.address.charAt(tag.address.length - 1));
-                                tempTags[tag.id].value = _getBit(value, pos) ? 1 : 0;
+                                tempTags[tag.id].rawValue = _getBit(value, pos) ? 1 : 0;
                             } catch (err) { }
                         }
                         someval = true;
@@ -306,7 +307,7 @@ function S7client(_data, _logger, _events) {
                     }
                     tempTags[items[itemidx].id] = {
                         id: items[itemidx].id,
-                        value: items[itemidx].value,
+                        rawValue: items[itemidx].value,
                         type: items[itemidx].type,
                         daq: items[itemidx].daq,
                         changed: changed,
@@ -320,8 +321,8 @@ function S7client(_data, _logger, _events) {
             const timestamp = new Date().getTime();
             var result = {};
             for (var id in tempTags) {
-                if (!utils.isNullOrUndefined(tempTags[id].value)) {
-                    tempTags[id].value = deviceUtils.tagValueCompose(tempTags[id].value, tempTags[id].tagref);
+                if (!utils.isNullOrUndefined(tempTags[id].rawValue)) {
+                    tempTags[id].value = deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref);
                     if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
                         result[id] = tempTags[id];
                     }

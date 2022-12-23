@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Inject, Input, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, AfterViewInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
@@ -15,7 +15,8 @@ import { PropertyType } from './flex-input/flex-input.component';
 @Component({
     selector: 'gauge-property',
     templateUrl: './gauge-property.component.html',
-    styleUrls: ['./gauge-property.component.css']
+    styleUrls: ['./gauge-property.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GaugePropertyComponent implements AfterViewInit {
 
