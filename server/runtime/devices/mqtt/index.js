@@ -215,6 +215,14 @@ function MQTTclient(_data, _logger, _events) {
     this.addDaq = null;
 
     /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+     this.lastReadTimestamp = () => {
+        return lastTimestampValue;
+    }    
+
+    /**
      * Set function to ask property (security)
      */
     this.bindGetProperty = function (fnc) {

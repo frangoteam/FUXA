@@ -101,6 +101,14 @@ function DeviceTemplate(_data, _logger, _events) {
     this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
     }
+
+    /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+    this.lastReadTimestamp = () => {
+        console.error('Not supported!');
+    }
 }
 
 module.exports = {

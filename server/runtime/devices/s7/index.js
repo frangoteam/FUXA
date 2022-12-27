@@ -249,6 +249,14 @@ function S7client(_data, _logger, _events) {
     this.addDaq = null;                             // Add the DAQ value to db history
 
     /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+    this.lastReadTimestamp = () => {
+        return lastTimestampValue;
+    }
+
+    /**
      * Clear the Tags values by setting to null
      * Emit to clients
      */

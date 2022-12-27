@@ -289,6 +289,14 @@ function BACNETclient(_data, _logger, _events) {
     this.addDaq = null;                             // Callback to add the DAQ value to db history
 
     /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+     this.lastReadTimestamp = () => {
+        return lastTimestampValue;
+    }
+
+    /**
      * Connect the client to device
      * Listening after broadcast query
      * @param {*} callback 

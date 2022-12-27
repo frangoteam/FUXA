@@ -233,6 +233,14 @@ function EthernetIPclient(_data, _logger, _events) {
     this.addDaq = null;
 
     /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+     this.lastReadTimestamp = () => {
+        return lastTimestampValue;
+    }
+
+    /**
      * Clear local Items value by set all to null
      */
     var _clearVarsValue = function () {

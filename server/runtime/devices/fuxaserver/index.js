@@ -17,6 +17,7 @@ const deviceUtils = require('../device-utils');
     var tagsMap = {};                   // Map of tag id
     var overloading = 0;                // Overloading counter to mange the break connection
     var tocheck = false;                // Flag that define if there are tags to check by polling
+    var connectionTags = [];            // Tags of connection status of devices
     var type;
 
     /**
@@ -77,10 +78,14 @@ const deviceUtils = require('../device-utils');
         data = JSON.parse(JSON.stringify(_data));
         tagsMap = {};
         var count = Object.keys(data.tags).length;
+        connectionTags = [];
         for (var id in data.tags) {
             tagsMap[id] = data.tags[id];
             if (data.tags[id].init) {
                 data.tags[id].value = _parseValue(data.tags[id].init);
+            }
+            if (data.tags[id].sysType === TagSystemTypeEnum.deviceConnectionStatus) {
+                connectionTags.push(data.tags[id])
             }
         }
         tocheck = !utils.isEmptyObject(data.tags);
@@ -136,6 +141,18 @@ const deviceUtils = require('../device-utils');
     }
 
     /**
+     * Set the connection status to tag of device sttus
+     * @param {*} deviceId 
+     * @param {*} status 
+     */
+    this.setConnectionStatus = function(deviceId, status) {
+        var tag = connectionTags.find(tag => tag.memaddress === deviceId);
+        if (tag) {
+            tag.value = status;
+        }
+    }
+
+    /**
      * Return connected with itself
      */
     this.isConnected = function () {
@@ -149,6 +166,14 @@ const deviceUtils = require('../device-utils');
         this.addDaq = fnc;                         // Add the DAQ value to db history
     }
     this.addDaq = null;      
+
+    /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+     this.lastReadTimestamp = () => {
+        return lastTimestampValue;
+    }
 
     /**
      * Cheack and parse the value return converted value
@@ -232,4 +257,8 @@ module.exports = {
     create: function (data, logger, events) {
         return new FuxaServer(data, logger, events);
     }
+}
+
+var TagSystemTypeEnum  = {
+    deviceConnectionStatus: 1,
 }

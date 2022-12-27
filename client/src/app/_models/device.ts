@@ -66,6 +66,8 @@ export class Tag {
     init: string;
     /** Value scaling properties */
     scale: TagScale;
+    /** System Tag used in FUXA Server, example device status connection */
+    sysType: TagSystemType;
 
     constructor(_id: string) {
         this.id = _id;
@@ -517,4 +519,8 @@ export class TagScale {
 export enum TagScaleModeType {
     undefined = 'device.tag-scale-mode-undefined',
     linear = 'device.tag-scale-mode-linear',
+}
+
+export enum TagSystemType {
+    deviceConnectionStatus = 1,
 }
