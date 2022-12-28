@@ -72,13 +72,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        // this.mapTags();
-        // if (this.deviceSelected) {
-        //     this.bindToTable(this.deviceSelected.tags);
-        // }
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        // this.table.renderRows();
     }
 
     mapTags() {

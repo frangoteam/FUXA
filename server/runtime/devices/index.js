@@ -9,6 +9,7 @@ var activeDevices = {};             // Actives Devices list
 var runtime;                        // Access to application resource like logger/settings
 var wokingStatus;                   // Current status (start/stop) to know if is working
 
+const FuxaServerId = '0';
 /**
  * Init by set the access to application resource
  * @param {*} _runtime 
@@ -147,6 +148,7 @@ function loadDevice(device) {
             runtime.logger.info(`'${device.name}' created`);
             activeDevices[device.id] = tdev;
             activeDevices[device.id].bindGetProperty(runtime.project.getDeviceProperty);
+            activeDevices[device.id].bindUpdateConnectionStatus(setDeviceConnectionStatus);
         } else {
             if (!Device.isInternal(device)) {
                 runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
@@ -271,6 +273,15 @@ function setDeviceValue(deviceid, sigid, value, fnc) {
     if (activeDevices[deviceid]) {
         activeDevices[deviceid].setValue(sigid, value, fnc);
     }
+}
+
+/**
+ * Set connection device status to server tag
+ * @param {*} deviceId 
+ * @param {*} status 
+ */
+function setDeviceConnectionStatus(deviceId, status) {
+    activeDevices[FuxaServerId].setDeviceConnectionStatus(deviceId, status);
 }
 
 /**

@@ -429,6 +429,15 @@ function OpcUAclient(_data, _logger, _events) {
     }
     this.addDaq = null;                             // Callback to add the DAQ value to db history
     
+
+    /**
+     * Return the timestamp of last read tag operation on polling
+     * @returns 
+     */
+     this.lastReadTimestamp = () => {
+        return lastTimestampValue;
+    }
+
     /**
      * Set function to ask property (security)
      */

@@ -224,7 +224,7 @@ export class HmiService {
      */
     public askDeviceStatus() {
         if (this.socket) {
-            this.socket.emit('device-status', 'get');
+            this.socket.emit(IoEventTypes.DEVICE_STATUS, 'get');
         }
     }
 

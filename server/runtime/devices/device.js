@@ -27,6 +27,7 @@ function Device(data, runtime) {
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
+    var connectionStatus = ConnectionStatusEnum.OFF;        // Connection status depending of read tag value response
     var pollingInterval = DEVICE_POLLING_INTERVAL;
     var comm;                                               // Interface to OPCUA/S7/.. Device
                                                             // required: connect, disconnect, isConnected, polling, init, load, getValue, 
@@ -111,6 +112,7 @@ function Device(data, runtime) {
                 clearInterval(deviceCheckStatus);
                 deviceCheckStatus = null;
             }
+            connectionStatus = ConnectionStatusEnum.OFF;
             comm.disconnect().then(function () {
                 status = DeviceStatusEnum.INIT;
                 resolve();
@@ -129,7 +131,6 @@ function Device(data, runtime) {
                 if (err) {
                     console.error(err);
                 }
-                // devices.woking = null;
             });
         } else if (status === DeviceStatusEnum.IDLE && !comm.isConnected()) {
             status = DeviceStatusEnum.INIT;
@@ -137,6 +138,19 @@ function Device(data, runtime) {
                 clearInterval(devicePolling);
                 devicePolling = null;
             }
+        }
+        // check connection status
+        const now = new Date().getTime();
+        var lastRead = comm.lastReadTimestamp() || 0;
+        if (lastRead < now - pollingInterval * 5) {
+            connectionStatus = ConnectionStatusEnum.OFF;
+        } else if (lastRead < now - pollingInterval * 2) {
+            connectionStatus = ConnectionStatusEnum.WARNING;
+        } else {
+            connectionStatus = ConnectionStatusEnum.ON;
+        }
+        if (this.updateConnectionStatus) {
+            this.updateConnectionStatus(property.id, connectionStatus);
         }
     }
 
@@ -297,6 +311,25 @@ function Device(data, runtime) {
     }
 
     /**
+     * Bind function to update connection status to server
+     */
+    this.bindUpdateConnectionStatus = function (fnc) {
+        this.updateConnectionStatus = fnc;
+    }
+
+    this.updateConnectionStatus = null;
+
+    /**
+     * Set connection status of device in FuxaServer
+     * used only from FuxaServer device
+     * @param {*} deviceId 
+     * @param {*} status 
+     */
+    this.setDeviceConnectionStatus = function (deviceId, status) {
+        comm.setConnectionStatus(deviceId, status);
+    }
+
+    /**
      * return the value calculated with the function if defined
      */
     this.getValueInFunction = function (current, value, fnc) {
@@ -431,4 +464,13 @@ var DeviceCmdEnum = {
     STOP: 'stop',
     START: 'start',
     CONNECT: 'connect'
+}
+
+/**
+ * State of Connection
+ */
+ var ConnectionStatusEnum = {
+    OFF: 0,
+    WARNING: 3, // up to 5 times the polling interval without response
+    ON: 5,
 }

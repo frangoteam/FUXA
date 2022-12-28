@@ -121,14 +121,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (prj && prj.server) {
             this.server = this.devices[prj.server.id];
         }
-        this.dataSource.data = Object.values(this.devices);
+        this.loadDevices();
     }
 
-    checkLayout() {
-        if (this.devices) {
-            if (this.plcs().length && this.flows().length) {
-            }
-        }
+    loadDevices() {
+        this.devices = this.projectService.checkSystemTags();
         this.dataSource.data = Object.values(this.devices);
     }
 
@@ -166,6 +163,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     removeDevice(device: Device) {
         delete this.devices[device.id];
+        this.loadDevices();
     }
 
     private getWindowWidth() {
@@ -505,7 +503,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                     this.projectService.setDevice(device, olddevice, result.security);
                 }
             }
-            this.checkLayout();
+            this.loadDevices();
         });
     }
 
