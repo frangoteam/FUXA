@@ -142,9 +142,9 @@ function Device(data, runtime) {
         // check connection status
         const now = new Date().getTime();
         var lastRead = comm.lastReadTimestamp() || 0;
-        if (lastRead < now - pollingInterval * 3) {
+        if (lastRead < now - pollingInterval * 5) {
             connectionStatus = ConnectionStatusEnum.OFF;
-        } else if (lastRead < now - pollingInterval) {
+        } else if (lastRead < now - pollingInterval * 2) {
             connectionStatus = ConnectionStatusEnum.WARNING;
         } else {
             connectionStatus = ConnectionStatusEnum.ON;
@@ -471,6 +471,6 @@ var DeviceCmdEnum = {
  */
  var ConnectionStatusEnum = {
     OFF: 0,
-    ON: 1,
-    WARNING: 2, // up to 3 times the polling interval without response
+    WARNING: 3, // up to 5 times the polling interval without response
+    ON: 5,
 }
