@@ -488,10 +488,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }, 300);
                     }
                 };
-            }else{
+            } else {
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
-
                 htmlevent.dom.onfocus = function(ev) {
                     if(htmlevent.ga.property){
                         let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
