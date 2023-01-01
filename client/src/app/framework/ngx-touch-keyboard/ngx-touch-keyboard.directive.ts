@@ -87,7 +87,11 @@ export class NgxTouchKeyboardDirective implements OnDestroy {
   /**
    * Open keyboard panel
    */
-  openPanel(): void {
+  openPanel(eleRef: ElementRef<HTMLInputElement> = null): void {
+    if (eleRef) {
+      this._elementRef = eleRef;
+      this._overlayRef = null;
+    }
     // return if panel is attached
     if (this._overlayRef?.hasAttached()) {
       return;

@@ -49,14 +49,6 @@
 				<app-alarm-view #alarmsview [fullview]="false" (showMode)="onAlarmsShowMode($event)"></app-alarm-view>
 			</div>
 		</div>
-		<div id="vkb" class="keyboard">
-			<input
-			type="text"
-			ngxTouchKeyboard
-			#touchKeyboard="ngxTouchKeyboard"
-			(focus)="touchKeyboard.openPanel()"
-		  />
-		</div>
 	</mat-sidenav-content>
 
 </mat-sidenav-container>
