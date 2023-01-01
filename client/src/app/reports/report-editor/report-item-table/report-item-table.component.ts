@@ -26,9 +26,11 @@ export class ReportItemTableComponent implements OnInit {
         private projectService: ProjectService,
         @Inject(MAT_DIALOG_DATA) public data: ReportItemTable) {
             if (this.data.columns.length <= 0) {
+                let tag = <Tag>{ label: 'Timestamp' };
                 this.data.columns = [ <ReportTableColumn>{
                     type: ReportTableColumnType.timestamp,
-                    tag: <Tag>{ label: 'Timestamp' },
+                    tag: tag,
+                    label: tag.label || tag.name,
                     align: 'left',
                     width: 'auto'
                 }];
@@ -63,10 +65,12 @@ export class ReportItemTableComponent implements OnInit {
             if (result) {
                 let varsId = result.variablesId || [result.variableId];
                 varsId.forEach(tagId => {
+                    let tag = this.projectService.getTagFromId(tagId);
                     this.columns.splice(++index, 0, <ReportTableColumn>{
-                        tag: this.projectService.getTagFromId(tagId),
+                        tag: tag,
                         width: 'auto',
                         align: 'left',
+                        label: tag.label || tag.name,
                         function: Utils.getEnumKey(ReportFunctionType, ReportFunctionType.average)
                     });
                 });
