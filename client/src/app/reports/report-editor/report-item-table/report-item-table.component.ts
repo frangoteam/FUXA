@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { DeviceTagDialog } from '../../../device/device.component';
+import { EditNameComponent } from '../../../gui-helpers/edit-name/edit-name.component';
 import { Utils } from '../../../_helpers/utils';
 import { DeviceType, Tag } from '../../../_models/device';
 import { ReportDateRangeType, ReportFunctionType, ReportIntervalType, ReportItemTable, ReportTableColumn, ReportTableColumnType } from '../../../_models/report';
@@ -74,6 +75,21 @@ export class ReportItemTableComponent implements OnInit {
                         function: Utils.getEnumKey(ReportFunctionType, ReportFunctionType.average)
                     });
                 });
+            }
+        });
+    }
+
+    onSetLabel(index: number) {
+        let title = '';
+        this.translateService.get('report.tags-table-setlabel').subscribe((txt: string) => { title = txt; });
+        let label = this.columns[index].label || this.columns[index].tag.label || this.columns[index].tag.name;
+        let dialogRef = this.dialog.open(EditNameComponent, {
+            position: { top: '60px' },
+            data: { name: label, title: title }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.columns[index].label = result.name;
             }
         });
     }
