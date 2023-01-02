@@ -26,14 +26,11 @@ export class NgxTouchKeyboardComponent {
   locale: Locale = Locales.enUS;
   layoutMode = 'text';
   layoutName = 'alphabetic';
-  debug = false;
+  debug = true;
 
   @Output() closePanel = new EventEmitter<void>();
 
   private _activeButtonClass = 'active';
-  private _holdInteractionTimeout!: number;
-  private _holdTimeout!: number;
-  private _isMouseHold!: boolean;
   private _caretPosition: number | null = null;
   private _caretPositionEnd: number | null = null;
   private _activeInputElement!: HTMLInputElement | HTMLTextAreaElement | null;
@@ -202,8 +199,9 @@ export class NgxTouchKeyboardComponent {
     const buttonWithoutBraces = button.replace('{', '').replace('}', '');
     let buttonNormalized = '';
 
-    if (buttonTypeClass !== 'standard-key')
+    if (buttonTypeClass !== 'standard-key') {
       buttonNormalized = `${buttonWithoutBraces}-key`;
+    }
 
     return `${buttonTypeClass} ${buttonNormalized}`;
   }
@@ -250,13 +248,15 @@ export class NgxTouchKeyboardComponent {
     if (!this.isStandardButton(button)) {
       // Handel functional button
       if (button === fnButton.BACKSPACE) {
-        if (output.length > 0) output = this._removeAt(output, ...commonParams);
+        if (output.length > 0) {
+          output = this._removeAt(output, ...commonParams);
+        }
       } else if (button === fnButton.SPACE) {
         output = this._addStringAt(output, ' ', ...commonParams);
       } else if (button === fnButton.TAB) {
         output = this._addStringAt(output, '\t', ...commonParams);
       } else if (button === fnButton.ENTER) {
-        output = this._addStringAt(output, '\n', ...commonParams);
+        // output = this._addStringAt(output, '\n', ...commonParams);
       } else {
         this.layoutName = button.substring(1, button.length - 1);
         return;
@@ -281,6 +281,10 @@ export class NgxTouchKeyboardComponent {
     }
 
     this._dispatchEvents(button);
+    if (button === fnButton.ENTER) {
+      this.closePanel.emit();
+      return;
+    }
   }
 
   /**
@@ -303,28 +307,6 @@ export class NgxTouchKeyboardComponent {
      */
     this._setActiveButton(button);
 
-    if (this._holdInteractionTimeout)
-      clearTimeout(this._holdInteractionTimeout);
-    if (this._holdTimeout) clearTimeout(this._holdTimeout);
-    this._isMouseHold = true;
-
-    /**
-     * Time to wait until a key hold is detected
-     */
-    this._holdTimeout = window.setTimeout(() => {
-      if (
-        this._isMouseHold &&
-        ((!button.includes('{') && !button.includes('}')) ||
-          button === fnButton.BACKSPACE ||
-          button === fnButton.SPACE)
-      ) {
-        if (this.debug) {
-          console.log('Button held:', button);
-        }
-        this.handleButtonHold(button);
-      }
-      clearTimeout(this._holdTimeout);
-    }, 500);
   }
 
   /**
@@ -346,30 +328,6 @@ export class NgxTouchKeyboardComponent {
      * Remove active class
      */
     this._removeActiveButton();
-
-    this._isMouseHold = false;
-    if (this._holdInteractionTimeout)
-      clearTimeout(this._holdInteractionTimeout);
-  }
-
-  /**
-   * Handles button hold
-   */
-  handleButtonHold(button: string): void {
-    if (this._holdInteractionTimeout)
-      clearTimeout(this._holdInteractionTimeout);
-
-    /**
-     * Timeout dictating the speed of key hold iterations
-     */
-    this._holdInteractionTimeout = window.setTimeout(() => {
-      if (this._isMouseHold) {
-        this.handleButtonClicked(button);
-        this.handleButtonHold(button);
-      } else {
-        clearTimeout(this._holdInteractionTimeout);
-      }
-    }, 100);
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -389,6 +347,7 @@ export class NgxTouchKeyboardComponent {
   ): void {
     this._caretPosition = position;
     this._caretPositionEnd = endPosition;
+    console.log('pos:', position);
   }
 
   /**
@@ -415,7 +374,9 @@ export class NgxTouchKeyboardComponent {
 
     if (caretPosition != null) {
       if (minus) {
-        if (caretPosition > 0) caretPosition = caretPosition - length;
+        if (caretPosition > 0) {
+          caretPosition = caretPosition - length;
+        }
       } else {
         caretPosition = caretPosition + length;
       }
@@ -459,10 +420,14 @@ export class NgxTouchKeyboardComponent {
 
         if (emojiMatched) {
           output = source.substr(0, position - 2) + source.substr(position);
-          if (moveCaret) this._updateCaretPos(2, true);
+          if (moveCaret) {
+            this._updateCaretPos(2, true);
+          }
         } else {
           output = source.substr(0, position - 1) + source.substr(position);
-          if (moveCaret) this._updateCaretPos(1, true);
+          if (moveCaret) {
+            this._updateCaretPos(1, true);
+          }
         }
       } else {
         prevTwoChars = source.slice(-2);
@@ -470,10 +435,14 @@ export class NgxTouchKeyboardComponent {
 
         if (emojiMatched) {
           output = source.slice(0, -2);
-          if (moveCaret) this._updateCaretPos(2, true);
+          if (moveCaret) {
+            this._updateCaretPos(2, true);
+          }
         } else {
           output = source.slice(0, -1);
-          if (moveCaret) this._updateCaretPos(1, true);
+          if (moveCaret) {
+            this._updateCaretPos(1, true);
+          }
         }
       }
     } else {
@@ -510,7 +479,9 @@ export class NgxTouchKeyboardComponent {
       output = [source.slice(0, position), str, source.slice(positionEnd)].join(
         ''
       );
-      if (moveCaret) this._updateCaretPos(str.length, false);
+      if (moveCaret) {
+        this._updateCaretPos(str.length, false);
+      }
     }
 
     return output;
@@ -609,9 +580,6 @@ export class NgxTouchKeyboardComponent {
       event.type === 'pointerup' &&
       this._activeInputElement === document.activeElement
     ) {
-      if (this._isMouseHold) {
-        this.handleButtonMouseUp('');
-      }
       return;
     } else if (!isKeyboard && event?.type !== 'selectionchange') {
       /**
@@ -640,10 +608,12 @@ export class NgxTouchKeyboardComponent {
    */
   private _focusActiveInput(): void {
     this._activeInputElement?.focus();
-    this._activeInputElement?.setSelectionRange(
-      this._caretPosition,
-      this._caretPositionEnd
-    );
+    if (this._caretPosition && this._caretPositionEnd) {
+      this._activeInputElement?.setSelectionRange(
+        this._caretPosition,
+        this._caretPositionEnd
+      );
+    }
   }
 
   /**

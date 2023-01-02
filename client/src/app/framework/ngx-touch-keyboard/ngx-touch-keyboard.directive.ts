@@ -119,7 +119,7 @@ export class NgxTouchKeyboardDirective implements OnDestroy {
     this._panelRef = this._overlayRef.attach(
       new ComponentPortal(NgxTouchKeyboardComponent)
     );
-    this._panelRef.instance.debug = this.ngxTouchKeyboardDebug;
+    this._panelRef.instance.debug = true;//this.ngxTouchKeyboardDebug;
     this._panelRef.instance.setLocale(this._locale);
     this._panelRef.instance.setActiveInput(this._elementRef.nativeElement);
     this.isOpen = true;
@@ -132,7 +132,7 @@ export class NgxTouchKeyboardDirective implements OnDestroy {
    * Close keyboard panel
    */
   closePanel(): void {
-    this._overlayRef.detach();
+    this._overlayRef?.detach();
     this.isOpen = false;
   }
 

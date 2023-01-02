@@ -493,17 +493,24 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
-                htmlevent.dom.onfocus = function(ev) {
-                    self.touchKeyboard.openPanel(new ElementRef(htmlevent.dom));
-                    if(htmlevent.ga.property){
-                        let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
-                        if(unit && htmlevent.dom.value.endsWith(unit)){
-                            let len = htmlevent.dom.value.length;
-                            htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
+                if (this.hmi.layout?.inputdialog === 'keyboard' && htmlevent.ga?.type === HtmlInputComponent.TypeTag) {
+                    htmlevent.dom.onfocus = function(ev) {
+                        self.touchKeyboard.closePanel();
+                        let eleRef = new ElementRef(htmlevent.dom);
+                        if (htmlevent.ga?.property?.options?.numeric) {
+                            eleRef.nativeElement.inputMode = 'decimal';
                         }
-                        htmlevent.dom.select();
-                    }
-                };
+                        self.touchKeyboard.openPanel(eleRef);
+                        // if(htmlevent.ga.property){
+                        //     let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
+                        //     if(unit && htmlevent.dom.value.endsWith(unit)){
+                        //         let len = htmlevent.dom.value.length;
+                        //         htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
+                        //     }
+                        //     htmlevent.dom.select();
+                        // }
+                    };
+                }
 
                 htmlevent.dom.onblur = function(ev) {
                     // Update variable value in case it has changed while input had focus
