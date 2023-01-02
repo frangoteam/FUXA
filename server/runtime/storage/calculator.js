@@ -6,13 +6,13 @@
 
 const utils = require("../utils");
 
-function getFunctionValues(values, fromts, tots, fnc, interval) {
+function getFunctionValues(values, fromts, tots, fnc, interval, format) {
     if (fnc === ReportFunctionType.min) {
         return getMin(values, fromts, tots, interval);
     } else if (fnc === ReportFunctionType.max) {
         return getMax(values, fromts, tots, interval);
     } else if (fnc === ReportFunctionType.average) {
-        return getAverage(values, fromts, tots, interval);
+        return getAverage(values, fromts, tots, interval, format);
     } else if (fnc === ReportFunctionType.sum) {
         return getSum(values, fromts, tots, interval);
     }
@@ -69,7 +69,7 @@ function getMax(timeserie, fromts, tots, intervalType) {
     return result;
 }
 
-function getAverage(timeserie, fromts, tots, intervalType) {
+function getAverage(timeserie, fromts, tots, intervalType, format) {
     let result = getInterval(fromts, tots, intervalType, 0);
     let counts = getInterval(fromts, tots, intervalType, 0);
     // sort to start with the oldest
@@ -93,7 +93,7 @@ function getAverage(timeserie, fromts, tots, intervalType) {
     // average
     Object.keys(result).forEach(k => {
         if (counts[k]) {
-            result[k] = utils.parseFloat(result[k] / counts[k], 5);
+            result[k] = utils.parseFloat(result[k] / counts[k], format || 5);
         }
     });
     return result; 
