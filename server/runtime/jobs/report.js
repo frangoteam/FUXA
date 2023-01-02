@@ -148,7 +148,7 @@ function Report(_property, _runtime) {
             try {
                 let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
                 let header = item.columns.map(col => { 
-                    return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
+                    return { text: col.label || col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
                 });
                 //item.columns.map(col => col.tag.address || '');
                 let values = [];
@@ -254,7 +254,6 @@ function Report(_property, _runtime) {
         } else if (dateRange === ReportDateRangeType.month) {
             var lastMonth = new Date(currentTime || Date.now());
             lastMonth.setMonth(lastMonth.getMonth() - 1);
-            lastMonth.setDate(-1);
             return { 
                 begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1), 
                 end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), lastMonth.getDate(), 23, 59, 59)

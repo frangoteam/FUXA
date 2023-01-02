@@ -259,7 +259,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     static getTableContent(item: ReportItemTable) {
         let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
-        let header = item.columns.map<any>(col => ({ text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }));
+        let header = item.columns.map<any>(col => ({ text: col.label || col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }));
         let values = item.columns.map(col => col.tag.address || '...');
         content['table'] = {
             // headers are automatically repeated if the table spans over multiple pages

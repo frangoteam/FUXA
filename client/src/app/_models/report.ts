@@ -69,6 +69,7 @@ export interface ReportItemTable extends ReportItem {
 export interface ReportTableColumn {
     type: ReportTableColumnType;
     tag: Tag;
+    label: string;
     align: string;
     width: string;
     function: ReportFunctionType;
