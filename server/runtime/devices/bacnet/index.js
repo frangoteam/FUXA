@@ -571,29 +571,31 @@ function BACNETclient(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = function (vars) {
+    var _updateVarsValue = (vars) => {
         const timestamp = new Date().getTime();
         var someval = false;
         var changed = {};
         for (var index in vars) {
             var address = vars[index].address;
             if (requestItemsMap[address]) {
-                for (var index in requestItemsMap[address]) {
-                    var tag = requestItemsMap[address][index];
-                    if (!varsValue[tag.id]) {
-                        varsValue[tag.id].changed = varsValue[tag.id].rawValue !== vars[index].rawValue;
-                        if (!utils.isNullOrUndefined(vars[index].rawValue)) {
-                            varsValue[tag.id].rawValue = vars[index].rawValue;
-                            varsValue[tag.id].value = deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[id]);
-                            vars[index].value = varsValue[tag.id].value;
-                            if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
-                                changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq };
-                                varsValue[tag.id] = changed[tag.id];
-                            }
+                for (var idx in requestItemsMap[address]) {
+                    var tag = requestItemsMap[address][idx];
+                    if (!varsValue[tag.id] || varsValue[tag.id].value !== vars[index].value) {
+                        changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type, daq: tag.daq };
+                        varsValue[tag.id] = changed[tag.id];    
+                    } 
+                    varsValue[tag.id].changed = varsValue[tag.id].rawValue !== vars[index].rawValue;
+                    if (!utils.isNullOrUndefined(vars[index].rawValue)) {
+                        varsValue[tag.id].rawValue = vars[index].rawValue;
+                        varsValue[tag.id].value = deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[tag.id]);
+                        vars[index].value = varsValue[tag.id].value;
+                        if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[tag.id], timestamp)) {
+                            changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq };
+                            varsValue[tag.id] = changed[tag.id];
                         }
-                        varsValue[tag.id].changed = false;
-                        someval = true;
                     }
+                    varsValue[tag.id].changed = false;
+                    someval = true;
                 }
             }
         }
