@@ -35,7 +35,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="container"  class="home-container" #container (click)="checkToCloseSideNav()">
+		<div id="container"  [ngClass]="showNavigation?'home-container-nav':'home-container'" #container (click)="checkToCloseSideNav()">
 			<app-cards-view *ngIf="!showHomeLink && homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions"
 				[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
 			</app-cards-view>
