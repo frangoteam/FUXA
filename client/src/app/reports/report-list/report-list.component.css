@@ -22,9 +22,11 @@
     left: 0px;
     right: 0px;
     bottom: 0px;
+    background-color: var(--workPanelBackground);
 }
 
 .container {
+    /* background-color: var(); */
     display: flex;
     flex-direction: column;
     min-width: 300px;
@@ -35,9 +37,9 @@
     right:0px;
 }
 
-.mat-table {
+table {
     overflow: auto;
-    height: 100%;
+    width: 100%;
 }
 
 .mat-row {
@@ -59,19 +61,9 @@
     font-size: 15px;
 }
 
-.mat-header-row {
-    top: 0;
-    position: sticky;
-    z-index: 1;
-}
-
-.mat-header-cell {
-    font-size: 15px;
-}
-
 .mat-column-select {
     overflow: visible;
-    flex: 0 0 80px;
+    width: 50px;
 }
 
 .mat-column-name {
@@ -93,9 +85,9 @@
 }
 
 .mat-column-create {
-    flex: 0 0 60px;
+    width: 50px;
 }
 
 .mat-column-remove {
-    flex: 0 0 60px;
+    width: 50px;
 }

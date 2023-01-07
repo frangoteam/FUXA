@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
@@ -13,7 +14,14 @@ import { ReportEditorComponent } from '../report-editor/report-editor.component'
 @Component({
     selector: 'app-report-list',
     templateUrl: './report-list.component.html',
-    styleUrls: ['./report-list.component.css']
+    styleUrls: ['./report-list.component.css'],
+    animations: [
+        trigger('detailExpand', [
+          state('collapsed', style({height: '0px', minHeight: '0'})),
+          state('expanded', style({height: '*'})),
+          transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+      ],
 })
 export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -22,6 +30,7 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionLoad: Subscription;
     private schedulingType = ReportSchedulingType;
+    expandedElement: PeriodicElement | null;
 
     @ViewChild(MatTable, {static: false}) table: MatTable<any>;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
@@ -103,4 +112,12 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadReports() {
         this.dataSource.data = this.projectService.getReports().sort((a: Report, b: Report) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
     }
+}
+
+export interface PeriodicElement {
+    name: string;
+    position: number;
+    weight: number;
+    symbol: string;
+    description: string;
 }

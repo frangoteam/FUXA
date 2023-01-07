@@ -254,10 +254,9 @@ function Report(_property, _runtime) {
             };
         } else if (dateRange === ReportDateRangeType.month) {
             var lastMonth = new Date(currentTime || Date.now());
-            lastMonth.setMonth(lastMonth.getMonth() - 1);
             return { 
-                begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1), 
-                end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), lastMonth.getDate(), 23, 59, 59)
+                begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth() - 1, 1, 0, 0, 0),
+                end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 0, 23, 59, 59)
             };
         } else {
             return { 
