@@ -6,7 +6,20 @@
 .home-container {
     position: absolute;
 	left: 0px;
-	top: 48px;
+    top:0px;
+	bottom: 0px;
+    right: 0px;
+    overflow: auto;
+	// -webkit-user-select: none;
+	// -moz-user-select: none;
+	// -ms-user-select: none;
+	// -o-user-select: none;
+	// user-select: none;
+}
+.home-container-nav {
+    position: absolute;
+	left: 0px;
+    top:48px;
 	bottom: 0px;
     right: 0px;
     overflow: auto;

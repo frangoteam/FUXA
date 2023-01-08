@@ -148,14 +148,15 @@ function Report(_property, _runtime) {
             try {
                 let content = { layout: 'lightHorizontalLines', fontSize: item.size }; // optional
                 let header = item.columns.map(col => { 
-                    return { text: col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
+                    return { text: col.label || col.tag.label || col.tag.name, bold: true, style: [{ alignment: col.align }] }
                 });
                 //item.columns.map(col => col.tag.address || '');
                 let values = [];
                 let tagsids = item.columns.filter(col => col.type !== 0).map(col => col.tag.id);
                 let fncs = item.columns.filter(col => col.type !== 0).map(col => col.function);
+                let formats = item.columns.filter(col => col.type !== 0).map(col => col.tag.format);
                 let timeRange = _getDateRange(item.range);
-                let options = { interval: item.interval, functions: fncs };
+                let options = { interval: item.interval, functions: fncs, formats: formats };
                 await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), options).then(result => {
                     if (!result || !result.length) {
                         values = [item.columns.map(col => { return {text: ''}})];
@@ -254,7 +255,6 @@ function Report(_property, _runtime) {
         } else if (dateRange === ReportDateRangeType.month) {
             var lastMonth = new Date(currentTime || Date.now());
             lastMonth.setMonth(lastMonth.getMonth() - 1);
-            lastMonth.setDate(-1);
             return { 
                 begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1), 
                 end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), lastMonth.getDate(), 23, 59, 59)

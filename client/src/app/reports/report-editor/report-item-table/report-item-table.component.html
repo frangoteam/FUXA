@@ -20,9 +20,9 @@
         </div>        
         <div class="data-table my-form-field">
             <span>{{'report.tags-table-column' | translate}}</span>
-            <div *ngFor="let column of columns; index as i" class="data-table-cell">
+            <div *ngFor="let column of columns; index as i" class="data-table-cell" matTooltip="{{column.tag.label || column.tag.name}}">
                 <div class="label" [style.textAlign]="column.align">
-                    {{column.tag.label || column.tag.name}}
+                    {{column.label || column.tag.label || column.tag.name}}
                 </div>
                 <div *ngIf="i > 0" class="my-form-field mt10">
                     <span>{{'report.item-function-type' | translate}}</span>
@@ -36,6 +36,7 @@
                     <mat-icon aria-label="More" [matMenuTriggerFor]="menuitem">more_vert</mat-icon>
                 </div>
                 <mat-menu #menuitem="matMenu">
+                    <button mat-menu-item (click)="onSetLabel(i)">{{'report.tags-table-setlabel' | translate}}</button>
                     <button mat-menu-item (click)="onAddItem(i)">{{'report.tags-table-add' | translate}}</button>
                     <button mat-menu-item [matMenuTriggerFor]="menualign">{{'report.table-alignitem' | translate}}</button>
                     <mat-divider *ngIf="i > 0" class="menu-separator"></mat-divider>

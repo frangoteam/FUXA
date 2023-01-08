@@ -85,7 +85,7 @@ function getNodesValues(tagsid, fromts, tots, options) {
                     let calcValues = [];
                     for (let idx = 0 ; idx < values.length; idx++) {
                         if (options.functions[idx]) {
-                            calcValues.push(calculator.getFunctionValues(values[idx], fromts, tots, options.functions[idx], options.interval));
+                            calcValues.push(calculator.getFunctionValues(values[idx], fromts, tots, options.functions[idx], options.interval, options.formats[idx]));
                         } else {
                             calcValues.push(calculator.getFunctionValues(values[idx], fromts, tots));
                         }
