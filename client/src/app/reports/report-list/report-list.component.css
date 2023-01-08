@@ -91,3 +91,23 @@ table {
 .mat-column-remove {
     width: 50px;
 }
+
+tr.detail-row {
+    height: 0;
+}
+  
+  /* .example-element-row td {
+    border-bottom-width: 0;
+  } */
+  
+.element-detail {
+    overflow: hidden;
+    display: flex;
+}
+
+.details-description {
+    min-height: 100px;
+    max-height: 600px;
+    margin: 10px 10px;
+    padding-left: 40px;
+}

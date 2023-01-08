@@ -95,6 +95,35 @@ module.exports = {
         });
 
         /**
+         * GET Server report folder content
+         */
+        diagnoseApp.get('/api/reportdir', secureFnc, function (req, res) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get reportdir: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api get reportdir: Unauthorized!");
+            } else {
+                try {
+                    var reportPath = runtime.settings.reportsDir;
+                    if (!fs.existsSync(reportPath)) {
+                        reportPath = path.join(process.cwd(), runtime.settings.reportsDir);
+                    }
+                    var reportFiles = fs.readdirSync(reportPath);
+                    res.json(reportFiles);
+                } catch (err) {
+                    if (err.code) {
+                        res.status(400).json({ error: err.code, message: err.message });
+                    } else {
+                        res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                    }
+                    runtime.logger.error("api get reportdir: " + err.message);
+                }
+            }
+        });
+
+        /**
          * POST testmail
          * Test SMTP send mail
          */

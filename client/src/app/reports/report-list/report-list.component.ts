@@ -30,7 +30,7 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionLoad: Subscription;
     private schedulingType = ReportSchedulingType;
-    expandedElement: PeriodicElement | null;
+    expandedElement: Report | null;
 
     @ViewChild(MatTable, {static: false}) table: MatTable<any>;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
@@ -114,10 +114,3 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 }
 
-export interface PeriodicElement {
-    name: string;
-    position: number;
-    weight: number;
-    symbol: string;
-    description: string;
-}
