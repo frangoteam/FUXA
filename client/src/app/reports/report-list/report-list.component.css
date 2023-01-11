@@ -92,6 +92,10 @@ table {
     width: 50px;
 }
 
+.mat-column-expand {
+    width: 50px;
+}
+
 tr.detail-row {
     height: 0;
 }
@@ -100,14 +104,25 @@ tr.detail-row {
     border-bottom-width: 0;
   } */
   
-.element-detail {
+.report-details {
     overflow: hidden;
     display: flex;
 }
 
 .details-description {
     min-height: 100px;
-    max-height: 600px;
-    margin: 10px 10px;
+    max-height: 360px;
+    margin: 5px 10px;
     padding-left: 40px;
+    width: 100%;
+    overflow: auto;
+}
+
+.report-detail div {
+    min-width: 600px;
+    display: inline-block;
+}
+
+td.details-container {
+    background-color: var(--workPanelExpandBackground);
 }

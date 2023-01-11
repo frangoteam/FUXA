@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 
 import { SmtpSettings, MailMessage } from '../_models/settings';
 import { LogsRequest } from '../_models/diagnose';
+import { Report } from '../_models/report';
 
 @Injectable({
     providedIn: 'root'
@@ -32,6 +33,15 @@ export class DiagnoseService {
             observe: 'response'
         };
         return this.http.get<any>(this.endPointConfig + '/api/logs', requestOptions);
+    }
+
+    getReportsDir(report: Report): Observable<string[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = {
+            id: report.id,
+            name: report.name,
+        };
+        return this.http.get<string[]>(this.endPointConfig + '/api/reportsdir', { headers: header, params: params });
     }
 
     sendMail(msg: MailMessage, smtp: SmtpSettings) {

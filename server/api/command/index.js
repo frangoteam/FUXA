@@ -4,6 +4,8 @@
 
 var express = require("express");
 const authJwt = require('../jwt-helper');
+const fs = require('fs');
+const path = require('path');
 var runtime;
 var secureFnc;
 var checkGroupsFnc;
@@ -35,13 +37,55 @@ module.exports = {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post command: Unauthorized");
             } else {
-                if (req.body.params.cmd === CommanTypeEnum.reportBuild) {
-                    if (runtime.jobsMgr.forceReport(req.body.params.report)) {
-                        res.end();
-                    } else {
-                        res.status(400).json({ error: "not_found", message: 'report not found!'});
-                        runtime.logger.error("api post buildreport: " + 'report not found!');
+                try {
+                    if (req.body.params.cmd === CommanTypeEnum.reportBuild) {
+                        if (runtime.jobsMgr.forceReport(req.body.params.report)) {
+                            res.end();
+                        } else {
+                            res.status(400).json({ error: "not_found", message: 'report not found!'});
+                            runtime.logger.error("api post buildreport: " + 'report not found!');
+                        }
                     }
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    runtime.logger.error("api post buildreport: " + error);
+                }
+            }
+        });
+
+        /**
+         * GET download
+         */
+        commandApp.get('/api/download', function(req, res){
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post command: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post command: Unauthorized");
+            } else {
+                if (req.query.cmd === CommanTypeEnum.reportDownload) {
+                    try {
+                        var reportPath = path.join(runtime.settings.reportsDir, req.query.name);
+                        if (!fs.existsSync(reportPath)) {
+                            reportPath = path.join(process.cwd(), runtime.settings.reportsDir, req.query.name);
+                        }
+                        if (fs.existsSync(reportPath)) {
+                            res.sendFile(reportPath, (err) => {
+                                if (err) {
+                                    runtime.logger.error("api get download: " + err);
+                                }
+                            });
+                        } else {
+                            res.status(400).json({ error: "not_found", message: 'report not found!'});
+                            runtime.logger.error("api get download: " + 'report not found!');
+                        }
+                    } catch (error) {
+                        res.status(400).json({ error: 'error', message: error});
+                        runtime.logger.error("api get download: " + error);
+                    }
+                } else {
+                    res.status(400).json({ error: "not_found", message: 'command not found!'});
                 }
             }
         });
@@ -53,5 +97,6 @@ module.exports = {
 
 const CommanTypeEnum = {
     reportBuild: 'REPORT-BUILD',
-    reportDelete: 'REPORT-DELETE'
+    reportDelete: 'REPORT-DELETE',
+    reportDownload: 'REPORT-DOWNLOAD'
 };

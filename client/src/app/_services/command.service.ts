@@ -40,6 +40,15 @@ export class CommandService {
         });
     }
 
+    getReportFile(reportName: string): Observable<Blob> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/pdf' });
+        let params = {
+            cmd: CommanType.reportDownload,
+            name: reportName,
+        };
+        return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
+    }
+
     private notifyError(err: any) {
         var msg = '';
         this.translateService.get('msg.report-build-error').subscribe((txt: string) => { msg = txt; });
@@ -53,5 +62,6 @@ export class CommandService {
 
 export enum CommanType {
     reportBuild = 'REPORT-BUILD',
-    reportDelete = 'REPORT-DELETE'
+    reportDelete = 'REPORT-DELETE',
+    reportDownload = 'REPORT-DOWNLOAD'
 };
