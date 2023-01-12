@@ -26,7 +26,7 @@ export class NgxTouchKeyboardComponent {
   locale: Locale = Locales.enUS;
   layoutMode = 'text';
   layoutName = 'alphabetic';
-  debug = true;
+  debug = false;
 
   @Output() closePanel = new EventEmitter<void>();
 
@@ -347,7 +347,6 @@ export class NgxTouchKeyboardComponent {
   ): void {
     this._caretPosition = position;
     this._caretPositionEnd = endPosition;
-    console.log('pos:', position);
   }
 
   /**
@@ -400,7 +399,8 @@ export class NgxTouchKeyboardComponent {
     moveCaret = false
   ) {
     if (position === 0 && positionEnd === 0) {
-      return source;
+      position = source.length;
+      positionEnd = source.length;
     }
 
     let output;
@@ -556,8 +556,7 @@ export class NgxTouchKeyboardComponent {
     const isKeyboard =
       event.target === this._elementRef.nativeElement ||
       (event.target && this._elementRef.nativeElement.contains(event.target));
-
-    if (isTextInput && this._activeInputElement == event.target) {
+    if (this._activeInputElement == event.target) {
       /**
        * Tracks current cursor position
        * As keys are pressed, text will be added/removed at that position within the input.
@@ -581,7 +580,7 @@ export class NgxTouchKeyboardComponent {
       this._activeInputElement === document.activeElement
     ) {
       return;
-    } else if (!isKeyboard && event?.type !== 'selectionchange') {
+    } else if (!isKeyboard && event?.type !== 'selectionchange' && event?.type !== 'select') {
       /**
        * we must ensure caretPosition doesn't persist once reactivated.
        */
