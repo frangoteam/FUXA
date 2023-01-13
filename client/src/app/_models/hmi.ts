@@ -117,6 +117,7 @@ export enum ZoomModeType {
 export enum InputModeType {
     false = 'item.inputmode-disabled',
     true = 'item.inputmode-enabled',
+    keyboard = 'item.inputmode-keyboard',
 }
 
 export enum HeaderBarModeType {

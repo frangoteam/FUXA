@@ -1,0 +1,26 @@
+<div dir="ltr" class="touch-keyboard" [ngClass]="'layout-' + layoutName">
+  <ng-container
+    *ngFor="
+      let row of locale.layouts[layoutMode + '_' + layoutName];
+      let rowIndex = index
+    "
+  >
+    <div class="touch-keyboard-row">
+      <ng-container *ngFor="let key of row; let keyIndex = index">
+        <button
+          [name]="key"
+          [dir]="locale.dir"
+          class="touch-keyboard-key"
+          [ngClass]="[getButtonClass(key)]"
+          [attr.data-layout]="layoutName"
+          (pointerdown)="
+            handleButtonClicked(key, $event); handleButtonMouseDown(key, $event)
+          "
+          (pointerup)="handleButtonMouseUp(key, $event)"
+          (pointercancel)="handleButtonMouseUp(key, $event)"
+          [innerHtml]="getButtonDisplayName(key)"
+        ></button>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

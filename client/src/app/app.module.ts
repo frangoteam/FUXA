@@ -160,6 +160,7 @@ import { ReportItemChartComponent } from './reports/report-editor/report-item-ch
 import { ScriptModeComponent } from './scripts/script-mode/script-mode.component';
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
+import { NgxTouchKeyboardModule } from './framework/ngx-touch-keyboard/ngx-touch-keyboard.module';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -317,6 +318,7 @@ export function createTranslateLoader(http: HttpClient) {
         ChartsModule,
         CodemirrorModule,
         NgxDaterangepickerMd.forRoot(),
+        NgxTouchKeyboardModule
     ],
     providers: [
         // providersResourceService,

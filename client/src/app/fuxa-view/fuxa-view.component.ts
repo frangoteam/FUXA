@@ -24,6 +24,7 @@ import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../_services/project.service';
+import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
 
 declare var SVG: any;
 
@@ -47,6 +48,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('dataContainer', {static: false}) dataContainer: ElementRef;
     @ViewChild('inputDialogRef', {static: false}) inputDialogRef: ElementRef;
     @ViewChild('inputValueRef', {static: false}) inputValueRef: ElementRef;
+    @ViewChild('touchKeyboard', {static: false}) touchKeyboard: NgxTouchKeyboardDirective;
 
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 
@@ -488,20 +490,27 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }, 300);
                     }
                 };
-            }else{
+            } else {
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
-
-                htmlevent.dom.onfocus = function(ev) {
-                    if(htmlevent.ga.property){
-                        let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
-                        if(unit && htmlevent.dom.value.endsWith(unit)){
-                            let len = htmlevent.dom.value.length;
-                            htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
+                if (this.hmi.layout?.inputdialog === 'keyboard' && htmlevent.ga?.type === HtmlInputComponent.TypeTag) {
+                    htmlevent.dom.onfocus = function(ev) {
+                        self.touchKeyboard.closePanel();
+                        let eleRef = new ElementRef(htmlevent.dom);
+                        if (htmlevent.ga?.property?.options?.numeric) {
+                            eleRef.nativeElement.inputMode = 'decimal';
                         }
-                        htmlevent.dom.select();
-                    }
-                };
+                        self.touchKeyboard.openPanel(eleRef);
+                        // if(htmlevent.ga.property){
+                        //     let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
+                        //     if(unit && htmlevent.dom.value.endsWith(unit)){
+                        //         let len = htmlevent.dom.value.length;
+                        //         htmlevent.dom.value = htmlevent.dom.value.substr(0, len - unit.length - 1);
+                        //     }
+                        //     htmlevent.dom.select();
+                        // }
+                    };
+                }
 
                 htmlevent.dom.onblur = function(ev) {
                     // Update variable value in case it has changed while input had focus

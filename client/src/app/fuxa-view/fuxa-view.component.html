@@ -40,3 +40,8 @@
         </button>
     </div>
 </div>
+<input type="text"
+       ngxTouchKeyboard
+       #touchKeyboard="ngxTouchKeyboard"
+       (focus)="touchKeyboard.openPanel()"
+       style="display: none;"/>
