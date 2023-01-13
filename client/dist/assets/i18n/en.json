@@ -154,7 +154,8 @@
 
     "dlg.layout-input-dialog": "Dialog Mode of input field",
     "item.inputmode-disabled": "Disabled",
-    "item.inputmode-enabled": "Enabled",
+    "item.inputmode-enabled": "Dialog",
+    "item.inputmode-keyboard": "Virtual-Keyboard",
 
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",
