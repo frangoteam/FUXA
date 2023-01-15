@@ -165,7 +165,7 @@ var utils = module.exports = {
     },
 
     isNumber: function(n) {
-        if (!isNaN(n) && typeof n === 'number') {
+        if (typeof n === 'number' || (!isNaN(parseFloat(n)) || !isNaN(parseInt(n)))) {
             return true;
         }
         return false;

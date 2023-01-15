@@ -1,4 +1,5 @@
 'use strict';
+var utils = require('../utils');
 
 module.exports = {
 
@@ -16,7 +17,7 @@ module.exports = {
     },
 
     tagValueCompose: function (value, tag) {
-        if (value && tag) {
+        if (tag && utils.isNumber(value)) {
             try {
                 value = parseFloat(value);
                 if (tag.scale && tag.scale.mode === 'linear') {
