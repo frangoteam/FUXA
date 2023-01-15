@@ -984,6 +984,14 @@ mat-toolbar-row {
     display: block;
 }
 
+.lbk {
+    display: inline-block;
+}
+
+.table {
+    display: table;
+}
+
 .mt5 {
     margin-top: 5px;
 }

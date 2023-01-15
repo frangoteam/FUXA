@@ -36,6 +36,7 @@ export class FlexEventComponent implements OnInit {
     eventType = GaugeEventType;
     setValueType = GaugeEventSetValueType;
     actionType = GaugeEventActionType;
+    eventActionOnCard = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
 
     constructor(private translateService: TranslateService) {
     }
@@ -108,6 +109,10 @@ export class FlexEventComponent implements OnInit {
         let c = Object.values(this.actionType).indexOf(GaugeEventActionType.onwindow);
         let d = Object.values(this.actionType).indexOf(GaugeEventActionType.ondialog);
         return a === b || a === c || a === d;
+    }
+
+    withPosition(eventAction: GaugeEventActionType) {
+        return eventAction === this.eventActionOnCard;
     }
 
     withSetValue(action) {

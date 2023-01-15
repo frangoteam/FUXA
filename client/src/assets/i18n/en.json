@@ -127,6 +127,10 @@
     "general.align-left": "Left",
     "general.align-center": "Center",
     "general.align-right": "Right",
+    "general-left": "Left",
+    "general-top": "Top",
+    "general-x": "X",
+    "general-y": "Y",
 
     "tester.title": "Variable",
     "tester.send": "Send",

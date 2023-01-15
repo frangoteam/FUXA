@@ -27,6 +27,16 @@
         <mat-select [(value)]="item.actparam">
             <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
         </mat-select>
+        <div *ngIf="withPosition(item.action)" class="table mt5">
+            <div class="my-form-field lbk">
+                <span>{{'general-x' | translate}}</span>
+                <input numberOnly [(ngModel)]="item.actoptions.left" type="number" style="width: 60px">
+            </div>
+            <div class="my-form-field lbk ml10">
+                <span>{{'general-y' | translate}}</span>
+                <input numberOnly [(ngModel)]="item.actoptions.top" type="number" style="width: 60px">
+            </div>
+        </div>
     </div>
     <div *ngIf="withDestination(item.action)" style="padding-left: 25px;">
         <flex-variables-mapping [(mapping)]="item.actoptions['variablesMapping']" [view]="getView(item.actparam)" [data]="data"></flex-variables-mapping>

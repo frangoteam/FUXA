@@ -623,8 +623,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         card = new CardModel(id);
-        card.x = event.clientX;
-        card.y = event.clientY;
+        card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
+        card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
         if (this.hmi.layout.hidenavigation) {
             card.y -= 48;
         }
