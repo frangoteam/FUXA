@@ -146,7 +146,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
-                if (n.checked && n.enabled && (!n.childs || n.childs.length == 0)) {
+                if (n.checked && n.enabled && (n.type || !n.childs || n.childs.length == 0)) {
                     this.data.nodes.push(this.treetable.nodes[key]);
                 }
             });
