@@ -166,7 +166,7 @@ var utils = module.exports = {
 
     isNumber: function(n, v) {
         if (typeof n === 'number') {
-            v = n;
+            v.value = n;
             return true;
         } else {
             var num = Number(n);
@@ -177,7 +177,7 @@ var utils = module.exports = {
             if (isNaN(num)) {
                 return false;
             }
-            v = num;
+            v.value = num;
             return true;
         }
     },

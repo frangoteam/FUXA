@@ -17,10 +17,10 @@ module.exports = {
     },
 
     tagValueCompose: function (value, tag) {
-        var nvalue;
-        if (tag && utils.isNumber(value, nvalue)) {
+        var obj = {value: null };
+        if (tag && utils.isNumber(value, obj)) {
             try {
-                value = nvalue;
+                value = obj.value;
                 if (tag.scale && tag.scale.mode === 'linear') {
                     value = (tag.scale.scaledHigh - tag.scale.scaledLow) * (value - tag.scale.rawLow) / (tag.scale.rawHigh - tag.scale.rawLow) + tag.scale.scaledLow;
                 }
