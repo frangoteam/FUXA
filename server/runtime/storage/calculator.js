@@ -70,7 +70,7 @@ function getMax(timeserie, fromts, tots, intervalType) {
 }
 
 function getAverage(timeserie, fromts, tots, intervalType, format) {
-    let result = getInterval(fromts, tots, intervalType, 0);
+    let result = getInterval(fromts, tots, intervalType, null);
     let counts = getInterval(fromts, tots, intervalType, 0);
     // sort to start with the oldest
     let sorted = timeserie.sort(function (a, b) {
@@ -79,7 +79,7 @@ function getAverage(timeserie, fromts, tots, intervalType, format) {
 
     let addToInterval = (intervals, counters, intervalIndex, value) => {
         if (utils.isNullOrUndefined(intervals[intervalIndex])) {
-            intervals[intervalIndex] = 0;
+            intervals[intervalIndex] = value;
         } else {
             intervals[intervalIndex] += value;
             counters[intervalIndex]++;
@@ -179,13 +179,28 @@ function getIntervalTime(millyDt, _interval, next) {
 }
 
 function getStepDate(ts, type, toadd) {
+    var dtRange;
     let dt = new Date(ts);
     if (type === ReportIntervalType.day) {
-        dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() + toadd, 0, 0, 0);
-    } else { //if (type === ReportIntervalType.hour) {
-        dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours() + toadd, 0, 0);
+        dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), 0, 0, 0);
+        dtRange.setDate(dt.getDate() + toadd);
+    } else if (type === ReportIntervalType.hour) {
+        dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
+        dtRange.setHours(dt.getHours() + toadd);
+    } else if (type === ReportIntervalType.min30) {
+        dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
+        var minutesRange = parseInt(dt.getMinutes() / 30);
+        dtRange.setMinutes((minutesRange + toadd) * 30);
+    } else if (type === ReportIntervalType.min10) {
+        dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
+        var minutesRange = parseInt(dt.getMinutes() / 10);
+        dtRange.setMinutes((minutesRange + toadd) * 10);
+    } else { //if (type === ReportIntervalType.min5) {
+        dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
+        var minutesRange = parseInt(dt.getMinutes() / 5);
+        dtRange.setMinutes((minutesRange + toadd) * 5);
     }
-    return dt;
+    return dtRange;
 }
 
 module.exports = {
@@ -197,6 +212,9 @@ module.exports = {
 };
 
 const ReportIntervalType = {
+    min5: 'min5',
+    min10: 'min10',
+    min30: 'min30',
     hour: 'hour',
     day: 'day',
 }

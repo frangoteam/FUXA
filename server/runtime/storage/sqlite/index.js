@@ -458,7 +458,11 @@ function DaqNode(_settings, _log, _id) {
             fs.mkdirSync(archive);
         }
         var dbfilenew = path.join(archive, path.basename(dbfile, path.extname(dbfile))) + '_' + suffix + path.extname(dbfile);
-        fs.renameSync(dbfile, dbfilenew);
+        try {
+            fs.renameSync(dbfile, dbfilenew);
+        } catch (err) {
+            console.error(err);
+        }
         return dbfilenew;
     }
 
