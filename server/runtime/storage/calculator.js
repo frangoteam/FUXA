@@ -82,8 +82,8 @@ function getAverage(timeserie, fromts, tots, intervalType, format) {
             intervals[intervalIndex] = value;
         } else {
             intervals[intervalIndex] += value;
-            counters[intervalIndex]++;
         }
+        counters[intervalIndex]++;
     }
     
     for (let i = 0; i < sorted.length; i++) {
