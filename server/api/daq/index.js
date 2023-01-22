@@ -51,7 +51,6 @@ module.exports = {
                                 res.status(404).end();
                                 runtime.logger.error("api get daq: Not Found!");
                             }
-                            // io.emit(Events.IoEventTypes.DAQ_RESULT, { gid: msg.gid, values: values });
                         }, reason => {
                             if (reason && reason.stack) {
                                 runtime.logger.error(`api get daq: Not Found!: ${reason.stack}`);

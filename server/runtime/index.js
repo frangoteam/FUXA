@@ -179,9 +179,8 @@ function init(_io, _api, _settings, _log, eventsMain) {
                     for (let i = 0; i < msg.sids.length; i++) {
                         dbfncs.push(daqstorage.getNodeValues(msg.sids[i], msg.from, msg.to));
                     }
-                    var result = {};
                     Promise.all(dbfncs).then(values => {
-                        io.emit(Events.IoEventTypes.DAQ_RESULT, { gid: msg.gid, values: values });
+                        io.emit(Events.IoEventTypes.DAQ_RESULT, { gid: msg.gid, result: values });
                     }, reason => {
                         if (reason && reason.stack) {
                             logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${reason.stack}`);
