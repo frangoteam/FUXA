@@ -35,7 +35,7 @@
                 <span>{{'chart.property-date-last-range' | translate}}</span>
                 <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
                     <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
+                        {{ ev.value | translate }}
                     </mat-option>
                 </mat-select>
             </div>
