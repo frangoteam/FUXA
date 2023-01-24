@@ -17,7 +17,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "up":"ng update @angular/core@12 @angular/cli@12"
+    "up":"ng update @angular/core@12 @angular/cli@12 --force"
   },
   "dependencies": {
     "@angular/animations": "^11.2.14",
