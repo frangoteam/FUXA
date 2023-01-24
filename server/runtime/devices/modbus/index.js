@@ -272,7 +272,7 @@ function MODBUSclient(_data, _logger, _events) {
      */
     this.getTagProperty = function (id) {
         if (memItemsMap[id]) {
-            return { id: id, name: id, type: memItemsMap[id].type };
+            return { id: id, name: id, type: memItemsMap[id].type, format: memItemsMap[id].format };
         } else {
             return null;
         }

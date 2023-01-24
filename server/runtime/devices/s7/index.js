@@ -202,9 +202,9 @@ function S7client(_data, _logger, _events) {
      */
     this.getTagProperty = function (id) {
         if (dbItemsMap[id]) {
-            return { id: id, name: id, type: dbItemsMap[id].type };
+            return { id: id, name: id, type: dbItemsMap[id].type, format: dbItemsMap[id].format };
         } else if (mixItemsMap[id]) {
-            return { id: id, name: id, type: mixItemsMap[id].type };
+            return { id: id, name: id, type: mixItemsMap[id].type, format: mixItemsMap[id].format };
         } else {
             return null;
         }

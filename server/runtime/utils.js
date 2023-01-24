@@ -164,7 +164,7 @@ var utils = module.exports = {
         return `${dd}/${mm}/${yyyy} ${HH}:${MM}:${SS}`;
     },
 
-    isNumber: function(n, v) {
+    isNumber: function(n, v = {value: null}) {
         if (typeof n === 'number') {
             v.value = n;
             return true;

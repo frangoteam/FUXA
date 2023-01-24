@@ -154,7 +154,7 @@ function Report(_property, _runtime) {
                 let values = [];
                 let tagsids = item.columns.filter(col => col.type !== 0).map(col => col.tag.id);
                 let fncs = item.columns.filter(col => col.type !== 0).map(col => col.function);
-                let formats = item.columns.filter(col => col.type !== 0).map(col => col.tag.format);
+                let formats = item.columns.filter(col => col.type !== 0).map(col => runtime.devices.getTagFormat(col.tag.id));
                 let timeRange = _getDateRange(item.range);
                 let options = { interval: item.interval, functions: fncs, formats: formats };
                 await runtime.daqStorage.getNodesValues(tagsids, timeRange.begin.getTime(), timeRange.end.getTime(), options).then(result => {

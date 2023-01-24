@@ -257,6 +257,21 @@ function getDeviceValue(deviceid, sigid) {
 }
 
 /**
+ * Get the Tag value format from the tag id
+ * used from Report
+ * @param {*} sigid 
+ */
+function getTagFormat(sigid) {
+    for (var id in activeDevices) {
+        var tag = activeDevices[id].getTagProperty(sigid);
+        if (tag) {
+            return tag.format;
+        }
+    }
+    return null;
+}
+
+/**
  * Return if manager is working (started or stopped)
  */
 function isWoking() {
@@ -378,5 +393,6 @@ var devices = module.exports = {
     getDeviceTagsResult: getDeviceTagsResult,
     isWoking: isWoking,
     getSupportedProperty: getSupportedProperty,
-    getRequestResult: getRequestResult
+    getRequestResult: getRequestResult,
+    getTagFormat: getTagFormat
 }

@@ -321,8 +321,7 @@ function MQTTclient(_data, _logger, _events) {
      */
     this.getTagProperty = function (topic) {
         if (data.tags[topic]) {
-            let prop = { id: topic, name: data.tags[topic].name, type: data.tags[topic].type };
-            return prop;
+            return { id: topic, name: data.tags[topic].name, type: data.tags[topic].type, format: data.tags[topic].format };
         } else {
             return null;
         }

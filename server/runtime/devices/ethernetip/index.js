@@ -193,8 +193,7 @@ function EthernetIPclient(_data, _logger, _events) {
      */
     this.getTagProperty = function (tagid) {
         if (data.tags[tagid]) {
-            let prop = { id: tagid, name: data.tags[tagid].name, type: data.tags[tagid].type };
-            return prop;
+            return { id: tagid, name: data.tags[tagid].name, type: data.tags[tagid].type, format: data.tags[tagid].format };
         } else {
             return null;
         }
