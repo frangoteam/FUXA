@@ -4,7 +4,7 @@ module.exports = {
     version: 1.1,
     
     // Standard language (editor)
-    language: 'en',
+    language: 'zh-cn',
 
     // The tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,

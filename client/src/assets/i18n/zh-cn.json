@@ -1,13 +1,12 @@
 {
     "with param": "示例 {{value}}",
-
     "app.home": "主页",
     "app.lab": "测试",
     "app.editor": "编辑器",
-
     "header.new-project": "新建项目",
     "header.save-project": "保存项目",
     "header.saveas-project": "项目另存为...",
+    "header.rename-project": "重命名项目",
     "header.open-project": "打开项目",
     "header.edit-project": "编辑项目",
     "header.edit-views": "视图编辑器",
@@ -22,13 +21,9 @@
     "header.help-tutorial": "教程",
     "header.help-info": "关于",
     "header.info-version": "版本",
-
     "sidenav.title": "福萨",
-
     "tutorial.title": "福萨教程",
-
     "dlg.info-title": "福萨",
-
     "dlg.layout-title": "布局设置",
     "dlg.layout-general": "常规",
     "dlg.layout-lbl-sview": "主页视图",
@@ -45,13 +40,11 @@
     "dlg.layout-lbl-title": "页眉",
     "dlg.layout-lbl-alarms": "警报图标显示模式",
     "dlg.layout-lbl-infos": "信息图标显示模式",
-
     "dlg.menuitem-title": "菜单项",
     "dlg.menuitem-icon": "图标",
     "dlg.menuitem-text": "文本",
     "dlg.menuitem-view": "单击查看视图",
     "dlg.menuitem-link": "单击打开链接",
-
     "dlg.docproperty-title": "视图属性",
     "dlg.docproperty-width": "宽度",
     "dlg.docproperty-height": "高度",
@@ -66,56 +59,42 @@
     "dlg.docproperty-size-1280-960": "1280 X 960像素",
     "dlg.docproperty-size-1600-1200": "1600 X 1200像素",
     "dlg.docproperty-size-1920-1080": "1920 X 1080像素",
-
     "dlg.docname-title": "视图名称",
     "dlg.docname-name": "名称",
-
     "dlg.linkproperty-title": "生成超链接",
     "dlg.linkproperty-url": "超链接网址",
-
     "dlg.login-title": "登录...",
     "dlg.logout-btn": "退出",
-
     "dlg.ok": "确定",
     "dlg.cancel": "取消",
-
     "dlg.userproperty-title": "用户",
     "dlg.userproperty-groups": "授权组",
     "dlg.useraccess-groups": "授权（空=对所有人授权）",
-
     "dlg.gauge-permission-title": "授权",
     "dlg.gauge-permission-label": "（空=对所有人授权）",
     "dlg.gauge-permission-show": "显示",
     "dlg.gauge-permission-enabled": "启用",
-
     "general.close": "关闭",
     "general.search": "搜索...",
     "general.search-notfound": "找不到选项",
     "general.username": "用户名",
     "general.password": "密码",
     "general.clientId": "客户端ID",
-
-
     "tester.title": "变量",
     "tester.send": "发送",
-
     "item.navsmode-none": "无侧栏",
     "item.navsmode-push": "需要时显示",
     "item.navsmode-over": "单击图标显示",
     "item.navsmode-fix": "总是显示",
-
     "item.navtype-icons": "图标",
     "item.navtype-text": "文本",
     "item.navtype-icons-text-block": "图标和文本（上下布置）",
     "item.navtype-icons-text-inline": "图标和文本（左右布置）",
-
     "item.notifymode-hide": "始终不显示",
     "item.notifymode-fix": "总是显示",
     "item.notifymode-float": "有消息时显示",
-
     "item.zoommode-disabled": "禁止",
     "item.zoommode-enabled": "启用",
-
     "chart.config-title": "图表设置",
     "chart.config-charts": "图表",
     "chart.config-devices": "设备",
@@ -129,7 +108,6 @@
     "chart.config-name": "名称",
     "chart.config-rename": "重命名",
     "chart.config-delete": "删除",
-
     "chart.property-props": "属性",
     "chart.property-layout": "布局",
     "chart.property-chart": "要显示的图表",
@@ -148,21 +126,17 @@
     "chart.property-legend.mode": "图例显示模式",
     "chart.property-date.format": "日期格式",
     "chart.property-time.format": "时间格式",
-
     "chart.rangetype-last8h": "前8小时",
     "chart.rangetype-last1d": "前一天",
     "chart.rangetype-last3d": "最近3天",
     "chart.rangetype-last1w": "上周",
-
     "chart.legend-always": "总是",
     "chart.legend-follow": "跟随",
     "chart.legend-bottom": "底部",
     "chart.legend-never": "从不",
-
     "chart.labels-serie": "系列",
     "chart.labels-time": "时间",
     "chart.labels-title": "标题",
-
     "editor.views": "视图",
     "editor.view-delete": "删除",
     "editor.view-rename": "重命名",
@@ -197,17 +171,14 @@
     "editor.controls-slider-settings": "滑块设置",
     "editor.controls-shape-settings": "形状设置",
     "editor.controls-html-switch-settings": "开关设置",
-	"editor.controls-switch": "开关控件",
-
+    "editor.controls-switch": "开关控件",
     "editor.layout-settings": "布局设置",
-
     "editor.interactivity": "属性",
     "editor.interactivity-id": "ID：",
     "editor.interactivity-id-title": "识别元素",
     "editor.interactivity-class": "班级：",
     "editor.interactivity-class-title": "元素类",
     "editor.interactivity-name": "",
-    
     "editor.cmenu-cut": "剪切",
     "editor.cmenu-copy": "复制",
     "editor.cmenu-paste": "粘贴",
@@ -223,7 +194,6 @@
     "editor.cmenu-layer-delete": "删除图层",
     "editor.cmenu-layer-marge-down": "向下合并",
     "editor.cmenu-layer-marge-all": "合并全部",
-
     "editor.transform": "调整",
     "editor.transform-x": "X坐标",
     "editor.transform-x-title": "更改左上角点X坐标",
@@ -277,7 +247,6 @@
     "editor.transform-change-image-title": "注意：不能修改此图形的标题，它的显示依赖图形标题。",
     "editor.transform-angle": "角度",
     "editor.transform-angle-title": "更改旋转角度",
-
     "editor.align": "对齐",
     "editor.align-left-title": "左对齐",
     "editor.align-center-title": "水平居中对齐",
@@ -285,7 +254,6 @@
     "editor.align-top-title": "顶端对齐",
     "editor.align-middle-title": "上下居中对齐",
     "editor.align-bottom-title": "底端对齐",
-
     "editor.stroke": "线条",
     "editor.stroke-width": "线条宽度",
     "editor.stroke-width-title": "将线条宽度更改为1，按住shift键并单击可将其更改为0.1",
@@ -299,7 +267,6 @@
     "editor.stroke-capround-title": "半圆形线条端部",
     "editor.stroke-shadow": "阴影",
     "editor.stroke-shadow-title": "有阴影",
-
     "editor.marker": "标记",
     "editor.marker-start": "开始",
     "editor.marker-start-title": "选择开始标记类型",
@@ -307,10 +274,8 @@
     "editor.marker-middle-title": "选择中间标记类型",
     "editor.marker-end": "结束",
     "editor.marker-end-title": "选择结束标记类型",
-
     "editor.hyperlink": "超链接",
     "editor.hyperlink-url": "网址",
-
     "editor.tools-launch-title": "测试当前视图",
     "editor.tools-zoom-title": "缩放工具[Ctrl+Up/Down]",
     "editor.tools-grid-title": "显示隐藏网格",
@@ -332,7 +297,6 @@
     "editor.tools-alignbottom-title": "底端对齐",
     "editor.tools-ungroup-title": "取消组合",
     "editor.tools-hyperlink-title": "生成超链接",
-
     "shapes.action-hide": "隐藏",
     "shapes.action-show": "显示",
     "shapes.action-blink": "闪烁",
@@ -350,7 +314,6 @@
     "shapes.event-ontogglevalue": "设置开关变量值",
     "shapes.event-onsetinput": "设置输入框",
     "shapes.event-onclose": "关闭",
-
     "pipe.property-props": "属性",
     "pipe.property-border-width": "边框宽度",
     "pipe.property-border-color": "边框颜色",
@@ -359,7 +322,6 @@
     "pipe.property-content-width": "内容宽度",
     "pipe.property-content-color": "内容颜色",
     "pipe.property-content-space": "内容破折号",
-
     "slider.property-props": "属性",
     "slider.property-horizontal": "水平",
     "slider.property-vertical": "垂直",
@@ -392,7 +354,6 @@
     "slider.property-slider-color": "有效部分颜色",
     "slider.property-slider-background": "背景颜色",
     "slider.property-slider-handle": "指针颜色",
-
     "html-switch.property-off-value": "关闭时的变量值",
     "html-switch.property-on-value": "打开时的变量值",
     "html-switch.property-on-background": "关闭时的背景颜色",
@@ -406,7 +367,6 @@
     "html-switch.property-on-text-color": "打开时的文本颜色",
     "html-switch.property-font-size": "字体大小",
     "html-switch.property-font": "字体",
-
     "editor.tools-zoomlevel-title": "缩放级别",
     "editor.tools-zoomlevel-fitcanvas": "适合画布",
     "editor.tools-zoomlevel-fitsection": "适应选择",
@@ -414,7 +374,6 @@
     "editor.tools-fillcolor-title": "填充颜色",
     "editor.tools-strokecolor-title": "笔划颜色",
     "editor.tools-palettecolor-title": "单击删除填充颜色，按住shift键单击删除笔划颜色，单击右侧色阶改变快速填充颜色，按住shift键单击右侧色阶改变快速线条颜色",
-
     "device.list-title": "设备设置",
     "device.list-device": "设备",
     "device.list-filter": "过滤器",
@@ -424,7 +383,6 @@
     "device.list-min": "最小值",
     "device.list-max": "最大值",
     "device.list-value": "实时值",
-
     "device.property-client": "设备属性",
     "device.property-server": "福萨服务器属性",
     "device.property-name": "变量",
@@ -456,7 +414,6 @@
     "device.security-none": "没有",
     "device.security-sign": "签名",
     "device.security-signandencrypt": "签名并加密",
-
     "device.browsetopics-property-title": "要订阅和发布的broker主题",
     "device.discovery-topics": "浏览broker上的主题",
     "device.add-topics": "在broker上发布我的主题",
@@ -474,11 +431,9 @@
     "device.tag-property-address-offset": "地址偏移量（1-65536）",
     "device.tag-array-id": "数组ID:",
     "device.tag-array-value": "值：",
-    
     "users.list-title": "用户设置",
     "users.list-name": "用户名",
     "users.list-groups": "组",
-
     "gauges.property-props": "属性",
     "gauges.property-events": "事件",
     "gauges.property-title": "属性",
@@ -518,7 +473,6 @@
     "gauges.property-head-remove-mapvariable": "移除绑定",
     "gauges.property-tooltip-add-event": "添加事件绑定",
     "gauges.property-interval-msec": "间隔（ms）",
-
     "bag.property-ticks": "刻度",
     "bag.property-divisions": "主刻度",
     "bag.property-subdivisions": "细分刻度",
@@ -550,7 +504,6 @@
     "bag.property-format-digits": "小数位数",
     "bag.property-zones": "区域",
     "bag.property-color": "颜色",
-
     "alarms.list-title": "报警设置",
     "alarms.list-name": "名称",
     "alarms.list-device": "设备/变量",
@@ -585,19 +538,16 @@
     "alarm.status-active": "主动的",
     "alarm.status-passive": "被动的",
     "alarm.status-active-ack": "活动确认",
-
     "texts.list-title": "文本设置",
     "texts.list-filter": "过滤器",
     "texts.list-filter-group": "组",
     "texts.list-id": "ID",
     "texts.list-group": "组",
     "texts.list-value": "文本",
-
     "dlg.textproperty-title": "文本",
     "dlg.textproperty-id": "ID",
     "dlg.textproperty-group": "组",
     "dlg.textproperty-value": "文本",
-
     "dlg.plugins-title": "插件",
     "dlg.plugins-name": "名称",
     "dlg.plugins-version": "版本",
@@ -607,7 +557,6 @@
     "dlg.plugins-status-installed": "已安装...",
     "dlg.plugins-status-removed": "已删除",
     "dlg.plugins-status-error": "错误！请尝试手动安装！",
-
     "dlg.setup-title": "设置",
     "dlg.setup-gui": "用户界面",
     "dlg.setup-diverse": "其它",
@@ -621,14 +570,17 @@
     "dlg.setup-layout": "布局",
     "dlg.setup-plugins": "插件",
     "dlg.setup-scripts": "脚本",
+    "dlg.setup-reports": "报表",
     "dlg.setup-settings": "设置",
+    "dlg.setup-logs": "日志",
+    "dlg.setup-notifications": "通知",
     "dlg.app-settings-title": "设置",
     "dlg.app-settings-system": "系统",
     "dlg.app-settings-language": "语言",
     "dlg.app-language-en": "英语",
     "dlg.app-language-ru": "俄语",
     "dlg.app-language-ua": "乌克兰语",
-	"dlg.app-language-zh-cn": "简体中文",
+    "dlg.app-language-zh-cn": "简体中文",
     "dlg.app-settings-server-port": "服务器侦听端口",
     "dlg.app-settings-auth-token": "令牌身份验证",
     "dlg.app-auth-disabled": "禁止",
@@ -637,7 +589,6 @@
     "dlg.app-auth-expiration-3h": "已启用，令牌将在3小时内过期。",
     "dlg.app-auth-expiration-1d": "已启用，令牌将在1天内过期。",
     "dlg.app-auth-tooltip": "启用后，使用管理员帐户“admin/123456”。登陆后请尽快更换密码",
-
     "msg.alarm-remove": "是否解除警报？",
     "msg.text-remove": "是否删除文本？",
     "msg.alarmproperty-error-exist": "报警名称已经存在！",
@@ -647,7 +598,6 @@
     "msg.device-remove": "是否删除设备？",
     "msg.device-tag-remove": "是否删除变量？",
     "msg.device-tag-exist": "变量名已经存在！",
-
     "msg.home-welcome": "没有设置主视图…先在编辑器映射设备，设计可视化视图并绑定设备变量！",
     "msg.project-load-error": "无法读取'{{value}}'",
     "msg.project": "是否保存项目？",
@@ -663,5 +613,4 @@
     "msg.login-username-required": "输入用户名",
     "msg.login-password-required": "输入密码",
     "msg.signin-failed": "登录失败"
-
 }
