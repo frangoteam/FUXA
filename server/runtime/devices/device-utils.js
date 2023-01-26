@@ -35,9 +35,10 @@ module.exports = {
     },
 
     tagRawCalculator: function (value, tag) {
-        if (value && tag) {
+        var obj = {value: null };
+        if (tag && utils.isNumber(value, obj)) {
             try {
-                value = parseFloat(value);
+                value = obj.value;
                 if (tag.scale && tag.scale.mode === 'linear') {
                     value = tag.scale.rawLow + ((tag.scale.rawHigh - tag.scale.rawLow) * (value - tag.scale.scaledLow)) / (tag.scale.scaledHigh - tag.scale.scaledLow);
                 }
