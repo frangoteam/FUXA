@@ -86,6 +86,7 @@ export enum influxDBVersionType {
 }
 
 export enum DaqStoreRetentionType {
+    none = 'none',
     day1 = 'day1',
     days2 = 'days2',
     days3 = 'days3',

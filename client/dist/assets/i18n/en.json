@@ -1194,6 +1194,7 @@
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "Organization",
     "dlg.app-settings-daqstore-retention": "Retention",
+    "daqstore.retention-none": "Disabled",
     "daqstore.retention-day1": "1 day",
     "daqstore.retention-days2": "2 days",
     "daqstore.retention-days3": "3 days",
