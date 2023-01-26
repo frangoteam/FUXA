@@ -206,6 +206,7 @@ function MODBUSclient(_data, _logger, _events) {
                     }
                 }
                 memItemsMap[id] = memory[memaddr].Items[offset];
+                memItemsMap[id].format = data.tags[id].format;
                 stepsMap[parseInt(data.tags[id].memaddress) + offset] =  { size: datatypes[data.tags[id].type].WordLen, offset: offset };
             } catch (err) {
                 logger.error(`'${data.name}' load error! ${err}`);

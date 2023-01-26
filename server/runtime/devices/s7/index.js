@@ -161,9 +161,11 @@ function S7client(_data, _logger, _events) {
                     }
                     count++;
                     dbItemsMap[id] = db[varDb.dbnum].Items[varDb.Start];
+                    dbItemsMap[id].format = data.tags[id].format;
                 } else if (varDb && !isNaN(varDb.Start)) {
                     varDb.id = id;
                     varDb.name = data.tags[id].name;
+                    varDb.format = data.tags[id].format;
                     mixItemsMap[id] = varDb;
                 }
             } catch (err) {
