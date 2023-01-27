@@ -570,6 +570,8 @@
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
     "editor.tools-svg-selector": "Item list selector",
+    "editor.tools-divideverticle-title": "Divide Vertically",
+    "editor.tools-dividehorizontal-title": "Divide Horizontally",
 
     "svg.selector.property-title": "View item list",
 
