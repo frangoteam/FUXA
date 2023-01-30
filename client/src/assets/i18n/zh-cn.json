@@ -605,7 +605,7 @@
     "pipe.property-pipe-width": "管道宽度",
     "pipe.property-pipe-color": "管道颜色",
     "pipe.property-content-width": "内容宽度",
-    "管道.属性-内容-颜色": "内容的颜色",
+    "pipe.property-content-color": "内容的颜色",
     "pipe.property-content-space": "内容的破折号",
     "pipe.action-hide-content": "隐藏内容",
 
