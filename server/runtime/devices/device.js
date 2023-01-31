@@ -140,7 +140,7 @@ function Device(data, runtime) {
             }
         }
         // check connection status
-        const now = new Date().getTime();
+        const now = Date.now();
         var lastRead = comm.lastReadTimestamp() || 0;
         if (lastRead < now - pollingInterval * 5) {
             connectionStatus = ConnectionStatusEnum.OFF;

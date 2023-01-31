@@ -6,7 +6,7 @@
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
- function FuxaServer(_data, _logger, _events) {
+function FuxaServer(_data, _logger, _events) {
 
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;
@@ -63,6 +63,7 @@ const deviceUtils = require('../device-utils');
                         this.addDaq(varsValueChanged, data.name);
                     }
                 }
+                _checkConnectionStatus();
             } catch (err) {
                 logger.error(`'${data.name}' polling error: ${err}`);
             }
@@ -85,7 +86,8 @@ const deviceUtils = require('../device-utils');
                 data.tags[id].value = _parseValue(data.tags[id].init);
             }
             if (data.tags[id].sysType === TagSystemTypeEnum.deviceConnectionStatus) {
-                connectionTags.push(data.tags[id])
+                data.tags[id].timestamp = Date.now();
+                connectionTags.push(data.tags[id]);
             }
         }
         tocheck = !utils.isEmptyObject(data.tags);
@@ -148,6 +150,7 @@ const deviceUtils = require('../device-utils');
         var tag = connectionTags.find(tag => tag.memaddress === deviceId);
         if (tag) {
             tag.value = status;
+            tag.timestamp = Date.now();
         }
     }
 
@@ -248,6 +251,16 @@ const deviceUtils = require('../device-utils');
         overloading = 0;
         return true;
     }
+
+    var _checkConnectionStatus = function () {
+        var dt = Date.now() - 60000;
+        connectionTags.forEach(tag => {
+            if (tag.value && tag.timestamp < dt) {
+                tag.value = 0;
+            }
+        });
+    }
+
 }
 
 module.exports = {
