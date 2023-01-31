@@ -188,7 +188,8 @@ export enum GaugeActionsType {
     clockwise = 'shapes.action-clockwise',
     anticlockwise = 'shapes.action-anticlockwise',
     downup = 'shapes.action-downup',
-    rotate = 'shapes.action-rotate'
+    rotate = 'shapes.action-rotate',
+    move = 'shapes.action-move'
 }
 
 export class GaugeAction {

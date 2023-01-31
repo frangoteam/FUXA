@@ -17,7 +17,8 @@ export class ShapesComponent extends GaugeBaseComponent {
     static LabelTag = 'Shapes';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
-                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate };
+                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate,
+                        move: GaugeActionsType.move };
 
     constructor() {
         super();
@@ -126,6 +127,7 @@ export class ShapesComponent extends GaugeBaseComponent {
             else if(rotation < act.options.minAngle){
                 rotation = act.options.minAngle;
             }
+            console.log(rotation);
             element.rotate(rotation);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
@@ -139,7 +141,9 @@ export class ShapesComponent extends GaugeBaseComponent {
         if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
             return;
         }
-        element.stop(true);
+        if (element.timeline) {
+            element.timeline().stop(true);
+        }
         if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
         } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.anticlockwise) {

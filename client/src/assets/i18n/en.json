@@ -583,6 +583,7 @@
     "shapes.action-anticlockwise": "Turn anticlockwise",
     "shapes.action-downup": "Up and down",
     "shapes.action-rotate": "Rotate",
+    "shapes.action-move": "Move",
     "shapes.event-click": "Click",
     "shapes.event-mouseup": "MouseUp",
     "shapes.event-mousedown": "MouseDown",
