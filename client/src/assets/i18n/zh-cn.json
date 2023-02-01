@@ -1219,7 +1219,7 @@
     "msg.project-load-error": "无法读取'{{value}}'",
     "msg.project": "您想保存项目的变化吗？",
     "msg.tags-remove-all": "您想删除所有标签吗？",
-    "msg.view-remove": "您是否想删除视图'{{value}'？",
+    "msg.view-remove": "您是否想删除视图'{{value}}'？",
     "msg.chart-remove": "您想删除图表'{{value}}'吗？",
     "msg.graph-remove": "您想删除条形图'{{value}}'吗？",
     "msg.script-remove": "您想删除脚本'{{value}}'吗？",
