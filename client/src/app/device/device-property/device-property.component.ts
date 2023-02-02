@@ -23,12 +23,31 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	deviceType: any = {};
 	showPassword: boolean;
 
-	pollingPlcType = [{text: '200 ms', value: 200}, {text: '500 ms', value: 500}, {text: '700 ms', value: 700}, {text: '1 sec', value: 1000},
-					{text: '1.5 sec', value: 1500}, {text: '2 sec', value: 2000}, { text: '3 sec', value: 3000},
-					{text: '4 sec', value: 4000}, {text: '5 sec', value: 5000}];
-	pollingWebApiType = [{text: '1 sec', value: 1000}, {text: '2 sec', value: 2000}, {text: '3 sec', value: 3000}, { text: '5 sec', value: 5000},
-						{text: '10 sec', value: 10000}, {text: '30 sec', value: 30000}, {text: '1 min', value: 60000}, {text: '2 min', value: 60000 * 2},
-						{text: '5 min', value: 60000 * 5}, {text: '10 min', value: 60000 * 10}, {text: '30 min', value: 60000 * 30}, {text: '60 min', value: 60000 * 60}];
+	pollingPlcType = [{text: '200 ms', value: 200},
+					  {text: '500 ms', value: 500},
+					  {text: '700 ms', value: 700},
+					  {text: '1 sec', value: 1000},
+					  {text: '1.5 sec', value: 1500},
+					  {text: '2 sec', value: 2000},
+					  {text: '3 sec', value: 3000},
+					  {text: '4 sec', value: 4000},
+					  {text: '5 sec', value: 5000},
+					  {text: '10 sec', value: 10000},
+					  {text: '30 sec', value: 30000},
+					  {text: '1 min', value: 60000}];
+
+	pollingWebApiType = [{text: '1 sec', value: 1000},
+						 {text: '2 sec', value: 2000},
+						 {text: '3 sec', value: 3000},
+						 {text: '5 sec', value: 5000},
+						 {text: '10 sec', value: 10000},
+						 {text: '30 sec', value: 30000},
+						 {text: '1 min', value: 60000},
+						 {text: '2 min', value: 60000 * 2},
+						 {text: '5 min', value: 60000 * 5},
+						 {text: '10 min', value: 60000 * 10},
+						 {text: '30 min', value: 60000 * 30},
+						 {text: '60 min', value: 60000 * 60}];
 
 	pollingType = this.pollingPlcType;
 
