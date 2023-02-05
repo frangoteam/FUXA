@@ -211,6 +211,13 @@ export class GaugeActionBlink {
 export class GaugeActionRotate {
     minAngle = 0;
     maxAngle = 90;
+    delay = 0;
+}
+
+export class GaugeActionMove {
+    toX = 0;
+    toY = 0;
+    delay = 100;
 }
 
 export class GaugePropertyColor {
