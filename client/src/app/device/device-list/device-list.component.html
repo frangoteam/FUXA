@@ -110,13 +110,9 @@
         <ng-container matColumnDef="options">
             <mat-header-cell *matHeaderCellDef></mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <!-- <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" (click)="$event.stopPropagation();editOptions(element)" class="options" -->
-                <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'device.list-options' | translate}}">
+                <button *ngIf="!readonly && deviceSelected.type !== deviceType.internal" mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'device.list-options' | translate}}">
                     <mat-icon>more_vert</mat-icon>
                 </button>
-                <!-- <mat-menu #optionsgMenu [overlapTrigger]="false">
-                    <button mat-menu-item (click)="editOptions(element)" style="font-size: 14px;">{{'device.list-options' | translate}}</button>
-                </mat-menu>-->
             </mat-cell>
         </ng-container>
 

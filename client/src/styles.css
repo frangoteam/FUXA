@@ -975,11 +975,19 @@ mat-toolbar-row {
     margin-bottom: 5px;
 }
 
+.inbk {
+    display: inline-block;
+}
+
 .message-error {
     color:#ff5151;
 }
 
 /* standard */
+.tohide {
+    display: none !important;
+}
+
 .block {
     display: block;
 }
