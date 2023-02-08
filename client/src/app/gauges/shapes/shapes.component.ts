@@ -133,7 +133,7 @@ export class ShapesComponent extends GaugeBaseComponent {
         } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.move) {
             let element = SVG.adopt(svgele.node);
             if (act.range.min <= actValue && act.range.max >= actValue) {
-                element.animate(3000).move(act.options.toX, act.options.toY);
+                element.animate(act.options.duration || 500).move(act.options.toX, act.options.toY);
             }
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {

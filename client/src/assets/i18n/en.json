@@ -869,6 +869,7 @@
     "gauges.property-action-maxAngle" : "Max Angle",
     "gauges.property-action-toX" : "To position X",
     "gauges.property-action-toY" : "To position Y",
+    "gauges.property-action-duration" : "Duration",
     "gauges.property-events-mapping-from": "Context variable",
     "gauges.property-map-variable": "Add context variable to bind",
     "gauges.property-head-remove-mapvariable": "Remove the bind",

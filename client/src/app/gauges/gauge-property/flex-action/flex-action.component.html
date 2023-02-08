@@ -63,14 +63,18 @@
                 </div>
             </div>
             <div *ngSwitchCase="actionMove" class="action-params">
-                <div class="my-form-field" style="padding-right: 10px;">
+                <div class="my-form-field mr10">
                     <span>{{'gauges.property-action-toX' | translate}}</span>
                     <input numberOnly [(ngModel)]="item.options.toX" type="number" style="width: 70px">
                 </div>
-                <div class="my-form-field">
+                <div class="my-form-field mr10">
                     <span>{{'gauges.property-action-toY' | translate}}</span>
                     <input numberOnly [(ngModel)]="item.options.toY" type="number" style="width: 70px">
                 </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-duration' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.duration" type="number" style="width: 70px">
+                </div>                
             </div>
         </div>
     </div>

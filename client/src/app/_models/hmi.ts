@@ -217,7 +217,7 @@ export class GaugeActionRotate {
 export class GaugeActionMove {
     toX = 0;
     toY = 0;
-    delay = 100;
+    duration = 100;
 }
 
 export class GaugePropertyColor {
