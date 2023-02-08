@@ -122,7 +122,9 @@ export class ProcEngComponent extends GaugeBaseComponent {
         if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
             return;
         }
-        element.stop(true);
+        if (element.timeline) {
+            element.timeline().stop(true);
+        }
         if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
         } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.anticlockwise) {
