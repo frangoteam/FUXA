@@ -529,7 +529,8 @@ function OpcUAclient(_data, _logger, _events) {
                 let id = tagsIdMap[nodeId];
                 if (data.tags[id]) {
                     data.tags[id].rawValue = dataValue.value.value;
-                    data.tags[id].timestamp = dataValue.serverTimestamp.toString();
+                    data.tags[id].serverTimestamp = dataValue.serverTimestamp.toString();
+                    data.tags[id].timestamp = new Date().getTime();
                     data.tags[id].changed = true;
                 }
             }

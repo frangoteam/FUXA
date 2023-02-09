@@ -417,11 +417,13 @@ function BACNETclient(_data, _logger, _events) {
                     Promise.all(readfnc).then(results => {
                         if (results) {
                             for (var index in results) {
-                                var object = _getObject(objects, results[index].type, results[index].instance);
-                                if (object) {
-                                    object.id = _formatId(object.type, object.instance);
-                                    object.name = results[index].value;
-                                    object.class = _getObjectClass(object.type);
+                                if (results[index]) {
+                                    var object = _getObject(objects, results[index].type, results[index].instance);
+                                    if (object) {
+                                        object.id = _formatId(object.type, object.instance);
+                                        object.name = results[index].value;
+                                        object.class = _getObjectClass(object.type);
+                                    }
                                 }
                             }
                         }
@@ -511,7 +513,7 @@ function BACNETclient(_data, _logger, _events) {
      */
     var _getObject = function (objs, type, instance) {
         for (var index in objs) {
-            if (objs[index].type === type && objs[index].instance === instance) {
+            if (objs[index] && objs[index].type === type && objs[index].instance === instance) {
                 return objs[index];
             }
         }
@@ -589,9 +591,10 @@ function BACNETclient(_data, _logger, _events) {
                         varsValue[tag.id].value = deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[tag.id]);
                         vars[index].value = varsValue[tag.id].value;
                         if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[tag.id], timestamp)) {
-                            changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq };
+                            changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq, timestamp: timestamp };
                             varsValue[tag.id] = changed[tag.id];
                         }
+                        varsValue[tag.id].timestamp = timestamp;
                     }
                     varsValue[tag.id].changed = false;
                     someval = true;

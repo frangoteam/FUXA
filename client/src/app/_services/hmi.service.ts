@@ -178,6 +178,7 @@ export class HmiService {
                         this.variables[varid] = new Variable(varid, null, null);
                     }
                     this.variables[varid].value = message.values[idx].value;
+                    this.variables[varid].timestamp = message.values[idx].timestamp;
                     this.setSignalValue(this.variables[varid]);
                 }
             });

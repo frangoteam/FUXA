@@ -75,6 +75,12 @@
             <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
         </ng-container>
 
+        <!-- Timestamp Column -->
+        <ng-container matColumnDef="timestamp">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-timestamp' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.timestamp | date : 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
+        </ng-container>
+        
         <!-- Logger Column -->
         <ng-container matColumnDef="logger">
             <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
@@ -110,13 +116,9 @@
         <ng-container matColumnDef="options">
             <mat-header-cell *matHeaderCellDef></mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <!-- <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" (click)="$event.stopPropagation();editOptions(element)" class="options" -->
-                <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'device.list-options' | translate}}">
+                <button *ngIf="!readonly && deviceSelected.type !== deviceType.internal" mat-icon-button (click)="$event.stopPropagation();onEditOptions(element)" class="options" matTooltip="{{'device.list-options' | translate}}">
                     <mat-icon>more_vert</mat-icon>
                 </button>
-                <!-- <mat-menu #optionsgMenu [overlapTrigger]="false">
-                    <button mat-menu-item (click)="editOptions(element)" style="font-size: 14px;">{{'device.list-options' | translate}}</button>
-                </mat-menu>-->
             </mat-cell>
         </ng-container>
 

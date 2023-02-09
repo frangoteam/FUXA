@@ -188,7 +188,8 @@ export enum GaugeActionsType {
     clockwise = 'shapes.action-clockwise',
     anticlockwise = 'shapes.action-anticlockwise',
     downup = 'shapes.action-downup',
-    rotate = 'shapes.action-rotate'
+    rotate = 'shapes.action-rotate',
+    move = 'shapes.action-move'
 }
 
 export class GaugeAction {
@@ -210,6 +211,13 @@ export class GaugeActionBlink {
 export class GaugeActionRotate {
     minAngle = 0;
     maxAngle = 90;
+    delay = 0;
+}
+
+export class GaugeActionMove {
+    toX = 0;
+    toY = 0;
+    duration = 100;
 }
 
 export class GaugePropertyColor {
@@ -381,6 +389,7 @@ export class Variable {
     source: string;
     value: string;
     error: number;
+    timestamp: number;
     constructor(id: string, source: string, name: string) {
         this.id = id; this.name = name; this.source = source;
     }
