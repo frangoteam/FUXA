@@ -680,6 +680,7 @@
     "device.list-min": "Min",
     "device.list-max": "Max",
     "device.list-value": "Value",
+    "device.list-timestamp": "Timestamp",
     "device.list-edit": "Edit Tag",
     "device.list-add": "Add Tag",
     "device.list-remove": "Remove Tag",

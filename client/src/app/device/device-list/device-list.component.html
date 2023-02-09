@@ -75,6 +75,12 @@
             <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
         </ng-container>
 
+        <!-- Timestamp Column -->
+        <ng-container matColumnDef="timestamp">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-timestamp' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.timestamp | date : 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
+        </ng-container>
+        
         <!-- Logger Column -->
         <ng-container matColumnDef="logger">
             <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>

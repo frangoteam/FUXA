@@ -215,6 +215,7 @@ function FuxaServer(_data, _logger, _events) {
         for (var id in data.tags) {
             if (!utils.isNullOrUndefined(data.tags[id].value)) {
                 data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
+                data.tags[id].timestamp = timestamp;
                 if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                     result[id] = data.tags[id];
                 }
