@@ -166,6 +166,7 @@ function S7client(_data, _logger, _events) {
                     varDb.id = id;
                     varDb.name = data.tags[id].name;
                     varDb.format = data.tags[id].format;
+                    varDb.daq = data.tags[id].daq;
                     mixItemsMap[id] = varDb;
                 }
             } catch (err) {
@@ -452,17 +453,21 @@ function S7client(_data, _logger, _events) {
                 let errs = [];
                 res = vars.map((v, i) => {
                     let value = null;
-                    if (res[i].Result !== 0)
-                        errs.push(s7client.ErrorText(res[i].Result));
-                    if (v.type === 'BOOL') {
-                        // check the full byte and send all bit if there is a change 
-                        value = datatypes['BYTE'].parser(res[i].Data);//, v.Start, -1);
+                    if (res[i].Result !== 0) {
+                        errs.push(`${v.name} - ${s7client.ErrorText(res[i].Result)}`);
                     } else {
-                        value = datatypes[v.type].parser(res[i].Data);
+                        try {
+                            if (v.type === 'BOOL') {
+                                // check the full byte and send all bit if there is a change 
+                                value = datatypes['BYTE'].parser(res[i].Data);//, v.Start, -1);
+                            } else {
+                                value = datatypes[v.type].parser(res[i].Data);
+                            }
+                            v.changed = value !== v.value;
+                            v.value = value;
+                            return v;
+                        } catch { }
                     }
-                    v.changed = value !== v.value;
-                    v.value = value;
-                    return v;
                 });
                 if (errs.length) return reject(_getErr(errs));
                 resolve(vars);
