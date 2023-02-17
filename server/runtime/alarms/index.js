@@ -451,7 +451,7 @@ function AlarmsManager(_runtime) {
     }
 
     var _isAlarmEnabled = function (alarm) {
-        if (alarm && alarm.enabled && alarm.checkdelay > 0 && utils.isValidRange(alarm.min, alarm.max) && alarm.timedelay) {
+        if (alarm && alarm.enabled && alarm.checkdelay > 0 && utils.isValidRange(alarm.min, alarm.max)) {
             return true;
         }
         return false;
@@ -465,7 +465,7 @@ function AlarmsManager(_runtime) {
     }
 
     var _isActionsValid = function (action) {
-        if (action && action.checkdelay > 0 && utils.isValidRange(action.min, action.max) && action.timedelay) {
+        if (action && action.checkdelay > 0 && utils.isValidRange(action.min, action.max)) {
             return true;
         }
         return false;
@@ -524,12 +524,13 @@ function Alarm(name, type, subprop, tagprop) {
             case AlarmStatusEnum.VOID:
                 //  check to activate
                 if (!onrange) {
+                    this.ontime = 0;
                     return false;
                 } else if (!this.ontime) {
                     this.ontime = dt;
                     return false;
                 }
-                if (this.ontime + (this.subproperty.timedelay * TimeMultiplier) < time) {
+                if (this.ontime + (this.subproperty.timedelay * TimeMultiplier) <= time) {
                     this.status = AlarmStatusEnum.ON;
                     return true;
                 }
