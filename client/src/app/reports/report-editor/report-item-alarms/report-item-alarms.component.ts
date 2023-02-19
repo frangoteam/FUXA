@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatListOption, MatSelectionListChange } from '@angular/material/list';
 import { TranslateService } from '@ngx-translate/core';
 import { AlarmPriorityType, AlarmPropertyType, AlarmStatusType, AlarmsType } from '../../../_models/alarm';
 import { ReportDateRangeType, ReportItemAlarms } from '../../../_models/report';
@@ -18,6 +17,7 @@ export class ReportItemAlarmsComponent implements OnInit {
     alarmsType = [AlarmsType.HIGH_HIGH, AlarmsType.HIGH, AlarmsType.LOW, AlarmsType.INFO];
     alarmPropertyType = Object.values(AlarmPropertyType).map(a => a);
     alarmsList = [];
+    alarmsListSelected = [];
 
     constructor(
         private projectService: ProjectService,
@@ -30,16 +30,19 @@ export class ReportItemAlarmsComponent implements OnInit {
             this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt; });
         });
 
-        console.log(this.data)
         this.alarmsList = this.projectService.getAlarms().map(alarm => {
             let tag = this.projectService.getTagFromId(alarm.property?.variableId);
             return {
                 name: alarm.name,
                 variableName: tag?.label || tag?.name,
                 variableId: alarm.property?.variableId,
-                isSelected: !!this.data.alarmFilter?.find(alarmName => alarmName === alarm.name)
             };
         });
+        if (this.data.alarmFilter) {
+            this.alarmsListSelected = this.alarmsList.filter(alarm => !!this.data.alarmFilter?.find(name => alarm.name === name));
+        } else {
+            this.alarmsListSelected = this.alarmsList;
+        }
     }
 
     onPriorityChanged(type: AlarmsType, value: boolean) {
@@ -59,15 +62,7 @@ export class ReportItemAlarmsComponent implements OnInit {
     }
 
     toggleAlarmFilterSelection(event: any) {
-        this.alarmsList.forEach(alarm => alarm.isSelected = event.checked);
-    }
-
-    onAlarmFilterSelectionChange(change: MatSelectionListChange) {
-        // const selectedOptions: MatListOption[] = event.source.selectedOptions.selected;
-        // this.alarmsList.forEach(alarm => alarm.isSelected = !!selectedOptions.find(alarm));
-        console.log(change.options, change.source.options);
-        // this.data.alarmFilter = this.alarmsList.filter(alarm => alarm.isSelected).map(alarm => alarm.name);
-        // this.alarmsList = selectedOptions.map(option => option.value);
+        this.alarmsListSelected = this.alarmsList.filter(alarm => event.checked);
     }
 
     onNoClick(): void {
@@ -90,8 +85,7 @@ export class ReportItemAlarmsComponent implements OnInit {
         Object.keys(AlarmStatusType).forEach(key => {
             this.translateService.get(AlarmStatusType[key]).subscribe((txt: string) => { this.data.statusText[key] = txt; });
         });
-        console.log(this.alarmsList);
-        this.data.alarmFilter = this.alarmsList.filter(alarm => alarm.isSelected).map(alarm => alarm.name);
+        this.data.alarmFilter = this.alarmsListSelected.map(alarm => alarm.name);
         this.dialogRef.close(this.data);
     }
 }

@@ -27,13 +27,12 @@
         <div class="my-form-field alarms-filter">
             <div class="my-form-field list-header">
                 <span>{{'report.alarms-filter' | translate}}</span>
-                <mat-checkbox (change)="toggleAlarmFilterSelection($event)">
+                <mat-checkbox [checked]="alarmsListSelected.length === alarmsList.length" (change)="toggleAlarmFilterSelection($event)">
                 </mat-checkbox>
             </div>
             <mat-selection-list class="alarm-list"
-                                (selectionChange)="onAlarmFilterSelectionChange($event)">
+                                [(ngModel)]="alarmsListSelected">
                 <mat-list-option *ngFor="let alarm of alarmsList" 
-                                 [selected]="alarm.isSelected"
                                  [value]="alarm"
                                  class="alarm-item">
                   <div class="alarm-name">{{alarm.name}}</div>

@@ -931,7 +931,7 @@
     "alarm.property-enabled": "Enabled",
     "alarm.property-min": "Min",
     "alarm.property-max": "Max",
-    "alarm.property-timedelay": "Time Delay (seconds)",
+    "alarm.property-timedelay": "Time in Min-Max range (seconds)",
     "alarm.property-checkdelay": "Check interval (seconds)",
     "alarm.property-type": "Type",
     "alarm.property-ackmode": "Ack Mode",
