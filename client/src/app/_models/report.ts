@@ -87,6 +87,7 @@ export interface ReportItemAlarms extends ReportItem {
     propertyText: {};
     statusText: {};
     range: ReportDateRangeType;
+    alarmFilter: string[];
 }
 
 export interface ReportItemChart extends ReportItem {

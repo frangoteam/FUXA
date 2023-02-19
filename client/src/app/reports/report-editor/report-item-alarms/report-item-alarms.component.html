@@ -23,7 +23,24 @@
                     {{'alarms.view-' + item | translate}}
                 </mat-checkbox>
             </div>            
-        </div>        
+        </div> 
+        <div class="my-form-field alarms-filter">
+            <div class="my-form-field list-header">
+                <span>{{'report.alarms-filter' | translate}}</span>
+                <mat-checkbox (change)="toggleAlarmFilterSelection($event)">
+                </mat-checkbox>
+            </div>
+            <mat-selection-list class="alarm-list"
+                                (selectionChange)="onAlarmFilterSelectionChange($event)">
+                <mat-list-option *ngFor="let alarm of alarmsList" 
+                                 [selected]="alarm.isSelected"
+                                 [value]="alarm"
+                                 class="alarm-item">
+                  <div class="alarm-name">{{alarm.name}}</div>
+                  <div class="alarm-tag">{{alarm.variableName}}</div>
+                </mat-list-option>
+              </mat-selection-list>
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

@@ -39,7 +39,7 @@
                     <div style="display: inline-table;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-checkdelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.highhigh.checkdelay" style="width: 145px" type="number">
+                            <input numberOnly [(ngModel)]="data.alarm.highhigh.checkdelay" style="width: 145px" type="number" min="1">
                         </div>
                         <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                             <range-number [range]="data.alarm.highhigh"></range-number>
@@ -88,7 +88,7 @@
                     <div style="display: inline-table;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-checkdelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.high.checkdelay" style="width: 145px" type="number">
+                            <input numberOnly [(ngModel)]="data.alarm.high.checkdelay" style="width: 145px" type="number" min="1">
                         </div>
                         <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                             <range-number [range]="data.alarm.high"></range-number>
@@ -137,7 +137,7 @@
                     <div style="display: inline-table;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-checkdelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.low.checkdelay" style="width: 145px" type="number">
+                            <input numberOnly [(ngModel)]="data.alarm.low.checkdelay" style="width: 145px" type="number" min="1">
                         </div>
                         <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                             <range-number [range]="data.alarm.low"></range-number>
@@ -186,7 +186,7 @@
                     <div style="display: inline-table;">
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;padding-right: 13px;">
                             <span>{{'alarm.property-checkdelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.info.checkdelay" style="width: 145px" type="number">
+                            <input numberOnly [(ngModel)]="data.alarm.info.checkdelay" style="width: 145px" type="number" min="1">
                         </div>
                         <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                             <range-number [range]="data.alarm.info"></range-number>
@@ -234,7 +234,7 @@
                             <div style="display: inline-table;;margin-bottom: 10px;">
                                 <div class="my-form-field" style="display: inline-block;padding-right: 13px;">
                                     <span>{{'alarm.property-checkdelay' | translate}}</span>
-                                    <input numberOnly [(ngModel)]="item.checkdelay" style="width: 145px" type="number">
+                                    <input numberOnly [(ngModel)]="item.checkdelay" style="width: 145px" type="number" min="1">
                                 </div>
                                 <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                                     <range-number [range]="item"></range-number>
