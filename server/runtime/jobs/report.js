@@ -283,7 +283,11 @@ function Report(_property, _runtime) {
                         })];
                      } else {
                         const property = Object.keys(item.property).filter(prop => { if (item.property[prop]) return prop; });
-                        values = result.filter(alr => { if (item.priority[alr.type]) return alr; });
+                        values = result.filter(alr => { 
+                            if (item.priority[alr.type] && (!item.alarmFilter || !!item.alarmFilter.find(name => name === alr.name))) {
+                                return alr; 
+                            }
+                        });
                         values = values.map(alr => {
                             let row = [];
                             property.forEach((prop) => {
@@ -302,6 +306,7 @@ function Report(_property, _runtime) {
                         })
                      }
                 }).catch(function (err) {
+                    console.error(err);
                     values = [Object.values(item.propertyText).map(col => { return {text: 'ERROR'}})];
                 });
                 content['table'] = {

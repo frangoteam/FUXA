@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { AlarmPriorityType, AlarmPropertyType, AlarmStatusType, AlarmsType } from '../../../_models/alarm';
 import { ReportDateRangeType, ReportItemAlarms } from '../../../_models/report';
+import { ProjectService } from '../../../_services/project.service';
 import { ReportItemTableComponent } from '../report-item-table/report-item-table.component';
 
 @Component({
@@ -15,8 +16,11 @@ export class ReportItemAlarmsComponent implements OnInit {
     dateRangeType = ReportDateRangeType;
     alarmsType = [AlarmsType.HIGH_HIGH, AlarmsType.HIGH, AlarmsType.LOW, AlarmsType.INFO];
     alarmPropertyType = Object.values(AlarmPropertyType).map(a => a);
+    alarmsList = [];
+    alarmsListSelected = [];
 
     constructor(
+        private projectService: ProjectService,
         public dialogRef: MatDialogRef<ReportItemTableComponent>,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) public data: ReportItemAlarms) { }
@@ -25,6 +29,20 @@ export class ReportItemAlarmsComponent implements OnInit {
         Object.keys(this.dateRangeType).forEach(key => {
             this.translateService.get(this.dateRangeType[key]).subscribe((txt: string) => { this.dateRangeType[key] = txt; });
         });
+
+        this.alarmsList = this.projectService.getAlarms().map(alarm => {
+            let tag = this.projectService.getTagFromId(alarm.property?.variableId);
+            return {
+                name: alarm.name,
+                variableName: tag?.label || tag?.name,
+                variableId: alarm.property?.variableId,
+            };
+        });
+        if (this.data.alarmFilter) {
+            this.alarmsListSelected = this.alarmsList.filter(alarm => !!this.data.alarmFilter?.find(name => alarm.name === name));
+        } else {
+            this.alarmsListSelected = this.alarmsList;
+        }
     }
 
     onPriorityChanged(type: AlarmsType, value: boolean) {
@@ -41,6 +59,10 @@ export class ReportItemAlarmsComponent implements OnInit {
 
     getPropertyValue(type: AlarmPropertyType) {
         return this.data.property[type];
+    }
+
+    toggleAlarmFilterSelection(event: any) {
+        this.alarmsListSelected = this.alarmsList.filter(alarm => event.checked);
     }
 
     onNoClick(): void {
@@ -63,6 +85,7 @@ export class ReportItemAlarmsComponent implements OnInit {
         Object.keys(AlarmStatusType).forEach(key => {
             this.translateService.get(AlarmStatusType[key]).subscribe((txt: string) => { this.data.statusText[key] = txt; });
         });
+        this.data.alarmFilter = this.alarmsListSelected.map(alarm => alarm.name);
         this.dialogRef.close(this.data);
     }
 }

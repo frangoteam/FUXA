@@ -38,7 +38,7 @@ export class AlarmSubRange {
     timedelay: number;
 
     static isValid(asr: AlarmSubRange): boolean {
-        if (asr && asr.checkdelay && Utils.isNumeric(asr.min) && Utils.isNumeric(asr.max) && asr.timedelay) {
+        if (asr && asr.checkdelay && Utils.isNumeric(asr.min) && Utils.isNumeric(asr.max)) {
             return true;
         }
         return false;
