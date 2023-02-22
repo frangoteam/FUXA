@@ -6,6 +6,8 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 
 ![fuxa ani](/screenshot/fuxa-ani.gif)
 
+![fuxa action](/screenshot/feature-action-move.gif)
+
 ## Features
 - Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley)
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
