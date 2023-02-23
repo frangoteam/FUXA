@@ -38,7 +38,16 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+                "chart.js",
+                "socket.io-client",
+                "chartjs-plugin-datalabels",
+                "panzoom",
+                "codemirror/addon/lint/lint",
+                "codemirror/mode/javascript/javascript",
+                "codemirror/mode/markdown/markdown"
+            ]
           },
           "configurations": {
             "production": {
