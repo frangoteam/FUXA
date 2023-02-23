@@ -46,7 +46,7 @@
     "moment": "^2.29.4",
     "ng2-charts": "^2.4.3",
     "ngx-color-picker": "12.0.1",
-    "ngx-toastr": "^13.2.0",
+    "ngx-toastr": "^14.1.4",
     "panzoom": "^9.4.3",
     "pdfmake": "^0.2.7",
     "rxjs": "~6.6.7",
@@ -83,7 +83,6 @@
     "karma-coverage-istanbul-reporter": "~3.0.3",
     "karma-jasmine": "~4.0.2",
     "karma-jasmine-html-reporter": "^1.7.0",
-    "node-sass": "^4.14.1",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "typescript": "~4.3.5"
