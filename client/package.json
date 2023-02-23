@@ -39,7 +39,6 @@
     "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "1.0.0",
     "codemirror": "^5.65.12",
-    "core-js": "^2.5.4",
     "fecha": "^4.2.3",
     "file-saver": "2.0.5",
     "material-icons": "^1.13.1",
