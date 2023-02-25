@@ -11,7 +11,7 @@ import { Tag, TAG_PREFIX } from '../../_models/device';
 @Component({
     selector: 'app-topic-property',
     templateUrl: './topic-property.component.html',
-    styleUrls: ['./topic-property.component.css']
+    styleUrls: ['./topic-property.component.scss']
 })
 export class TopicPropertyComponent implements OnInit, OnDestroy {
 
@@ -145,23 +145,25 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     }
 
     selectTopic(topic) {
-        this.selectedTopic = topic;
+        this.selectedTopic = JSON.parse(JSON.stringify(topic));
         this.loadSelectedSubTopic();
     }
 
     private loadSelectedSubTopic() {
         this.topicContent =  [];
-        if (this.topicSelectedSubType === 'json') {
-            let obj = JSON.parse(this.selectedTopic.value.content);
-            Object.keys(obj).forEach(key => {
-                let checked = (this.selectedTopic.subs) ? false : true;
-                if (this.selectedTopic.subs && this.selectedTopic.subs.indexOf(key) !== -1) {
-                    checked = true;
-                }
-                this.topicContent.push({ key: key, value: obj[key], checked: checked, type: this.topicSelectedSubType });
-            });
-        } else if (this.selectedTopic.value && this.selectedTopic.value.content) {
-            this.topicContent =  [{ name: this.selectedTopic.name, key: this.selectedTopic.key, value: this.selectedTopic.value.content, checked: true, type: this.topicSelectedSubType }];
+        if (this.selectedTopic.value) {
+            if (this.topicSelectedSubType === 'json') {
+                let obj = JSON.parse(this.selectedTopic.value?.content);
+                Object.keys(obj).forEach(key => {
+                    let checked = (this.selectedTopic.subs) ? false : true;
+                    if (this.selectedTopic.subs && this.selectedTopic.subs.indexOf(key) !== -1) {
+                        checked = true;
+                    }
+                    this.topicContent.push({ key: key, value: obj[key], checked: checked, type: this.topicSelectedSubType });
+                });
+            } else if (this.selectedTopic.value?.content) {
+                this.topicContent =  [{ name: this.selectedTopic.name, key: this.selectedTopic.key, value: this.selectedTopic.value?.content, checked: true, type: this.topicSelectedSubType }];
+            }
         }
     }
 
@@ -190,6 +192,23 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         return false;
     }
 
+    onAddSubscribeAttribute() {
+        if (this.selectedTopic.key && !this.topicContent.length || this.topicSelectedSubType === 'json') {
+            this.topicContent.push({
+                name: this.selectedTopic.name,
+                key: this.selectedTopic.key,
+                value: this.selectedTopic.value?.content,
+                checked: true, type: this.topicSelectedSubType
+            });
+        }
+    }
+
+    onSelectedChanged() {
+        if (this.topicSelectedSubType === 'raw' && this.topicContent.length) {
+            this.topicContent[0].key = this.selectedTopic.key;
+        }
+    }
+
     onAddToSubscribe() {
         if (this.topicContent && this.topicContent.length && this.invokeSubscribe) {
             let topicsToAdd = [];
@@ -215,6 +234,14 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                 }
             }
             this.invokeSubscribe(this.data.topic, topicsToAdd);
+        } else if (this.selectedTopic.key?.length) {
+            let topic = new Tag(Utils.getGUID(TAG_PREFIX));
+            topic.name = this.selectedTopic.key;
+            topic.type = 'raw';
+            topic.address = this.selectedTopic.key;
+            topic.memaddress = this.selectedTopic.key;
+            topic.options = { subs: this.selectedTopic.key };
+            this.invokeSubscribe(this.data.topic, [topic]);
         }
     }
     //#endregion
