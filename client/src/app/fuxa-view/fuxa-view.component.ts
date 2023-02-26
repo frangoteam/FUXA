@@ -17,7 +17,6 @@ import { ChangeDetectorRef } from '@angular/core';
 
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
-import { isUndefined } from 'util';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
@@ -255,7 +254,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     protected handleSignal(sig) {
-        if (!isUndefined(sig.value)) {
+        if (sig.value !== undefined) {
             try {
                 // take all gauges settings binded to the signal id in this view
                 let gas = this.gaugesManager.getGaugeSettings(this.id, sig.id);
