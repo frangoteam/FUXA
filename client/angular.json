@@ -31,6 +31,22 @@
             "scripts": [
               "node_modules/uplot/dist/uPlot.iife.min.js",
               "src/assets/lib/uplot/placement.min.js"
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true,
+            "allowedCommonJsDependencies": [
+                "chart.js",
+                "socket.io-client",
+                "chartjs-plugin-datalabels",
+                "panzoom",
+                "codemirror/addon/lint/lint",
+                "codemirror/mode/javascript/javascript",
+                "codemirror/mode/markdown/markdown"
             ]
           },
           "configurations": {
@@ -98,7 +114,8 @@
                 }
               ]           
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
