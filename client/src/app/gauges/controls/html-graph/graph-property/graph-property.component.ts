@@ -110,13 +110,11 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             this.options.xAxes.fontColor = '#666';
             this.options.gridLinesColor = 'rgba(0, 0, 0, 0.1)';
             this.options.legend.labels.fontColor = '#666';
-            this.options.title.fontColor = '#666';
         } else if (this.options.theme === this.themeType.dark) {
             this.options.yAxes.fontColor = '#fff';
             this.options.xAxes.fontColor = '#fff';
             this.options.gridLinesColor = 'rgba(0, 0, 0, 0.1)';
             this.options.legend.labels.fontColor = '#fff';
-            this.options.title.fontColor = '#fff';
 
         }
         this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
