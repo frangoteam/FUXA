@@ -40,7 +40,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     private rxjsPollingTimer = timer(0, 2000);
-    private destroy = new Subject();
+    private destroy = new Subject<void>();
 
     constructor(private translateService: TranslateService,
         private hmiService: HmiService) { }

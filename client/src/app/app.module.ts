@@ -144,7 +144,7 @@ import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-
 import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
 import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';
 import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
 import { TableCustomizerComponent, DialogTableCell } from './gauges/controls/html-table/table-customizer/table-customizer.component';
@@ -315,7 +315,7 @@ export function createTranslateLoader(http: HttpClient) {
             }
         }),
         GridsterModule,
-        ChartsModule,
+        NgChartsModule,
         CodemirrorModule,
         NgxDaterangepickerMd.forRoot(),
         FrameworkModule
