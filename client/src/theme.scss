@@ -1,5 +1,5 @@
-@use '~@angular/material' as mat;
-@import '~@angular/material/theming';
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
 @include mat.core();
 
 $my-header-primary: mat.define-palette(mat.$grey-palette, 100);
