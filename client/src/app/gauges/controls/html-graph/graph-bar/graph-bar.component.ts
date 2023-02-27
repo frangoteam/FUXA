@@ -335,6 +335,17 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     enabled: true,
                     intersect: false
                 },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'center',
+                    labels: {
+                        font: {
+                            size: 12
+                        },
+                        color: ''
+                    }
+                },
                 datalabels: {
                     display: true,
                     anchor: 'end',
@@ -342,15 +353,6 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     font: {
                         size: 12,
                     }
-                }
-            },
-            legend: {
-                display: true,
-                position: 'top',
-                align: 'center',
-                labels: {
-                    fontSize: 12,
-                    fontColor: ''
                 }
             }
         };

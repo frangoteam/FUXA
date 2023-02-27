@@ -53,26 +53,4 @@ export interface GraphOptions extends ChartOptions {
     borderWidth?: number;
     gridLinesShow?: boolean;
     gridLinesColor?: string;
-    yAxes?: {
-        display?: boolean;
-        min: string;
-        max: string;
-        stepSize: number;
-        fontSize: number;
-        fontColor: string;
-    };
-    xAxes?: {
-        display?: boolean;
-        fontSize: number;
-        fontColor: string;
-    };
-    legend?: {
-        display?: boolean;
-        position?: any;
-        align?: any;
-        labels?: {
-            fontColor?: Color;
-            fontSize?: number;
-        };
-    };
 }
