@@ -1,6 +1,5 @@
 <div style="display: block;" [style.height]="height + 'px'" [style.width]="width + 'px'">
-    <canvas baseChart #ngchart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [plugins]="barChartPlugins" [legend]="barChartLegend"
-        [type]="barChartType">
+    <canvas baseChart #ngchart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [type]="barChartType">
     </canvas>
 </div>
 <div class="graph-toolbar" *ngIf="barChartOptions.offline">
