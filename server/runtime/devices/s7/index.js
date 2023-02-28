@@ -7,6 +7,8 @@ var datatypes;
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
+const MAX_MIX_ITEM = 20;
+
 function S7client(_data, _logger, _events) {
 
     var db = {};                        // Loaded Signal in DB format { DB index, start, size, ... }
@@ -100,7 +102,9 @@ function S7client(_data, _logger, _events) {
                 readVarsfnc.push(_readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
             }
             if (Object.keys(mixItemsMap).length) {
-                readVarsfnc.push(_readVars(Object.values(mixItemsMap)));
+                utils.chunkArray(Object.values(mixItemsMap), MAX_MIX_ITEM).forEach((chunk) => {
+                    readVarsfnc.push(_readVars(chunk));
+                })
             }
             Promise.all(readVarsfnc).then(result => {
                 _checkWorking(false);
