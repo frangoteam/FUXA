@@ -299,6 +299,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             decimals: 0,
             responsive: true,
             maintainAspectRatio: false,
+            indexAxis: 'x',
             gridLinesShow: true,                // to set in property
             scales: {
                 y: {
