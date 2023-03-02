@@ -7,7 +7,7 @@ import { Calc, TimeValue, CollectionType } from '../../../../_helpers/calc';
 import { ChartType, ChartDataset } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { DaqQuery, DaqValue } from '../../../../_models/hmi';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 
 @Component({
     selector: 'graph-bar',
@@ -27,6 +27,9 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
 
     public barChartLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
     public barChartType: ChartType = 'bar';
+    public barChartPlugins = [
+        DataLabelsPlugin
+    ];
 
     public barChartData: ChartDataset[] = [
         { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
@@ -61,6 +64,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         if (!this.barChartOptions) {
             this.barChartOptions = GraphBarComponent.DefaultOptions();
         }
+
         if (this.isEditor && !GraphBarComponent.demoValues.length) {
             for (let i = 0; i < 100; i++) {
                 GraphBarComponent.demoValues[i] = Utils.rand(10, 100);
@@ -134,9 +138,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 }
             }
 
-            this.barChartOptions.plugins.title = {
-                text:  GraphBaseComponent.getTitle(options, this.title)
-            };
+            this.barChartOptions.plugins.title.text = GraphBaseComponent.getTitle(options, this.title);
 
             this.chart.update();
             if (!this.isEditor) {
