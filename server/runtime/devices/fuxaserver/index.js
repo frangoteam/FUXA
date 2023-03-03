@@ -133,7 +133,7 @@ function FuxaServer(_data, _logger, _events) {
      * Set the Tag value to device
      */
     this.setValue = function (id, value) {
-        if (data.tags[id]) {
+        if (varsValue[id]) {
             var val = _parseValue(value);
             varsValue[id].value = val;
             varsValue[id].changed = true;
