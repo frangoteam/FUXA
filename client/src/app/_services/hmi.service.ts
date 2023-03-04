@@ -10,7 +10,7 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class HmiService {
@@ -28,7 +28,7 @@ export class HmiService {
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
 
-    onServerConnection$ = new Subject<boolean>();
+    onServerConnection$ = new BehaviorSubject<boolean>(false);
 
     public static separator = '^~^';
     public hmi: Hmi;
@@ -154,11 +154,9 @@ export class HmiService {
         if (!this.socket) {
             this.socket = io(this.endPointConfig);
             this.socket.on('connect', () => {
-                console.log('connected');
                 this.onServerConnection$.next(true);
             });
             this.socket.on('disconnect', () => {
-                console.log('disconnected');
                 this.onServerConnection$.next(false);
             });
             // devicse status
