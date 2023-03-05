@@ -53,4 +53,6 @@ export interface GraphOptions extends ChartOptions {
     borderWidth?: number;
     gridLinesShow?: boolean;
     gridLinesColor?: string;
+    plugins?: any;
+    scales?: any;
 }
