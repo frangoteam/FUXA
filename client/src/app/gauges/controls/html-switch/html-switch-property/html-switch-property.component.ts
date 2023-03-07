@@ -62,6 +62,6 @@ export class HtmlSwitchPropertyComponent implements AfterContentInit {
     }
 
     updateOptions() {
-        this.switcher.setOptions(this.options);
+        this.switcher?.setOptions(this.options);
     }
 }

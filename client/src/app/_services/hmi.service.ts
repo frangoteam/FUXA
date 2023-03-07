@@ -74,13 +74,13 @@ export class HmiService {
                     this.variables[sigId]['source'] = device.id;
                 }
                 if (device?.type === DeviceType.internal) {
+                    this.variables[sigId].timestamp = new Date().getTime();
                     this.setSignalValue(this.variables[sigId]);
                 } else {
                     this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
                 }
             } else if (this.bridge) {
                 this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
-                // this.setSignalValue(this.variables[sigId], fnc);
             } else if (!environment.serverEnabled) {
                 // for demo, only frontend
                 this.setSignalValue(this.variables[sigId]);
