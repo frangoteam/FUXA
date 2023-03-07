@@ -1,10 +1,14 @@
 <div style="display: block;" [style.height]="height + 'px'" [style.width]="width + 'px'">
-    <canvas baseChart #ngchart [datasets]="barChartData" [labels]="barChartLabels" [options]="barChartOptions" [plugins]="barChartPlugins" [legend]="barChartLegend"
-        [chartType]="barChartType">
+    <canvas baseChart #ngchart 
+            [datasets]="barChartData" 
+            [labels]="barChartLabels" 
+            [options]="barChartOptions" 
+            [plugins]="barChartPlugins"
+            [type]="barChartType">
     </canvas>
 </div>
 <div class="graph-toolbar" *ngIf="barChartOptions.offline">
-    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="barChartOptions.title.fontColor">
+    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="barChartOptions.plugins.title.color">
         <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
     </button>
 </div>
