@@ -10,6 +10,7 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class HmiService {
@@ -26,6 +27,8 @@ export class HmiService {
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
+
+    onServerConnection$ = new BehaviorSubject<boolean>(false);
 
     public static separator = '^~^';
     public hmi: Hmi;
@@ -150,6 +153,12 @@ export class HmiService {
         // check to init socket io
         if (!this.socket) {
             this.socket = io(this.endPointConfig);
+            this.socket.on('connect', () => {
+                this.onServerConnection$.next(true);
+            });
+            this.socket.on('disconnect', () => {
+                this.onServerConnection$.next(false);
+            });
             // devicse status
             this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
                 this.onDeviceChanged.emit(message);
