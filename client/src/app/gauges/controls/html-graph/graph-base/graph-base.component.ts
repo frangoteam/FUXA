@@ -1,7 +1,7 @@
 
 import { Component, Output, EventEmitter } from '@angular/core';
 import { GraphSource, GraphRangeType, GraphDateGroupType } from '../../../../_models/graph';
-import { ChartOptions, GridLineOptions, ChartType, Color, CartesianScaleOptions } from 'chart.js';
+import { ChartOptions, GridLineOptions, ChartType } from 'chart.js';
 import { DaqQuery } from '../../../../_models/hmi';
 @Component({
     template: ''

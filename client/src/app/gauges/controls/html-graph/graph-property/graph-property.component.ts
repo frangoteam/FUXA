@@ -118,14 +118,16 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
         }
 
         const yScale = this.options.scales['y'];
-        if(!yScale.hasOwnProperty('grid'))
+        if(!yScale.hasOwnProperty('grid')) {
             yScale.grid = {};
+        }
 
         yScale.grid.color = 'rgba(0, 0, 0, 0.1)';
 
         const xScale = this.options.scales['x'];
-        if(!xScale.hasOwnProperty('grid'))
+        if(!xScale.hasOwnProperty('grid')) {
             xScale.grid = {};
+        }
 
         xScale.grid.color = 'rgba(0, 0, 0, 0.1)';
 

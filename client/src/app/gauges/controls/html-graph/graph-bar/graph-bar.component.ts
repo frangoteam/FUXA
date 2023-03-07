@@ -317,7 +317,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 x: {
                     display: true,
                     // stacked: true,
-                    ticks: { 
+                    ticks: {
                         font: {
                             size: 12
                         }

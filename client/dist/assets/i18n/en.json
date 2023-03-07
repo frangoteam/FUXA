@@ -1223,6 +1223,7 @@
     "msg.report-property-missing-value": "There are incorrect or missing values!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
+    "msg.server-connection-failed": "SERVER CONNECTION FAILED!",
     "msg.project-load-error": "Unable to read '{{value}}'",
     "msg.project": "Would you like to save the Project changes?",
     "msg.tags-remove-all": "Would you like to remove all Tags?",

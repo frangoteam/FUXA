@@ -39,7 +39,7 @@
                                         <select class="monthselect" (change)="monthChanged($event, sideEnum.left)">
                                                 <option
                                                 [disabled]="(calendarVariables.left.dropdowns.inMinYear && m < calendarVariables.left.minDate.month()) || (calendarVariables.left.dropdowns.inMaxYear && m > calendarVariables.left.maxDate.month())"
-                                                *ngFor="let m of calendarVariables.left.dropdowns.monthArrays" [value]="m" [selected]="calendarVariables.left.dropdowns.currentMonth == m">
+                                                *ngFor="let m of calendarVariables.left.dropdowns.monthArrays" [value]="m" [selected]="calendarVariables.left.dropdowns.currentMonth === m">
                                                     {{locale.monthNames[m]}}
                                                 </option>
                                         </select>
@@ -145,7 +145,7 @@
                                     <select class="monthselect" (change)="monthChanged($event, sideEnum.right)">
                                             <option
                                             [disabled]="(calendarVariables.right.dropdowns.inMinYear && m < calendarVariables.right.minDate.month()) || (calendarVariables.right.dropdowns.inMaxYear && m > calendarVariables.right.maxDate.month())"
-                                            *ngFor="let m of calendarVariables.right.dropdowns.monthArrays" [value]="m" [selected]="calendarVariables.right.dropdowns.currentMonth == m">
+                                            *ngFor="let m of calendarVariables.right.dropdowns.monthArrays" [value]="m" [selected]="calendarVariables.right.dropdowns.currentMonth === m">
                                                 {{locale.monthNames[m]}}
                                             </option>
                                     </select>
