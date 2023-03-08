@@ -29,9 +29,9 @@ import { Utils } from '../../_helpers/utils';
 
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'logger', 'options', 'remove'];
-    readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'warning', 'remove'];
-    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'options', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'logger', 'options', 'remove'];
+    readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'remove'];
+    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -362,6 +362,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             if (this.tagsMap[id]) {
                 this.tagsMap[id].value = sigs[id].value;
                 this.tagsMap[id].error = sigs[id].error;
+                this.tagsMap[id].timestamp = sigs[id].timestamp;
             }
         }
         this.changeDetector.detectChanges();

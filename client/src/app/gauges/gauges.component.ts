@@ -116,7 +116,8 @@ export class GaugesManager {
 
     createGaugeStatus(ga: GaugeSettings): GaugeStatus {
         let result = new GaugeStatus();
-        if (!ga.type.startsWith(HtmlChartComponent.TypeTag) && !ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
+        if (!ga.type.startsWith(HtmlChartComponent.TypeTag) && !ga.type.startsWith(HtmlGraphComponent.TypeTag) &&
+            !ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             result.onlyChange = true;
         }
         if (ga.type.startsWith(SliderComponent.TypeTag)) {

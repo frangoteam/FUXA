@@ -9,13 +9,13 @@ $multiple-check-width: 33px;
 .mat-select-search-inner {
     position: absolute;
     top: 0;
-    width: calc(100% + #{2 * $mat-menu-side-padding - $scrollbar-width});
+    width: calc(100% + #{2 * 16px - $scrollbar-width});
     border-bottom: 1px solid #cccccc;
     background-color: var(--workPanelBackground);
     z-index: 100;
     &.mat-select-search-inner-multiple {
         width: calc(
-            100% + #{2 * $mat-menu-side-padding - $scrollbar-width +
+            100% + #{2 * 16px - $scrollbar-width +
                 $multiple-check-width}
         );
     }
@@ -28,8 +28,8 @@ $multiple-check-width: 33px;
 }
 
 .mat-select-search-input {
-    padding: $mat-menu-side-padding;
-    padding-right: $mat-menu-side-padding + $clear-button-width;
+    padding: 16px;
+    padding-right: 16px + $clear-button-width;
     box-sizing: border-box;
     font-size: 15px;
     border: none;
@@ -37,7 +37,7 @@ $multiple-check-width: 33px;
     color: var(--formInputColor);
 }
 .mat-select-search-no-entries-found {
-    padding: $mat-menu-side-padding;
+    padding: 16px;
     color: var(--formInputColor);
 }
 .mat-select-search-clear {

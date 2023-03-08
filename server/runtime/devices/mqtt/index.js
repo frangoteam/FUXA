@@ -533,14 +533,14 @@ function MQTTclient(_data, _logger, _events) {
                     // payloand
                     if (tags[key].type === 'json') {
                         client.publish(tags[key].address, JSON.stringify(topicTopuplish));
-                    } else if (topicTopuplish[0]) { // payloand with row data
+                    } else if (topicTopuplish[0] !== undefined) { // payloand with row data
                         client.publish(tags[key].address, Object.values(topicTopuplish)[0].toString());
                     }
                 } else if (tags[key].type === 'json' && tags[key].options && tags[key].options.subs && tags[key].options.subs.length) {
                     let obj = {};
                     obj[tags[key].memaddress] = tags[key].value;
                     client.publish(tags[key].address, JSON.stringify(obj));
-                } else if (tags[key].value) {   // whitout payload
+                } else if (tags[key].value !== undefined) {   // whitout payload
                     client.publish(tags[key].address, tags[key].value.toString());
                     tags[key].value = null;
                 }

@@ -2,6 +2,12 @@
 	<mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
 	</mat-progress-bar>
 </div>
+<div *ngIf="serverErrorBanner" class="banner">
+	<div>
+		<span>{{'msg.server-connection-failed' | translate}}</span>
+		<mat-icon>block</mat-icon>
+	</div>
+</div>
 <mat-sidenav-container class="sidenav-container" [hasBackdrop]="false">
 	<mat-sidenav #matsidenav *ngIf="showNavigation && showSidenav" class="sidenav" [mode]="showSidenav">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>

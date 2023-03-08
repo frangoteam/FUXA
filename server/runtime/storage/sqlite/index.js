@@ -10,7 +10,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { logger } = require('../..');
 var sqlite3 = require('sqlite3').verbose();
 
 const db_daqdata_prefix = 'daq-data_';

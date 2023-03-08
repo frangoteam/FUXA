@@ -85,7 +85,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
 
     setCM() {
         this.changeDetector.detectChanges();
-        this.CodeMirror.codeMirror.refresh();
+        this.CodeMirror?.codeMirror?.refresh();
         let spellCheckOverlay = {
             token: (stream) => {
                 for (let i = 0; i < this.checkSystemFnc.length; i++) {
@@ -97,7 +97,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
                 return null;
             }
         };
-        this.CodeMirror.codeMirror.addOverlay(spellCheckOverlay);
+        this.CodeMirror?.codeMirror?.addOverlay(spellCheckOverlay);
     }
 
     onNoClick(): void {

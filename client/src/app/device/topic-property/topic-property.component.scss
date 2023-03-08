@@ -1,0 +1,120 @@
+.topic {
+    font-size: 12px;
+    width: 100%;
+    height: 24px;
+    cursor: pointer;
+}
+
+.topic-active {
+    width: 100%;
+    height: 26px;
+    background-color: violet;
+}
+
+.browser-result {
+    height: 240px;
+    border: 1px solid var(--formBorder);
+    padding: 5px 5px 3px 8px;
+    overflow: auto;
+
+    .browser-item:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+.select-tool {
+    margin-top: 10px;
+    display: block;
+
+    .select-item {
+        display:inline-block;
+        margin-right: 10px;
+
+        input {
+            width: 300px;
+        }
+    }
+    .add-payload {
+        margin-right: 20px;;
+    }
+}
+
+.topic-text {
+    width: 250px;
+    display: inline-block;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 24px;
+}
+
+.topic-name {
+    display: inline-block;
+    width: 220px;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+.topic-name input {
+    width: 200px;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    font-family: monospace;
+    background-color: var(--formExtInputBackground);
+    padding: 4px 2px 4px 3px !important;
+}
+
+.topic-value {
+    font-size: 12px;
+    color: gray;
+    width: 280px;
+    display: inline-block;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 24px;
+}
+
+.topic-check {
+    float: right;
+    margin-right: 12px;
+}
+
+.topic-publish-result {
+    height: 160px;
+    width: 100%;
+    background-color: var(--formInputBackground);
+    padding: 5px 5px 3px 8px;
+    overflow: auto;
+    white-space: pre;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.topic-subscription-result {
+    height: 160px;
+    background-color: var(--formInputBackground);
+    padding: 5px 5px 3px 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.separator-line {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    height: 1px;
+    width: 100%;
+}
+
+.toggle-group {
+    height: 29px;
+    align-items: center;
+  }

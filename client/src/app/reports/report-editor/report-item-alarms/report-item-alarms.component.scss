@@ -2,6 +2,52 @@
 .alarms {
     min-width: 600px;
     margin-top: 20px;
-    min-height: 250px;
+    margin-bottom: 10px;
     display: block;
+}
+
+.alarms-filter {
+    width: 100%;
+    margin-top: 5px;
+
+    mat-selection-list {
+        overflow: auto;
+        height: 300px;
+    }
+
+    mat-list-option ::ng-deep .mat-list-text {
+        display: block;
+    }
+
+    .alarm-name {
+        width: 50%;
+        display: inline-block;
+    }
+
+    .alarm-tag {
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .list-header {
+        display: block;
+        span {
+            margin-bottom: 2px;
+        }
+
+        mat-checkbox {
+            position: absolute;
+            right: 16px;
+            top: -5px;
+        }
+    }
+
+    .alarm-list {
+        background: var(--formInputBackground);
+    }
+
+    .alarm-item {
+        font-size: 14px;
+        height: 34px;
+    }
 }

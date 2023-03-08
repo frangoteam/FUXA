@@ -2,6 +2,29 @@
     display: table;
     margin: 0 auto;
 }
+.banner {
+    display: flex;
+    position: absolute;
+	left: 0px;
+    top:0px;
+    right: 0px;
+    z-index: 999999;
+    font-size: 16px;
+    padding-left: 25px;
+    height: 48px;
+    background-color: #B71C1C;
+    color:#FFFFFF;
+    div {
+        display: flex;
+    align-items: center;
+    margin: auto;
+    }
+    mat-icon {
+        margin-left: 10px;
+    }
+    span {
+    }
+}
 
 .home-container {
     position: absolute;

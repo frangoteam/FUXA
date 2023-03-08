@@ -287,6 +287,7 @@ function HTTPclient(_data, _logger, _events) {
                     reqdata[i].changed = varsValue[id] && reqdata[i].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(reqdata[i].value)) {
                         reqdata[i].value = deviceUtils.tagValueCompose(reqdata[i].value, data.tags[id]);
+                        reqdata[i].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
                             changed[id] = reqdata[i];
                         }
@@ -323,6 +324,7 @@ function HTTPclient(_data, _logger, _events) {
                     result[id].changed = varsValue[id] && result[id].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(result[id].value)) {
                         result[id].value = deviceUtils.tagValueCompose(result[id].value, result[id].tagref);
+                        result[id].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(result[id], timestamp)) {
                             changed[id] = result[id];
                         }

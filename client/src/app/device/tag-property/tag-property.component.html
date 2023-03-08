@@ -52,7 +52,9 @@
                         </div>                
                         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                             <span>{{'device.tag-property-type' | translate}}</span>
-                            <mat-select [(value)]="data.tag.type" style="width: 350px" [disabled]="!memaddress.value || memaddress.value == '000000' || memaddress.value == '100000'">
+                            <mat-select [(value)]="data.tag.type"
+                                        [disabled]="!memaddress.value || memaddress.value === '000000' || memaddress.value === '100000'"
+                                        style="width: 350px">
                                 <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
                                     {{ type.value }}
                                 </mat-option>

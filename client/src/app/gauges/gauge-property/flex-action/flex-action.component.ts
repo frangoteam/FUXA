@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../../_helpers/utils';
 
-import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink, GaugeActionRotate } from '../../../_models/hmi';
+import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink, GaugeActionRotate, GaugeActionMove } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-action',
@@ -20,6 +20,7 @@ export class FlexActionComponent implements OnInit {
     actionsSupported: any;
     actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
     actionRotate = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.rotate);
+    actionMove = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.move);
     itemtype: any;
     slideView = true;
     defaultColor = Utils.defaultColor;
@@ -87,6 +88,8 @@ export class FlexActionComponent implements OnInit {
             ga.options = new GaugeActionBlink();
         } else if (type === this.actionRotate && typeof(ga.options) !== typeof(GaugeActionRotate)) {
             ga.options = new GaugeActionRotate();
+        } else if (type === this.actionMove && typeof(ga.options) !== typeof(GaugeActionMove)) {
+            ga.options = new GaugeActionMove();
         }
     }
 }

@@ -1,49 +1,50 @@
-@import '~@angular/material/theming';
-@include mat-core();
+@use '@angular/material' as mat;
+@import '@angular/material/theming';
+@include mat.core();
 
-$my-header-primary: mat-palette($mat-grey, 100);
-$my-header-accent: mat-palette($mat-pink);
-$my-header-theme: mat-light-theme($my-header-primary, $my-header-accent);
-@include mat-menu-theme($my-header-theme);
+$my-header-primary: mat.define-palette(mat.$grey-palette, 100);
+$my-header-accent: mat.define-palette(mat.$pink-palette);
+$my-header-theme: mat.define-light-theme($my-header-primary, $my-header-accent);
+@include mat.menu-theme($my-header-theme);
 
-$my-checkbox-primary: mat-palette($mat-grey, 800);
-$my-checkbox-accent: mat-palette($mat-grey, 800);
-$my-checkbox-theme:  mat-light-theme($my-checkbox-primary, $my-checkbox-accent);
-@include mat-checkbox-theme($my-checkbox-theme);
-@include mat-pseudo-checkbox-theme($my-checkbox-theme);
+$my-checkbox-primary: mat.define-palette(mat.$grey-palette, 800);
+$my-checkbox-accent: mat.define-palette(mat.$grey-palette, 800);
+$my-checkbox-theme:  mat.define-light-theme($my-checkbox-primary, $my-checkbox-accent);
+@include mat.checkbox-theme($my-checkbox-theme);
+@include mat.pseudo-checkbox-theme($my-checkbox-theme);
 
-$my-radio-primary: mat-palette($mat-grey, 800);
-$my-radio-accent: mat-palette($mat-grey, 800);
-$my-radio-theme:  mat-light-theme($my-radio-primary, $my-radio-accent);
-@include mat-radio-theme($my-radio-theme);
+$my-radio-primary: mat.define-palette(mat.$grey-palette, 800);
+$my-radio-accent: mat.define-palette(mat.$grey-palette, 800);
+$my-radio-theme:  mat.define-light-theme($my-radio-primary, $my-radio-accent);
+@include mat.radio-theme($my-radio-theme);
 
-$my-button-primary: mat-palette($mat-blue, A200);
-$my-button-accent: mat-palette($mat-red, 600);
-$my-button-warn: mat-palette($mat-red, 600);
-$my-button-theme:  mat-light-theme($my-button-primary, $my-button-accent, $my-button-warn);
-@include mat-button-theme($my-button-theme);
+$my-button-primary: mat.define-palette(mat.$blue-palette, A200);
+$my-button-accent: mat.define-palette(mat.$red-palette, 600);
+$my-button-warn: mat.define-palette(mat.$red-palette, 600);
+$my-button-theme:  mat.define-light-theme($my-button-primary, $my-button-accent, $my-button-warn);
+@include mat.button-theme($my-button-theme);
 
-$my-slide-toggle-primary: mat-palette($mat-blue, 700);
-$my-slide-toggle-accent: mat-palette($mat-green, 600);
-$my-slide-toggle-warn: mat-palette($mat-red, 600);
-$my-slide-toggle-theme:  mat-light-theme($my-slide-toggle-primary, $my-slide-toggle-accent, $my-slide-toggle-warn);
-@include mat-slide-toggle-theme($my-slide-toggle-theme);
+$my-slide-toggle-primary: mat.define-palette(mat.$blue-palette, 700);
+$my-slide-toggle-accent: mat.define-palette(mat.$green-palette, 600);
+$my-slide-toggle-warn: mat.define-palette(mat.$red-palette, 600);
+$my-slide-toggle-theme:  mat.define-light-theme($my-slide-toggle-primary, $my-slide-toggle-accent, $my-slide-toggle-warn);
+@include mat.slide-toggle-theme($my-slide-toggle-theme);
 
-$my-slider-primary: mat-palette($mat-blue, 700);
-$my-slider-accent: mat-palette($mat-green, 600);
-$my-slider-warn: mat-palette($mat-red, 600);
-$my-slider-theme:  mat-light-theme($my-slider-primary, $my-slider-primary, $my-slider-warn);
-@include mat-slider-theme($my-slider-theme);
+$my-slider-primary: mat.define-palette(mat.$blue-palette, 700);
+$my-slider-accent: mat.define-palette(mat.$green-palette, 600);
+$my-slider-warn: mat.define-palette(mat.$red-palette, 600);
+$my-slider-theme:  mat.define-light-theme($my-slider-primary, $my-slider-primary, $my-slider-warn);
+@include mat.slider-theme($my-slider-theme);
 
 // Define an dark theme.
-$dark-primary: mat-palette($mat-blue);
-$dark-accent:  mat-palette($mat-amber, A200, A100, A400);
-$dark-warn:    mat-palette($mat-deep-orange);
-$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+$dark-primary: mat.define-palette(mat.$blue-palette);
+$dark-accent:  mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$dark-warn:    mat.define-palette(mat.$deep-orange-palette);
+$dark-theme:   mat.define-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
 // themes will be switched based on class names, angular will switch classes which will trigger the theme change
 .dark-theme {
-  @include angular-material-theme($dark-theme);
+  @include mat.all-component-themes($dark-theme);
 }
 
 @import '~codemirror/lib/codemirror';

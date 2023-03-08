@@ -4,10 +4,10 @@ import { GraphBaseComponent, GraphOptions, GraphThemeType } from '../graph-base/
 import { GraphBarProperty, GraphBarXType, GraphSource, GraphRangeType, GraphBarFunction, GraphBarDateFunctionType, GraphDateGroupType } from '../../../../_models/graph';
 import { Utils } from '../../../../_helpers/utils';
 import { Calc, TimeValue, CollectionType } from '../../../../_helpers/calc';
-import { ChartType, ChartDataSets, ChartPoint } from 'chart.js';
-import { Label, BaseChartDirective } from 'ng2-charts';
+import { ChartType, ChartDataset } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import { DaqQuery, DaqValue } from '../../../../_models/hmi';
-import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 
 @Component({
     selector: 'graph-bar',
@@ -25,12 +25,13 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         maintainAspectRatio: false,
     };
 
-    public barChartLabels: Label[] = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+    public barChartLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
     public barChartType: ChartType = 'bar';
-    public barChartLegend = true;
-    public barChartPlugins = [pluginDataLabels];
+    public barChartPlugins = [
+        DataLabelsPlugin
+    ];
 
-    public barChartData: ChartDataSets[] = [
+    public barChartData: ChartDataset[] = [
         { data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A' },
         { data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B' }
     ];
@@ -63,6 +64,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         if (!this.barChartOptions) {
             this.barChartOptions = GraphBarComponent.DefaultOptions();
         }
+
         if (this.isEditor && !GraphBarComponent.demoValues.length) {
             for (let i = 0; i < 100; i++) {
                 GraphBarComponent.demoValues[i] = Utils.rand(10, 100);
@@ -95,7 +97,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         this.sourceMap = {};
         this.barChartData = [];
         for (let i = 0; i < sources.length; i++) {
-            let dataset = <ChartDataSets>{ label: sources[i].label, data: [], backgroundColor: [sources[i].fill], borderColor: [sources[i].color],
+            let dataset = <ChartDataset>{ label: sources[i].label, data: [], backgroundColor: [sources[i].fill], borderColor: [sources[i].color],
                 hoverBackgroundColor: [sources[i].fill], hoverBorderColor: [sources[i].color] };
             this.sourceMap[sources[i].id] = dataset;
             this.barChartData.push(dataset);
@@ -105,14 +107,11 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
 
     setOptions(options: GraphOptions): void {
         if (options) {
-            options.scales.yAxes = [GraphBaseComponent.getAxes((options.type === this.barChartType) ? options.yAxes : options.xAxes)];
-            options.scales.xAxes = [GraphBaseComponent.getAxes((options.type === this.barChartType) ? options.xAxes : options.yAxes)];
+            options.scales['y'] = options.type === this.barChartType ? options.scales['y'] : options.scales['x'];
+            options.scales['x'] = options.type === this.barChartType ? options.scales['x'] : options.scales['y'];
             // check axes grids property
-            for (let i = 0; i < options.scales.xAxes.length; i++) {
-                options.scales.xAxes[i].gridLines = GraphBaseComponent.getGridLines(options);
-            }
-            for (let i = 0; i < options.scales.yAxes.length; i++) {
-                options.scales.yAxes[i].gridLines = GraphBaseComponent.getGridLines(options);
+            for (let i = 0; i < options.scales.length; i++) {
+                options.scales[i].grid = GraphBaseComponent.getGridLines(options);
             }
             if (options.type) {
                 this.barChartType = <ChartType>options.type;
@@ -139,7 +138,8 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 }
             }
 
-            this.barChartOptions.title = GraphBaseComponent.getTitle(options, this.title);
+            this.barChartOptions.plugins.title.text = GraphBaseComponent.getTitle(options, this.title);
+
             this.chart.update();
             if (!this.isEditor) {
                 setTimeout(() => {
@@ -194,12 +194,12 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                         for (let key in this.dateGroupTemplate) {
                             let k = parseInt(key);
                             if (!fncvalues[k]) {
-                                data.push(<ChartPoint>this.dateGroupTemplate[k]);
+                                data.push(this.dateGroupTemplate[k]);
                             } else {
                                 data.push(fncvalues[k].toFixed(this.barChartOptions.decimals));
                             }
                         }
-                        let dataset = <ChartDataSets>this.sourceMap[sigsid[i]];
+                        let dataset = <ChartDataset>this.sourceMap[sigsid[i]];
                         dataset.data = data;
                         this.fullDataSetAttribute(dataset);
                     }
@@ -232,7 +232,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         }
     }
 
-    private fullDataSetAttribute(dataset: ChartDataSets) {
+    private fullDataSetAttribute(dataset: ChartDataset) {
         dataset.backgroundColor = Array(dataset.data.length).fill(dataset.backgroundColor[0]);
         dataset.borderColor = Array(dataset.data.length).fill(dataset.borderColor[0]);
         dataset.hoverBackgroundColor = Array(dataset.data.length).fill(dataset.hoverBackgroundColor[0]);
@@ -299,39 +299,54 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             decimals: 0,
             responsive: true,
             maintainAspectRatio: false,
-            tooltips: { enabled: true, intersect: false, },
-            title: {
-                display: true,
-                text: 'Title',
-                fontSize: 12,
-            },
+            indexAxis: 'x',
             gridLinesShow: true,                // to set in property
-            yAxes: {                            // to set in property
-                display: true,
-                min: '0',
-                // max: '100',
-                stepSize: 20,
-                fontSize: 12,
-            },
-            xAxes: {                            // to set in property
-                display: true,
-                fontSize: 12,
-            },
             scales: {
-                yAxes: [{
+                y: {
+                    display: true,
+                    min: 0,
+                    // stacked: true,
+                    ticks: {
+                        stepSize: 20,
+                        font: {
+                            size: 12
+                        }
+                        // suggestedMin: 0
+                     },
+                },
+                x: {
                     display: true,
                     // stacked: true,
                     ticks: {
-                        // suggestedMin: 0
-                     },
-                }],
-                xAxes: [{
-                    display: true,
-                    // stacked: true,
-                    ticks: { },
-                }]
+                        font: {
+                            size: 12
+                        }
+                    },
+                }
             },
             plugins: {
+                title: {
+                    display: true,
+                    text: 'Title',
+                    font: {
+                        size: 12
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    intersect: false
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    align: 'center',
+                    labels: {
+                        font: {
+                            size: 12
+                        },
+                        color: ''
+                    }
+                },
                 datalabels: {
                     display: true,
                     anchor: 'end',
@@ -339,15 +354,6 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                     font: {
                         size: 12,
                     }
-                }
-            },
-            legend: {
-                display: true,
-                position: 'top',
-                align: 'center',
-                labels: {
-                    fontSize: 12,
-                    fontColor: ''
                 }
             }
         };

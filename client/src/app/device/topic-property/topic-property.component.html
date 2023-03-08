@@ -24,8 +24,8 @@
                         {{discoveryError}}
                     </div>
                 </div>
-                <div style="height: 240px; border: 1px solid var(--formBorder); padding: 5px 5px 3px 8px; overflow: auto;">
-                    <div *ngFor="let topic of topicsList | keyvalue">
+                <div class="browser-result">
+                    <div *ngFor="let topic of topicsList | keyvalue" class="browser-item">
                         <div class="topic" (click)="selectTopic(topic);" [ngClass]="{'topic-active': isTopicSelected(topic)}">
                             <div class="topic-text">
                                 {{topic.key}}
@@ -36,16 +36,25 @@
                         </div>
                     </div>
                 </div>
-                <div style="margin-top: 10px; display: block;">
-                    <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
+                <div class="select-tool">
+                    <div class="my-form-field select-item">
                         <span>{{'device.topic-selected' | translate}}</span>
-                        <input [(ngModel)]="selectedTopic.key" class="my-form-readonly-input" style="width: 400px;" type="text" [readonly]="true">
+                        <input [(ngModel)]="selectedTopic.key"
+                               (keyup)="onSelectedChanged()"
+                               class="my-form-readonly-input"
+                               type="text">
                     </div>
-                    <mat-button-toggle-group class="mytoggle-group" [(ngModel)]="topicSelectedSubType" (change)="onSubTopicValChange($event.value)">
+                    <div class="my-form-field add-payload">
+                        <button mat-icon-button (click)="onAddSubscribeAttribute()" [disabled]="!this.selectedTopic.key">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                        {{'device.topic-publish-add-item' | translate}}
+                    </div>
+                    <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedSubType" (change)="onSubTopicValChange($event.value)">
                         <mat-button-toggle value="raw">{{'device.topic-raw' | translate}}</mat-button-toggle>
                         <mat-button-toggle value="json">{{'device.topic-json' | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
-                    <button style="margin-left: 20px" mat-raised-button (click)="onAddToSubscribe()" [disabled]="!isSubscriptionValid()" color="primary">
+                    <button style="margin-left: 20px" mat-raised-button (click)="onAddToSubscribe()" color="primary" [disabled]="!selectedTopic.key || !topicContent?.length">
                         {{'device.topic-subscribe' | translate}}
                     </button>
                 </div>
@@ -58,8 +67,8 @@
                                 <div class="topic-name">
                                     <input [(ngModel)]="tcontent.name" type="text">
                                 </div>     
-                                <div class="topic-text">
-                                    {{tcontent.key}}
+                                <div class="topic-name">
+                                    <input [(ngModel)]="tcontent.key" type="text" [disabled]="topicSelectedSubType === 'raw'">
                                 </div>
                                 <div class="topic-value">
                                     {{tcontent.value}}
@@ -82,7 +91,7 @@
                         <span>{{'device.topic-publish-path' | translate}}</span>
                         <input [(ngModel)]="publishTopicPath" (keyup)="stringifyPublishItem()" style="width: 400px;" type="text">
                     </div>
-                    <mat-button-toggle-group class="mytoggle-group" [(ngModel)]="topicSelectedPubType" (change)="onPubTopicValChange($event.value)">
+                    <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedPubType" (change)="onPubTopicValChange($event.value)">
                         <mat-button-toggle value="raw" [disabled]="!isPublishTypeToEnable('raw')">{{'device.topic-raw' | translate}}</mat-button-toggle>
                         <mat-button-toggle value="json" [disabled]="!isPublishTypeToEnable('json')">{{'device.topic-json' | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
