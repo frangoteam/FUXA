@@ -41,12 +41,16 @@
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "chart.js",
-              "socket.io-client",
               "chartjs-plugin-datalabels",
-              "panzoom",
               "codemirror/addon/lint/lint",
               "codemirror/mode/javascript/javascript",
-              "codemirror/mode/markdown/markdown"
+              "codemirror/mode/markdown/markdown",
+              "file-saver",
+              "moment",
+              "panzoom",
+              "pdfmake/build/pdfmake",
+              "pdfmake/build/vfs_fonts",
+              "socket.io-client"
             ]
           },
           "configurations": {
