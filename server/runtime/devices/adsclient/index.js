@@ -4,6 +4,8 @@
 
 'use strict';
 const ads = require('ads-client');
+var utils = require('../../utils');
+const deviceUtils = require('../device-utils');
 
 function ADSclient(_data, _logger, _events) {
 
@@ -16,6 +18,8 @@ function ADSclient(_data, _logger, _events) {
     var client = null;                  // ADS client head
     var varsValue = {};                 // Tags to send to frontend { id, type, value }
     var overloading = 0;                // Overloading counter to mange the break connection
+    var lastTimestampValue;             // Last Timestamp of asked values
+    var topicsMap = {};                 // Map the topic subscribed, to check by on.message
 
     /**
      * initialize the device type 
@@ -105,8 +109,13 @@ function ADSclient(_data, _logger, _events) {
      * Emit connection status to clients, clear all Tags values
      */
     this.disconnect = function () {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             if (client) {
+                try {
+                    await client.unsubscribeAll();
+                } catch (err) {
+                    logger.error(`'${data.name}' try to unsubscribe error! ${err}`);
+                }
                 try {
                     client.disconnect();
                 } catch (err) {
@@ -130,57 +139,94 @@ function ADSclient(_data, _logger, _events) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
-        console.error('Not supported!');
-        // events.emit('device-value:changed', { id: data.name, values: values });
+        if (_checkWorking(true)) {
+            if (client) {
+                try {
+                    var varsValueChanged = _checkVarsChanged();
+                    lastTimestampValue = new Date().getTime();
+                    _emitValues(varsValue);
+
+                    if (this.addDaq) {
+                        this.addDaq(varsValueChanged, data.name);
+                    }
+                } catch (err) {
+                    logger.error(`'${data.name}' polling error: ${err}`);
+                }
+                _checkWorking(false);
+            } else {
+                _checkWorking(false);
+            }
+        }
     }
 
     /**
      * Load Tags attribute to read with polling
      */
     this.load = function (_data) {
-        console.error('Not supported!');
+        varsValue = {};
+        data = JSON.parse(JSON.stringify(_data));
+        try {
+            var count = Object.keys(data.tags).length;
+            logger.info(`'${data.name}' data loaded (${count})`, true);
+        } catch (err) {
+            logger.error(`'${data.name}' load error! ${err}`);
+        }
     }
 
     /**
      * Return Tags values array { id: <name>, value: <value> }
      */
     this.getValues = function () {
-        console.error('Not supported!');
+        return data.tags;
     }
 
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
-    this.getValue = function (tagid) {
-        console.error('Not supported!');
+    this.getValue = function (tagId) {
+        if (varsValue[tagId]) {
+            return { id: tagId, value: varsValue[tagId].value, ts: lastTimestampValue };
+        }
+        return null;
     }
 
     /**
      * Return connection status 'connect-off', 'connect-ok', 'connect-error', 'connect-busy'
      */
     this.getStatus = function () {
-        console.error('Not supported!');
+        return lastStatus;
     }
 
     /**
      * Return Tag property to show in frontend
      */
-    this.getTagProperty = function (tagid) {
-        console.error('Not supported!');
+    this.getTagProperty = function (tagId) {
+        if (data.tags[tagId]) {
+            return { id: tagId, name: data.tags[tagId].name, type: data.tags[tagId].type, format: data.tags[tagId].format };
+        } else {
+            return null;
+        }
     }
 
     /**
      * Set the Tag value to device
      */
-    this.setValue = function (tagid, value) {
-        console.error('Not supported!');
+    this.setValue = async (tagId, value) => {
+        if (client && client.connected && data.tags[tagId]) {
+            try {
+                var valueToSend = deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
+                const res = await client.writeSymbol(ata.tags[tagId].address, valueToSend)
+            } catch (err) {
+                logger.error(`'${data.name}' setValue error! ${err}`);
+            }
+        }
     }
 
     /**
      * Return if device is connected
      */
     this.isConnected = function () {
-        return connected;
+        return (client) ? client.connected : false;
     }
 
     /**
@@ -189,13 +235,14 @@ function ADSclient(_data, _logger, _events) {
     this.bindAddDaq = function (fnc) {
         this.addDaq = fnc;                         // Add the DAQ value to db history
     }
+    this.addDaq = null;
 
     /**
      * Return the timestamp of last read tag operation on polling
      * @returns 
      */
     this.lastReadTimestamp = () => {
-        console.error('Not supported!');
+        return lastTimestampValue;
     }
 
     /**
@@ -204,8 +251,20 @@ function ADSclient(_data, _logger, _events) {
     var _createSubscription = function () {
         return new Promise(function (resolve, reject) {
             var topics = Object.values(data.tags).map(t => t.address);
-            // _mapTopicsAddress(Object.values(data.tags));
+            _mapTopicsAddress(Object.values(data.tags));
             if (topics && topics.length) {
+                var count = 0;
+                topics.forEach(async (topic) => {
+                    try {
+                        await client.subscribe(topic, _onChange, 1000, false);
+                        count++;
+                    } catch (err) {
+                        logger.error(`'${data.name}' subscribe ${topic} error! ${err}`);
+                        return
+                    }
+                });
+                logger.info(`'${data.name}' subscribe ${count} of ${topics.length}`, true);
+
                 // client.subscribe(topics, function (err) {
                 //     if (err) {
                 //         reject(err);
@@ -243,6 +302,40 @@ function ADSclient(_data, _logger, _events) {
     }
 
     /**
+     * Callback from monitor of changed Tag value
+     * And set the changed value to local Tags
+     * @param {*} _nodeId 
+     */
+    const _onChange = (data, sub) => {
+        console.log(`${data.timeStamp}: ${sub.target} changed to ${data.value}`)
+        if (topicsMap[sub.target]) {
+            for (var i = 0; i < topicsMap[sub.target].length; i++) {
+                var id = topicsMap[sub.target][i].id;
+                var oldvalue = data.tags[id].rawValue;
+                data.tags[id].rawValue = data.value.toString();
+                data.tags[id].timestamp = new Date().getTime();
+                data.tags[id].changed = oldvalue !== data.tags[id].rawValue;
+            }
+        }
+    }
+
+    /**
+     * Map the topics to address (path)
+     * @param {*} topics 
+     */
+    var _mapTopicsAddress = function (topics) {
+        var tmap = {};
+        for (var i = 0; i < topics.length; i++) {
+            if (tmap[topics[i].address]) {
+                tmap[topics[i].address].push(topics[i]);
+            } else {
+                tmap[topics[i].address] = [topics[i]];
+            }
+        }
+        topicsMap = tmap;
+    }
+
+    /**
      * Clear local Topics value by set all to null
      */
     var _clearVarsValue = function () {
@@ -250,6 +343,25 @@ function ADSclient(_data, _logger, _events) {
             varsValue[id].value = null;
         }
         _emitValues(varsValue);
+    }
+
+    /**
+     * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
+     */
+    var _checkVarsChanged = () => {
+        const timestamp = new Date().getTime();
+        var result = {};
+        for (var id in data.tags) {
+            if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
+                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
+                if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
+                    result[id] = data.tags[id];
+                }
+            }
+            data.tags[id].changed = false;
+            varsValue[id] = data.tags[id];
+        }
+        return result;
     }
 
     /**
@@ -292,6 +404,25 @@ function ADSclient(_data, _logger, _events) {
         overloading = 0;
         return true;
     }
+
+    /**
+     * Convert value from string depending of type
+     * @param {*} type 
+     * @param {*} value 
+     */
+    var _toValue = function (type, value) {
+        switch (type) {
+            case Datatypes.boolean:
+                if (value && value.toLowerCase() !== 'false') {
+                    return 1;
+                }
+                return 0;
+            case Datatypes.number:
+                return parseFloat(value);
+            default:
+                return value;
+        }
+    }
 }
 
 module.exports = {
@@ -305,4 +436,10 @@ module.exports = {
 
         return new ROSclient(data, logger, events);
     }
+}
+
+const Datatypes = {
+    number: 'number',
+    boolean: 'boolean',
+    string: 'string'
 }
