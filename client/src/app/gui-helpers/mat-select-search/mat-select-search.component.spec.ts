@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,9 +37,9 @@ export class MatSelectSearchTestComponent implements OnInit, OnDestroy {
   @ViewChild(MatSelectSearchComponent) matSelectSearch: MatSelectSearchComponent;
 
   // control for the selected bank
-  public bankCtrl: FormControl = new FormControl();
+  public bankCtrl: UntypedFormControl = new UntypedFormControl();
   // control for the MatSelect filter keyword
-  public bankFilterCtrl: FormControl = new FormControl();
+  public bankFilterCtrl: UntypedFormControl = new UntypedFormControl();
 
   // list of banks
   private banks: Bank[] = [{name: 'Bank A', id: 'A'}, {name: 'Bank B', id: 'B'}, {name: 'Bank C', id: 'C'}, {name: 'Bank DC', id: 'DC'}];

@@ -3,7 +3,7 @@ import {
     Component, OnInit, ElementRef, ViewChild, EventEmitter, Output, Input, forwardRef, ViewEncapsulation, ChangeDetectorRef
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { FormControl} from '@angular/forms';
+import { UntypedFormControl} from '@angular/forms';
 import { LocaleConfig } from './daterangepicker.config';
 
 import * as _moment from 'moment';
@@ -34,7 +34,7 @@ export class DaterangepickerComponent implements OnInit {
     chosenLabel: string;
     calendarVariables: {left: any; right: any} = {left: {}, right: {}};
     timepickerVariables: {left: any; right: any} = {left: {}, right: {}};
-    daterangepicker: {start: FormControl; end: FormControl} = {start: new FormControl(), end: new FormControl()};
+    daterangepicker: {start: UntypedFormControl; end: UntypedFormControl} = {start: new UntypedFormControl(), end: new UntypedFormControl()};
     applyBtn: {disabled: boolean} = {disabled: false};
     startDate = moment().startOf('day');
     endDate = moment().endOf('day');
