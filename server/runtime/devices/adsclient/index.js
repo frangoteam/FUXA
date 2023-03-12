@@ -37,13 +37,18 @@ function ADSclient(_data, _logger, _events) {
             if (data.property && data.property.address) {
                 try {
                     if (_checkWorking(true)) {
+                        var ipAddress = data.property.address;
+                        if (ipAddress.indexOf(':') !== -1) {
+                            data.property.port = parseInt(data.property.address.substring(data.property.address.indexOf(':') + 1));
+                            ipAddress = data.property.address.substring(0, data.property.address.indexOf(':'));
+                        }
                         var options = {
-                            targetAmsNetId: data.property.address,
-                            targetAdsPort: data.property.address.port || 851,
-                            // localAmsNetId: '192.168.1.10',       //Can be anything but needs to be in PLC StaticRoutes.xml file
+                            // localAmsNetId: '192.168.1.201',       //Can be anything but needs to be in PLC StaticRoutes.xml file
                             // localAdsPort: 32750, 
-                            // routerAddress: '192.168.1.120',      //PLC ip address
-                            // routerTcpPort: 48898   
+                            targetAmsNetId: ipAddress,
+                            targetAdsPort: data.property.port || 30012,
+                            // routerAddress: 'localhost',      //PLC ip address
+                            // routerTcpPort: data.property.port || 48898   
                         };
                         client = new ads.Client(options);
                         _clearVarsValue();
@@ -67,6 +72,7 @@ function ADSclient(_data, _logger, _events) {
                             connected = false;
                             logger.error(`'${data.name}' try to connect error! ${err}`);
                             _checkWorking(false);
+                            _emitStatus('connect-error');
                             reject(err);
                         });
                         client.on("connect", function (connectionInfo) {
@@ -429,12 +435,7 @@ module.exports = {
     init: function (settings) {
     },
     create: function (data, logger, events, manager) {
-        // To use with plugin
-        // try { TemplateDriver = require('template-driver'); } catch { }
-        // if (!TemplateDriver && manager) { try { TemplateDriver = manager.require('template-driver'); } catch { } }
-        // if (!TemplateDriver) return null;
-
-        return new ROSclient(data, logger, events);
+        return new ADSclient(data, logger, events);
     }
 }
 

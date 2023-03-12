@@ -11,6 +11,7 @@ var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
+var ADSclient = require('./adsclient');
 var ROSclient = require('./ros');
 // var TEMPLATEclient = require('./template');
 
@@ -73,6 +74,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = FuxaServer.create(data, logger, events, manager);     
+    } else if (data.type === DeviceEnum.ADSclient) {
+        if (!ADSclient) {
+            return null;
+        }
+        comm = ADSclient.create(data, logger, events, manager);
     } else if (data.type === DeviceEnum.ROSclient) {
         if (!ROSclient) {
             return null;
@@ -416,6 +422,8 @@ function loadPlugin(type, module) {
         EthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
         FuxaServer = require(module);
+    } else if (type === DeviceEnum.ADSclient) {
+        ADSclient = require(module);
     } else if (type === DeviceEnum.ROSclient) {
         ROSclient = require(module);
     }
@@ -453,6 +461,7 @@ var DeviceEnum = {
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
+    ADSclient: 'ADSclient',
     ROSclient: 'ROSclient',
     // Template: 'template'
 }
