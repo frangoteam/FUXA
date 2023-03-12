@@ -116,6 +116,9 @@ export class ShapesComponent extends GaugeBaseComponent {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 let element = SVG.adopt(svgele.node);
                 let valRange = act.range.max - act.range.min;
+                if (act.range.max === act.range.min) {
+                    valRange = 1;
+                }
                 let angleRange = act.options.maxAngle - act.options.minAngle;
 
                 // Calculate rotation based on defined ranges and actual value
@@ -128,7 +131,9 @@ export class ShapesComponent extends GaugeBaseComponent {
                 else if(rotation < act.options.minAngle){
                     rotation = act.options.minAngle;
                 }
-                element.rotate(rotation);
+                element.animate(200).transform({
+                    rotate: rotation,
+                });
             }
         } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.move) {
             let element = SVG.adopt(svgele.node);
