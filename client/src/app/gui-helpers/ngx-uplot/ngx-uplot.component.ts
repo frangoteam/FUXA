@@ -335,11 +335,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                         try {
                             var ydx = this._proximityIndex(u, i, idx, x);
                             if (!isNaN(u.data[i][ydx])) {
-                                if (u.data[i][ydx].toString().indexOf('.') !== -1) {
-                                    value = parseFloat(u.data[i][ydx]).toFixed(this.options.decimalsPrecision);
-                                } else {
-                                    value = u.data[i][ydx];
-                                }
+                                value = u.data[i][ydx];
                             }
                         } catch { }
                         series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
