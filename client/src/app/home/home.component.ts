@@ -137,7 +137,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onGoToPage(viewId: string, force: boolean = false) {
-        debugger;
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
