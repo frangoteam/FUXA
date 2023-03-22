@@ -42,10 +42,10 @@
 			</div>
 		</div>
 		<div id="container"  [ngClass]="showNavigation?'home-container-nav':'home-container'" #container (click)="checkToCloseSideNav()">
-			<app-cards-view *ngIf="!showHomeLink && homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions"
+			<app-cards-view *ngIf="!showHomeLink && homeView && homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions"
 				[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
 			</app-cards-view>
-			<app-fuxa-view *ngIf="!showHomeLink && homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView"
+			<app-fuxa-view *ngIf="!showHomeLink && homeView && homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView"
 				[hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)">
 			</app-fuxa-view>
 			<ng-container *ngFor="let iframe of iframes">
