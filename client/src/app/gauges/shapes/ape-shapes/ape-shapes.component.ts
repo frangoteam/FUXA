@@ -134,7 +134,6 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            console.log('stop');
             element.timeline().pause(true);
         }
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {

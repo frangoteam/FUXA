@@ -153,7 +153,6 @@ export class ShapesComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            console.log('stop');
             element.timeline().pause(true);
         }
         if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.clockwise) {
