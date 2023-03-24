@@ -9,16 +9,17 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { GaugeChartProperty, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Chart, ChartViewType, ChartLegendMode, ChartRangeType } from '../../../../_models/chart';
-import { ChartOptions, ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
+import { ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
 import { ChartConfigComponent } from '../../../../editor/chart-config/chart-config.component';
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
+import { ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 
 
 @Component({
     selector: 'app-chart-property',
     templateUrl: './chart-property.component.html',
-    styleUrls: ['./chart-property.component.css']
+    styleUrls: ['./chart-property.component.scss']
 })
 export class ChartPropertyComponent implements OnInit, OnDestroy {
 

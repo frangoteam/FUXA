@@ -161,6 +161,7 @@ import { ScriptModeComponent } from './scripts/script-mode/script-mode.component
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
+import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -236,6 +237,7 @@ export function createTranslateLoader(http: HttpClient) {
         EscapeHtmlPipe,
         DraggableDirective,
         NumberOnlyDirective,
+        StopInputPropagationDirective,
         NumberOrNullOnlyDirective,
         NgxFabButtonComponent,
         NgxFabItemButtonComponent,

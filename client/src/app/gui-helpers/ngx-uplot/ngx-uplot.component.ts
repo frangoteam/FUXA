@@ -1,5 +1,6 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@angular/core';
+import { Utils } from '../../_helpers/utils';
 
 import { Series, Options, Legend } from './uPlot';
 
@@ -177,7 +178,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         // this.uplot.redraw(false, true);
     }
 
-    init(options?: Options) {
+    init(options?: ChartOptions) {
         this.data = [[]];
         if (options) {
             this.options = options;
@@ -215,6 +216,17 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         if (!this.options.title) {
             this.options.title = this.languageLabels.title;
         }
+        this.options.scales = {
+            1: { range: [Utils.isNumeric(options.scaleY1min) ? options.scaleY1min : null, Utils.isNumeric(options.scaleY1max) ? options.scaleY1max : null] },
+            2: { range: [Utils.isNumeric(options.scaleY2min) ? options.scaleY2min : null, Utils.isNumeric(options.scaleY2max) ? options.scaleY2max : null] },
+            3: { range: [Utils.isNumeric(options.scaleY3min) ? options.scaleY3min : null, Utils.isNumeric(options.scaleY3max) ? options.scaleY3max : null] },
+            4: { range: [Utils.isNumeric(options.scaleY4min) ? options.scaleY4min : null, Utils.isNumeric(options.scaleY4max) ? options.scaleY4max : null] },
+        };
+        // if (Utils.isNumeric(options.scaleY1min) || Utils.isNumeric(options.scaleY1max)) {
+            // this.options.scales['4'] = {
+            //     range: [Utils.isNumeric(options.scaleY1min) ? options.scaleY1min : null, Utils.isNumeric(options.scaleY1max) ? options.scaleY1max : null]
+            // };
+        // }
         // set plugins
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
 
@@ -335,11 +347,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                         try {
                             var ydx = this._proximityIndex(u, i, idx, x);
                             if (!isNaN(u.data[i][ydx])) {
-                                if (u.data[i][ydx].toString().indexOf('.') != -1) {
-                                    value = u.data[i][ydx].toFixed(this.options.decimalsPrecision);
-                                } else {
-                                    value = u.data[i][ydx];
-                                }
+                                value = u.data[i][ydx];
                             }
                         } catch { }
                         series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
@@ -400,6 +408,42 @@ export interface NgxOptions extends Options {
     tooltip?: Legend;
     dateFormat?: string;
     timeFormat?: string;
+}
+
+export interface ChartOptions extends NgxOptions {
+    /** chart panel size, with from toolbar to legend */
+    panel?: { height: number; width: number };
+    /** when true, null data values will not cause line breaks, Series.spanGaps */
+    connectSeparatedPoints?: boolean;
+
+    titleHeight?: number;
+    axisLabelFontSize?: number;
+    axisLabelWidth?: number;
+    labelsDivWidth?: number;
+    axisLineColor?: string;
+    axisLabelColor?: string;
+    gridLineColor?: string;
+    axisLabelX?: string;
+    axisLabelY1?: string;
+    scaleY1min?: number;
+    scaleY1max?: number;
+    axisLabelY2?: string;
+    scaleY2min?: number;
+    scaleY2max?: number;
+    axisLabelY3?: string;
+    scaleY3min?: number;
+    scaleY3max?: number;
+    axisLabelY4?: string;
+    scaleY4min?: number;
+    scaleY4max?: number;
+
+    fontFamily?: string;
+    legendFontSize?: number;
+    colorBackground?: string;
+    legendBackground?: string;
+    legendMode?: string;
+    realtime?: number;
+    lastRange?: string;
 }
 
 export interface NgxSeries extends Series {

@@ -134,12 +134,13 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            element.timeline().stop(true);
+            console.log('stop');
+            element.timeline().pause(true);
         }
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {
-            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
+            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate({swing: true, duration: 3000}).ease('-').rotate(365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.anticlockwise) {
-            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
+            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate({swing: true, duration: 3000}).ease('-').rotate(-365).loop() };
         } else if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.downup) {
             let eletoanim = Utils.searchTreeStartWith(element.node, 'pm');
             if (eletoanim) {
@@ -152,7 +153,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                 var moveto = { x: elebox.x, y: elebox.y  - 25 };
                 ApeShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
                 let timeout = setInterval(() => {
-                    element.animate(1000).move(moveto.x, moveto.y).animate(1000).move(movefrom.x, movefrom.y);
+                    element.animate(1000).ease('-').move(moveto.x, moveto.y).animate(1000).ease('-').move(movefrom.x, movefrom.y);
                 }, 2000);
                 gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout, spool: movefrom };
             }

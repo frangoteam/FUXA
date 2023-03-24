@@ -278,6 +278,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     objNode.type = Utils.getType(childValue.property);
                     objNode.checked = true;
                     objNode.enabled = n.enabled;
+                    const exist = Object.values(this.data.device.tags).find((tag: Tag) => tag.address === objNode.id && tag.memaddress === objNode.property);
+                    if (exist) {
+                        objNode.enabled = false;
+                    }
                     result.push(objNode);
                 }
             } else if (n.class === NodeType.Variable && n.checked) {
