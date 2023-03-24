@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Input, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -25,7 +25,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
     }
     @ViewChild('grptabs', {static: false}) grptabs: MatTabGroup;
 
-    tableTypeCtrl: FormControl = new FormControl();
+    tableTypeCtrl: UntypedFormControl = new UntypedFormControl();
     options = DataTableComponent.DefaultOptions();
     tableType = TableType;
     columnType = TableCellType;

@@ -40,13 +40,17 @@
             "optimization": false,
             "namedChunks": true,
             "allowedCommonJsDependencies": [
-                "chart.js",
-                "socket.io-client",
-                "chartjs-plugin-datalabels",
-                "panzoom",
-                "codemirror/addon/lint/lint",
-                "codemirror/mode/javascript/javascript",
-                "codemirror/mode/markdown/markdown"
+              "chart.js",
+              "chartjs-plugin-datalabels",
+              "codemirror/addon/lint/lint",
+              "codemirror/mode/javascript/javascript",
+              "codemirror/mode/markdown/markdown",
+              "file-saver",
+              "moment",
+              "panzoom",
+              "pdfmake/build/pdfmake",
+              "pdfmake/build/vfs_fonts",
+              "socket.io-client"
             ]
           },
           "configurations": {
@@ -112,7 +116,7 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.client.ts"
                 }
-              ]           
+              ]
             }
           },
           "defaultConfiguration": ""
@@ -121,7 +125,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "FUXA:build"
-          },          
+          },
           "configurations": {
             "production": {
               "browserTarget": "FUXA:build:production"
@@ -178,10 +182,9 @@
             "production": {
               "devServerTarget": "angular.io-example:serve:production"
             }
-          }          
+          }
         }
       }
     }
-  },
-  "defaultProject": "FUXA"
+  }
 }

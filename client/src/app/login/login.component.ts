@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AuthService } from '../_services/auth.service';
@@ -17,8 +17,8 @@ export class LoginComponent {
 	showPassword = false;
 	submitLoading = false;
 	messageError: string;
-	username: FormControl = new FormControl();
-	password: FormControl = new FormControl();
+	username: UntypedFormControl = new UntypedFormControl();
+	password: UntypedFormControl = new UntypedFormControl();
 	errorEnabled = false;
 
 	constructor(private authService: AuthService,

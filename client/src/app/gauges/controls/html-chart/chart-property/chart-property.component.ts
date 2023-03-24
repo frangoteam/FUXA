@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReplaySubject } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -39,8 +39,8 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     fonts = Define.fonts;
     defaultColor = Utils.defaultColor;
     chartViewValue = this.chartViewRealtime;
-    public chartCtrl: FormControl = new FormControl();
-    public chartFilterCtrl: FormControl = new FormControl();
+    public chartCtrl: UntypedFormControl = new UntypedFormControl();
+    public chartFilterCtrl: UntypedFormControl = new UntypedFormControl();
     public filteredChart: ReplaySubject<Chart[]> = new ReplaySubject<Chart[]>(1);
     options: ChartOptions = ChartUplotComponent.DefaultOptions();
     autoScala = { enabled: true, min: 0, max: 10 };
