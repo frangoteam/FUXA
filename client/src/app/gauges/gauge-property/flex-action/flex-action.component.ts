@@ -34,7 +34,6 @@ export class FlexActionComponent implements OnInit {
         if (!this.actions || this.actions.length <= 0) {
             this.onAddAction();
         }
-        // this.itemtype = this.data.withActions.clockwise;
         if (this.data.withActions) {
 			this.actionsSupported = this.data.withActions;
 			Object.keys(this.actionsSupported).forEach(key => {
