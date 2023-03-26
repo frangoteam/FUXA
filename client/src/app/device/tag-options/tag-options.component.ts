@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FuxaServer, TagDaq, TagScale, TagScaleModeType } from '../../_models/device';
 
@@ -11,12 +11,12 @@ import { FuxaServer, TagDaq, TagScale, TagScaleModeType } from '../../_models/de
 })
 export class TagOptionsComponent implements OnInit {
 
-    formGroup: FormGroup;
+    formGroup: UntypedFormGroup;
     scaleModeType = TagScaleModeType;
 
     constructor(
         public dialogRef: MatDialogRef<TagOptionsComponent>,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         @Inject(MAT_DIALOG_DATA) public data: any) {
     }
 

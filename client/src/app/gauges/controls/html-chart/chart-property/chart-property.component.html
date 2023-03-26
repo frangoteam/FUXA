@@ -1,4 +1,4 @@
-<div class="element-property">
+<div stopInputPropagation class="element-property">
     <div class="element-property-title">
         {{'editor.controls-chart-settings' | translate}}
     </div>
@@ -7,11 +7,11 @@
             <span>{{'chart.property-data' | translate}}</span>
         </div>
         <div class="_section-newline">
-            <div class="my-form-field section-item section-item-block">
+            <div class="my-form-field field-block lbk">
                 <span>{{'chart.property-name' | translate}}</span>
                 <input [(ngModel)]="data.settings.name" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="text">
             </div>
-            <div class="my-form-field section-item section-item-block">
+            <div class="my-form-field field-block lbk">
                 <span>{{'chart.property-chart' | translate}}</span>
                 <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
                     <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
@@ -39,7 +39,7 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div *ngIf="chartViewValue === chartViewRealtime" class="my-form-field section-inline-number section-item">
+            <div *ngIf="chartViewValue === chartViewRealtime" class="my-form-field field-number lbk section-item">
                 <span style="width: 100px">{{'chart.property-realtime-max' | translate}}</span>
                 <input numberOnly [(ngModel)]="options.realtime"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="1">
             </div>            
@@ -55,12 +55,12 @@
                 </mat-select>
             </div>
             <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number section-toogle">
+            <div class="my-form-field field-number lbk section-toogle">
                 <span>{{'chart.property-font.titlesize' | translate}}</span>
                 <input numberOnly [(ngModel)]="options.titleHeight" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="36">
             </div>
             <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number section-toogle">
+            <div class="my-form-field field-number lbk section-toogle">
                 <span>{{'chart.property-font.axissize' | translate}}</span>
                 <input numberOnly [(ngModel)]="options.axisLabelFontSize" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="24">
             </div>
@@ -94,25 +94,62 @@
             <div class="element-property-header">
                 <span>{{'chart.property-yaxis' | translate}}</span>
             </div>
-            <div class="my-form-field section-inline-text">
-                <span>{{'chart.property-axis-y1' | translate}}</span>
-                <input [(ngModel)]="options.axisLabelY1" type="text" (change)="onChartChanged()">
+            <div class="block">
+                <div class="my-form-field field-text">
+                    <span>{{'chart.property-axis-y1' | translate}}</span>
+                    <input [(ngModel)]="options.axisLabelY1" type="text" (change)="onChartChanged()">
+                </div>
+                <div class="my-form-field field-number ml5">
+                    <span>{{'chart.property-axis-y1-min' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY1min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+                <div class="my-form-field field-number ml12">
+                    <span>{{'chart.property-axis-y1-max' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY1max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
             </div>
-            <div class="section-inline-margin-s"></div>
-            <div class="my-form-field section-inline-text">
-                <span>{{'chart.property-axis-y2' | translate}}</span>
-                <input [(ngModel)]="options.axisLabelY2" type="text" (change)="onChartChanged()">
-            </div>
-            <div class="section-inline-margin-s"></div>
-            <div class="my-form-field section-inline-text">
-                <span>{{'chart.property-axis-y3' | translate}}</span>
-                <input [(ngModel)]="options.axisLabelY3" type="text" (change)="onChartChanged()">
-            </div>
-            <div class="section-inline-margin-s"></div>
-            <div class="my-form-field section-inline-text">
-                <span>{{'chart.property-axis-y4' | translate}}</span>
-                <input [(ngModel)]="options.axisLabelY4" type="text" (change)="onChartChanged()">
-            </div>
+            <div class="block">
+                <div class="my-form-field field-text lbk">
+                    <span>{{'chart.property-axis-y2' | translate}}</span>
+                    <input [(ngModel)]="options.axisLabelY2" type="text" (change)="onChartChanged()">
+                </div>
+                <div class="my-form-field field-number ml5">
+                    <span>{{'chart.property-axis-y2-min' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY2min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+                <div class="my-form-field field-number ml12">
+                    <span>{{'chart.property-axis-y2-max' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY2max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+            </div>            
+            <div class="block">
+                <div class="my-form-field field-text lbk">
+                    <span>{{'chart.property-axis-y3' | translate}}</span>
+                    <input [(ngModel)]="options.axisLabelY3" type="text" (change)="onChartChanged()">
+                </div>
+                <div class="my-form-field field-number ml5">
+                    <span>{{'chart.property-axis-y3-min' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY3min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+                <div class="my-form-field field-number ml12">
+                    <span>{{'chart.property-axis-y3-max' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY3max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+            </div>                     
+            <div class="block">
+                <div class="my-form-field field-text lbk">
+                    <span>{{'chart.property-axis-y4' | translate}}</span>
+                    <input [(ngModel)]="options.axisLabelY4" type="text" (change)="onChartChanged()">
+                </div>
+                <div class="my-form-field field-number ml5">
+                    <span>{{'chart.property-axis-y4-min' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY4min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+                <div class="my-form-field field-number ml12">
+                    <span>{{'chart.property-axis-y4-max' | translate}}</span>
+                    <input [(ngModel)]="options.scaleY4max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                </div>
+            </div>                    
                     <!-- <div class="my-form-field slider-field" style="padding-left: 12px">
                         <span>{{'chart.property-scala.auto' | translate}}</span>
                         <mat-slide-toggle color="primary" [(ngModel)]="autoScala.enabled" (change)="onChangeOptions('autoscala', $event.value)"></mat-slide-toggle>

@@ -4,7 +4,8 @@ import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
-import { ChartUplotComponent, ChartOptions } from './chart-uplot/chart-uplot.component';
+import { ChartUplotComponent } from './chart-uplot/chart-uplot.component';
+import { ChartOptions } from '../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 
 @Component({
     selector: 'html-chart',

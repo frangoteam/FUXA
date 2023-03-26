@@ -196,7 +196,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			if (this.subscriptionDeviceWebApiRequest) {
 				this.subscriptionDeviceWebApiRequest.unsubscribe();
 			}
-		} catch (e) {
+		} catch (err) {
+			console.error(err);
 		}
 	}
 

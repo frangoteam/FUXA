@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemChart, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
@@ -23,7 +23,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 })
 export class ReportEditorComponent implements OnInit, AfterViewInit {
 
-    myForm: FormGroup;
+    myForm: UntypedFormGroup;
 
     itemTextType = Utils.getEnumKey(ReportItemType, ReportItemType.text);
     itemTableType = Utils.getEnumKey(ReportItemType, ReportItemType.table);
@@ -37,7 +37,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
 
     constructor(public dialogRef: MatDialogRef<ReportEditorComponent>,
         public dialog: MatDialog,
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private translateService: TranslateService,
         private resourcesService: ResourcesService,
         @Inject(MAT_DIALOG_DATA) public data: any) {

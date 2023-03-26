@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Input, Output, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, ReplaySubject } from 'rxjs';
 
@@ -35,8 +35,8 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
     dateGroupType = GraphDateGroupType;
     dataXType = Utils.getEnumKey(GraphBarXType, GraphBarXType.date);
 
-    graphCtrl: FormControl = new FormControl();
-    graphFilterCtrl: FormControl = new FormControl();
+    graphCtrl: UntypedFormControl = new UntypedFormControl();
+    graphFilterCtrl: UntypedFormControl = new UntypedFormControl();
     public filteredGraph: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
 
     private _onDestroy = new Subject<void>();
