@@ -43,13 +43,37 @@ function ADSclient(_data, _logger, _events) {
                             ipAddress = data.property.address.substring(0, data.property.address.indexOf(':'));
                         }
                         var options = {
-                            // localAmsNetId: '192.168.1.201',       //Can be anything but needs to be in PLC StaticRoutes.xml file
-                            // localAdsPort: 32750, 
                             targetAmsNetId: ipAddress,
                             targetAdsPort: data.property.port || 30012,
                             // routerAddress: 'localhost',      //PLC ip address
                             // routerTcpPort: data.property.port || 48898   
                         };
+                        if (data.property.local) {
+                            var ipLocalNetId = data.property.local;
+                            var ipLocalPort = 32750;
+                            if (ipLocalNetId.indexOf(':') !== -1) {
+                                ipLocalPort = parseInt(data.property.local.substring(data.property.local.indexOf(':') + 1));
+                                ipLocalNetId = data.property.local.substring(0, data.property.local.indexOf(':'));
+                            }
+                            options = {
+                                ...options,
+                                localAmsNetId: ipLocalNetId,       //Can be anything but needs to be in PLC StaticRoutes.xml file
+                                localAdsPort: ipLocalPort || 32750,
+                            }
+                        }
+                        if (data.property.router) {
+                            var ipRouterNetId = data.property.router;
+                            var ipRouterPort = 48898;
+                            if (ipRouterNetId.indexOf(':') !== -1) {
+                                ipRouterPort = parseInt(data.property.router.substring(data.property.router.indexOf(':') + 1));
+                                ipRouterNetId = data.property.router.substring(0, data.property.router.indexOf(':'));
+                            }
+                            options = {
+                                ...options,
+                                routerAddress: ipRouterNetId,           //PLC ip address
+                                routerTcpPort: ipRouterPort || 48898    //PLC needs to have this port opened. Test disabling all firewalls if problems
+                            }
+                        }
                         client = new ads.Client(options);
                         _clearVarsValue();
                         client.connect().then((res) => {
