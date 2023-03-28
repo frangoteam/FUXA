@@ -159,7 +159,7 @@ var DaqStoreTypeEnum = {
 }
 
 function _getValue(value) {
-    if (value == Number.MAX_VALUE || value == Number.MIN_VALUE || value == null) {
+    if (value == Number.MAX_VALUE || value === utils.SMALLEST_NEGATIVE_INTEGER || value == null) {
         return '';
     }
     return value.toString();

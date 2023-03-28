@@ -4,6 +4,8 @@ const ip = require('ip');
 'use strict';
 var utils = module.exports = {
 
+    SMALLEST_NEGATIVE_INTEGER: -9007199254740991,
+
     domStringSplitter: function (src, tagsplitter, first) {
         var result = { before: '', tagcontent: '', after: '' };
         var tagStart = '<' + tagsplitter.toLowerCase();
