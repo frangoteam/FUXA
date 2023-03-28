@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -15,8 +15,8 @@ import { Chart } from '../../../_models/chart';
 })
 export class ReportItemChartComponent implements OnInit, OnDestroy {
 
-    public chartCtrl: FormControl = new FormControl();
-    public chartFilterCtrl: FormControl = new FormControl();
+    public chartCtrl: UntypedFormControl = new UntypedFormControl();
+    public chartFilterCtrl: UntypedFormControl = new UntypedFormControl();
     public filteredChart: ReplaySubject<Chart[]> = new ReplaySubject<Chart[]>(1);
 
     dateRangeType = ReportDateRangeType;

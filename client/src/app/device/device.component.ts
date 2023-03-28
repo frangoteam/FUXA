@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { DeviceListComponent } from './device-list/device-list.component';
@@ -204,9 +204,9 @@ export class DeviceTagDialog implements OnInit, AfterViewInit {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     dataSource = new MatTableDataSource([]);
-    nameFilter = new FormControl();
-    addressFilter = new FormControl();
-    deviceFilter = new FormControl();
+    nameFilter = new UntypedFormControl();
+    addressFilter = new UntypedFormControl();
+    deviceFilter = new UntypedFormControl();
     tags: TagElement[] = [];
 
     filteredValues = {

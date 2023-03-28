@@ -740,7 +740,7 @@
     "device.browsetopics-property-sub": "Subscribe",
     "device.browsetopics-property-pub": "Publish",
     "device.discovery-topics": "Browser Topics on broker",
-    "device.topic-selected": "Topic selected",
+    "device.topic-selected": "Topic path",
     "device.topic-raw": "raw",
     "device.topic-json": "json",
     "device.add-topics": "Publish my Topics on broker",
@@ -1223,6 +1223,7 @@
     "msg.report-property-missing-value": "There are incorrect or missing values!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
+    "msg.server-connection-failed": "SERVER CONNECTION FAILED!",
     "msg.project-load-error": "Unable to read '{{value}}'",
     "msg.project": "Would you like to save the Project changes?",
     "msg.tags-remove-all": "Would you like to remove all Tags?",

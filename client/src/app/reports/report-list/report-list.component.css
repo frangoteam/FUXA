@@ -27,18 +27,13 @@
 
 .container {
     /* background-color: var(); */
-    display: flex;
-    flex-direction: column;
-    min-width: 300px;
-    position: absolute;
-    bottom: 0px;
-    top: 0px;
-    left:0px;
-    right:0px;
+    display: inline-table;
+    width: 100%;
 }
 
-table {
+.mat-table {
     overflow: auto;
+    height: 100%;
     width: 100%;
 }
 

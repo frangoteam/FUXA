@@ -1,6 +1,6 @@
 import { Component, AfterViewInit, ViewChild } from '@angular/core';
 
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -21,10 +21,10 @@ export class LogsViewComponent implements AfterViewInit {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     dataSource = new MatTableDataSource([]);
-    ontimeFilter = new FormControl();
-    typeFilter = new FormControl();
-    sourceFilter = new FormControl();
-    textFilter = new FormControl();
+    ontimeFilter = new UntypedFormControl();
+    typeFilter = new UntypedFormControl();
+    sourceFilter = new UntypedFormControl();
+    textFilter = new UntypedFormControl();
 
     filteredValues = {
         ontime: '', source: '', type: '', text: ''

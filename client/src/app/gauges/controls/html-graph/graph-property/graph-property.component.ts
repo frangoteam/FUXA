@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Input, Output, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, ReplaySubject } from 'rxjs';
 
@@ -35,8 +35,8 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
     dateGroupType = GraphDateGroupType;
     dataXType = Utils.getEnumKey(GraphBarXType, GraphBarXType.date);
 
-    graphCtrl: FormControl = new FormControl();
-    graphFilterCtrl: FormControl = new FormControl();
+    graphCtrl: UntypedFormControl = new UntypedFormControl();
+    graphFilterCtrl: UntypedFormControl = new UntypedFormControl();
     public filteredGraph: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
 
     private _onDestroy = new Subject<void>();
@@ -106,19 +106,31 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             }
         }
         if (this.options.theme === this.themeType.light) {
-            this.options.yAxes.fontColor = '#666';
-            this.options.xAxes.fontColor = '#666';
-            this.options.gridLinesColor = 'rgba(0, 0, 0, 0.1)';
-            this.options.legend.labels.fontColor = '#666';
-            this.options.title.fontColor = '#666';
+            this.options.scales['y'].ticks.color = '#666';
+            this.options.scales['x'].ticks.color = '#666';
+            this.options.plugins.legend.labels.color = '#666';
+            this.options.plugins.title.color = '#666';
         } else if (this.options.theme === this.themeType.dark) {
-            this.options.yAxes.fontColor = '#fff';
-            this.options.xAxes.fontColor = '#fff';
-            this.options.gridLinesColor = 'rgba(0, 0, 0, 0.1)';
-            this.options.legend.labels.fontColor = '#fff';
-            this.options.title.fontColor = '#fff';
-
+            this.options.scales['y'].ticks.color = '#fff';
+            this.options.scales['x'].ticks.color = '#fff';
+            this.options.plugins.legend.labels.color = '#fff';
+            this.options.plugins.title.color = '#fff';
         }
+
+        const yScale = this.options.scales['y'];
+        if(!yScale.hasOwnProperty('grid')) {
+            yScale.grid = {};
+        }
+
+        yScale.grid.color = 'rgba(0, 0, 0, 0.1)';
+
+        const xScale = this.options.scales['x'];
+        if(!xScale.hasOwnProperty('grid')) {
+            xScale.grid = {};
+        }
+
+        xScale.grid.color = 'rgba(0, 0, 0, 0.1)';
+
         this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
         this.onPropChanged.emit(this.data.settings);
     }

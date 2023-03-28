@@ -169,7 +169,7 @@ export class GaugeBaseComponent {
         }
     }
 
-    static clearAnimationTimer(actref: any) {
+    static clearAnimationTimer(actref: GaugeActionStatus) {
         if (actref && actref.timer) {
             clearTimeout(actref.timer);
             actref.timer = null;

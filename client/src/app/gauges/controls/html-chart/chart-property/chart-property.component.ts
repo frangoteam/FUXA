@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ReplaySubject } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -9,16 +9,17 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { GaugeChartProperty, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Chart, ChartViewType, ChartLegendMode, ChartRangeType } from '../../../../_models/chart';
-import { ChartOptions, ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
+import { ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
 import { ChartConfigComponent } from '../../../../editor/chart-config/chart-config.component';
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
+import { ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 
 
 @Component({
     selector: 'app-chart-property',
     templateUrl: './chart-property.component.html',
-    styleUrls: ['./chart-property.component.css']
+    styleUrls: ['./chart-property.component.scss']
 })
 export class ChartPropertyComponent implements OnInit, OnDestroy {
 
@@ -38,8 +39,8 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     fonts = Define.fonts;
     defaultColor = Utils.defaultColor;
     chartViewValue = this.chartViewRealtime;
-    public chartCtrl: FormControl = new FormControl();
-    public chartFilterCtrl: FormControl = new FormControl();
+    public chartCtrl: UntypedFormControl = new UntypedFormControl();
+    public chartFilterCtrl: UntypedFormControl = new UntypedFormControl();
     public filteredChart: ReplaySubject<Chart[]> = new ReplaySubject<Chart[]>(1);
     options: ChartOptions = ChartUplotComponent.DefaultOptions();
     autoScala = { enabled: true, min: 0, max: 10 };

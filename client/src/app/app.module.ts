@@ -144,7 +144,7 @@ import { GraphBarComponent } from './gauges/controls/html-graph/graph-bar/graph-
 import { GraphPieComponent } from './gauges/controls/html-graph/graph-pie/graph-pie.component';
 import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-property/graph-property.component';
 import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
 import { TableCustomizerComponent, DialogTableCell } from './gauges/controls/html-table/table-customizer/table-customizer.component';
@@ -161,6 +161,7 @@ import { ScriptModeComponent } from './scripts/script-mode/script-mode.component
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
+import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -236,6 +237,7 @@ export function createTranslateLoader(http: HttpClient) {
         EscapeHtmlPipe,
         DraggableDirective,
         NumberOnlyDirective,
+        StopInputPropagationDirective,
         NumberOrNullOnlyDirective,
         NgxFabButtonComponent,
         NgxFabItemButtonComponent,
@@ -315,7 +317,7 @@ export function createTranslateLoader(http: HttpClient) {
             }
         }),
         GridsterModule,
-        ChartsModule,
+        NgChartsModule,
         CodemirrorModule,
         NgxDaterangepickerMd.forRoot(),
         FrameworkModule
@@ -351,77 +353,6 @@ export function createTranslateLoader(http: HttpClient) {
         ModalPositionCache,
         Define,
         AuthGuard
-    ],
-    entryComponents: [
-        DialogDocProperty,
-        DialogDocName,
-        DialogNewDoc,
-        DialogTagName,
-        DialogLinkProperty,
-        DialogInfo,
-        DaterangeDialogComponent,
-        DeviceTagDialog,
-        GaugePropertyComponent,
-        DialogGaugePermission,
-        SvgSelectorComponent,
-        ChartPropertyComponent,
-        NgxGaugeComponent,
-        NgxNouisliderComponent,
-        BagPropertyComponent,
-        PipePropertyComponent,
-        SliderPropertyComponent,
-        HtmlSwitchPropertyComponent,
-        TagOptionsComponent,
-        DevicePropertyComponent,
-        DeviceWebapiPropertyDialogComponent,
-        TagPropertyComponent,
-        TopicPropertyComponent,
-        ConfirmDialogComponent,
-        EditNameComponent,
-        LayoutPropertyComponent,
-        PluginsComponent,
-        AppSettingsComponent,
-        SetupComponent,
-        DialogMenuItem,
-        NgxSwitchComponent,
-        ChartConfigComponent,
-        GraphConfigComponent,
-        CardConfigComponent,
-        AlarmListComponent,
-        AlarmViewComponent,
-        AlarmPropertyComponent,
-        NotificationListComponent,
-        NotificationPropertyComponent,
-        ScriptListComponent,
-        ScriptEditorComponent,
-        ScriptSchedulingComponent,
-        ScriptPermissionComponent,
-        ScriptModeComponent,
-        ReportListComponent,
-        ReportEditorComponent,
-        TextListComponent,
-        DialogChartLine,
-        DialogGraphSource,
-        DialogUser,
-        LoginComponent,
-        DialogUserInfo,
-        DialogItemText,
-        ChartUplotComponent,
-        NgxUplotComponent,
-        GraphBarComponent,
-        GraphPieComponent,
-        GraphBaseComponent,
-        DialogScriptParam,
-        BitmaskComponent,
-        DataTableComponent,
-        TableCustomizerComponent,
-        DialogTableCell,
-        RangeNumberComponent,
-        LibImagesComponent,
-        ReportItemTextComponent,
-        ReportItemTableComponent,
-        ReportItemAlarmsComponent,
-        ReportItemChartComponent
     ],
     bootstrap: [AppComponent]
 })

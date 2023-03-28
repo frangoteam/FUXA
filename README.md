@@ -6,6 +6,8 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 
 ![fuxa ani](/screenshot/fuxa-ani.gif)
 
+![fuxa action](/screenshot/feature-action-move.gif)
+
 ## Features
 - Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley)
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
@@ -17,7 +19,7 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
-You need to have installed [Node](https://nodejs.org) (Version 10, 12 or 14) and NPM (Version >= 6.11 and < 7.xx).
+You need to have installed [Node](https://nodejs.org) (Version ^14.15.0 || ^16.10.0) and NPM (Version >= 6.11 and < 7.xx).
 
 Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (first option)
 ```
@@ -89,7 +91,7 @@ Please ensure you follow the coding standards used through-out the existing code
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.
 
-## <a href="https://discord.gg/VjH57CZY" target="_blank" > <img src="https://skillicons.dev/icons?i=discord" alt=""></a>
+## <a href="https://discord.gg/WZhxz9uHh4" target="_blank" > <img src="https://skillicons.dev/icons?i=discord" alt=""></a>
 
 ## License
 MIT.

@@ -113,28 +113,9 @@ export class ShapesComponent extends GaugeBaseComponent {
             let inRange = (act.range.min <= actValue && act.range.max >= actValue);
             this.checkActionBlink(element, act, gaugeStatus, inRange, false, propertyColor);
         } else if (this.actionsType[act.type] === this.actionsType.rotate) {
-            if (act.range.min <= actValue && act.range.max >= actValue) {
-                let element = SVG.adopt(svgele.node);
-                let valRange = act.range.max - act.range.min;
-                let angleRange = act.options.maxAngle - act.options.minAngle;
-
-                // Calculate rotation based on defined ranges and actual value
-                let rotation = valRange > 0 ? act.options.minAngle + (actValue * angleRange / valRange) : 0;
-
-                // Don't allow rotation angle to exceed configured range
-                if(rotation > act.options.maxAngle) {
-                    rotation = act.options.maxAngle;
-                }
-                else if(rotation < act.options.minAngle){
-                    rotation = act.options.minAngle;
-                }
-                element.rotate(rotation);
-            }
+            ShapesComponent.rotateShape(act, svgele, actValue);
         } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.move) {
-            let element = SVG.adopt(svgele.node);
-            if (act.range.min <= actValue && act.range.max >= actValue) {
-                element.animate(act.options.duration || 500).move(act.options.toX, act.options.toY);
-            }
+            ShapesComponent.moveShape(act, svgele, actValue);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
@@ -148,17 +129,57 @@ export class ShapesComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            element.timeline().stop(true);
+            element.timeline().stop();
         }
         if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.clockwise) {
-            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
+            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);
         } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.anticlockwise) {
-            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
+            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, -360);
         } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.stop) {
-            if (gaugeStatus.actionRef) {
-                ShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
-                gaugeStatus.actionRef.type = type;
+            ShapesComponent.stopAnimationShape(gaugeStatus, type);
+        }
+    }
+
+    static startRotateAnimationShape(element: any, type: string, angle: number): GaugeActionStatus {
+        return <GaugeActionStatus>{ type: type, animr: element.animate(3000).ease('-').rotate(angle).loop() };
+    }
+
+    static stopAnimationShape(gaugeStatus: GaugeStatus, type: string) {
+        if (gaugeStatus.actionRef) {
+            ShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
+            gaugeStatus.actionRef.type = type;
+        }
+    }
+
+    static rotateShape(act: GaugeAction, svgele: any, actValue: number) {
+        if (act.range.min <= actValue && act.range.max >= actValue) {
+            let element = SVG.adopt(svgele.node);
+            let valRange = act.range.max - act.range.min;
+            if (act.range.max === act.range.min) {
+                valRange = 1;
             }
+            let angleRange = act.options.maxAngle - act.options.minAngle;
+
+            // Calculate rotation based on defined ranges and actual value
+            let rotation = valRange > 0 ? act.options.minAngle + (actValue * angleRange / valRange) : 0;
+
+            // Don't allow rotation angle to exceed configured range
+            if(rotation > act.options.maxAngle) {
+                rotation = act.options.maxAngle;
+            }
+            else if(rotation < act.options.minAngle){
+                rotation = act.options.minAngle;
+            }
+            element.animate(200).ease('-').transform({
+                rotate: rotation,
+            });
+        }
+    }
+
+    static moveShape(act: GaugeAction, svgele: any, actValue: number) {
+        let element = SVG.adopt(svgele.node);
+        if (act.range.min <= actValue && act.range.max >= actValue) {
+            element.animate(act.options.duration || 500).ease('-').move(act.options.toX, act.options.toY);
         }
     }
 }

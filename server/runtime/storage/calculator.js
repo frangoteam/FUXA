@@ -48,7 +48,7 @@ function getMin(timeserie, fromts, tots, intervalType) {
 }
 
 function getMax(timeserie, fromts, tots, intervalType) {
-    let result = getInterval(fromts, tots, intervalType, Number.MIN_VALUE);
+    let result = getInterval(fromts, tots, intervalType, utils.SMALLEST_NEGATIVE_INTEGER);
     // sort to start with the oldest
     let sorted = timeserie.sort(function (a, b) {
         return a.dt - b.dt;
@@ -56,7 +56,7 @@ function getMax(timeserie, fromts, tots, intervalType) {
 
     let addToInterval = (intervals, intervalIndex, value) => {
         if (!intervals[intervalIndex]) {
-            intervals[intervalIndex] = Number.MIN_VALUE;
+            intervals[intervalIndex] = utils.SMALLEST_NEGATIVE_INTEGER;
         } else if (intervals[intervalIndex] < value) {
             intervals[intervalIndex] = value;
         }

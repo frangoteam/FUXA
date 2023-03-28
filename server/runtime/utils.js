@@ -4,6 +4,8 @@ const ip = require('ip');
 'use strict';
 var utils = module.exports = {
 
+    SMALLEST_NEGATIVE_INTEGER: -9007199254740991,
+
     domStringSplitter: function (src, tagsplitter, first) {
         var result = { before: '', tagcontent: '', after: '' };
         var tagStart = '<' + tagsplitter.toLowerCase();
@@ -199,5 +201,13 @@ var utils = module.exports = {
             return true;
         }
         return false;
+    },
+
+    chunkArray: function (array, chunkSize) {
+        const chunks = [];
+        for (let i = 0; i < array.length; i += chunkSize) {
+          chunks.push(array.slice(i, i + chunkSize));
+        }
+        return chunks;
     }
 }

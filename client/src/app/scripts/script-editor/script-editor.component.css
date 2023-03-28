@@ -120,17 +120,17 @@
     white-space: nowrap;
 }
 
-:host() ::ng-deep .mat-tab-label {
+:host ::ng-deep .mat-tab-label {
     height: var(--tab-height) !important;
     color: white;
 }
 
-:host() ::ng-deep .cm-system-function {
+:host ::ng-deep .cm-system-function {
     color: greenyellow;
 }
 
 @media screen and (max-height: 1500px) {
-    :host() ::ng-deep .CodeMirror{
+    :host ::ng-deep .CodeMirror{
         height: 600px;
     }
     .test-panel {
@@ -139,7 +139,7 @@
 }
 
 @media screen and (max-height: 960px) {
-    :host() ::ng-deep .CodeMirror{
+    :host ::ng-deep .CodeMirror{
         height: 600px;
     }
     .test-panel {
@@ -148,7 +148,7 @@
 }
 
 @media screen and (max-height: 920px) {
-    :host() ::ng-deep .CodeMirror{
+    :host ::ng-deep .CodeMirror{
         height: 540px;
     }
     .test-panel {
@@ -157,7 +157,7 @@
 }
 
 @media screen and (max-height: 870px) {
-    :host() ::ng-deep .CodeMirror{
+    :host ::ng-deep .CodeMirror{
         height: 480px;
     }
     .test-panel {
@@ -166,7 +166,7 @@
 }
 
 @media screen and (max-height: 820px) {
-    :host() ::ng-deep .CodeMirror{
+    :host ::ng-deep .CodeMirror{
         height: 400px;
     }
     .test-panel {
@@ -175,7 +175,7 @@
 }
 
 @media screen and (max-height: 720px) {
-    :host() ::ng-deep .CodeMirror{
+    :host ::ng-deep .CodeMirror{
         height: 300px;
     }
     .test-panel {

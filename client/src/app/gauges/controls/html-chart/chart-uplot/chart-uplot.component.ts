@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
 import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine } from '../../../../_models/chart';
-import { NgxUplotComponent, NgxOptions, NgxSeries } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
+import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType, IDateRange } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
@@ -368,32 +368,4 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.chartPanel.nativeElement.style.backgroundColor = this.options.colorBackground;
     }
-}
-
-export interface ChartOptions extends NgxOptions {
-    /** chart panel size, with from toolbar to legend */
-    panel?: { height: number; width: number };
-    /** when true, null data values will not cause line breaks, Series.spanGaps */
-    connectSeparatedPoints?: boolean;
-
-    titleHeight?: number;
-    axisLabelFontSize?: number;
-    axisLabelWidth?: number;
-    labelsDivWidth?: number;
-    axisLineColor?: string;
-    axisLabelColor?: string;
-    gridLineColor?: string;
-    axisLabelX?: string;
-    axisLabelY1?: string;
-    axisLabelY2?: string;
-    axisLabelY3?: string;
-    axisLabelY4?: string;
-
-    fontFamily?: string;
-    legendFontSize?: number;
-    colorBackground?: string;
-    legendBackground?: string;
-    legendMode?: string;
-    realtime?: number;
-    lastRange?: string;
 }

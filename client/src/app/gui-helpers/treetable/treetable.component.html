@@ -56,7 +56,7 @@
 				</div>
 				<div class="item-check">
 					&nbsp;
-					<mat-checkbox [(ngModel)]="node.checked" *ngIf="node.text && (node.class == nodeType.Variable)"
+					<mat-checkbox [(ngModel)]="node.checked" *ngIf="node.text && (node.class === nodeType.Variable)"
 						[disabled]="!node.enabled" (change)="changeStatus(node,$event)"></mat-checkbox>
 				</div>
 			</div>

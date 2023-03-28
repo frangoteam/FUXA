@@ -3,8 +3,9 @@
  */
 import { Component, Input } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType, GaugeActionStatus, GaugePropertyColor, GaugeProperty } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType, GaugePropertyColor, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
+import { ShapesComponent } from '../shapes.component';
 
 declare var SVG: any;
 
@@ -22,8 +23,8 @@ export class ProcEngComponent extends GaugeBaseComponent {
     static LabelTag = 'Proc-Eng';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
-        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise };
-
+                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate,
+                        move: GaugeActionsType.move };
     constructor() {
         super();
     }
@@ -110,6 +111,10 @@ export class ProcEngComponent extends GaugeBaseComponent {
             let element = SVG.adopt(svgele.node);
             let inRange = (act.range.min <= actValue && act.range.max >= actValue);
             this.checkActionBlink(element, act, gaugeStatus, inRange, false, propertyColor);
+        } else if (this.actionsType[act.type] === this.actionsType.rotate) {
+            ShapesComponent.rotateShape(act, svgele, actValue);
+        } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.move) {
+            ShapesComponent.moveShape(act, svgele, actValue);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
@@ -126,14 +131,11 @@ export class ProcEngComponent extends GaugeBaseComponent {
             element.timeline().stop(true);
         }
         if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.clockwise) {
-            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(365).loop() };
+            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);
         } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.anticlockwise) {
-            gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, animr: element.animate(3000).rotate(-365).loop() };
+            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, -360);
         } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.stop) {
-            if (gaugeStatus.actionRef) {
-                ProcEngComponent.clearAnimationTimer(gaugeStatus.actionRef);
-                gaugeStatus.actionRef.type = type;
-            }
+            ShapesComponent.stopAnimationShape(gaugeStatus, type);
         }
     }
 }

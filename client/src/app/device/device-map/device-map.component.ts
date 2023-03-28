@@ -502,8 +502,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }
+                this.loadDevices();
             }
-            this.loadDevices();
         });
     }
 

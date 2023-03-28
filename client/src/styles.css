@@ -1,5 +1,5 @@
 @import 'material-icons/iconfont/material-icons.css';
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~ngx-toastr/toastr.css";
 @import "~angular2-draggable/css/resizable.min.css";
 
@@ -1020,8 +1020,28 @@ mat-toolbar-row {
     margin-left: 10px;
 }
 
+.mr5 {
+    margin-right: 5px;
+}
+
 .mr10 {
     margin-right: 10px;
+}
+
+.mr15 {
+    margin-right: 15px;
+}
+
+.ml5 {
+    margin-left: 5px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
+.ml12 {
+    margin-left: 12px;
 }
 
 .ml20 {

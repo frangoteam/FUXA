@@ -35,7 +35,7 @@
                         <ngx-gauge [options]="options" #ngauge [value]="gauge.value"></ngx-gauge>
                     </div>
                 </div>
-                <div class="toolbox-det" *ngIf="gaugeType!=gaugeTypeEnum.Donut">
+                <div class="toolbox-det" *ngIf="gaugeType !== gaugeTypeEnum.Donut">
                     <div class="field-row">
                         <div class="my-form-field" style="padding-left: 12px">
                             <span>{{'bag.property-ticks' | translate}}</span>
@@ -249,7 +249,7 @@
                     </div> -->
                     </div>
                 </div>
-                <div class="toolbox-right" *ngIf="gaugeType==gaugeTypeEnum.Zones">
+                <div class="toolbox-right" *ngIf="gaugeType === gaugeTypeEnum.Zones">
                     <div style="position: absolute; top: 0px; right: 0px">
                         <span>{{'bag.property-zones' | translate}}</span>
                         <button mat-icon-button (click)="onAddZone()" [disabled]="optcfg.staticZones && optcfg.staticZones.length >= 5">
