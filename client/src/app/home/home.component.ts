@@ -140,7 +140,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (viewId !== this.homeView.id || force) {
+        } else if (this.homeView && viewId !== this.homeView.id || force || !this.homeView) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
@@ -178,6 +178,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     setIframe(link: string = null) {
+        this.homeView = null;
         let currentLink: string;
         this.iframes.forEach(iframe => {
             if (!iframe.hide) {
