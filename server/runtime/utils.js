@@ -209,5 +209,18 @@ var utils = module.exports = {
           chunks.push(array.slice(i, i + chunkSize));
         }
         return chunks;
+    },
+
+    getNetworkInterfaces: function () {
+        const interfaces = os.networkInterfaces();
+        var result = [];
+        Object.keys(interfaces).forEach((interfaceName) => {
+            interfaces[interfaceName].forEach((iface) => {
+                if (iface.interal === true) return;
+                if (iface.family !== 'IPv4') return;
+                result.push(iface.address);
+            });
+        });
+        return result;
     }
 }

@@ -7,3 +7,11 @@
     overflow: auto;
     max-height: 300px;
 }
+
+.address {
+    width: 350px;
+}
+
+.adpu {
+    width: 120px;
+}
