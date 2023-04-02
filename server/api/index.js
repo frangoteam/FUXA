@@ -121,9 +121,7 @@ function mergeUserSettings(settings) {
     if (settings.language) {
         runtime.settings.language = settings.language;
     }
-    // if (settings.uiPort) {
-    //     runtime.settings.uiPort = settings.uiPort;
-    // }
+    runtime.settings.broadcastAll = settings.broadcastAll;
     runtime.settings.secureEnabled = settings.secureEnabled;
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;

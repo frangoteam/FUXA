@@ -261,7 +261,7 @@ export class HmiService {
     /**
      * Ask device tags settings
      */
-     public askDeviceTags(deviceId: string) {
+    public askDeviceTags(deviceId: string) {
         if (this.socket) {
             let msg = { deviceId: deviceId };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_REQUEST, msg);
@@ -332,6 +332,25 @@ export class HmiService {
         }
     }
 
+    /**
+     * Subscribe to tags values
+     */
+    public tagsSubscribe(tagsId: string[]) {
+        if (this.socket) {
+            let msg = { tagsId: tagsId };
+            this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
+        }
+    }
+
+    /**
+     * Unsubscribe to tags values
+     */
+    public tagsUnsubscribe(tagsId: string[]) {
+        if (this.socket) {
+            let msg = { tagsId: tagsId };
+            this.socket.emit(IoEventTypes.DEVICE_TAGS_UNSUBSCRIBE, msg);
+        }
+    }
     //#endregion
 
     //#region Signals Gauges Mapping
@@ -566,6 +585,8 @@ export enum IoEventTypes {
     DEVICE_NODE_ATTRIBUTE = 'device-node-attribute',
     DEVICE_WEBAPI_REQUEST = 'device-webapi-request',
     DEVICE_TAGS_REQUEST = 'device-tags-request',
+    DEVICE_TAGS_SUBSCRIBE = 'device-tags-subscribe',
+    DEVICE_TAGS_UNSUBSCRIBE = 'device-tags-unsubscribe',
     DAQ_QUERY = 'daq-query',
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',

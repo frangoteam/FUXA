@@ -857,6 +857,14 @@ export class GaugesManager {
     clearMemory() {
         this.memorySigGauges = {};
     }
+
+    /**
+     *
+     * @returns list of signals id (tag) that are binded to a gauge
+     */
+    getBindedSignalsId() {
+        return Object.keys(this.memorySigGauges);
+    }
 }
 
 interface MapGaugesSetting {

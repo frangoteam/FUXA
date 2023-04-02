@@ -82,8 +82,8 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('script-console', scriptConsoleOutput);
 
     io.on('connection', (socket) => {
-        logger.info('socket.io client connected');
-
+        logger.info(`socket.io client connected`);
+        socket.tagsClientSubscriptions = [];
         // client ask device status
         socket.on(Events.IoEventTypes.DEVICE_STATUS, (message) => {
             if (message === 'get') {
@@ -263,7 +263,20 @@ function init(_io, _api, _settings, _log, eventsMain) {
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: ${err}`);
             }
-        });        
+        });
+        socket.on(Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE, (message) => {
+            try {
+                socket.tagsClientSubscriptions = message.tagsId
+            } catch (err) {
+                logger.error(`${Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE}: ${err}`);
+            }
+        });
+        socket.on(Events.IoEventTypes.DEVICE_TAGS_UNSUBSCRIBE, (message) => {
+            try {
+            } catch (err) {
+                logger.error(`${Events.IoEventTypes.DEVICE_TAGS_UNSUBSCRIBE}: ${err}`);
+            }
+        });
     });
 }
 
@@ -414,8 +427,22 @@ function updateDevice(event) {
  */
 function updateDeviceValues(event) {
     try {
-        let values = Object.values(event.values);
-        io.emit(Events.IoEventTypes.DEVICE_VALUES, { id: event.id, values: values });
+        if (settings.broadcastAll) {
+            io.emit(Events.IoEventTypes.DEVICE_VALUES, { 
+                id: event.id,
+                values: Object.values(event.values) 
+            });
+        } else {
+            Object.values(io.sockets.sockets).forEach((socket) => {
+                const tags = Object.values(event.values).filter((tag) => {
+                    return socket.tagsClientSubscriptions.includes(tag.id);
+                });
+                socket.emit(Events.IoEventTypes.DEVICE_VALUES, {
+                    id: event.id,
+                    values: Object.values(tags)
+                });
+            });
+        }
         tagsSubscription.forEach((key, value) => {
             if (event.values[value]) {
                 events.emit('tag-value:changed', event.values[value]);

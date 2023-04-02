@@ -1198,6 +1198,7 @@
     "dlg.app-auth-expiration-3h": "Enabled with token expiration in 3 hours.",
     "dlg.app-auth-expiration-1d": "Enabled with token expiration in 1 day.",
     "dlg.app-auth-tooltip": "Enabled: you have a administrator account 'admin/123456' (don't forget to change it). Server restart is required!",
+    "dlg.app-settings-client-broadcast": "Broadcast to client (frontend) all tags values",
 
     "dlg.app-settings-daqstore": "DAQ storage",
     "dlg.app-settings-daqstore-type": "Database type",

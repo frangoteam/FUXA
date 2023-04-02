@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
+import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-app-settings',
@@ -51,6 +52,9 @@ export class AppSettingsComponent implements OnInit {
 
         if (this.settings.secureEnabled) {
             this.authentication = this.settings.tokenExpiresIn;
+        }
+        if (Utils.isNullOrUndefined(this.settings.broadcastAll)) {
+            this.settings.broadcastAll = false;
         }
         if (!this.settings.smtp) {
             this.settings.smtp = new SmtpSettings();

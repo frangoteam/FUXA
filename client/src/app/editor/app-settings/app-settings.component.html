@@ -5,33 +5,34 @@
         <mat-tab-group style="height: 500px; width: 620px;">
             <mat-tab label="{{'dlg.app-settings-system' | translate}}">
                 <div style="width: 420px">
-                    <div class="blk mt20">
-                        <div class="my-form-field">
-                            <span>{{'dlg.app-settings-language' | translate}}</span>
-                            <mat-select [(value)]="settings.language" style="width: 320px" (selectionChange)="onLanguageChange($event.value)">
-                                <mat-option *ngFor="let language of languageType" [value]="language.value">
-                                    {{ language.text }}
-                                </mat-option>
-                            </mat-select>
-                        </div>
+                    <div class="my-form-field blk mt20">
+                        <span>{{'dlg.app-settings-language' | translate}}</span>
+                        <mat-select [(value)]="settings.language" style="width: 320px" (selectionChange)="onLanguageChange($event.value)">
+                            <mat-option *ngFor="let language of languageType" [value]="language.value">
+                                {{ language.text }}
+                            </mat-option>
+                        </mat-select>
                     </div>
-                    <div class="blk mt20">
-                        <div class="my-form-field">
-                            <span>{{'dlg.app-settings-server-port' | translate}}</span>
-                            <input numberOnly [(ngModel)]="settings.uiPort" style="width: 320px" type="text" disabled="true">
-                        </div>
+                    <div class="my-form-field blk mt15">
+                        <span>{{'dlg.app-settings-server-port' | translate}}</span>
+                        <input numberOnly [(ngModel)]="settings.uiPort" style="width: 320px" type="text" disabled="true">
                     </div>
-                    <div class="blk mt20">
-                        <div class="my-form-field">
-                            <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
-                            <mat-icon class="my-form-field-info" matTooltip="{{authenticationTooltip}}">error_outline</mat-icon>
-                            <mat-select [(value)]="authentication" style="width: 320px; display: block;">
-                                <mat-option *ngFor="let auth of authType" [value]="auth.value">
-                                    {{ auth.text }}
-                                </mat-option>
-                            </mat-select>
-                        </div>
+                    <div class="my-form-field blk mt15">
+                        <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
+                        <mat-icon class="my-form-field-info" matTooltip="{{authenticationTooltip}}">error_outline</mat-icon>
+                        <mat-select [(value)]="authentication" style="width: 320px; display: block;">
+                            <mat-option *ngFor="let auth of authType" [value]="auth.value">
+                                {{ auth.text }}
+                            </mat-option>
+                        </mat-select>
                     </div>
+                    <div class="my-form-field blk mt15">
+                        <span>{{'dlg.app-settings-client-broadcast' | translate}}</span>
+                        <mat-select [(value)]="settings.broadcastAll" style="width: 320px; display: block;">
+                            <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
+                            <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
+                        </mat-select>
+                    </div>                    
                     <div class="blk mt20 mb20">
                         <button mat-raised-button color="basic" (click)="onAlarmsClear()">{{'dlg.app-settings-alarms-clear' | translate}}</button>
                     </div>
