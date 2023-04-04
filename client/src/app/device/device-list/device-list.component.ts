@@ -93,6 +93,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             tags = {};
         }
         this.dataSource.data = Object.values(tags);
+        this.hmiService.tagsSubscribe(Object.keys(tags));
     }
 
     onDeviceChange(source) {
