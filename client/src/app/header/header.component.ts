@@ -169,8 +169,6 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
      * @param event file resource
      */
     onFileChangeListener(event) {
-        let text = [];
-        let files = event.srcElement.files;
         let input = event.target;
         let reader = new FileReader();
         reader.onload = (data) => {

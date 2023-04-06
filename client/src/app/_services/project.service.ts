@@ -134,13 +134,15 @@ export class ProjectService {
     /**
      * Save Project
      */
-    save(): boolean {
+    save(skipNotification = false): boolean {
         // check project change don't work some svg object change the order and this to check isn't easy...boooo
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
-            var msg = '';
-            this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt; });
-            this.toastr.success(msg);
+            if (!skipNotification) {
+                var msg = '';
+                this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt; });
+                this.toastr.success(msg);
+            }
         }, err => {
             console.error(err);
             var msg = '';
@@ -872,12 +874,12 @@ export class ProjectService {
      * Used from open and upload JSON Project file
      * @param prj project data to save
      */
-    setProject(prj: ProjectData, notify?: boolean) {
+    setProject(prj: ProjectData, skipNotification = false) {
         this.projectData = prj;
         if (this.appService.isClientApp) {
             this.projectData = ResourceStorageService.defileProject(prj);
         }
-        this.save();
+        this.save(skipNotification);
     }
 
     setNewProject() {
