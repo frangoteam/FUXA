@@ -427,7 +427,8 @@ function updateDevice(event) {
  */
 function updateDeviceValues(event) {
     try {
-        if (settings.broadcastAll) {
+        //!TOFIX
+        if (settings.broadcastAll || !settings.broadcastAll) {
             io.emit(Events.IoEventTypes.DEVICE_VALUES, { 
                 id: event.id,
                 values: Object.values(event.values) 
