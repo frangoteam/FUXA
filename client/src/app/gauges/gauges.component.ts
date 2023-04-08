@@ -545,10 +545,12 @@ export class GaugesManager {
             if (currentValue === null || currentValue === undefined){
                 return;
             } else {
-                if (currentValue === 0) {
+                if (currentValue === 0 || currentValue === '0') {
                     this.putSignalValue(sigid, '1');
-                } else if (currentValue === 1) {
+                } else if (currentValue === 1 || currentValue === '1') {
                     this.putSignalValue(sigid, '0');
+                } else if (currentValue === 'false') {
+                    this.putSignalValue(sigid, 'true');
                 } else {
                     this.putSignalValue(sigid, String(!currentValue));
                 }
