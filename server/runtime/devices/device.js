@@ -166,7 +166,9 @@ function Device(data, runtime) {
      */
     this.connect = function () {
         var self = this;
-        if (data.type === DeviceEnum.ModbusRTU) {
+        if (data.type === DeviceEnum.ModbusRTUOverTCP) {
+            comm.init(MODBUSclient.ModbusTypes.RTU);
+        } else if (data.type === DeviceEnum.ModbusRTU) {
             comm.init(MODBUSclient.ModbusTypes.RTU);
         } else if (data.type === DeviceEnum.ModbusTCP) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
