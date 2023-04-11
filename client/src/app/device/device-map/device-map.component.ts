@@ -414,6 +414,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (device.property.slaveid) {
                     result += device.property.slaveid;
                 }
+            } else if (device.type === DeviceType.ModbusRTUOverTCP) {
+                result = 'Modbus-RTUOverTCP  ' + 'Slave ID: ';
+                if (device.property.slaveid) {
+                    result += device.property.slaveid;
+                }
             }
         }
         return result;

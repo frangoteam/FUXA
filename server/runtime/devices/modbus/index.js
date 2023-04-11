@@ -37,7 +37,7 @@ function MODBUSclient(_data, _logger, _events) {
      */
     this.connect = function () {
         return new Promise(function (resolve, reject) {
-            if (data.property && data.property.address && (type === ModbusTypes.TCP || 
+            if (data.property && data.property.address && (type === ModbusTypes.RTUOverTCP || type === ModbusTypes.TCP || 
                     (type === ModbusTypes.RTU && data.property.baudrate && data.property.databits && data.property.stopbits && data.property.parity))) {
                 try {
                     if (!client.isOpen  && _checkWorking(true)) {
@@ -362,6 +362,15 @@ function MODBUSclient(_data, _logger, _events) {
                     port = parseInt(temp);
                 }
                 client.connectTCP(addr, { port: port }, callback)
+            } else if (type === ModbusTypes.RTUOverTCP) {
+                var port = 502;
+                var addr = data.property.address;
+                if (data.property.address.indexOf(':') !== -1) {
+                    var addr = data.property.address.substring(0, data.property.address.indexOf(':'));
+                    var temp = data.property.address.substring(data.property.address.indexOf(':') + 1);
+                    port = parseInt(temp);
+                }
+                client.connectTelnet(addr, { port: port }, callback);
             }
         } catch (err) {
             callback(err);
@@ -653,7 +662,7 @@ function MODBUSclient(_data, _logger, _events) {
     const delay = ms => { return new Promise(resolve => setTimeout(resolve, ms)) };
 }
 
-const ModbusTypes = { RTU: 0, TCP: 1 };
+const ModbusTypes = { RTU: 0, TCP: 1, RTUOverTCP: 2 };
 const ModbusMemoryAddress = { CoilStatus: 0, DigitalInputs: 100000, InputRegisters: 300000, HoldingRegisters: 400000 };
 
 module.exports = {

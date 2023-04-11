@@ -341,7 +341,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 	}
 
 	isModbus() {
-		return (this.data.device.type === DeviceType.ModbusRTU || this.data.device.type === DeviceType.ModbusTCP) ? true : false;
+		return (this.data.device.type === DeviceType.ModbusRTU || this.data.device.type === DeviceType.ModbusTCP || this.data.device.type === DeviceType.ModbusRTUOverTCP) ? true : false;
     }
 
     isOpcua() {
