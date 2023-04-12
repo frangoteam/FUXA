@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { DeviceListComponent } from './device-list/device-list.component';
 import { DeviceMapComponent } from './device-map/device-map.component';
 import { Device, Tag, DeviceViewModeType, DevicesUtils } from './../_models/device';
-import { ProjectService, SaveMode } from '../_services/project.service';
+import { ProjectService } from '../_services/project.service';
 import { HmiService } from '../_services/hmi.service';
 import { DEVICE_READONLY } from '../_models/hmi';
 import { Utils } from '../_helpers/utils';
@@ -30,7 +30,6 @@ export class DeviceComponent implements OnInit, OnDestroy {
     private subscriptionLoad: Subscription;
     private subscriptionDeviceChange: Subscription;
     private subscriptionVariableChange: Subscription;
-    private subscriptionSave: Subscription;
     private askStatusTimer;
 
     devicesViewMode = DeviceViewModeType.devices;
@@ -62,13 +61,6 @@ export class DeviceComponent implements OnInit, OnDestroy {
         this.subscriptionVariableChange = this.hmiService.onVariableChanged.subscribe(event => {
             this.deviceList.updateDeviceValue();
         });
-        this.subscriptionSave = this.projectService.onSaveCurrent.subscribe((mode: SaveMode) => {
-            if (mode === SaveMode.SaveAs) {
-                this.projectService.saveAs();
-            } else if (mode === SaveMode.Save) {
-                this.projectService.save();
-            }
-        });
         this.askStatusTimer = setInterval(() => {
             this.hmiService.askDeviceStatus();
         }, 10000);
@@ -86,9 +78,6 @@ export class DeviceComponent implements OnInit, OnDestroy {
             }
             if (this.subscriptionVariableChange) {
                 this.subscriptionVariableChange.unsubscribe();
-            }
-            if (this.subscriptionSave) {
-                this.subscriptionSave.unsubscribe();
             }
         } catch (e) {
         }

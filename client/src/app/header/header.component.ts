@@ -190,9 +190,13 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
      */
     onSaveProject() {
         try {
-            this.projectService.saveProject(SaveMode.Save);
+            if (this.savededitor) {
+                this.projectService.save();
+            } else {
+                this.projectService.saveProject(SaveMode.Save);
+            }
         } catch (e) {
-
+            console.error(e);
         }
     }
 

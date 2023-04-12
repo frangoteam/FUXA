@@ -139,9 +139,7 @@ export class ProjectService {
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
             if (!skipNotification) {
-                var msg = '';
-                this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt; });
-                this.toastr.success(msg);
+                this.notifySuccessMessage('msg.project-save-success');
             }
         }, err => {
             console.error(err);
@@ -293,7 +291,7 @@ export class ProjectService {
      * Save to Server
      * @param view
      */
-    setView(view: View) {
+    setView(view: View, notify = false) {
         let v = null;
         for (let i = 0; i < this.projectData.hmi.views.length; i++) {
             if (this.projectData.hmi.views[i].id === view.id) {
@@ -306,6 +304,9 @@ export class ProjectService {
             this.projectData.hmi.views.push(view);
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
+            if (notify) {
+                this.notifySuccessMessage('msg.project-save-success');
+            }
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -895,7 +896,7 @@ export class ProjectService {
         } else {
             delete this.projectData.server;
         }
-        this.save();
+        this.save(true);
     }
 
     getProject() {
@@ -1083,6 +1084,12 @@ export class ProjectService {
             }
         }
         return obj;
+    }
+
+    private notifySuccessMessage(msgKey: string) {
+        var msg = '';
+        this.translateService.get(msgKey).subscribe((txt: string) => { msg = txt; });
+        this.toastr.success(msg);
     }
 }
 

@@ -136,7 +136,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 } else if (mode === SaveMode.SaveAs) {
                     this.projectService.saveAs();
                 } else if (mode === SaveMode.Save) {
-                    this.onSaveProject();
+                    this.onSaveProject(true);
                 }
             });
             this.gaugesManager.clearMemory();
@@ -339,8 +339,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Set or Add the View to Project
      * Save the View to Server
      */
-    private saveView(view: View) {
-        this.projectService.setView(view);
+    private saveView(view: View, notify = false) {
+        this.projectService.setView(view, notify);
     }
 
     /**
@@ -876,10 +876,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Save Project
      * Save the current View
      */
-    onSaveProject() {
+    onSaveProject(notify = false) {
         if (this.currentView) {
             this.currentView.svgcontent = this.getContent();
-            this.saveView(this.currentView);
+            this.saveView(this.currentView, notify);
         }
     }
 
