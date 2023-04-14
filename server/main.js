@@ -346,7 +346,6 @@ process.on('uncaughtException', function (err) {
     } else {
         logger.error(err);
     }
-    process.exit(1);
 });
 
 process.on('SIGINT', function () {
