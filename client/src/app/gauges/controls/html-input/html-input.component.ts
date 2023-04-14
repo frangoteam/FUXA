@@ -106,8 +106,8 @@ export class HtmlInputComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(gab: GaugeSettings, isview: boolean) {
-        if (isview) {
+    static initElement(gab: GaugeSettings, isView: boolean) {
+        if (isView) {
             let ele = document.getElementById(gab.id);
             if (ele && gab.property) {
                 let input = Utils.searchTreeStartWith(ele, this.prefix);
@@ -115,13 +115,40 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     input.value = '';
                     input.setAttribute('autocomplete', 'off');
                     if (gab.property.options && gab.property.options.numeric) {
-                        input.setAttribute('type', 'number');
-                        if (!Utils.isNullOrUndefined(gab.property.options.min)) {
-                            input.setAttribute('min', gab.property.options.min);
-                        }
-                        if (!Utils.isNullOrUndefined(gab.property.options.max)) {
-                            input.setAttribute('max', gab.property.options.max);
-                        }
+                        const min = parseFloat(gab.property.options.min);
+                        const max = parseFloat(gab.property.options.max);
+                        input.addEventListener('keydown', (event: KeyboardEvent) => {
+                            try {
+                                if (event.code === 'Enter' && !event.view) {
+                                    const value = parseFloat(input.value);
+                                    let warningMessage = '';
+                                    if (min > value) {
+                                        warningMessage += `Min=${min} `;
+                                    }
+                                    if (max < value) {
+                                        warningMessage += `Max=${max} `;
+                                    }
+                                    if (warningMessage) {
+                                        let inputPosition = input.getBoundingClientRect();
+                                        const tooltip = document.createElement('div');
+                                        tooltip.innerText = warningMessage;
+                                        tooltip.style.position = 'absolute';
+                                        tooltip.style.top = `${inputPosition.top + input.offsetHeight + 3}px`;
+                                        tooltip.style.left = `${inputPosition.left}px`;
+                                        tooltip.style.zIndex = '99999';
+                                        tooltip.style.padding = '3px 5px';
+                                        tooltip.style.border = '1px solid black';
+                                        tooltip.style.backgroundColor = 'white';
+                                        document.body.appendChild(tooltip);
+                                        setTimeout(() => {
+                                            document.body.removeChild(tooltip);
+                                        }, 2000);
+                                    }
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        });
                     }
 
                     // Adjust the width to better fit the surrounding svg rect
