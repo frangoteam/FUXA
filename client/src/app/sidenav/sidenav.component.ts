@@ -1,8 +1,10 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
+import { Location } from '@angular/common';
 
 import { LayoutSettings, NaviItem, NavigationSettings, LinkType } from '../_models/hmi';
+import { Router } from '@angular/router';
+import { ProjectService } from '../_services/project.service';
 
 @Component({
     selector: 'app-sidenav',
@@ -23,8 +25,10 @@ export class SidenavComponent implements AfterContentChecked {
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
 
-    constructor(private router: Router,
-        private changeDetector: ChangeDetectorRef) {
+    constructor(private location: Location,
+                private router: Router,
+                private projectService: ProjectService,
+                private changeDetector: ChangeDetectorRef) {
     }
 
     ngAfterContentChecked(): void {
@@ -33,6 +37,12 @@ export class SidenavComponent implements AfterContentChecked {
     }
 
     onGoTo(item: NaviItem) {
+        if (this.location.path().startsWith('/home/')) {
+            const view = this.projectService.getViewFromId(item.view);
+            if (view) {
+                this.router.navigate(['/home', view.name]);
+            }
+        }
         if (item.link && item.view === this.viewAsLink) {
             this.goToLink.emit(item.link);
         } else if (item.view) {

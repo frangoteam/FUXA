@@ -4,7 +4,7 @@ import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeD
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
@@ -71,6 +71,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private changeDetector: ChangeDetectorRef,
         public dialog: MatDialog,
         private router: Router,
+        private route: ActivatedRoute,
         private hmiService: HmiService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
@@ -284,6 +285,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (!viewToShow) {
                 viewToShow = this.hmi.views[0];
+            }
+            let startView = this.hmi.views.find(x => x.name === this.route.snapshot.paramMap.get('viewName')?.trim());
+            if (startView) {
+                viewToShow = startView;
             }
             this.homeView = viewToShow;
             this.setBackground();

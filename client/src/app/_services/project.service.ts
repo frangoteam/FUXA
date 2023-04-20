@@ -322,11 +322,21 @@ export class ProjectService {
     }
 
 
-    getViewId(name) {
+    getViewId(name: string) {
         let views = this.getViews();
         for (var i = 0; i < views.length; i++) {
             if (views[i].name === name) {
                 return views[i].id;
+            }
+        }
+        return null;
+    }
+
+    getViewFromId(id: string) {
+        let views = this.getViews();
+        for (var i = 0; i < views.length; i++) {
+            if (views[i].id === id) {
+                return views[i];
             }
         }
         return null;
