@@ -29,6 +29,7 @@ function Device(data, runtime) {
     var devicePolling = null;                               // TimerInterval to polling read device value
     var connectionStatus = ConnectionStatusEnum.OFF;        // Connection status depending of read tag value response
     var pollingInterval = DEVICE_POLLING_INTERVAL;
+    var sharedDevices = data.sharedDevices;
     var comm;                                               // Interface to OPCUA/S7/.. Device
                                                             // required: connect, disconnect, isConnected, polling, init, load, getValue, 
                                                             // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
@@ -42,7 +43,7 @@ function Device(data, runtime) {
             return null;
         }
         comm = OpcUAclient.create(data, logger, events, manager);
-    } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
+    } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP || data.type === DeviceEnum.ModbusRTUOverTCP) {
         if (!MODBUSclient) {
             return null;
         }
@@ -170,6 +171,8 @@ function Device(data, runtime) {
             comm.init(MODBUSclient.ModbusTypes.RTU);
         } else if (data.type === DeviceEnum.ModbusTCP) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
+        } else if (data.type === DeviceEnum.ModbusRTUOverTCP) {
+            comm.init(MODBUSclient.ModbusTypes.RTUOverTCP);
         }
         return comm.connect().then(function () {
             devicePolling = setInterval(function () {
@@ -440,6 +443,7 @@ var DeviceEnum = {
     OPCUA: 'OPCUA',
     ModbusRTU: 'ModbusRTU',
     ModbusTCP: 'ModbusTCP',
+    ModbusRTUOverTCP: 'ModbusRTUOverTCP',
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
