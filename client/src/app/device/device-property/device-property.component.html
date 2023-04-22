@@ -123,6 +123,14 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusRTU">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.property-connection-options' | translate}}</span>
+                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 262px">
+                            <mat-option *ngFor="let value of modbusRtuOptionType" [value]="value">
+                                {{ value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
                     <div style="display: block;margin-bottom: 10px;">
                         <div class="my-form-field" style="display: inline-block;">
                             <span>{{'device.property-serialport' | translate}}</span>
@@ -171,20 +179,14 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
-                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
-                        <span>{{'device.property-address-port' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 262px" type="ip" (click)="onAddressChanged()">
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.property-connection-options' | translate}}</span>
+                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 262px">
+                            <mat-option *ngFor="let value of modbusTcpOptionType" [value]="value">
+                                {{ value }}
+                            </mat-option>
+                        </mat-select>
                     </div>
-                    <div class="my-form-field" style="display: inline-block;margin-left: 15px;">
-                        <span>{{'device.property-slave-id' | translate}}</span>
-                        <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 65px" type="text">
-                    </div>
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
-                        <span>{{'device.property-tockenized' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
-                    </div>
-                </div>
-                <div *ngSwitchCase="deviceType.ModbusRTUOverTCP">
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                         <span>{{'device.property-address-port' | translate}}</span>
                         <input [(ngModel)]="data.device.property.address" style="width: 262px" type="ip" (click)="onAddressChanged()">

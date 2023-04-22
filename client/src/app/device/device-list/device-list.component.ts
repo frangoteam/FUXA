@@ -253,7 +253,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (!tag.address) {
             return '';
         }
-        if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP || this.deviceSelected.type === DeviceType.ModbusRTUOverTCP) {
+        if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
             return parseInt(tag.address) + parseInt(tag.memaddress);
         } else if (this.deviceSelected.type === DeviceType.WebAPI) {
             if (tag.options) {
@@ -270,7 +270,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     isToEdit(type, tag: Tag) {
-        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusRTUOverTCP || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
+        if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
             return true;
         } else if (type === DeviceType.MQTTclient) {

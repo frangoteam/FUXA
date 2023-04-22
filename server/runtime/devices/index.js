@@ -122,12 +122,12 @@ function load() {
     // check existing or to add new 
     for (var id in tempdevices) {
         if (tempdevices[id].enabled) {
-            if(tempdevices[id].type=='ModbusRTU' || tempdevices[id].type=='ModbusRTUOverTCP'){
+            if(tempdevices[id].type == 'ModbusRTU'){
                 if(!(tempdevices[id].property.address in sharedDevices)){
-                    sharedDevices[tempdevices[id].property.address]=[];
+                    sharedDevices[tempdevices[id].property.address] = [];
                 }
                 sharedDevices[tempdevices[id].property.address].push(id);
-                tempdevices[id].sharedDevices=sharedDevices;
+                tempdevices[id].sharedDevices = sharedDevices;
             }
             devices.loadDevice(tempdevices[id]);
         }

@@ -414,11 +414,6 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (device.property.slaveid) {
                     result += device.property.slaveid;
                 }
-            } else if (device.type === DeviceType.ModbusRTUOverTCP) {
-                result = 'Modbus-RTUOverTCP  ' + 'Slave ID: ';
-                if (device.property.slaveid) {
-                    result += device.property.slaveid;
-                }
             }
         }
         return result;
@@ -506,6 +501,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         device.property.format = tempdevice.property.format;
                         device.property.broadcastAddress = tempdevice.property.broadcastAddress;
                         device.property.adpuTimeout = tempdevice.property.adpuTimeout;
+                        if (tempdevice.property.connectionOption) {
+                            device.property.connectionOption = tempdevice.property.connectionOption;
+                        }
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }

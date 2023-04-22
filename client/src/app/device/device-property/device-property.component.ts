@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType } from './../../_models/device';
 
 @Component({
 	selector: 'app-device-property',
@@ -66,6 +66,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	methodType = ['GET'];//, 'POST'];
 	parserType = ['JSON'];//, 'CSV'];
 	hostInterfaces = [];
+	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
+	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
