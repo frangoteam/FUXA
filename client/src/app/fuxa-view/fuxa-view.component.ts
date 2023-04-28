@@ -650,8 +650,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         iframe = new CardModel(id);
-        iframe.x = Utils.isNumeric(options.left) ? parseInt(options.right) : event.clientX;
-        iframe.y = Utils.isNumeric(options.top) ? parseInt(options.left) : event.clientY;
+        iframe.x = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
+        iframe.y = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
         iframe.width = 600;
         iframe.height = 400;
         iframe.scale = 1;
