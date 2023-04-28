@@ -75,15 +75,25 @@
         <div style="display: table; padding-left: 20px; padding-top: 5px;" *ngIf="withAddress(item.action)">
             <div class="my-form-field">
                 <span>{{'gauges.property-event-width' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.width" type="text" style="width: 60px">
+                <input numberOnly [(ngModel)]="item.actoptions.width" type="number" style="width: 60px">
             </div>
-            <div class="my-form-field" style="padding-left: 20px;">
+            <div class="my-form-field ml10">
                 <span>{{'gauges.property-event-height' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.height" type="text" style="width: 60px">
+                <input numberOnly [(ngModel)]="item.actoptions.height" type="number" style="width: 60px">
             </div>
-            <div class="my-form-field" style="padding-left: 20px;" *ngIf="withScale(item.action)">
+            <div class="my-form-field ml10" *ngIf="withScale(item.action)">
                 <span>{{'gauges.property-event-scale' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.scale" type="text" style="width: 60px">
+                <input numberOnly [(ngModel)]="item.actoptions.scale" type="number" style="width: 60px">
+            </div>
+            <div *ngIf="withPosition(item.action)" class="block mt5">
+                <div class="my-form-field">
+                    <span>{{'general-x' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.actoptions.left" type="number" style="width: 60px">
+                </div>
+                <div class="my-form-field ml10">
+                    <span>{{'general-y' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.actoptions.top" type="number" style="width: 60px">
+                </div>
             </div>
         </div>
     </div>

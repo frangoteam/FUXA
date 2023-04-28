@@ -650,8 +650,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         iframe = new CardModel(id);
-        iframe.x = event.clientX;
-        iframe.y = event.clientY;
+        iframe.x = Utils.isNumeric(options.left) ? parseInt(options.right) : event.clientX;
+        iframe.y = Utils.isNumeric(options.top) ? parseInt(options.left) : event.clientY;
         iframe.width = 600;
         iframe.height = 400;
         iframe.scale = 1;
@@ -664,7 +664,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!isNaN(parseFloat(options.scale))) {
             iframe.scale = parseFloat(options.scale);
         }
-
         iframe.link = link;
         iframe.name = link;
         this.iframes.push(iframe);
@@ -693,7 +692,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!isNaN(parseInt(options.height))) {
             height = parseInt(options.height);
         }
-        window.open(link, '_blank', 'height=' + height + ',width=' + width + ',left=' + event.clientX + ',top=' + event.clientY);
+        const left = Utils.isNumeric(options.left) ? parseInt(options.right) : event.clientX;
+        const top = Utils.isNumeric(options.top) ? parseInt(options.left) : event.clientY;
+        window.open(link, '_blank', 'height=' + height + ',width=' + width + ',left=' + left + ',top=' + top);
     }
 
     onCloseCard(card: CardModel) {
