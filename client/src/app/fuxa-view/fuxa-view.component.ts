@@ -652,18 +652,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         iframe = new CardModel(id);
         iframe.x = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
         iframe.y = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
-        iframe.width = 600;
-        iframe.height = 400;
-        iframe.scale = 1;
-        if (!isNaN(parseInt(options.width))) {
-            iframe.width = parseInt(options.width);
-        }
-        if (!isNaN(parseInt(options.height))) {
-            iframe.height = parseInt(options.height);
-        }
-        if (!isNaN(parseFloat(options.scale))) {
-            iframe.scale = parseFloat(options.scale);
-        }
+        iframe.width = Utils.isNumeric(options.width) ? parseInt(options.width) : 600;
+        iframe.height = Utils.isNumeric(options.height) ? parseInt(options.height) : 400;
+        iframe.scale = Utils.isNumeric(options.scale) ? parseFloat(options.scale) : 1;
         iframe.link = link;
         iframe.name = link;
         this.iframes.push(iframe);
@@ -684,17 +675,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     openWindow(id: string, event: any, link: string, options: any) {
-        let width = 600;
-        let height = 400;
-        if (!isNaN(parseInt(options.width))) {
-            width = parseInt(options.width);
-        }
-        if (!isNaN(parseInt(options.height))) {
-            height = parseInt(options.height);
-        }
-        const left = Utils.isNumeric(options.left) ? parseInt(options.right) : event.clientX;
-        const top = Utils.isNumeric(options.top) ? parseInt(options.left) : event.clientY;
-        window.open(link, '_blank', 'height=' + height + ',width=' + width + ',left=' + left + ',top=' + top);
+        const width = Utils.isNumeric(options.width) ? parseInt(options.width) : 600;
+        const height = Utils.isNumeric(options.height) ? parseInt(options.height) : 400;
+        const left = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
+        const top = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
+        console.log(top);
+        window.open(link, '_blank', `height=${height},width=${width},left=${left},top=${top}`);
     }
 
     onCloseCard(card: CardModel) {
