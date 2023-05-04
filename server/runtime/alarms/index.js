@@ -140,7 +140,7 @@ function AlarmsManager(_runtime) {
     this.getAlarmsHistory = function (query, groups) {
         return new Promise(function (resolve, reject) {
             var history = [];
-            alarmstorage.getAlarmsHistory(query.from, query.to).then(result => {
+            alarmstorage.getAlarmsHistory(query.start, query.end).then(result => {
                 for (var i = 0; i < result.length; i++) {
                     var alr = new AlarmHistory(result[i].nametype);
                     alr.status = result[i].status;

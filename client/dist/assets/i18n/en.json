@@ -102,6 +102,7 @@
     "dlg.ok": "OK",
     "dlg.cancel": "CANCEL",
     "dlg.close": "CLOSE",
+    "dlg.apply": "APPLY",
 
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",

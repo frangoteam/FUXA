@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.1.13-1198",
+  "version": "1.1.13-1199",
   "keywords": [],
   "author": "frangoteam <4frango@gmail.com>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -26,6 +26,7 @@
     "@angular/core": "^14.2.12",
     "@angular/forms": "^14.2.12",
     "@angular/material": "^14.2.7",
+    "@angular/material-moment-adapter": "^14.2.7",
     "@angular/platform-browser": "^14.2.12",
     "@angular/platform-browser-dynamic": "^14.2.12",
     "@angular/router": "^14.2.12",

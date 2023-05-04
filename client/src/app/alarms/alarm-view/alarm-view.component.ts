@@ -3,11 +3,14 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subject, timer, empty } from 'rxjs';
-import { takeUntil, switchMap, catchError } from 'rxjs/operators';
+import { takeUntil, switchMap, catchError, delay } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/alarm';
+import { FormControl, FormGroup } from '@angular/forms';
+
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-alarm-view',
@@ -28,6 +31,8 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     alarmShowType = AlarmShowType;
     showType = AlarmShowType.alarms;
     history = [];
+    alarmsLoading = false;
+    dateRange: FormGroup;
 
     @Input() autostart = false;
     @Input() showInContainer = false;
@@ -43,7 +48,13 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy = new Subject<void>();
 
     constructor(private translateService: TranslateService,
-        private hmiService: HmiService) { }
+        private hmiService: HmiService) {
+            const today = moment();
+            this.dateRange = new FormGroup({
+                endDate: new FormControl(today.set({hour: 23, minute: 59, second: 59, millisecond: 999}).toDate()),
+                startDate: new FormControl(today.set({hour: 0, minute: 0, second: 0, millisecond: 0}).add(-3, 'day').toDate())
+            });
+        }
 
     ngOnInit() {
         Object.keys(this.statusText).forEach(key => {
@@ -145,10 +156,17 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onShowAlarmsHistory() {
+        console.log(new Date(this.dateRange.value.startDate), new Date(this.dateRange.value.endDate));
         this.showType = AlarmShowType.history;
         this.displayColumns = this.historyColumns;
-        let query: AlarmQuery = <AlarmQuery>{ from: null, to: null };
-        this.hmiService.getAlarmsHistory(query).subscribe(result => {
+        let query: AlarmQuery = <AlarmQuery>{
+            start: new Date(this.dateRange.value.startDate),
+            end: new Date(this.dateRange.value.endDate)
+        };
+		this.alarmsLoading = true;
+        this.hmiService.getAlarmsHistory(query).pipe(
+            delay(1000)
+        ).subscribe(result => {
             if (result) {
                 result.forEach(alr => {
                     alr.status = this.getStatus(alr.status);
@@ -156,8 +174,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 this.dataSource.data = result;
             }
-        }, err => {
-            console.error('get Alarms history err: ' + err);
+		    this.alarmsLoading = false;
         });
     }
 }
