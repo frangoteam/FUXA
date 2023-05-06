@@ -7,7 +7,7 @@ import { Subject, ReplaySubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Graph, GraphType, GraphRangeType, GraphBarXType, GraphDateGroupType } from '../../../../_models/graph';
-import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
+import { GraphConfigComponent, IDataGraphResult } from '../../../../editor/graph-config/graph-config.component';
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
@@ -141,10 +141,14 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             minWidth: '1090px', width: '1090px',
             data: { type: (this.graphType === GraphType.bar) ? 'bar' : 'pie' }
         });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: IDataGraphResult) => {
             if (result) {
-                this.data.graphs = result;
+                this.data.graphs = result.graphs;
                 this.loadGraphs();
+                if (result.selected) {
+                    this.graphCtrl.setValue(result.selected);
+                }
+                this.onGraphChanged();
             }
         });
     }

@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { GaugeChartProperty, DateFormatType, TimeFormatType } from '../../../../_models/hmi';
 import { Chart, ChartViewType, ChartLegendMode, ChartRangeType } from '../../../../_models/chart';
 import { ChartUplotComponent } from '../chart-uplot/chart-uplot.component';
-import { ChartConfigComponent } from '../../../../editor/chart-config/chart-config.component';
+import { ChartConfigComponent, IDataChartResult } from '../../../../editor/chart-config/chart-config.component';
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
 import { ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
@@ -103,10 +103,14 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
             position: { top: '60px' },
             minWidth: '1090px', width: '1090px'
         });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: IDataChartResult) => {
             if (result) {
-                this.data.charts = result;
+                this.data.charts = result.charts;
                 this.loadChart();
+                if (result.selected) {
+                    this.chartCtrl.setValue(result.selected);
+                }
+                this.onChartChanged();
             }
         });
     }
