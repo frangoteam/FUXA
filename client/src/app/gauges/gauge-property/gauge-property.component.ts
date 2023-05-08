@@ -72,7 +72,6 @@ export class GaugePropertyComponent implements AfterViewInit {
 
         if (this.data.withBitmask) {
             this.withBitmask = this.data.withBitmask;
-            this.withBitmask = this.data.withBitmask;
         }
     }
 

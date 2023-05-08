@@ -33,6 +33,7 @@ import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.componen
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
+import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 
 @Injectable()
 export class GaugesManager {
@@ -564,7 +565,8 @@ export class GaugesManager {
      */
     putEvent(event: Event) {
         if (event.ga.property && event.ga.property.variableId) {
-            this.hmiService.putSignalValue(event.ga.property.variableId, event.value);
+            const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.ga.property.variableId]?.value);
+            this.hmiService.putSignalValue(event.ga.property.variableId, String(value));
             event.dbg = 'put ' + event.ga.property.variableId + ' ' + event.value;
         }
         this.onevent.emit(event);

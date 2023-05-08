@@ -1,10 +1,11 @@
 import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
-import { GaugeSettings, Variable, GaugeStatus, Event } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, Event, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 import { NgxSwitchComponent } from '../../../gui-helpers/ngx-switch/ngx-switch.component';
 import { Utils } from '../../../_helpers/utils';
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 
 @Injectable()
 export class HtmlSwitchComponent {
@@ -36,6 +37,10 @@ export class HtmlSwitchComponent {
         return GaugeDialogType.Switch;
     }
 
+    static isBitmaskSupported(): boolean {
+        return true;
+    }
+
     static bindEvents(ga: GaugeSettings, slider?: NgxSwitchComponent, callback?: any): Event {
         if (slider) {
             slider.bindUpdate((val) => {
@@ -52,14 +57,18 @@ export class HtmlSwitchComponent {
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus, switcher?: NgxSwitchComponent) {
         try {
             if (switcher) {
-                let val = parseFloat(sig.value);
-                if (Number.isNaN(val)) {
+                let value = parseFloat(sig.value);
+                if (Number.isNaN(value)) {
                     // maybe boolean
-                    val = Number(sig.value);
+                    value = Number(sig.value);
                 } else {
-                    val = parseFloat(val.toFixed(5));
+                    value = parseFloat(value.toFixed(5));
                 }
-                switcher.setValue(val);
+                value = GaugeBaseComponent.checkBitmaskAndValue((<GaugeProperty>ga.property).bitmask,
+                                                                        value,
+                                                                        (<GaugeProperty>ga.property).options.offValue,
+                                                                        (<GaugeProperty>ga.property).options.onValue);
+                switcher.setValue(value);
             }
         } catch (err) {
             console.error(err);

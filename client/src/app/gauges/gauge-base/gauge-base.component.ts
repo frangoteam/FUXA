@@ -183,6 +183,20 @@ export class GaugeBaseComponent {
         return value;
     }
 
+    static checkBitmaskAndValue(bitmask: number, value: number, min: number, max: number): number {
+        if (bitmask) {
+            return (value & max & bitmask) ? 1 : 0;
+        }
+        return (value == min) ? 0 : 1;
+    }
+
+    static valueBitmask(bitmask: number, value: number, source: number): number {
+        if (bitmask) {
+            return (value & bitmask) | (source & ~bitmask);
+        }
+        return value;
+    }
+
     static getBlinkActionId(act: GaugeAction) {
         return `${act.variableId}-${act.range.max}-${act.range.min}`;
     }
