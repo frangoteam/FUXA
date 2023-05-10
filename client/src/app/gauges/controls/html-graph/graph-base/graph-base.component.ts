@@ -55,4 +55,5 @@ export interface GraphOptions extends ChartOptions {
     gridLinesColor?: string;
     plugins?: any;
     scales?: any;
+    backgroundColor?: string;
 }

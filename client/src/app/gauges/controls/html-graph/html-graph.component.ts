@@ -68,6 +68,11 @@ export class HtmlGraphComponent extends GaugeBaseComponent {
                 let opt = <GraphOptions>{ panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
                 opt = { ...GraphBarComponent.DefaultOptions(), ...opt };
                 componentRef.instance.setOptions(opt);
+                if (gab.property.options.backgroundColor) {
+                    window['svgEditor']?.setColor(gab.property.options.backgroundColor, 100, 'fill');
+                } else {
+                    window['svgEditor']?.setColor('none', 100, 'fill');
+                }
 
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;
