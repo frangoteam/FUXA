@@ -58,8 +58,7 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        // var draw = SVG().addTo('#pipe').size('100%', '100%');
-        var draw = SVG('pipe');
+        var draw = SVG().addTo('#pipe').size('100%', '100%');
         this.pipepath.bk = draw.path('m 1,120 200,0');
         this.pipepath.fg = draw.path('m 1,120 200,0');
         this.pipepath.hp = draw.path('m 1,120 200,0');
