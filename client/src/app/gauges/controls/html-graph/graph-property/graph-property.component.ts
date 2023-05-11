@@ -80,7 +80,7 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
                 this.data.settings.property.options = GraphBarComponent.DefaultOptions();
             }
         }
-        this.options = this.data.settings.property.options;
+        this.options = Utils.mergeDeep(GraphBarComponent.DefaultOptions(), this.data.settings.property.options);
         // load graphs list to choise
         this.loadGraphs();
         let graph = null;
