@@ -326,10 +326,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onSelectView(this.hmi.views[0]);
             }
         }
+        this.hmi.layout = <LayoutSettings>Utils.mergeDeep(new LayoutSettings(), this.hmi.layout);
+
         // check and set start page
-        if (!this.hmi.layout) {
-            this.hmi.layout = new LayoutSettings();
-        }
         if (!this.hmi.layout.start) {
             this.hmi.layout.start = this.hmi.views[0].id;
         }

@@ -50,6 +50,8 @@ export class LayoutSettings {
     theme = '';
     /** Show login by start */
     loginonstart?: boolean = false;
+    /** Show connection error toast */
+    show_connection_error? = true;
 }
 
 export class NavigationSettings {

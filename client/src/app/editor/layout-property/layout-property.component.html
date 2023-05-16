@@ -62,6 +62,15 @@
                         </mat-select>
                     </div>
                 </div>
+                <div style="display: block;margin-top: 5px;">
+                    <div class="my-form-field" style="display: inline-block">
+                        <span>{{'dlg.layout-connection-message' | translate}}</span>
+                        <mat-select [(value)]="data.layout.show_connection_error" style="width: 400px">
+                            <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
+                            <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
+                        </mat-select>
+                    </div>
+                </div>                
             </mat-tab>
             <mat-tab label="{{'dlg.layout-navigation' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
                 <div style="display: inline-block;margin-top: 10px;width:100%; min-height: 500px; overflow-y: auto; height: 650px">

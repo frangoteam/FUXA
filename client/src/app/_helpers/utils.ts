@@ -300,13 +300,19 @@ export class Utils {
         });
     };
 
+    /** Merge of array of object, the next overwrite the last */
     static mergeDeep(...objArray) {
         const result = {};
         objArray.forEach((obj) => {
             if (obj) {
                 Object.keys(obj).forEach((key) => {
-                    if (obj[key] && typeof obj[key] === 'object') {
+                    if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
                         result[key] = Utils.mergeDeep(result[key], obj[key]);
+                    } else if (Array.isArray(obj[key])) {
+                        if (!Array.isArray(result[key])) {
+                            result[key] = [];
+                        }
+                        result[key] = result[key].concat(obj[key]);
                     } else {
                         result[key] = obj[key];
                     }

@@ -43,6 +43,7 @@
     "dlg.layout-lbl-login-start": "Show login on start",
     "dlg.layout-lbl-zoom": "Zoom",
     "dlg.layout-navigation-mode": "Show Navigation",
+    "dlg.layout-connection-message": "Show connection error (Toast)",
     "dlg.layout-show-dev": "Show button",
     "dlg.layout-navigation": "Navigation Side Menu",
     "dlg.layout-nav-bkcolor": "Background Color",

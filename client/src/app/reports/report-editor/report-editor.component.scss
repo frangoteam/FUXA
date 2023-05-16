@@ -102,10 +102,10 @@ $panelRight: 880px;
     margin-top: 15px;
 }
 
-::ng-deep .mat-tab-label {
+::ng-deep .content-panel .mat-tab-label {
     height: 34px !important;
     min-width: 120px !important;
-    width: 140px !important;
+    width: 140px;
 }
 
 .menu-item-select {

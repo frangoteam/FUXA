@@ -41,9 +41,8 @@ export class LayoutPropertyComponent implements OnInit {
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
         private translateService: TranslateService,
         private resourcesService: ResourcesService) {
-        if (!data.layout) {
-            data.layout = new LayoutSettings();
-        }
+
+        data.layout = Utils.mergeDeep(new LayoutSettings(), data.layout);
         this.startView = data.layout.start;
         this.sideMode = data.layout.navigation.mode;
         if (!data.layout.navigation.items) {

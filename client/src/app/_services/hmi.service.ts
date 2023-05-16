@@ -48,6 +48,10 @@ export class HmiService {
         if (environment.serverEnabled) {
             this.initSocket();
         }
+
+        this.projectService.onLoadHmi.subscribe(() => {
+            this.hmi = this.projectService.getHmi();
+        });
     }
 
     /**
@@ -162,7 +166,7 @@ export class HmiService {
             // devicse status
             this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
                 this.onDeviceChanged.emit(message);
-                if (message.status === 'connect-error') {
+                if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
                     let name = message.id;
                     let device = this.projectService.getDeviceFromId(message.id);
                     if (device) {name = device.name;}
