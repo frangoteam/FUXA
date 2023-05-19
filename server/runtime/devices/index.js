@@ -221,7 +221,7 @@ function getDeviceValue(deviceid, sigid) {
             let result = activeDevices[deviceid].getValue(sigid);
             if (fully) {
                 return result;
-            } else {
+            } else if (result) {
                 return result.value;
             }
         }
