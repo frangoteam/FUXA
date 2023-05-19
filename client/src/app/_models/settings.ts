@@ -13,6 +13,8 @@ export class AppSettings {
     smtp = new SmtpSettings();
     /** Daq store database */
     daqstore = new DaqStore();
+    /** Alarms store settings */
+    alarms = new AlarmsSettings();
 }
 
 export class SmtpSettings {
@@ -67,6 +69,10 @@ export class DaqStore {
     }
 }
 
+export class AlarmsSettings {
+    retention = AlarmsRetentionType.year1;
+}
+
 export class StoreCredentials {
     token?: string;
     username?: string;
@@ -97,6 +103,16 @@ export enum DaqStoreRetentionType {
     days30 = 'days30',
     days90 = 'days90',
     year1 = 'year1',
+}
+
+export enum AlarmsRetentionType {
+    none = 'none',
+    days7 = 'days7',
+    days30 = 'days30',
+    days90 = 'days90',
+    year1 = 'year1',
+    year3 = 'year3',
+    year5 = 'year5',
 }
 
 export class MailMessage {

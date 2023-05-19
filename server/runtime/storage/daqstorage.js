@@ -121,7 +121,7 @@ function checkRetention() {
     return new Promise(async function (resolve, reject) {
         if (settings.daqstore && _getDbType() === DaqStoreTypeEnum.SQlite && settings.daqstore.retention !== 'none') {
             try {
-                SqliteDB.checkRetention(_getRetentionLimit(settings.daqstore.retention), settings.dbDir, 
+                SqliteDB.checkRetention(utils.getRetentionLimit(settings.daqstore.retention), settings.dbDir, 
                 (fileDeleted) => {
                     logger.info(`daqstorage.checkRetention file ${fileDeleted} removed`);
                 },
@@ -163,30 +163,6 @@ function _getValue(value) {
         return '';
     }
     return value.toString();
-}
-
-var _getRetentionLimit = function(retention) {
-    var dayToAdd = 0;
-    if (retention === 'day1') {
-        dayToAdd = 1;
-    } else if (retention === 'days2') {
-        dayToAdd = 2;
-    } else if (retention === 'days3') {
-        dayToAdd = 3;
-    } else if (retention === 'days7') {
-        dayToAdd = 7;
-    } else if (retention === 'days14') {
-        dayToAdd = 14;
-    } else if (retention === 'days30') {
-        dayToAdd = 30;
-    } else if (retention === 'days90') {
-        dayToAdd = 90;
-    } else if (retention === 'year1') {
-        dayToAdd = 365;
-    }
-    const date = new Date();
-    date.setDate(date.getDate() - dayToAdd);
-    return date;
 }
 
 module.exports = {

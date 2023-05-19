@@ -21,11 +21,19 @@ function Cleaner(_runtime) {
                 if (!_isToExecute(time) && !force) {
                     resolve(true);
                 } else {
-                    await _clearStorage().then(() => {
+                    const clearFncs = [await runtime.daqStorage.checkRetention(),
+                                       await runtime.alarmsMgr.checkRetention()];
+
+                    Promise.all(clearFncs).then(values => {
                         lastExecuted = currentTime;
                         resolve();
-                    }).catch(function (err) {
-                        reject(err);
+                    }, reason => {
+                        if (reason && reason.stack) {
+                            logger.error(`Cleaner.execute: ${reason.stack}`);
+                        } else {
+                            logger.error(`Cleaner.execute: ${reason}`);
+                        }
+                        reject(reason);
                     });
                 }
             } catch (err) {
@@ -44,10 +52,6 @@ function Cleaner(_runtime) {
             return true;
         }
         return false;
-    }
-
-    var _clearStorage = function () {
-        return runtime.daqStorage.checkRetention();
     }
 }
 

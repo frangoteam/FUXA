@@ -133,6 +133,9 @@ try {
         if (mysettings.daqstore) {
             settings.daqstore = mysettings.daqstore;
         }
+        if (mysettings.alarms) {
+            settings.alarms = mysettings.alarms;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)

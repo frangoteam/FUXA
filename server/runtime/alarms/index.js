@@ -227,6 +227,24 @@ function AlarmsManager(_runtime) {
     }
 
     /**
+     * Clear Alarm history
+     */
+    this.checkRetention = function () {
+        return new Promise(async function (resolve, reject) {
+            if (settings.alarms && settings.alarms.retention !== 'none') {
+                alarmstorage.clearAlarmsHistory(utils.getRetentionLimit(settings.alarms.retention)).then((result) => {
+                    logger.info(`alarms.checkRetention processed`);
+                    resolve(true);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    /**
      * Check the Alarms state machine
      */
     var _checkStatus = function () {

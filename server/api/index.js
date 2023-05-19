@@ -132,6 +132,9 @@ function mergeUserSettings(settings) {
     if (settings.daqstore) {
         runtime.settings.daqstore = settings.daqstore;
     }
+    if (settings.alarms) {
+        runtime.settings.alarms = settings.alarms;
+    }
 }
 
 function verifyGroups(req) {

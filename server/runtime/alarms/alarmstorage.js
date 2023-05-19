@@ -74,6 +74,22 @@ function clearAlarms(all) {
 }
 
 /**
+ * Clear Alarms history
+ */
+function clearAlarmsHistory(dtlimit) {
+    return new Promise(function (resolve, reject) {
+        var sql = "DELETE FROM chronicle WHERE ontime < ?;";
+        db_alarms.all(sql, [dtlimit.getTime()], function (err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+/**
  * Return the Alarms list
  */
 function getAlarms() {
@@ -184,5 +200,6 @@ module.exports = {
     getAlarmsHistory: getAlarmsHistory,
     setAlarms: setAlarms,
     clearAlarms: clearAlarms,
+    clearAlarmsHistory: clearAlarmsHistory,
     removeAlarm: removeAlarm
 };

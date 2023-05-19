@@ -201,6 +201,7 @@ function _checkPluginsSupported() {
                 }
             }
         } catch (err) {
+            logger.error(err);
         }
     });
     // check in _pkg
@@ -223,6 +224,7 @@ function _checkPluginsSupported() {
                 }
             }
         } catch (err) {
+            logger.error(err);
         }
     });
     return plugins;
