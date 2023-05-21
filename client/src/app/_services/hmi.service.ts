@@ -361,8 +361,7 @@ export class HmiService {
     addSignal(signalId: string, ga: GaugeSettings) {
         // add to variable list
         if (!this.variables[signalId]) {
-            let v = new Variable(signalId, null, null);
-            this.variables[signalId] = v;
+            this.variables[signalId] = new Variable(signalId, null, this.projectService.getDeviceFromTagId(signalId));
         }
     }
 
@@ -376,8 +375,7 @@ export class HmiService {
         this.viewSignalGaugeMap.add(domViewId, signalId, ga);
         // add to variable list
         if (!this.variables[signalId]) {
-            let v = new Variable(signalId, null, null);
-            this.variables[signalId] = v;
+            this.variables[signalId] = new Variable(signalId, null, this.projectService.getDeviceFromTagId(signalId));
         }
     }
 

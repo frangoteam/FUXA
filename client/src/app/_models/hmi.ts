@@ -1,4 +1,4 @@
-import { Tag } from './device';
+import { Device, DeviceType, Tag } from './device';
 
 export class Hmi {
     /** Layout for navigation menu, header bar, ...  */
@@ -392,8 +392,14 @@ export class Variable {
     value: string;
     error: number;
     timestamp: number;
-    constructor(id: string, source: string, name: string) {
-        this.id = id; this.name = name; this.source = source;
+    device?: Device;
+    constructor(id: string, name: string, device?: Device) {
+        this.id = id;
+        this.name = name;
+        this.device = device;
+        if (device?.type === DeviceType.internal) {
+            this.value = '0';
+        }
     }
 }
 
