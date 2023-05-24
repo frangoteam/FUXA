@@ -9,6 +9,8 @@ let influx = require('influx')
 var { InfluxDB, Point, flux } = require('@influxdata/influxdb-client');
 //var { InfluxDB, Point, flux } = ***@***.***/influxdb-client');
 
+const VERSION_18_FLUX = '1.8-flux';
+const VERSION_20 = '2.0';
 
 function Influx(_settings, _log) {
 
@@ -18,7 +20,7 @@ function Influx(_settings, _log) {
 
 
     var influxError = { error: null, timestamp: 0 };
-    var influxdbVersion = VERSION_20;
+    var influxdbVersion = VERSION_18_FLUX;//VERSION_20;
     var client = null;
     var clientOptions = null
     var writeApi = null
@@ -26,25 +28,29 @@ function Influx(_settings, _log) {
 
     this.init = function () {
 
-        // This is where it needs to have a FRONT END so this options is dynamic//----------------------------------->>>
-
-        if (settings.daqstore.url != "") {
-
+        if (settings.daqstore.credentials && influxdbVersion === VERSION_20) {
+            const token = settings.daqstore.credentials.token;
             clientOptions = {
-                host: "the host or the IP of influxserver (string)",
-                port: 8086,
-                protocol: 'https', // *could be http or https
-                database: "the database name in the influxdb (string)",
-                username:'username (string)',
-                password:'password (string)',
-                options: {
-                    rejectUnauthorized: false // this options is needed when protocol is set to https and the influxdb server is using a self-signed certificate (it is important)
-                }
+                url: settings.daqstore.url,
+                // rejectUnauthorized: n.rejectUnauthorized,
+                token
             }
             // client = new influx.InfluxDB(clientOptions);
             client = new InfluxDB(clientOptions);
             writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 's');
             queryApi = client.getQueryApi(settings.daqstore.organization);
+            status = InfluxDBStatusEnum.OPEN;
+        } else if (influxdbVersion === VERSION_18_FLUX) {
+            clientOptions = {
+                host: 'localhost',//settings.daqstore.url,
+                port: 8086,
+                protocol: 'http',
+                database: "mydatabase",
+                // username:'username (string)',
+                // password:'password (string)',
+            }
+
+            client = new influx.InfluxDB(clientOptions);
             status = InfluxDBStatusEnum.OPEN;
         }
     }
@@ -80,25 +86,40 @@ function Influx(_settings, _log) {
             if (!tag.daq || !tag.daq.enabled || utils.isNullOrUndefined(tag.value)) {
                 continue;
             }
-            const tags = {
-                id: tag.id,
-                devicename: deviceName
+            if (influxdbVersion === VERSION_18_FLUX) {
+                const tags = {
+                    id: tag.id,
+                    devicename: deviceName
+                }
+                const fields = {
+                    value: utils.isBoolean(tag.value) ? tag.value * 1 : tag.value
+                }
+                dataToWrite.push({
+                    measurement: tag.id,
+                    tags,
+                    fields,
+                    timestamp: new Date(tag.timestamp || new Date().getTime())
+                });
+            } else {
+                const point = new Point(tag.id)
+                    .tag('id', tag.id)
+                    .tag('name', tag.name)
+                    .tag('type', tag.type)
+                    .timestamp(new Date(tag.timestamp || new Date().getTime()));
+                if (deviceName) {
+                    point.tag('device', deviceName);
+                }
+                if (utils.isBoolean(tag.value)) {
+                    point.booleanField('value', tag.value);
+                } else {
+                    point.floatField('value', tag.value)
+                }
+                dataToWrite.push(point);
             }
-            let fields = {
-                value: tag.value
-            }
-            if (utils.isBoolean(tag.value)) {
-                fields.value = tag.value * 1
-            }
-            var pts = {
-                measurement: tag.name,
-                tags,
-                fields,
-                timestamp: tag.timestamp * 1000000 || new Date().getTime() * 1000000
-            }
-            dataToWrite.push(pts)
         }
-        writePoints(dataToWrite)
+        if (dataToWrite.length) {
+            writePoints(dataToWrite);
+        }
     }
 
     this.getDaqMap = function (tagid) {
@@ -109,22 +130,41 @@ function Influx(_settings, _log) {
 
     this.getDaqValue = function (tagid, fromts, tots) {
         return new Promise(function (resolve, reject) {
-            const query = flux`from(bucket: "${settings.daqstore.bucket}") |> range(start: ${new Date(fromts)}, stop: ${new Date(tots)}) |> filter(fn: (r) => r.id == "${tagid}")`;
             try {
-                var result = [];
-                queryApi.queryRows(query, {
-                    next(row, tableMeta) {
-                        const o = tableMeta.toObject(row);
-                        result = result.concat({ dt: new Date(o._time).getTime(), value: o._value });
-                    },
-                    error(error) {
+                if (influxdbVersion === VERSION_18_FLUX) {
+                    fromts *= 1000000;
+                    tots *= 1000000;
+                    const query = `SELECT * FROM "${tagid}" WHERE time >= ${fromts} AND time <= ${tots}`;
+                    client.query(query).then((result) => {
+                        resolve(result.map(row => { 
+                            return {
+                                dt: new Date(row.time).getTime(),
+                                value: row.value
+                            }
+                        }));
+                    })
+                    .catch((error) => {
                         logger.error(`influxdb-getDaqValue failed! ${error}`);
                         reject(error);
-                    },
-                    complete() {
-                        resolve(result);
-                    }
-                })
+                    });
+                } else {
+                    const query = flux`from(bucket: "${settings.daqstore.bucket}") |> range(start: ${new Date(fromts)}, stop: ${new Date(tots)}) |> filter(fn: (r) => r.id == "${tagid}")`;
+                    var result = [];
+                    queryApi.queryRows(query, {
+                        next(row, tableMeta) {
+                            const o = tableMeta.toObject(row);
+                            result = result.concat({ dt: new Date(o._time).getTime(), value: o._value });
+                        },
+                        error(error) {
+                            logger.error(`influxdb-getDaqValue failed! ${error}`);
+                            reject(error);
+                        },
+                        complete() {
+                            resolve(result);
+                        }
+                    });
+                }
+
             } catch (error) {
                 logger.error(`influxdb-getDaqValue failed! ${error}`);
                 reject(error);
@@ -132,9 +172,19 @@ function Influx(_settings, _log) {
         });
     }
 
-    async function writePoints(pts) {
+    function writePoints(points) {
         try {
-            await writeApi.writePoints(pts);
+            if (influxdbVersion === VERSION_18_FLUX) {
+                client.writePoints(points)
+                .catch((error) => {
+                    logger.error(`influxdb-writePoints failed! ${error}`);
+                });
+            } else {
+                writeApi.writePoints(points)
+                .catch((error) => {
+                    logger.error(`influxdb-writePoints failed! ${error}`);
+                });
+            }
         } catch (error) {
             logger.error(`influxdb-writePoints failed! ${error}`);
         }
