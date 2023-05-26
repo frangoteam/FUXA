@@ -94,14 +94,6 @@
             </mat-cell>
         </ng-container>
 
-        <!-- Graph Column -->
-        <ng-container matColumnDef="graph">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <mat-icon>multiline_chart</mat-icon>
-            </mat-cell>
-        </ng-container>
-
         <!-- Warning Column -->
         <ng-container matColumnDef="warning">
             <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
@@ -109,6 +101,14 @@
                 <button mat-icon-button *ngIf="element.error" class="warning">
                     <mat-icon>warning_amber</mat-icon>
                 </button>
+            </mat-cell>
+        </ng-container>
+
+        <!-- Info Column -->
+        <ng-container matColumnDef="info">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+            <mat-cell *matCellDef="let element" [jsonTooltip]="element">
+                <mat-icon>data_object</mat-icon>
             </mat-cell>
         </ng-container>
 
