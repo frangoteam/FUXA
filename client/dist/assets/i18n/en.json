@@ -696,6 +696,7 @@
     "device.list-remove": "Remove Tag",
     "device.list-remove-all": "Remove all Tags",
     "device.list-options": "Tag options",
+    "device.list-clipboard": "Copy Tag object to clipboard",
 
     "devices.export": "Export devices",
     "devices.export-json": "JSON",

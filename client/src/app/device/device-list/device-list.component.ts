@@ -29,7 +29,7 @@ import { Utils } from '../../_helpers/utils';
 
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'logger', 'info', 'options', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
@@ -405,6 +405,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             dialogRef.afterClosed().subscribe(result => {
             });
         }
+    }
+
+    onCopyTagToClipboard(tag: Tag) {
+        Utils.copyToClipboard(JSON.stringify(tag));
     }
 
     private addTopicSubscription(oldTopic: Tag, topics: Tag[]) {

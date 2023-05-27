@@ -86,7 +86,7 @@
 }
 
 .mat-column-info {
-    flex: 0 0 30px;
+    flex: 0 0 40px;
 }
 
 .mat-column-warning {
@@ -134,4 +134,8 @@
     margin-bottom: 6px;
     padding: 3px 1px 3px 2px;
     border-radius: 2px;
+}
+
+.context-menu {
+    font-size: 13px;
 }

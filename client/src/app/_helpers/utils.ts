@@ -320,6 +320,22 @@ export class Utils {
             }
         });
         return result;
+    };
+
+    static copyToClipboard(text) {
+        // Create a temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        // Make the textarea hidden
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        // Append the textarea to the document
+        document.body.appendChild(textarea);
+        // Select and copy the text from the textarea
+        textarea.select();
+        document.execCommand('copy');
+        // Remove the textarea from the document
+        document.body.removeChild(textarea);
     }
 }
 

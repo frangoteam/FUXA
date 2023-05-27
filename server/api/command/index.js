@@ -66,9 +66,10 @@ module.exports = {
             } else {
                 if (req.query.cmd === CommanTypeEnum.reportDownload) {
                     try {
-                        var reportPath = path.join(runtime.settings.reportsDir, req.query.name);
+                        const fileName = req.query.name.replace(new RegExp('../', 'g'), '');
+                        var reportPath = path.join(runtime.settings.reportsDir, fileName);
                         if (!fs.existsSync(reportPath)) {
-                            reportPath = path.join(process.cwd(), runtime.settings.reportsDir, req.query.name);
+                            reportPath = path.join(process.cwd(), runtime.settings.reportsDir, fileName);
                         }
                         if (fs.existsSync(reportPath)) {
                             res.sendFile(reportPath, (err) => {
@@ -86,6 +87,33 @@ module.exports = {
                     }
                 } else {
                     res.status(400).json({ error: "not_found", message: 'command not found!'});
+                }
+            }
+        });
+
+        /**
+         * POST set tag value report
+         */
+         commandApp.post("/api/setTagValue", secureFnc, function (req, res, next) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post setTagValue: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post command: Unauthorized");
+            } else {
+                try {
+                    if (req.body.id && req.body.value) {
+                        if (runtime.devices.setTagValue(req.body.id, req.body.value)) {
+                            res.end();
+                        } else {
+                            res.status(400).json({ error: "not_found", message: 'tag id not found!'});
+                            runtime.logger.error("api post setTagValue: " + 'id not found!');
+                        }
+                    }
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    runtime.logger.error("api post setTagValue: " + error);
                 }
             }
         });
