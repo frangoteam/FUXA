@@ -92,15 +92,59 @@ module.exports = {
         });
 
         /**
-         * POST set tag value report
+         * GET get tags values
          */
-         commandApp.post("/api/setTagValue", secureFnc, async function (req, res, next) {
+        commandApp.get("/api/getTagValue", secureFnc, async function (req, res, next) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get getTagValue: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get getTagValue: Unauthorized");
+            } else {
+                try {
+                    var tagsIds = JSON.parse(req.query.ids);
+                    if (tagsIds) {
+                        var errors = '';
+                        var result = [];
+                        for (const tagId of tagsIds) {
+                            try {
+                                const value = runtime.devices.getTagValue(tagId, true);
+                                if (value) {
+                                    result.push(value);
+                                } else {
+                                    result.push({id: tagId, value: null});
+                                    errors += `${tagId}; `;
+                                }
+                            } catch (err) {
+                                errors += `${tagId}: ${err}`;
+                            }
+                        }
+                        if (errors) {
+                            runtime.logger.error("api get getTagValue: " + 'id not found!' + errors);
+                        }
+                        res.json(result);
+                    } else {
+                        res.status(400).json({ error: "not_found", message: 'tag id not found!'});
+                        runtime.logger.error("api get getTagValue: " + 'id not found!');
+                    }
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    runtime.logger.error("api get getTagValue: " + error);
+                }                
+            }            
+        });
+
+        /**
+         * POST set tags values
+         */
+        commandApp.post("/api/setTagValue", secureFnc, async function (req, res, next) {
             var groups = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post setTagValue: Tocken Expired");
             } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api post command: Unauthorized");
+                runtime.logger.error("api post setTagValue: Unauthorized");
             } else {
                 try {
                     if (req.body.tags) {
