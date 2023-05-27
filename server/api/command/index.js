@@ -94,7 +94,7 @@ module.exports = {
         /**
          * POST set tag value report
          */
-         commandApp.post("/api/setTagValue", secureFnc, function (req, res, next) {
+         commandApp.post("/api/setTagValue", secureFnc, async function (req, res, next) {
             var groups = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post setTagValue: Tocken Expired");
@@ -103,13 +103,26 @@ module.exports = {
                 runtime.logger.error("api post command: Unauthorized");
             } else {
                 try {
-                    if (req.body.id && req.body.value) {
-                        if (runtime.devices.setTagValue(req.body.id, req.body.value)) {
-                            res.end();
-                        } else {
-                            res.status(400).json({ error: "not_found", message: 'tag id not found!'});
-                            runtime.logger.error("api post setTagValue: " + 'id not found!');
+                    if (req.body.tags) {
+                        var errors = '';
+                        for (const tag of req.body.tags) {
+                            try {
+                                if (!runtime.devices.setTagValue(tag.id, tag.value)) {
+                                    errors += `${tag.id}; `
+                                }
+                            } catch (err) {
+                                errors += `${tag.id}: ${err}`;
+                            }
                         }
+                        if (errors) {
+                            res.status(400).json({ error: "not_found", message: 'tag id not found: ' + errors});
+                            runtime.logger.error("api post setTagValue: " + 'id not found!' + errors);
+                        } else {
+                            res.end();
+                        }
+                    } else {
+                        res.status(400).json({ error: "not_found", message: 'tag id not found!'});
+                        runtime.logger.error("api post setTagValue: " + 'id not found!');
                     }
                 } catch (error) {
                     res.status(400).json({ error: "error", message: error});
