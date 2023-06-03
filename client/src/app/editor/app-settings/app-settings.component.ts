@@ -34,6 +34,7 @@ export class AppSettingsComponent implements OnInit {
     daqstoreType = DaqStoreType;
     retationType = DaqStoreRetentionType;
     alarmsRetationType = AlarmsRetentionType;
+    influxDB18 = Utils.getEnumKey(DaqStoreType, DaqStoreType.influxDB18);
 
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,

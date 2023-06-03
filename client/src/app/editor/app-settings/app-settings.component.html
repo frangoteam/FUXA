@@ -109,6 +109,24 @@
                                     <input [(ngModel)]="settings.daqstore.organization" placeholder="" class="input-row" type="text">
                                 </div>
                             </div>
+                            <div *ngSwitchCase="influxDB18">
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-url' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.url" placeholder="http://localhost:8086" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-database' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.database" placeholder="" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-username' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="" class="input-row" type="text">
+                                </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>

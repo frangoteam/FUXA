@@ -36,11 +36,12 @@ function reset() {
 
 function addDaqNode(_id, fncgetprop) {
     var id = _id;
-    if (_getDbType() === DaqStoreTypeEnum.influxDB) {
-        id = _getDbType();
+    const dbType = _getDbType();
+    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18) {
+        id = dbType;
     }
     if (!daqDB[id]) {
-        if (id === DaqStoreTypeEnum.influxDB) {
+        if (id === DaqStoreTypeEnum.influxDB || id === DaqStoreTypeEnum.influxDB18) {
             daqDB[id] = InfluxDB.create(settings, logger);
         } else {
             daqDB[id] = SqliteDB.create(settings, logger, id);
@@ -156,6 +157,7 @@ function _getDbType() {
 var DaqStoreTypeEnum = {
     SQlite: 'SQlite',
     influxDB: 'influxDB',
+    influxDB18: 'influxDB18',
 }
 
 function _getValue(value) {

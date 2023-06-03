@@ -5,9 +5,9 @@
 "use strict";
 
 var utils = require('../../utils');
-let influx = require('influx')
+const influx = require('influx');
+const { URL } = require('url');
 var { InfluxDB, Point, flux } = require('@influxdata/influxdb-client');
-//var { InfluxDB, Point, flux } = ***@***.***/influxdb-client');
 
 const VERSION_18_FLUX = '1.8-flux';
 const VERSION_20 = '2.0';
@@ -20,7 +20,7 @@ function Influx(_settings, _log) {
 
 
     var influxError = { error: null, timestamp: 0 };
-    var influxdbVersion = VERSION_18_FLUX;//VERSION_20;
+    var influxdbVersion = VERSION_20;
     var client = null;
     var clientOptions = null
     var writeApi = null
@@ -28,6 +28,9 @@ function Influx(_settings, _log) {
 
     this.init = function () {
 
+        if (settings.daqstore.type === 'influxDB18') {
+            influxdbVersion = VERSION_18_FLUX;
+        }
         if (settings.daqstore.credentials && influxdbVersion === VERSION_20) {
             const token = settings.daqstore.credentials.token;
             clientOptions = {
@@ -35,21 +38,27 @@ function Influx(_settings, _log) {
                 // rejectUnauthorized: n.rejectUnauthorized,
                 token
             }
-            // client = new influx.InfluxDB(clientOptions);
             client = new InfluxDB(clientOptions);
             writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 's');
             queryApi = client.getQueryApi(settings.daqstore.organization);
             status = InfluxDBStatusEnum.OPEN;
         } else if (influxdbVersion === VERSION_18_FLUX) {
-            clientOptions = {
-                host: 'localhost',//settings.daqstore.url,
-                port: 8086,
-                protocol: 'http',
-                database: "mydatabase",
-                // username:'username (string)',
-                // password:'password (string)',
+            try {
+                const parsedUrl = new URL(settings.daqstore.url);
+                const [host] = parsedUrl.host.split(':');
+                const [protocol] = parsedUrl.protocol.split(':');
+                clientOptions = {
+                    host: host,
+                    port: parsedUrl.port || 8086,
+                    protocol: protocol || 'http',
+                    database: settings.daqstore.database,
+                    username: settings.daqstore.credentials.username,
+                    password: settings.daqstore.credentials.password,
+                }
+            } catch (error) {
+                logger.error(`influxdb-init failed! ${error}`);
+                reject(error);
             }
-
             client = new influx.InfluxDB(clientOptions);
             status = InfluxDBStatusEnum.OPEN;
         }
@@ -83,7 +92,7 @@ function Influx(_settings, _log) {
         var dataToWrite = []
         for (var tagid in tagsValues) {
             let tag = tagsValues[tagid];
-            if (!tag.daq || !tag.daq.enabled || utils.isNullOrUndefined(tag.value)) {
+            if (!tag.daq || !tag.daq.enabled || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value) ) {
                 continue;
             }
             if (influxdbVersion === VERSION_18_FLUX) {
@@ -180,9 +189,12 @@ function Influx(_settings, _log) {
                     logger.error(`influxdb-writePoints failed! ${error}`);
                 });
             } else {
-                writeApi.writePoints(points)
-                .catch((error) => {
-                    logger.error(`influxdb-writePoints failed! ${error}`);
+                writeApi.writePoints(points);
+                writeApi.flush(true).then(() => {
+                    // reset last error ;
+                }).catch(err => {
+                    logger.error(`influxdb-writePoints error! ${err}`);
+                    setError(err);
                 });
             }
         } catch (error) {
