@@ -2,7 +2,7 @@
 	<mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
 	</mat-progress-bar>
 </div>
-<div *ngIf="serverErrorBanner" class="banner">
+<div *ngIf="serverErrorBanner$ | async" class="banner">
 	<div>
 		<span>{{'msg.server-connection-failed' | translate}}</span>
 		<mat-icon>block</mat-icon>

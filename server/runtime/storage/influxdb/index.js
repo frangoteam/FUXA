@@ -67,7 +67,7 @@ function Influx(_settings, _log) {
     this.close = function () {
         try {
             status = InfluxDBStatusEnum.CLOSE;
-            client.close.then(() => {
+            client.close().then(() => {
                 logger.info('influxdb-close FINISHED');
             })
             .catch((e) => {

@@ -2,12 +2,14 @@
 
 const jwt = require('jsonwebtoken');
 
+var secureEnabled = false;
 var secretCode = 'frangoteam751';
 var tokenExpiresIn = 60 * 15;   // 15 minutes
 const adminGroups = [-1, 255];
 
 
-function init(_secretCode, _tokenExpires) {
+function init(_secureEnabled, _secretCode, _tokenExpires) {
+    secureEnabled = _secureEnabled;
     if (_secretCode) {
         secretCode = _secretCode;
     }
@@ -16,6 +18,26 @@ function init(_secretCode, _tokenExpires) {
     }
 }
 
+/**
+ * Verify token
+ * @param {*} token 
+ */
+function verify (token) {
+    jwt.verify(token, secretCode, (err, decoded) => {
+        if (err) {
+            console.error(`verify token error: ${err}`);
+            return false;
+        }
+        return true;
+    });
+}
+
+/**
+ * Verify WebAPI token (take from header)
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 function verifyToken (req, res, next) {
     let token = req.headers['x-access-token'];
 
@@ -49,6 +71,9 @@ function verifyToken (req, res, next) {
         // notice that no token was provided...}
         req.userId = null;
         req.userGroups = null;
+        // if (secureEnabled) {
+        //     res.status(401).json({ error: "unauthorized_error", message: "Token missing!" });
+        // }
         next();
     }
 }
@@ -59,6 +84,7 @@ function getTokenExpiresIn() {
 
 module.exports = {
     init: init,
+    verify: verify,
     verifyToken: verifyToken,
     get secretCode() { return secretCode },
     get tokenExpiresIn() { return tokenExpiresIn },

@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -24,7 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 // declare var panzoom: any;
 
 @Component({
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     showNavigation = true;
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
-    serverErrorBanner = false;
+    serverErrorBanner$: Observable<boolean>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
 
@@ -95,13 +95,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
-            this.hmiService.onServerConnection$.pipe(
+            this.serverErrorBanner$ = combineLatest([
+                this.hmiService.onServerConnection$,
+                this.authService.currentUser$
+            ]).pipe(
+                map(([connectionStatus, userProfile]) => (this.securityEnabled && !userProfile) ? false : !connectionStatus),
                 takeUntil(this.destroy$)
-            ).subscribe(status => {
-                this.serverErrorBanner = !status;
-            });
-        }
-        catch (err) {
+            );
+        } catch (err) {
             console.error(err);
         }
     }

@@ -67,7 +67,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.isLoading = show;
 			}, error => {
 				this.isLoading = false;
-				console.error('Error lto show loading');
+				console.error('Error to show loading');
 			});
 		}
 		catch (err) {
