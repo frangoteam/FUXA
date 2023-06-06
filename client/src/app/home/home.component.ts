@@ -24,7 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { map, takeUntil } from 'rxjs/operators';
+import { debounceTime, last, map, takeUntil } from 'rxjs/operators';
 // declare var panzoom: any;
 
 @Component({
@@ -100,7 +100,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.authService.currentUser$
             ]).pipe(
                 map(([connectionStatus, userProfile]) => (this.securityEnabled && !userProfile) ? false : !connectionStatus),
-                takeUntil(this.destroy$)
+                takeUntil(this.destroy$),
+                debounceTime(1000),
+                last()
             );
         } catch (err) {
             console.error(err);

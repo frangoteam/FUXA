@@ -23,12 +23,15 @@ function init(_secureEnabled, _secretCode, _tokenExpires) {
  * @param {*} token 
  */
 function verify (token) {
-    jwt.verify(token, secretCode, (err, decoded) => {
-        if (err) {
-            console.error(`verify token error: ${err}`);
-            return false;
-        }
-        return true;
+    return new Promise ((resolve, reject) => {
+        jwt.verify(token, secretCode, (err, decoded) => {
+            if (err) {
+                console.error(`verify token error: ${err}`);
+                reject(false);
+            } else {
+                resolve(true);
+            }
+        });    
     });
 }
 

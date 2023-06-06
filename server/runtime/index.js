@@ -79,18 +79,19 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('tag-change:subscription', subscriptionTagChange);
     events.on('script-console', scriptConsoleOutput);
 
-    io.on('connection', (socket) => {
+    io.on('connection', async (socket) => {
         logger.info(`socket.io client connected`);        
         socket.tagsClientSubscriptions = [];
         // check authorizations
         if (settings.secureEnabled) {
             const token = socket.handshake.query.token;
-            if (!token) {
+            if (!token || token === 'null') {
                 socket.disconnect();
                 logger.error(`Token is missing!`);
             } else {
                 try {
-                    if (api.authJwt.verify(token)) {
+                    const authenticated = await api.authJwt.verify(token);
+                    if (!authenticated) {
                         logger.error(`Token error!`);
                         socket.disconnect();
                     }
