@@ -110,6 +110,16 @@ function init(_server, _runtime) {
                 }
             });
 
+            /**
+             * GET Heartbeat to check token
+             */
+            apiApp.get('/api/heartbeat', authJwt.verifyToken, function (req, res) {
+                if (runtime.settings.secureEnabled && res.statusCode === 403) {
+                    res.json(false);
+                } else {
+                    res.json(true);
+                }
+            });
             runtime.logger.info('api: init successful!', true);
         } else {
         }

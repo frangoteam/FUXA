@@ -51,6 +51,10 @@ export class AuthService {
 		return this.currentUser;
 	}
 
+	getUserProfile(): UserProfile {
+		return this.currentUser;
+	}
+
 	getUserToken(): string {
 		return this.currentUser?.token;
 	}
@@ -61,6 +65,11 @@ export class AuthService {
         }
         return false;
     }
+
+	setNewToken(token: string) {
+		this.currentUser.token = token;
+		this.saveUserToken(this.currentUser);
+	}
 
 	// to check by page refresh
 	private saveUserToken(user: UserProfile) {

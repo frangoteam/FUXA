@@ -39,10 +39,15 @@ export class AuthInterceptor implements HttpInterceptor {
             }, (err: any) => {
                 if (err instanceof HttpErrorResponse) {
                     if (err.status === 403) {
-                        // redirect to the login route or show a modal
-                        authService.signOut();
-                        const projectService = this.injector.get(ProjectService);
-                        projectService.reload();
+                        if (err.error && err.error.message === 'tokenRefresh' && err.error.token) {
+                            // token refreshed
+                            authService.setNewToken(err.error.token);
+                        } else {
+                            // redirect to the login route or show a modal
+                            authService.signOut();
+                            const projectService = this.injector.get(ProjectService);
+                            projectService.reload();
+                        }
                     }
                 }
             }

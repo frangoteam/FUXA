@@ -10,6 +10,7 @@ import { ProjectService } from './_services/project.service';
 import { SettingsService } from './_services/settings.service';
 import { UserGroups } from './_models/user';
 import { AppService } from './_services/app.service';
+import { HeartbeatService } from './_services/heartbeat.service';
 
 @Component({
 	selector: 'app-root',
@@ -32,6 +33,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private projectService: ProjectService,
 		private settingsService: SettingsService,
 		private translateService: TranslateService,
+		private heartbeatService: HeartbeatService,
 		location: Location
 		) {
 		this.location = location;
@@ -39,6 +41,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit() {
 		console.log(`FUXA v${environment.version}`);
+		this.heartbeatService.startHeartbeatPolling();
 	}
 
 	ngAfterViewInit() {

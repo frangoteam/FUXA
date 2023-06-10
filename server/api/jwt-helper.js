@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 var secureEnabled = false;
 var secretCode = 'frangoteam751';
-var tokenExpiresIn = 60 * 15;   // 15 minutes
+var tokenExpiresIn = 60 * 60;   // 60 minutes
 const adminGroups = [-1, 255];
 
 
@@ -38,8 +38,8 @@ function verify (token) {
 /**
  * Verify WebAPI token (take from header)
  * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ * @param {*} res
+ * @param {*} next
  */
 function verifyToken (req, res, next) {
     let token = req.headers['x-access-token'];
@@ -50,8 +50,23 @@ function verifyToken (req, res, next) {
                 req.userId = null;
                 req.userGroups = null;
                 if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
-                    req.tokenExpired = true;
-                    res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
+                    const authUser = (req.headers['x-auth-user']) ? JSON.parse(req.headers['x-auth-user']) : null;
+                    if (authUser.groups === 255 || authUser.groups === -1) {
+                        const token = jwt.sign({
+                            id: authUser.user,
+                            groups: authUser.groups
+                        },
+                        secretCode, { 
+                            expiresIn: tokenExpiresIn 
+                        });//'1h' });
+                        res.status(403).json({ 
+                            message: 'tokenRefresh',
+                            token: token 
+                        });
+                    } else {
+                        req.tokenExpired = true;
+                        res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
+                    }
                 }
                 next();
                 // return res.status(500).send({
