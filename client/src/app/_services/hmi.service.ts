@@ -11,6 +11,7 @@ import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService, UserProfile } from './auth.service';
 
 @Injectable()
 export class HmiService {
@@ -44,13 +45,17 @@ export class HmiService {
 
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
+        private authService: AuthService,
         private toastr: ToastrService) {
-        if (environment.serverEnabled) {
-            this.initSocket();
-        }
+
+        this.initSocket();
 
         this.projectService.onLoadHmi.subscribe(() => {
             this.hmi = this.projectService.getHmi();
+        });
+
+        this.authService.currentUser$.subscribe((userProfile: UserProfile) => {
+           this.initSocket(userProfile?.token);
         });
     }
 
@@ -153,84 +158,86 @@ export class HmiService {
     /**
      * Init the socket and subsribe to device status and signal value change
      */
-    public initSocket() {
+    public initSocket(token: string = null) {
         // check to init socket io
-        if (!this.socket) {
-            this.socket = io(this.endPointConfig);
-            this.socket.on('connect', () => {
-                this.onServerConnection$.next(true);
-            });
-            this.socket.on('disconnect', () => {
-                this.onServerConnection$.next(false);
-            });
-            // devicse status
-            this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
-                this.onDeviceChanged.emit(message);
-                if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
-                    let name = message.id;
-                    let device = this.projectService.getDeviceFromId(message.id);
-                    if (device) {name = device.name;}
-                    let msg = '';
-                    this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
-                    this.toastr.error(msg, '', {
-                        timeOut: 3000,
-                        closeButton: true,
-                        // disableTimeOut: true
-                    });
-                }
-            });
-            // device property
-            this.socket.on(IoEventTypes.DEVICE_PROPERTY, (message) => {
-                this.onDeviceProperty.emit(message);
-            });
-            // devices values
-            this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
-                for (let idx = 0; idx < message.values.length; idx++) {
-                    let varid = message.values[idx].id;
-                    if (!this.variables[varid]) {
-                        this.variables[varid] = new Variable(varid, null, null);
-                    }
-                    this.variables[varid].value = message.values[idx].value;
-                    this.variables[varid].timestamp = message.values[idx].timestamp;
-                    this.setSignalValue(this.variables[varid]);
-                }
-            });
-            // device browse
-            this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
-                this.onDeviceBrowse.emit(message);
-            });
-            // device node attribute
-            this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
-                this.onDeviceNodeAttribute.emit(message);
-            });
-            // daq values
-            this.socket.on(IoEventTypes.DAQ_RESULT, (message) => {
-                this.onDaqResult.emit(message);
-            });
-            // alarms status
-            this.socket.on(IoEventTypes.ALARMS_STATUS, (alarmsstatus) => {
-                this.onAlarmsStatus.emit(alarmsstatus);
-            });
-            this.socket.on(IoEventTypes.HOST_INTERFACES, (message) => {
-                this.onHostInterfaces.emit(message);
-            });
-            this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
-                this.onDeviceWebApiRequest.emit(message);
-            });
-            this.socket.on(IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
-                this.onDeviceTagsRequest.emit(message);
-            });
-            // scripts
-            this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
-                this.onScriptConsole.emit(message);
-            });
-            this.socket.on(IoEventTypes.SCRIPT_COMMAND, (message) => {
-                this.onScriptCommand(message);
-            });
-
-            this.askDeviceValues();
-            this.askAlarmsStatus();
+        if (!environment.serverEnabled) {
+            return;
         }
+        this.socket?.close();
+        this.socket = io(`${this.endPointConfig}/?token=${token}`);
+        this.socket.on('connect', () => {
+            this.onServerConnection$.next(true);
+        });
+        this.socket.on('disconnect', () => {
+            this.onServerConnection$.next(false);
+        });
+        // devicse status
+        this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
+            this.onDeviceChanged.emit(message);
+            if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
+                let name = message.id;
+                let device = this.projectService.getDeviceFromId(message.id);
+                if (device) {name = device.name;}
+                let msg = '';
+                this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
+                this.toastr.error(msg, '', {
+                    timeOut: 3000,
+                    closeButton: true,
+                    // disableTimeOut: true
+                });
+            }
+        });
+        // device property
+        this.socket.on(IoEventTypes.DEVICE_PROPERTY, (message) => {
+            this.onDeviceProperty.emit(message);
+        });
+        // devices values
+        this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
+            for (let idx = 0; idx < message.values.length; idx++) {
+                let varid = message.values[idx].id;
+                if (!this.variables[varid]) {
+                    this.variables[varid] = new Variable(varid, null, null);
+                }
+                this.variables[varid].value = message.values[idx].value;
+                this.variables[varid].timestamp = message.values[idx].timestamp;
+                this.setSignalValue(this.variables[varid]);
+            }
+        });
+        // device browse
+        this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
+            this.onDeviceBrowse.emit(message);
+        });
+        // device node attribute
+        this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
+            this.onDeviceNodeAttribute.emit(message);
+        });
+        // daq values
+        this.socket.on(IoEventTypes.DAQ_RESULT, (message) => {
+            this.onDaqResult.emit(message);
+        });
+        // alarms status
+        this.socket.on(IoEventTypes.ALARMS_STATUS, (alarmsstatus) => {
+            this.onAlarmsStatus.emit(alarmsstatus);
+        });
+        this.socket.on(IoEventTypes.HOST_INTERFACES, (message) => {
+            this.onHostInterfaces.emit(message);
+        });
+        this.socket.on(IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
+            this.onDeviceWebApiRequest.emit(message);
+        });
+        this.socket.on(IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
+            this.onDeviceTagsRequest.emit(message);
+        });
+        // scripts
+        this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
+            this.onScriptConsole.emit(message);
+        });
+        this.socket.on(IoEventTypes.SCRIPT_COMMAND, (message) => {
+            this.onScriptCommand(message);
+        });
+
+        this.askDeviceValues();
+        this.askAlarmsStatus();
     }
 
     /**

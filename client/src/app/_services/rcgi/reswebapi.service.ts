@@ -115,4 +115,9 @@ export class ResWebApiService implements ResourceStorageService {
         let params = { query: JSON.stringify(query) };
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
+
+    heartbeat(): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.get<any>(this.endPointConfig + '/api/heartbeat', { headers: header });
+    }
 }

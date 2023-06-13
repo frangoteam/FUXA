@@ -41,6 +41,8 @@ export abstract class ResourceStorageService {
 
     public abstract getDaqValues(query: DaqQuery): Observable<any>;
 
+    public abstract heartbeat(): Observable<any>;
+
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) {return source;}
         let destination = JSON.parse(JSON.stringify(source));

@@ -104,4 +104,10 @@ export class ResDemoService implements ResourceStorageService {
             observer.error('Not supported!');
         });
     }
+
+    heartbeat(): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
 }

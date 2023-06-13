@@ -2,13 +2,12 @@
 
 var path = require('path');
 
-var runtime = require('./runtime');
-var api = require('./api');
+const runtime = require('./runtime');
+const api = require('./api');
 
 var logger;
 var version;
 var settings;
-var api;
 
 function getVersion() {
     if (!version) {

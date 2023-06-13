@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { User, UserGroups } from '../_models/user';
 import { environment } from '../../environments/environment';
@@ -11,12 +11,14 @@ export class AuthService {
 
 	private currentUser: UserProfile;
 	private endPointConfig: string = EndPointApi.getURL();
+	currentUser$ = new BehaviorSubject<UserProfile>(null);
 
 	constructor(private http: HttpClient) {
 		let user = JSON.parse(localStorage.getItem('currentUser'));
 		if (user) {
 		  this.currentUser = user;
 		}
+		this.currentUser$.next(this.currentUser);
 	}
 
 	signIn(username: string, password: string) {
@@ -27,6 +29,7 @@ export class AuthService {
 					if (result) {
 						this.currentUser = <UserProfile>result.data;
 						this.saveUserToken(this.currentUser);
+						this.currentUser$.next(this.currentUser);
 					}
 					observer.next();
 				}, err => {
@@ -48,12 +51,12 @@ export class AuthService {
 		return this.currentUser;
 	}
 
+	getUserProfile(): UserProfile {
+		return this.currentUser;
+	}
+
 	getUserToken(): string {
-		if (this.currentUser) {
-			return this.currentUser.token;
-		} else {
-			return null;
-		}
+		return this.currentUser?.token;
 	}
 
     isAdmin(): boolean {
@@ -63,6 +66,11 @@ export class AuthService {
         return false;
     }
 
+	setNewToken(token: string) {
+		this.currentUser.token = token;
+		this.saveUserToken(this.currentUser);
+	}
+
 	// to check by page refresh
 	private saveUserToken(user: UserProfile) {
 		localStorage.setItem('currentUser', JSON.stringify(user));
@@ -71,6 +79,7 @@ export class AuthService {
 	private removeUser() {
 		this.currentUser = null;
 		localStorage.removeItem('currentUser');
+		this.currentUser$.next(this.currentUser);
 	}
 }
 
