@@ -113,11 +113,24 @@ function init(_server, _runtime) {
             /**
              * GET Heartbeat to check token
              */
-            apiApp.get('/api/heartbeat', authJwt.verifyToken, function (req, res) {
-                if (runtime.settings.secureEnabled && res.statusCode === 403) {
-                    res.json(false);
+            apiApp.post('/api/heartbeat', authJwt.verifyToken, function (req, res) {
+                if (!runtime.settings.secureEnabled) {
+                    res.end();
+                } else if (res.statusCode === 403) {
+                    runtime.logger.error("api post heartbeat: Tocken Expired");
+                } else if (req.body.params) {
+                    const token = authJwt.getNewToken(req.headers)
+                    if (token) {
+                        res.status(200).json({ 
+                            message: 'tokenRefresh',
+                            token: token 
+                        });
+                        console.log('new', token);
+                    } else {
+                        res.end();
+                    }
                 } else {
-                    res.json(true);
+                    res.end();
                 }
             });
             runtime.logger.info('api: init successful!', true);

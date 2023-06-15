@@ -161,7 +161,7 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
-    heartbeat(): Observable<any> {
+    heartbeat(activity: boolean): Observable<any> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });

@@ -116,8 +116,8 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 
-    heartbeat(): Observable<any> {
+    heartbeat(activity: boolean): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        return this.http.get<any>(this.endPointConfig + '/api/heartbeat', { headers: header });
+        return this.http.post<any>(this.endPointConfig + '/api/heartbeat', { headers: header, params: activity });
     }
 }

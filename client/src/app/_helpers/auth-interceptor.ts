@@ -30,24 +30,14 @@ export class AuthInterceptor implements HttpInterceptor {
                 req = req.clone({ headers: req.headers.set(TOKEN_HEADER_KEY, token) });
             }
         }
-        // if (!req.headers.has('Content-Type')) {
-        //     req = req.clone({ headers: req.headers.set('Content-Type', 'application/json') });
-        // }
-        // req = req.clone({ headers: req.headers.set('Accept', 'application/json') });
         return next.handle(req).pipe(
             tap((event: HttpEvent<any>) => {
             }, (err: any) => {
                 if (err instanceof HttpErrorResponse) {
                     if (err.status === 403) {
-                        if (err.error && err.error.message === 'tokenRefresh' && err.error.token) {
-                            // token refreshed
-                            authService.setNewToken(err.error.token);
-                        } else {
-                            // redirect to the login route or show a modal
-                            authService.signOut();
-                            const projectService = this.injector.get(ProjectService);
-                            projectService.reload();
-                        }
+                        authService.signOut();
+                        const projectService = this.injector.get(ProjectService);
+                        projectService.reload();
                     }
                 }
             }

@@ -50,23 +50,8 @@ function verifyToken (req, res, next) {
                 req.userId = null;
                 req.userGroups = null;
                 if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
-                    const authUser = (req.headers['x-auth-user']) ? JSON.parse(req.headers['x-auth-user']) : null;
-                    if (authUser.groups === 255 || authUser.groups === -1) {
-                        const token = jwt.sign({
-                            id: authUser.user,
-                            groups: authUser.groups
-                        },
-                        secretCode, { 
-                            expiresIn: tokenExpiresIn 
-                        });//'1h' });
-                        res.status(403).json({ 
-                            message: 'tokenRefresh',
-                            token: token 
-                        });
-                    } else {
-                        req.tokenExpired = true;
-                        res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
-                    }
+                    req.tokenExpired = true;
+                    res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
                 }
                 next();
                 // return res.status(500).send({
@@ -96,6 +81,20 @@ function verifyToken (req, res, next) {
     }
 }
 
+function getNewToken(headers) {
+    const authUser = (headers['x-auth-user']) ? JSON.parse(headers['x-auth-user']) : null;
+    if (authUser) {
+        return jwt.sign({
+            id: authUser.user,
+            groups: authUser.groups
+        },
+        secretCode, { 
+            expiresIn: tokenExpiresIn 
+        });
+    }
+    return null;
+}
+
 function getTokenExpiresIn() {
     return tokenExpiresIn;
 }
@@ -104,6 +103,7 @@ module.exports = {
     init: init,
     verify: verify,
     verifyToken: verifyToken,
+    getNewToken: getNewToken,
     get secretCode() { return secretCode },
     get tokenExpiresIn() { return tokenExpiresIn },
     adminGroups: adminGroups

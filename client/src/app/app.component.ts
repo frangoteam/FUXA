@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, fromEvent, interval, merge, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -42,6 +42,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	ngOnInit() {
 		console.log(`FUXA v${environment.version}`);
 		this.heartbeatService.startHeartbeatPolling();
+
+		// capture events for the token refresh
+		const inactivityDuration = 15 * 60 * 1000;
+		const activity$ = merge(
+			fromEvent(document, 'click'),
+			fromEvent(document, 'touchstart')
+		);
+		activity$.pipe(
+			tap(() => this.heartbeatService.setActivity(true)),
+			switchMap(() => interval(inactivityDuration))
+		).subscribe(() => {
+			this.heartbeatService.setActivity(false);
+		});
 	}
 
 	ngAfterViewInit() {
