@@ -54,10 +54,6 @@ function verifyToken (req, res, next) {
                     res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
                 }
                 next();
-                // return res.status(500).send({
-                //     auth: false,
-                //     message: 'Fail to Authentication. Error -> ' + err
-                // });
             } else {
                 req.userId = decoded.id;
                 req.userGroups = decoded.groups;

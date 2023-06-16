@@ -125,7 +125,6 @@ function init(_server, _runtime) {
                             message: 'tokenRefresh',
                             token: token 
                         });
-                        console.log('new', token);
                     } else {
                         res.end();
                     }

@@ -35,7 +35,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private translateService: TranslateService,
 		private heartbeatService: HeartbeatService,
 		location: Location
-		) {
+	) {
 		this.location = location;
 	}
 
@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.heartbeatService.startHeartbeatPolling();
 
 		// capture events for the token refresh
-		const inactivityDuration = 15 * 60 * 1000;
+		const inactivityDuration = 1 * 60 * 1000;
 		const activity$ = merge(
 			fromEvent(document, 'click'),
 			fromEvent(document, 'touchstart')

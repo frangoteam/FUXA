@@ -3,6 +3,8 @@ import { ResourceStorageService } from './rcgi/resource-storage.service';
 import { RcgiService } from './rcgi/rcgi.service';
 import { Subscription, interval } from 'rxjs';
 import { AuthService } from './auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Injectable({
 	providedIn: 'root'
@@ -15,6 +17,7 @@ export class HeartbeatService {
 	private activity = false;
 	constructor(
 		private authService: AuthService,
+		private router: Router,
 		private rcgiService: RcgiService
 	) {
 		this.server = rcgiService.rcgi;
@@ -28,6 +31,12 @@ export class HeartbeatService {
 					if (res?.message === 'tokenRefresh' && res?.token) {
 						this.authService.setNewToken(res.token);
 					}
+				}, (error) => {
+					if (error instanceof HttpErrorResponse) {
+						if (error.status === 403) {
+							this.router.navigateByUrl('/');
+						}
+					}
 				});
 			});
 		}
@@ -40,7 +49,6 @@ export class HeartbeatService {
 	}
 
 	setActivity(activity: boolean) {
-		console.log('activity', activity);
 		this.activity = activity;
 	}
 }
