@@ -117,7 +117,7 @@ export class FlexInputComponent implements OnInit {
     changeTag(_tag) {
         this.tag = _tag;
         if (this.isOutputCtrl()) {
-            let device = DevicesUtils.getDeviceFromTagId(this.data.devices, _tag.id);
+            let device = DevicesUtils.getDeviceFromTagId(this.data.devices, _tag?.id);
             if (device) {
                 if (this.varunit) {
                     this.varunit.setVariable(DevicesUtils.getTagFromTagAddress(device, _tag.address + 'OpcEngUnit'));

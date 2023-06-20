@@ -1,0 +1,20 @@
+
+::ng-deep .group-label span {
+    line-height: 28px;
+    height: 28px;
+}
+
+::ng-deep .option-label  {
+
+    line-height: 28px !important;
+    height: 28px !important;
+
+    span {
+        font-size: 13px;
+    }
+}
+::ng-deep .variable-input {
+    font-size: 13px;
+    min-width: 450px;
+    vertical-align: unset !important;
+}
