@@ -12,10 +12,23 @@
     </div>
     <div class="my-form-field" style="margin-left: 0px;">
         <span>{{getDeviceName()}}</span>
-        <input style="font-size: 13px;min-width: 450px" value="{{getVariableName()}}" readonly="true" [disabled]="true" 
-            title="{{tagTitle | translate}}" placeholder="{{tagTitle | translate}}">
+        <input matInput
+            class="variable-input"
+            style="font-size: 13px;min-width: 450px"
+            title="{{tagTitle | translate}}"
+            placeholder="{{tagTitle | translate}}"
+            type="text"
+            [formControl]="tagFilter"
+            [matAutocomplete]="autoDevices">
+        <mat-autocomplete #autoDevices="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onDeviceTagSelected($event.option.value)">
+            <mat-optgroup *ngFor="let device of devicesTags$ | async" class="group-label" [label]="device.name">
+                <mat-option *ngFor="let tag of device.tags" [value]="tag" class="option-label">
+                    <span>{{tag.name}}</span>
+                </mat-option>
+            </mat-optgroup>
+        </mat-autocomplete>
     </div>
-    <div class="my-form-field" style="vertical-align: bottom; margin-left: 5px;" *ngIf="withBitmask">
+    <div class="my-form-field" style="vertical-align: bottom; margin-left: 7px;" *ngIf="withBitmask">
         <span>{{'gauges.property-mask' | translate}}</span>
         <div class="my-form-field-bitmask">
             <input value="{{getVariableMask()}}" readonly="true" [disabled]="true">
