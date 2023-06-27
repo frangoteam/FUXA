@@ -5,6 +5,7 @@
 const mqtt = require('mqtt');
 var utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+const path = require('path');
 
 function MQTTclient(_data, _logger, _events) {
     var data = _data;                   // Current data
@@ -48,6 +49,15 @@ function MQTTclient(_data, _logger, _events) {
                                 options.clientId = property.clientId;
                                 options.username = property.uid;
                                 options.password = property.pwd;
+                                if (property.cert) {
+                                    options.cert = path.join(data.certificatesDir, property.cert);
+                                }
+                                if (property.pkey) {
+                                    options.key = path.join(data.certificatesDir, property.pkey);
+                                }
+                                if (property.caCert) {
+                                    options.ca = path.join(data.certificatesDir, property.caCert);
+                                }                                
                             }
                         }
                         client = mqtt.connect(options.url, options);

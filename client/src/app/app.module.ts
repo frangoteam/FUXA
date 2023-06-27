@@ -164,6 +164,8 @@ import { FrameworkModule } from './framework/framework.module';
 import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
 import { HeartbeatService } from './_services/heartbeat.service';
 import { RcgiService } from './_services/rcgi/rcgi.service';
+import { ToastNotifierService } from './_services/toast-notifier.service';
+import { MyFileService } from './_services/my-file.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -356,7 +358,9 @@ export function createTranslateLoader(http: HttpClient) {
         Dictionary,
         ModalPositionCache,
         Define,
-        AuthGuard
+        AuthGuard,
+        ToastNotifierService,
+        MyFileService
     ],
     bootstrap: [AppComponent]
 })
