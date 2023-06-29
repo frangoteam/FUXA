@@ -746,6 +746,10 @@
     "device.property-broadcast-address-ph": "127.0.0.255",
     "device.property-adpu-timeout": "adpu Timeout",
     "device.property-adpu-timeout-ph": "6000",
+    "device.property-certificate-section": "TLS Certificate",
+    "device.property-certificate": "Certificate",
+    "device.property-certificate-key": "Private Key",
+    "device.property-certificate-ca": "CA Certificate",
     "device.security-none": "None",
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encrypt",
@@ -1246,6 +1250,7 @@
     "msg.device-tag-exist": "Tag name exist!",
     "msg.notification-property-missing-value": "Some values are missing!",
     "msg.report-property-missing-value": "There are incorrect or missing values!",
+    "msg.file-upload-failed": "Upload failed!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.server-connection-failed": "SERVER CONNECTION FAILED!",

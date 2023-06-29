@@ -190,17 +190,25 @@ module.exports = {
          * images will be in media file saved
          */
         prjApp.post('/api/upload', function (req, res) {
-            const file = req.body;
+            const file = req.body.resource;
+            const destination = req.body.destination;
             try {
                 let basedata = file.data;
                 let encoding = {};
                 // let basedata = file.data.replace(/^data:.*,/, '');
                 // let basedata = file.data.replace(/^data:image\/png;base64,/, "");
                 let fileName = file.name.replace(new RegExp('../', 'g'), '');
-                const filePath = path.join(runtime.settings.uploadFileDir, fileName);
                 if (file.type !== 'svg') {
                     basedata = file.data.replace(/^data:.*,/, '');
                     encoding = {encoding: 'base64'};
+                }
+                var filePath = path.join(runtime.settings.uploadFileDir, fileName);
+                if (destination) {
+                    const destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
+                    if (!fs.existsSync(destinationDir)) {
+                        fs.mkdirSync(destinationDir);
+                    }
+                    filePath = path.join(destinationDir, fileName);
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
                 let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fileName };

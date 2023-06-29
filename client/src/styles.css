@@ -1099,3 +1099,7 @@ mat-toolbar-row {
 .container-split-ver > div {
     flex: 1;
 }
+
+.pointer {
+    cursor: pointer;
+}
