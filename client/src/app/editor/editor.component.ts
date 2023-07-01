@@ -235,24 +235,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (copiedPasted) => {
-                    if (copiedPasted && copiedPasted.copy && copiedPasted.past) {
-                        copiedPasted.copy = copiedPasted.copy.filter(function(e) { return e; });
-                        if (copiedPasted.copy.length == copiedPasted.past.length) {
-                            for (let i = 0; i < copiedPasted.copy.length; i++) {
-                                let srcType = copiedPasted.copy[i].getAttribute('type');
-                                let srcId = copiedPasted.copy[i].getAttribute('id');
-                                if (srcId) {
-                                    let gaSrc: GaugeSettings = this.searchGaugeSettings({ id: srcId, type: srcType });
-                                    if (gaSrc) {
-                                        let gaDest: GaugeSettings = this.gaugesManager.createSettings(copiedPasted.past[i].id, gaSrc.type);
-                                        gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
-                                        this.setGaugeSettings(gaDest);
-                                        this.checkGaugeAdded(gaDest);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    this.onCopyAndPaste(copiedPasted);
                 }
             );
 
@@ -664,6 +647,35 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.checkMySelectedToSetColor(null, this.colorStroke, this.winRef.nativeWindow.svgEditor.getSelectedElements());
     }
 
+    private onCopyAndPaste(copiedPasted: CopiedAndPasted) {
+        if (copiedPasted?.copy?.length && copiedPasted?.past?.length) {
+            const copied = copiedPasted.copy.filter(element => element !== null);
+            const pasted = copiedPasted.past.filter(element => element !== null);
+            if (copied.length == copiedPasted.past.length) {
+                for (let i = 0; i < copied.length; i++) {
+                    const copiedIdsAndTypes = Utils.getInTreeIdAndType(copied[i]);
+                    const pastedIdsAndTypes = Utils.getInTreeIdAndType(pasted[i]);
+                    if (copiedIdsAndTypes.length === pastedIdsAndTypes.length) {
+                        for (let j = 0; j < copiedIdsAndTypes.length; j++) {
+                            if (copiedIdsAndTypes[j].id && pastedIdsAndTypes[j].id && copiedIdsAndTypes[j].type === pastedIdsAndTypes[j].type) {
+                                let gaSrc: GaugeSettings = this.searchGaugeSettings(copiedIdsAndTypes[j]);
+                                if (gaSrc) {
+                                    let gaDest: GaugeSettings = this.gaugesManager.createSettings(pastedIdsAndTypes[j].id, pastedIdsAndTypes[j].type);
+                                    gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
+                                    this.setGaugeSettings(gaDest);
+                                    this.checkGaugeAdded(gaDest);
+                                }
+                            } else {
+                                console.error(`Inconsistent elements!`, `${copiedIdsAndTypes[j]}`, `${pastedIdsAndTypes[j]}`);
+                            }
+                        }
+                    } else {
+                        console.error('Between copied and pasted there are inconsistent elements!');
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * event from svg-editor: svg element removed
@@ -1421,6 +1433,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     flipSelected(fliptype: string) {
     }
+}
+
+interface CopiedAndPasted {
+    copy: HTMLElement[];
+    past: HTMLElement[];
 }
 
 @Component({
