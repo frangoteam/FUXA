@@ -28,6 +28,20 @@ export class Utils {
         return null;
     }
 
+    static getInTreeIdAndType(element: Element): any[] {
+        let type = element.getAttribute('type');
+        let id = element.getAttribute('id');
+        let result = [];
+        if (id && type) {
+            result = [{ id: id, type: type }];
+        }
+        for (var i = 0; i < element.children.length; i++) {
+            const idsAndTypes = Utils.getInTreeIdAndType(element.children[i]);
+            result = [...result, ...idsAndTypes];
+        }
+        return result;
+    }
+
     static isNullOrUndefined(ele) {
         return (ele === null || ele === undefined) ? true : false;
     }
