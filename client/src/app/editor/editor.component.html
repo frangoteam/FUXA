@@ -2,14 +2,14 @@
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
-<mat-drawer #svgSelectorPanel class="editor-sidenav" mode="side" position="end">
+<mat-drawer #svgSelectorPanel class="sidepanel-selector" mode="side" position="end">
     <button mat-icon-button (click)="svgSelectorPanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
     </button>
     <button mat-icon-button (click)="checkSvgElementsMap(true)" style="position: absolute; top: 3px; right: 40px;">
         <mat-icon>autorenew</mat-icon>
     </button>
-    <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
+    <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" (onEdit)="onGaugeEdit($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
 </mat-drawer>
 <mat-drawer #sidePanel class="editor-sidenav" mode="side" position="end">
     <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">

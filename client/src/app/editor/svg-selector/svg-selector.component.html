@@ -7,6 +7,9 @@
             (click)="onSelected(svgElement)" (mouseout)="onSvgElementPreview(svgElement, false)" (mouseover)="onSvgElementPreview(svgElement, true)">
             <div class="name">{{ svgElement.name }}</div>
             <div class="id">{{ svgElement.id }}</div>
+            <button mat-icon-button (click)="onEditElement(svgElement)" class="edit">
+                <mat-icon>edit</mat-icon>
+            </button>
         </div>
     </div>
 </div>

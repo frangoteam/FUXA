@@ -8,6 +8,7 @@ import { ISvgElement } from '../../_models/hmi';
 })
 export class SvgSelectorComponent {
 
+    @Output() onEdit: EventEmitter<ISvgElement> = new EventEmitter();
     @Output() onSelect: EventEmitter<ISvgElement> = new EventEmitter();
     @Output() onPreview: EventEmitter<IElementPreview> = new EventEmitter();
     @Input('selected') set selected(element: ISvgElement) {
@@ -28,6 +29,10 @@ export class SvgSelectorComponent {
 
     onSelected(element: ISvgElement) {
         this.onSelect?.emit(element);
+    }
+
+    onEditElement(element: ISvgElement) {
+        this.onEdit?.emit(element);
     }
 
     isSelected(element: ISvgElement) {

@@ -6,6 +6,14 @@
     width: 350px;
 }
 
+.sidepanel-selector {
+    position: fixed;
+    margin-top: 36px;
+    height: calc(100% - 74px);
+    padding: 7px;
+    width: 370px;
+}
+
 #svg_editor_container {
     background: #aaa;
     height: 100%;
