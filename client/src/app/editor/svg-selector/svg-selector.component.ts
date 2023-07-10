@@ -32,7 +32,10 @@ export class SvgSelectorComponent {
     }
 
     onEditElement(element: ISvgElement) {
-        this.onEdit?.emit(element);
+        this.onSelect?.emit(element);
+        setTimeout(() => {
+            this.onEdit?.emit(element);
+        }, 500);
     }
 
     isSelected(element: ISvgElement) {

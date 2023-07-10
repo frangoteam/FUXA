@@ -616,7 +616,7 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <div class="rightbar_panel">
-                            <gauge-base #gaugepanel *ngIf="selectedElement" [settings]=getGaugeSettings(selectedElement) (edit)="onGaugeEdit($event)"></gauge-base>
+                            <gauge-base #gaugepanel *ngIf="selectedElement" [settings]="getGaugeSettings(selectedElement)" (edit)="onGaugeEdit($event)"></gauge-base>
                         </div>
                     </mat-expansion-panel>
                 </div>

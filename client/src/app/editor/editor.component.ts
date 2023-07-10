@@ -1192,8 +1192,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param event
      */
     onGaugeEdit(event) {
-        let settings = this.gaugePanelComponent.settings;
-        this.openEditGauge(settings, data => {
+        this.openEditGauge(this.gaugePanelComponent?.settings, data => {
             this.setGaugeSettings(data);
         });
     }
@@ -1223,6 +1222,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param callback
      */
     openEditGauge(settings, callback) {
+        if (!settings) {
+            return;
+        }
         let tempsettings = JSON.parse(JSON.stringify(settings));
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
