@@ -652,6 +652,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             const copied = copiedPasted.copy.filter(element => element !== null);
             const pasted = copiedPasted.past.filter(element => element !== null);
             if (copied.length == copiedPasted.past.length) {
+                let names = Object.values(this.currentView.items).map(gs => gs.name);
                 for (let i = 0; i < copied.length; i++) {
                     const copiedIdsAndTypes = Utils.getInTreeIdAndType(copied[i]);
                     const pastedIdsAndTypes = Utils.getInTreeIdAndType(pasted[i]);
@@ -661,6 +662,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                                 let gaSrc: GaugeSettings = this.searchGaugeSettings(copiedIdsAndTypes[j]);
                                 if (gaSrc) {
                                     let gaDest: GaugeSettings = this.gaugesManager.createSettings(pastedIdsAndTypes[j].id, pastedIdsAndTypes[j].type);
+                                    gaDest.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(pastedIdsAndTypes[j].type), names);
                                     gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
                                     this.setGaugeSettings(gaDest);
                                     this.checkGaugeAdded(gaDest);
@@ -673,6 +675,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                         console.error('Between copied and pasted there are inconsistent elements!');
                     }
                 }
+                this.checkSvgElementsMap(true);
             }
         }
     }
@@ -1192,8 +1195,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param event
      */
     onGaugeEdit(event) {
-        let settings = this.gaugePanelComponent.settings;
-        this.openEditGauge(settings, data => {
+        this.openEditGauge(this.gaugePanelComponent?.settings, data => {
             this.setGaugeSettings(data);
         });
     }
@@ -1223,6 +1225,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param callback
      */
     openEditGauge(settings, callback) {
+        if (!settings) {
+            return;
+        }
         let tempsettings = JSON.parse(JSON.stringify(settings));
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
