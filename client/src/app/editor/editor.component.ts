@@ -236,6 +236,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 },
                 (copiedPasted) => {
                     this.onCopyAndPaste(copiedPasted);
+                },
+                () => { // onGroupChanged
+                    this.checkSvgElementsMap(true);
                 }
             );
 
@@ -273,7 +276,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSvgElementPreview(value: IElementPreview) {//value: ISvgElement, preview: boolean) {
         let elem = document.getElementById(value.element?.id);
-        let rect: DOMRect = elem.getBoundingClientRect();
+        let rect: DOMRect = elem?.getBoundingClientRect();
         if (elem && rect) {
             this.svgPreview.nativeElement.style.width = `${rect.width}px`;
             this.svgPreview.nativeElement.style.height = `${rect.height}px`;
