@@ -36,6 +36,7 @@ import { GridsterItem } from 'angular-gridster2';
 import { CardConfigComponent } from './card-config/card-config.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
+import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
 
 declare var Gauge: any;
 
@@ -1349,6 +1350,47 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.saveView(this.currentView);
                 }
                 this.checkSvgElementsMap(true);
+            }
+        });
+    }
+
+    editBindOfTags(selected: any) {
+        if (!selected) {
+            return;
+        }
+        const gaugesSettings: GaugeSettings[] = [];
+        const elesSelected = this.winRef.nativeWindow.svgEditor.getSelectedElements();
+        const tagsIds = new Set();
+        if (elesSelected?.length) {
+            const eleIdsAndTypes = Utils.getInTreeIdAndType(elesSelected[0]);
+            if (eleIdsAndTypes?.length) {
+                for (let i = 0; i < eleIdsAndTypes.length; i++) {
+                    let gaSrc: GaugeSettings = this.searchGaugeSettings(eleIdsAndTypes[i]);
+                    const variablesIds = Utils.searchValuesByAttribute(gaSrc, 'variableId');
+                    if (variablesIds?.length) {
+                        gaugesSettings.push(gaSrc);
+                        variablesIds.forEach(id => {
+                            tagsIds.add(id);
+                        });
+                    }
+                }
+            }
+        }
+        const dialogRef = this.dialog.open(TagsIdsConfigComponent, {
+            position: { top: '60px' },
+            data: <TagsIdsData>{
+                devices: Object.values(this.projectService.getDevices()),
+                tagsIds: Array.from(tagsIds).map(id => <TagIdRef>{ srcId: id, destId: id })
+            }
+        });
+        dialogRef.afterClosed().subscribe((result: TagIdRef[]) => {
+            if (result?.length) {
+                gaugesSettings.forEach(gaSettings => {
+                    result.forEach((tagIdRef: TagIdRef) => {
+                        Utils.changeAttributeValue(gaSettings, 'variableId', tagIdRef.srcId, tagIdRef.destId);
+                    });
+                });
+                this.saveView(this.currentView);
             }
         });
     }

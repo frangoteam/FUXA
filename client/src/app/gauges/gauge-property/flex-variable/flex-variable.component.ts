@@ -36,6 +36,7 @@ export class FlexVariableComponent implements OnInit {
     @Input() tagLabel = 'gauges.property-tag-label';
     @Input() tagTitle = '';
     @Input() bitmask: number;
+    @Input() readonly = false;
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
