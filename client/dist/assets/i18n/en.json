@@ -443,6 +443,7 @@
     "editor.interactivity-class": "class:",
     "editor.interactivity-class-title": "Element class",
     "editor.interactivity-name": "name",
+    "editor.edit-bind-of-tags": "Edit bind of Tags",
 
     "editor.cmenu-property": "Property",
     "editor.cmenu-cut": "Cut",
@@ -580,6 +581,8 @@
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
     "editor.tools-svg-selector": "Item list selector",
+
+    "tags.ids-config-title": "Tags-Ids reference",
 
     "svg.selector.property-title": "View item list",
 

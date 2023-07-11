@@ -3,7 +3,7 @@
         <span>{{variableLabel | translate}}</span>
         <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 100px" type="text">
     </div>
-    <div class="my-form-field" style="display:inline-block;">
+    <div class="my-form-field" style="display:inline-block;" *ngIf="!readonly">
         <span style="text-overflow:clip; white-space:nowrap; width: 28px">{{tagLabel | translate}}</span>
         <div class="my-form-field-link"></div>
         <button mat-icon-button (click)="onBindTag()" style="line-height: 28px;height:28px; width:28px; vertical-align: middle;">
@@ -19,7 +19,8 @@
             placeholder="{{tagTitle | translate}}"
             type="text"
             [formControl]="tagFilter"
-            [matAutocomplete]="autoDevices">
+            [matAutocomplete]="autoDevices"
+            [readonly]="readonly">
         <mat-autocomplete #autoDevices="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onDeviceTagSelected($event.option.value)">
             <mat-optgroup *ngFor="let device of devicesTags$ | async" class="group-label" [label]="device.name">
                 <mat-option *ngFor="let tag of device.tags" [value]="tag" class="option-label">

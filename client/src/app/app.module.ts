@@ -166,6 +166,7 @@ import { HeartbeatService } from './_services/heartbeat.service';
 import { RcgiService } from './_services/rcgi/rcgi.service';
 import { ToastNotifierService } from './_services/toast-notifier.service';
 import { MyFileService } from './_services/my-file.service';
+import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -188,6 +189,7 @@ export function createTranslateLoader(http: HttpClient) {
         DevicePropertyComponent,
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
+        TagsIdsConfigComponent,
         PluginsComponent,
         AppSettingsComponent,
         SetupComponent,
