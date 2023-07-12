@@ -29,7 +29,7 @@
             </mat-optgroup>
         </mat-autocomplete>
     </div>
-    <div class="my-form-field" style="vertical-align: bottom; margin-left: 7px;" *ngIf="withBitmask">
+    <div *ngIf="withBitmask" class="my-form-field variable-bitmask">
         <span>{{'gauges.property-mask' | translate}}</span>
         <div class="my-form-field-bitmask">
             <input value="{{getVariableMask()}}" readonly="true" [disabled]="true">
