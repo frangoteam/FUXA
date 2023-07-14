@@ -155,7 +155,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setValues(values) {
         // merge the data to have rows with 0:timestamp, n:variable values
         let data = [];
-        // data.push({});
         data.push([]);    // timestamp, index 0
         let xmap = {};
         for (var i = 0; i < values.length; i++) {
@@ -191,7 +190,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (column.type === TableCellType.timestamp) {
                     row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
                 } else if (column.type === TableCellType.variable) {
-                    row[column.id].stringValue = (data[x][i]) ? numeral(data[x][i]).format(column.valueFormat) : '';
+                    row[column.id].stringValue = (data[x][i]) ? Utils.formatValue(data[x][i], column.valueFormat) : '';
                 } else if (column.type === TableCellType.device) {
                     row[column.id].stringValue = column.exname;
                 }
