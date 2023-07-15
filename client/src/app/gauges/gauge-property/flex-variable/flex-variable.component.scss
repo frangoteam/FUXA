@@ -18,3 +18,19 @@
     min-width: 450px;
     vertical-align: unset !important;
 }
+
+.tag-link {
+    position:absolute; 
+    bottom: 0px; 
+    right: 0px; 
+    height: 28px; 
+    width: 28px; 
+    border-radius: 2px 0px 0px 2px;
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
+}
+
+.bitmask {
+    vertical-align: bottom; 
+    margin-left: 7px;
+}

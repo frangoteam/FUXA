@@ -5,7 +5,7 @@
     </div>
     <div class="my-form-field" style="display:inline-block;" *ngIf="!readonly">
         <span style="text-overflow:clip; white-space:nowrap; width: 28px">{{tagLabel | translate}}</span>
-        <div class="my-form-field-link"></div>
+        <div class="tag-link"></div>
         <button mat-icon-button (click)="onBindTag()" style="line-height: 28px;height:28px; width:28px; vertical-align: middle;">
             <mat-icon>link</mat-icon>
         </button>
@@ -29,7 +29,7 @@
             </mat-optgroup>
         </mat-autocomplete>
     </div>
-    <div class="my-form-field" style="vertical-align: bottom; margin-left: 7px;" *ngIf="withBitmask">
+    <div class="my-form-field bitmask" *ngIf="withBitmask">
         <span>{{'gauges.property-mask' | translate}}</span>
         <div class="my-form-field-bitmask">
             <input value="{{getVariableMask()}}" readonly="true" [disabled]="true">
