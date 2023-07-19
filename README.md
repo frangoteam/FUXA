@@ -31,6 +31,9 @@ Or [Download the latest release](https://github.com/frangoteam/FUXA/releases) an
 ```
 cd ./server
 npm install
+cd ..
+cd ./server
+npm install
 npm start
 ```
 
