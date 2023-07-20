@@ -1,3 +1,30 @@
+.container {
+    display: block;
+    margin-bottom: 5px;
+    .value {
+        max-width: 100px;
+        margin-right: 18px;
+    }
+    .link {
+        display:inline-block;
+        vertical-align: bottom;
+        .span-link {
+            text-overflow:clip;
+            white-space:nowrap;
+            width: 28px
+        }
+
+        button {
+            line-height: 28px;
+            height:28px;
+            width:28px;
+            vertical-align: middle;
+        }
+    }
+    .input {
+        margin-left: 0px;
+    }
+}
 
 ::ng-deep .group-label span {
     line-height: 28px;
@@ -17,6 +44,7 @@
     font-size: 13px;
     min-width: 450px;
     vertical-align: unset !important;
+    width: unset;
 }
 
 .tag-link {
