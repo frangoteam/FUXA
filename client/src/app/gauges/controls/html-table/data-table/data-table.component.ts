@@ -244,6 +244,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dataSource.paginator = this.paginator;
         }
         this.dataSource.sort = this.sort;
+        this.dataSource.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].stringValue;
     }
 
     private loadData() {
