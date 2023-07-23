@@ -445,12 +445,7 @@ function updateDevice(event) {
 function updateDeviceValues(event) {
     try {
         //!TOFIX
-        if (settings.broadcastAll || !settings.broadcastAll) {
-            io.emit(Events.IoEventTypes.DEVICE_VALUES, { 
-                id: event.id,
-                values: Object.values(event.values) 
-            });
-        } else {
+        if (settings.broadcastAll === false) {
             Object.values(io.sockets.sockets).forEach((socket) => {
                 const tags = Object.values(event.values).filter((tag) => {
                     return socket.tagsClientSubscriptions.includes(tag.id);
@@ -459,6 +454,11 @@ function updateDeviceValues(event) {
                     id: event.id,
                     values: Object.values(tags)
                 });
+            });
+        } else {
+            io.emit(Events.IoEventTypes.DEVICE_VALUES, { 
+                id: event.id,
+                values: Object.values(event.values) 
             });
         }
         tagsSubscription.forEach((key, value) => {
