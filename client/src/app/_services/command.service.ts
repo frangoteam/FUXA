@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { Report } from '../_models/report';
+import { RcgiService } from './rcgi/rcgi.service';
+import { ResourceStorageService } from './rcgi/resource-storage.service';
 
 @Injectable({
     providedIn: 'root'
@@ -13,10 +15,15 @@ import { Report } from '../_models/report';
 export class CommandService {
 
     private endPointConfig: string = EndPointApi.getURL();
+	private server: ResourceStorageService;
 
-    constructor(private http: HttpClient,
+    constructor(
+        private http: HttpClient,
+		private rcgiService: RcgiService,
         private translateService: TranslateService,
         private toastr: ToastrService) {
+
+        this.server = rcgiService.rcgi;
     }
 
     buildReport(report: Report) {
@@ -41,12 +48,7 @@ export class CommandService {
     }
 
     getReportFile(reportName: string): Observable<Blob> {
-        let header = new HttpHeaders({ 'Content-Type': 'application/pdf' });
-        let params = {
-            cmd: CommanType.reportDownload,
-            name: reportName,
-        };
-        return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
+        return  this.server.downloadFile(reportName, CommanType.reportDownload);
     }
 
     private notifyError(err: any) {

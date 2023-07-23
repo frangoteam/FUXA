@@ -8,6 +8,7 @@ import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/proje
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery, IAlarmHistory } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
+import { CommanType } from '../command.service';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -119,5 +120,14 @@ export class ResWebApiService implements ResourceStorageService {
     heartbeat(activity: boolean): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.http.post<any>(this.endPointConfig + '/api/heartbeat', { headers: header, params: activity });
+    }
+
+    downloadFile(fileName: string, type: CommanType): Observable<Blob> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/pdf' });
+        let params = {
+            cmd: type,
+            name: fileName,
+        };
+        return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
     }
 }
