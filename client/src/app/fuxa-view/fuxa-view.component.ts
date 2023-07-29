@@ -679,7 +679,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         const height = Utils.isNumeric(options.height) ? parseInt(options.height) : 400;
         const left = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
         const top = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
-        console.log(top);
         window.open(link, '_blank', `height=${height},width=${width},left=${left},top=${top}`);
     }
 
@@ -695,11 +694,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.onclose) {
             this.onclose.emit($event);
         }
-        // if (this.dialog && this.dialog.view && this.dialog.view.name === viewref) {
-        // 	this.onCloseDialog();
-        // } else if (this.cards.find((c) => c.name === viewref)) {
-        // 	this.onCloseCard(this.cards.find((c) => c.name === viewref));
-        // }
     }
 
     onSetValue(ga: GaugeSettings, event: GaugeEvent) {
