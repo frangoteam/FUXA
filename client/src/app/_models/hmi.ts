@@ -102,7 +102,24 @@ export class HeaderSettings {
     infos: NotificationModeType;
     bkcolor = '#ffffff';
     fgcolor = '#000000';
+    items: HeaderItem[];
 }
+
+export interface HeaderItem extends NaviItem {
+    id: string;
+    type: HeaderItemType;
+    position: HeaderItemPosition;
+    property: GaugeProperty;
+}
+
+export type HeaderItemType = 'button' | 'label' | 'image';
+
+export interface HeaderItemPosition {
+    index: number;
+    direction: PositionDirectionType;
+}
+
+export type PositionDirectionType = 'left' | 'center' | 'right';
 
 export enum NotificationModeType {
     hide = 'item.notifymode-hide',

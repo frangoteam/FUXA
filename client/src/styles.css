@@ -996,6 +996,10 @@ mat-toolbar-row {
     display: inline-block;
 }
 
+.force-lbk {
+    display: inline-block !important;
+}
+
 .table {
     display: table;
 }
@@ -1102,4 +1106,8 @@ mat-toolbar-row {
 
 .pointer {
     cursor: pointer;
+}
+
+.pointer-move {
+    cursor: move;
 }

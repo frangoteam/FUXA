@@ -66,6 +66,9 @@
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
 
+    "dlg.headeritem-title": "Header Item",
+    "dlg.headeritem-icon": "Icon",
+
     "dlg.docproperty-title": "View properties",
     "dlg.docproperty-width": "Width",
     "dlg.docproperty-height": "Height",
@@ -146,6 +149,10 @@
     "item.navtype-text": "Text",
     "item.navtype-icons-text-block": "Icons & Text (block)",
     "item.navtype-icons-text-inline": "Icons & Text (inline)",
+
+    "item.headertype-button": "Button",
+    "item.headertype-label": "Label",
+    "item.headertype-image": "Image",
 
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",

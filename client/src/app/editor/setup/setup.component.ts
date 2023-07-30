@@ -7,7 +7,7 @@ import { AppService } from '../../_services/app.service';
 
 import { ChartConfigComponent } from '../../editor/chart-config/chart-config.component';
 import { GraphConfigComponent } from '../../editor/graph-config/graph-config.component';
-import { LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
+import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
 
@@ -74,7 +74,7 @@ export class SetupComponent {
         }
         let dialogRef = this.dialog.open(LayoutPropertyComponent, {
             position: { top: '60px' },
-            data: { layout: templayout, views: hmi.views, securityEnabled: this.projectService.isSecurityEnabled() }
+            data: <ILayoutPropertyData>{ layout: templayout, views: hmi.views, securityEnabled: this.projectService.isSecurityEnabled() }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

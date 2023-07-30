@@ -1,0 +1,41 @@
+<div class="header-item-dialog">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'dlg.headeritem-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn" cdkFocusInitial>clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field block mb10">
+            <span>{{'dlg.headeritem-icon' | translate}}</span>
+            <mat-select [(value)]="item.icon" class="icons-selector" #iconsel>
+                <mat-select-trigger>
+                    <mat-icon>{{iconsel.value}}</mat-icon>
+                </mat-select-trigger>
+                <mat-option [value]="'image'" (click)="imagefile.value = '';imagefile.click();">
+                    {{'dlg.menuitem-image' | translate}}
+                    <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
+                </mat-option>
+                <mat-option *ngFor="let icon of icons$ | async" [value]="icon" (click)="item.image = ''" style="display: inline-block !important;">
+                    <mat-icon class="">{{ icon }}</mat-icon>
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field block mt10">
+            <span>{{'dlg.layout-lbl-type' | translate}}</span>
+            <mat-select [(ngModel)]="item.type" style="width: 300px">
+                <mat-option *ngFor="let type of headerType" [value]="type">
+                    {{ 'item.headertype-' + type | translate }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field block mt10">
+            <span>{{'dlg.menuitem-text' | translate}}</span>
+            <input [(ngModel)]="item.text" type="text" style="width: 300px">
+        </div>
+        <div class="my-form-field block mt10">
+            <span>{{'dlg.useraccess-groups' | translate}}</span>
+            <sel-options #seloptions [selected]="selectedGroups" [options]="groups"></sel-options>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>    
+</div>

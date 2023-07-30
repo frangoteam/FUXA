@@ -30,58 +30,88 @@
     padding-left: 4px;
     padding-right: 10px;
     background-color: rgba(255, 255, 255, 1);
-}
 
-.header-menu {
-    display: inline-block;
-}
-
-.header-title {
-    display: inline-block;
-    margin-left: 20px;
-    min-width: 200px;
-    text-align: right;
-    line-height: 46px
-}
-
-.header-login {
-    float: right;
-    line-height: 46px;
-    border-left-width: 1px;
-    border-left-style: solid;
-    padding-left: 10px;
-}
-
-.header-button {  
-    float: right;
-    width: 240px;
-    line-height: 46px;
-    text-align: right;
-    margin-right: 10px;
-    padding-right: 50px;
-}
-
-.header-button mat-icon {
-    font-size: 28px;
-    width: 28px;
-    height:28px;
-}
-.alarm-layout {
-    margin-right: 20px;
-}
-
-.info-layout {
+    .header-menu {
+        display: inline-block;
+    }
+    
+    .header-title {
+        display: inline-block;
+        margin-left: 20px;
+        min-width: 200px;
+        text-align: right;
+        line-height: 46px
+    }
+    
+    .header-login {
+        float: right;
+        line-height: 46px;
+        border-left-width: 1px;
+        border-left-style: solid;
+        padding-left: 10px;
+    }
+    
+    .header-notify-button {  
+        float: right;
+        width: 240px;
+        line-height: 46px;
+        text-align: right;
+        margin-right: 10px;
+        padding-right: 10px;
+        
+        mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height:28px;
+        }
+        
+        .alarm-button {
+            margin-right: 20px;
+        }
+    }
 }
 
 .header-config {
-    display: flex;
     padding-top: 30px;
-    margin-left: 80px;
+    .config-left {
+        display: inline-block;
+    
+        .add-item {
+            display: inline-block;
+            vertical-align: top;
+            width: 50px;
+        }
+    
+        .header-items {
+            display: inline-block;
+
+            .header-item {
+                .edit {
+                    display: block;
+                    width: 50px;
+                }
+            }
+        }
+    
+    }
+    .config-right {
+        float: right;
+    
+        .colors {
+            display: block; 
+            margin-top: 10px;
+            width: 268px
+        }
+    }
 }
 
-.config {
-    display: inline-block;
-    width: 50%;
+.header-item-dialog {
+    min-width: 350px;
+}
+
+.icons-selector {
+    width: 60px;
+    height: 30px;
 }
 
 .my-form-field mat-icon {
