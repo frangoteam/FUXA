@@ -35,9 +35,9 @@
                 <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
             </div>
         </div>
-        <div *ngIf="data.cell.type === columnType.variable || data.cell.type === columnType.device" class="my-form-field" style="display: block; margin-top: 10px;">
+        <div *ngIf="data.cell.type === columnType.variable || data.cell.type === columnType.device" class="my-form-field variable-input">
             <flex-variable [data]="devicesValues" (onchange)="onSetVariable($event)" [variableId]="data.cell.variableId" [bitmask]="data.cell.bitmask"
-            [withStaticValue]="false" [withBitmask]="true">
+                [withStaticValue]="false" [withBitmask]="true">
            </flex-variable>
         </div>
     </div>

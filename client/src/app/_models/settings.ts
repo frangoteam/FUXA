@@ -8,7 +8,7 @@ export class AppSettings {
     /** Expiration of authanticated token (15m)*/
     tokenExpiresIn = '1h';
     /** Broadcast all tags, without check the frontend views */
-    broadcastAll = false;
+    broadcastAll = true;
     /** Smtp to send mails */
     smtp = new SmtpSettings();
     /** Daq store database */

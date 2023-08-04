@@ -768,8 +768,10 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
             HtmlInputComponent.initElement(ga, isview);
+            return true;
         } else if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
             HtmlSelectComponent.initElement(ga, isview);
+            return true;
         } else if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
             return true;
@@ -793,6 +795,8 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.initElement(ga, isview);
+            return true;
+        } else {
             return true;
         }
     }

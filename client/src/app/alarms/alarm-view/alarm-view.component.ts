@@ -11,6 +11,8 @@ import { AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/al
 import { FormControl, FormGroup } from '@angular/forms';
 
 import * as moment from 'moment';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-alarm-view',
@@ -48,13 +50,14 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy = new Subject<void>();
 
     constructor(private translateService: TranslateService,
-        private hmiService: HmiService) {
-            const today = moment();
-            this.dateRange = new FormGroup({
-                endDate: new FormControl(today.set({hour: 23, minute: 59, second: 59, millisecond: 999}).toDate()),
-                startDate: new FormControl(today.set({hour: 0, minute: 0, second: 0, millisecond: 0}).add(-3, 'day').toDate())
-            });
-        }
+                private dialog: MatDialog,
+                private hmiService: HmiService) {
+        const today = moment();
+        this.dateRange = new FormGroup({
+            endDate: new FormControl(today.set({hour: 23, minute: 59, second: 59, millisecond: 999}).toDate()),
+            startDate: new FormControl(today.set({hour: 0, minute: 0, second: 0, millisecond: 0}).add(-3, 'day').toDate())
+        });
+    }
 
     ngOnInit() {
         Object.keys(this.statusText).forEach(key => {
@@ -135,7 +138,27 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onAckAlarm(alarm: any) {
         this.hmiService.setAlarmAck(alarm.name).subscribe(result => {
         }, error => {
-            console.error('Error setAlarmAck');
+            console.error('Error setAlarmAck', error);
+        });
+    }
+
+    onAckAllAlarm() {
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                msg: this.translateService.instant('msg.alarm-ack-all')
+            },
+            position: {
+                top: '60px'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.hmiService.setAlarmAck(null).subscribe(result => {
+                }, error => {
+                    console.error('Error onAckAllAlarm', error);
+                });
+            }
         });
     }
 

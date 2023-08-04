@@ -178,6 +178,7 @@ export class TableCustomizerComponent implements OnInit {
 @Component({
     selector: 'table-cell-dialog',
     templateUrl: 'table-cell.dialog.html',
+    styleUrls: ['./table-customizer.component.css']
 })
 export class DialogTableCell {
     tableType = TableType;

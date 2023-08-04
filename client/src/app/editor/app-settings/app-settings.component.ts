@@ -56,7 +56,7 @@ export class AppSettingsComponent implements OnInit {
             this.authentication = this.settings.tokenExpiresIn;
         }
         if (Utils.isNullOrUndefined(this.settings.broadcastAll)) {
-            this.settings.broadcastAll = false;
+            this.settings.broadcastAll = true;
         }
         if (!this.settings.smtp) {
             this.settings.smtp = new SmtpSettings();

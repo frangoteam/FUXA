@@ -155,7 +155,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setValues(values) {
         // merge the data to have rows with 0:timestamp, n:variable values
         let data = [];
-        // data.push({});
         data.push([]);    // timestamp, index 0
         let xmap = {};
         for (var i = 0; i < values.length; i++) {
@@ -185,13 +184,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         for (let i = 0; i < data[0].length; i++) {
             // create the row
             let row = {};
+            let colPos = 1;
             for (let x = 0; x < this.displayedColumns.length; x++) {
                 let column = <TableColumn>this.columnsStyle[this.displayedColumns[x]];
                 row[column.id] = <TableCellData> { stringValue: '' };
                 if (column.type === TableCellType.timestamp) {
                     row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
                 } else if (column.type === TableCellType.variable) {
-                    row[column.id].stringValue = (data[x][i]) ? numeral(data[x][i]).format(column.valueFormat) : '';
+                    row[column.id].stringValue = (data[colPos][i]) ? Utils.formatValue(data[x][i], column.valueFormat) : '';
+                    colPos++;
                 } else if (column.type === TableCellType.device) {
                     row[column.id].stringValue = column.exname;
                 }
@@ -243,6 +244,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dataSource.paginator = this.paginator;
         }
         this.dataSource.sort = this.sort;
+        this.dataSource.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].stringValue;
     }
 
     private loadData() {

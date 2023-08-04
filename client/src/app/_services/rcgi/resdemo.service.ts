@@ -7,6 +7,7 @@ import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/proje
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
+import { CommanType } from '../command.service';
 
 @Injectable()
 export class ResDemoService implements ResourceStorageService {
@@ -106,6 +107,12 @@ export class ResDemoService implements ResourceStorageService {
     }
 
     heartbeat(activity: boolean): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    downloadFile(fileName: string, type: CommanType): Observable<Blob> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });
