@@ -1,4 +1,4 @@
-import { Component, Inject, ViewChild, AfterContentInit } from '@angular/core';
+import { Component, Inject, ViewChild, AfterContentInit, OnInit } from '@angular/core';
 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GaugeProperty } from '../../../../_models/hmi';
@@ -15,7 +15,7 @@ import { Utils } from '../../../../_helpers/utils';
     templateUrl: './html-switch-property.component.html',
     styleUrls: ['./html-switch-property.component.scss']
 })
-export class HtmlSwitchPropertyComponent implements AfterContentInit {
+export class HtmlSwitchPropertyComponent implements OnInit, AfterContentInit {
 
     @ViewChild('switcher', {static: false}) switcher: NgxSwitchComponent;
 	@ViewChild('flexhead', {static: false}) flexhead: FlexHeadComponent;
@@ -28,6 +28,7 @@ export class HtmlSwitchPropertyComponent implements AfterContentInit {
     switchHeight = 40;
     fonts = Define.fonts;
     defaultColor = Utils.defaultColor;
+    withBitmask = false;
 
     constructor(public dialogRef: MatDialogRef<HtmlSwitchPropertyComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -44,6 +45,12 @@ export class HtmlSwitchPropertyComponent implements AfterContentInit {
         this.switchHeight = switchsize.height;
         this.switchWidth = switchsize.width;
         this.options.height = this.switchHeight;
+    }
+
+    ngOnInit(): void {
+        if (this.data.withBitmask) {
+            this.withBitmask = this.data.withBitmask;
+        }
     }
 
     ngAfterContentInit() {

@@ -136,7 +136,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 } else if (mode === SaveMode.SaveAs) {
                     this.projectService.saveAs();
                 } else if (mode === SaveMode.Save) {
-                    this.onSaveProject();
+                    this.onSaveProject(true);
                 }
             });
             this.gaugesManager.clearMemory();
@@ -235,22 +235,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (copiedPasted) => {
-                    if (copiedPasted && copiedPasted.copy && copiedPasted.past) {
-                        copiedPasted.copy = copiedPasted.copy.filter(function(e) { return e; });
-                        if (copiedPasted.copy.length == copiedPasted.past.length) {
-                            for (let i = 0; i < copiedPasted.copy.length; i++) {
-                                let srcType = copiedPasted.copy[i].getAttribute('type');
-                                let srcId = copiedPasted.copy[i].getAttribute('id');
-                                if (srcId) {
-                                    let gaSrc: GaugeSettings = this.searchGaugeSettings({ id: srcId, type: srcType });
-                                    let gaDest: GaugeSettings = this.gaugesManager.createSettings(copiedPasted.past[i].id, gaSrc.type);
-                                    gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
-                                    this.setGaugeSettings(gaDest);
-                                    this.checkGaugeAdded(gaDest);
-                                }
-                            }
-                        }
-                    }
+                    this.onCopyAndPaste(copiedPasted);
                 }
             );
 
@@ -324,10 +309,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onSelectView(this.hmi.views[0]);
             }
         }
+        this.hmi.layout = <LayoutSettings>Utils.mergeDeep(new LayoutSettings(), this.hmi.layout);
+
         // check and set start page
-        if (!this.hmi.layout) {
-            this.hmi.layout = new LayoutSettings();
-        }
         if (!this.hmi.layout.start) {
             this.hmi.layout.start = this.hmi.views[0].id;
         }
@@ -339,8 +323,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Set or Add the View to Project
      * Save the View to Server
      */
-    private saveView(view: View) {
-        this.projectService.setView(view);
+    private saveView(view: View, notify = false) {
+        this.projectService.setView(view, notify);
     }
 
     /**
@@ -663,6 +647,35 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.checkMySelectedToSetColor(null, this.colorStroke, this.winRef.nativeWindow.svgEditor.getSelectedElements());
     }
 
+    private onCopyAndPaste(copiedPasted: CopiedAndPasted) {
+        if (copiedPasted?.copy?.length && copiedPasted?.past?.length) {
+            const copied = copiedPasted.copy.filter(element => element !== null);
+            const pasted = copiedPasted.past.filter(element => element !== null);
+            if (copied.length == copiedPasted.past.length) {
+                for (let i = 0; i < copied.length; i++) {
+                    const copiedIdsAndTypes = Utils.getInTreeIdAndType(copied[i]);
+                    const pastedIdsAndTypes = Utils.getInTreeIdAndType(pasted[i]);
+                    if (copiedIdsAndTypes.length === pastedIdsAndTypes.length) {
+                        for (let j = 0; j < copiedIdsAndTypes.length; j++) {
+                            if (copiedIdsAndTypes[j].id && pastedIdsAndTypes[j].id && copiedIdsAndTypes[j].type === pastedIdsAndTypes[j].type) {
+                                let gaSrc: GaugeSettings = this.searchGaugeSettings(copiedIdsAndTypes[j]);
+                                if (gaSrc) {
+                                    let gaDest: GaugeSettings = this.gaugesManager.createSettings(pastedIdsAndTypes[j].id, pastedIdsAndTypes[j].type);
+                                    gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
+                                    this.setGaugeSettings(gaDest);
+                                    this.checkGaugeAdded(gaDest);
+                                }
+                            } else {
+                                console.error(`Inconsistent elements!`, `${copiedIdsAndTypes[j]}`, `${pastedIdsAndTypes[j]}`);
+                            }
+                        }
+                    } else {
+                        console.error('Between copied and pasted there are inconsistent elements!');
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * event from svg-editor: svg element removed
@@ -876,10 +889,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Save Project
      * Save the current View
      */
-    onSaveProject() {
+    onSaveProject(notify = false) {
         if (this.currentView) {
             this.currentView.svgcontent = this.getContent();
-            this.saveView(this.currentView);
+            this.saveView(this.currentView, notify);
         }
     }
 
@@ -1289,7 +1302,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 position: { top: '60px' },
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    withEvents: eventsSupported, withActions: actionsSupported,
+                    withEvents: eventsSupported, withActions: actionsSupported, withBitmask: bitmaskSupported,
                     names: names
                 }
             });
@@ -1420,6 +1433,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     flipSelected(fliptype: string) {
     }
+}
+
+interface CopiedAndPasted {
+    copy: HTMLElement[];
+    past: HTMLElement[];
 }
 
 @Component({

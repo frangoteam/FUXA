@@ -24,7 +24,7 @@ export class ChartConfigComponent implements OnInit {
 
     selectedChart = <Chart>{ id: null, name: null, lines: [] };
     selectedDevice = { id: null, name: null, tags: []};
-    data = { charts: [], devices: [] };
+    data = <IDataChartConfig>{ charts: [], devices: [] };
     defaultColor = Utils.defaultColor;
     lineColor = Utils.lineColor;
 
@@ -62,7 +62,7 @@ export class ChartConfigComponent implements OnInit {
 
     onOkClick(): void {
         this.projectService.setCharts(this.data.charts);
-        this.dialogRef.close(this.data.charts);
+        this.dialogRef.close(<IDataChartResult> { charts: this.data.charts, selected: this.selectedChart });
     }
 
     onRemoveChart(index: number) {
@@ -239,4 +239,15 @@ export class DialogChartLine {
     onOkClick(): void {
         this.dialogRef.close(this.data);
     }
+}
+
+
+interface IDataChartConfig {
+    charts: Chart[];
+    devices: Device[];
+}
+
+export interface IDataChartResult {
+    charts: Chart[];
+    selected: Chart;
 }

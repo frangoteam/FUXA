@@ -298,6 +298,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             offline: false,
             decimals: 0,
             responsive: true,
+            backgroundColor: null,              // to set in property
             maintainAspectRatio: false,
             indexAxis: 'x',
             gridLinesShow: true,                // to set in property
@@ -313,6 +314,10 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                         }
                         // suggestedMin: 0
                      },
+                     grid: {
+                        color: 'rgba(0, 0, 0, 0.2)',
+                        display: true
+                     }
                 },
                 x: {
                     display: true,
@@ -322,6 +327,10 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                             size: 12
                         }
                     },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.2)',
+                        display: true
+                     }
                 }
             },
             plugins: {

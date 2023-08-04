@@ -12,7 +12,7 @@
                     {{'dlg.menuitem-image' | translate}}
                     <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
                 </mat-option>
-                <mat-option *ngFor="let icon of icons" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important;">
+                <mat-option *ngFor="let icon of icons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important;">
                     <mat-icon class="">{{ icon }}</mat-icon>
                 </mat-option>
             </mat-select>

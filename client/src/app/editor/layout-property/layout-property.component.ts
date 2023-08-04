@@ -13,6 +13,7 @@ import { Utils } from '../../_helpers/utils';
 import { UploadFile } from '../../_models/project';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
+import { map, Observable, of } from 'rxjs';
 
 @Component({
     selector: 'app-layout-property',
@@ -41,9 +42,8 @@ export class LayoutPropertyComponent implements OnInit {
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
         private translateService: TranslateService,
         private resourcesService: ResourcesService) {
-        if (!data.layout) {
-            data.layout = new LayoutSettings();
-        }
+
+        data.layout = Utils.mergeDeep(new LayoutSettings(), data.layout);
         this.startView = data.layout.start;
         this.sideMode = data.layout.navigation.mode;
         if (!data.layout.navigation.items) {
@@ -172,17 +172,23 @@ export class DialogMenuItem {
     // defaultColor = Utils.defaultColor;
 	selectedGroups = [];
     groups = UserGroups.Groups;
-    icons = Define.materialIcons;
+    icons$: Observable<string[]>;
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
 
     @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
     constructor(public projectService: ProjectService,
-        public dialogRef: MatDialogRef<DialogMenuItem>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-            this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
-        }
+                public dialogRef: MatDialogRef<DialogMenuItem>,
+                @Inject(MAT_DIALOG_DATA) public data: any) {
+        this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
+
+        this.icons$ = of(Define.MaterialIconsRegular).pipe(
+          map((data: string) => data.split('\n')),
+          map(lines => lines.map(line => line.split(' ')[0])),
+          map(names => names.filter(name => !!name))
+        );
+    }
 
     onNoClick(): void {
         this.dialogRef.close();

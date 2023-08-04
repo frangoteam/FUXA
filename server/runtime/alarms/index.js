@@ -140,7 +140,7 @@ function AlarmsManager(_runtime) {
     this.getAlarmsHistory = function (query, groups) {
         return new Promise(function (resolve, reject) {
             var history = [];
-            alarmstorage.getAlarmsHistory(query.from, query.to).then(result => {
+            alarmstorage.getAlarmsHistory(query.start, query.end).then(result => {
                 for (var i = 0; i < result.length; i++) {
                     var alr = new AlarmHistory(result[i].nametype);
                     alr.status = result[i].status;
@@ -223,6 +223,24 @@ function AlarmsManager(_runtime) {
             }).catch(function (err) {
                 reject(err);
             });
+        });
+    }
+
+    /**
+     * Clear Alarm history
+     */
+    this.checkRetention = function () {
+        return new Promise(async function (resolve, reject) {
+            if (settings.alarms && settings.alarms.retention !== 'none') {
+                alarmstorage.clearAlarmsHistory(utils.getRetentionLimit(settings.alarms.retention)).then((result) => {
+                    logger.info(`alarms.checkRetention processed`);
+                    resolve(true);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } else {
+                resolve();
+            }
         });
     }
 

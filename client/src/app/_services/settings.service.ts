@@ -59,6 +59,10 @@ export class SettingsService {
             this.appSettings.tokenExpiresIn = settings.tokenExpiresIn;
             dirty = true;
         }
+        if (settings.broadcastAll != this.appSettings.broadcastAll) {
+            this.appSettings.broadcastAll = settings.broadcastAll;
+            dirty = true;
+        }
         if (settings.smtp && !(settings.smtp.host === this.appSettings.smtp.host && settings.smtp.port === this.appSettings.smtp.port &&
                 settings.smtp.mailsender === this.appSettings.smtp.mailsender && settings.smtp.username === this.appSettings.smtp.username &&
                 settings.smtp.password === this.appSettings.smtp.password)) {

@@ -1,96 +1,96 @@
-<div style="width: 650px;position: relative;">
+<div class="container">
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-html-switch-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'gauges.property-props' | translate}}">
             <div style="height: 500px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
-                <div style="display: block;">
+                <div class="block">
                     <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
                 </div>
-                <div mat-dialog-content style="overflow: hidden; width:100%">
-                    <flex-head [data]="data" [property]="property" #flexhead></flex-head>
+                <div class="block">
+                    <flex-head [data]="data" [property]="property" #flexhead [withStaticValue]="false" [withBitmask]="withBitmask"></flex-head>
                 </div>
-                <div class="field-row" style="padding-top: 10px;">
-                    <div class="my-form-field" style="padding-left: 60px;">
-                        <span>{{'html-switch.property-off-value' | translate}}</span>
-                        <input numberOnly [(ngModel)]="options.offValue" style="width: 80px;text-align: center;display:inline-block;" type="text">
-                    </div>
-                    <div class="my-form-field" style="float: right;padding-right: 60px">
-                        <span>{{'html-switch.property-on-value' | translate}}</span>
-                        <input numberOnly [(ngModel)]="options.onValue" style="width: 80px;text-align: center;display:inline-block;" type="text">
-                    </div>
+                <div class="field-row mt10">
                 </div>
-                <div class="field-row" style="padding-top: 10px;">
+                <div class="field-row mt10">
                     <div class="my-form-field color-field">
                         <span>{{'html-switch.property-off-background' | translate}}</span>
                         <input [(colorPicker)]="options.offBackground" [style.background]="options.offBackground" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 90px"
                             [cpPosition]="'right'" (colorPickerChange)="updateOptions()" />
                     </div>
-                    <div class="my-form-field color-field" style="padding-left: 12px">
+                    <div class="my-form-field color-field ml10">
                         <span>{{'html-switch.property-off-slider-color' | translate}}</span>
                         <input [(colorPicker)]="options.offSliderColor" [style.background]="options.offSliderColor" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 90px"
                             [cpPosition]="'right'" (colorPickerChange)="updateOptions()" />
                     </div>
-                    <div class="my-form-field slider-field" style="padding-left: 50px; top: -1px;">
-                        <span>{{'html-switch.property-radius' | translate}}</span>
-                        <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.radius" (input)="updateOptions()">
-                        </mat-slider>
+                    <div class="my-form-field ml10">
+                        <span>{{'html-switch.property-off-value' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.offValue" style="width: 80px;text-align: center;display:inline-block;" type="text">
                     </div>
-                    <div class="my-form-field color-field" style="float: right;padding-left: 12px;">
+                    <div class="my-form-field color-field ftr ml10">
                         <span>{{'html-switch.property-on-background' | translate}}</span>
                         <input [(colorPicker)]="options.onBackground" [style.background]="options.onBackground" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 90px"
                             [cpPosition]="'left'" (colorPickerChange)="updateOptions()" />
                     </div>
-                    <div class="my-form-field color-field" style="float: right;">
+                    <div class="my-form-field color-field ftr ml10">
                         <span>{{'html-switch.property-on-slider-color' | translate}}</span>
                         <input [(colorPicker)]="options.onSliderColor" [style.background]="options.onSliderColor" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 90px"
                             [cpPosition]="'left'" (colorPickerChange)="updateOptions()" />
                     </div>
+                    <div class="my-form-field ftr">
+                        <span>{{'html-switch.property-on-value' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.onValue" style="width: 80px;text-align: center;display:inline-block;" type="text">
+                    </div>
                 </div>
-                <div class="field-row">
+                <div class="field-row mt10">
                     <div class="my-form-field color-field">
                         <span>{{'html-switch.property-off-text-color' | translate}}</span>
                         <input [(colorPicker)]="options.offTextColor" [style.background]="options.offTextColor" [cpAlphaChannel]="'always'" class="input-color"
                             [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 90px"
                             [cpPosition]="'top'" (colorPickerChange)="updateOptions()" />
                     </div>
-                    <div class="my-form-field" style="padding-left: 12px;">
+                    <div class="my-form-field ml10">
                         <span>{{'html-switch.property-off-text' | translate}}</span>
-                        <input [(ngModel)]="options.offText" (change)="updateOptions()" style="width: 60px;text-align: center;display:inline-block;" type="text">
+                        <input [(ngModel)]="options.offText" (change)="updateOptions()" style="width: 90px;text-align: center;display:inline-block;" type="text">
                     </div>
-                    <div class="my-form-field slider-field slider-small" style="padding-left: 17px; top: -2px;width: 80px;">
+                    <div class="my-form-field color-field ftr ml10">
+                        <span>{{'html-switch.property-on-text-color' | translate}}</span>
+                        <input [(colorPicker)]="options.onTextColor" [style.background]="options.onTextColor" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 90px"
+                            [cpPosition]="'top'" (colorPickerChange)="updateOptions()" />
+                    </div>
+                    <div class="my-form-field ftr ml10">
+                        <span>{{'html-switch.property-on-text' | translate}}</span>
+                        <input [(ngModel)]="options.onText" (change)="updateOptions()" style="width: 90px;text-align: center;display:inline-block;" type="text">
+                    </div>
+                </div>
+                <div class="field-row mt10">
+                    <div class="my-form-field input-radius">
+                        <span>{{'html-switch.property-radius' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.radius" (change)="updateOptions()" (keyup.enter)="updateOptions()" type="number" min="0" max="100" step="1">
+                    </div>
+                    <div class="my-form-field input-font-size ml10">
                         <span>{{'html-switch.property-font-size' | translate}}</span>
-                        <mat-slider style="display:inline-block;" [max]="50" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="options.fontSize" (input)="updateOptions()">
-                        </mat-slider>
+                        <input numberOnly [(ngModel)]="options.fontSize" (change)="updateOptions()" (keyup.enter)="updateOptions()" type="number" min="0" max="50" step="1">
                     </div>
-                    <div class="my-form-field" style="width:160px;padding-left: 12px;">
+                    <div class="my-form-field input-font ml10">
                         <span>{{'html-switch.property-font' | translate}}</span>
                         <mat-select [(value)]="options.fontFamily" (selectionChange)="updateOptions()">
                             <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
                                 {{font}}
                             </mat-option>
                         </mat-select>
-                    </div>
-                    <div class="my-form-field color-field" style="float: right;padding-left: 12px">
-                        <span>{{'html-switch.property-on-text-color' | translate}}</span>
-                        <input [(colorPicker)]="options.onTextColor" [style.background]="options.onTextColor" [cpAlphaChannel]="'always'" class="input-color"
-                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 98px"
-                            [cpPosition]="'top'" (colorPickerChange)="updateOptions()" />
-                    </div>
-                    <div class="my-form-field" style="float: right;padding-left: 12px;">
-                        <span>{{'html-switch.property-on-text' | translate}}</span>
-                        <input [(ngModel)]="options.onText" (change)="updateOptions()" style="width: 60px;text-align: center;display:inline-block;" type="text">
-                    </div>
+                    </div>                    
                 </div>
                 <div class="field-row" style="position: absolute;height:210px;width:650px;margin-top: 16px;max-width: 650px; max-height: 210px;overflow: hidden;">
                     <ngx-switch #switcher style="position: absolute;left: 50%;top: 50%;transform: translateX(-50%) translateY(-50%);" [style.width]="switchWidth + 'px'"

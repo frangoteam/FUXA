@@ -1016,6 +1016,10 @@ mat-toolbar-row {
     margin-top: 20px;
 }
 
+.mt25 {
+    margin-top: 25px;
+}
+
 .ml10 {
     margin-left: 10px;
 }
@@ -1072,10 +1076,30 @@ mat-toolbar-row {
     margin-bottom: 20px;
 }
 
+.mb25 {
+    margin-bottom: 25px;
+}
+
 .ftl {
     float: left;
 }
 
 .ftr {
     float: right;
+}
+
+.w100 {
+    width: 100%;
+}
+
+.container-split-ver {
+    display: flex;
+}
+
+.container-split-ver > div {
+    flex: 1;
+}
+
+.pointer {
+    cursor: pointer;
 }

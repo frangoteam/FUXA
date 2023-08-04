@@ -99,7 +99,7 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
-    uploadFile(file: any): Observable<UploadFile> {
+    uploadFile(file: any, destination?: string): Observable<UploadFile> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });
@@ -157,6 +157,12 @@ export class ResClientService implements ResourceStorageService {
 
     getDaqValues(query: DaqQuery): Observable<any> {
         return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    heartbeat(activity: boolean): Observable<any> {
+        return new Observable(observer => {
             observer.error('Not supported!');
         });
     }

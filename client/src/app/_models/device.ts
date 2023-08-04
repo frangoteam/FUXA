@@ -132,6 +132,8 @@ export class DeviceNetProperty {
     method: string;
     /** Data format flag used for WebAPI (CSV/JSON) */
     format: string;
+    /** Connection option used for Modbus RTU/TCP */
+    connectionOption: string;
 
     static descriptor = {
         address: 'Device address (IP)',
@@ -162,6 +164,9 @@ export class DeviceSecurity {
     password: string;
     clientId: string;
     grant_type: string;
+    certificateFileName: string;
+    privateKeyFileName: string;
+    caCertificateFileName: string;
 }
 
 export enum DeviceType {
@@ -206,6 +211,16 @@ export enum ModbusTagType {
     Int32MLE = 'Int32MLE',
     UInt32MLE = 'UInt32MLE'
     // String = 'String'
+}
+
+export enum ModbusOptionType {
+    SerialPort = 'SerialPort',
+    RTUBufferedPort = 'RTUBufferedPort',
+    AsciiPort = 'AsciiPort',
+    TcpPort = 'TcpPort',
+    UdpPort = 'UdpPort',
+    TcpRTUBufferedPort = 'TcpRTUBufferedPort',
+    TelnetPort = 'TelnetPort'
 }
 
 export enum MessageSecurityMode {

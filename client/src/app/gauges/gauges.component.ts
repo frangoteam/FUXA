@@ -33,6 +33,7 @@ import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.componen
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
+import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 
 @Injectable()
 export class GaugesManager {
@@ -545,10 +546,12 @@ export class GaugesManager {
             if (currentValue === null || currentValue === undefined){
                 return;
             } else {
-                if (currentValue === 0) {
+                if (currentValue === 0 || currentValue === '0') {
                     this.putSignalValue(sigid, '1');
-                } else if (currentValue === 1) {
+                } else if (currentValue === 1 || currentValue === '1') {
                     this.putSignalValue(sigid, '0');
+                } else if (currentValue === 'false') {
+                    this.putSignalValue(sigid, 'true');
                 } else {
                     this.putSignalValue(sigid, String(!currentValue));
                 }
@@ -562,7 +565,8 @@ export class GaugesManager {
      */
     putEvent(event: Event) {
         if (event.ga.property && event.ga.property.variableId) {
-            this.hmiService.putSignalValue(event.ga.property.variableId, event.value);
+            const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.ga.property.variableId]?.value);
+            this.hmiService.putSignalValue(event.ga.property.variableId, String(value));
             event.dbg = 'put ' + event.ga.property.variableId + ' ' + event.value;
         }
         this.onevent.emit(event);
@@ -856,6 +860,14 @@ export class GaugesManager {
      */
     clearMemory() {
         this.memorySigGauges = {};
+    }
+
+    /**
+     *
+     * @returns list of signals id (tag) that are binded to a gauge
+     */
+    getBindedSignalsId() {
+        return Object.keys(this.memorySigGauges);
     }
 }
 

@@ -1,4 +1,24 @@
 
+.container {
+    width: 620px;
+    position: relative;
+
+    .input-radius {
+        // margin-left: 60px;
+
+        input {
+            width: 80px;
+        }
+    }
+    .input-font-size input {
+        width: 80px;
+    }
+
+    .input-font mat-select {
+        width: 160px;
+    }
+}
+
 .field-row {
     display: block;
     margin-bottom: 5px;

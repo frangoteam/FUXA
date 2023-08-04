@@ -1,23 +1,25 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { Subscription } from 'rxjs';
+import { Subscription, delay } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType } from './../../_models/device';
 
 @Component({
 	selector: 'app-device-property',
 	templateUrl: './device-property.component.html',
-	styleUrls: ['./device-property.component.css']
+	styleUrls: ['./device-property.component.scss']
 })
 export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	// @Input() name: any;
-	@ViewChild(MatExpansionPanel, {static: false}) panelProperty: MatExpansionPanel;
+	@ViewChild('panelProperty', {static: false}) panelProperty: MatExpansionPanel;
+	@ViewChild('panelCertificate', {static: false}) panelCertificate: MatExpansionPanel;
+
 	securityRadio: any;
 	mode: any;
 	deviceType: any = {};
@@ -66,6 +68,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	methodType = ['GET'];//, 'POST'];
 	parserType = ['JSON'];//, 'CSV'];
 	hostInterfaces = [];
+	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
+	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
@@ -146,7 +150,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		});
 		// check security
 		if (this.data.device.id && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient)) {
-			this.projectService.getDeviceSecurity(this.data.device.id).subscribe(result => {
+			this.projectService.getDeviceSecurity(this.data.device.id).pipe(
+				delay(500)
+			).subscribe(result => {
 				if (result) {
 					this.setSecurity(result.value);
 				}
@@ -182,7 +188,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		});
 
 		this.onDeviceTypeChanged();
-		// this.hmiService.askHostInterface();
 	}
 
 	ngOnDestroy() {
@@ -257,18 +262,30 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	getSecurity(): any {
+	getSecurity(): DeviceSecurityGeneral {
 		if (!this.propertyExpanded || (this.data.device.type !== DeviceType.OPCUA && this.data.device.type !== DeviceType.MQTTclient)) {
 			return null;
 		} else {
 			if (this.data.device.type === DeviceType.OPCUA) {
 				if (this.securityRadio || this.security.username || this.security.password) {
-					let result = { mode: this.securityRadio, uid: this.security.username, pwd: this.security.password };
+					let result = <DeviceSecurityGeneral>{
+						mode: this.securityRadio,
+						uid: this.security.username,
+						pwd: this.security.password
+					};
 					return result;
 				}
 			} else if (this.data.device.type === DeviceType.MQTTclient) {
-				if (this.security.clientId || this.security.username || this.security.password) {
-					let result = { clientId: this.security.clientId, uid: this.security.username, pwd: this.security.password };
+				if (this.security.clientId || this.security.username || this.security.password || this.security.certificateFileName ||
+					this.security.privateKeyFileName || this.security.caCertificateFileName) {
+					let result = <DeviceSecurityGeneral>{
+						clientId: this.security.clientId,
+						uid: this.security.username,
+						pwd: this.security.password,
+						cert: this.security.certificateFileName,
+						pkey: this.security.privateKeyFileName,
+						caCert: this.security.caCertificateFileName
+					};
 					return result;
 				}
             }
@@ -278,14 +295,20 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	setSecurity(security: string) {
 		if (security && security !== 'null') {
-			let value = JSON.parse(security);
+			let value = <DeviceSecurityGeneral>JSON.parse(security);
 			this.mode = value.mode;
 			this.security.username = value.uid;
 			this.security.password = value.pwd;
 			this.security.clientId = value.clientId;
 			this.security.grant_type = value.gt;
-			if (this.panelProperty) {
-				this.panelProperty.open();
+			if (value.uid || value.pwd || value.clientId) {
+				this.panelProperty?.open();
+			}
+			this.security.certificateFileName = value.cert;
+			this.security.privateKeyFileName = value.pkey;
+			this.security.caCertificateFileName = value.caCert;
+			if (value.cert || value.pkey || value.caCert) {
+				this.panelCertificate?.open();
 			}
 		}
 	}
@@ -306,4 +329,15 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		}
 		return result;
 	}
+}
+
+interface DeviceSecurityGeneral {
+	mode: string;
+	gt: string;
+	uid: string;
+	pwd: string;
+	clientId: string;
+	cert: string;
+	pkey: string;
+	caCert: string;
 }

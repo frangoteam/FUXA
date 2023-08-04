@@ -5,6 +5,7 @@
 'use strict';
 var Device = require('./device');
 
+var sharedDevices = {};             // Shared Devices list
 var activeDevices = {};             // Actives Devices list
 var runtime;                        // Access to application resource like logger/settings
 var wokingStatus;                   // Current status (start/stop) to know if is working
@@ -121,6 +122,13 @@ function load() {
     // check existing or to add new 
     for (var id in tempdevices) {
         if (tempdevices[id].enabled) {
+            if(tempdevices[id].type == 'ModbusRTU'){
+                if(!(tempdevices[id].property.address in sharedDevices)){
+                    sharedDevices[tempdevices[id].property.address] = [];
+                }
+                sharedDevices[tempdevices[id].property.address].push(id);
+                tempdevices[id].sharedDevices = sharedDevices;
+            }
             devices.loadDevice(tempdevices[id]);
         }
     }
@@ -213,7 +221,7 @@ function getDeviceValue(deviceid, sigid) {
             let result = activeDevices[deviceid].getValue(sigid);
             if (fully) {
                 return result;
-            } else {
+            } else if (result) {
                 return result.value;
             }
         }

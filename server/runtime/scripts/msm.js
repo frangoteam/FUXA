@@ -58,7 +58,11 @@ function MyScriptsModule(_events, _logger) {
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
-            scriptsModule[_script.name](...paramsValue);
+            try {
+                scriptsModule[_script.name](...paramsValue);
+            } catch (err) {
+                console.error(err);
+            }
         }
     }
 
@@ -88,7 +92,7 @@ function MyScriptsModule(_events, _logger) {
                             if (params.length) params += ',';
                             params += `${script.parameters[i].name}`;
                         }
-                        functions += `function ${script.name} (${params}) { ${script.code} } `;
+                        functions += `function ${script.name} (${params}) { try { ${script.code} } catch (e) { console.error(e); } }`;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {

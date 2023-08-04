@@ -20,7 +20,7 @@ import { DeviceTagDialog } from '../../device/device.component';
 export class GraphConfigComponent implements OnInit {
 
     selectedGraph = new Graph(GraphType.bar);
-    data = { graphs: [], devices: [] };
+    data = <IDataGraphConfig>{ graphs: [], devices: [] };
     lineColor = Utils.lineColor;
 
     barXType = GraphBarXType;
@@ -63,7 +63,7 @@ export class GraphConfigComponent implements OnInit {
 
     onOkClick(): void {
         this.projectService.setGraphs(this.data.graphs);
-        this.dialogRef.close(this.data.graphs);
+        this.dialogRef.close(<IDataGraphResult>{ graphs: this.data.graphs, selected: this.selectedGraph });
     }
 
     onAddNewCategory() {
@@ -269,4 +269,14 @@ export class DialogGraphSource {
     onOkClick(): void {
         this.dialogRef.close(this.data);
     }
+}
+
+interface IDataGraphConfig {
+    graphs: Graph[];
+    devices: Device[];
+}
+
+export interface IDataGraphResult {
+    graphs: Graph[];
+    selected: Graph;
 }

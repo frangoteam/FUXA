@@ -28,6 +28,20 @@ export class Utils {
         return null;
     }
 
+    static getInTreeIdAndType(element: Element): any[] {
+        let type = element.getAttribute('type');
+        let id = element.getAttribute('id');
+        let result = [];
+        if (id && type) {
+            result = [{ id: id, type: type }];
+        }
+        for (var i = 0; i < element.children.length; i++) {
+            const idsAndTypes = Utils.getInTreeIdAndType(element.children[i]);
+            result = [...result, ...idsAndTypes];
+        }
+        return result;
+    }
+
     static isNullOrUndefined(ele) {
         return (ele === null || ele === undefined) ? true : false;
     }
@@ -191,7 +205,7 @@ export class Utils {
         var dddd = ['\x02', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         var ddd = ['\x03', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-        let ii = (i, len?) => { var s = i + ''; len = len || 2; while (s.length < len) {s = '0' + s;} return s; };
+        let ii = (i, len?) => { var s = i + ''; len = len || 2; while (s.length < len) { s = '0' + s; } return s; };
 
         var y = utc ? date.getUTCFullYear() : date.getFullYear();
         format = format.replace(/(^|[^\\])yyyy+/g, '$1' + y);
@@ -243,8 +257,7 @@ export class Utils {
 
         var tz = -date.getTimezoneOffset();
         var K = utc || !tz ? 'Z' : tz > 0 ? '+' : '-';
-        if (!utc)
-        {
+        if (!utc) {
             tz = Math.abs(tz);
             var tzHrs = Math.floor(tz / 60);
             var tzMin = tz % 60;
@@ -266,7 +279,7 @@ export class Utils {
 
     static findBitPosition(n) {
         let result = [];
-        for (let i = 0 ; i < 32; i++) {
+        for (let i = 0; i < 32; i++) {
             if (n & (0x01 << i)) {
                 result.push(i);
             }
@@ -283,23 +296,61 @@ export class Utils {
     static assign = (target: { [key: string]: any }, ...sources: object[]) => {
         sources.forEach((source) => Object.keys(source).forEach((key) => {
             target[key] = source[key as keyof Object];
-          }));
+        }));
         return target;
     };
 
     static clone = (obj) => JSON.parse(JSON.stringify(obj));
 
-    static convertArrayToObject  = (array, value) => array.reduce((accumulator, key) => ({...accumulator, [key]: value}), {});
+    static convertArrayToObject = (array, value) => array.reduce((accumulator, key) => ({ ...accumulator, [key]: value }), {});
 
     static resizeView = (selector) => {
         document.querySelectorAll(selector).forEach((scaled: any) => {
             let parent = scaled.parentNode,
-            ratioWidth = (parent.offsetWidth / scaled.offsetWidth),
-            ratioHeight = (parent.offsetHeight / scaled.offsetHeight);
+                ratioWidth = (parent.offsetWidth / scaled.offsetWidth),
+                ratioHeight = (parent.offsetHeight / scaled.offsetHeight);
             scaled.style.transform = 'scale(' + Math.min(ratioWidth, ratioHeight) + ')';
             scaled.style.transformOrigin = 'top left';
         });
-      };
+    };
+
+    /** Merge of array of object, the next overwrite the last */
+    static mergeDeep(...objArray) {
+        const result = {};
+        objArray.forEach((obj) => {
+            if (obj) {
+                Object.keys(obj).forEach((key) => {
+                    if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                        result[key] = Utils.mergeDeep(result[key], obj[key]);
+                    } else if (Array.isArray(obj[key])) {
+                        if (!Array.isArray(result[key])) {
+                            result[key] = [];
+                        }
+                        result[key] = result[key].concat(obj[key]);
+                    } else {
+                        result[key] = obj[key];
+                    }
+                });
+            }
+        });
+        return result;
+    };
+
+    static copyToClipboard(text) {
+        // Create a temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        // Make the textarea hidden
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        // Append the textarea to the document
+        document.body.appendChild(textarea);
+        // Select and copy the text from the textarea
+        textarea.select();
+        document.execCommand('copy');
+        // Remove the textarea from the document
+        document.body.removeChild(textarea);
+    }
 }
 
 @Pipe({
@@ -322,10 +373,10 @@ export class EnumToArrayPipe implements PipeTransform {
 
 @Pipe({ name: 'keepHtml', pure: false })
 export class EscapeHtmlPipe implements PipeTransform {
-  constructor(private sanitizer: DomSanitizer) {
-  }
+    constructor(private sanitizer: DomSanitizer) {
+    }
 
-  transform(content) {
-    return this.sanitizer.bypassSecurityTrustHtml(content);
-  }
+    transform(content) {
+        return this.sanitizer.bypassSecurityTrustHtml(content);
+    }
 }

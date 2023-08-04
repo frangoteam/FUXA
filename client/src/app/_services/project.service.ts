@@ -134,13 +134,13 @@ export class ProjectService {
     /**
      * Save Project
      */
-    save(): boolean {
+    save(skipNotification = false): boolean {
         // check project change don't work some svg object change the order and this to check isn't easy...boooo
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
-            var msg = '';
-            this.translateService.get('msg.project-save-success').subscribe((txt: string) => { msg = txt; });
-            this.toastr.success(msg);
+            if (!skipNotification) {
+                this.notifySuccessMessage('msg.project-save-success');
+            }
         }, err => {
             console.error(err);
             var msg = '';
@@ -291,7 +291,7 @@ export class ProjectService {
      * Save to Server
      * @param view
      */
-    setView(view: View) {
+    setView(view: View, notify = false) {
         let v = null;
         for (let i = 0; i < this.projectData.hmi.views.length; i++) {
             if (this.projectData.hmi.views[i].id === view.id) {
@@ -304,6 +304,9 @@ export class ProjectService {
             this.projectData.hmi.views.push(view);
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
+            if (notify) {
+                this.notifySuccessMessage('msg.project-save-success');
+            }
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -319,11 +322,21 @@ export class ProjectService {
     }
 
 
-    getViewId(name) {
+    getViewId(name: string) {
         let views = this.getViews();
         for (var i = 0; i < views.length; i++) {
             if (views[i].name === name) {
                 return views[i].id;
+            }
+        }
+        return null;
+    }
+
+    getViewFromId(id: string) {
+        let views = this.getViews();
+        for (var i = 0; i < views.length; i++) {
+            if (views[i].id === id) {
+                return views[i];
             }
         }
         return null;
@@ -872,12 +885,12 @@ export class ProjectService {
      * Used from open and upload JSON Project file
      * @param prj project data to save
      */
-    setProject(prj: ProjectData, notify?: boolean) {
+    setProject(prj: ProjectData, skipNotification = false) {
         this.projectData = prj;
         if (this.appService.isClientApp) {
             this.projectData = ResourceStorageService.defileProject(prj);
         }
-        this.save();
+        this.save(skipNotification);
     }
 
     setNewProject() {
@@ -893,7 +906,7 @@ export class ProjectService {
         } else {
             delete this.projectData.server;
         }
-        this.save();
+        this.save(true);
     }
 
     getProject() {
@@ -1081,6 +1094,12 @@ export class ProjectService {
             }
         }
         return obj;
+    }
+
+    private notifySuccessMessage(msgKey: string) {
+        var msg = '';
+        this.translateService.get(msgKey).subscribe((txt: string) => { msg = txt; });
+        this.toastr.success(msg);
     }
 }
 

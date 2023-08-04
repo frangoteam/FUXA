@@ -284,7 +284,7 @@ function DaqNode(_settings, _log, _id) {
             if (daqTagsMap[tagid]) {
                 var result = [];
                 // search in current db
-                    _getTagValues(db_daqdata, daqTagsMap[tagid].mapid, fromts, tots).then(function (rows) {
+                _getTagValues(db_daqdata, daqTagsMap[tagid].mapid, fromts, tots).then(function (rows) {
                     // search in archive
                     var archivefiles = _getArchiveFiles(id, fromts, tots);
                     var dbfncs = [];
@@ -584,12 +584,16 @@ function DaqNode(_settings, _log, _id) {
 
     function _getTagValues(db, id, fromts, tots) {
         return new Promise(function (resolve, reject) {
+            const booleanMapping = { "true": true, "false": false };
             var sql = "SELECT dt, value FROM data WHERE id = ? AND dt BETWEEN ? and ? ORDER BY dt ASC";
             db.all(sql, [id, fromts, tots], function (err, rows) {
                 if (err) {
                     console.error(err);
                     reject(err);
                 } else {
+                    for (var i = 0; i < rows.length; i++) {
+                        rows[i].value =  booleanMapping[rows[i].value] !== undefined ? booleanMapping[rows[i].value] : rows[i].value;
+                    }
                     resolve(rows);
                 }
             });

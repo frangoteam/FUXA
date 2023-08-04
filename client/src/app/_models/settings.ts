@@ -7,10 +7,14 @@ export class AppSettings {
     secureEnabled = false;
     /** Expiration of authanticated token (15m)*/
     tokenExpiresIn = '1h';
+    /** Broadcast all tags, without check the frontend views */
+    broadcastAll = false;
     /** Smtp to send mails */
     smtp = new SmtpSettings();
     /** Daq store database */
     daqstore = new DaqStore();
+    /** Alarms store settings */
+    alarms = new AlarmsSettings();
 }
 
 export class SmtpSettings {
@@ -43,6 +47,7 @@ export class DaqStore {
     organization?: string;
     credentials?: StoreCredentials;
     bucket?: string;
+    database?: string;
     retention = DaqStoreRetentionType.year1;
 
     constructor(daqstore: DaqStore = null) {
@@ -52,17 +57,23 @@ export class DaqStore {
             this.organization = daqstore.organization;
             this.credentials = daqstore.credentials;
             this.bucket = daqstore.bucket;
+            this.database = daqstore.database;
             this.retention = daqstore.retention || DaqStoreRetentionType.year1;
         }
     }
 
     isEquals(store: DaqStore) {
-        if (this.type === store.type && this.bucket === store.bucket && this.url === store.url && this.organization === store.organization &&
+        if (this.type === store.type && this.bucket === store.bucket && this.url === store.url &&
+            this.organization === store.organization && this.database === store.database &&
             (this.credentials && StoreCredentials.isEquals(this.credentials, store.credentials)) && this.retention === store.retention) {
             return true;
         }
         return false;
     }
+}
+
+export class AlarmsSettings {
+    retention = AlarmsRetentionType.year1;
 }
 
 export class StoreCredentials {
@@ -78,6 +89,7 @@ export class StoreCredentials {
 export enum DaqStoreType {
     SQlite = 'SQlite',
     influxDB = 'influxDB',
+    influxDB18 = 'influxDB 1.8',
 }
 
 export enum influxDBVersionType {
@@ -95,6 +107,16 @@ export enum DaqStoreRetentionType {
     days30 = 'days30',
     days90 = 'days90',
     year1 = 'year1',
+}
+
+export enum AlarmsRetentionType {
+    none = 'none',
+    days7 = 'days7',
+    days30 = 'days30',
+    days90 = 'days90',
+    year1 = 'year1',
+    year3 = 'year3',
+    year5 = 'year5',
 }
 
 export class MailMessage {

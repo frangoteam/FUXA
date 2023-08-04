@@ -47,9 +47,8 @@ export class LoginComponent {
 	signIn() {
 		this.submitLoading = true;
 		this.authService.signIn(this.username.value, this.password.value).subscribe(result => {
-			// 		this.router.navigate([this.returnUrl]);
 			this.submitLoading = false;
-			this.dialogRef.close(this.data.user);
+			this.dialogRef.close(true);
 			this.projectService.reload();
 		}, error => {
 			this.submitLoading = false;

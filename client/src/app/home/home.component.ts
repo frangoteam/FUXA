@@ -2,9 +2,9 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject, Subscription } from 'rxjs';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
@@ -24,7 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, last, map, takeUntil } from 'rxjs/operators';
 // declare var panzoom: any;
 
 @Component({
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     showNavigation = true;
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
-    serverErrorBanner = false;
+    serverErrorBanner$: Observable<boolean>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
 
@@ -71,6 +71,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private changeDetector: ChangeDetectorRef,
         public dialog: MatDialog,
         private router: Router,
+        private route: ActivatedRoute,
         private hmiService: HmiService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
@@ -94,13 +95,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
-            this.hmiService.onServerConnection$.pipe(
-                takeUntil(this.destroy$)
-            ).subscribe(status => {
-                this.serverErrorBanner = !status;
-            });
-        }
-        catch (err) {
+            this.serverErrorBanner$ = combineLatest([
+                this.hmiService.onServerConnection$,
+                this.authService.currentUser$
+            ]).pipe(
+                map(([connectionStatus, userProfile]) => (this.securityEnabled && !userProfile) ? false : !connectionStatus),
+                takeUntil(this.destroy$),
+                debounceTime(1000),
+                last()
+            );
+        } catch (err) {
             console.error(err);
         }
     }
@@ -140,7 +144,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (viewId !== this.homeView.id || force) {
+        } else if (this.homeView && viewId !== this.homeView.id || force || !this.homeView) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
@@ -178,6 +182,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     setIframe(link: string = null) {
+        this.homeView = null;
         let currentLink: string;
         this.iframes.forEach(iframe => {
             if (!iframe.hide) {
@@ -283,6 +288,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (!viewToShow) {
                 viewToShow = this.hmi.views[0];
+            }
+            let startView = this.hmi.views.find(x => x.name === this.route.snapshot.paramMap.get('viewName')?.trim());
+            if (startView) {
+                viewToShow = startView;
             }
             this.homeView = viewToShow;
             this.setBackground();

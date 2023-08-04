@@ -184,6 +184,9 @@ function _checkPluginsSupported() {
     });
     // check in node_modules
     module = path.resolve(__dirname, '../../node_modules');
+    if (!fs.existsSync(module)) {
+        module = path.resolve(__dirname, '../../../node_modules');
+    }
     var dirs = fs.readdirSync(module);
     var data = {};
     dirs.forEach(function (dir) {
@@ -201,6 +204,7 @@ function _checkPluginsSupported() {
                 }
             }
         } catch (err) {
+            logger.error(err);
         }
     });
     // check in _pkg
@@ -223,6 +227,7 @@ function _checkPluginsSupported() {
                 }
             }
         } catch (err) {
+            logger.error(err);
         }
     });
     return plugins;

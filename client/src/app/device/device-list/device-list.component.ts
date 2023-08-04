@@ -30,7 +30,6 @@ import { Utils } from '../../_helpers/utils';
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'logger', 'options', 'remove'];
-    readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
@@ -93,6 +92,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             tags = {};
         }
         this.dataSource.data = Object.values(tags);
+        this.hmiService.tagsSubscribe(Object.keys(tags));
     }
 
     onDeviceChange(source) {
@@ -221,11 +221,12 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     tag.type = n.type;
                     if (this.deviceSelected.type === DeviceType.BACnet) {
                         tag.label = n.text;
+                        tag.memaddress = n.parent?.id;
                     } else if (this.deviceSelected.type === DeviceType.WebAPI) {
                         tag.label = n.text;
                         if (n.class === NodeType.Reference) {
-                            tag.memaddress = n.property;    // in memaddress save the address of the value
-                            tag.options = n.todefine;         // save the id and value in text to set by select list
+                            tag.memaddress = n.property;        // in memaddress save the address of the value
+                            tag.options = n.todefine;           // save the id and value in text to set by select list
                             tag.type = n.type;
                         }
                     }
@@ -404,6 +405,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             dialogRef.afterClosed().subscribe(result => {
             });
         }
+    }
+
+    onCopyTagToClipboard(tag: Tag) {
+        Utils.copyToClipboard(JSON.stringify(tag));
     }
 
     private addTopicSubscription(oldTopic: Tag, topics: Tag[]) {

@@ -23,7 +23,7 @@ export abstract class ResourceStorageService {
 
     public abstract setServerProjectData(cmd: ProjectDataCmdType, data: any, prj: ProjectData);
 
-    public abstract uploadFile(file: any): Observable<UploadFile>;
+    public abstract uploadFile(file: any, destination?: string): Observable<UploadFile>;
 
     public abstract getDeviceSecurity(id: string): Observable<any>;
 
@@ -40,6 +40,8 @@ export abstract class ResourceStorageService {
     public abstract getAppId(): string;
 
     public abstract getDaqValues(query: DaqQuery): Observable<any>;
+
+    public abstract heartbeat(activity: boolean): Observable<any>;
 
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) {return source;}

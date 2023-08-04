@@ -1,12 +1,12 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 
 import { EndPointApi } from '../../_helpers/endpointapi';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
-import { AlarmQuery } from '../../_models/alarm';
+import { AlarmQuery, IAlarmHistory } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 
 @Injectable()
@@ -44,9 +44,9 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.post<any>(this.endPointConfig + '/api/projectData', params, { headers: header });
     }
 
-    uploadFile(resource: any): Observable<UploadFile> {
+    uploadFile(resource: any, destination?: string): Observable<UploadFile> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = resource;
+        let params = { resource, destination };
         return this.http.post<any>(this.endPointConfig + '/api/upload', params, { headers: header });
     }
 
@@ -66,10 +66,29 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/alarms', {});
     }
 
-    getAlarmsHistory(query: AlarmQuery): Observable<any> {
+    getAlarmsHistory(query: AlarmQuery): Observable<IAlarmHistory[]> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { query: JSON.stringify(query) };
-        return this.http.get<any>(this.endPointConfig + '/api/alarmsHistory', { headers: header, params: params });
+        const requestOptions: Object = {
+            /* other options here */
+            headers: header,
+            params: {
+                start: query.start.getTime(),
+                end: query.end.getTime()
+            },
+            observe: 'response'
+        };
+        return this.http.get<IAlarmHistory[]>(this.endPointConfig + '/api/alarmsHistory', requestOptions).pipe(
+            switchMap((response: any) => {
+                if (response.body === null || response.body === undefined) {
+                  return of([]);
+                }
+                return of(response.body);
+            }),
+            map((body: IAlarmHistory[]) => body)
+        );
+        // // let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        // let params = { query: JSON.stringify(query) };
+        // return this.http.get<any>(this.endPointConfig + '/api/alarmsHistory', { headers: header, params: params });
     }
 
     setAlarmAck(name: string): Observable<any> {
@@ -95,5 +114,10 @@ export class ResWebApiService implements ResourceStorageService {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = { query: JSON.stringify(query) };
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
+    }
+
+    heartbeat(activity: boolean): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<any>(this.endPointConfig + '/api/heartbeat', { headers: header, params: activity });
     }
 }

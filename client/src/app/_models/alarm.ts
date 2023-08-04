@@ -94,8 +94,22 @@ export class AlarmEvent {
 }
 
 export class AlarmQuery {
-    from: string;
-    to: string;
+    start: Date;
+    end: Date;
+}
+
+export interface IAlarmHistory {
+    type: string;
+    name: string;
+    status: string;
+    text: string;
+    ontime: number;
+    offtime: number;
+    acktime: number;
+    userack: number;
+    group: number;
+    bkcolor: string;
+    color: string;
 }
 
 export enum AlarmActionsType {

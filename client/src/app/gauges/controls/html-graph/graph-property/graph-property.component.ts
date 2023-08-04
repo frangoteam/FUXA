@@ -7,7 +7,7 @@ import { Subject, ReplaySubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Graph, GraphType, GraphRangeType, GraphBarXType, GraphDateGroupType } from '../../../../_models/graph';
-import { GraphConfigComponent } from '../../../../editor/graph-config/graph-config.component';
+import { GraphConfigComponent, IDataGraphResult } from '../../../../editor/graph-config/graph-config.component';
 import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
@@ -41,10 +41,9 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
 
     private _onDestroy = new Subject<void>();
 
-    constructor(
-        public dialog: MatDialog,
-        private translateService: TranslateService) {
-        }
+    constructor(public dialog: MatDialog,
+                private translateService: TranslateService) {
+    }
 
     ngOnInit() {
         if (this.data.settings.type.endsWith('bar')) {
@@ -81,7 +80,7 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
                 this.data.settings.property.options = GraphBarComponent.DefaultOptions();
             }
         }
-        this.options = this.data.settings.property.options;
+        this.options = Utils.mergeDeep(GraphBarComponent.DefaultOptions(), this.data.settings.property.options);
         // load graphs list to choise
         this.loadGraphs();
         let graph = null;
@@ -105,34 +104,37 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
                 this.options.dateGroup = <GraphDateGroupType>Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
             }
         }
-        if (this.options.theme === this.themeType.light) {
-            this.options.scales['y'].ticks.color = '#666';
-            this.options.scales['x'].ticks.color = '#666';
-            this.options.plugins.legend.labels.color = '#666';
-            this.options.plugins.title.color = '#666';
-        } else if (this.options.theme === this.themeType.dark) {
-            this.options.scales['y'].ticks.color = '#fff';
-            this.options.scales['x'].ticks.color = '#fff';
-            this.options.plugins.legend.labels.color = '#fff';
-            this.options.plugins.title.color = '#fff';
-        }
-
-        const yScale = this.options.scales['y'];
-        if(!yScale.hasOwnProperty('grid')) {
-            yScale.grid = {};
-        }
-
-        yScale.grid.color = 'rgba(0, 0, 0, 0.1)';
-
-        const xScale = this.options.scales['x'];
-        if(!xScale.hasOwnProperty('grid')) {
-            xScale.grid = {};
-        }
-
-        xScale.grid.color = 'rgba(0, 0, 0, 0.1)';
-
+        this.options.scales['y'].grid.color = this.options.gridLinesColor;
+        this.options.scales['y'].grid.display = this.options.gridLinesShow;
+        this.options.scales['x'].grid.color = this.options.gridLinesColor;
+        this.options.scales['x'].grid.display = this.options.gridLinesShow;
         this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
         this.onPropChanged.emit(this.data.settings);
+    }
+
+    onGraphThemaChanged() {
+        const yScale = this.options.scales['y'];
+        const xScale = this.options.scales['x'];
+        if (this.options.theme === this.themeType.light) {
+            yScale.ticks.color = '#666';
+            xScale.ticks.color = '#666';
+            this.options.plugins.legend.labels.color = '#666';
+            this.options.plugins.datalabels.color = '#666';
+            this.options.plugins.title.color = '#666';
+            this.options.gridLinesColor = 'rgba(0, 0, 0, 0.2)';
+            this.options.backgroundColor = null;
+        } else if (this.options.theme === this.themeType.dark) {
+            yScale.ticks.color = '#fff';
+            xScale.ticks.color = '#fff';
+            this.options.plugins.legend.labels.color = '#fff';
+            this.options.plugins.datalabels.color = '#fff';
+            this.options.plugins.title.color = '#fff';
+            this.options.gridLinesColor = '#808080';
+            this.options.backgroundColor = '242424';
+        } else if (this.options.theme === this.themeType.customise) {
+            this.options.backgroundColor = null;
+        }
+        this.onGraphChanged();
     }
 
     onEditNewGraph() {
@@ -141,10 +143,14 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             minWidth: '1090px', width: '1090px',
             data: { type: (this.graphType === GraphType.bar) ? 'bar' : 'pie' }
         });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: IDataGraphResult) => {
             if (result) {
-                this.data.graphs = result;
+                this.data.graphs = result.graphs;
                 this.loadGraphs();
+                if (result.selected) {
+                    this.graphCtrl.setValue(result.selected);
+                }
+                this.onGraphChanged();
             }
         });
     }

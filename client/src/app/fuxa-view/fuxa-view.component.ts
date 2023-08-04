@@ -24,6 +24,7 @@ import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.com
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../_services/project.service';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
+import { HmiService } from '../_services/hmi.service';
 
 declare var SVG: any;
 
@@ -66,12 +67,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     protected plainVariableMapping: any = {};
     private subscriptionLoad: Subscription;
 
-    constructor(private el: ElementRef,
+    constructor(
         private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
         private viewContainerRef: ViewContainerRef,
         private scriptService: ScriptService,
         private projectService: ProjectService,
+        private hmiService: HmiService,
         private resolver: ComponentFactoryResolver) {
     }
 
@@ -89,7 +91,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.loadHmi(this.view);
-
         /* check if already loaded */
         if (this.projectService.getHmi()) {
             this.projectService.initScheduledScripts();
@@ -196,7 +197,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadWatch(view: View) {
         if (view && view.items) {
             let items = this.applyVariableMapping(view.items);
-            // this.gaugesManager.initGaugesMap();
             for (let key in items) {
                 if (!items.hasOwnProperty(key)) {
                     continue;
@@ -232,8 +232,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         }
                     }
-
-
                 } catch (err) {
                     console.error('loadWatch: ' + err);
                 }
@@ -250,6 +248,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     value: this.staticValues[variableId]
                 });
             }
+            // set subscription to server
+            this.hmiService.tagsSubscribe(this.gaugesManager.getBindedSignalsId());
         }
     }
 
@@ -650,21 +650,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         iframe = new CardModel(id);
-        iframe.x = event.clientX;
-        iframe.y = event.clientY;
-        iframe.width = 600;
-        iframe.height = 400;
-        iframe.scale = 1;
-        if (!isNaN(parseInt(options.width))) {
-            iframe.width = parseInt(options.width);
-        }
-        if (!isNaN(parseInt(options.height))) {
-            iframe.height = parseInt(options.height);
-        }
-        if (!isNaN(parseFloat(options.scale))) {
-            iframe.scale = parseFloat(options.scale);
-        }
-
+        iframe.x = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
+        iframe.y = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
+        iframe.width = Utils.isNumeric(options.width) ? parseInt(options.width) : 600;
+        iframe.height = Utils.isNumeric(options.height) ? parseInt(options.height) : 400;
+        iframe.scale = Utils.isNumeric(options.scale) ? parseFloat(options.scale) : 1;
         iframe.link = link;
         iframe.name = link;
         this.iframes.push(iframe);
@@ -685,15 +675,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     openWindow(id: string, event: any, link: string, options: any) {
-        let width = 600;
-        let height = 400;
-        if (!isNaN(parseInt(options.width))) {
-            width = parseInt(options.width);
-        }
-        if (!isNaN(parseInt(options.height))) {
-            height = parseInt(options.height);
-        }
-        window.open(link, '_blank', 'height=' + height + ',width=' + width + ',left=' + event.clientX + ',top=' + event.clientY);
+        const width = Utils.isNumeric(options.width) ? parseInt(options.width) : 600;
+        const height = Utils.isNumeric(options.height) ? parseInt(options.height) : 400;
+        const left = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
+        const top = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
+        console.log(top);
+        window.open(link, '_blank', `height=${height},width=${width},left=${left},top=${top}`);
     }
 
     onCloseCard(card: CardModel) {

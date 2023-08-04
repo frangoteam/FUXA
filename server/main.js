@@ -125,6 +125,11 @@ try {
         }
         if (mysettings.secureEnabled) {
             settings.secureEnabled = mysettings.secureEnabled;
+            if (!settings.tokenExpiresIn) {
+                settings.tokenExpiresIn = '1h';
+            }
+        }
+        if (mysettings.tokenExpiresIn) {
             settings.tokenExpiresIn = mysettings.tokenExpiresIn;
         }
         if (mysettings.smtp) {
@@ -132,6 +137,9 @@ try {
         }
         if (mysettings.daqstore) {
             settings.daqstore = mysettings.daqstore;
+        }
+        if (mysettings.alarms) {
+            settings.alarms = mysettings.alarms;
         }
     }
 } catch (err) {
@@ -246,6 +254,7 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 app.use('/', express.static(settings.httpStatic));
 app.use('/home', express.static(settings.httpStatic));
+app.use('/home/:viewName', express.static(settings.httpStatic));
 app.use('/lab', express.static(settings.httpStatic));
 app.use('/editor', express.static(settings.httpStatic));
 app.use('/device', express.static(settings.httpStatic));
@@ -346,7 +355,6 @@ process.on('uncaughtException', function (err) {
     } else {
         logger.error(err);
     }
-    process.exit(1);
 });
 
 process.on('SIGINT', function () {

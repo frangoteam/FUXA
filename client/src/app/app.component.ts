@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, fromEvent, interval, merge, switchMap, tap } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -10,6 +10,7 @@ import { ProjectService } from './_services/project.service';
 import { SettingsService } from './_services/settings.service';
 import { UserGroups } from './_models/user';
 import { AppService } from './_services/app.service';
+import { HeartbeatService } from './_services/heartbeat.service';
 
 @Component({
 	selector: 'app-root',
@@ -32,13 +33,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private projectService: ProjectService,
 		private settingsService: SettingsService,
 		private translateService: TranslateService,
+		private heartbeatService: HeartbeatService,
 		location: Location
-		) {
+	) {
 		this.location = location;
 	}
 
 	ngOnInit() {
 		console.log(`FUXA v${environment.version}`);
+		this.heartbeatService.startHeartbeatPolling();
+
+		// capture events for the token refresh
+		const inactivityDuration = 1 * 60 * 1000;
+		const activity$ = merge(
+			fromEvent(document, 'click'),
+			fromEvent(document, 'touchstart')
+		);
+		activity$.pipe(
+			tap(() => this.heartbeatService.setActivity(true)),
+			switchMap(() => interval(inactivityDuration))
+		).subscribe(() => {
+			this.heartbeatService.setActivity(false);
+		});
 	}
 
 	ngAfterViewInit() {
@@ -67,7 +83,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.isLoading = show;
 			}, error => {
 				this.isLoading = false;
-				console.error('Error lto show loading');
+				console.error('Error to show loading');
 			});
 		}
 		catch (err) {
@@ -97,13 +113,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	isHidden() {
-		let list = ['', '/lab', '/home'],
-			route = this.location.path();
-		return (list.indexOf(route) > -1);
+		const urlEnd = this.location.path();
+		if (!urlEnd || urlEnd.startsWith('/home') || urlEnd === '/lab') {
+			return true;
+		}
+		return false;
 	}
 
 	getClass() {
-		let route = this.location.path();
+		const route = this.location.path();
 		if (route.startsWith('/view')) {
             return 'work-void';
         }
@@ -111,7 +129,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
     showDevNavigation() {
-        let route = this.location.path();
+        const route = this.location.path();
         if (route.startsWith('/view')) {
             return false;
         }

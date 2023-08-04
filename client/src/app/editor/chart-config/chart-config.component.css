@@ -28,7 +28,7 @@
 .mychips span {
     padding-left: 3px;
     padding-right: 3px;
-    vertical-align: super;
+    vertical-align: top;
 }
 .mychips:hover {
     opacity: 0.9;

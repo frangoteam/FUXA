@@ -67,7 +67,8 @@ module.exports = {
                 runtime.logger.error("api get logs: Unauthorized!");
             } else {
                 try {
-                    var logFileName = req.query.file || 'fuxa.log';
+                    const fileName = req.query.file.replace(new RegExp('../', 'g'), '');
+                    var logFileName = fileName || 'fuxa.log';
                     var logPath = runtime.logger.logDir();
                     if (!fs.existsSync(logPath)) {
                         logPath = path.join(process.cwd(), runtime.logger.logDir());
