@@ -56,6 +56,11 @@
     "dlg.layout-lbl-title": "Title",
     "dlg.layout-lbl-alarms": "Alarms notification mode",
     "dlg.layout-lbl-infos": "Info notification mode",
+    "dlg.layout-lbl-font": "Font family",
+    "dlg.layout-lbl-font-size": "Font size",
+    "dlg.layout-lbl-anchor": "Direction",
+    "dlg.layout-lbl-margin-left": "Margin left",
+    "dlg.layout-lbl-margin-right": "Margin right",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -153,6 +158,9 @@
     "item.headertype-button": "Button",
     "item.headertype-label": "Label",
     "item.headertype-image": "Image",
+    "item.headeranchor-left": "Left",
+    "item.headeranchor-right": "Right",
+    "item.headeranchor-center": "Center",
 
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",

@@ -975,6 +975,12 @@ mat-toolbar-row {
     margin-bottom: 5px;
 }
 
+.gauge-property-button {
+    background-color: dimgrey;
+    color:white;
+}
+
+/* standard */
 .inbk {
     display: inline-block;
 }
@@ -983,7 +989,6 @@ mat-toolbar-row {
     color:#ff5151;
 }
 
-/* standard */
 .tohide {
     display: none !important;
 }
@@ -1026,6 +1031,10 @@ mat-toolbar-row {
 
 .ml10 {
     margin-left: 10px;
+}
+
+.ml15 {
+    margin-left: 15px;
 }
 
 .mr5 {

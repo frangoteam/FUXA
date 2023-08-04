@@ -102,24 +102,27 @@ export class HeaderSettings {
     infos: NotificationModeType;
     bkcolor = '#ffffff';
     fgcolor = '#000000';
+    fontFamily: string;
+    fontSize = 13;
     items: HeaderItem[];
+    itemsAnchor: AnchorType = 'left';
 }
 
-export interface HeaderItem extends NaviItem {
+export interface HeaderItem {
     id: string;
     type: HeaderItemType;
-    position: HeaderItemPosition;
+    icon: string;
+    image: string;
+    bkcolor: string;
+    fgcolor: string;
+    marginLeft: number;
+    marginRight: number;
     property: GaugeProperty;
 }
 
 export type HeaderItemType = 'button' | 'label' | 'image';
 
-export interface HeaderItemPosition {
-    index: number;
-    direction: PositionDirectionType;
-}
-
-export type PositionDirectionType = 'left' | 'center' | 'right';
+export type AnchorType = 'left' | 'center' | 'right';
 
 export enum NotificationModeType {
     hide = 'item.notifymode-hide',

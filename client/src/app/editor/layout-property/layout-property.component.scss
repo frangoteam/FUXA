@@ -4,6 +4,15 @@
     min-height: 700px;
 }
 
+.tab-container {
+    display: block;
+    margin-top: 10px;
+    width:100%;
+    min-height: 500px;
+    overflow-y: auto;
+    height: 650px;
+}
+
 .layout-menu-item-icon {
     /* position: absolute; */
     font-size: 17px;
@@ -21,12 +30,58 @@
     white-space: nowrap;
 }
 
+.nav-config {
+    overflow-y: auto;
+    .config-left {
+        display: inline-block;
+        .nav-item {
+            display: flex;
+            line-height: 35px;
+            min-width: max-content;
+            .position {
+                display: inline-block;
+                line-height: 35px;
+                margin-left: 15px;
+                vertical-align: bottom;
+                mat-icon {
+                    display: block;
+                }
+            }
+            .edit {
+                display: inline-block;
+                line-height: 35px;
+                mat-icon {
+                    margin-left: 10px;
+                    vertical-align: middle;
+                }
+                .type {
+                    display: inline-block;
+                    font-size: 12px;
+                    margin-left: 10px;
+                    white-space: nowrap;
+                }
+            }
+            .remove {
+                display: inline-block;
+                line-height: 35px;
+                margin-left: 10px;
+                mat-icon {
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+    .config-right {
+        float: right;
+        margin-top: 30px;
+    }    
+}
+
 .header-layout {
-    display: block;
+    display: flex;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; 
-    /* min-height: 46px !important; */
-    /* max-height: 46px !important; */
     height: 46px !important;
+    line-height: 46px;
     padding-left: 4px;
     padding-right: 10px;
     background-color: rgba(255, 255, 255, 1);
@@ -44,7 +99,6 @@
     }
     
     .header-login {
-        float: right;
         line-height: 46px;
         border-left-width: 1px;
         border-left-style: solid;
@@ -52,13 +106,13 @@
     }
     
     .header-notify-button {  
-        float: right;
-        width: 240px;
+        display: flex;
         line-height: 46px;
         text-align: right;
+        margin-left: 10px;
         margin-right: 10px;
         padding-right: 10px;
-        
+        align-items: center;
         mat-icon {
             font-size: 28px;
             width: 28px;
@@ -69,10 +123,16 @@
             margin-right: 20px;
         }
     }
+
+    .items {
+        flex: 1;
+        align-items: center;
+    }
 }
 
 .header-config {
     padding-top: 30px;
+    overflow-y: auto;
     .config-left {
         display: inline-block;
     
@@ -84,11 +144,46 @@
     
         .header-items {
             display: inline-block;
-
+            mat-list-item {
+                min-height: 50px;
+            }
             .header-item {
+                display: flex;
+                .position {
+                    display: inline-block;
+                    vertical-align: bottom;
+                    mat-icon {
+                        display: block;
+                    }
+                }
                 .edit {
-                    display: block;
-                    width: 50px;
+                    display: inline-block;
+                    line-height: 35px;
+                    mat-icon {
+                        vertical-align: middle;
+                    }
+                    .type {
+                        display: inline-block;
+                        font-size: 12px;
+                        margin-left: 10px;
+                        width: 60px;
+                    }
+                }
+                .property {
+                    display: inline-block;
+                    line-height: 35px;
+                    button {
+                        background-color: dimgrey;
+                        color:white;
+                    }
+                }
+                .remove {
+                    display: inline-block;
+                    line-height: 35px;
+                    margin-left: 10px;
+                    mat-icon {
+                        vertical-align: middle;
+                    }
                 }
             }
         }
@@ -106,7 +201,7 @@
 }
 
 .header-item-dialog {
-    min-width: 350px;
+    // min-width: 350px;
 }
 
 .icons-selector {
@@ -117,6 +212,12 @@
 .my-form-field mat-icon {
     padding-left: 10px;
     vertical-align: middle;
+}
+
+.field-input-60 {
+    input {
+        width: 60px;
+    }
 }
   
 .dndList {
