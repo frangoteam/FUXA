@@ -28,6 +28,23 @@ export class Utils {
         return null;
     }
 
+    static findElementByIdRecursive(root: HTMLElement, id: string): HTMLElement | null {
+        if (!root) {
+          return null;
+        }
+        if (root.id === id) {
+          return root;
+        }
+        for (let i = 0; i < root.children.length; i++) {
+          const child = root.children[i] as HTMLElement;
+          const foundElement = this.findElementByIdRecursive(child, id);
+          if (foundElement) {
+            return foundElement;
+          }
+        }
+        return null;
+    }
+
     static searchValuesByAttribute(jsonData: any, attributeName: string) {
         const result: string[] = [];
         function search(jsonData: any): void {

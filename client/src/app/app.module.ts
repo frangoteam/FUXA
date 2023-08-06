@@ -26,7 +26,7 @@ import { ViewComponent } from './view/view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
-import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
+import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
@@ -194,6 +194,7 @@ export function createTranslateLoader(http: HttpClient) {
         AppSettingsComponent,
         SetupComponent,
         DialogMenuItem,
+        DialogHeaderItem,
         DeviceListComponent,
         DialogTagName,
         DeviceMapComponent,
