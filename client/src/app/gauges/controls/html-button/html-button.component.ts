@@ -151,16 +151,24 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         return ele.getAttribute('stroke');
     }
 
-    static processAction(act: GaugeAction, svgele: any, button: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, button: HTMLElement | any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
-                let element = SVG.adopt(svgele.node);
-                this.runActionHide(element, act.type, gaugeStatus);
+                if (button === svgele) {
+                    button.style.display = 'none';
+                } else {
+                    let element = SVG.adopt(svgele.node);
+                    this.runActionHide(element, act.type, gaugeStatus);
+                }
             }
         } else if (this.actionsType[act.type] === this.actionsType.show) {
             if (act.range.min <= value && act.range.max >= value) {
-                let element = SVG.adopt(svgele.node);
-                this.runActionShow(element, act.type, gaugeStatus);
+                if (button === svgele) {
+                    button.style.display = 'unset';
+                } else {
+                    let element = SVG.adopt(svgele.node);
+                    this.runActionShow(element, act.type, gaugeStatus);
+                }
             }
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let inRange = (act.range.min <= value && act.range.max >= value);

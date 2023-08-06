@@ -155,7 +155,7 @@ export class GaugeBaseComponent {
                         gaugeStatus.actionRef.timer = null;
                     }
                     // check to overwrite with property color
-                    if (propertyColor) {
+                    if (propertyColor && gaugeStatus.actionRef.spool) {
                         if (propertyColor.fill) {
                             gaugeStatus.actionRef.spool.bk = propertyColor.fill;
                         }
