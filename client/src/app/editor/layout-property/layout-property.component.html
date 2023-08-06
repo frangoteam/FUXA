@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="{{'dlg.layout-navigation' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
+            <mat-tab label="{{'dlg.layout-navigation' | translate}}">
                 <div class="tab-container">
                     <div [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                         <button mat-icon-button>
@@ -172,7 +172,7 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="{{'dlg.layout-header' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
+            <mat-tab label="{{'dlg.layout-header' | translate}}">
                 <div class="tab-container">
                     <div class="header-layout" [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                         <div class="header-menu">
@@ -237,11 +237,6 @@
                                 </button>
                             </div>
                             <div class="header-items">
-                                <div class="my-form-field" style="width: 300px">
-                                    <span>{{'dlg.layout-lbl-title' | translate}}</span>
-                                    <input [(ngModel)]="data.layout.header.title" type="text" style="width:293px">
-                                </div>
-
                                 <mat-list>
                                     <mat-list-item *ngFor="let item of headerItems; let i = index"
                                                    [ngClass]="'menu-item-' + data.layout.navigation.type">
@@ -334,6 +329,6 @@
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button [mat-dialog-close]="">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

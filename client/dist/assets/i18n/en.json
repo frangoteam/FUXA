@@ -56,6 +56,11 @@
     "dlg.layout-lbl-title": "Title",
     "dlg.layout-lbl-alarms": "Alarms notification mode",
     "dlg.layout-lbl-infos": "Info notification mode",
+    "dlg.layout-lbl-font": "Font family",
+    "dlg.layout-lbl-font-size": "Font size",
+    "dlg.layout-lbl-anchor": "Direction",
+    "dlg.layout-lbl-margin-left": "Margin left",
+    "dlg.layout-lbl-margin-right": "Margin right",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -65,6 +70,9 @@
     "dlg.menuitem-link": "Link by Click",
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
+
+    "dlg.headeritem-title": "Header Item",
+    "dlg.headeritem-icon": "Icon",
 
     "dlg.docproperty-title": "View properties",
     "dlg.docproperty-width": "Width",
@@ -146,6 +154,13 @@
     "item.navtype-text": "Text",
     "item.navtype-icons-text-block": "Icons & Text (block)",
     "item.navtype-icons-text-inline": "Icons & Text (inline)",
+
+    "item.headertype-button": "Button",
+    "item.headertype-label": "Label",
+    "item.headertype-image": "Image",
+    "item.headeranchor-left": "Left",
+    "item.headeranchor-right": "Right",
+    "item.headeranchor-center": "Center",
 
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",
@@ -434,6 +449,7 @@
     "editor.controls-iframe": "Iframe",
     "editor.controls-iframe-settings": "Iframe settings",
     "editor.controls-table": "Table",
+    "editor.header-item-settings": "Header item settings",
 
     "editor.layout-settings": "Layout settings",
 

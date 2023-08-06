@@ -92,7 +92,7 @@ export class LayoutPropertyComponent implements OnInit {
         });
     }
 
-    onAddMenuItem(item) {
+    onAddMenuItem(item: NaviItem = null) {
         let eitem = new NaviItem();
         if (item) {
             eitem = JSON.parse(JSON.stringify(item));
@@ -210,6 +210,10 @@ export class LayoutPropertyComponent implements OnInit {
             }
         });
     }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
 }
 
 @Component({
@@ -284,6 +288,7 @@ export class DialogHeaderItem {
     item: HeaderItem;
     icons$: Observable<string[]>;
     headerType = <HeaderItemType[]>['button', 'label', 'image'];
+    defaultColor = Utils.defaultColor;
 
     constructor(
         public projectService: ProjectService,

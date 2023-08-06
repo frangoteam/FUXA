@@ -377,7 +377,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private loadHeaderItems() {
         this.headerItemsMap.clear();
-        this.layoutHeader.items.forEach(item => {
+        if (!this.showNavigation) {
+            return;
+        }
+        this.layoutHeader.items?.forEach(item => {
             item.status = item.status ?? new GaugeStatus();
             item.status.onlyChange = true;
             item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);

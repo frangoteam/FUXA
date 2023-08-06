@@ -295,6 +295,7 @@ app-root {
 .sidenav-toogle {
     top: 0px;
     left: 10px;
+    line-height: 46px;
 }
 
 .sidenav-menu {
