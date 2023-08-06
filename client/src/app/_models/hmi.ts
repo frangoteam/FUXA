@@ -118,6 +118,8 @@ export interface HeaderItem {
     marginLeft: number;
     marginRight: number;
     property: GaugeProperty;
+    status: GaugeStatus;
+    element: HTMLElement;
 }
 
 export type HeaderItemType = 'button' | 'label' | 'image';
@@ -154,14 +156,10 @@ export class DocProfile {
     margin = 10;
 }
 
-export class MyItem {
-
-}
-
 export class GaugeSettings {
     name = '';
     property: any = null;   // set to GaugeProperty after upgrate
-    label = '';     // Gauge type label
+    label = '';             // Gauge type label
     constructor(public id: string, public type: string) {
     }
 }

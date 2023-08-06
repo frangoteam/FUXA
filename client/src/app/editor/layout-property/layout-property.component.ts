@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
@@ -14,7 +14,8 @@ import { UploadFile } from '../../_models/project';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
 import { map, Observable, of } from 'rxjs';
-import { GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
+import { GaugeDialogType, GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
+import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-button.component';
 
 @Component({
     selector: 'app-layout-property',
@@ -191,33 +192,21 @@ export class LayoutPropertyComponent implements OnInit {
     }
 
     onEditPropertyItem(item: HeaderItem) {
-        let tempsettings;// = JSON.parse(JSON.stringify(settings));
+        let settingsProperty = <ISettingsGaugeProperty>{ property: item.property ?? new GaugeProperty() };
         let hmi = this.projectService.getHmi();
-        let dlgType;// = GaugesManager.getEditDialogTypeToUse(settings.type);
-        let defaultValue;// = GaugesManager.getDefaultValue(settings.type);
-        let dialogRef: any;
-        let title = '';//this.getGaugeTitle(settings.type);
-        dialogRef = this.dialog.open(GaugePropertyComponent, {
+        let dlgType = GaugeDialogType.RangeAndText;
+        let title = this.translateService.instant('editor.header-item-settings');
+        let dialogRef = this.dialog.open(GaugePropertyComponent, {
             position: { top: '60px' },
             data: {
-                settings: tempsettings, devices: Object.values(this.projectService.getDevices()), title: title,
-                views: hmi.views, dlgType: dlgType, withEvents: true, withActions: true, default: defaultValue,
+                settings: settingsProperty, devices: Object.values(this.projectService.getDevices()), title: title,
+                views: hmi.views, dlgType: dlgType, withEvents: true, withActions: HtmlButtonComponent.actionsType,
                 scripts: this.projectService.getScripts(), withBitmask: false
             }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                // callback(result.settings);
-                // this.saveView(this.currentView);
-                // let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
-                // if (dlgType === GaugeDialogType.Pipe && result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
-                //     // by init a path we need to change the id
-                //     delete this.currentView.items[result.settings.id];
-                //     result.settings.id = result_gauge.element.id;
-                //     callback(result.settings);
-                //     this.saveView(this.currentView);
-                // }
-                // this.checkSvgElementsMap(true);
+                item.property = result.settings.property;
             }
         });
     }
@@ -321,4 +310,8 @@ export interface ILayoutPropertyData {
     layout: LayoutSettings;
     views: View[];
     securityEnabled: boolean;
+}
+
+interface ISettingsGaugeProperty {
+    property: GaugeProperty;
 }

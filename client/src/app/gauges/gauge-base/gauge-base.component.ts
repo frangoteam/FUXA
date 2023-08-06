@@ -113,8 +113,12 @@ export class GaugeBaseComponent {
             // save action (dummy) id and colors to restore on break
             try {
                 const actId = GaugeBaseComponent.getBlinkActionId(act);
-                if (dom) {gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };}
-                else {gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };}
+                if (dom) {
+                    gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };
+                }
+                else {
+                    gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };
+                }
             } catch (err) {
                 console.error(err);
             }
