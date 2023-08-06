@@ -398,7 +398,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private runEvents(self: any, ga: GaugeSettings, ev: any, events: any) {
+    public runEvents(self: any, ga: GaugeSettings, ev: any, events: any) {
         for (let i = 0; i < events.length; i++) {
             let actindex = Object.keys(GaugeEventActionType).indexOf(events[i].action);
             let eventTypes = Object.values(GaugeEventActionType);

@@ -14,7 +14,7 @@ import { HmiService, ScriptSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -347,6 +347,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     this.checkHeaderButton();
                     this.layoutHeader = this.hmi.layout.header;
+                    this.changeDetector.detectChanges();
                     this.loadHeaderItems();
                 }
                 if (this.hmi.layout.zoom && ZoomModeType[this.hmi.layout.zoom] === ZoomModeType.enabled) {
@@ -387,7 +388,39 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 this.headerItemsMap.get(sigId).push(item);
             });
+            const settingsProperty = <GaugeSettings>{
+                property: item.property,
+                type: HtmlButtonComponent.TypeTag
+            };
+            this.onBindMouseEvents(item.element, settingsProperty);
         });
+    }
+
+    private onBindMouseEvents(element: HTMLElement, ga: GaugeSettings) {
+        if (element) {
+            let clickEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
+            if (clickEvents && clickEvents.length > 0) {
+                element.onclick = (ev: MouseEvent) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                };
+                element.ontouchstart = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                };
+
+            }
+            let mouseDownEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
+            if (mouseDownEvents && mouseDownEvents.length > 0) {
+                element.onmousedown = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseDownEvents);
+                };
+            }
+            let mouseUpEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
+            if (mouseUpEvents && mouseUpEvents.length > 0) {
+                element.onmouseup = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseUpEvents);
+                };
+            }
+        }
     }
 
     private setBackground() {
