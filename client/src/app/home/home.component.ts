@@ -289,7 +289,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     <GaugeSettings>{ property: item.property },
                     item.element ?? Utils.findElementByIdRecursive(this.header.nativeElement, item.id),
                     varTag,
-                    item.status
+                    item.status,
+                    item.type === 'label'
                 );
             }
             item.status.variablesValue[varTag.id] = varTag.value;

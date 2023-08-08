@@ -199,9 +199,16 @@ export class LayoutPropertyComponent implements OnInit {
         let dialogRef = this.dialog.open(GaugePropertyComponent, {
             position: { top: '60px' },
             data: {
-                settings: settingsProperty, devices: Object.values(this.projectService.getDevices()), title: title,
-                views: hmi.views, dlgType: dlgType, withEvents: true, withActions: HtmlButtonComponent.actionsType,
-                scripts: this.projectService.getScripts(), withBitmask: false
+                settings: settingsProperty,
+                devices: Object.values(this.projectService.getDevices()),
+                title: title,
+                views: hmi.views,
+                dlgType: dlgType,
+                withEvents: true,
+                withActions: HtmlButtonComponent.actionsType,
+                withBitmask: false,
+                withProperty: item.type !== 'label',
+                scripts: this.projectService.getScripts(),
             }
         });
         dialogRef.afterClosed().subscribe(result => {

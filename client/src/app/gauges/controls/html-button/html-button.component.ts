@@ -76,13 +76,17 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         }
     }
 
-    static processValue(ga: GaugeSettings, element: HTMLElement | any, sig: Variable, gaugeStatus: GaugeStatus) {
+    static processValue(ga: GaugeSettings, element: HTMLElement | any, sig: Variable, gaugeStatus: GaugeStatus, isLabelType = false) {
         try {
             let button: HTMLElement = element instanceof HTMLElement ? element : null;
             if (button === null && element.node?.children && element.node.children.length >= 1) {
                 button = Utils.searchTreeStartWith(element.node, this.prefixB);
             }
             if (button) {
+                if (isLabelType) {
+                    button.textContent = sig.value;
+                    return;
+                }
                 let val = parseFloat(sig.value);
                 if (Number.isNaN(val)) {
                     // maybe boolean
