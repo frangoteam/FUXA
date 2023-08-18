@@ -68,7 +68,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	methodType = ['GET'];//, 'POST'];
 	parserType = ['JSON'];//, 'CSV'];
 	hostInterfaces = [];
-	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
+    s7ConnectOptionType = [{text: 'PG', value: 1},
+        {text: 'OP', value: 2},
+        {text: 'BASIC', value: 3}];
+    modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	result = '';
 	private subscriptionDeviceProperty: Subscription;

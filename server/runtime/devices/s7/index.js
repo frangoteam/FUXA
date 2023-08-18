@@ -34,6 +34,7 @@ function S7client(_data, _logger, _events) {
                 try {
                     if (!s7client.Connected() && _checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
+                        s7client.SetConnectionType(data.property.connectionOption);
                         s7client.ConnectTo(data.property.address, data.property.rack, data.property.slot, function (err) {
                             if (err) {
                                 logger.error(`'${data.name}' connect failed! ${err}`);

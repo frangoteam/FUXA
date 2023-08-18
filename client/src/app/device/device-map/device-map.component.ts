@@ -65,11 +65,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     domArea: any;
 
     constructor(private dialog: MatDialog,
-        private translateService: TranslateService,
-        private elementRef: ElementRef,
-        private appService: AppService,
-        private pluginService: PluginService,
-        private projectService: ProjectService) {
+                private translateService: TranslateService,
+                private elementRef: ElementRef,
+                private appService: AppService,
+                private pluginService: PluginService,
+                private projectService: ProjectService) {
         this.domArea = this.elementRef.nativeElement.parent;
     }
 
@@ -502,6 +502,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         device.property.broadcastAddress = tempdevice.property.broadcastAddress;
                         device.property.adpuTimeout = tempdevice.property.adpuTimeout;
                         if (tempdevice.property.connectionOption) {
+                            device.property.connectionOption = tempdevice.property.connectionOption;
+                        }
+                        if (tempdevice.property.connectionOption){
                             device.property.connectionOption = tempdevice.property.connectionOption;
                         }
                     }
