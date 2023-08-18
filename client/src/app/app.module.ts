@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule } from '@angular/core';
+import { ApplicationRef, CUSTOM_ELEMENTS_SCHEMA, ComponentFactoryResolver, Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -167,6 +167,7 @@ import { RcgiService } from './_services/rcgi/rcgi.service';
 import { ToastNotifierService } from './_services/toast-notifier.service';
 import { MyFileService } from './_services/my-file.service';
 import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
+import { createCustomElement } from '@angular/elements';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -363,8 +364,20 @@ export function createTranslateLoader(http: HttpClient) {
         Define,
         AuthGuard,
         ToastNotifierService,
-        MyFileService
+        MyFileService,
+        AppComponent
     ],
-    bootstrap: [AppComponent]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+
 })
-export class AppModule { }
+export class AppModule {
+    constructor(private resolver: ComponentFactoryResolver, private injector: Injector) {
+    }
+
+    ngDoBootstrap(appRef: ApplicationRef) {
+        const custom = createCustomElement(AppComponent, {injector: this.injector});
+        if (!customElements.get('app-fuxa')) {
+            customElements.define('app-fuxa', custom);
+        }
+    }
+}

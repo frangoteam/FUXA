@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/lib/svgeditor/jquery-plugin.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/lib/svgeditor/jquery-plugin.min.css"></noscript>
 
     <link rel="stylesheet" href="assets/lib/svgeditor/extensions/ext-html_button.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/lib/svgeditor/extensions/ext-html_button.min.css"></noscript>
-    <style>body{background:#d0d0d0}body,div,html{-webkit-user-select:text;-khtml-user-select:text;-moz-user-select:text;-o-user-select:text;user-select:text;-webkit-user-drag:text}</style><link rel="stylesheet" href="assets/lib/svgeditor/svg-editor.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/lib/svgeditor/svg-editor.min.css"></noscript>
+    <style>body{background:#d0d0d0}body,div,html{-webkit-user-select:text;-khtml-user-select:text;-moz-user-select:text;-o-user-select:text;user-select:text;-webkit-user-drag:text}select{margin-top:4px}</style><link rel="stylesheet" href="assets/lib/svgeditor/svg-editor.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/lib/svgeditor/svg-editor.min.css"></noscript>
     <link rel="stylesheet" href="assets/lib/ext-styles.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/lib/ext-styles.css"></noscript>
     <link rel="stylesheet" href="assets/lib/nouislider/nouislider.min.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="assets/lib/nouislider/nouislider.min.css"></noscript>
 
@@ -30,21 +30,26 @@
     <script src="assets/lib/svg/svg.min.js"></script>
     <script src="assets/lib/svg/raphael.min.js"></script>
 
-<style>@font-face{font-family:Roboto-Regular;src:local("Roboto Regular"),local("Roboto-Regular"),url(roboto-regular-webfont.f58066a2d9061006.woff) format("woff"),url(roboto-regular-webfont.ae47f6f1292d196f.woff2) format("woff2"),url(roboto-regular-webfont.2b0501b72f5a94d5.ttf) format("truetype"),url(roboto-regular-webfont.2ce0ba9a06424965.svg) format("svg")}html{height:100%;position:relative;background-color:#fff;font-family:Segoe UI Symbol,Roboto-Regular,Helvetica Neue,sans-serif;font-weight:300}body{height:100%;margin:0;font-family:Segoe UI Symbol,Roboto-Regular,Helvetica Neue,sans-serif;font-weight:300;background-color:#fff}*{text-decoration:none;scrollbar-width:thin}*:focus{outline:none}app-root{display:block;height:100%}.logo{display:block;text-indent:-9999px;width:30px;height:30px;background:url(logo.0e8e64e69250a450.svg);background-size:30px 30px}</style><link rel="stylesheet" href="styles.8c09a5687c061e5b.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.8c09a5687c061e5b.css"></noscript></head>
+<style>@font-face{font-family:Roboto-Regular;src:local("Roboto Regular"),local("Roboto-Regular"),url(roboto-regular-webfont.f58066a2d9061006.woff) format("woff"),url(roboto-regular-webfont.ae47f6f1292d196f.woff2) format("woff2"),url(roboto-regular-webfont.2b0501b72f5a94d5.ttf) format("truetype"),url(roboto-regular-webfont.2ce0ba9a06424965.svg) format("svg")}html{height:100%;position:relative;background-color:#fff;font-family:Segoe UI Symbol,Roboto-Regular,Helvetica Neue,sans-serif;font-weight:300}body{height:100%;margin:0;font-family:Segoe UI Symbol,Roboto-Regular,Helvetica Neue,sans-serif;font-weight:300;background-color:#fff}select:disabled{opacity:1}*{text-decoration:none;scrollbar-width:thin}*:focus{outline:none}</style><link rel="stylesheet" href="styles.8c09a5687c061e5b.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.8c09a5687c061e5b.css"></noscript></head>
 <!-- 3. Display the application -->
 
 <body>
-    <app-root>
-        <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
-            <div class="logo" style="display:block;width:60px;height:60px;background-size:60px 60px;margin-left: 45px;"></div>
-            <div style="display: block; padding-left:10px">
-                <div style="display:block;font-size: 18px; font-weight: 600; text-align: center;">FUXA Loading...</div>
-                <div style="display: block;font-size: 10px;padding-top: 3px; text-align: center;">
-                    powered by <span><b>frango</b>team</span>
-                </div>
-            </div>
-        </div>
-    </app-root>
-<script src="runtime.8ef63094e52a66ba.js" type="module"></script><script src="polyfills.2696a6f9dc75535e.js" type="module"></script><script src="scripts.1c3385254ff4c93c.js" defer></script><script src="main.dcae3c9fe85c3efd.js" type="module"></script>
+    <script src="assets/indextest.js"></script>
+
+    <button onclick="create('1')">fuxa 1</button>
+    <button onclick="refresh('1')">refresh 1</button>
+    <button onclick="create('2')">fuxa 2</button>
+    <button onclick="refresh('2')">refresh 2</button>
+    <select id="tags" style="width: 200px;">
+    </select>
+    <input id="tvalue" style="width: 100px;">
+    <button onclick="send('1')">send to fuxa1</button>
+    <select id="views" onchange="command('1', this)" style="width: 200px;">
+    </select>
+
+    <div id="logger" style="width: 300px; position: absolute; top: 30px; left: 10px">
+    </div>
+
+<script src="runtime.8ef63094e52a66ba.js" type="module"></script><script src="polyfills.2696a6f9dc75535e.js" type="module"></script><script src="scripts.1c3385254ff4c93c.js" defer></script><script src="main.346190b635624f14.js" type="module"></script>
 
 </body></html>

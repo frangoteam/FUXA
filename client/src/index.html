@@ -37,17 +37,22 @@
 <!-- 3. Display the application -->
 
 <body>
-    <app-root>
-        <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
-            <div class="logo" style="display:block;width:60px;height:60px;background-size:60px 60px;margin-left: 45px;"></div>
-            <div style="display: block; padding-left:10px">
-                <div style="display:block;font-size: 18px; font-weight: 600; text-align: center;">FUXA Loading...</div>
-                <div style="display: block;font-size: 10px;padding-top: 3px; text-align: center;">
-                    powered by <span><b>frango</b>team</span>
-                </div>
-            </div>
-        </div>
-    </app-root>
+    <script src="assets/indextest.js"></script>
+
+    <button onclick="create('1')">fuxa 1</button>
+    <button onclick="refresh('1')">refresh 1</button>
+    <button onclick="create('2')">fuxa 2</button>
+    <button onclick="refresh('2')">refresh 2</button>
+    <select id="tags" style="width: 200px;">
+    </select>
+    <input id="tvalue"  style="width: 100px;">
+    <button onclick="send('1')">send to fuxa1</button>
+    <select id="views" onchange="command('1', this)" style="width: 200px;" >
+    </select>
+
+    <div id="logger" style="width: 300px; position: absolute; top: 30px; left: 10px">
+    </div>
+
 </body>
 
 </html>
