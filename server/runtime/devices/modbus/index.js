@@ -314,7 +314,9 @@ function MODBUSclient(_data, _logger, _events) {
             } catch (err) {
                 console.log(err);
             }
+            return true;
         }
+        return false;
     }
 
     /**

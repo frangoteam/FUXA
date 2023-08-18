@@ -318,8 +318,10 @@ function MQTTclient(_data, _logger, _events) {
                 }
                 tag.changed = true;
                 _publishValues([tag]);
+                return true;
             }
         }
+        return false;
     }
 
     /**

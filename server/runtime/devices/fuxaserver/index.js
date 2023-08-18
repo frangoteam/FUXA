@@ -138,7 +138,9 @@ function FuxaServer(_data, _logger, _events) {
             varsValue[id].value = val;
             varsValue[id].changed = true;
             logger.info(`'${data.name}' setValue(${id}, ${value})`, true);
+            return true;
         }
+        return false;
     }
 
     /**

@@ -271,7 +271,9 @@ function BACNETclient(_data, _logger, _events) {
                     logger.error(`'${data.name}' _writeProperty error! ${reason}`);
                 }
             });
+            return true;
         }
+        return false;
     }
 
     /**
