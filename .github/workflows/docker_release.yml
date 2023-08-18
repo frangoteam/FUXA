@@ -2,7 +2,7 @@ name: Build and Publish DockerHub release
 
 env:
   app: fuxa
-  version: 1.1.13
+  version: 1.1.14
   # for available platforms see output of a previous run -
   # ie the "Setup Docker BuildX" / "Inspect Builder" section
   # has eg "node_platforms": "linux/amd64,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6"

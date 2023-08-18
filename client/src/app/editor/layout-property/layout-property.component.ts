@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
@@ -14,6 +14,8 @@ import { UploadFile } from '../../_models/project';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
 import { map, Observable, of } from 'rxjs';
+import { GaugeDialogType, GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
+import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-button.component';
 
 @Component({
     selector: 'app-layout-property',
@@ -23,8 +25,11 @@ import { map, Observable, of } from 'rxjs';
 export class LayoutPropertyComponent implements OnInit {
 
     draggableListLeft = [];
-    layout: any;
+    headerItems: HeaderItem[];
+    layout: LayoutSettings;
     defaultColor = Utils.defaultColor;
+    fonts = Define.fonts;
+    anchorType = <AnchorType[]>['left', 'center', 'right'];
 
     startView: string;
     sideMode: string;
@@ -37,18 +42,20 @@ export class LayoutPropertyComponent implements OnInit {
     headerMode = HeaderBarModeType;
     logo = null;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: any,
+    constructor(@Inject(MAT_DIALOG_DATA) public data: ILayoutPropertyData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
+        private projectService: ProjectService,
         private translateService: TranslateService,
         private resourcesService: ResourcesService) {
 
-        data.layout = Utils.mergeDeep(new LayoutSettings(), data.layout);
+        data.layout = <LayoutSettings>Utils.mergeDeep(new LayoutSettings(), data.layout);
         this.startView = data.layout.start;
         this.sideMode = data.layout.navigation.mode;
         if (!data.layout.navigation.items) {
             data.layout.navigation.items = [];
         }
+        this.headerItems = data.layout.header.items ?? [];
         this.draggableListLeft = data.layout.navigation.items;
         this.resourcesService.getResources(ResourceType.images).subscribe((result: Resources) => {
             if (result) {
@@ -85,7 +92,7 @@ export class LayoutPropertyComponent implements OnInit {
         });
     }
 
-    onAddMenuItem(item) {
+    onAddMenuItem(item: NaviItem = null) {
         let eitem = new NaviItem();
         if (item) {
             eitem = JSON.parse(JSON.stringify(item));
@@ -118,7 +125,6 @@ export class LayoutPropertyComponent implements OnInit {
                 }
             }
         });
-        // this.winRef.nativeWindow.svgEditor.showDocProperties();
     }
 
     onRemoveMenuItem(index: number, item) {
@@ -133,23 +139,6 @@ export class LayoutPropertyComponent implements OnInit {
         }
     }
 
-    onOkClick() {
-        this.data.layout.navigation.items = [];
-        this.draggableListLeft.forEach(item => {
-            let nitem = new NaviItem();
-            nitem.icon = item.icon;
-            nitem.image = item.image;
-            nitem.text = item.text;
-            nitem.view = item.view;
-            nitem.link = item.link;
-            this.data.layout.navigation.items.push(nitem);
-        });
-    }
-
-    onNoClick(): void {
-		this.dialogRef.close();
-    }
-
     getViewName(vid: NaviItem) {
         if (vid.view) {
             const view = this.data.views.find(x=>x.id === vid.view);
@@ -162,6 +151,76 @@ export class LayoutPropertyComponent implements OnInit {
             return '';
         }
     }
+
+    onAddHeaderItem(item: HeaderItem = null) {
+        let eitem = item ? JSON.parse(JSON.stringify(item)) : <HeaderItem> {
+            id: Utils.getShortGUID('i_'),
+            type: 'button',
+            marginLeft: 5,
+            marginRight: 5
+        };
+        let dialogRef = this.dialog.open(DialogHeaderItem, {
+            position: { top: '60px' },
+            data: eitem
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (item) {
+                    const index = this.headerItems.findIndex(hi => hi.id === item.id);
+                    this.headerItems[index] = result;
+                } else {
+                    this.headerItems.push(result);
+                }
+                this.data.layout.header.items = this.headerItems;
+            }
+        });
+    }
+
+    onRemoveHeaderItem(index: number, item: HeaderItem) {
+        this.headerItems.splice(index, 1);
+        this.data.layout.header.items = this.headerItems;
+    }
+
+    onMoveHeaderItem(index, direction) {
+        if (direction === 'top' && index > 0) {
+            this.headerItems.splice(index - 1, 0, this.headerItems.splice(index, 1)[0]);
+        } else if (direction === 'bottom' && index < this.draggableListLeft.length) {
+            this.headerItems.splice(index + 1, 0, this.headerItems.splice(index, 1)[0]);
+        }
+        this.data.layout.header.items = this.headerItems;
+    }
+
+    onEditPropertyItem(item: HeaderItem) {
+        let settingsProperty = <ISettingsGaugeProperty>{ property: item.property ?? new GaugeProperty() };
+        let hmi = this.projectService.getHmi();
+        let dlgType = GaugeDialogType.RangeAndText;
+        let title = this.translateService.instant('editor.header-item-settings');
+        let dialogRef = this.dialog.open(GaugePropertyComponent, {
+            position: { top: '60px' },
+            data: {
+                settings: settingsProperty,
+                devices: Object.values(this.projectService.getDevices()),
+                title: title,
+                views: hmi.views,
+                dlgType: dlgType,
+                withEvents: true,
+                withActions: HtmlButtonComponent.actionsType,
+                withBitmask: false,
+                withProperty: item.type !== 'label',
+                scripts: this.projectService.getScripts(),
+            }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                item.property = result.settings.property;
+            }
+        });
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
 }
 
 @Component({
@@ -169,7 +228,6 @@ export class LayoutPropertyComponent implements OnInit {
     templateUrl: './menuitem.dialog.html',
 })
 export class DialogMenuItem {
-    // defaultColor = Utils.defaultColor;
 	selectedGroups = [];
     groups = UserGroups.Groups;
     icons$: Observable<string[]>;
@@ -226,4 +284,46 @@ export class DialogMenuItem {
             }
         }
     }
+}
+
+@Component({
+    selector: 'dialog-headeritem',
+    templateUrl: './dialog-header-item.html',
+    styleUrls: ['./layout-property.component.scss']
+})
+export class DialogHeaderItem {
+    item: HeaderItem;
+    icons$: Observable<string[]>;
+    headerType = <HeaderItemType[]>['button', 'label', 'image'];
+    defaultColor = Utils.defaultColor;
+
+    constructor(
+        public projectService: ProjectService,
+        public dialogRef: MatDialogRef<DialogHeaderItem>,
+        @Inject(MAT_DIALOG_DATA) public data: HeaderItem) {
+        this.item = data;
+        this.icons$ = of(Define.MaterialIconsRegular).pipe(
+            map((data: string) => data.split('\n')),
+            map(lines => lines.map(line => line.split(' ')[0])),
+            map(names => names.filter(name => !!name))
+          );
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    onOkClick(): void {
+        this.dialogRef.close(this.item);
+    }
+}
+
+export interface ILayoutPropertyData {
+    layout: LayoutSettings;
+    views: View[];
+    securityEnabled: boolean;
+}
+
+interface ISettingsGaugeProperty {
+    property: GaugeProperty;
 }

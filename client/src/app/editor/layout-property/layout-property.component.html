@@ -1,8 +1,8 @@
 <div style="position: relative;" class="dialog-mdsd-main">
     <h1 mat-dialog-title style="display:inline-block; cursor:move" mat-dialog-draggable>{{'dlg.layout-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div class="dialog-mdsd-content">
-        <mat-tab-group style="width: 950px;height: 700px">
+    <div class="dialog-mdsd-content content">
+        <mat-tab-group>
             <mat-tab label="{{'dlg.layout-general' | translate}}">
                 <div class="container-split-ver mt25">
                     <div>
@@ -66,152 +66,206 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="{{'dlg.layout-navigation' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
-                <div style="display: inline-block;margin-top: 10px;width:100%; min-height: 500px; overflow-y: auto; height: 650px">
+            <mat-tab label="{{'dlg.layout-navigation' | translate}}">
+                <div class="tab-container">
                     <div [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                         <button mat-icon-button>
                             <mat-icon aria-label="Menu">menu</mat-icon>
                         </button>
                         <div style="display: inline-block;padding-left: 140px">
-                            <button mat-icon-button (click)="onAddMenuItem(null)">
+                            <button mat-icon-button (click)="onAddMenuItem()">
                                 <mat-icon aria-label="Add">control_point</mat-icon>
                             </button>
                         </div>
                     </div>
-                    <div class="sidenav-menu" [style.background-color]="data.layout.navigation.bkcolor" [style.color]="data.layout.navigation.fgcolor"
-                        style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
-                        <mat-list class="dndList" style="padding-top: 10px; background-color: inherit;">
-                            <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="data.layout.navigation.fgcolor">
-                                <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
-                                <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
-                            </mat-list-item>
-                            <mat-list-item *ngFor="let item of draggableListLeft; let i = index" [ngClass]="'menu-item-' + data.layout.navigation.type" style="width: unset">
-                                <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
-                                    <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
-                                        <img *ngIf="item.image" src="{{item.image}}">
-                                        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                    </div>
-                                    <div *ngSwitchCase="'text'" class="menu-item-content-text">
-                                        <span>{{item.text}}</span>
-                                    </div>
-                                    <div *ngSwitchCase="'block'" class="menu-item-content-block">
-                                        <img *ngIf="item.image" src="{{item.image}}">
-                                        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                        <span>{{item.text}}</span>
-                                    </div>
-                                    <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
-                                        <img *ngIf="item.image" src="{{item.image}}">
-                                        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>                                        
-                                        <span style="display: inline-block">{{item.text}}</span>
-                                    </div>
-                                </button>
-                                <div style="padding-left:15px;padding-top: 3px;display: block;width: 50px;">
-                                    <mat-icon (click)="onMoveMenuItem(i, 'top')" class="layout-menu-item-icon" style="display: block;">arrow_upward</mat-icon>
-                                    <mat-icon (click)="onMoveMenuItem(i, 'bottom')" class="layout-menu-item-icon" style="display: block;">arrow_downward</mat-icon>
-                                </div>
-                                <div style="padding-left:15px;">
-                                    <div style="display: block;width: 50px;">
-                                        <mat-icon (click)="onAddMenuItem(item)" class="layout-menu-item-icon layout-menu-item-edit">edit</mat-icon>
-                                        <mat-icon (click)="onRemoveMenuItem(i, item)" class="layout-menu-item-icon layout-menu-item-delete">clear</mat-icon>
-                                    </div>
-                                    <div class="layout-menu-item-link">{{getViewName(item)}}</div>
-                                </div>
-                            </mat-list-item>
-                        </mat-list>
-                    </div>
-                    <div style="top: 70px; right: 25px;position: absolute;">
-                        <div class="my-form-field" style="display: block;">
-                            <span>{{'dlg.layout-lbl-smode' | translate}}</span>
-                            <mat-select [(value)]="data.layout.navigation.mode" style="width: 300px">
-                                <mat-option *ngFor="let mode of navMode | enumToArray" [value]="mode.key">
-                                    {{ mode.value }}
-                                </mat-option>
-                            </mat-select>
-                        </div>
-                        <div class="my-form-field" style="display: block; margin-top: 10px">
-                            <span>{{'dlg.layout-lbl-type' | translate}}</span>
-                            <mat-select [(value)]="data.layout.navigation.type" style="width: 300px">
-                                <mat-option *ngFor="let type of navType | enumToArray" [value]="type.key">
-                                    {{ type.value }}
-                                </mat-option>
-                            </mat-select>
-                        </div>
-                        <div style="display: block; margin-top: 10px">
-                            <div class="my-form-field" style="display: inline-block">
-                                <span>{{'dlg.layout-nav-bkcolor' | translate}}</span>
-                                <input [(colorPicker)]="data.layout.navigation.bkcolor" [style.background]="data.layout.navigation.bkcolor" [cpAlphaChannel]="'always'"
-                                    class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
-                            </div>
-                            <div class="my-form-field" style="float:right">
-                                <span>{{'dlg.layout-nav-fgcolor' | translate}}</span>
-                                <input [(colorPicker)]="data.layout.navigation.fgcolor" [style.background]="data.layout.navigation.fgcolor" [cpAlphaChannel]="'always'"
-                                    class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+                    <div class="nav-config">
+                        <div class="config-left">
+                            <div class="sidenav-menu" [style.background-color]="data.layout.navigation.bkcolor" [style.color]="data.layout.navigation.fgcolor"
+                                style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
+                                <mat-list class="dndList" style="padding-top: 10px; background-color: inherit;">
+                                    <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="data.layout.navigation.fgcolor">
+                                        <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
+                                        <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
+                                    </mat-list-item>
+                                    <mat-list-item *ngFor="let item of draggableListLeft; let i = index"                                                    
+                                                   [ngClass]="'menu-item-' + data.layout.navigation.type" 
+                                                   style="width: unset">
+                                        <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
+                                            <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
+                                                <img *ngIf="item.image" src="{{item.image}}">
+                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                                            </div>
+                                            <div *ngSwitchCase="'text'" class="menu-item-content-text">
+                                                <span>{{item.text}}</span>
+                                            </div>
+                                            <div *ngSwitchCase="'block'" class="menu-item-content-block">
+                                                <img *ngIf="item.image" src="{{item.image}}">
+                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                                                <span>{{item.text}}</span>
+                                            </div>
+                                            <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
+                                                <img *ngIf="item.image" src="{{item.image}}">
+                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>                                        
+                                                <span style="display: inline-block">{{item.text}}</span>
+                                            </div>
+                                        </button>
+                                        <div class="nav-item">
+                                            <div class="position">
+                                                <mat-icon (click)="onMoveMenuItem(i, 'top')" class="layout-menu-item-icon" style="display: block;">arrow_upward</mat-icon>
+                                                <mat-icon (click)="onMoveMenuItem(i, 'bottom')" class="layout-menu-item-icon" style="display: block;">arrow_downward</mat-icon>
+                                            </div>
+                                            <div class="edit">
+                                                <mat-icon (click)="onAddMenuItem(item)" class="layout-menu-item-icon layout-menu-item-edit">edit</mat-icon>
+                                                <div class="type">
+                                                    {{ getViewName(item) }}
+                                                </div>
+                                            </div>
+                                            <div class="remove">
+                                                <mat-icon (click)="onRemoveMenuItem(i, item)" class="layout-menu-item-icon layout-menu-item-delete">clear</mat-icon>
+                                            </div>
+                                        </div>
+                                    </mat-list-item>
+                                </mat-list>
                             </div>
                         </div>
-                        <div class="my-form-field" style="display: inline-block;margin-top: 10px;">
-                            <span>{{'dlg.layout-lbl-logo' | translate}}</span>
-                            <mat-select [(value)]="data.layout.navigation.logo" style="width: 300px">
-                                <mat-option (click)="data.layout.navigation.logo = null;"></mat-option>
-                                <mat-option *ngFor="let resource of resources" [value]="resource.path">
-                                    {{ resource.name }}
-                                </mat-option>
-                            </mat-select>
+                        <div class="config-right mr10">
+                            <div class="my-form-field" style="display: block;">
+                                <span>{{'dlg.layout-lbl-smode' | translate}}</span>
+                                <mat-select [(value)]="data.layout.navigation.mode" style="width: 300px">
+                                    <mat-option *ngFor="let mode of navMode | enumToArray" [value]="mode.key">
+                                        {{ mode.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field" style="display: block; margin-top: 10px">
+                                <span>{{'dlg.layout-lbl-type' | translate}}</span>
+                                <mat-select [(value)]="data.layout.navigation.type" style="width: 300px">
+                                    <mat-option *ngFor="let type of navType | enumToArray" [value]="type.key">
+                                        {{ type.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div style="display: block; margin-top: 10px">
+                                <div class="my-form-field" style="display: inline-block">
+                                    <span>{{'dlg.layout-nav-bkcolor' | translate}}</span>
+                                    <input [(colorPicker)]="data.layout.navigation.bkcolor" [style.background]="data.layout.navigation.bkcolor" [cpAlphaChannel]="'always'"
+                                        class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+                                </div>
+                                <div class="my-form-field" style="float:right">
+                                    <span>{{'dlg.layout-nav-fgcolor' | translate}}</span>
+                                    <input [(colorPicker)]="data.layout.navigation.fgcolor" [style.background]="data.layout.navigation.fgcolor" [cpAlphaChannel]="'always'"
+                                        class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+                                </div>
+                            </div>
+                            <div class="my-form-field" style="display: inline-block;margin-top: 10px;">
+                                <span>{{'dlg.layout-lbl-logo' | translate}}</span>
+                                <mat-select [(value)]="data.layout.navigation.logo" style="width: 300px">
+                                    <mat-option (click)="data.layout.navigation.logo = null;"></mat-option>
+                                    <mat-option *ngFor="let resource of resources" [value]="resource.path">
+                                        {{ resource.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="{{'dlg.layout-header' | translate}}" *ngIf="data.layout.hidenavigation !== 'true'">
-                <div style="overflow-y: hidden; overflow-x: hidden; margin-top: 10px; min-height: 500px;">
+            <mat-tab label="{{'dlg.layout-header' | translate}}">
+                <div class="tab-container">
                     <div class="header-layout" [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                         <div class="header-menu">
                             <button mat-icon-button>
                                 <mat-icon aria-label="Menu">menu</mat-icon>
                             </button>
                         </div>
-                        <div class="header-title">
-                            {{data.layout.header.title}}
+                        <div class="items" [style.textAlign]="data.layout.header.itemsAnchor">
+                            <ng-container *ngFor="let item of headerItems; let i = index" [ngSwitch]="item.type">
+                                <ng-container *ngSwitchCase="'button'">
+                                    <button mat-raised-button 
+                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor" 
+                                            [style.color]="item.fgcolor ?? data.layout.header.fgcolor"
+                                            [style.fontFamily]="data.layout.header.fontFamily"
+                                            [style.fontSize]="data.layout.header.fontSize + 'px !important'"
+                                            [style.marginLeft.px]="item.marginLeft"
+                                            [style.marginRight.px]="item.marginRight">
+                                        {{ item.property?.text ?? item.type }}
+                                    </button>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'label'">
+                                    <button mat-button 
+                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor" 
+                                            [style.color]="item.fgcolor ?? data.layout.header.fgcolor"
+                                            [style.fontFamily]="data.layout.header.fontFamily"
+                                            [style.fontSize]="data.layout.header.fontSize + 'px !important'"
+                                            [style.marginLeft.px]="item.marginLeft"
+                                            [style.marginRight.px]="item.marginRight">
+                                        {{ item.property?.text ?? item.type }}
+                                    </button>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'image'">
+                                    <button mat-icon-button
+                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor" 
+                                            [style.color]="item.fgcolor ?? data.layout.header.fgcolor"
+                                            [style.marginLeft.px]="item.marginLeft"
+                                            [style.marginRight.px]="item.marginRight">
+                                        <mat-icon>{{ item.icon }}</mat-icon>
+                                    </button>
+                                </ng-container>
+                            </ng-container>
                         </div>
-                        <div *ngIf="data.securityEnabled" class="header-login">
-                            <button mat-icon-button>
-                                <mat-icon aria-label="Login">account_circle</mat-icon>
-                            </button>
-                        </div>
-                        <div class="header-button">
-                            <button mat-icon-button class="alarm-layout">
+                        <div class="header-notify-button">
+                            <button mat-icon-button class="alarm-button">
                                 <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                             </button>
-                            <button mat-icon-button class="info-layout">
+                            <button mat-icon-button>
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </button>
+                            <div *ngIf="data.securityEnabled" class="header-login">
+                                <button mat-icon-button>
+                                    <mat-icon aria-label="Login">account_circle</mat-icon>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="header-config">
-                        <div class="config">
-                            <div class="my-form-field" style="width: 300px">
-                                <span>{{'dlg.layout-lbl-title' | translate}}</span>
-                                <input [(ngModel)]="data.layout.header.title" type="text" style="width:293px">
+                    <div class="header-config ml20">
+                        <div class="config-left">
+                            <div class="add-item">
+                                <button mat-icon-button (click)="onAddHeaderItem()">
+                                    <mat-icon aria-label="Add">control_point</mat-icon>
+                                </button>
                             </div>
-                            <div style="display: block; margin-top: 20px;width: 300px">
-                                <div class="my-form-field" style="display: inline-block">
-                                    <span>{{'dlg.layout-header-bkcolor' | translate}}</span>
-                                    <input [(colorPicker)]="data.layout.header.bkcolor" [style.background]="data.layout.header.bkcolor" [cpAlphaChannel]="'always'"
-                                        class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
-                                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                        style="width:126px;" [cpPosition]="'bottom'" />
-                                </div>
-                                <div class="my-form-field" style="float: right;">
-                                    <span>{{'dlg.layout-header-fgcolor' | translate}}</span>
-                                    <input [(colorPicker)]="data.layout.header.fgcolor" [style.background]="data.layout.header.fgcolor" [cpAlphaChannel]="'always'"
-                                        class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
-                                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                        style="width:126px;" [cpPosition]="'bottom'" />
-                                </div>
+                            <div class="header-items">
+                                <mat-list>
+                                    <mat-list-item *ngFor="let item of headerItems; let i = index"
+                                                   [ngClass]="'menu-item-' + data.layout.navigation.type">
+                                        <div class="header-item">
+                                            <div class="position mr15">
+                                                <mat-icon (click)="onMoveHeaderItem(i, 'top')" class="layout-menu-item-icon block">arrow_upward</mat-icon>
+                                                <mat-icon (click)="onMoveHeaderItem(i, 'bottom')" class="layout-menu-item-icon block">arrow_downward</mat-icon>
+                                            </div>
+                                            <div class="edit">
+                                                <mat-icon (click)="onAddHeaderItem(item)" class="layout-menu-item-icon layout-menu-item-edit">edit</mat-icon>
+                                                <div class="type">
+                                                    {{ 'item.headertype-' + item.type | translate }}
+                                                </div>
+                                            </div>
+                                            <div class="property">
+                                                <button mat-button (click)="onEditPropertyItem(item)">
+                                                    {{'gauges.property-title' | translate}}
+                                                </button>
+                                            </div>
+                                            <div class="remove">
+                                                <mat-icon (click)="onRemoveHeaderItem(i, item)" class="layout-menu-item-icon layout-menu-item-delete">clear</mat-icon>
+                                            </div>
+                                        </div>
+                                    </mat-list-item>
+                                </mat-list>
                             </div>
                         </div>
-                        <div class="config">
-                            <div class="my-form-field">
+                        <div class="config-right mr10">
+                            <div class="my-form-field block">
                                 <span>{{'dlg.layout-lbl-alarms' | translate}}</span>
                                 <mat-select [(value)]="data.layout.header.alarms" style="width: 260px">
                                     <mat-option *ngFor="let mode of notifyMode | enumToArray" [value]="mode.key">
@@ -220,7 +274,7 @@
                                 </mat-select>
                                 <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                             </div>
-                            <div class="my-form-field" style="margin-top: 20px;">
+                            <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-infos' | translate}}</span>
                                 <mat-select [(value)]="data.layout.header.infos" style="width: 260px">
                                     <mat-option *ngFor="let mode of notifyMode | enumToArray" [value]="mode.key">
@@ -229,6 +283,44 @@
                                 </mat-select>
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </div>
+                            <div class="my-form-field block mt10">
+                                <div class="my-form-field lbk">
+                                    <span>{{'dlg.layout-lbl-font' | translate}}</span>
+                                    <mat-select [(ngModel)]="data.layout.header.fontFamily" style="width: 180px">
+                                        <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
+                                            {{font}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="my-form-field lbk ml15">
+                                    <span>{{'dlg.layout-lbl-font-size' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="data.layout.header.fontSize" max="20" min="10" step="1" type="number">
+                                </div>
+                            </div>
+                            <div class="my-form-field block mt10">
+                                <span>{{'dlg.layout-lbl-anchor' | translate}}</span>
+                                <mat-select [(ngModel)]="data.layout.header.itemsAnchor" style="width: 260px">
+                                    <mat-option *ngFor="let type of anchorType" [value]="type">
+                                        {{ 'item.headeranchor-' + type | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="colors block">
+                                <div class="my-form-field" style="display: inline-block">
+                                    <span>{{'dlg.layout-header-bkcolor' | translate}}</span>
+                                    <input [(colorPicker)]="data.layout.header.bkcolor" [style.background]="data.layout.header.bkcolor" [cpAlphaChannel]="'always'"
+                                        class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                                        style="width:120px;" [cpPosition]="'bottom'" />
+                                </div>
+                                <div class="my-form-field" style="float: right;">
+                                    <span>{{'dlg.layout-header-fgcolor' | translate}}</span>
+                                    <input [(colorPicker)]="data.layout.header.fgcolor" [style.background]="data.layout.header.fgcolor" [cpAlphaChannel]="'always'"
+                                        class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                                        style="width:120px;" [cpPosition]="'bottom'" />
+                                </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -237,6 +329,6 @@
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button [mat-dialog-close]="">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

@@ -83,9 +83,13 @@ export class ValueComponent extends GaugeBaseComponent {
                         val = parseFloat(val).toFixed(digit);
                     }
                     if (ga.property.variableId === sig.id) {
-                        g.textContent = val;
-                        if (unit) {
-                            g.textContent += ' ' + unit;
+                        try {
+                            g.textContent = val;
+                            if (unit) {
+                                g.textContent += ' ' + unit;
+                            }
+                        } catch (err) {
+                            console.error(ga, sig, err);
                         }
                     }
                     // check actions

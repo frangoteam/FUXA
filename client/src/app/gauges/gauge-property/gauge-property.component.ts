@@ -54,22 +54,23 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.defaultValue = this.data.default;
-        if (this.dialogType === GaugeDialogType.Input) {
-            this.flexHead.withProperty = PropertyType.input;
-        } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
-            this.flexHead.withProperty = PropertyType.output;
-        } else {
-            this.flexHead.defaultValue = this.defaultValue;
-            this.flexHead.withProperty = PropertyType.range;
-            if (this.dialogType === GaugeDialogType.ValueWithRef) {
-                this.flexHead.withProperty = PropertyType.text;
-            } else if (this.dialogType === GaugeDialogType.Step) {
-                this.flexHead.withProperty = PropertyType.step;
-            } else if (this.dialogType === GaugeDialogType.MinMax) {
-                this.flexHead.withProperty = PropertyType.minmax;
+        if (this.data.withProperty !== false) { // else undefined
+            if (this.dialogType === GaugeDialogType.Input) {
+                this.flexHead.withProperty = PropertyType.input;
+            } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
+                this.flexHead.withProperty = PropertyType.output;
+            } else {
+                this.flexHead.defaultValue = this.defaultValue;
+                this.flexHead.withProperty = PropertyType.range;
+                if (this.dialogType === GaugeDialogType.ValueWithRef) {
+                    this.flexHead.withProperty = PropertyType.text;
+                } else if (this.dialogType === GaugeDialogType.Step) {
+                    this.flexHead.withProperty = PropertyType.step;
+                } else if (this.dialogType === GaugeDialogType.MinMax) {
+                    this.flexHead.withProperty = PropertyType.minmax;
+                }
             }
         }
-
         if (this.data.withBitmask) {
             this.withBitmask = this.data.withBitmask;
         }
@@ -118,7 +119,7 @@ export class GaugePropertyComponent implements AfterViewInit {
     isToolboxToShow() {
         if (this.dialogType === GaugeDialogType.RangeWithAlarm || this.dialogType === GaugeDialogType.Range || this.dialogType === GaugeDialogType.Step ||
             this.dialogType === GaugeDialogType.RangeAndText) {
-            return true;
+            return this.data.withProperty !== false;
         }
         return false;
     }

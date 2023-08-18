@@ -112,7 +112,7 @@ function Influx(_settings, _log) {
             } else {
                 const point = new Point(tag.id)
                     .tag('id', tag.id)
-                    .tag('name', tag.name)
+                    .tag('name', tag.name || tag.tagref.name)
                     .tag('type', tag.type)
                     .timestamp(new Date(tag.timestamp || new Date().getTime()));
                 if (deviceName) {

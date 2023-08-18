@@ -56,6 +56,11 @@
     "dlg.layout-lbl-title": "Title",
     "dlg.layout-lbl-alarms": "Alarms notification mode",
     "dlg.layout-lbl-infos": "Info notification mode",
+    "dlg.layout-lbl-font": "Font family",
+    "dlg.layout-lbl-font-size": "Font size",
+    "dlg.layout-lbl-anchor": "Direction",
+    "dlg.layout-lbl-margin-left": "Margin left",
+    "dlg.layout-lbl-margin-right": "Margin right",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -65,6 +70,9 @@
     "dlg.menuitem-link": "Link by Click",
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
+
+    "dlg.headeritem-title": "Header Item",
+    "dlg.headeritem-icon": "Icon",
 
     "dlg.docproperty-title": "View properties",
     "dlg.docproperty-width": "Width",
@@ -146,6 +154,13 @@
     "item.navtype-text": "Text",
     "item.navtype-icons-text-block": "Icons & Text (block)",
     "item.navtype-icons-text-inline": "Icons & Text (inline)",
+
+    "item.headertype-button": "Button",
+    "item.headertype-label": "Label",
+    "item.headertype-image": "Image",
+    "item.headeranchor-left": "Left",
+    "item.headeranchor-right": "Right",
+    "item.headeranchor-center": "Center",
 
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",
@@ -434,6 +449,7 @@
     "editor.controls-iframe": "Iframe",
     "editor.controls-iframe-settings": "Iframe settings",
     "editor.controls-table": "Table",
+    "editor.header-item-settings": "Header item settings",
 
     "editor.layout-settings": "Layout settings",
 
@@ -443,6 +459,7 @@
     "editor.interactivity-class": "class:",
     "editor.interactivity-class-title": "Element class",
     "editor.interactivity-name": "name",
+    "editor.edit-bind-of-tags": "Edit bind of Tags",
 
     "editor.cmenu-property": "Property",
     "editor.cmenu-cut": "Cut",
@@ -580,6 +597,8 @@
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
     "editor.tools-svg-selector": "Item list selector",
+
+    "tags.ids-config-title": "Tags-Ids reference",
 
     "svg.selector.property-title": "View item list",
 
@@ -746,6 +765,10 @@
     "device.property-broadcast-address-ph": "127.0.0.255",
     "device.property-adpu-timeout": "adpu Timeout",
     "device.property-adpu-timeout-ph": "6000",
+    "device.property-certificate-section": "TLS Certificate",
+    "device.property-certificate": "Certificate",
+    "device.property-certificate-key": "Private Key",
+    "device.property-certificate-ca": "CA Certificate",
     "device.security-none": "None",
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encrypt",
@@ -1192,6 +1215,7 @@
     "dlg.app-settings-smtp-testaddress": "Email to send test message",
     "dlg.app-settings-smtp-test": "Test",
     "dlg.app-settings-language": "Language",
+    "dlg.app-language-de": "German",
     "dlg.app-language-en": "English",
     "dlg.app-language-ru": "Russian",
     "dlg.app-language-ua": "Ukrainian",
@@ -1235,17 +1259,19 @@
     "store.retention-year3": "3 year",
     "store.retention-year5": "5 year",
 
-    "msg.alarm-remove": "Would you like to remove Alarm ",
-    "msg.text-remove": "Would you like to remove Text ",
+    "msg.alarm-ack-all": "Would you like to ACK all alarms?",
+    "msg.alarm-remove": "Would you like to remove Alarm?",
+    "msg.text-remove": "Would you like to remove Text?",
     "msg.alarmproperty-error-exist": "Alarm name exist!",
     "msg.alarmproperty-missing-value": "Some values are missing!",
     "msg.textproperty-error-exist": "Text-ID exist!",
     "msg.textproperty-missing-value": "Some values are missing!",
-    "msg.device-remove": "Would you like to remove Device ",
-    "msg.device-tag-remove": "Would you like to remove Tag ",
+    "msg.device-remove": "Would you like to remove Device?",
+    "msg.device-tag-remove": "Would you like to remove Tag?",
     "msg.device-tag-exist": "Tag name exist!",
     "msg.notification-property-missing-value": "Some values are missing!",
     "msg.report-property-missing-value": "There are incorrect or missing values!",
+    "msg.file-upload-failed": "Upload failed!",
 
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.server-connection-failed": "SERVER CONNECTION FAILED!",
@@ -1270,7 +1296,8 @@
     "msg.project-save-ask": "Do you want to leave the project?",
     "msg.login-username-required": "Enter a username",
     "msg.login-password-required": "Enter a password",
-    "msg.signin-failed": "Unauthorized",
+    "msg.signin-failed": "Username or Password is incorrect!",
+    "msg.signin-unauthorized": "Unauthorized!",
     "msg.get-project-void": "Project not found!",
     "msg.editor-mode-locked": "The editor is already open!",
     "msg.alarms-clear-success": "All alarms have been cancelled!",

@@ -113,8 +113,12 @@ export class GaugeBaseComponent {
             // save action (dummy) id and colors to restore on break
             try {
                 const actId = GaugeBaseComponent.getBlinkActionId(act);
-                if (dom) {gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };}
-                else {gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };}
+                if (dom) {
+                    gaugeStatus.actionRef.spool = { bk: element.style.backgroundColor, clr: element.style.color, actId: actId };
+                }
+                else {
+                    gaugeStatus.actionRef.spool = { bk: element.node.getAttribute('fill'), clr: element.node.getAttribute('stroke'), actId: actId };
+                }
             } catch (err) {
                 console.error(err);
             }
@@ -151,13 +155,17 @@ export class GaugeBaseComponent {
                         gaugeStatus.actionRef.timer = null;
                     }
                     // check to overwrite with property color
-                    if (propertyColor) {
-                        if (propertyColor.fill) {gaugeStatus.actionRef.spool.bk = propertyColor.fill;}
-                        if (propertyColor.stroke) {gaugeStatus.actionRef.spool.clr = propertyColor.stroke;}
+                    if (propertyColor && gaugeStatus.actionRef.spool) {
+                        if (propertyColor.fill) {
+                            gaugeStatus.actionRef.spool.bk = propertyColor.fill;
+                        }
+                        if (propertyColor.stroke) {
+                            gaugeStatus.actionRef.spool.clr = propertyColor.stroke;
+                        }
                     }
                     if (dom) {
-                        element.style.backgroundColor = gaugeStatus.actionRef.spool.bk;
-                        element.style.color = gaugeStatus.actionRef.spool.clr;
+                        element.style.backgroundColor = gaugeStatus.actionRef.spool?.bk;
+                        element.style.color = gaugeStatus.actionRef.spool?.clr;
                     } else if (gaugeStatus.actionRef.spool) {
                         element.node.setAttribute('fill', gaugeStatus.actionRef.spool.bk);
                         element.node.setAttribute('stroke', gaugeStatus.actionRef.spool.clr);

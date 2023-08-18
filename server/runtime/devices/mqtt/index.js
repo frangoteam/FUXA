@@ -5,6 +5,8 @@
 const mqtt = require('mqtt');
 var utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+const path = require('path');
+const fs = require('fs');
 
 function MQTTclient(_data, _logger, _events) {
     var data = _data;                   // Current data
@@ -23,6 +25,8 @@ function MQTTclient(_data, _logger, _events) {
     var topicsMap = {};                 // Map the topic subscribed, to check by on.message
     var memoryTagToPublish = new Map(); // Map tag to publish, content in topics as 'tag'
     var refTagToTopics = {};            // Map of Tag to Topic (with ref to other device tag)
+    
+    const certificatesDir = _data.certificatesDir;
 
     /**
      * Tag with options 'pubs' for publish and 'subs' for subscription
@@ -48,6 +52,15 @@ function MQTTclient(_data, _logger, _events) {
                                 options.clientId = property.clientId;
                                 options.username = property.uid;
                                 options.password = property.pwd;
+                                if (property.cert) {
+                                    options.cert = fs.readFileSync(path.join(certificatesDir, property.cert));
+                                }
+                                if (property.pkey) {
+                                    options.key = fs.readFileSync(path.join(certificatesDir, property.pkey));
+                                }
+                                if (property.caCert) {
+                                    options.ca = fs.readFileSync(path.join(certificatesDir, property.caCert));
+                                }                                
                             }
                         }
                         client = mqtt.connect(options.url, options);

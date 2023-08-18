@@ -5,6 +5,7 @@ import { Device } from '../../_models/device';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { AlarmQuery } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
+import { CommanType } from '../command.service';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -23,7 +24,7 @@ export abstract class ResourceStorageService {
 
     public abstract setServerProjectData(cmd: ProjectDataCmdType, data: any, prj: ProjectData);
 
-    public abstract uploadFile(file: any): Observable<UploadFile>;
+    public abstract uploadFile(file: any, destination?: string): Observable<UploadFile>;
 
     public abstract getDeviceSecurity(id: string): Observable<any>;
 
@@ -42,6 +43,8 @@ export abstract class ResourceStorageService {
     public abstract getDaqValues(query: DaqQuery): Observable<any>;
 
     public abstract heartbeat(activity: boolean): Observable<any>;
+
+    public abstract downloadFile(fileName: string, type: CommanType): Observable<Blob>;
 
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) {return source;}

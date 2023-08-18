@@ -14,17 +14,49 @@
 	</mat-sidenav>
 	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
 		<div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
-			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" 
-				(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
-				<mat-icon aria-label="Menu">menu</mat-icon>
-			</button>
-			<div class="header-title">
-				{{title}}
-			</div>
-			<div *ngIf="securityEnabled" class="header-login">
-				<button mat-icon-button (click)="onLogin()">
-					<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
+			<div *ngIf="showSidenav && showSidenav !== 'side'" class="sidenav-toogle">
+				<button mat-icon-button 
+					(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()">
+					<mat-icon aria-label="Menu">menu</mat-icon>
 				</button>
+			</div>
+			<div #header class="items" [style.textAlign]="layoutHeader.itemsAnchor">
+				<ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
+					<ng-container *ngSwitchCase="'button'">
+						<button mat-raised-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.fontFamily]="layoutHeader.fontFamily"
+								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							{{ item.property?.text ?? item.type }}
+						</button>
+					</ng-container>
+					<ng-container *ngSwitchCase="'label'">
+						<button mat-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.fontFamily]="layoutHeader.fontFamily"
+								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							{{ item.property?.text ?? item.type }}
+						</button>
+					</ng-container>
+					<ng-container *ngSwitchCase="'image'">
+						<button mat-icon-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							<mat-icon>{{ item.icon }}</mat-icon>
+						</button>
+					</ng-container>
+				</ng-container>
 			</div>
 			<div class="header-button">
 				<div class="alarm-layout" style="min-width: 40px;">
@@ -37,6 +69,11 @@
 					<button mat-icon-button *ngIf="infos.show" (click)="onAlarmsShowMode('collapse')">
 						<mat-icon aria-label="Info">error_outline</mat-icon>
 						<div class="button-counter info-color" [style.opacity]="infos.count?'':'0'">{{infos.count}}</div>
+					</button>
+				</div>
+				<div *ngIf="securityEnabled" class="header-login">
+					<button mat-icon-button (click)="onLogin()">
+						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
 					</button>
 				</div>
 			</div>

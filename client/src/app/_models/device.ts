@@ -164,6 +164,9 @@ export class DeviceSecurity {
     password: string;
     clientId: string;
     grant_type: string;
+    certificateFileName: string;
+    privateKeyFileName: string;
+    caCertificateFileName: string;
 }
 
 export enum DeviceType {

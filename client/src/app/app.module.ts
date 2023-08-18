@@ -26,7 +26,7 @@ import { ViewComponent } from './view/view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
-import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
+import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
@@ -164,6 +164,9 @@ import { FrameworkModule } from './framework/framework.module';
 import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
 import { HeartbeatService } from './_services/heartbeat.service';
 import { RcgiService } from './_services/rcgi/rcgi.service';
+import { ToastNotifierService } from './_services/toast-notifier.service';
+import { MyFileService } from './_services/my-file.service';
+import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -186,10 +189,12 @@ export function createTranslateLoader(http: HttpClient) {
         DevicePropertyComponent,
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
+        TagsIdsConfigComponent,
         PluginsComponent,
         AppSettingsComponent,
         SetupComponent,
         DialogMenuItem,
+        DialogHeaderItem,
         DeviceListComponent,
         DialogTagName,
         DeviceMapComponent,
@@ -356,7 +361,9 @@ export function createTranslateLoader(http: HttpClient) {
         Dictionary,
         ModalPositionCache,
         Define,
-        AuthGuard
+        AuthGuard,
+        ToastNotifierService,
+        MyFileService
     ],
     bootstrap: [AppComponent]
 })

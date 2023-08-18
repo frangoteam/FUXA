@@ -14,7 +14,7 @@ import { HmiService, ScriptSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -24,7 +24,8 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { debounceTime, last, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, last, map, takeUntil } from 'rxjs/operators';
+import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 // declare var panzoom: any;
 
 @Component({
@@ -40,6 +41,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('cardsview', { static: false }) cardsview: CardsViewComponent;
     @ViewChild('alarmsview', { static: false }) alarmsview: AlarmViewComponent;
     @ViewChild('container', { static: false }) container: ElementRef;
+    @ViewChild('header', { static: false }) header: ElementRef;
 
     iframes: IiFrame[] = [];
     isLoading = true;
@@ -61,7 +63,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     serverErrorBanner$: Observable<boolean>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
-
+    private headerItemsMap = new Map<string, HeaderItem[]>();
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
     private subscriptiongoTo: Subscription;
@@ -95,6 +97,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
+
             this.serverErrorBanner$ = combineLatest([
                 this.hmiService.onServerConnection$,
                 this.authService.currentUser$
@@ -104,6 +107,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 debounceTime(1000),
                 last()
             );
+
+            this.gaugesManager.onchange.pipe(
+                takeUntil(this.destroy$),
+                filter(varTag => this.headerItemsMap.has(varTag.id))
+            ).subscribe(varTag => {
+                this.processValueInHeaderItem(varTag);
+            });
         } catch (err) {
             console.error(err);
         }
@@ -272,6 +282,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    private processValueInHeaderItem(varTag: Variable) {
+        this.headerItemsMap.get(varTag.id)?.forEach(item => {
+            if (item.status.variablesValue[varTag.id] !== varTag.value) {
+                HtmlButtonComponent.processValue(
+                    <GaugeSettings>{ property: item.property },
+                    item.element ?? Utils.findElementByIdRecursive(this.header.nativeElement, item.id),
+                    varTag,
+                    item.status,
+                    item.type === 'label'
+                );
+            }
+            item.status.variablesValue[varTag.id] = varTag.value;
+        });
+    }
+
     private goTo(destination: string) {
         this.router.navigate([destination]);//, this.ID]);
     }
@@ -323,6 +348,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     this.checkHeaderButton();
                     this.layoutHeader = this.hmi.layout.header;
+                    this.changeDetector.detectChanges();
+                    this.loadHeaderItems();
                 }
                 if (this.hmi.layout.zoom && ZoomModeType[this.hmi.layout.zoom] === ZoomModeType.enabled) {
                     setTimeout(() => {
@@ -346,6 +373,57 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.securityEnabled = this.projectService.isSecurityEnabled();
         if (this.securityEnabled && !this.isLoggedIn() && this.hmi.layout.loginonstart) {
             this.onLogin();
+        }
+    }
+
+    private loadHeaderItems() {
+        this.headerItemsMap.clear();
+        if (!this.showNavigation) {
+            return;
+        }
+        this.layoutHeader.items?.forEach(item => {
+            item.status = item.status ?? new GaugeStatus();
+            item.status.onlyChange = true;
+            item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);
+            const signalsIds = HtmlButtonComponent.getSignals(item.property);
+            signalsIds.forEach(sigId => {
+                if (!this.headerItemsMap.has(sigId)) {
+                    this.headerItemsMap.set(sigId, []);
+                }
+                this.headerItemsMap.get(sigId).push(item);
+            });
+            const settingsProperty = <GaugeSettings>{
+                property: item.property,
+                type: HtmlButtonComponent.TypeTag
+            };
+            this.onBindMouseEvents(item.element, settingsProperty);
+        });
+    }
+
+    private onBindMouseEvents(element: HTMLElement, ga: GaugeSettings) {
+        if (element) {
+            let clickEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
+            if (clickEvents && clickEvents.length > 0) {
+                element.onclick = (ev: MouseEvent) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                };
+                element.ontouchstart = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                };
+
+            }
+            let mouseDownEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
+            if (mouseDownEvents && mouseDownEvents.length > 0) {
+                element.onmousedown = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseDownEvents);
+                };
+            }
+            let mouseUpEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
+            if (mouseUpEvents && mouseUpEvents.length > 0) {
+                element.onmouseup = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseUpEvents);
+                };
+            }
         }
     }
 

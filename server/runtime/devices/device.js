@@ -13,6 +13,8 @@ var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 // var TEMPLATEclient = require('./template');
 
+const path = require('path');
+
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
@@ -62,7 +64,8 @@ function Device(data, runtime) {
         if (!MQTTclient) {
             return null;
         }
-        comm = MQTTclient.create(data, logger, events, manager);        
+        data.certificatesDir = path.resolve(runtime.settings.appDir, '_certificates');
+        comm = MQTTclient.create(data, logger, events, runtime);        
     } else if (data.type === DeviceEnum.EthernetIP) {
         if (!EthernetIPclient) {
             return null;

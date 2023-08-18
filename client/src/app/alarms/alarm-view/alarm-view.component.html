@@ -37,7 +37,11 @@
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.acktime) ? (element.acktime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="ack">
-            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>
+                <button mat-icon-button (click)="onAckAllAlarm()">
+                    <mat-icon>check_circle_outline</mat-icon>
+                </button>
+            </mat-header-cell>
             <mat-cell *matCellDef="let element" [style.color]="element.color">
                 <button mat-icon-button (click)="onAckAlarm(element)" *ngIf="element.toack >= 0" [disabled]="element.toack === 0" class="remove">
                     <mat-icon>check_circle_outline</mat-icon>

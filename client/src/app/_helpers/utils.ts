@@ -28,6 +28,75 @@ export class Utils {
         return null;
     }
 
+    static findElementByIdRecursive(root: HTMLElement, id: string): HTMLElement | null {
+        if (!root) {
+          return null;
+        }
+        if (root.id === id) {
+          return root;
+        }
+        for (let i = 0; i < root.children.length; i++) {
+          const child = root.children[i] as HTMLElement;
+          const foundElement = this.findElementByIdRecursive(child, id);
+          if (foundElement) {
+            return foundElement;
+          }
+        }
+        return null;
+    }
+
+    static searchValuesByAttribute(jsonData: any, attributeName: string) {
+        const result: string[] = [];
+        function search(jsonData: any): void {
+            if (Array.isArray(jsonData)) {
+                for (const item of jsonData) {
+                  search(item);
+                }
+            } else if (typeof jsonData === 'object' && jsonData !== null) {
+                if (jsonData.hasOwnProperty(attributeName)) {
+                    result.push(jsonData[attributeName]);
+                }
+                for (const key in jsonData) {
+                  search(jsonData[key]);
+                }
+              }
+        }
+        search(jsonData);
+        return result;
+    }
+
+    static changeAttributeValue(jsonData: any, attributeName: string, srcValue: any, destValue: any) {
+        function change(jsonData: any): void {
+            if (Array.isArray(jsonData)) {
+                for (const item of jsonData) {
+                    change(item);
+                }
+            } else if (typeof jsonData === 'object' && jsonData !== null) {
+                if (jsonData.hasOwnProperty(attributeName) && jsonData[attributeName] === srcValue) {
+                    jsonData[attributeName] = destValue;
+                }
+                for (const key in jsonData) {
+                    change(jsonData[key]);
+                }
+              }
+        }
+        change(jsonData);
+    }
+
+    static getInTreeIdAndType(element: Element): any[] {
+        let type = element.getAttribute('type');
+        let id = element.getAttribute('id');
+        let result = [];
+        if (id && type) {
+            result = [{ id: id, type: type }];
+        }
+        for (var i = 0; i < element.children.length; i++) {
+            const idsAndTypes = Utils.getInTreeIdAndType(element.children[i]);
+            result = [...result, ...idsAndTypes];
+        }
+        return result;
+    }
+
     static isNullOrUndefined(ele) {
         return (ele === null || ele === undefined) ? true : false;
     }

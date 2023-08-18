@@ -1,21 +1,34 @@
-<div style="display: block; margin-bottom: 5px;">
-    <div class="my-form-field" style="max-width: 100px;margin-right: 18px;" *ngIf="withStaticValue">
+<div class="container">
+    <div class="my-form-field value" *ngIf="withStaticValue">
         <span>{{variableLabel | translate}}</span>
         <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 100px" type="text">
     </div>
-    <div class="my-form-field" style="display:inline-block;">
-        <span style="text-overflow:clip; white-space:nowrap; width: 28px">{{tagLabel | translate}}</span>
-        <div class="my-form-field-link"></div>
-        <button mat-icon-button (click)="onBindTag()" style="line-height: 28px;height:28px; width:28px; vertical-align: middle;">
+    <div class="my-form-field link" *ngIf="!readonly">
+        <span class="span-link">{{tagLabel | translate}}</span>
+        <div class="tag-link"></div>
+        <button mat-icon-button (click)="onBindTag()">
             <mat-icon>link</mat-icon>
         </button>
     </div>
-    <div class="my-form-field" style="margin-left: 0px;">
+    <div class="my-form-field input">
         <span>{{getDeviceName()}}</span>
-        <input style="font-size: 13px;min-width: 450px" value="{{getVariableName()}}" readonly="true" [disabled]="true" 
-            title="{{tagTitle | translate}}" placeholder="{{tagTitle | translate}}">
+        <input matInput
+            class="variable-input"
+            title="{{tagTitle | translate}}"
+            placeholder="{{tagTitle | translate}}"
+            type="text"
+            [formControl]="tagFilter"
+            [matAutocomplete]="autoDevices"
+            [readonly]="readonly">
+        <mat-autocomplete #autoDevices="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onDeviceTagSelected($event.option.value)">
+            <mat-optgroup *ngFor="let device of devicesTags$ | async" class="group-label" [label]="device.name">
+                <mat-option *ngFor="let tag of device.tags" [value]="tag" class="option-label">
+                    <span>{{tag.name}}</span>
+                </mat-option>
+            </mat-optgroup>
+        </mat-autocomplete>
     </div>
-    <div class="my-form-field" style="vertical-align: bottom; margin-left: 5px;" *ngIf="withBitmask">
+    <div class="my-form-field bitmask" *ngIf="withBitmask">
         <span>{{'gauges.property-mask' | translate}}</span>
         <div class="my-form-field-bitmask">
             <input value="{{getVariableMask()}}" readonly="true" [disabled]="true">

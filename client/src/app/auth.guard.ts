@@ -5,7 +5,9 @@ import { ProjectService } from './_services/project.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { LoginComponent } from './login/login.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -13,6 +15,7 @@ export class AuthGuard implements CanActivate {
         private translateService: TranslateService,
         private toastr: ToastrService,
         private projectService: ProjectService,
+        private dialog: MatDialog,
         private router: Router) {
         }
 
@@ -23,17 +26,41 @@ export class AuthGuard implements CanActivate {
         if (this.authService.isAdmin()) {
             return of(true);
         }
-        return this.projectService.checkServer().pipe(map((response: any) => {
-            if (response && !response.secureEnabled) {
+
+        const serverSecureEnabled$ = this.projectService.checkServer().pipe(
+            map(response => {
+                if (!response?.secureEnabled) {
+                    return false;
+                }
                 return true;
-            }
-            return false;
-        }));
+            })
+        );
+        return serverSecureEnabled$.pipe(
+            switchMap(secureEnabled => {
+                if (!secureEnabled) {
+                    return of(true);
+                } else {
+                    const dialogRef = this.dialog.open(LoginComponent);
+                    return dialogRef.afterClosed().pipe(
+                        mergeMap(result => {
+                            if (result) {
+                                if (this.authService.isAdmin()) {
+                                    return of(true);
+                                }
+                            }
+                            this.notifySaveError('msg.signin-unauthorized');
+							this.router.navigateByUrl('/');
+                            return of(false);
+                        })
+                    );
+                }
+            })
+        );
     }
 
-    private notifySaveError() {
+    private notifySaveError(textKey: string) {
         let msg = '';
-        this.translateService.get('msg.signin-failed').subscribe((txt: string) => { msg = txt; });
+        this.translateService.get(textKey).subscribe((txt: string) => { msg = txt; });
         this.toastr.error(msg, '', {
             timeOut: 3000,
             closeButton: true,

@@ -36,6 +36,7 @@ import { GridsterItem } from 'angular-gridster2';
 import { CardConfigComponent } from './card-config/card-config.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
+import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
 
 declare var Gauge: any;
 
@@ -235,24 +236,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (copiedPasted) => {
-                    if (copiedPasted && copiedPasted.copy && copiedPasted.past) {
-                        copiedPasted.copy = copiedPasted.copy.filter(function(e) { return e; });
-                        if (copiedPasted.copy.length == copiedPasted.past.length) {
-                            for (let i = 0; i < copiedPasted.copy.length; i++) {
-                                let srcType = copiedPasted.copy[i].getAttribute('type');
-                                let srcId = copiedPasted.copy[i].getAttribute('id');
-                                if (srcId) {
-                                    let gaSrc: GaugeSettings = this.searchGaugeSettings({ id: srcId, type: srcType });
-                                    if (gaSrc) {
-                                        let gaDest: GaugeSettings = this.gaugesManager.createSettings(copiedPasted.past[i].id, gaSrc.type);
-                                        gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
-                                        this.setGaugeSettings(gaDest);
-                                        this.checkGaugeAdded(gaDest);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    this.onCopyAndPaste(copiedPasted);
+                },
+                () => { // onGroupChanged
+                    this.checkSvgElementsMap(true);
                 }
             );
 
@@ -290,7 +277,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSvgElementPreview(value: IElementPreview) {//value: ISvgElement, preview: boolean) {
         let elem = document.getElementById(value.element?.id);
-        let rect: DOMRect = elem.getBoundingClientRect();
+        let rect: DOMRect = elem?.getBoundingClientRect();
         if (elem && rect) {
             this.svgPreview.nativeElement.style.width = `${rect.width}px`;
             this.svgPreview.nativeElement.style.height = `${rect.height}px`;
@@ -664,6 +651,38 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.checkMySelectedToSetColor(null, this.colorStroke, this.winRef.nativeWindow.svgEditor.getSelectedElements());
     }
 
+    private onCopyAndPaste(copiedPasted: CopiedAndPasted) {
+        if (copiedPasted?.copy?.length && copiedPasted?.past?.length) {
+            const copied = copiedPasted.copy.filter(element => element !== null);
+            const pasted = copiedPasted.past.filter(element => element !== null);
+            if (copied.length == copiedPasted.past.length) {
+                let names = Object.values(this.currentView.items).map(gs => gs.name);
+                for (let i = 0; i < copied.length; i++) {
+                    const copiedIdsAndTypes = Utils.getInTreeIdAndType(copied[i]);
+                    const pastedIdsAndTypes = Utils.getInTreeIdAndType(pasted[i]);
+                    if (copiedIdsAndTypes.length === pastedIdsAndTypes.length) {
+                        for (let j = 0; j < copiedIdsAndTypes.length; j++) {
+                            if (copiedIdsAndTypes[j].id && pastedIdsAndTypes[j].id && copiedIdsAndTypes[j].type === pastedIdsAndTypes[j].type) {
+                                let gaSrc: GaugeSettings = this.searchGaugeSettings(copiedIdsAndTypes[j]);
+                                if (gaSrc) {
+                                    let gaDest: GaugeSettings = this.gaugesManager.createSettings(pastedIdsAndTypes[j].id, pastedIdsAndTypes[j].type);
+                                    gaDest.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(pastedIdsAndTypes[j].type), names);
+                                    gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
+                                    this.setGaugeSettings(gaDest);
+                                    this.checkGaugeAdded(gaDest);
+                                }
+                            } else {
+                                console.error(`Inconsistent elements!`, `${copiedIdsAndTypes[j]}`, `${pastedIdsAndTypes[j]}`);
+                            }
+                        }
+                    } else {
+                        console.error('Between copied and pasted there are inconsistent elements!');
+                    }
+                }
+                this.checkSvgElementsMap(true);
+            }
+        }
+    }
 
     /**
      * event from svg-editor: svg element removed
@@ -1180,8 +1199,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param event
      */
     onGaugeEdit(event) {
-        let settings = this.gaugePanelComponent.settings;
-        this.openEditGauge(settings, data => {
+        this.openEditGauge(this.gaugePanelComponent?.settings, data => {
             this.setGaugeSettings(data);
         });
     }
@@ -1211,6 +1229,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param callback
      */
     openEditGauge(settings, callback) {
+        if (!settings) {
+            return;
+        }
         let tempsettings = JSON.parse(JSON.stringify(settings));
         let hmi = this.projectService.getHmi();
         let dlgType = GaugesManager.getEditDialogTypeToUse(settings.type);
@@ -1333,6 +1354,47 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+    editBindOfTags(selected: any) {
+        if (!selected) {
+            return;
+        }
+        const gaugesSettings: GaugeSettings[] = [];
+        const elesSelected = this.winRef.nativeWindow.svgEditor.getSelectedElements();
+        const tagsIds = new Set();
+        if (elesSelected?.length) {
+            const eleIdsAndTypes = Utils.getInTreeIdAndType(elesSelected[0]);
+            if (eleIdsAndTypes?.length) {
+                for (let i = 0; i < eleIdsAndTypes.length; i++) {
+                    let gaSrc: GaugeSettings = this.searchGaugeSettings(eleIdsAndTypes[i]);
+                    const variablesIds = Utils.searchValuesByAttribute(gaSrc, 'variableId');
+                    if (variablesIds?.length) {
+                        gaugesSettings.push(gaSrc);
+                        variablesIds.forEach(id => {
+                            tagsIds.add(id);
+                        });
+                    }
+                }
+            }
+        }
+        const dialogRef = this.dialog.open(TagsIdsConfigComponent, {
+            position: { top: '60px' },
+            data: <TagsIdsData>{
+                devices: Object.values(this.projectService.getDevices()),
+                tagsIds: Array.from(tagsIds).map(id => <TagIdRef>{ srcId: id, destId: id })
+            }
+        });
+        dialogRef.afterClosed().subscribe((result: TagIdRef[]) => {
+            if (result?.length) {
+                gaugesSettings.forEach(gaSettings => {
+                    result.forEach((tagIdRef: TagIdRef) => {
+                        Utils.changeAttributeValue(gaSettings, 'variableId', tagIdRef.srcId, tagIdRef.destId);
+                    });
+                });
+                this.saveView(this.currentView);
+            }
+        });
+    }
+
     onGaugeDialogChanged(settings: any) {
         if (settings) {
             this.setGaugeSettings(settings);
@@ -1421,6 +1483,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     flipSelected(fliptype: string) {
     }
+}
+
+interface CopiedAndPasted {
+    copy: HTMLElement[];
+    past: HTMLElement[];
 }
 
 @Component({
