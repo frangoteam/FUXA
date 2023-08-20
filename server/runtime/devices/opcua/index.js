@@ -409,8 +409,9 @@ function OpcUAclient(_data, _logger, _events) {
                     logger.error(`'${data.name}' setValue error! ${err}`);
                 }
             });
-
+            return true;
         }
+        return false;
     }
 
     /**

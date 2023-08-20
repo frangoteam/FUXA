@@ -213,7 +213,9 @@ function EthernetIPclient(_data, _logger, _events) {
                     logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true);
                 }
             });
+            return true;
         }
+        return false;
     }
 
     /**

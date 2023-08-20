@@ -295,6 +295,7 @@ app-root {
 .sidenav-toogle {
     top: 0px;
     left: 10px;
+    line-height: 46px;
 }
 
 .sidenav-menu {
@@ -975,6 +976,12 @@ mat-toolbar-row {
     margin-bottom: 5px;
 }
 
+.gauge-property-button {
+    background-color: dimgrey;
+    color:white;
+}
+
+/* standard */
 .inbk {
     display: inline-block;
 }
@@ -983,7 +990,6 @@ mat-toolbar-row {
     color:#ff5151;
 }
 
-/* standard */
 .tohide {
     display: none !important;
 }
@@ -994,6 +1000,10 @@ mat-toolbar-row {
 
 .lbk {
     display: inline-block;
+}
+
+.force-lbk {
+    display: inline-block !important;
 }
 
 .table {
@@ -1022,6 +1032,10 @@ mat-toolbar-row {
 
 .ml10 {
     margin-left: 10px;
+}
+
+.ml15 {
+    margin-left: 15px;
 }
 
 .mr5 {
@@ -1102,4 +1116,8 @@ mat-toolbar-row {
 
 .pointer {
     cursor: pointer;
+}
+
+.pointer-move {
+    cursor: move;
 }

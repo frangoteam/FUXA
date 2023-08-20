@@ -192,9 +192,11 @@ function HTTPclient(_data, _logger, _events) {
             } else {
                 logger.error(`postTags undefined (setValue)`, true);
             }
+            return true;
         } else {
             logger.error(`setValue not supported!`, true);
         }
+        return false;
     }
 
     /**

@@ -57,7 +57,7 @@
 }
 
 .header {
-    display: block;
+    display: flex;
     z-index: 9999 !important;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important; 
     /* min-height: 46px !important; */
@@ -66,14 +66,13 @@
     padding-left: 4px;
     padding-right: 10px;
     background-color: rgba(255, 255, 255, 1);
-}
+    line-height: 46px;
 
-.header-title {
-    display: inline-block;
-    margin-left: 20px;
-    min-width: 200px;
-    text-align: right;
-    line-height: 46px
+    .items {
+        flex: 1;
+        align-items: center;
+        margin-left: 30px;
+    }
 }
 
 .header-login {
@@ -86,11 +85,10 @@
 
 .header-button {  
     float: right;
-    width: 30%;
+    width: 150px;
     line-height: 46px;
     text-align: right;
     margin-right: 10px;
-    padding-right: 50px;
 }
 
 .header-button mat-icon {

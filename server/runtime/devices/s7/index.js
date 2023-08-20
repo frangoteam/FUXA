@@ -235,7 +235,9 @@ function S7client(_data, _logger, _events) {
                     logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
             });
+            return true;
         }
+        return false;
     }
 
     /**
