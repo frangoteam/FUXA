@@ -275,7 +275,7 @@ function Report(_property, _runtime) {
                 });
                 let values = [];
                 const timeRange = _getDateRange(item.range);
-                const query = { from: timeRange.begin.getTime(), to: timeRange.end.getTime() };
+                const query = { start: timeRange.begin.getTime(), end: timeRange.end.getTime() };
                 await runtime.alarmsMgr.getAlarmsHistory(query).then(result => {
                     if (!result || !result.length) {
                         values = [Object.values(item.propertyText).map(col => { 
