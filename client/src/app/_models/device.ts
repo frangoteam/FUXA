@@ -534,6 +534,7 @@ export class TagScale {
 export enum TagScaleModeType {
     undefined = 'device.tag-scale-mode-undefined',
     linear = 'device.tag-scale-mode-linear',
+    convert = 'device.tag-convert-function',
 }
 
 export enum TagSystemType {
