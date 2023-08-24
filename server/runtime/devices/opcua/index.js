@@ -18,7 +18,7 @@ function OpcUAclient(_data, _logger, _events) {
     var events = _events;               // Events to commit change to runtime
     var the_session;
     var the_subscription = null;
-    var options = { connectionStrategy: { maxRetry: 1 }, keepSessionAlive: true };  // Connections options
+    var options = { connectionStrategy: { maxRetry: 1 }, keepSessionAlive: true, endpointMustExist: false };  // Connections options
     var client = opcua.OPCUAClient.create(options);
     const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === 'DataType' || x === 'AccessLevel' || x === 'UserAccessLevel');//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
