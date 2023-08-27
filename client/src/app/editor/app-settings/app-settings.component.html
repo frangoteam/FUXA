@@ -32,7 +32,14 @@
                             <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
                             <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
                         </mat-select>
-                    </div> 
+                    </div>
+                    <div class="my-form-field block mt15">
+                        <span>{{'dlg.app-settings-server-log-full' | translate}}</span>
+                        <mat-select [(value)]="settings.logFull">
+                            <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
+                            <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
+                        </mat-select>
+                    </div>
                 </div>
             </mat-tab>
             <mat-tab label="{{'dlg.app-settings-smtp' | translate}}">

@@ -141,6 +141,12 @@ try {
         if (mysettings.alarms) {
             settings.alarms = mysettings.alarms;
         }
+        if (!utils.isNullOrUndefined(mysettings.broadcastAll)) {
+            settings.broadcastAll = mysettings.broadcastAll;
+        }
+        if (!utils.isNullOrUndefined(mysettings.logFull)) {
+            settings.logFull = mysettings.logFull;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)
@@ -154,7 +160,7 @@ if (!fs.existsSync(settings.logDir)) {
     fs.mkdirSync(settings.logDir);
 }
 
-logger.init(settings.logDir);
+logger.init(settings);
 const version = FUXA.version();
 if (version.indexOf('beta') > 0) {
     logger.warn('FUXA V.' + version);
@@ -265,7 +271,10 @@ app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileD
 app.use('/_images', express.static(settings.imagesFileDir));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
-app.use(morgan('combined', { stream: accessLogStream }));
+app.use(morgan('combined', { 
+    stream: accessLogStream,
+    skip: function (req, res) { return res.statusCode < 400 }
+}));
 
 app.use(morgan('dev', {
     skip: function (req, res) {

@@ -73,6 +73,10 @@ export class SettingsService {
             this.appSettings.daqstore = new DaqStore(settings.daqstore);
             dirty = true;
         }
+        if (settings.logFull !== this.appSettings.logFull) {
+            this.appSettings.logFull = settings.logFull;
+            dirty = true;
+        }
         return dirty;
     }
 

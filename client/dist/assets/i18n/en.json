@@ -1226,6 +1226,7 @@
     "dlg.app-language-es": "Spanish",
     "dlg.app-language-fr": "French",
     "dlg.app-settings-server-port": "Server is listening on port",
+    "dlg.app-settings-server-log-full": "Log full mode",
     "dlg.app-settings-alarms": "Alarms",
     "dlg.app-settings-alarms-clear": "Clear all alarms and history",
     "dlg.app-settings-auth-token": "Authentication with Token",

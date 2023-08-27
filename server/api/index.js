@@ -145,6 +145,7 @@ function mergeUserSettings(settings) {
     }
     runtime.settings.broadcastAll = settings.broadcastAll;
     runtime.settings.secureEnabled = settings.secureEnabled;
+    runtime.settings.logFull = settings.logFull;
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
     }

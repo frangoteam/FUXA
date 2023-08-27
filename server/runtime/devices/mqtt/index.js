@@ -318,6 +318,7 @@ function MQTTclient(_data, _logger, _events) {
                 }
                 tag.changed = true;
                 _publishValues([tag]);
+                // logger.info(`'${data.name}' setValue(${tagId}, ${value})`, true, true);
                 return true;
             }
         }

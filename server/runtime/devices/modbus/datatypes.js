@@ -1,14 +1,15 @@
 
-function _gen(bytes, bFn, WordLen, swapType) {
+function _gen(bytes, bFn, WordLen, swapType, toCast = false) {
     return {
         bytes,
         parser: (buffer, offset = 0) => { 
             _swap(buffer, swapType, offset);
-            return buffer['read' + bFn](offset) 
+            var value = buffer['read' + bFn](offset); 
+            return (toCast) ? Number(value) : value; 
         },
         formatter: v => {
             var b = Buffer.allocUnsafe(bytes);//new Buffer(bytes);
-            b['write' + bFn](v);
+            b['write' + bFn](toCast ? BigInt(v) : v);
             _swap(b, swapType);
             return b;
         },
@@ -60,7 +61,11 @@ const Datatypes = {
      * Float64
      */
     Float64: _gen(8, 'DoubleBE', 4),
-    
+    /**
+     * Int64
+     */
+    Int64: _gen(8, 'BigInt64BE', 4, 0, true),
+        
     /**
      * Int16LE
      */
@@ -85,6 +90,10 @@ const Datatypes = {
      * Float64LE
      */
     Float64LE: _gen(8, 'DoubleLE', 4),
+    /**
+     * Int64
+     */
+    Int64LE: _gen(8, 'BigInt64LE', 4, 0, true),
     
     /**
      * Int32MLE

@@ -15,6 +15,8 @@ export class AppSettings {
     daqstore = new DaqStore();
     /** Alarms store settings */
     alarms = new AlarmsSettings();
+    /** Log Full enabled to log all setValue */
+    logFull = false;
 }
 
 export class SmtpSettings {
