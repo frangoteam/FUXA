@@ -210,7 +210,7 @@ function EthernetIPclient(_data, _logger, _events) {
                 if (error) {
                     logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
                 } else {
-                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true);
+                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true, true);
                 }
             });
             return true;

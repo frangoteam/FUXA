@@ -185,7 +185,7 @@ function HTTPclient(_data, _logger, _events) {
                 data.tags[tagId].value = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
                 axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
                     lastTimestampRequest = new Date().getTime();
-                    logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true);
+                    logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
                 }).catch(err => {
                     logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
                 });

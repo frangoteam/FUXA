@@ -407,6 +407,8 @@ function OpcUAclient(_data, _logger, _events) {
             the_session.write(nodesToWrite, function (err, statusCodes) {
                 if (err) {
                     logger.error(`'${data.name}' setValue error! ${err}`);
+                } else {
+                    logger.info(`'${data.name}' setValue(${tagId}, ${value})`, true, true);
                 }
             });
             return true;

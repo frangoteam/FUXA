@@ -58,6 +58,9 @@ export class AppSettingsComponent implements OnInit {
         if (Utils.isNullOrUndefined(this.settings.broadcastAll)) {
             this.settings.broadcastAll = true;
         }
+        if (Utils.isNullOrUndefined(this.settings.logFull)) {
+            this.settings.logFull = false;
+        }
         if (!this.settings.smtp) {
             this.settings.smtp = new SmtpSettings();
         }
