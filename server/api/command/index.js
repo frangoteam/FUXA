@@ -56,7 +56,7 @@ module.exports = {
         /**
          * GET download
          */
-        commandApp.get('/api/download', function(req, res){
+        commandApp.get('/api/download', secureFnc, function(req, res){
             var groups = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post command: Tocken Expired");
