@@ -29,8 +29,11 @@
             </mat-select>
         </div>
         <ng-container [ngSwitch]="formGroup.controls.scaleMode.value">
-            <ng-container *ngSwitchCase="'convert'">
-                pippo
+            <ng-container *ngSwitchCase="'convertDateTime'">
+                <div class="my-form-field block mt10">
+                    <span>{{'device.tag-convert-datetime-format' | translate}}</span>
+                    <input formControlName="dateTimeformat" style="width:300px">
+                </div>
             </ng-container>
             <ng-container *ngSwitchCase="'linear'">
                 <div class="block mt5">

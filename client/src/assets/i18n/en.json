@@ -834,7 +834,7 @@
     "device.tag-daq-changed": "Save value if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
     "device.tag-format": "Format digits (2 = #.##)",
-    "device.tag-scale": "Scale Mode",
+    "device.tag-scale": "Scale Mode / Convertion",
     "device.tag-scale-mode-undefined": "No Scaling",
     "device.tag-scale-mode-undefined-tooltip": "Tag Value",
     "device.tag-scale-mode-linear": "Linear: ΔS * (Value - RL) / ΔR + SL",
@@ -843,7 +843,10 @@
     "device.tag-raw-high": "Raw High",
     "device.tag-scaled-low": "Scaled Low",
     "device.tag-scaled-high": "Scaled High",
-    
+    "device.tag-convert-datetime": "Milliseconds to DateTime format",
+    "device.tag-convert-datetime-tooltip": "Example format: 'YYYY-MM-DD HH:mm:ss' for 2023-09-14 08:45:10",
+    "device.tag-convert-datetime-format": "DateTime format",
+
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
     "device.connect-failed": "Failed",
