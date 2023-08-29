@@ -77,11 +77,9 @@ export class HtmlInputComponent extends GaugeBaseComponent {
 
                     if (Number.isNaN(val)) {
                         // maybe boolean
-                        val = Number(sig.value);
-                    } else if (!Utils.isNullOrUndefined(digit)){
-                        val = val.toFixed(digit);
+                        val = Utils.toNumber(sig.value);
                     } else {
-                        val = parseFloat(val.toFixed(5));
+                        val = parseFloat(val.toFixed(digit || 5));
                     }
 
                     // Do not update value if input is in focus!
