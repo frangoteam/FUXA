@@ -80,7 +80,6 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                         val = Utils.toNumber(sig.value);
                     } else {
                         val = parseFloat(val.toFixed(digit || 5));
-                        console.log('asdf', val, sig.value);
                     }
 
                     // Do not update value if input is in focus!
