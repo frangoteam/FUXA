@@ -167,10 +167,17 @@ import { RcgiService } from './_services/rcgi/rcgi.service';
 import { ToastNotifierService } from './_services/toast-notifier.service';
 import { MyFileService } from './_services/my-file.service';
 import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+
+export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
+    showDelay: 1000,
+    hideDelay: 1000,
+    touchendHideDelay: 1000,
+};
 
 @NgModule({
     declarations: [
@@ -363,7 +370,8 @@ export function createTranslateLoader(http: HttpClient) {
         Define,
         AuthGuard,
         ToastNotifierService,
-        MyFileService
+        MyFileService,
+        {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]
 })
