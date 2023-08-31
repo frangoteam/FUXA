@@ -31,7 +31,7 @@ export class TagOptionsComponent implements OnInit {
             rawHigh: null,
             scaledLow: null,
             scaledHigh: null,
-            dateTimeformat: null
+            dateTimeFormat: null
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -55,7 +55,7 @@ export class TagOptionsComponent implements OnInit {
             let rawHigh = { value: null, valid: true };
             let scaledLow = { value: null, valid: true };
             let scaledHigh = { value: null, valid: true };
-            let dateTimeformat = { value: null, valid: true };
+            let dateTimeFormat = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -87,7 +87,7 @@ export class TagOptionsComponent implements OnInit {
                     rawHigh.value = this.data.tags[i].scale?.rawHigh;
                     scaledLow.value = this.data.tags[i].scale?.scaledLow;
                     scaledHigh.value = this.data.tags[i].scale?.scaledHigh;
-                    dateTimeformat.value = this.data.tags[i].scale?.format;
+                    dateTimeFormat.value = this.data.tags[i].scale?.dateTimeFormat;
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
@@ -113,7 +113,7 @@ export class TagOptionsComponent implements OnInit {
                     rawHigh: rawHigh.value,
                     scaledLow: scaledLow.value,
                     scaledHigh: scaledHigh.value,
-                    dateTimeformat: dateTimeformat.value
+                    dateTimeFormat: dateTimeFormat.value
                 };
             }
             this.formGroup.patchValue(values);

@@ -32,7 +32,13 @@
             <ng-container *ngSwitchCase="'convertDateTime'">
                 <div class="my-form-field block mt10">
                     <span>{{'device.tag-convert-datetime-format' | translate}}</span>
-                    <input formControlName="dateTimeformat" style="width:300px">
+                    <input formControlName="dateTimeFormat" style="width:300px">
+                </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="'convertTickTime'">
+                <div class="my-form-field block mt10">
+                    <span>{{'device.tag-convert-ticktime-format' | translate}}</span>
+                    <input formControlName="dateTimeFormat" style="width:300px">
                 </div>
             </ng-container>
             <ng-container *ngSwitchCase="'linear'">

@@ -531,13 +531,14 @@ export class TagScale {
     rawHigh: number;
     scaledLow: number;
     scaledHigh: number;
-    format: string;
+    dateTimeFormat: string;
 }
 
 export enum TagScaleModeType {
     undefined = 'device.tag-scale-mode-undefined',
     linear = 'device.tag-scale-mode-linear',
     convertDateTime = 'device.tag-convert-datetime',
+    convertTickTime = 'device.tag-convert-ticktime',
 }
 
 export enum TagSystemType {

@@ -845,7 +845,10 @@
     "device.tag-scaled-high": "Scaled High",
     "device.tag-convert-datetime": "Milliseconds to DateTime format",
     "device.tag-convert-datetime-tooltip": "Example format: 'YYYY-MM-DD HH:mm:ss' for 2023-09-14 08:45:10",
-    "device.tag-convert-datetime-format": "DateTime format",
+    "device.tag-convert-datetime-format": "DateTime format (YYYY-MM-DD HH:mm:ss)",
+    "device.tag-convert-ticktime": "Milliseconds to Time format (Remaining or Duration)",
+    "device.tag-convert-ticktime-tooltip": "Example format: 'HH:mm:ss' for 56:45:10",
+    "device.tag-convert-ticktime-format": "Time format (HH:mm:ss)",
 
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
