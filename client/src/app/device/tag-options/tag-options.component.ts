@@ -30,7 +30,8 @@ export class TagOptionsComponent implements OnInit {
             rawLow: null,
             rawHigh: null,
             scaledLow: null,
-            scaledHigh: null
+            scaledHigh: null,
+            dateTimeFormat: null
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -54,6 +55,7 @@ export class TagOptionsComponent implements OnInit {
             let rawHigh = { value: null, valid: true };
             let scaledLow = { value: null, valid: true };
             let scaledHigh = { value: null, valid: true };
+            let dateTimeFormat = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -85,6 +87,7 @@ export class TagOptionsComponent implements OnInit {
                     rawHigh.value = this.data.tags[i].scale?.rawHigh;
                     scaledLow.value = this.data.tags[i].scale?.scaledLow;
                     scaledHigh.value = this.data.tags[i].scale?.scaledHigh;
+                    dateTimeFormat.value = this.data.tags[i].scale?.dateTimeFormat;
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
@@ -109,7 +112,8 @@ export class TagOptionsComponent implements OnInit {
                     rawLow: rawLow.value,
                     rawHigh: rawHigh.value,
                     scaledLow: scaledLow.value,
-                    scaledHigh: scaledHigh.value
+                    scaledHigh: scaledHigh.value,
+                    dateTimeFormat: dateTimeFormat.value
                 };
             }
             this.formGroup.patchValue(values);
@@ -157,10 +161,11 @@ export class TagOptionsComponent implements OnInit {
             format: this.formGroup.value.format,
             scale: (this.formGroup.value.scaleMode !== 'undefined') ? {
                 mode: this.formGroup.value.scaleMode,
-                    rawLow: this.formGroup.value.rawLow,
-                    rawHigh: this.formGroup.value.rawHigh,
-                    scaledLow: this.formGroup.value.scaledLow,
-                    scaledHigh: this.formGroup.value.scaledHigh
+                rawLow: this.formGroup.value.rawLow,
+                rawHigh: this.formGroup.value.rawHigh,
+                scaledLow: this.formGroup.value.scaledLow,
+                scaledHigh: this.formGroup.value.scaledHigh,
+                dateTimeFormat: this.formGroup.value.dateTimeFormat
             } : null,
         });
     }
