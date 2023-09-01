@@ -20,7 +20,7 @@ import { ScriptModeComponent } from '../script-mode/script-mode.component';
 })
 export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'params', 'scheduling', 'type', 'mode', 'options', 'remove'];
+    displayedColumns = ['select', 'name', 'params', 'scheduling', 'mode', 'options', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     private subscriptionLoad: Subscription;
@@ -108,6 +108,9 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
     getScheduling(script: Script) {
         if (script.scheduling) {
             let result = '';
+            if (script.scheduling.mode) {
+                result = this.translateService.instant('script.scheduling-' + script.scheduling.mode) + ' - ';
+            }
             if (script.scheduling.interval) {
                 result += `${script.scheduling.interval} sec.`;
             }

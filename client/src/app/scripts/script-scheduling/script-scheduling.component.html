@@ -1,14 +1,32 @@
-<div>
+<form [formGroup]="formGroup">
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'script.scheduling-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="my-form-field" style="display: block;">
-            <span>{{'script.scheduling-interval' | translate}}</span>
-            <input numberOnly [(ngModel)]="scheduling.interval" min="0" type="number" style="width:300px">
+        <div class="my-form-field block mt10 mb10">
+            <span>{{''script.scheduling-type' | translate}}</span>
+            <mat-select formControlName="mode" style="width: 300px">
+                <mat-option *ngFor="let mode of schedulingMode" [value]="mode" [disabled]="mode === 'scheduling'">
+                    {{ 'script.scheduling-' + mode | translate }}
+                </mat-option>
+            </mat-select>
         </div>
+        <ng-container [ngSwitch]="formGroup.controls.mode.value">
+            <ng-container *ngSwitchCase="'start'">
+                <div class="my-form-field block mt10">
+                    <span>{{'script.delay' | translate}}</span>
+                    <input numberOnly formControlName="interval" min="0" type="number" style="width:300px">
+                </div>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+                <div class="my-form-field" style="display: block;">
+                    <span>{{'script.interval' | translate}}</span>
+                    <input numberOnly formControlName="interval" min="0" type="number" style="width:300px">
+                </div>
+            </ng-container>
+        </ng-container>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
     </div>
-</div>
+</form>

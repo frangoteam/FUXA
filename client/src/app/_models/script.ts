@@ -48,7 +48,14 @@ export interface ScriptConsoleMessage {
 }
 
 export interface ScriptScheduling {
+    mode: ScriptSchedulingMode;
     interval: number;
+}
+
+export enum ScriptSchedulingMode {
+    interval = 'interval',
+    start = 'start',
+    scheduling = 'scheduling',
 }
 
 export class SystemFunctions {

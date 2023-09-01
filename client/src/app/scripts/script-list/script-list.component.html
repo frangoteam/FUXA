@@ -32,12 +32,7 @@
             <!-- Parameter Scheduling -->
             <ng-container matColumnDef="scheduling">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-scheduling' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{getScheduling(element)}} </mat-cell>
-            </ng-container>
-            <!-- Type Column -->
-            <ng-container matColumnDef="type">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'scripts.list-type' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
+                <mat-cell *matCellDef="let element"> {{getScheduling(element)}}</mat-cell>
             </ng-container>
 
             <!-- Mode Column -->
