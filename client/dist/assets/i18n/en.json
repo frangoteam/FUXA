@@ -1067,7 +1067,12 @@
     "script.sys-fnc-gettag-text": "$getTag (TagID)",
     "script.sys-fnc-gettag-tooltip": "System function to get Tag value: $getTag (TagID as string) return value as string or number",
     "script.scheduling-title": "Script scheduling",
-    "script.scheduling-interval": "Interval in seconds",
+    "script.scheduling-type": "Type",
+    "script.scheduling-interval": "Loop with interval",
+    "script.scheduling-start": "Only on Start",
+    "script.scheduling-scheduling": "Scheduling",
+    "script.interval": "Interval (seconds)",
+    "script.delay": "Delay (seconds)",
     "script.sys-fnc-setview-text": "$setView (View name)",
     "script.sys-fnc-setview-tooltip": "System function to set View on client: $setView (View name as string)",
 

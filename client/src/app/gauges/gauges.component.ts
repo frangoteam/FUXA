@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
-import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableRangeType } from '../_models/hmi';
+import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -784,13 +784,10 @@ export class GaugesManager {
             if (gauge) {
                 this.setTablePropety(gauge, ga.property);
                 this.mapTable[ga.id] = gauge;
-                gauge.onTimeRange.subscribe(data => {
+                gauge.onTimeRange$.subscribe(data => {
                     this.hmiService.queryDaqValues(data);
                 });
                 this.mapGauges[ga.id] = gauge;
-                if (isview) {
-                    gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1h));
-                }
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
