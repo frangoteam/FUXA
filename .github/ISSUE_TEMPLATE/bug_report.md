@@ -28,4 +28,4 @@ If applicable, add screenshots to help explain your problem.
  - Node.js version: 
  - npm version:
  - Platform/OS:
-- Browser:
+ - Browser:
