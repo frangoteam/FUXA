@@ -78,25 +78,26 @@ export class HmiService {
      * @param value
      */
     putSignalValue(sigId: string, value: string, fnc: string = null) {
-        if (this.variables[sigId]) {
-            this.variables[sigId].value = this.getValueInFunction(this.variables[sigId].value, value, fnc);
-            if (this.socket) {
-                let device = this.projectService.getDeviceFromTagId(sigId);
-                if (device) {
-                    this.variables[sigId]['source'] = device.id;
-                }
-                if (device?.type === DeviceType.internal) {
-                    this.variables[sigId].timestamp = new Date().getTime();
-                    this.setSignalValue(this.variables[sigId]);
-                } else {
-                    this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
-                }
-            } else if (this.bridge) {
-                this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
-            } else if (!environment.serverEnabled) {
-                // for demo, only frontend
-                this.setSignalValue(this.variables[sigId]);
+        if (!this.variables[sigId]) {
+            this.variables[sigId] = new Variable(sigId, null, null);
+        }
+        this.variables[sigId].value = this.getValueInFunction(this.variables[sigId].value, value, fnc);
+        if (this.socket) {
+            let device = this.projectService.getDeviceFromTagId(sigId);
+            if (device) {
+                this.variables[sigId]['source'] = device.id;
             }
+            if (device?.type === DeviceType.internal) {
+                this.variables[sigId].timestamp = new Date().getTime();
+                this.setSignalValue(this.variables[sigId]);
+            } else {
+                this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
+            }
+        } else if (this.bridge) {
+            this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
+        } else if (!environment.serverEnabled) {
+            // for demo, only frontend
+            this.setSignalValue(this.variables[sigId]);
         }
     }
 

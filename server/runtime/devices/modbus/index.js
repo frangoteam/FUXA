@@ -315,6 +315,8 @@ function MODBUSclient(_data, _logger, _events) {
                 console.log(err);
             }
             return true;
+        } else {
+            logger.error(`'${data.name}' setValue(${sigid}, ${value}) Tag not found`, true, true);
         }
         return false;
     }
