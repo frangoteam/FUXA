@@ -384,6 +384,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.layoutHeader.items?.forEach(item => {
             item.status = item.status ?? new GaugeStatus();
             item.status.onlyChange = true;
+            item.status.variablesValue = {};
             item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);
             const signalsIds = HtmlButtonComponent.getSignals(item.property);
             signalsIds.forEach(sigId => {
