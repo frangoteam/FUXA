@@ -40,7 +40,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     dataSource = new MatTableDataSource([]);
     selection = new SelectionModel<Element>(true, []);
     devices: Device[];
-    dirty = false;
     deviceType = DeviceType;
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
@@ -92,7 +91,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             tags = {};
         }
         this.dataSource.data = Object.values(tags);
-        this.hmiService.tagsSubscribe(Object.keys(tags));
+        this.hmiService.viewsTagsSubscribe(Object.keys(tags));
     }
 
     onDeviceChange(source) {
@@ -210,7 +209,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.dirty = true;
                 if (this.deviceSelected.type === DeviceType.WebAPI) {
                     // this.clearTags();
                 }
@@ -296,7 +294,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     });
                     this.projectService.setDeviceTags(this.deviceSelected);
                 } else {
-                    this.dirty = true;
                     tag.name = temptag.name;
                     tag.type = temptag.type;
                     tag.address = temptag.address;

@@ -399,6 +399,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             };
             this.onBindMouseEvents(item.element, settingsProperty);
         });
+        this.hmiService.homeTagsSubscribe(Array.from(this.headerItemsMap.keys()));
     }
 
     private onBindMouseEvents(element: HTMLElement, ga: GaugeSettings) {

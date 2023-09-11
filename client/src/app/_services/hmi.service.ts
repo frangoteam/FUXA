@@ -42,6 +42,8 @@ export class HmiService {
 
     private addFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.add);
     private removeFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.remove);
+    private homeTagsSubscription = [];
+    private viewsTagsSubscription = [];
 
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
@@ -344,14 +346,28 @@ export class HmiService {
         }
     }
 
-    /**
-     * Subscribe to tags values
-     */
-    public tagsSubscribe(tagsId: string[]) {
+    private tagsSubscribe() {
         if (this.socket) {
-            let msg = { tagsId: tagsId };
+            const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription);
+            let msg = { tagsId: [...new Set(mergedArray)] };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
         }
+    }
+
+    /**
+     * Subscribe views tags values
+     */
+    public viewsTagsSubscribe(tagsId: string[]) {
+        this.viewsTagsSubscription = tagsId;
+        this.tagsSubscribe();
+    }
+
+    /**
+     * Subscribe only home tags value
+     */
+    public homeTagsSubscribe(tagsId: string[]) {
+        this.homeTagsSubscription = tagsId;
+        this.tagsSubscribe();
     }
 
     /**

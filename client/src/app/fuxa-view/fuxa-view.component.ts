@@ -249,7 +249,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
             // set subscription to server
-            this.hmiService.tagsSubscribe(this.gaugesManager.getBindedSignalsId());
+            this.hmiService.viewsTagsSubscribe(this.gaugesManager.getBindedSignalsId());
         }
     }
 
