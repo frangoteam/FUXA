@@ -27,8 +27,8 @@ export class ScriptSchedulingComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            mode: this.data.scheduling.mode || 'interval',
-            interval: [this.data.scheduling.interval || 0],
+            mode: [this.data.scheduling?.mode || 'interval'],
+            interval: [this.data.scheduling?.interval || 0],
         });
     }
 
