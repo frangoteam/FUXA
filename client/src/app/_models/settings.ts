@@ -7,6 +7,8 @@ export class AppSettings {
     secureEnabled = false;
     /** Expiration of authanticated token (15m)*/
     tokenExpiresIn = '1h';
+    /** authentication are valid only for edit mode */
+    secureOnlyEditor = false;
     /** Broadcast all tags, without check the frontend views */
     broadcastAll = true;
     /** Smtp to send mails */

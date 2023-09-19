@@ -123,11 +123,14 @@ try {
         if (mysettings.uiPort) {
             settings.uiPort = mysettings.uiPort;
         }
-        if (mysettings.secureEnabled) {
+        if (!utils.isNullOrUndefined(mysettings.secureEnabled)) {
             settings.secureEnabled = mysettings.secureEnabled;
             if (!settings.tokenExpiresIn) {
                 settings.tokenExpiresIn = '1h';
             }
+        }
+        if (!utils.isNullOrUndefined(mysettings.secureOnlyEditor)) {
+            settings.secureOnlyEditor = mysettings.secureOnlyEditor;
         }
         if (mysettings.tokenExpiresIn) {
             settings.tokenExpiresIn = mysettings.tokenExpiresIn;

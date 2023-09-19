@@ -1241,6 +1241,7 @@
     "dlg.app-settings-alarms": "Alarms",
     "dlg.app-settings-alarms-clear": "Clear all alarms and history",
     "dlg.app-settings-auth-token": "Authentication with Token",
+    "dlg.app-settings-auth-only-editor": "Only for Editor",
     "dlg.app-auth-disabled": "Disabled",
     "dlg.app-auth-expiration-15m": "Enabled with token expiration in 15 min.",
     "dlg.app-auth-expiration-1h": "Enabled with token expiration in 1 hour.",
