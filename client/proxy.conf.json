@@ -1,0 +1,6 @@
+{
+    "/resources": {
+      "target": "http://localhost:1881",
+      "secure": false
+    }
+}
