@@ -155,13 +155,13 @@ export class HtmlInputComponent extends GaugeBaseComponent {
             }
 
             // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
-            let fobj = ele.getElementsByTagName('foreignObject');
+        let fobj = ele.getElementsByTagName('foreignObject');
             if(fobj){
                 fobj[0].style.paddingLeft = '1px';
             }
 
             // Set the border on the surrounding svg rect
-            let rects = ele.getElementsByTagName('rect');
+        let rects = ele.getElementsByTagName('rect');
             if(rects){
                 rects[0].setAttribute('stroke-width','0.5');
             }
@@ -215,7 +215,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
     }
 
     static validateValue(value: any, ga: GaugeSettings): {valid: boolean; errorText: string; min: number; max: number} {
-        if(ga.property.options && ga.property.options.numeric){
+        if(ga.property?.options && ga.property.options?.numeric){
             if(!Utils.isNullOrUndefined(ga.property.options.min) && !Utils.isNullOrUndefined(ga.property.options.max)){
                 if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
                     return {valid: false, errorText: 'html-input.not-a-number', min: 0, max: 0};

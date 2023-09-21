@@ -450,6 +450,7 @@
     "editor.controls-iframe-settings": "Iframe settings",
     "editor.controls-table": "Table",
     "editor.header-item-settings": "Header item settings",
+    "editor.controls-image": "Image (link)",
 
     "editor.layout-settings": "Layout settings",
 
@@ -574,7 +575,7 @@
     "editor.tools-ellipse": "Ellipse Tool",
     "editor.tools-path": "Path Tool",
     "editor.tools-text": "Text Tool",
-    "editor.tools-image": "Image Tool",
+    "editor.tools-image": "Image Tool (embedded)",
 
     "editor.tools-zoom-title": "Zoom Tool [Ctrl+Up/Down]",
     "editor.tools-grid-title": "Show Hide Grid",
@@ -1241,6 +1242,7 @@
     "dlg.app-settings-alarms": "Alarms",
     "dlg.app-settings-alarms-clear": "Clear all alarms and history",
     "dlg.app-settings-auth-token": "Authentication with Token",
+    "dlg.app-settings-auth-only-editor": "Only for Editor",
     "dlg.app-auth-disabled": "Disabled",
     "dlg.app-auth-expiration-15m": "Enabled with token expiration in 15 min.",
     "dlg.app-auth-expiration-1h": "Enabled with token expiration in 1 hour.",
