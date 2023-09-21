@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService, SaveMode } from '../_services/project.service';
-import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, ISvgElement } from '../_models/hmi';
+import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, ISvgElement, GaugeProperty } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
 
@@ -37,6 +37,7 @@ import { CardConfigComponent } from './card-config/card-config.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
 import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
+import { UploadFile } from '../_models/project';
 
 declare var Gauge: any;
 
@@ -82,6 +83,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     hmi: Hmi = new Hmi();// = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
     currentMode = '';
     imagefile: string;
+    ctrlInitParams: any;
     gridOn = false;
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
@@ -217,7 +219,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (eleadded) => {
-                    let ga: GaugeSettings = this.getGaugeSettings(eleadded);
+                    let ga: GaugeSettings = this.getGaugeSettings(eleadded, this.ctrlInitParams);
                     this.checkGaugeAdded(ga);
                     setTimeout(() => {
                         this.setMode('select', false);
@@ -371,12 +373,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
      * @param ele gauge id
      */
-    getGaugeSettings(ele) {
+    getGaugeSettings(ele, initParams: any = null) {
         if (ele && this.currentView) {
             if (this.currentView.items[ele.id]) {
                 return this.currentView.items[ele.id];
             }
-            return this.gaugesManager.createSettings(ele.id, ele.type);
+            let gs = this.gaugesManager.createSettings(ele.id, ele.type);
+            if (initParams) {
+                gs.property = new GaugeProperty();
+                gs.property.address = initParams;
+            }
+            return gs;
         }
         return null;
     }
@@ -794,6 +801,36 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     self.setMode('image');
                 });
+            }
+        }
+    }
+
+    /**
+     * add image to view
+     * the image will be upload into server/_appdata/_upload_files
+     * @param event selected file
+     */
+    onSetImageAsLink(event) {
+        if (event.target.files) {
+            let filename = event.target.files[0].name;
+            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
+            let reader = new FileReader();
+            this.ctrlInitParams = null;
+            reader.onload = () => {
+                try {
+                    fileToUpload.data = reader.result;
+                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
+                        this.ctrlInitParams = result.location;
+                        this.setMode('own_ctrl-image');
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            if (fileToUpload.type === 'svg') {
+                reader.readAsText(event.target.files[0]);
+            } else {
+                reader.readAsDataURL(event.target.files[0]);
             }
         }
     }

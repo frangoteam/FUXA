@@ -191,6 +191,11 @@
                                 (click)="setMode('own_ctrl-iframe')">
                                 <span class="icon-tool icon-iframe"></span>
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-image' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-image')}"
+                                (click)="imageLink.value = '';imageLink.click()">
+                                <span class="material-icon-tool material-icons">photo_size_select_actual</span>
+                                <input #imageLink type="file" style="display: none;" (change)="onSetImageAsLink($event)" accept="image/png|jpg|svg" />
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->

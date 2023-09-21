@@ -168,6 +168,7 @@ import { ToastNotifierService } from './_services/toast-notifier.service';
 import { MyFileService } from './_services/my-file.service';
 import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
+import { HtmlImageComponent } from './gauges/controls/html-image/html-image.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -221,6 +222,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         HtmlChartComponent,
         HtmlGraphComponent,
         HtmlIframeComponent,
+        HtmlImageComponent,
         HtmlBagComponent,
         GaugeProgressComponent,
         GaugeSemaphoreComponent,

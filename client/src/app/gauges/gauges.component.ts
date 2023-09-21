@@ -34,6 +34,7 @@ import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
+import { HtmlImageComponent } from './controls/html-image/html-image.component';
 
 @Injectable()
 export class GaugesManager {
@@ -68,7 +69,8 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
+        HtmlImageComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -792,6 +794,9 @@ export class GaugesManager {
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.initElement(ga, isview);
+            return true;
+        } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
+            HtmlImageComponent.initElement(ga, isview);
             return true;
         } else {
             return true;
