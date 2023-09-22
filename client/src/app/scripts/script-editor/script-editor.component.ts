@@ -167,7 +167,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         if (sysfnc.params.filter((value) => value).length === 1) {
             this.onAddSystemFunctionTag(sysfnc);
         } else {
-            this.insertText(this.getFunctionText(sysfnc, '\'MainView\''));
+            this.insertText(this.getFunctionText(sysfnc));
         }
     }
 
@@ -251,8 +251,13 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         return `${sysfnc.name}(${paramText});`;
     }
 
-    private getFunctionText(sysfnc: SystemFunction, param: string): string {
-        return `${sysfnc.name}(${param});`;
+    private getFunctionText(sysfnc: SystemFunction): string {
+        let paramText = '\'MainView\'';
+        const fx = this.systemFunctions.functions.find(sf => sf.name === sysfnc.name);
+        if (fx && fx.paramsText) {
+            paramText = this.translateService.instant(fx.paramsText) || paramText;
+        }
+        return `${sysfnc.name}(${paramText});`;
     }
 
     private loadTestParameter() {

@@ -184,7 +184,9 @@ function ScriptsManager(_runtime) {
         var sysFncs = {};
         sysFncs['$getTag'] = runtime.devices.getTagValue;
         sysFncs['$setTag'] = runtime.devices.setTagValue;
+        sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
+        sysFncs['$enableDevice'] = runtime.devices.enableDevice;
         return sysFncs;
     }
 

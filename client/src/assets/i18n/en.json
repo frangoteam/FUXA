@@ -1076,6 +1076,12 @@
     "script.delay": "Delay (seconds)",
     "script.sys-fnc-setview-text": "$setView (View name)",
     "script.sys-fnc-setview-tooltip": "System function to set View on client: $setView (View name as string)",
+    "script.sys-fnc-enableDevice-text": "$enableDevice (Device name, enable True/False)",
+    "script.sys-fnc-enableDevice-tooltip": "System function to enable Device connection: $enableDevice (Device name as string, enable as boolean)",
+    "script.sys-fnc-enableDevice-params": "'Device name', true",
+    "script.sys-fnc-getTagId-text": "$getTagId (Tag name)",
+    "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string)",
+    "script.sys-fnc-getTagId-params": "'Tag name'",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
