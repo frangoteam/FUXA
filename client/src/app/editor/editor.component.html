@@ -179,10 +179,6 @@
                                 (click)="setMode('html_graph-bar')">
                                 <span class="icon-tool icon-graphbar"></span>
                             </div>
-                            <!-- <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
-                                (click)="setMode('html_graph-pie')">
-                                <span class="icon-tool icon-graphpie"></span>
-                            </div> -->
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-table' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-table')}"
                                 (click)="setMode('own_ctrl-table')">
                                 <span class="icon-tool icon-table"></span>
@@ -190,6 +186,10 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-iframe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-iframe')}"
                                 (click)="setMode('own_ctrl-iframe')">
                                 <span class="icon-tool icon-iframe"></span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
+                                (click)="setMode('html_graph-pie')">
+                                <span class="material-icon-tool material-icons">pie_chart</span>
                             </div>
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-image' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-image')}"
                                 (click)="imageLink.value = '';imageLink.click()">
