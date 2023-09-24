@@ -56,6 +56,7 @@ import { CardsViewComponent } from './cards-view/cards-view.component';
 import { TesterComponent } from './tester/tester.component';
 import { TesterService } from './tester/tester.service';
 import { UserService } from './_services/user.service';
+import { RecipeService} from "./_services/recipe.service";
 import { SettingsService } from './_services/settings.service';
 import { PluginService } from './_services/plugin.service';
 import { AuthService } from './_services/auth.service';
@@ -167,6 +168,7 @@ import { RcgiService } from './_services/rcgi/rcgi.service';
 import { ToastNotifierService } from './_services/toast-notifier.service';
 import { MyFileService } from './_services/my-file.service';
 import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
+import { RecipeComponent, DialogRecipe } from './recipe/recipe.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -298,7 +300,9 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemTextComponent,
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
-        ReportItemChartComponent
+        ReportItemChartComponent,
+        RecipeComponent,
+        DialogRecipe
     ],
     imports: [
         BrowserModule,
@@ -339,6 +343,7 @@ export function createTranslateLoader(http: HttpClient) {
         AppService,
         ProjectService,
         UserService,
+        RecipeService,
         DiagnoseService,
         CommandService,
         HeartbeatService,

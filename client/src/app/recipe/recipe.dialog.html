@@ -1,0 +1,126 @@
+<div style="width: 100%;position: relative;">
+    <div *ngIf="isToRemove" style="margin-top: 20px;margin-bottom: 20px;">
+        {{'msg.recipe-remove' | translate}} '{{data.recipe.recipeName}}' ?
+    </div>
+    <div *ngIf="!isToRemove">
+        <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable >
+            {{'recipe.property' | translate}}</h1>
+        <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+    </div>
+
+    <div style="overflow-y: hidden; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove">
+
+            <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                <span>{{'recipe.list-recipename' | translate}}</span>
+                <input [(ngModel)]="data.recipe.recipeName" style="width: 350px" type="text">
+            </div>
+
+            <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;" >
+                <span>{{'recipe.list-description' | translate}}</span>
+                <input [(ngModel)]="data.recipe.description" style="width: 350px" type="text">
+            </div>
+            <div>
+                <span>{{'recipe.list-version' | translate}}</span>
+                <input [(ngModel)]="data.recipe.version"  style="width: 350px" type="text">
+            </div>
+            <div>
+                <span>{{'recipe.detail.dbblockaddress' | translate}}</span>
+                <input [(ngModel)]="data.recipe.dbBlockAddress" (ngModelChange)="onDbBlockAddressChange()">
+            </div>
+
+            <div class="container">
+                <mat-table #table [dataSource]="detail" matSort>
+                    <ng-container matColumnDef="address">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.detail.address' | translate}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{element.address}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="type">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.detail.type' | translate}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{element.type}} </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="value">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.detail.value' | translate}} </mat-header-cell>
+                        <mat-cell *matCellDef="let element">{{element.value}} </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="remove">
+                        <mat-header-cell *matHeaderCellDef> Remove </mat-header-cell>
+                        <mat-cell *matCellDef="let element; let rowIndex = index">
+                            <button mat-icon-button (click)="removeRow(rowIndex)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
+
+                </mat-table>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <mat-form-field *ngIf="!autoIncrement">
+                    <input matInput [(ngModel)]="manualAddress" placeholder="DB Address"  >
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-select [(value)]="currentType" (change)="currentValue = '';">
+                        <mat-option *ngFor="let type of recipeDetailMateTypes | enumToArray" [value]="type.value">
+                            {{ type.value }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field *ngIf="currentType === 'BOOL'">
+                    <mat-select [(value)]="currentValue">
+                        <mat-option value="true">True</mat-option>
+                        <mat-option value="false">False</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- For BYTE -->
+                <mat-form-field *ngIf="currentType === 'BYTE'">
+                    <input matInput [(ngModel)]="currentValue" type="number" min="0" max="255" placeholder="value">
+                </mat-form-field>
+
+                <!-- For CHAR -->
+                <mat-form-field *ngIf="currentType === 'CHAR'">
+                    <input matInput [(ngModel)]="currentValue" maxlength="1" placeholder="value">
+                </mat-form-field>
+
+                <!-- For INT -->
+                <mat-form-field *ngIf="currentType === 'INT'">
+                    <input matInput [(ngModel)]="currentValue" type="number" placeholder="value">
+                </mat-form-field>
+
+                <!-- For WORD -->
+                <mat-form-field *ngIf="currentType === 'WORD'">
+                    <input matInput [(ngModel)]="currentValue" type="number" min="0" max="65535" placeholder="value">
+                </mat-form-field>
+
+                <!-- For DINT (If needed, you can add min and max values based on 32-bit integer range) -->
+                <mat-form-field *ngIf="currentType === 'DINT'">
+                    <input matInput [(ngModel)]="currentValue" type="number" placeholder="value">
+                </mat-form-field>
+
+                <!-- For DWORD (Assuming it's unsigned 32-bit) -->
+                <mat-form-field *ngIf="currentType === 'DWORD'">
+                    <input matInput [(ngModel)]="currentValue" type="number" min="0" max="4294967295" placeholder="value">
+                </mat-form-field>
+
+                <!-- For REAL -->
+                <mat-form-field *ngIf="currentType === 'REAL'">
+                    <input matInput [(ngModel)]="currentValue" type="number" step="any" placeholder="value">
+                </mat-form-field>
+                <button mat-raised-button (click)="addEntry()">Add Row</button>
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" [(ngModel)]="autoIncrement" [disabled]="!data.recipe.dbBlockAddress"> Whether to auto-increment
+                </label>
+            </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' |
+            translate}}</button>
+    </div>
+</div>

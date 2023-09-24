@@ -79,7 +79,7 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 像素",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 像素",
     "dlg.docproperty-margin": "边距",
-    
+
     "dlg.docname-title": "视图名称",
     "dlg.docname-name": "名称",
     "dlg.docproperty-type": "视图类型",
@@ -90,7 +90,7 @@
     "dlg.parameter-title": "参数",
 
     "dlg.tagname-title": "标签名称",
-    "dlg.tagname-name": "标签名称", 
+    "dlg.tagname-name": "标签名称",
 
     "dlg.linkproperty-title": "制作超链接",
     "dlg.linkproperty-url": "超链接URL",
@@ -300,7 +300,7 @@
     "graph.property-datalabels-show": "显示",
     "graph.property-datalabels-fontsize": "字体大小",
     "graph.property-datalabels-align": "对齐",
-    
+
     "graph.rangetype-last1h": "最后一小时",
     "graph.rangetype-last1d": "最后一天",
     "graph.rangetype-last3d": "最后3天",
@@ -327,7 +327,7 @@
     "table.property-row-height": "高度",
     "table.property-row-background": "背景",
     "table.property-row-color": "颜色",
-    "table.property-row-fontSize": "字体大小",    
+    "table.property-row-fontSize": "字体大小",
     "table.property-layout": "布局",
     "table.property-filter": "过滤器",
     "table.property-paginator": "分页器",
@@ -465,7 +465,7 @@
     "editor.transform-y2-title": "改变线条的起始Y坐标",
     "editor.transform-rect-width-title": "改变矩形宽度",
     "editor.transform-width": "宽度",
-    "editor.transform-rect-height-title": "改变矩形宽度", 
+    "editor.transform-rect-height-title": "改变矩形宽度",
     "editor.transform-height": "高度",
     "editor.transform-rect-radius-title": "改变矩形角半径",
     "editor.transform-radiuscorner": "半径角",
@@ -474,7 +474,7 @@
     "editor.transform-circlecy": "cy",
     "editor.transform-circlecy-title": "改变圆的cy坐标",
     "editor.transform-circler": "r",
-    "editor.transform-circler-title": "改变圆的半径", 
+    "editor.transform-circler-title": "改变圆的半径",
     "editor.transform-ellipsecx": "cx",
     "editor.transform-ellipsecx-title": "改变椭圆的cx坐标",
     "editor.transform-ellipsecy": "cy",
@@ -762,7 +762,7 @@
     "device.topic-name-exist": "主题名称'{{value}}'已经存在",
     "device.topic-subs-address-exist": "要订阅地址为'{{value}}的主题已经存在",
     "device.topic-pubs-address-exist": "地址为'{{value}}的要发布的主题已经存在",
-    
+
     "device.property-mqtt-address": "地址（mqtt://[server]:[port]）",
     "device.tag-property-title": "标签属性",
     "device.browsetag-property-title": "浏览服务器中的标签",
@@ -779,8 +779,8 @@
     "device.tag-property-obj-name": "名称",
     "device.tag-property-path": "路径",
     "device.tag-property-unit": "单位",
-    "device.tag-property-digits": "十进制",   
-    "device.tag-property-initvalue": "初始值",   
+    "device.tag-property-digits": "十进制",
+    "device.tag-property-initvalue": "初始值",
     "device.tag-array-id": "阵列ID:",
     "device.tag-array-value": "值：",
     "device-tag-dialog-title": "标签选择",
@@ -799,7 +799,7 @@
     "device.tag-raw-high": "原始高",
     "device.tag-scaled-low": "按比例的低",
     "device.tag-scaled-high": "按比例的高",
-    
+
     "device.connect-ok": "OK",
     "device.connect-error": "错误",
     "device.connect-failed": "失败",
@@ -814,6 +814,18 @@
     "devices.list-polling": "轮询",
     "devices.list-enabled": "已启用",
     "devices.list-status": "状态",
+
+    "recipe.list-recipename":"名称",
+    "recipe.list-description":"描述",
+    "recipe.list-createtime": "创建时间",
+    "recipe.list-version":"版本",
+    "recipe.list-detail":"配方具体参数",
+    "recipe.property":"配方属性",
+    "recipe.detail.dbblockaddress":"存储块地址",
+    "recipe.detail.address":"地址",
+    "recipe.detail.type": "类型",
+    "recipe.detail.value":"值",
+
 
     "users.list-title": "用户设置",
     "users.list-name": "用户名",
@@ -884,7 +896,7 @@
     "bag.property-divisions-color": "分部的颜色",
     "bag.property-subdivisions-color": "子分部的颜色",
     "bag.property-divisionfont-size": "分部的字体大小",
-    "bag.property-divisionfont-color": "分部字体颜色", 
+    "bag.property-divisionfont-color": "分部字体颜色",
     "bag.property-divisions-labels": "分区标签（例如：10;20;...）",
     "bag.property-current-value": "当前值",
     "bag.property-min": "最小",
@@ -918,7 +930,7 @@
     "alarm.property-name": "名称",
     "alarm.property-permission": "授权",
     "alarm.property-highhigh": "高 高",
-    "alarm.property-high": "高",    
+    "alarm.property-high": "高",
     "alarm.property-low": "低",
     "alarm.property-info": "信息",
     "alarm.property-action": "行动",
@@ -1073,7 +1085,7 @@
     "report.item-interval-min10": "10分钟",
     "report.item-interval-min30": "30分钟",
     "report.item-interval-hour": "1小时",
-    "report.item-interval-day": "1天",   
+    "report.item-interval-day": "1天",
     "report.item-function-type": "功能类型",
     "report.item-function-min": "Min",
     "report.item-function-max": "最大",
@@ -1244,5 +1256,6 @@
     "msg.import-devices-error": "导入设备失败！",
     "msg.report-build-forced": "发送构建报告成功",
     "msg.report-build-error": "发送构建报告失败！",
-    "msg.device-tags-request-result": "加载 {{value}} 的 {{current}}"
+    "msg.device-tags-request-result": "加载 {{value}} 的 {{current}}",
+    "msg.recipe-remove": "您是否想删除配方"
 }
