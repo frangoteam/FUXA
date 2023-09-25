@@ -56,6 +56,10 @@ export class GraphBarDateFunction extends GraphBarFunction {
     }
 }
 
+export class GraphPieProperty {
+
+}
+
 export class GraphSource {
     device: string;
     id: string;

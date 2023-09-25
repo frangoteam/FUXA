@@ -272,6 +272,7 @@
     "graph.bar-date-fnc-hour-integral": "Hour Sum (Integral)",
 
     "graph.property-data": "Data",
+    "graph.property-name": "Name",
     "graph.property-general": "General",
     "graph.property-title": "Title",
     "graph.property-title-font": "Font size",
