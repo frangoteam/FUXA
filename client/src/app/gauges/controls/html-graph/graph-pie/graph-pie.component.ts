@@ -33,8 +33,8 @@ export class GraphPieComponent extends GraphBaseComponent implements OnInit, Aft
           {
             data: this.pieData,
             backgroundColor: [
-                'rgb(255, 99, 132)',
                 'rgb(154, 162, 235)',
+                'rgb(63, 73, 100)',
                 'rgb(255, 105, 86)'
             ],
           },
