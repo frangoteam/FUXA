@@ -68,15 +68,15 @@ export class RecipeComponent implements OnInit, AfterViewInit {
   private editRecipe(recipe: Recipe, current: Recipe) {
     let mrecipe: Recipe = JSON.parse(JSON.stringify(recipe));
     let dialogRef = this.dialog.open(DialogRecipe, {
-      position: { top: '60px' },
-      data: { recipe: mrecipe, current: current }
+        position: { top: '60px' },
+        data: { recipe: mrecipe, current: current }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && result.recipeId === null) {
+          this.recipeService.setRecipe(result);
           console.log(JSON.stringify(result, null, 2));
-        // Add your logic for saving the recipe either by creating a new one or updating an existing one
-        this.loadRecipes();
+          this.loadRecipes();
       }
     });
   }

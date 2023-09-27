@@ -16,6 +16,7 @@ var plugins = require('./plugins');
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
 var jobs = require('./jobs');
+var recipe = require('./recipe');
 
 var api;
 var settings
@@ -531,6 +532,7 @@ function scriptConsoleOutput(output) {
 var runtime = module.exports = {
     init: init,
     project: project,
+    recipe: recipe,
     users: users,
     plugins: plugins,
     start: start,

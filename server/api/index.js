@@ -18,6 +18,7 @@ var scriptsApi = require('./scripts');
 var resourcesApi = require('./resources');
 var daqApi = require('./daq');
 var commandApi = require('./command');
+var recipeApi = require('./recipe');
 
 var apiApp;
 var server;
@@ -55,6 +56,8 @@ function init(_server, _runtime) {
             apiApp.use(resourcesApi.app());
             commandApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(commandApi.app());
+            recipeApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(recipeApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes

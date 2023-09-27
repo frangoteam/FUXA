@@ -28,7 +28,7 @@ export class RecipeService{
         return new Observable((observer) => {
             if (environment.serverEnabled) {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-                this.http.post<any>(this.endPointConfig + '/api/recipes', { headers: header, params: recipe }).subscribe(result => {
+                this.http.post<any>(this.endPointConfig + '/api/recipe', { headers: header, params: recipe }).subscribe(result => {
                     observer.next();
                 }, err => {
                     console.error(err);

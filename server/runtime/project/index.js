@@ -917,7 +917,6 @@ const ProjectDataCmdType = {
     Charts: 'charts',
     Graphs: 'graphs',
     SetText: 'set-text',
-    SetText: 'set-text',
     DelText: 'del-text',
     SetAlarm: 'set-alarm',
     DelAlarm: 'del-alarm',
