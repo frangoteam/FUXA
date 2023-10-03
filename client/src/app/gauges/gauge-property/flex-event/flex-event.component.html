@@ -16,9 +16,16 @@
         <div class="my-form-field" style="width: 140px;padding-left: 20px">
             <span>{{'gauges.property-event-action' | translate}}</span>
             <mat-select [(value)]="item.action" (change)="item.actparam = '';">
-                <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
-                    {{ type.value }}
-                </mat-option>
+                <ng-container *ngIf="item.type !== 'enter'; else enterAction">
+                    <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
+                        {{ type.value }}
+                    </mat-option>
+                </ng-container>
+                <ng-template #enterAction>
+                    <mat-option *ngFor="let type of enterActionType | enumToArray" [value]="type.key">
+                        {{ type.value }}
+                    </mat-option>
+                </ng-template>
             </mat-select>
         </div>
     </div>
@@ -114,7 +121,15 @@
             <div style="margin-left: 10px; display: inline-block;">
                 <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
                     <span>{{'gauges.property-event-script-param-value' | translate}}</span>
-                    <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                    <ng-container *ngIf="item.type !== 'enter'; else enterParamValue">
+                        <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                    </ng-container>
+                    <ng-template #enterParamValue>
+                        <input [(ngModel)]="scriptParam.value" 
+                               placeholder="{{'gauges.property-event-script-param-input-value' | translate}}" 
+                               type="text" 
+                               style="width: 260px">
+                    </ng-template>
                 </div>
                 <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
                     <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value" [withStaticValue]="false"></flex-variable>

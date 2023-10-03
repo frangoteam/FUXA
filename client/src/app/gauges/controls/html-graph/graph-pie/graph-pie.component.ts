@@ -87,7 +87,7 @@ export class GraphPieComponent extends GraphBaseComponent implements OnInit, Aft
 
         for (let i = 0; i < sources.length; i++) {
             labels.push(sources[i].label || sources[i].name);
-            this.pieData.push(i + 10);
+            this.pieData.push((i + 1) * 10);
             backgroundColor.push(sources[i].fill);
             this.sourceMap[sources[i].id] = i;
         }

@@ -266,6 +266,7 @@ export enum GaugeEventType {
     click = 'shapes.event-click',
     mousedown = 'shapes.event-mousedown',
     mouseup = 'shapes.event-mouseup',
+    enter = 'shapes.event-enter',
 }
 
 export enum GaugeEventActionType {

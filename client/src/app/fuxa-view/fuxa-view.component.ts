@@ -18,7 +18,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
-import { ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
+import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -51,6 +51,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('touchKeyboard', {static: false}) touchKeyboard: NgxTouchKeyboardDirective;
 
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+    scriptParameterValue = Utils.getEnumKey(ScriptParamType, ScriptParamType.value);
 
     cards: CardModel[] = [];
     iframes: CardModel[] = [];
@@ -456,7 +457,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
-
                     let res = HtmlInputComponent.validateValue(htmlevent.dom.value, htmlevent.ga);
                     if(!res.valid){
                         self.setInputValidityMessage(res, htmlevent.dom);
@@ -464,6 +464,20 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     else{
                         self.gaugesManager.putEvent(htmlevent);
                         htmlevent.dom.blur();
+                    }
+                    if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
+                        const events = JSON.parse(JSON.stringify(HtmlInputComponent.getEvents(htmlevent.ga.property, GaugeEventType.enter)));
+                        events.forEach(ev => {
+                            if (htmlevent.value) {
+                                let parameters = <ScriptParam[]>ev.actoptions[SCRIPT_PARAMS_MAP];
+                                parameters.forEach(param => {
+                                    if (param.type === self.scriptParameterValue && !param.value) {
+                                        param.value = htmlevent.value;
+                                    }
+                                });
+                            }
+                            self.onRunScript(ev);
+                        });
                     }
                 } else if (ev.key == 'Escape') {
                     htmlevent.dom.blur();
