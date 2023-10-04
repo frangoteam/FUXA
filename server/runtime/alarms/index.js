@@ -192,7 +192,7 @@ function AlarmsManager(_runtime) {
                         var mask = ((alr.tagproperty.permission >> 8) & 255);
                         var canack = (mask) ? mask & groups : 1;
                         if (canack) {
-                            if (alr.isToAck()) {
+                            if (alr.isToAck() > 0) {
                                 alr.setAck(userId);
                                 changed.push(alr);
                             }
