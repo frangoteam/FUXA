@@ -164,7 +164,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.panel.height = height;
             this.options.height = height;
             this.options.height -= 40;      // legend
-            if (this.withToolbar) {
+            if (this.withToolbar && !this.options.hideToolbar) {
                 this.options.height -= 34;  // toolbar
             }
             let size = Utils.getDomTextHeight(this.options.titleHeight, this.options.fontFamily);

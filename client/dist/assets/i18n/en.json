@@ -221,6 +221,7 @@
     "chart.property-color.legend": "Legend color",
     "chart.property-legend.mode": "Legend show mode",
     "chart.property-date-last-range": "Date range",
+    "chart.property-hide-toolbar": "Hide toolbar",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
     "chart.property-axis": "Axis",

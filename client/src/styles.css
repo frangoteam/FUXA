@@ -1121,3 +1121,7 @@ mat-toolbar-row {
 .pointer-move {
     cursor: move;
 }
+
+.tac {
+    text-align: center;
+}
