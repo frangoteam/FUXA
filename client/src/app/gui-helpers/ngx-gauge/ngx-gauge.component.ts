@@ -86,8 +86,8 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
 
     setValue(val) {
         let value = Utils.toFloatOrNumber(val);
-        value = Math.max(value, this.options.minValue);
-        value = Math.min(value, this.options.maxValue);
+        value = Math.max(value, Number(this.options.minValue));
+        value = Math.min(value, Number(this.options.maxValue));
         this.gauge.set(value);
     }
 
@@ -126,8 +126,9 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
             this.gauge = new Donut(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         }
+        const value = Number(this.options.minValue) + 1;
         this.setOptions(this.options);
-        this.setValue(this.options.minValue);
+        this.setValue(value);
         this.initialized = true;
     }
 }
