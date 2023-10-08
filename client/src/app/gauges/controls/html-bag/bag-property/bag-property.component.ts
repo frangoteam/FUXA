@@ -125,6 +125,9 @@ export class BagPropertyComponent implements AfterViewInit {
         } else if (opt === 'pointerStrokeWidth') {
             this.options.pointer.strokeWidth = value / 1000;
         }
+        if (opt === 'minValue') {
+            this.onChangeValue(value);
+        }
         this.setGaugeOptions();
     }
 

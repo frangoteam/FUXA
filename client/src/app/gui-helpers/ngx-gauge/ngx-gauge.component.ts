@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnChanges, ViewChild, HostListener, ElementRef, Input, SimpleChanges } from '@angular/core';
 
 import { GaugeOptions, GaugeType } from './gaugeOptions';
+import { Utils } from '../../_helpers/utils';
 
 declare const Gauge: any;
 declare const Donut: any;
@@ -33,6 +34,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     ngAfterViewInit() {
         setTimeout(() => {
             this.onResize(null);
+            this.setOptions(this.options);
         }, 100);
     }
 
@@ -40,7 +42,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         if (this.gauge) {
             if (changes) {
                 if (changes.value) {
-                    this.gauge.set(changes.value.currentValue);
+                    this.setValue(changes.value.currentValue);
                 }
             }
         }
@@ -82,15 +84,11 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         this.gauge.render();
     }
 
-    setValue(value) {
-        let val = parseFloat(value);
-        if (Number.isNaN(val)) {
-            // maybe boolean
-            val = Number(value);
-        } else {
-            val = parseFloat(val.toFixed(5));
-        }
-        this.gauge.set(val);
+    setValue(val) {
+        let value = Utils.toFloatOrNumber(val);
+        value = Math.max(value, this.options.minValue);
+        value = Math.min(value, this.options.maxValue);
+        this.gauge.set(value);
     }
 
     setOptions(options: GaugeOptions) {
@@ -129,7 +127,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
             this.gauge.setTextField(this.gaugetext.nativeElement);
         }
         this.setOptions(this.options);
-        this.gauge.set(this.value);
+        this.setValue(this.options.minValue);
         this.initialized = true;
     }
 }

@@ -221,6 +221,22 @@ export class Utils {
         return value;
     }
 
+    /**
+     * check to convert to float or to number
+     * @param value
+     */
+    static toFloatOrNumber(value: any) {
+        let result = parseFloat(value);
+        if (Utils.isNullOrUndefined(result)) {
+            // maybe boolean
+            result = Number(value);
+        } else {
+            result = parseFloat(result.toFixed(5));
+        }
+        return result;
+    }
+
+
     static formatValue(value: string, format: string): string {
         try {
             if (Utils.isNumeric(value)) {
