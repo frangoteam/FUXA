@@ -1002,6 +1002,7 @@
     "alarms.view-offtime": "OFF Date/Time",
     "alarms.view-acktime": "ACK Date/Time",
     "alarms.view-userack": "ACK User",
+    "alarms.view-ack-all-alarms": "ACK All Alarms",    
     "alarm.status-active": "Active",
     "alarm.status-passive": "Passive",
     "alarm.status-active-ack": "Active-ACK",
