@@ -111,6 +111,8 @@ export enum DaqStoreRetentionType {
     days30 = 'days30',
     days90 = 'days90',
     year1 = 'year1',
+    year3 = 'year3',
+    year5 = 'year5',
 }
 
 export enum AlarmsRetentionType {

@@ -80,6 +80,10 @@ export class SettingsService {
             this.appSettings.logFull = settings.logFull;
             dirty = true;
         }
+        if (settings.alarms?.retention !== this.appSettings.alarms?.retention) {
+            this.appSettings.alarms.retention = settings.alarms.retention;
+            dirty = true;
+        }
         return dirty;
     }
 
