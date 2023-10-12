@@ -19,9 +19,9 @@ export class RecipeService{
 
     }
     getRecipes(recipe: any): Observable<any> {
-    let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-    let params = recipe;
-    return this.http.get<any>(this.endPointConfig + '/api/recipes', { headers: header, params: params });
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = recipe;
+        return this.http.get<any>(this.endPointConfig + '/api/recipes', { headers: header, params: params });
     }
 
     setRecipe(recipe: Recipe) {

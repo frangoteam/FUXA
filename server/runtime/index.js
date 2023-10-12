@@ -61,6 +61,14 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.error('runtime.failed-to-init users');
     });
 
+    recipe.init(settings, logger).then(result => {
+        logger.info('runtime init recipe successful!', true);
+        events.emit('init-recipe-ok');
+    }).catch(function (err) {
+        logger.error('runtime.failed-to-init recipe');
+    });
+
+
     project.init(settings, logger).then(result => {
         logger.info('runtime init project successful!', true);
         events.emit('init-project-ok');

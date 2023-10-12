@@ -815,16 +815,20 @@
     "devices.list-enabled": "已启用",
     "devices.list-status": "状态",
 
-    "recipe.list-recipename":"名称",
+    "recipe.list-recipeName":"名称",
     "recipe.list-description":"描述",
     "recipe.list-createtime": "创建时间",
+    "recipe.list-lastModifiedTime": "创建时间",
     "recipe.list-version":"版本",
-    "recipe.list-detail":"配方具体参数",
+    "recipe.list-isActive":"开关",
     "recipe.property":"配方属性",
-    "recipe.detail.dbblockaddress":"存储块地址",
+    "recipe.detail.dbBlockAddress":"存储块地址",
     "recipe.detail.address":"地址",
     "recipe.detail.type": "类型",
     "recipe.detail.value":"值",
+    "recipe.list-title":"配方设置",
+    "recipe.property-edit": "编辑配方",
+
 
 
     "users.list-title": "用户设置",

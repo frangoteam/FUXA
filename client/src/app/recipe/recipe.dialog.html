@@ -11,7 +11,7 @@
     <div style="overflow-y: hidden; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove">
 
             <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                <span>{{'recipe.list-recipename' | translate}}</span>
+                <span>{{'recipe.list-recipeName' | translate}}</span>
                 <input [(ngModel)]="data.recipe.recipeName" style="width: 350px" type="text">
             </div>
 
@@ -24,8 +24,8 @@
                 <input [(ngModel)]="data.recipe.version"  style="width: 350px" type="text">
             </div>
             <div>
-                <span>{{'recipe.detail.dbblockaddress' | translate}}</span>
-                <input [(ngModel)]="data.recipe.dbBlockAddress" (ngModelChange)="onDbBlockAddressChange()">
+                <span>{{'recipe.detail.dbBlockAddress' | translate}}</span>
+                <input [(ngModel)]="data.recipe.dbBlockAddress" (ngModelChange)="ondbBlockAddressChange()">
             </div>
 
             <div class="container">
@@ -42,16 +42,6 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.detail.value' | translate}} </mat-header-cell>
                         <mat-cell *matCellDef="let element">{{element.value}} </mat-cell>
                     </ng-container>
-
-                    <ng-container matColumnDef="remove">
-                        <mat-header-cell *matHeaderCellDef> Remove </mat-header-cell>
-                        <mat-cell *matCellDef="let element; let rowIndex = index">
-                            <button mat-icon-button (click)="removeRow(rowIndex)">
-                                <mat-icon>delete</mat-icon>
-                            </button>
-                        </mat-cell>
-                    </ng-container>
-
                     <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
 
@@ -110,6 +100,11 @@
                     <input matInput [(ngModel)]="currentValue" type="number" step="any" placeholder="value">
                 </mat-form-field>
                 <button mat-raised-button (click)="addEntry()">Add Row</button>
+
+                <mat-form-field *ngIf="currentType === 'REAL'">
+                    <input matInput [(ngModel)]="currentValue" type="number" step="any" placeholder="value">
+                </mat-form-field>
+                <button mat-raised-button (click)="clearRow()">clear</button>    
             </div>
 
             <div>

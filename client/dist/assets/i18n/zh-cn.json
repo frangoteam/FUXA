@@ -1107,6 +1107,12 @@
 
     "resources.lib-images": "图片",
 
+    "recipe.list.recipeName": "名称",
+    "recipe.list.creationTime": "创建时间",
+    "recipe.list.lastModifiedTime'": "修改时间",
+    "recipe.list.version": "版本",
+    "recipe.list.isActive": "开关",
+
     "text.list-title": "文本设置",
     "text.list-filter": "过滤器",
     "text.list-filter-group": "组",

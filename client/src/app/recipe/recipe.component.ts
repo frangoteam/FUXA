@@ -9,6 +9,7 @@ import { SelOptionsComponent } from '../gui-helpers/sel-options/sel-options.comp
 import {RecipeService} from '../_services/recipe.service';
 
 import {Recipe, RecipeDetailType} from '../_models/recipe';
+import {User} from "../_models/user";
 
 @Component({
   selector: 'app-recipe',
@@ -17,6 +18,8 @@ import {Recipe, RecipeDetailType} from '../_models/recipe';
 })
 export class RecipeComponent implements OnInit, AfterViewInit {
 
+  @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
+  displayedColumns = ['select', 'recipeName', 'creationTime', 'lastModifiedTime', 'version', 'isActive', 'remove'];
   dataSource = new MatTableDataSource([]);
 
 
@@ -25,38 +28,52 @@ export class RecipeComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatTable, {static: false}) table: MatTable<any>;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
-    displayedColumns: any;
     readonly: Boolean;
     tableWidth: 1200;
 
 
-  constructor(private dialog: MatDialog,
-              private recipeService: RecipeService) {
-  }
+    constructor(
+    private dialog: MatDialog,
+    private recipeService: RecipeService) {
+    }
 
 
-  ngOnInit() {
-    // this.loadRecipes();
-  }
+    ngOnInit() {
+    this.loadRecipes();
+    }
 
-  ngAfterViewInit() {
+    ngAfterViewInit() {
     this.dataSource.sort = this.sort;
-  }
+    }
 
-  addRecipe() {
+    onAddRecipe(){
     let recipe = new Recipe();
     this.editRecipe(recipe, recipe);
-  }
+    }
 
-  onRemoveUser(recipe: Recipe) {
+    onEditRecipe(recipe: Recipe){
+    this.editRecipe(recipe, recipe);
+    }
+
+    onRemoveRecipe(recipe: Recipe) {
     this.editRecipe(recipe, null);
-  }
+    }
+
+
+    isAdmin(user: User): boolean {
+    if (user && user.username === 'admin') {
+        return true;
+    } else {
+        return false;
+    }
+    }
 
   private loadRecipes() {
     this.recipes = [];
     this.recipeService.getRecipes(null).subscribe(result => {
-      Object.values<Recipe>(result).forEach(r => {
-        this.recipes.push(r);
+      Object.values<Recipe>(result).forEach(
+        r => {
+         this.recipes.push(r);
       });
       this.bindToTable(this.recipes);
     }, err => {
@@ -65,18 +82,19 @@ export class RecipeComponent implements OnInit, AfterViewInit {
   }
 
 
+
   private editRecipe(recipe: Recipe, current: Recipe) {
     let mrecipe: Recipe = JSON.parse(JSON.stringify(recipe));
     let dialogRef = this.dialog.open(DialogRecipe, {
         position: { top: '60px' },
-        data: { recipe: mrecipe, current: current }
+        data: { recipe: mrecipe, detail: mrecipe.detail, current: current }
     });
-
     dialogRef.afterClosed().subscribe(result => {
-      if (result && result.recipeId === null) {
-          this.recipeService.setRecipe(result);
-          console.log(JSON.stringify(result, null, 2));
+      if(result){
+        console.log('dialog close');
+        this.recipeService.setRecipe(result).subscribe(result => {
           this.loadRecipes();
+        });
       }
     });
   }
@@ -89,6 +107,8 @@ export class RecipeComponent implements OnInit, AfterViewInit {
   templateUrl: './recipe.dialog.html',
 })
 
+
+
 export class DialogRecipe {
   autoIncrement: boolean = true;
   manualAddress: string = '';
@@ -98,7 +118,6 @@ export class DialogRecipe {
 
 
   description: string = null;
-  version: string = '';
   dbBlockAddress: string = '';
   detail = [];
   currentType: string = 'BOOL';
@@ -111,27 +130,27 @@ export class DialogRecipe {
 
   constructor(public dialogRef: MatDialogRef<DialogRecipe>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
-    // this.selectedGroups = UserGroups.ValueToGroups(this.data.user.groups);
+                console.log("test");
+                this.detail = data.detail;
+
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-  addEntry() {
-      if (!this.isValidValue()) {
-          alert('Invalid value!');  // 你可以选择其他方式显示错误，比如SnackBar。
-          return;
-      }
-      const address = this.autoIncrement ? this.getNextAddress() : this.manualAddress;
 
-      const entry = {
-          address: address,
-          type: this.currentType,
-          value: this.currentValue
-     };
-      this.detail.push(entry);
-      this.detail = [...this.detail];
-  }
+    addEntry() {
+        if (!this.isValidValue()) {
+            alert('Invalid value!');  // 你可以选择其他方式显示错误，比如SnackBar。
+            return;
+        }
+        const address = this.autoIncrement ? this.getNextAddress() : this.manualAddress;
+
+        const entry = {
+            address: address,
+            type: this.currentType,
+            value: this.currentValue
+        };
+        this.detail.push(entry);
+        this.detail = [...this.detail];
+    }
 
 
     isValidValue(): boolean {
@@ -167,39 +186,39 @@ export class DialogRecipe {
         }
     }
 
-  getNextAddress() {
-      let byteNumber,lastindex;
-      let isfirstRow = this.detail.length == 0;
-      if(!isfirstRow){
-          const lastEntry = this.detail[this.detail.length - 1];
-          const addressSegments = lastEntry.address.split('.');
-          lastindex = parseInt(addressSegments[1].substring(3));
-      }
-      // 根据上一个entry的type来调整byteNumber
-      switch (this.currentType) {
-          case 'BOOL':
-              byteNumber = isfirstRow ?  0 : lastindex += 1;
-              return `DB${this.dbBlockAddress}.DBX${byteNumber}.0`;
-          case 'BYTE':
-          case 'CHAR':
-              byteNumber = isfirstRow ?  0 : lastindex += 1;
-              return `DB${this.dbBlockAddress}.DBB${byteNumber}`;
-          case 'INT':
-          case 'WORD':
-              byteNumber = isfirstRow ?  0 : lastindex += 2;
-              return `DB${this.dbBlockAddress}.DBW${byteNumber}`;
-          case 'DINT':
-          case 'DWORD':
-          case 'REAL':
-              byteNumber = isfirstRow ?  0 : lastindex += 4;
-              return `DB${this.dbBlockAddress}.DBD${byteNumber}`;
-          default:
-              return '';  // 如果类型未匹配，返回空字符串
-      }
-  }
+    getNextAddress() {
+        let byteNumber,lastindex;
+        let isfirstRow = this.detail.length == 0;
+        if(!isfirstRow){
+            const lastEntry = this.detail[this.detail.length - 1];
+            const addressSegments = lastEntry.address.split('.');
+            lastindex = parseInt(addressSegments[1].substring(3));
+        }
+        // 根据上一个entry的type来调整byteNumber
+        switch (this.currentType) {
+            case 'BOOL':
+                byteNumber = isfirstRow ?  0 : lastindex += 1;
+                return `${this.data.recipe.dbBlockAddress}.DBX${byteNumber}.0`;
+            case 'BYTE':
+            case 'CHAR':
+                byteNumber = isfirstRow ?  0 : lastindex += 1;
+                return `${this.data.recipe.dbBlockAddress}.DBB${byteNumber}`;
+            case 'INT':
+            case 'WORD':
+                byteNumber = isfirstRow ?  0 : lastindex += 2;
+                return `${this.data.recipe.dbBlockAddress}.DBW${byteNumber}`;
+            case 'DINT':
+            case 'DWORD':
+            case 'REAL':
+                byteNumber = isfirstRow ?  0 : lastindex += 4;
+                return `${this.data.recipe.dbBlockAddress}.DBD${byteNumber}`;
+            default:
+                return '';  // 如果类型未匹配，返回空字符串
+        }
+    }
 
 
-  onDbBlockAddressChange() {
+  ondbBlockAddressChange() {
     if (this.dbBlockAddress) {
       // Update the address of all existing entries
       this.detail = this.detail.map(entry => {
@@ -212,9 +231,12 @@ export class DialogRecipe {
     }
   }
 
+    clearRow(){
+      this.detail = [];
+    }
 
-    removeRow(index: number) {
-        this.data.splice(index, 1);
+    onNoClick(): void {
+      this.dialogRef.close();
     }
 
     onOkClick() {

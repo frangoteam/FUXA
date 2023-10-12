@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -368,7 +369,8 @@ export function createTranslateLoader(http: HttpClient) {
         Define,
         AuthGuard,
         ToastNotifierService,
-        MyFileService
+        MyFileService,
+        DatePipe
     ],
     bootstrap: [AppComponent]
 })

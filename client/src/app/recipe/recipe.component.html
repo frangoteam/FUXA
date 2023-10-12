@@ -1,78 +1,49 @@
-<div style="width: 100%;height: 100% !important;position: absolute;">
     <div class="header-panel">
-        {{'device.list-title' | translate}}
+        {{'recipe.list-title' | translate}}
     </div>
     <div class="work-panel">
-        <mat-table [dataSource]="recipes">
-            <!-- Your other columns for displaying recipes -->
-            <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef>
-                    <button mat-icon-button  (click)="addRecipe()"  style="color: red;">
-                        <mat-icon>add</mat-icon>
-                    </button>
-                </mat-header-cell>
-                <!-- Additional cells for edit or delete actions if needed -->
-            </ng-container>
-
-            <!-- Other columns and rows -->
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-
         <div class="container" >
-            <mat-table #table [dataSource]="recipes" matSort>
+            <mat-table #table [dataSource]="dataSource" matSort>
                 <!-- Edit Column -->
                 <ng-container matColumnDef="select">
-                    <mat-header-cell *matHeaderCellDef [ngClass]="!readonly ? 'selectWidthClass' : 'selectHideClass'">
-                        <button *ngIf="!readonly" mat-icon-button (click)="addRecipe()" class="remove" matTooltip="{{'device.property-add' | translate}}">
+                    <mat-header-cell *matHeaderCellDef [ngClass]="selectWidthClass">
+                        <button *ngIf="!readonly" mat-icon-button (click)="onAddRecipe()" class="remove" matTooltip="{{'device.property-add' | translate}}">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" [ngClass]="!readonly ? 'selectWidthClass' : 'selectHideClass'">
-                        <button *ngIf="!readonly" mat-icon-button  class="remove" matTooltip="{{'device.property-tags' | translate}}">
+                        <!-- <button *ngIf="!readonly" mat-icon-button  class="onListRecipe(element)" class="remove" matTooltip="{{'device.property-tags' | translate}}">
                             <mat-icon>link</mat-icon>
-                        </button>
-                        <button *ngIf="!readonly" mat-icon-button  class="remove" matTooltip="{{'device.property-edit' | translate}}">
+                        </button> -->
+                        <button *ngIf="!readonly" mat-icon-button (click)="onEditRecipe(element)"  class="remove" matTooltip="{{'recipe.property-edit' | translate}}">
                             <mat-icon>edit</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
-                <!-- Name Column -->
-                <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-name' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{element.name}} </mat-cell>
+                <ng-container matColumnDef="recipeName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-recipeName' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.recipeName}} </mat-cell>
                 </ng-container>
-                <!-- Type Column -->
-                <ng-container matColumnDef="type">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-type' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{element.type}} </mat-cell>
+                <ng-container matColumnDef="creationTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-createtime' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.creationTime | date:'short'}} </mat-cell>
                 </ng-container>
-                <!-- Polling Column -->
-                <ng-container matColumnDef="polling">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-polling' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{element.polling}} </mat-cell>
+                <ng-container matColumnDef="lastModifiedTime">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-lastModifiedTime' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.lastModifiedTime | date:'short'}} </mat-cell>
                 </ng-container>
-                <!-- Address Column -->
-                <ng-container matColumnDef="address">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-address' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element"></mat-cell>
+                <ng-container matColumnDef="version">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-version' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">{{element.version}}</mat-cell>
                 </ng-container>
-                <!-- Status Column -->
-                <ng-container matColumnDef="status">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-status' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element" ></mat-cell>
+                <ng-container matColumnDef="isActive">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-isActive' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element" >{{element.isActive}}</mat-cell>
                 </ng-container>
-                <!-- Enabled Column -->
-                <ng-container matColumnDef="enabled">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'devices.list-enabled' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element">{{element.enabled}} </mat-cell>
-                </ng-container>
-                <!-- Button remove Column -->
                 <ng-container matColumnDef="remove">
-                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button *ngIf="!readonly" mat-icon-button class="remove" matTooltip="{{'device.property-remove' | translate}}">
+                        <button mat-icon-button (click)="$event.stopPropagation();onRemoveRecipe(element)" class="remove" *ngIf="!isAdmin(element)">
                             <mat-icon>clear</mat-icon>
                         </button>
                     </mat-cell>
@@ -84,7 +55,6 @@
             <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="position: relative; right: 100px;"></mat-paginator>
         </div>
     </div>
-</div>
-<button *ngIf="!readonly" mat-fab color="primary" (click)="addRecipe()" class="fab-add">
+<button *ngIf="!readonly" mat-fab color="primary" (click)="onAddRecipe()" class="fab-add">
     <mat-icon class="">add</mat-icon>
 </button>

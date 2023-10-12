@@ -1,3 +1,27 @@
+.header-panel {
+    /* z-index: 9999 !important; */
+    background-color: var(--headerBackground);
+    color: var(--headerColor);
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 36px;
+    width: 100%;
+    text-align: center;
+    line-height: 36px;
+    border-bottom: 1px solid var(--headerBorder);
+}
+
+.work-panel {
+    position: absolute;
+    top: 37px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: var(--workPanelBackground);
+}
+
+
 .container {
     display: flex;
     flex-direction: column;
@@ -7,4 +31,135 @@
     top: 1px;
     left:0px;
     right:0px;
+}
+
+.filter {
+    display: inline-block;
+    min-height: 50px;
+    padding: 8px 24px 0;
+}
+
+.filter .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.mat-table {
+    overflow: auto;
+    /* min-width: 1500px; */
+    height: 100%;
+}
+
+.mat-row {
+    min-height: 40px;
+    height: 43px;
+}
+
+.mat-cell {
+    font-size: 13px;
+}
+
+.mat-header-row {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+}
+
+.mat-header-cell {
+    font-size: 15px;
+}
+
+.mat-column-select {
+    overflow: visible;
+    flex: 0 0 80px;
+}
+
+.mat-column-name {
+    flex: 1 1 100px;
+}
+
+
+.mat-column-address {
+    flex: 2 1 280px;
+}
+
+.mat-column-device {
+    flex: 1 1 140px;
+}
+
+.mat-column-type {
+    flex: 0 0 160px;
+}
+
+.mat-column-value {
+    flex: 0 0 180px;
+}
+
+.mat-column-timestamp {
+    flex: 0 0 140px;
+}
+
+.mat-column-logger {
+    flex: 0 0 80px;
+    font-size: 10px;
+}
+
+.mat-column-logger mat-icon {
+    font-size: 20px;
+    height: 20px;
+}
+
+.mat-column-info {
+    flex: 0 0 40px;
+}
+
+.mat-column-warning {
+    flex: 0 0 30px;
+}
+
+.mat-column-options {
+    flex: 0 0 60px;
+}
+
+.mat-column-min {
+    flex: 0 0 100px;
+}
+
+.mat-column-max {
+    flex: 0 0 100px;
+}
+
+.mat-column-remove {
+    flex: 0 0 60px;
+}
+
+.selectidthClass{
+    flex: 0 0 50px;
+ }
+
+ .warning {
+     color: red;
+ }
+
+ .my-header-filter ::ng-deep .mat-sort-header-button {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+}
+
+.my-header-filter ::ng-deep .mat-sort-header-arrow {
+    top: -12px;
+    right: 20px;
+}
+
+.my-header-filter-input {
+    display: block; 
+    margin-top: 4px;
+    margin-bottom: 6px;
+    padding: 3px 1px 3px 2px;
+    border-radius: 2px;
+}
+
+.context-menu {
+    font-size: 13px;
 }

@@ -35,8 +35,10 @@ function init(_settings, log) {
 }
 
 function setRecipe(recipeData) {
-    logger.info(recipeData);
     return new Promise((resolve, reject) => {
+        recipeData.creationTime = Date.now();
+        recipeData.lastModifiedTime = Date.now();
+        recipeData.isActive = false;
         recstorage.addRecipe(recipeData)
             .then(recipeId => {
                 console.log("Recipe successfully added with ID:", recipeId);
@@ -49,9 +51,9 @@ function setRecipe(recipeData) {
     });
 }
 
-function pageRecipes(pageNumber, pageSize) {
+function getRecipes() {
     return new Promise((resolve, reject) => {
-        recstorage.pageRecipes(pageNumber, pageSize)
+        recstorage.getRecipes()
             .then(recipes => {
                 resolve(recipes);
             })
@@ -62,15 +64,16 @@ function pageRecipes(pageNumber, pageSize) {
     });
 }
 
-function updateRecipeInDatabase(recipeData) {
+function updateRecipe(recipeData) {
     return new Promise((resolve, reject) => {
         recstorage.updateRecipe(recipeData)
             .then(() => {
-                console.log("Recipe successfully updated!");
-                resolve();
+                console.log('Recipe successfully updated');
+                resolve(); // 如果需要，可以将一些成功信息返回给调用者
             })
             .catch(error => {
-                console.error('Error updating the recipe:', error);
+                // 在错误日志中包含 recipeData.id
+                console.error('Error updating the recipe with ID', recipeData.id, ':', error);
                 reject(error);
             });
     });
@@ -100,6 +103,7 @@ function uploadRecipeToRun(recipeId){
 
 module.exports = {
     init: init,
-    pageRecipes: pageRecipes,
+    getRecipes: getRecipes,
+    updateRecipe: updateRecipe,
     setRecipe: setRecipe
 };

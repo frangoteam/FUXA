@@ -2,6 +2,7 @@ export class Recipe {
     recipeId: string;
     recipeName: string;
     description: string;
+    dbblockAddress: string;
     creationTime: number;
     version: number;
     detail: RecipeDetail[];

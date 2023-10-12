@@ -21,7 +21,7 @@ module.exports = {
         });
 
         recApp.get("/api/recipes", secureFnc, function(req, res){
-            runtime.recipe.pageRecipes(req.pageN, req.pagS).then(result => {
+            runtime.recipe.getRecipes().then(result => {
                 if (result) {
                     res.json(result);
                 } else {
@@ -41,13 +41,24 @@ module.exports = {
             });
         })
 
-        recApp.post("api/recipe", secureFnc, function (req, res,){
+        recApp.post("/api/recipe", secureFnc, function (req, res,){
             var groups = checkGroupsFnc(req);
             if(res.statusCode === 403){
                 runtime.logger.error("api post users: Tocken Expired");
             } else if(authJwt.adminGroups.indexOf(groups) === -1){
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post users: Unauthorized");
+            } else if(req.body.params.recipeId !== undefined){
+                runtime.recipe.updateRecipe(req.body.params).then(function () {
+                    res.end();
+                }).catch(function (err){
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api post recipe: " + err.message);
+                })
             } else {
                 runtime.recipe.setRecipe(req.body.params).then(function () {
                     res.end();
