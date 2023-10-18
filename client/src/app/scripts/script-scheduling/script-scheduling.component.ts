@@ -7,7 +7,7 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 @Component({
     selector: 'app-script-scheduling',
     templateUrl: './script-scheduling.component.html',
-    styleUrls: ['./script-scheduling.component.css']
+    styleUrls: ['./script-scheduling.component.scss']
 })
 export class ScriptSchedulingComponent implements OnInit {
 
@@ -27,8 +27,16 @@ export class ScriptSchedulingComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            mode: [this.data.scheduling?.mode || 'interval'],
-            interval: [this.data.scheduling?.interval || 0],
+            mode: [this.scheduling?.mode || 'interval'],
+            interval: [this.scheduling?.interval || 0],
+            schedules: [this.scheduling?.schedules || []],
+        });
+    }
+
+    onAddScheduling() {
+        let schedules =  this.formGroup.get('schedules').value;
+        schedules.push({
+            date: new Date()
         });
     }
 

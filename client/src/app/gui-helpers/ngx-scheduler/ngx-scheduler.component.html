@@ -1,0 +1,10 @@
+<form [formGroup]="myForm">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'script.scheduling-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

@@ -50,6 +50,11 @@ export interface ScriptConsoleMessage {
 export interface ScriptScheduling {
     mode: ScriptSchedulingMode;
     interval: number;
+    schedules: SchedulerData[];
+}
+
+export interface SchedulerData {
+    date?: Date;
 }
 
 export enum ScriptSchedulingMode {
