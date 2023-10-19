@@ -447,6 +447,7 @@
 	"editor.controls-switch": "Switch",
     "editor.controls-graphbar": "Bar Graph",
     "editor.controls-graph-bar-settings": "Bar Graph settings",
+    "editor.controls-graphpie": "Pie Graph",
     "editor.controls-graph-pie-settings": "Pie Graph settings",
     "editor.controls-iframe": "Iframe",
     "editor.controls-iframe-settings": "Iframe settings",

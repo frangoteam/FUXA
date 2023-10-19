@@ -487,15 +487,16 @@ export class DevicesUtils {
         tag.memaddress = items[6].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
         tag.address = items[7].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
         tag.divisor = parseInt(items[8]) || 1;
-        tag.options = items[9].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
+        tag.init = items[9];
+        tag.format = items[10] ? parseInt(items[10]) : null;
+        tag.options = items[11].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
         if (tag.options && Utils.isJson(tag.options)) {
             tag.options = JSON.parse(tag.options);
         }
-        tag.init = items[10];
         tag.daq = <TagDaq> {
-            enabled: items[11] === 'true' ? true : false,
+            enabled:  Utils.Boolify(items[12]) ? true : false,
             changed: true,
-            interval: parseInt(items[12]) || 60
+            interval: parseInt(items[13]) || 60
         };
         return { tag, deviceId };
     }
