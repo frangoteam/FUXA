@@ -38,9 +38,6 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
             this.loadScripts();
         });
-        // Object.values(this.alarmsEnum).forEach(key => {
-        //     this.translateService.get('alarm.property-' + key).subscribe((txt: string) => { this.alarmsType[key] = txt });
-        // });
     }
 
     ngAfterViewInit() {
@@ -58,6 +55,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onAddScript() {
         let script = new Script(Utils.getGUID(SCRIPT_PREFIX));
+        script.name = Utils.getNextName('script_', this.dataSource.data.map(s => s.name));
 		this.editScript(script, 1);
     }
 

@@ -19,15 +19,22 @@
             </ng-container>
             <ng-container *ngSwitchCase="'scheduling'">
                 <div class="my-form-field block">
-                    <button mat-icon-button (click)="onAddScheduling()">
+                    <button mat-icon-button
+                            (click)="onAddScheduling()"
+                            type="button">
                         <mat-icon>add_circle_outline</mat-icon>
                     </button>
                     {{'script.scheduling-add-item' | translate}}
                 </div>
-                    <div *ngFor="let item of formGroup.controls.schedules.value">
-                        <span>asdf</span>
-{{item.date}}
+                <div class="schedulig-list mt10">
+                    <div *ngFor="let item of formGroup.controls.schedules.value.controls; let i = index"
+                         class="mt5 mb5">
+                        <app-ngx-scheduler [formGroup]="item"
+                                           [removable]="true"
+                                           (onRemove)="onRemoveScheduling(i)">
+                        </app-ngx-scheduler>
                     </div>
+                </div>
             </ng-container>
             <ng-container *ngSwitchDefault>
                 <div class="my-form-field block">

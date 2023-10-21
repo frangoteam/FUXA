@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { SchedulerData, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
+import { FormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-script-scheduling',
@@ -12,7 +12,7 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 export class ScriptSchedulingComponent implements OnInit {
 
     formGroup: UntypedFormGroup;
-    scheduling = <ScriptScheduling> { interval: 0 };
+    scheduling = <ScriptScheduling>{ interval: 0 };
     schedulingMode = Object.keys(ScriptSchedulingMode);
 
     constructor(
@@ -29,15 +29,29 @@ export class ScriptSchedulingComponent implements OnInit {
         this.formGroup = this.fb.group({
             mode: [this.scheduling?.mode || 'interval'],
             interval: [this.scheduling?.interval || 0],
-            schedules: [this.scheduling?.schedules || []],
+            schedules: [this.fb.array([])]
         });
+        if (this.scheduling?.schedules) {
+            this.scheduling.schedules.forEach(schedule => {
+                this.onAddScheduling(schedule);
+            });
+        }
     }
 
-    onAddScheduling() {
-        let schedules =  this.formGroup.get('schedules').value;
-        schedules.push({
-            date: new Date()
+    onAddScheduling(value?: SchedulerData) {
+        let schedules = this.formGroup.get('schedules') as FormArray;
+        const sch = this.fb.group({
+            date: [value?.date],
+            days: [value?.days],
+            time: [value?.time],
+            type: [value?.type],
         });
+        schedules.value.controls.push(sch);
+    }
+
+    onRemoveScheduling(index: number) {
+        let schedules = this.formGroup.get('schedules') as FormArray;
+        schedules.value.controls.splice(index, 1);
     }
 
     onNoClick(): void {
@@ -45,7 +59,9 @@ export class ScriptSchedulingComponent implements OnInit {
     }
 
     onOkClick(): void {
-        this.dialogRef.close(this.formGroup.value);
+        let schedules = this.formGroup.get('schedules') as FormArray;
+        this.scheduling.schedules = schedules.value.controls.map(control => control.value);
+        this.dialogRef.close(this.scheduling);
     }
 }
 

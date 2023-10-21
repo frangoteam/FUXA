@@ -283,6 +283,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LogsViewComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,
+        NgxSchedulerComponent,
         DialogChartLine,
         DialogGraphSource,
         UsersComponent,
@@ -309,7 +310,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
         ReportItemChartComponent,
-        NgxSchedulerComponent
     ],
     imports: [
         BrowserModule,

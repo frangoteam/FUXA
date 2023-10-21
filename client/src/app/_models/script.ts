@@ -55,12 +55,20 @@ export interface ScriptScheduling {
 
 export interface SchedulerData {
     date?: Date;
+    days?: any[];
+    time?: string;
+    type?: SchedulerType;
 }
 
 export enum ScriptSchedulingMode {
     interval = 'interval',
     start = 'start',
     scheduling = 'scheduling',
+}
+
+export enum SchedulerType {
+    weekly = 0,
+    date = 1,
 }
 
 export class SystemFunctions {

@@ -1,10 +1,41 @@
-<form [formGroup]="myForm">
-    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'script.scheduling-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content>
-    </div>
-    <div mat-dialog-actions class="dialog-action">
-        <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
-    </div>
+<form [formGroup]="formGroup" class="container">
+    <mat-tab-group class="inbk" [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabSelectionChange($event)">
+        <mat-tab label="{{'script.scheduling-weekly' | translate}}">
+            <mat-button-toggle-group formControlName="days" multiple class="mt15">
+                <mat-button-toggle value="mon" matTooltip="{{'general.monday' | translate}}">{{'general.monday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="tue" matTooltip="{{'general.tuesday' | translate}}">{{'general.tuesday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="wed" matTooltip="{{'general.wednesday' | translate}}">{{'general.wednesday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="thu" matTooltip="{{'general.thursday' | translate}}">{{'general.thursday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="fri" matTooltip="{{'general.friday' | translate}}">{{'general.friday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="sat" matTooltip="{{'general.saturday' | translate}}">{{'general.saturday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="sun" matTooltip="{{'general.sunday' | translate}}">{{'general.sunday-short' | translate}}</mat-button-toggle>
+            </mat-button-toggle-group>
+            <div class="my-form-field inbk ml10 mr10">
+                <span>{{'script.scheduling-time' | translate}}</span>
+                <input type="time" matInput formControlName="time" class="time">
+            </div>
+            <ng-container *ngIf="removable">
+                <button mat-icon-button (click)="onRemoveScheduling(index)" class="ml10" type="button">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </ng-container>            
+        </mat-tab>
+        <mat-tab label="{{'script.scheduling-date' | translate}}">
+            <div class="mt10">
+                <div class="my-form-field inbk ml10 mr10">
+                    <span>{{'script.scheduling-date' | translate}}</span>
+                    <input type="date" matInput formControlName="date" class="time">
+                </div>
+                <div class="my-form-field inbk ml10 mr10">
+                    <span>{{'script.scheduling-time' | translate}}</span>
+                    <input type="time" matInput formControlName="time" class="time">
+                </div>
+                <ng-container *ngIf="removable">
+                    <button mat-icon-button (click)="onRemoveScheduling()" class="ftr" type="button">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </ng-container> 
+            </div>     
+        </mat-tab>
+    </mat-tab-group>
 </form>
