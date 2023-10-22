@@ -134,7 +134,7 @@ function FuxaServer(_data, _logger, _events) {
      */
     this.setValue = function (id, value) {
         if (varsValue[id]) {
-            var val = _parseValue(value);
+            var val = _parseValue(value, varsValue[id].type);
             varsValue[id].value = val;
             varsValue[id].changed = true;
             logger.info(`'${data.name}' setValue(${id}, ${value})`, true, true);
@@ -183,19 +183,27 @@ function FuxaServer(_data, _logger, _events) {
      * Cheack and parse the value return converted value
      * @param {*} value as string
      */
-    var _parseValue = function (value) {
-        let val = parseFloat(value);
-        if (Number.isNaN(val)) {
-            // maybe boolean
-            val = Number(value);
-            // maybe string
-            if (Number.isNaN(val)) {
-                val = value;
-            }
+    var _parseValue = function (value, type) {
+        if (type === 'number') {
+            return parseFloat(value); 
+        } else if (type === 'boolean') {
+            return Boolean(value);
+        } else if (type === 'string') {
+            return value;
         } else {
-            val = parseFloat(val.toFixed(5));
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            return val;
         }
-        return val;
     }
 
     /**
