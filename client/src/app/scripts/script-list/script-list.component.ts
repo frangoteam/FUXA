@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 import { ScriptEditorComponent } from '../script-editor/script-editor.component';
 import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/script-scheduling.component';
-import { Script, SCRIPT_PREFIX, ScriptScheduling } from '../../_models/script';
+import { Script, SCRIPT_PREFIX, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
 import { Utils } from '../../_helpers/utils';
 import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
 import { ScriptModeComponent } from '../script-mode/script-mode.component';
@@ -109,8 +109,14 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
             if (script.scheduling.mode) {
                 result = this.translateService.instant('script.scheduling-' + script.scheduling.mode) + ' - ';
             }
-            if (script.scheduling.interval) {
-                result += `${script.scheduling.interval} sec.`;
+            if (script.scheduling.mode ===  ScriptSchedulingMode.interval) {
+                if (script.scheduling.interval) {
+                    result += `${script.scheduling.interval} sec.`;
+                } else {
+                    result += this.translateService.instant('report.scheduling-none');
+                }
+            } else if (script.scheduling.mode === ScriptSchedulingMode.scheduling) {
+                
             }
             return result;
         }

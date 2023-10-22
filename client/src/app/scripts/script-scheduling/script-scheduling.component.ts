@@ -60,6 +60,7 @@ export class ScriptSchedulingComponent implements OnInit {
 
     onOkClick(): void {
         let schedules = this.formGroup.get('schedules') as FormArray;
+        this.scheduling = <ScriptScheduling>this.formGroup.value;
         this.scheduling.schedules = schedules.value.controls.map(control => control.value);
         this.dialogRef.close(this.scheduling);
     }

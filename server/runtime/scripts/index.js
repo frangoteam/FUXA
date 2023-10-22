@@ -5,6 +5,7 @@
 'use strict';
 
 const MyScriptModule = require('./msm');
+const schedule = require('node-schedule');
 
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
@@ -142,8 +143,17 @@ function ScriptsManager(_runtime) {
      */
     var _init = function () {
         return new Promise(function (resolve, reject) {
-            scriptModule.init(_getSystemFunctions());
-            resolve();
+            try {
+                scriptModule.init(_getSystemFunctions());
+                resolve();
+            } catch (err) {
+                logger.error(err);
+            }
+            try {
+                schedule.gracefulShutdown();
+            } catch (e) {
+                logger.error(e);
+            }
         });
     }
 
