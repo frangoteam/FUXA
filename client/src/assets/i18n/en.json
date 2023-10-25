@@ -1096,6 +1096,8 @@
     "script.scheduling-weekly": "Weekly",
     "script.scheduling-date": "Date",
     "script.scheduling-time": "Time",
+    "script.scheduling-hour": "Hour",
+    "script.scheduling-minute": "Minute",
     "script.interval": "Interval (seconds)",
     "script.delay": "Delay (seconds)",
     "script.sys-fnc-setview-text": "$setView (View name)",

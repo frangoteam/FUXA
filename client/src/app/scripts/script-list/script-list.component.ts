@@ -109,14 +109,14 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
             if (script.scheduling.mode) {
                 result = this.translateService.instant('script.scheduling-' + script.scheduling.mode) + ' - ';
             }
-            if (script.scheduling.mode ===  ScriptSchedulingMode.interval) {
+            if (script.scheduling.mode ===  ScriptSchedulingMode.interval || script.scheduling.mode === ScriptSchedulingMode.start) {
                 if (script.scheduling.interval) {
                     result += `${script.scheduling.interval} sec.`;
                 } else {
                     result += this.translateService.instant('report.scheduling-none');
                 }
             } else if (script.scheduling.mode === ScriptSchedulingMode.scheduling) {
-                
+                result += `${script.scheduling.schedules?.length}`;
             }
             return result;
         }

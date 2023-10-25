@@ -57,6 +57,8 @@ export interface SchedulerData {
     date?: Date;
     days?: any[];
     time?: string;
+    hour?: number;
+    minute?: number;
     type?: SchedulerType;
 }
 

@@ -17,4 +17,13 @@
         font-size: 16px;
         font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
     }
+
+    .hour-time {
+        span {
+            width: 40px;
+        }
+        input {
+            width: 40px;
+        }
+    } 
 }

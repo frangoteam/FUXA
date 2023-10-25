@@ -44,6 +44,8 @@ export class ScriptSchedulingComponent implements OnInit {
             date: [value?.date],
             days: [value?.days],
             time: [value?.time],
+            hour: [value?.hour],
+            minute: [value?.minute],
             type: [value?.type],
         });
         schedules.value.controls.push(sch);
