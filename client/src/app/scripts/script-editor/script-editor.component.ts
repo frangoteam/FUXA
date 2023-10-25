@@ -226,8 +226,8 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     private validateName(name: string) {
-        let regName = /^[a-zA-Z]*$/;
-        return regName.test(name);
+        const regex = /^[a-zA-Z_$][0-9a-zA-Z_$]*$/;
+        return regex.test(name);
     }
 
     private insertText(text: string) {

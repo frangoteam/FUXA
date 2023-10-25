@@ -1,0 +1,29 @@
+.container {
+    min-height: 100px;
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+        min-width: 120px !important;
+    }
+
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: var(--inputTime);
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: var(--inputTime);
+    }
+
+    .time {
+        font-size: 16px;
+        font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
+    }
+
+    .hour-time {
+        span {
+            width: 40px;
+        }
+        input {
+            width: 40px;
+        }
+    } 
+}
