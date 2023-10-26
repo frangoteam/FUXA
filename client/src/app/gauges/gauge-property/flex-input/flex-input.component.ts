@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { GaugeProperty, GaugeRangeProperty, InputOptionsProperty } from '../../../_models/hmi';
+import { GaugeProperty, GaugeRangeProperty, InputOptionType, InputOptionsProperty } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
@@ -26,6 +26,7 @@ export class FlexInputComponent implements OnInit {
     slideView = true;
     defaultColor = Utils.defaultColor;
     valueresult = '123';
+    inputOptionType = InputOptionType;
 
     constructor() {
     }
@@ -58,6 +59,7 @@ export class FlexInputComponent implements OnInit {
         }
         if (this.isInputCtrl()) {
             this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
+            this.property.options.type = this.property.options.type ? this.property.options.type : this.property.options.numeric ? this.inputOptionType.number : this.inputOptionType.text;
         }
         this.ranges.forEach(range => {
             if (!range.color) {

@@ -182,7 +182,17 @@ export interface InputOptionsProperty {
     numeric?: boolean;
     min?: number;
     max?: number;
+    type?: InputOptionType;
 }
+
+export enum InputOptionType {
+    number = 'number',
+    text = 'text',
+    date = 'date',
+    time = 'time',
+    datetime = 'datetime'
+}
+
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;

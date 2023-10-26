@@ -101,15 +101,19 @@
         </div>
     </div>
     <div *ngIf="isInputCtrl()" class="mt15">
-        <div class="my-form-field ml20">
+        <div class="my-form-field ml10">
             <span>{{'gauges.property-update-enabled' | translate}}</span>
             <mat-slide-toggle color="primary" [(ngModel)]="property.options.updated" class="ml20"></mat-slide-toggle>
         </div>
-        <div class="my-form-field ml30">
-            <span>{{'gauges.property-numeric-enabled' | translate}}</span>
-            <mat-slide-toggle color="primary" [(ngModel)]="property.options.numeric" class="ml20"></mat-slide-toggle>
+        <div class="my-form-field ml30" style="width: 100px;">
+            <span>{{'gauges.property-input-type' | translate}}</span>
+            <mat-select [(ngModel)]="property.options.type">
+                <mat-option *ngFor="let ev of inputOptionType | enumToArray" [value]="ev.key">
+                    {{ 'gauges.property-input-type-' + ev.value | translate }}
+                </mat-option>
+            </mat-select>
         </div>
-        <ng-container *ngIf="property.options.numeric">
+        <ng-container *ngIf="property.options.type === inputOptionType.number">
             <div class="my-form-field ml20">
                 <span>{{'gauges.property-input-min' | translate}}</span>
                 <input numberOnly [(ngModel)]="property.options.min" type="number" style="width: 80px">
