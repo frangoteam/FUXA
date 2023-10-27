@@ -12,10 +12,11 @@ var { InfluxDB, Point, flux } = require('@influxdata/influxdb-client');
 const VERSION_18_FLUX = '1.8-flux';
 const VERSION_20 = '2.0';
 
-function Influx(_settings, _log) {
+function Influx(_settings, _log, _currentStorate) {
 
     var settings = _settings;               // Application settings
     var logger = _log;                      // Application logger
+    var currentStorage = _currentStorate    // Database to set the last value (current)
     var status = InfluxDBStatusEnum.CLOSE;
 
 
@@ -212,8 +213,8 @@ function Influx(_settings, _log) {
 
 
 module.exports = {
-    create: function (data, logger) {
-        return new Influx(data, logger);
+    create: function (data, logger, currentStorate) {
+        return new Influx(data, logger, currentStorate);
     }
 };
 

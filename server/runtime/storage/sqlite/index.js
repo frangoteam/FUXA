@@ -17,12 +17,12 @@ const db_daqmap_prefix = 'daq-map_';
 const db_daqtoken = 3600000;    // 1 hour
 const archive_folder = 'archive';
 
-function DaqNode(_settings, _log, _id) {
+function DaqNode(_settings, _log, _id, _currentStorate) {
 
     var settings = _settings;               // Application settings
     var logger = _log;                      // Application logger
     var id = _id;                           // Device id
-
+    const currentStorage = _currentStorate  // Database to set the last value (current)
     var initready = false;                  // Initilized flag 
     var mapworking = false;                 // Data mapping working flag
     var dataworking = false;                // Save data working flag
@@ -676,8 +676,8 @@ function _suffixToTimestamp(file) {
 }
 
 module.exports = {
-    create: function (data, logger, id) {
-        return new DaqNode(data, logger, id);
+    create: function (data, logger, id, currentStorate) {
+        return new DaqNode(data, logger, id, currentStorate);
     },
     checkRetention: checkRetention
 };
