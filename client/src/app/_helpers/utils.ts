@@ -422,6 +422,59 @@ export class Utils {
         // Remove the textarea from the document
         document.body.removeChild(textarea);
     }
+
+    static millisecondsToTime(milliseconds: number): { hours: number; minutes: number; seconds: number; milliseconds: number } {
+        const hours = Math.floor(milliseconds / 3600000);
+        milliseconds %= 3600000;
+
+        const minutes = Math.floor(milliseconds / 60000);
+        milliseconds %= 60000;
+
+        const seconds = Math.floor(milliseconds / 1000); // 1 secondo = 1000 millisecondi
+        milliseconds %= 1000;
+
+        return { hours, minutes, seconds, milliseconds };
+    }
+
+    static timeToString(time: { hours: number; minutes: number; seconds: number; milliseconds: number }, format: number): string {
+        function formatNumberWithLeadingZeros(number, length) {
+            return number.toString().padStart(length, '0');
+        }
+        let result = `${formatNumberWithLeadingZeros(time.hours, 2)}:${formatNumberWithLeadingZeros(time.minutes, 2)}`;
+        if (format) {
+            result += `:${formatNumberWithLeadingZeros(time.seconds, 2)}`;
+            if (format >= 1000) {
+                result += `.${formatNumberWithLeadingZeros(time.milliseconds, 3)}`;
+            }
+        }
+        return result;
+    }
+
+    static millisecondsToTimeString(milliseconds: number, format?: number): string {
+        return Utils.timeToString(Utils.millisecondsToTime(milliseconds), format);
+    }
+
+    static millisecondsToDateString(milliseconds: number, format?: number): string {
+        const dateObject = new Date(milliseconds);
+        const year = dateObject.getFullYear();
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        const hours = dateObject.getHours().toString().padStart(2, '0');
+        const minutes = dateObject.getMinutes().toString().padStart(2, '0');
+        const seconds = dateObject.getSeconds().toString().padStart(2, '0');
+        const milli = dateObject.getMilliseconds().toString().padStart(3, '0');
+        let dateString = `${year}-${month}-${day}`;
+        if (format > 0) {
+            dateString += `T${hours}:${minutes}`;
+            if (format > 1) {
+                dateString += `:${seconds}`;
+                if (format > 100) {
+                    dateString += `.${milli}`;
+                }
+            }
+        }
+        return dateString;
+    }
 }
 
 @Pipe({

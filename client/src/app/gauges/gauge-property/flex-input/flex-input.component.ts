@@ -1,8 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { GaugeProperty, GaugeRangeProperty, InputOptionType, InputOptionsProperty } from '../../../_models/hmi';
+import { GaugeProperty, GaugeRangeProperty, InputConvertionType, InputOptionType, InputOptionsProperty, InputTimeFormatType } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
     selector: 'flex-input',
@@ -27,6 +28,8 @@ export class FlexInputComponent implements OnInit {
     defaultColor = Utils.defaultColor;
     valueresult = '123';
     inputOptionType = InputOptionType;
+    inputTimeFormatType = InputTimeFormatType;
+    inputConvertionType = InputConvertionType;
 
     constructor() {
     }
@@ -170,6 +173,15 @@ export class FlexInputComponent implements OnInit {
     onUnitChanged(range: GaugeRangeProperty, event) {
         range.textId = event.variableId;
         range.text = event.variableValue;
+    }
+
+    onTypeChange(select: MatSelectChange) {
+        if (!this.property.options.timeformat && (select.value === InputOptionType.time || select.value === InputOptionType.datetime)) {
+            this.property.options.timeformat = InputTimeFormatType.normal;
+        }
+        if (!this.property.options.convertion && (select.value === InputOptionType.time || select.value === InputOptionType.date || select.value === InputOptionType.datetime)) {
+            this.property.options.convertion = InputConvertionType.milliseconds;
+        }
     }
 
     private addInput(gap: GaugeRangeProperty) {

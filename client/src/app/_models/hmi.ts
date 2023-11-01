@@ -183,6 +183,8 @@ export interface InputOptionsProperty {
     min?: number;
     max?: number;
     type?: InputOptionType;
+    timeformat?: InputTimeFormatType;
+    convertion?: InputConvertionType;
 }
 
 export enum InputOptionType {
@@ -191,6 +193,17 @@ export enum InputOptionType {
     date = 'date',
     time = 'time',
     datetime = 'datetime'
+}
+
+export enum InputTimeFormatType {
+    normal = 'normal',
+    seconds = 'seconds',
+    milliseconds = 'milliseconds',
+}
+
+export enum InputConvertionType {
+    milliseconds = 'milliseconds',
+    string = 'string',
 }
 
 export interface IPropertyVariable {
