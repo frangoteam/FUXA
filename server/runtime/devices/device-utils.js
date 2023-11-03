@@ -7,9 +7,9 @@ dayjs.extend(duration);
 module.exports = {
 
     tagDaqToSave: function (tag, timestamp) {
-        if (tag.daq && tag.daq.enabled) {
+        if (tag.daq && (tag.daq.enabled || tag.daq.restored)) {
             tag.timestamp = timestamp;
-            if (tag.changed && tag.daq.changed) {
+            if (tag.changed && (tag.daq.changed || tag.daq.restored)) {
                 return true;
             } else if (!tag.daq.lastDaqSaved || timestamp - parseInt(tag.daq.interval) * 1000 > tag.daq.lastDaqSaved) {
                 tag.daq.lastDaqSaved = timestamp;

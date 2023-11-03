@@ -121,8 +121,8 @@ function EthernetIPclient(_data, _logger, _events) {
                             let varsValueChanged = _updateVarsValue(result);
                             lastTimestampValue = new Date().getTime();
                             _emitValues(varsValue);
-                            if (this.addDaq) {
-                                this.addDaq(varsValueChanged, data.name);
+                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                this.addDaq(varsValueChanged, data.name, data.id);
                             }
                         } else {
                             // console.error('then error');

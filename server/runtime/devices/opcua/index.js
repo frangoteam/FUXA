@@ -322,8 +322,8 @@ function OpcUAclient(_data, _logger, _events) {
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);

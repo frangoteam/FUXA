@@ -179,23 +179,32 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
      * Add Daq value of Tag/Node
      * Check if the Tag/Node is mapped otherwise first add the value to data db then check if the db is to split and to archive
      */
-    this.addDaqValues = function (tags, tagid, tagvalue) {
+    this.addDaqValues = function (tags, deviceName, deviceId) {
         if (initready) {
             if (db_daqdata) {
                 var addMapfnc = [];
                 var addDaqfnc = [];
+                var dataToRestore = [];
                 // prepare functions
                 for (var tagid in tags) {
-                    if (!tags[tagid].daq || !tags[tagid].daq.enabled) {
+                    const tag = tags[tagid];
+                    if (!tag.daq) {
                         continue;
                     }
+                    if (tag.daq.restored) {
+                        dataToRestore.push({id: tag.id, deviceId: deviceId, value: tag.value});
+                    }
+                    if (!tag.daq.enabled) {
+                        continue;
+                    }
+
                     if (!daqTagsMap[tagid]) {
                         var prop = fncGetTagProp(tagid);
                         if (prop) {
                             addMapfnc.push(_insertTagToMap(prop.id, prop.name, prop.type));
                         }
                     } else {
-                        addDaqfnc.push(_insertTagValue(daqTagsMap[tagid].mapid, tags[tagid].value));
+                        addDaqfnc.push(_insertTagValue(daqTagsMap[tagid].mapid, tag.value));
                     }
                 }
                 // check function to insert in map            
@@ -244,7 +253,7 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                                 });
                             } else {
                                 _checkDataWorking(false);
-                            }                            
+                            }
                         }, reason => {
                             if (reason && reason.stack) {
                                 logger.error(`daqstorage.add-daq-values addDaqfnc failed! '${id}' ${reason.stack}`);
@@ -254,6 +263,9 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                             _checkDataWorking(false);
                         });
                     }
+                }
+                if (dataToRestore.length && currentStorage) {
+                    currentStorage.setValues(dataToRestore);
                 }
             } else {
                 // some things was wrong by tokenize...try to bind the db_daqdata 

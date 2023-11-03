@@ -71,7 +71,7 @@ export class Tag {
 
     constructor(_id: string) {
         this.id = _id;
-        this.daq = new TagDaq(false, true, 60);
+        this.daq = new TagDaq(false, false, 60, false);
     }
 
     static descriptor = {
@@ -99,11 +99,14 @@ export class TagDaq {
     interval: number;
     /** Save if the value was changed, the check is in device polling interval */
     changed: boolean;
+    /** Restore withe the last saved value on start device */
+    restored = false;
 
-    constructor(_enabled: boolean, _changed: boolean, _interval: number) {
+    constructor(_enabled: boolean, _changed: boolean, _interval: number, _restored?: boolean) {
         this.enabled = _enabled;
         this.changed = _changed;
         this.interval = _interval;
+        this.restored = _restored;
     }
 }
 

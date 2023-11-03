@@ -89,12 +89,18 @@ function Influx(_settings, _log, _currentStorate) {
         logger.error('influxdb-addDaqValue Not supported!');
     }
 
-    this.addDaqValues = function (tagsValues, deviceName) {
-        var dataToWrite = []
+    this.addDaqValues = function (tagsValues, deviceName, deviceId) {
+        var dataToWrite = [];
+        var dataToRestore = [];
         for (var tagid in tagsValues) {
             let tag = tagsValues[tagid];
-            if (!tag.daq || !tag.daq.enabled || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value) ) {
-                continue;
+            if (!tag.daq || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value)) {
+                if (tag.daq.restored) {
+                    dataToRestore.push({id: tag.id, deviceId: deviceId, value: tag.value});
+                }
+                if (!tag.daq.enabled) {
+                    continue;
+                }
             }
             if (influxdbVersion === VERSION_18_FLUX) {
                 const tags = {
@@ -129,6 +135,9 @@ function Influx(_settings, _log, _currentStorate) {
         }
         if (dataToWrite.length) {
             writePoints(dataToWrite);
+        }
+        if (dataToRestore.length && currentStorage) {
+            currentStorage.setValues(dataToRestore);
         }
     }
 
@@ -197,6 +206,9 @@ function Influx(_settings, _log, _currentStorate) {
                     logger.error(`influxdb-writePoints error! ${err}`);
                     setError(err);
                 });
+            }
+            if (currentStorage) {
+                currentStorage.setValues(points);
             }
         } catch (error) {
             logger.error(`influxdb-writePoints failed! ${error}`);

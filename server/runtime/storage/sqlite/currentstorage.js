@@ -2,16 +2,15 @@
 
 const fs = require('fs');
 const path = require('path');
-var sqlite3 = require('sqlite3').verbose();
-
-var settings        // Application settings
-var logger;         // Application logger
-var db_current;     // Database of project
+const sqlite3 = require('sqlite3').verbose();
+const writeInterval = 5000;
 
 function CurrentTagReadings(_settings, _log) {
 
-    const settings = _settings;
-    const logger = _log;
+    const settings = _settings;     // Application settings
+    const logger = _log;            // Application logger
+    var db_current = null;          // Database of project
+    const dataQueue = new Map();    // Tags map
 
     /**
      * Bind the database resource by create the table if not exist
@@ -41,26 +40,35 @@ function CurrentTagReadings(_settings, _log) {
     }
 
     /**
+     * Write dataQueue in database
+     */
+    var _writeValues = async function() {
+        if (dataQueue.size > 0) {
+            const stmt = db_current.prepare("INSERT OR REPLACE INTO currentValues (tagId, deviceId, value) VALUES (?, ?, ?)");
+            for (const [tagid, tag] of dataQueue) {
+                await new Promise((resolve, reject) => {
+                    stmt.run(tagid, tag.deviceId, tag.value, function(err) {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+            }
+            stmt.finalize();
+            dataQueue.clear();
+        }
+    }
+
+    /**
      * Insert the list of values in database tables, if exist replace the value
      * @param {*} tags [{ tagid, deviceId, value}]
      */
     this.setValues = function (tags) {
-        return new Promise(function (resolve, reject) {
-            // prepare query
-            var sql = "";
-            for(var i = 0; i < tags.length; i++) {
-                // var value = JSON.stringify(tags[i].value).replace(/\'/g,"''");
-                sql += "INSERT OR REPLACE INTO values (tagId, deviceId, value) VALUES('" + tags[i].tagId + "','" + tags[i].deviceId + "','" + tags[i].value + "');";
-            }
-            db_current.exec(sql, function (err) {
-                if (err) {
-                    logger.error(`currentstorage.set failed! ${err}`);
-                    reject();
-                } else {
-                    resolve();
-                }
-            });          
-        });
+        for (const tag of tags) {
+            dataQueue.set(tag.id, tag);
+        }
     }
 
     /**
@@ -77,8 +85,11 @@ function CurrentTagReadings(_settings, _log) {
      */
     this.clearAll = function () {
         return new Promise(function (resolve, reject) {
+            if (!db_current) {
+                reject('currentstorage.clear failed! (db_current)');
+            }
             // prepare query
-            var sql = "DELETE FROM values;";
+            var sql = "DELETE FROM currentValues;";
             db_current.exec(sql, function (err) {
                 if (err) {
                     logger.error(`currentstorage.clear failed! ${err}`);
@@ -86,12 +97,22 @@ function CurrentTagReadings(_settings, _log) {
                 } else {
                     resolve(true);
                 }
-            });  
+            });
+            dataQueue.clear();
         });
     }
 
     _bind().then(result => {
         logger.info('currentstorage init successful!', true);
+        setInterval(async () => {
+            try {
+                if (db_current) {
+                    await _writeValues();
+                }
+            } catch (error) {
+                logger.error(`currentstorage.writeValues failed! ${error}`);
+            }
+        }, writeInterval);
     }).catch(function (err) {
         logger.error(`currentstorage.failed-to-init ${err}`);
     });
