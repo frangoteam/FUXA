@@ -1114,6 +1114,10 @@ mat-toolbar-row {
     display: flex;
 }
 
+.font-edit {
+    font-size: 14px;
+}
+
 .container-split-ver > div {
     flex: 1;
 }

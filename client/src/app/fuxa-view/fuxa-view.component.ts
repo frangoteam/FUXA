@@ -461,7 +461,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     if(!res.valid){
                         self.setInputValidityMessage(res, htmlevent.dom);
                     }
-                    else{
+                    else {
+                        htmlevent.value = res.value;
                         self.gaugesManager.putEvent(htmlevent);
                         htmlevent.dom.blur();
                     }

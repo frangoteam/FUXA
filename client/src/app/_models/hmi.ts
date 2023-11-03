@@ -182,7 +182,30 @@ export interface InputOptionsProperty {
     numeric?: boolean;
     min?: number;
     max?: number;
+    type?: InputOptionType;
+    timeformat?: InputTimeFormatType;
+    convertion?: InputConvertionType;
 }
+
+export enum InputOptionType {
+    number = 'number',
+    text = 'text',
+    date = 'date',
+    time = 'time',
+    datetime = 'datetime'
+}
+
+export enum InputTimeFormatType {
+    normal = 'normal',
+    seconds = 'seconds',
+    milliseconds = 'milliseconds',
+}
+
+export enum InputConvertionType {
+    milliseconds = 'milliseconds',
+    string = 'string',
+}
+
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;
