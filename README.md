@@ -21,13 +21,17 @@ FUXA is developed with NodeJS (backend) and Angular (frontend).
 
 You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14.21.3 (npm 6.14.18) || 16.20.2 (npm 8.19.4) || 18.18.2 (npm 9.8.1).
 
+**WARNING** In linux with nodejs Version 16.20.2 || 18.18.2 there are problems with the node-snap7 library for communication with Siemens S7 PLCs, if you don't intend to use it you can remove it from the server/package.json
+
 Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (first option)
+In linux to use only with nodejs Version 14.21.3
 ```
 npm install -g --unsafe-perm @frangoteam/fuxa
 fuxa
 ```
 
 Or [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it (second option)
+
 ```
 cd ./server
 npm install
