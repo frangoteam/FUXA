@@ -142,20 +142,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                 let input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
                     input.value = '';
-                    if (gab.property.options?.type) {
-                        if (gab.property.options.type === InputOptionType.datetime) {
-                            input.setAttribute('type', 'datetime-local');
-                        } else {
-                            input.setAttribute('type', gab.property.options?.type);
-                        }
-                        if (gab.property.options.type === InputOptionType.time) {
-                            if (gab.property.options?.timeformat === InputTimeFormatType.seconds) {
-                                input.setAttribute('step', 1);
-                            } else if (gab.property.options?.timeformat === InputTimeFormatType.milliseconds) {
-                                input.setAttribute('step', 0.001);
-                            }
-                        }
-                    }
+                    HtmlInputComponent.checkInputType(input, gab.property.options);
                     input.setAttribute('autocomplete', 'off');
                     if (gab.property.options && gab.property.options.numeric) {
                         const min = parseFloat(gab.property.options.min);
@@ -209,6 +196,23 @@ export class HtmlInputComponent extends GaugeBaseComponent {
             let rects = ele.getElementsByTagName('rect');
             if(rects){
                 rects[0].setAttribute('stroke-width','0.5');
+            }
+        }
+    }
+
+    static checkInputType(input: HTMLElement, options?: any) {
+        if (options?.type) {
+            if (options.type === InputOptionType.datetime) {
+                input.setAttribute('type', 'datetime-local');
+            } else {
+                input.setAttribute('type', options.type);
+            }
+            if (options.type === InputOptionType.time) {
+                if (options.timeformat === InputTimeFormatType.seconds) {
+                    input.setAttribute('step', '1');
+                } else if (options.timeformat === InputTimeFormatType.milliseconds) {
+                    input.setAttribute('step', '0.001');
+                }
             }
         }
     }
