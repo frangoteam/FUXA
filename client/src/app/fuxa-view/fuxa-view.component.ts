@@ -498,7 +498,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                         self.gaugeInputCurrent = htmlevent.dom.value;
                         document.body.appendChild(self.inputDialogRef.nativeElement);
-
+                        HtmlInputComponent.checkInputType(self.inputValueRef.nativeElement, htmlevent.ga.property?.options);
                         setTimeout(() => {
                             self.inputValueRef.nativeElement.focus();
                         }, 300);
@@ -814,16 +814,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onOkClick(evintput) {
         if (this.inputDialog.target.dom) {
             let res = HtmlInputComponent.validateValue(evintput, this.inputDialog.target.ga);
-            if(!res.valid){
+            if(!res.valid) {
                 this.setInputValidityMessage(res, this.inputValueRef.nativeElement);
             }
-            else{
+            else {
                 this.inputValueRef.nativeElement.setCustomValidity('');
                 this.inputDialog.target.dom.value = evintput;
                 this.inputDialog.target.dbg = 'key pressed ' + this.inputDialog.target.dom.id + ' ' + this.inputDialog.target.dom.value;
                 this.inputDialog.target.id = this.inputDialog.target.dom.id;
                 this.inputDialog.target.value = this.inputDialog.target.dom.value;
-                this.gaugesManager.putEvent(this.inputDialog.target);
+                this.gaugesManager.putEvent({...this.inputDialog.target, value: res.value});
             }
         }
     }
