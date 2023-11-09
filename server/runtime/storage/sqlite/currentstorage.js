@@ -72,6 +72,25 @@ function CurrentTagReadings(_settings, _log) {
     }
 
     /**
+     * Get a list of values per device
+     * @param {*} deviceId
+     */
+    this.getValuesByDeviceId = function (deviceId) {
+        return new Promise(function (resolve, reject) {
+            var sql = "SELECT tagId, value FROM data WHERE deviceId = ?";
+            db_current.all(sql, [deviceId], function (err, rows) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    const result = rows.map(row => ({ id: row.id, value: row.value }));
+                    resolve(result);
+                }
+            });
+        });
+    }
+
+    /**
      * Close the database
      */
     this.close = function () {
