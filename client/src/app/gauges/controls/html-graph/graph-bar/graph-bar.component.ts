@@ -202,6 +202,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                         let dataset = <ChartDataset>this.sourceMap[sigsid[i]];
                         dataset.data = data;
                         this.fullDataSetAttribute(dataset);
+                        this.chart.update();
                     }
                 }
             }
