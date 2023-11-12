@@ -140,6 +140,10 @@ function checkRetention() {
     });
 }
 
+function getCurrentStorageFnc() {
+    return currentStorateDB.getValuesByDeviceId;
+}
+
 function _getDaqNode(tagid) {
     var nodes = Object.values(daqDB);
     for (var i = 0; i < nodes.length; i++) {
@@ -176,4 +180,5 @@ module.exports = {
     getNodeValues: getNodeValues,
     getNodesValues: getNodesValues,
     checkRetention: checkRetention,
+    getCurrentStorageFnc: getCurrentStorageFnc,
 };

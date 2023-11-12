@@ -77,13 +77,13 @@ function CurrentTagReadings(_settings, _log) {
      */
     this.getValuesByDeviceId = function (deviceId) {
         return new Promise(function (resolve, reject) {
-            var sql = "SELECT tagId, value FROM data WHERE deviceId = ?";
+            var sql = "SELECT tagId, value FROM currentValues WHERE deviceId = ?";
             db_current.all(sql, [deviceId], function (err, rows) {
                 if (err) {
                     console.error(err);
                     reject(err);
                 } else {
-                    const result = rows.map(row => ({ id: row.id, value: row.value }));
+                    const result = rows.map(row => ({ id: row.tagId, value: row.value }));
                     resolve(result);
                 }
             });

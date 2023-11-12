@@ -14,6 +14,7 @@ var FuxaServer = require('./fuxaserver');
 // var TEMPLATEclient = require('./template');
 
 const path = require('path');
+const utils = require('../utils');
 
 var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
@@ -93,6 +94,7 @@ function Device(data, runtime) {
         currentCmd = DeviceCmdEnum.START;
         if (status === DeviceStatusEnum.INIT) {
             logger.info(`'${property.name}' start`);
+            this.restoreValues();
             var self = this;
             this.checkStatus();
             deviceCheckStatus = setInterval(function () {
@@ -298,6 +300,11 @@ function Device(data, runtime) {
         //return comm.addDaq = fnc;
     }
 
+    this.bindGetDaqValueToRestore = function (fnc) {
+        this.getDaqValueToRestore = fnc;
+    }
+    this.getDaqValueToRestore = null;   // Function to get current value to restore by start
+
     /**
      * Call Device to return Tag property
      */
@@ -348,9 +355,32 @@ function Device(data, runtime) {
                 return parseFloat(current) - parseFloat(fnc[1]);
             }     
         } catch (err) {
-            console.error(err);
+            logger.error(err);
         }
         return value;
+    }
+
+    this.restoreValues = function() {
+        try {
+            if (this.getDaqValueToRestore) {
+                var self = this;
+                this.getDaqValueToRestore(property.id).then((toRestore) => {
+                    var restored = 0;
+                    toRestore.forEach(element => {
+                        if (element.id && !utils.isNullOrUndefined(element.value)) {
+                            if (self.setValue(element.id, element.value)) {
+                                restored++;
+                            }
+                        }
+                    });
+                    logger.info(`'${property.name}' restored ${restored}/${toRestore.length} values`);
+                }).catch((err) => {
+                    logger.error(`'${property.name}' restore error! ${err}`);
+                });
+            }
+        } catch (err) {
+            logger.error(`'${property.name}' restore error! ${err}`);
+        }
     }
 
     this.load(data);

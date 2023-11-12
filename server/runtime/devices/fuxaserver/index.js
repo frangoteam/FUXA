@@ -89,6 +89,7 @@ function FuxaServer(_data, _logger, _events) {
                 data.tags[id].timestamp = Date.now();
                 connectionTags.push(data.tags[id]);
             }
+            varsValue[id] = data.tags[id];
         }
         tocheck = !utils.isEmptyObject(data.tags);
         logger.info(`'${data.name}' data loaded (${count})`, true);
