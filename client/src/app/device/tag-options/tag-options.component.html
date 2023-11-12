@@ -2,14 +2,18 @@
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'device.tag-options-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="block mt10" style="text-align: center;">
-            <div class="my-form-field" style="float: left;">
+        <div class="block mt10 flex" style="text-align: center;">
+            <div class="my-form-field w100">
                 <span>{{'device.tag-daq-enabled' | translate}}</span>
                 <mat-slide-toggle color="primary" formControlName="enabled"></mat-slide-toggle>
             </div>
-            <div class="my-form-field" style="display: inline-block;">
+            <div class="my-form-field w100">
                 <span>{{'device.tag-daq-changed' | translate}}</span>
                 <mat-slide-toggle color="primary" formControlName="changed"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field w100">
+                <span>{{'device.tag-daq-restored' | translate}}</span>
+                <mat-slide-toggle color="primary" formControlName="restored"></mat-slide-toggle>
             </div>
         </div>
         <div class="my-form-field block">

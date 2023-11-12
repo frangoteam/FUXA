@@ -12,10 +12,11 @@ var { InfluxDB, Point, flux } = require('@influxdata/influxdb-client');
 const VERSION_18_FLUX = '1.8-flux';
 const VERSION_20 = '2.0';
 
-function Influx(_settings, _log) {
+function Influx(_settings, _log, _currentStorate) {
 
     var settings = _settings;               // Application settings
     var logger = _log;                      // Application logger
+    var currentStorage = _currentStorate    // Database to set the last value (current)
     var status = InfluxDBStatusEnum.CLOSE;
 
 
@@ -88,12 +89,18 @@ function Influx(_settings, _log) {
         logger.error('influxdb-addDaqValue Not supported!');
     }
 
-    this.addDaqValues = function (tagsValues, deviceName) {
-        var dataToWrite = []
+    this.addDaqValues = function (tagsValues, deviceName, deviceId) {
+        var dataToWrite = [];
+        var dataToRestore = [];
         for (var tagid in tagsValues) {
             let tag = tagsValues[tagid];
-            if (!tag.daq || !tag.daq.enabled || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value) ) {
-                continue;
+            if (!tag.daq || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value)) {
+                if (tag.daq.restored) {
+                    dataToRestore.push({id: tag.id, deviceId: deviceId, value: tag.value});
+                }
+                if (!tag.daq.enabled) {
+                    continue;
+                }
             }
             if (influxdbVersion === VERSION_18_FLUX) {
                 const tags = {
@@ -128,6 +135,9 @@ function Influx(_settings, _log) {
         }
         if (dataToWrite.length) {
             writePoints(dataToWrite);
+        }
+        if (dataToRestore.length && currentStorage) {
+            currentStorage.setValues(dataToRestore);
         }
     }
 
@@ -197,6 +207,9 @@ function Influx(_settings, _log) {
                     setError(err);
                 });
             }
+            if (currentStorage) {
+                currentStorage.setValues(points);
+            }
         } catch (error) {
             logger.error(`influxdb-writePoints failed! ${error}`);
         }
@@ -212,8 +225,8 @@ function Influx(_settings, _log) {
 
 
 module.exports = {
-    create: function (data, logger) {
-        return new Influx(data, logger);
+    create: function (data, logger, currentStorate) {
+        return new Influx(data, logger, currentStorate);
     }
 };
 

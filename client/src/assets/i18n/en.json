@@ -850,8 +850,10 @@
 
     "device.tag-options-title": "Tag Options",
     "device.tag-daq-enabled": "Registration Enabled",
-    "device.tag-daq-changed": "Save value if changed",
+    "device.tag-daq-changed": "Save if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
+    "device.tag-daq-restored": "To restore",
+
     "device.tag-format": "Format digits (2 = #.##)",
     "device.tag-scale": "Scale Mode / Convertion",
     "device.tag-scale-mode-undefined": "No Scaling",

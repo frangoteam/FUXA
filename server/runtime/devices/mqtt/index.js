@@ -3,7 +3,7 @@
  */
 'use strict';
 const mqtt = require('mqtt');
-var utils = require('../../utils');
+const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const path = require('path');
 const fs = require('fs');
@@ -154,8 +154,8 @@ function MQTTclient(_data, _logger, _events) {
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);

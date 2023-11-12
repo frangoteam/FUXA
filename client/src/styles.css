@@ -1106,6 +1106,10 @@ mat-toolbar-row {
     width: 100%;
 }
 
+.flex {
+    display: flex;
+}
+
 .container-split-ver {
     display: flex;
 }
