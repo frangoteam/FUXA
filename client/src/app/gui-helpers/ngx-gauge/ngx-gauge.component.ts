@@ -1,7 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnChanges, ViewChild, HostListener, ElementRef, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges, ViewChild, HostListener, ElementRef, Input, SimpleChanges, OnDestroy } from '@angular/core';
 
 import { GaugeOptions, GaugeType } from './gaugeOptions';
 import { Utils } from '../../_helpers/utils';
+import { Subject, interval, take, takeUntil } from 'rxjs';
 
 declare const Gauge: any;
 declare const Donut: any;
@@ -11,7 +12,7 @@ declare const Donut: any;
     templateUrl: './ngx-gauge.component.html',
     styleUrls: ['./ngx-gauge.component.css']
 })
-export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
+export class NgxGaugeComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
     @Input() public id: string;
     @Input() public options: GaugeOptions;
@@ -19,6 +20,8 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     @ViewChild('panel', {static: false}) public panel: ElementRef;
     @ViewChild('gauge', {static: false}) public canvas: ElementRef;
     @ViewChild('gaugetext', {static: false}) public gaugetext: ElementRef;
+
+    private destroy$ = new Subject<void>();
 
     gauge: any;
     type = GaugeType.Gauge;
@@ -32,10 +35,22 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {
+        interval(100).pipe(
+            take(10),
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
             this.onResize(null);
             this.setOptions(this.options);
-        }, 100);
+        });
+    }
+
+    ngOnDestroy() {
+        try {
+            this.destroy$.next();
+            this.destroy$.unsubscribe();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
