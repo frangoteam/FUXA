@@ -1,7 +1,7 @@
 ---
-name: '[FEATURE]'
+name: 'Feature request'
 about: Suggest an idea for improving FUXA
-title: ''
+title: '[FEATURE]'
 labels: 'type:feature'
 assignees: ''
 ---
