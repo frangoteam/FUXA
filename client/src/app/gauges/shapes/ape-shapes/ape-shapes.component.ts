@@ -140,7 +140,10 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            element.timeline().stop(true);
+            element.timeline().stop();
+        }
+        if (gaugeStatus.actionRef?.animr) {
+            gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);
