@@ -335,6 +335,7 @@ export interface GaugeGraphProperty {
 
 export interface GaugeIframeProperty {
     address: string;
+    variableId: string;
 }
 
 export interface GaugeTableProperty {

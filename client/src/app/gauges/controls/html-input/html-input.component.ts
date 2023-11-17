@@ -186,16 +186,18 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                 }
             }
 
-            // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
-            let fobj = ele.getElementsByTagName('foreignObject');
-            if(fobj){
-                fobj[0].style.paddingLeft = '1px';
-            }
+            if (ele) {
+                // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
+                let fobj = ele.getElementsByTagName('foreignObject');
+                if(fobj){
+                    fobj[0].style.paddingLeft = '1px';
+                }
 
-            // Set the border on the surrounding svg rect
-            let rects = ele.getElementsByTagName('rect');
-            if(rects){
-                rects[0].setAttribute('stroke-width','0.5');
+                // Set the border on the surrounding svg rect
+                let rects = ele.getElementsByTagName('rect');
+                if(rects){
+                    rects[0].setAttribute('stroke-width','0.5');
+                }
             }
         }
     }

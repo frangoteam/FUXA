@@ -475,6 +475,15 @@ export class Utils {
         }
         return dateString;
     }
+
+    static isValidUrl(url: string): boolean {
+        try {
+            new URL(url);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
 }
 
 @Pipe({
