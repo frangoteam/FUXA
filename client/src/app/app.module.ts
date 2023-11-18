@@ -170,6 +170,7 @@ import { ToastNotifierService } from './_services/toast-notifier.service';
 import { MyFileService } from './_services/my-file.service';
 import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
 import { RecipeComponent, DialogRecipe } from './recipe/recipe.component';
+import { RecipeUploadComponent } from './recipe/recipe-upload/recipe-upload.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -303,7 +304,8 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemAlarmsComponent,
         ReportItemChartComponent,
         RecipeComponent,
-        DialogRecipe
+        DialogRecipe,
+        RecipeUploadComponent,
     ],
     imports: [
         BrowserModule,

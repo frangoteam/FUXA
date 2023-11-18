@@ -5,6 +5,7 @@ export class Recipe {
     dbblockAddress: string;
     creationTime: number;
     version: number;
+    isActive: number;
     detail: RecipeDetail[];
 }
 

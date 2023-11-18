@@ -3,6 +3,9 @@ import { Component, Inject, OnInit, AfterViewInit, ViewChild } from '@angular/co
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+
+
 
 import { SelOptionsComponent } from '../gui-helpers/sel-options/sel-options.component';
 
@@ -19,10 +22,8 @@ import {User} from "../_models/user";
 export class RecipeComponent implements OnInit, AfterViewInit {
 
   @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
-  displayedColumns = ['select', 'recipeName', 'creationTime', 'lastModifiedTime', 'version', 'isActive', 'remove'];
+  displayedColumns = ['select', 'recipeName', 'creationTime', 'lastModifiedTime', 'version', 'isActive', 'uploadRecipe', 'remove'];
   dataSource = new MatTableDataSource([]);
-
-
 
   recipes: Recipe[];
 
@@ -48,17 +49,29 @@ export class RecipeComponent implements OnInit, AfterViewInit {
 
     onAddRecipe(){
     let recipe = new Recipe();
-    this.editRecipe(recipe, recipe);
+    this.editRecipe(recipe);
     }
 
     onEditRecipe(recipe: Recipe){
-    this.editRecipe(recipe, recipe);
+    this.editRecipe(recipe);
+    }
+
+    onUploadRecipe(recipe: Recipe){
+      // this.onUploadRecipe(recipe, recipe);
     }
 
     onRemoveRecipe(recipe: Recipe) {
-    this.editRecipe(recipe, null);
+    this.editRecipe(recipe);
     }
 
+    toggleIsActive(event: MatSlideToggleChange, element: Recipe) {
+      element.isActive = event.checked ? 1 : 0;
+      this.recipeService.setRecipe(element).subscribe(result => {
+        this.loadRecipes();
+      });
+      console.log(element);
+      // 在这里执行其他处理开关状态更改的操作，例如向服务器发送更新请求
+    }
 
     isAdmin(user: User): boolean {
     if (user && user.username === 'admin') {
@@ -83,11 +96,11 @@ export class RecipeComponent implements OnInit, AfterViewInit {
 
 
 
-  private editRecipe(recipe: Recipe, current: Recipe) {
+  private editRecipe(recipe: Recipe) {
     let mrecipe: Recipe = JSON.parse(JSON.stringify(recipe));
     let dialogRef = this.dialog.open(DialogRecipe, {
         position: { top: '60px' },
-        data: { recipe: mrecipe, detail: mrecipe.detail, current: current }
+        data: { recipe: mrecipe}
     });
     dialogRef.afterClosed().subscribe(result => {
       if(result){
@@ -104,7 +117,7 @@ export class RecipeComponent implements OnInit, AfterViewInit {
 }
 @Component({
   selector: 'app-dialog-recipe',
-  templateUrl: './recipe.dialog.html',
+  templateUrl: './recipe-property.dialog.html',
 })
 
 
@@ -130,9 +143,7 @@ export class DialogRecipe {
 
   constructor(public dialogRef: MatDialogRef<DialogRecipe>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
-                console.log("test");
-                this.detail = data.detail;
-
+                this.detail = data.recipe.detail;
   }
 
 

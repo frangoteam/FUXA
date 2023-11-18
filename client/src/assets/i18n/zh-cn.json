@@ -821,6 +821,8 @@
     "recipe.list-lastModifiedTime": "创建时间",
     "recipe.list-version":"版本",
     "recipe.list-isActive":"开关",
+    "recipe.list-uploadRecipe":"配方上传",
+    "recipe.add":"添加配方",
     "recipe.property":"配方属性",
     "recipe.detail.dbBlockAddress":"存储块地址",
     "recipe.detail.address":"地址",
@@ -828,6 +830,7 @@
     "recipe.detail.value":"值",
     "recipe.list-title":"配方设置",
     "recipe.property-edit": "编辑配方",
+    "recipe.upload":"上传",
 
 
 

@@ -7,7 +7,7 @@
                 <!-- Edit Column -->
                 <ng-container matColumnDef="select">
                     <mat-header-cell *matHeaderCellDef [ngClass]="selectWidthClass">
-                        <button *ngIf="!readonly" mat-icon-button (click)="onAddRecipe()" class="remove" matTooltip="{{'device.property-add' | translate}}">
+                        <button *ngIf="!readonly" mat-icon-button (click)="onAddRecipe()" class="remove" matTooltip="{{'recipe.add' | translate}}">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
@@ -38,8 +38,20 @@
                 </ng-container>
                 <ng-container matColumnDef="isActive">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-isActive' | translate}} </mat-header-cell>
-                    <mat-cell *matCellDef="let element" >{{element.isActive}}</mat-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-slide-toggle [checked]="element.isActive === 1" (change)="toggleIsActive($event, element)">{{ element.isActive === 1 ? 'On' : 'Off' }}</mat-slide-toggle>
+                    </mat-cell>
+                    <!-- <mat-cell *matCellDef="let element" >{{element.isActive}}</mat-cell> -->
                 </ng-container>
+                <ng-container matColumnDef="uploadRecipe"> 
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipe.list-uploadRecipe' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button *ngIf="!readonly" mat-icon-button (click)="onEditRecipe(element)"  class="remove" matTooltip="{{'recipe.upload' | translate}}">
+                            <mat-icon>upload</mat-icon>
+                        </button>
+                    </mat-cell>
+                    <!-- <mat-cell *matCellDef="let element" >{{element.isActive}}</mat-cell> -->
+                </ng-container>                
                 <ng-container matColumnDef="remove">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
