@@ -188,6 +188,9 @@ function FuxaServer(_data, _logger, _events) {
         if (type === 'number') {
             return parseFloat(value); 
         } else if (type === 'boolean') {
+            if (typeof value === 'string') {
+                return value.toLowerCase() !== 'false';
+            }
             return Boolean(value);
         } else if (type === 'string') {
             return value;
