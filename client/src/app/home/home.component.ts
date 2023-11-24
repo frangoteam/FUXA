@@ -154,7 +154,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (this.homeView && viewId !== this.homeView.id || force || !this.homeView) {
+        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview.view?.id !== viewId) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
