@@ -64,10 +64,12 @@ export class HtmlSwitchComponent {
                 } else {
                     value = parseFloat(value.toFixed(5));
                 }
-                value = GaugeBaseComponent.checkBitmaskAndValue((<GaugeProperty>ga.property).bitmask,
-                                                                        value,
-                                                                        (<GaugeProperty>ga.property).options.offValue,
-                                                                        (<GaugeProperty>ga.property).options.onValue);
+                if (typeof sig.value !== 'boolean') {
+                    value = GaugeBaseComponent.checkBitmaskAndValue((<GaugeProperty>ga.property).bitmask,
+                                                                            value,
+                                                                            (<GaugeProperty>ga.property).options.offValue,
+                                                                            (<GaugeProperty>ga.property).options.onValue);
+                }
                 switcher.setValue(value);
             }
         } catch (err) {
