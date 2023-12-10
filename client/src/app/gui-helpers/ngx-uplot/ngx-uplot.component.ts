@@ -445,6 +445,7 @@ export interface ChartOptions extends NgxOptions {
     realtime?: number;
     lastRange?: string;
     hideToolbar?: boolean;
+    refreshInterval?: number;
 }
 
 export interface NgxSeries extends Series {

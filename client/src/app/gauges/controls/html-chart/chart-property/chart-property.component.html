@@ -11,7 +11,7 @@
                 <span>{{'chart.property-name' | translate}}</span>
                 <input [(ngModel)]="data.settings.name" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="text">
             </div>
-            <div class="my-form-field field-block lbk">
+            <div class="my-form-field field-block lbk mt5">
                 <span>{{'chart.property-chart' | translate}}</span>
                 <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
                     <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
@@ -40,9 +40,15 @@
                         </mat-option>
                     </mat-select>
                 </div>
-                <div class="my-form-field inbk ml10 tac">
-                    <span>{{'chart.property-hide-toolbar' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                <div class="block mt5">
+                    <div class="my-form-field field-number inbk" style="width: 120px">
+                        <span style="width: 120px;">{{'chart.property-refresh-interval' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.refreshInterval"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0">
+                    </div>   
+                    <div class="my-form-field inbk ml10 tac">
+                        <span>{{'chart.property-hide-toolbar' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                    </div>
                 </div>
             </ng-container>
             <div *ngIf="chartViewValue === chartViewRealtime" class="my-form-field field-number lbk section-item">

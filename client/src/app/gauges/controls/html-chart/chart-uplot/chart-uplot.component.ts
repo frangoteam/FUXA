@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, timer } from 'rxjs';
+import { Subject, interval, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataConverterService } from '../../../../_services/data-converter.service';
 
@@ -181,6 +181,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.mapData = {};
         if (options) {
             this.options = options;
+        }
+        this.destroy$.next();
+        if (this.options.refreshInterval) {
+            interval(this.options.refreshInterval * 60000).pipe(
+                takeUntil(this.destroy$)
+            ).subscribe((res) => {
+                this.onRefresh();
+            });
         }
         this.updateCanvasOptions(this.nguplot);
         if (this.options.panel) {
