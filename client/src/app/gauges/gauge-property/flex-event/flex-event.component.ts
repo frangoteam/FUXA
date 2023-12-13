@@ -173,6 +173,11 @@ export class FlexEventComponent implements OnInit {
         scriptParam.value = event.variableId;
     }
 
+    destinationWithHideClose(action: GaugeEventActionType) {
+        return action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow) ||
+            action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.ondialog);
+    }
+
     private addEvent(ge: GaugeEvent) {
         if (!this.events) {
             this.events = [];

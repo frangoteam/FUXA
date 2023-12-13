@@ -619,6 +619,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (view.profile.bkcolor) {
             this.dialog.bkcolor = view.profile.bkcolor;
         }
+        this.dialog.disableDefaultClose = options.hideClose;
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
@@ -646,6 +647,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.height = view.profile.height;
         card.view = view;
         card.variablesMapping = options.variablesMapping;
+        card.disableDefaultClose = options.hideClose;
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
@@ -843,6 +845,8 @@ export class CardModel {
     public variablesMapping: any = [];
     public view: View;
 
+    disableDefaultClose: boolean;
+
     constructor(id: string) {
         this.id = id;
     }
@@ -857,6 +861,8 @@ export class DialogModalModel {
     public bkcolor: string;
     public view: View;
     public variablesMapping: any = [];
+
+    disableDefaultClose: boolean;
 
     constructor(id: string) {
         this.id = id;
