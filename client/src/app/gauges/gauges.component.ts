@@ -740,7 +740,7 @@ export class GaugesManager {
                     this.hmiService.queryDaqValues(data);
                 });
                 if (isview) {
-                    gauge.setRange(null);
+                    gauge.setInitRange();
                 }
                 this.mapGauges[ga.id] = gauge;
             }

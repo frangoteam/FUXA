@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType, IDateRange } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
@@ -36,6 +36,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
     private destroy$ = new Subject<void>();
+    type: ChartViewType;
 
     constructor(
         private dataService: DataConverterService,
@@ -183,7 +184,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options = options;
         }
         this.destroy$.next();
-        if (this.options.refreshInterval) {
+        if (this.type === ChartViewType.history && this.options.refreshInterval) {
             interval(this.options.refreshInterval * 60000).pipe(
                 takeUntil(this.destroy$)
             ).subscribe((res) => {
@@ -198,14 +199,23 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.updateDomOptions(this.nguplot);
     }
 
-    public setRange(startRange) {
+    public setInitRange(startRange?: string) {
         if (this.withToolbar) {
             if (startRange) {
                 this.rangeTypeValue = this.options.lastRange;
             } else if (this.options.lastRange) {
                 this.rangeTypeValue = this.options.lastRange;
             }
+        }
+        if (this.type === ChartViewType.history) {
             this.onRangeChanged(this.rangeTypeValue);
+        } else if (this.options.loadOldValues && this.options.realtime) {
+            this.lastDaqQuery.gid = this.id;
+            this.lastDaqQuery.sids = Object.keys(this.mapData);
+            var now = new Date();
+            this.lastDaqQuery.from = new Date(now.getTime() - this.options.realtime * 60000).getTime();
+            this.lastDaqQuery.to = Date.now();
+            this.onDaqQuery();
         }
     }
 

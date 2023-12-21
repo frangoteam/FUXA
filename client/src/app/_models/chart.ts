@@ -17,8 +17,8 @@ export class ChartLine {
 }
 
 export enum ChartViewType {
-    realtime1 = 'chart.viewtype-realtime1',
-    history = 'chart.viewtype-history'
+    realtime1 = 'realtime1',
+    history = 'history'
 }
 
 export enum ChartRangeType {

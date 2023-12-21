@@ -31,14 +31,13 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
 
     lastRangeType = ChartRangeType;
     chartViewType = ChartViewType;
-    chartViewRealtime = Utils.getEnumKey(ChartViewType, ChartViewType.realtime1);
 
     dateFormat = DateFormatType;
     timeFormat = TimeFormatType;
     legendModes = ChartLegendMode;
     fonts = Define.fonts;
     defaultColor = Utils.defaultColor;
-    chartViewValue = this.chartViewRealtime;
+    chartViewValue = ChartViewType.realtime1;
     public chartCtrl: UntypedFormControl = new UntypedFormControl();
     public chartFilterCtrl: UntypedFormControl = new UntypedFormControl();
     public filteredChart: ReplaySubject<Chart[]> = new ReplaySubject<Chart[]>(1);
@@ -52,10 +51,6 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
         private translateService: TranslateService) { }
 
     ngOnInit() {
-
-        Object.keys(this.chartViewType).forEach(key => {
-            this.translateService.get(this.chartViewType[key]).subscribe((txt: string) => { this.chartViewType[key] = txt; });
-        });
         Object.keys(this.legendModes).forEach(key => {
             this.translateService.get(this.legendModes[key]).subscribe((txt: string) => { this.legendModes[key] = txt; });
         });
