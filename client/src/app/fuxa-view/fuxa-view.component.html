@@ -1,10 +1,21 @@
 <div #dataContainer class="view-container" id="content">
 </div>
-<div *ngFor="let card of cards; let i = index" [style.height]="getCardHeight(card.height) + 'px'" [style.left]="card.x + 'px'" [style.top]="card.y +'px'"
-    [style.width]="card.width +'px'" class="fab-card" style="cursor: auto  !important;" ngDraggable>
-    <a (click)="onCloseCard(card);" class="card-close" *ngIf="!card.disableDefaultClose">
-        <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
-    </a>
+<div *ngFor="let card of cards; let i = index"
+     [style.height]="getCardHeight(card.height) + 'px'" 
+     [style.left]="card.x + 'px'" 
+     [style.top]="card.y +'px'"
+     [style.width]="card.width +'px'" 
+     class="fab-card" 
+     style="cursor: auto !important;" 
+     [handle]="DemoHandle"
+     ngDraggable>
+    <div #DemoHandle
+         class="card-move-area">
+         <a (click)="onCloseCard(card);" class="card-close" *ngIf="!card.disableDefaultClose">
+            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+        </a>
+    </div>
+
     <app-fuxa-view (onclose)="onCloseCard(card)" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [parentcards]="cards" [variablesMapping]="card.variablesMapping"
         [view]="card.view"></app-fuxa-view>
 </div>
