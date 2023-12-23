@@ -225,7 +225,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.setMode('select', false);
                     }, 700);
                     this.checkSvgElementsMap(true);
-                    // this.hmiService.addGauge(this.hmi, eleadded);
                 },
                 (eleremoved) => {
                     this.onRemoveElement(eleremoved);
@@ -660,7 +659,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private onCopyAndPaste(copiedPasted: CopiedAndPasted) {
         if (copiedPasted?.copy?.length && copiedPasted?.past?.length) {
-            const copied = copiedPasted.copy.filter(element => element !== null && !element.symbols);
+            const copied = copiedPasted.copy.filter(element => element !== null && !element?.symbols);
             const pasted = copiedPasted.past.filter(element => element !== null);
             if (copied.length == copiedPasted.past.length) {
                 let names = Object.values(this.currentView.items).map(gs => gs.name);
