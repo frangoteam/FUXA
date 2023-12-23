@@ -14,6 +14,8 @@ export class Utils {
 
     static lineColor = ['#4484ef', '#ef0909', '#00b050', '#ffd04a', '#7030a0', '#a5a5a5', '#c0504d', '#000000'];
 
+    static svgTagToType = ['rect', 'line', 'path', 'circle', 'ellipse', 'text'];
+
     static searchTreeStartWith(element, matchingStart) {
         if (element.id.startsWith(matchingStart)) {
             return element;
@@ -85,6 +87,9 @@ export class Utils {
 
     static getInTreeIdAndType(element: Element): any[] {
         let type = element.getAttribute('type');
+        if (!type && Utils.svgTagToType.includes(element.tagName.toLowerCase())) {
+            type = 'svg-ext-shapes-' + element.tagName.toLowerCase();
+        }
         let id = element.getAttribute('id');
         let result = [];
         if (id && type) {
