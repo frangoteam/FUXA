@@ -358,6 +358,10 @@
     "iframe.property-address": "Address",
     "iframe.property-name": "Name",
 
+    "panel.property-data": "Data",
+    "panel.property-view-name": "View name",
+    "panel.property-name": "Name",
+
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
     "table.property-date-last-range": "Date range",
@@ -471,6 +475,8 @@
     "editor.controls-table": "Table",
     "editor.header-item-settings": "Header item settings",
     "editor.controls-image": "Image (link)",
+    "editor.controls-panel": "Panel",
+    "editor.controls-panel-settings": "Panel settings",
 
     "editor.layout-settings": "Layout settings",
 

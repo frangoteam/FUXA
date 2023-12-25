@@ -28,6 +28,9 @@
         <div *ngSwitchCase="gaugeDialogType.Table">
             <app-table-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-table-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.Panel">
+            <app-panel-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-panel-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
@@ -196,6 +199,10 @@
                                 <span class="material-icon-tool material-icons">photo_size_select_actual</span>
                                 <input #imageLink type="file" style="display: none;" (change)="onSetImageAsLink($event)" accept="image/png|jpg|svg" />
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-panel' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-panel')}"
+                                (click)="setMode('own_ctrl-panel')">
+                                <span class="material-icon-tool material-icons" style="font-size: 25px;">web_asset</span>
+                            </div>                            
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->

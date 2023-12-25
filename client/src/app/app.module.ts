@@ -171,6 +171,8 @@ import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/
 import { HtmlImageComponent } from './gauges/controls/html-image/html-image.component';
 import { NgxSchedulerComponent } from './gui-helpers/ngx-scheduler/ngx-scheduler.component';
 import { FlexDeviceTagComponent } from './gauges/gauge-property/flex-device-tag/flex-device-tag.component';
+import { PanelComponent } from './gauges/controls/panel/panel.component';
+import { PanelPropertyComponent } from './gauges/controls/panel/panel-property/panel-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -312,6 +314,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
         ReportItemChartComponent,
+        PanelComponent,
+        PanelPropertyComponent
     ],
     imports: [
         BrowserModule,

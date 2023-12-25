@@ -1351,7 +1351,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     names: names
                 }
             });
-        } else if (dlgType === GaugeDialogType.Table) {
+        } else if (dlgType === GaugeDialogType.Table || dlgType === GaugeDialogType.Panel) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {
                 settings: tempsettings, dlgType: dlgType, names: names

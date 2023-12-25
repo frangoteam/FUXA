@@ -16,7 +16,7 @@ export class IframePropertyComponent implements OnInit {
         this._reload();
     }
 
-    property: GaugeIframeProperty ;
+    property: GaugeIframeProperty;
 
     constructor(private translateService: TranslateService) {
     }

@@ -35,6 +35,8 @@ import { DataTableComponent } from './controls/html-table/data-table/data-table.
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { HtmlImageComponent } from './controls/html-image/html-image.component';
+import { PanelComponent } from './controls/panel/panel.component';
+import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 
 @Injectable()
 export class GaugesManager {
@@ -62,15 +64,15 @@ export class GaugesManager {
     static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
-        ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag];
+        ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
-        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent];
+        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent];
+        HtmlImageComponent, PanelComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -532,6 +534,15 @@ export class GaugesManager {
                         });
                     }
                     break;
+                } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
+                    if (this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                            if (k === ga.id && this.mapGauges[k]) {
+                                PanelComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                            }
+                        });
+                    }
+                    break;
                 } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
                     GaugesManager.Gauges[i]['processValue'](ga, svgele, sig, gaugeStatus);
                     break;
@@ -798,6 +809,10 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.initElement(ga, isview);
             return true;
+        } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
+            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.projectService.getHmi(), isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge;
         } else {
             return true;
         }

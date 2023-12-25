@@ -338,6 +338,11 @@ export interface GaugeIframeProperty {
     variableId: string;
 }
 
+export interface GaugePanelProperty {
+    viewName: string;
+    variableId: string;
+}
+
 export interface GaugeTableProperty {
     id: string;
     type: TableType;
