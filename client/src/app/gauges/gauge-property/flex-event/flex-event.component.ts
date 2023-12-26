@@ -42,6 +42,7 @@ export class FlexEventComponent implements OnInit {
     eventWithPosition = [Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard),
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow),
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oniframe)];
+    cardDestination = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
 
     constructor(private translateService: TranslateService) {
     }

@@ -43,9 +43,13 @@
                 <span>{{'general-y' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.top" type="number" style="width: 60px">
             </div>
+            <div *ngIf="cardDestination === item.action" class="my-form-field lbk ml10 tac" style="max-width: 70px;">
+                <span>{{'gauges.property-event-single-card' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.singleCard"></mat-slide-toggle>
+            </div>
         </div>
     </div>
-    <div *ngIf="destinationWithHideClose(item.action)" class="my-form-field lbk ml20" style="max-width: 60px;">
+    <div *ngIf="destinationWithHideClose(item.action)" class="my-form-field lbk ml10 tac" style="max-width: 60px;">
         <span>{{'gauges.property-event-destination-hide-close' | translate}}</span>
         <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.hideClose"></mat-slide-toggle>
     </div>

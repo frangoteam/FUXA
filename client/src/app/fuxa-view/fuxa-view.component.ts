@@ -625,6 +625,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
+        if (options.singleCard) {
+            this.cards = [];
+        }
         let view: View = this.getView(viewref);
         if (!view) {
             return;
