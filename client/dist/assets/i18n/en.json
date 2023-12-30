@@ -912,6 +912,7 @@
     "gauges.property-event-action": "Action",
     "gauges.property-event-destination": "Destination",
     "gauges.property-event-destination-hide-close": "Hide Close",
+    "gauges.property-event-single-card": "Single Card",
     "gauges.property-event-value": "Value",
     "gauges.property-event-function": "Function",
     "gauges.property-event-input": "Input (only input with name)",
