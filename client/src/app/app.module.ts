@@ -118,7 +118,7 @@ import { HtmlTableComponent } from './gauges/controls/html-table/html-table.comp
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
-import { UsersComponent, DialogUser } from './users/users.component';
+import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
 import { DialogUserInfo } from './home/home.component';
 import { ShapesComponent } from './gauges/shapes/shapes.component';
@@ -173,6 +173,7 @@ import { NgxSchedulerComponent } from './gui-helpers/ngx-scheduler/ngx-scheduler
 import { FlexDeviceTagComponent } from './gauges/gauge-property/flex-device-tag/flex-device-tag.component';
 import { PanelComponent } from './gauges/controls/panel/panel.component';
 import { PanelPropertyComponent } from './gauges/controls/panel/panel-property/panel-property.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -291,7 +292,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DialogChartLine,
         DialogGraphSource,
         UsersComponent,
-        DialogUser,
+        UserEditComponent,
         LoginComponent,
         DialogUserInfo,
         ViewComponent,
