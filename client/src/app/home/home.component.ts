@@ -26,6 +26,7 @@ import { GridsterConfig } from 'angular-gridster2';
 import panzoom from 'panzoom';
 import { debounceTime, filter, last, map, takeUntil } from 'rxjs/operators';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
+import { User } from '../_models/user';
 // declare var panzoom: any;
 
 @Component({
@@ -68,6 +69,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionAlarmsStatus: Subscription;
     private subscriptiongoTo: Subscription;
     private destroy$ = new Subject<void>();
+    loggedUser$: Observable<User>;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -107,6 +109,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 debounceTime(1000),
                 last()
             );
+
+            this.loggedUser$ = this.authService.currentUser$;
 
             this.gaugesManager.onchange.pipe(
                 takeUntil(this.destroy$),

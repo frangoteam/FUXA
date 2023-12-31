@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty, LoginInfoType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
@@ -30,6 +30,7 @@ export class LayoutPropertyComponent implements OnInit {
     defaultColor = Utils.defaultColor;
     fonts = Define.fonts;
     anchorType = <AnchorType[]>['left', 'center', 'right'];
+    loginInfoType = <LoginInfoType[]>['nothing', 'username', 'fullname', 'both'];
 
     startView: string;
     sideMode: string;

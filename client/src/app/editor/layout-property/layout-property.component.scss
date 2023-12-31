@@ -103,6 +103,33 @@
         border-left-width: 1px;
         border-left-style: solid;
         padding-left: 10px;
+
+        .info {
+            display: inline-block;
+            line-height: 46px;
+            vertical-align: middle;
+        }
+        .primary {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: fit-content;
+            line-height: 16px;
+        }
+        .secondary {
+            display: block;
+            font-size: 14px;
+            font-weight: 100;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: fit-content;
+            color: gray;
+            line-height: 16px;
+        }
     }
     
     .header-notify-button {  

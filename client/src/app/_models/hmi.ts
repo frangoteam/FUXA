@@ -106,6 +106,7 @@ export class HeaderSettings {
     fontSize = 13;
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
+    loginInfo: LoginInfoType;
 }
 
 export interface HeaderItem {
@@ -121,6 +122,8 @@ export interface HeaderItem {
     status: GaugeStatus;
     element: HTMLElement;
 }
+
+export type LoginInfoType = 'nothing' | 'username' | 'fullname' | 'both';
 
 export type HeaderItemType = 'button' | 'label' | 'image';
 

@@ -226,6 +226,20 @@
                                 <button mat-icon-button>
                                     <mat-icon aria-label="Login">account_circle</mat-icon>
                                 </button>
+                                <div class="info">
+                                    <ng-container [ngSwitch]="data.layout.header.loginInfo">
+                                        <ng-container *ngSwitchCase="'username'">
+                                            <span class="primary">username</span>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="'fullname'">
+                                            <span class="primary">Full Name</span>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="'both'">
+                                            <span class="primary">username</span>
+                                            <span class="secondary">Full Name</span>
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -266,6 +280,14 @@
                         </div>
                         <div class="config-right mr10">
                             <div class="my-form-field block">
+                                <span>{{'dlg.layout-lbl-login-info' | translate}}</span>
+                                <mat-select [(value)]="data.layout.header.loginInfo" style="width: 260px">
+                                    <mat-option *ngFor="let type of loginInfoType" [value]="type">
+                                        {{ 'item.logininfo-type-' + type | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-alarms' | translate}}</span>
                                 <mat-select [(value)]="data.layout.header.alarms" style="width: 260px">
                                     <mat-option *ngFor="let mode of notifyMode | enumToArray" [value]="mode.key">

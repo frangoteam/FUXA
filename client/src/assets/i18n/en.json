@@ -62,6 +62,7 @@
     "dlg.layout-lbl-anchor": "Direction",
     "dlg.layout-lbl-margin-left": "Margin left",
     "dlg.layout-lbl-margin-right": "Margin right",
+    "dlg.layout-lbl-login-info": "Login info",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -180,6 +181,11 @@
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",
     "item.notifymode-float": "Push",
+
+    "item.logininfo-type-nothing": "Nothing",
+    "item.logininfo-type-username": "Username",
+    "item.logininfo-type-fullname": "Full name",
+    "item.logininfo-type-both": "Username & Full name",
 
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Manually",

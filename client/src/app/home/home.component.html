@@ -75,6 +75,20 @@
 					<button mat-icon-button (click)="onLogin()">
 						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
 					</button>
+					<div *ngIf="layoutHeader.loginInfo && loggedUser$ | async as user" class="info">
+						<ng-container [ngSwitch]="layoutHeader.loginInfo">
+							<ng-container *ngSwitchCase="'username'">
+								<span class="primary">{{ user?.username }}</span>
+							</ng-container>
+							<ng-container *ngSwitchCase="'fullname'">
+								<span class="primary">{{ user?.fullname }}</span>
+							</ng-container>
+							<ng-container *ngSwitchCase="'both'">
+								<span class="primary">{{ user?.username }}</span>
+								<span class="secondary">{{ user?.fullname }}</span>
+							</ng-container>
+						</ng-container>
+					</div>
 				</div>
 			</div>
 		</div>
