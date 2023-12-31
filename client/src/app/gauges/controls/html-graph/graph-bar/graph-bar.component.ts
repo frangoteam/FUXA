@@ -184,7 +184,9 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 if (this.property.xtype === this.xTypeValue) {
                     for (let i = 0; i < sigsvalues.length; i++) {
                         sigsvalues[i].forEach((v: DaqValue) => {
-                            this.setValue(v.id, v.ts, v.value.toFixed(this.barChartOptions.decimals));
+                            if (v) {
+                                this.setValue(v.id, v.ts, v.value.toFixed(this.barChartOptions.decimals));
+                            }
                         });
                     }
                 } else if (this.property.xtype === this.xTypeDate) {

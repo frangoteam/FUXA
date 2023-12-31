@@ -24,7 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, last, map, takeUntil } from 'rxjs/operators';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 // declare var panzoom: any;
 
@@ -104,7 +104,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             ]).pipe(
                 map(([connectionStatus, userProfile]) => (this.securityEnabled && !userProfile) ? false : !connectionStatus),
                 takeUntil(this.destroy$),
-                debounceTime(1000)
+                debounceTime(1000),
+                last()
             );
 
             this.gaugesManager.onchange.pipe(
