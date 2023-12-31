@@ -25,6 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../_services/project.service';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
 import { HmiService } from '../_services/hmi.service';
+import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
 
 declare var SVG: any;
 
@@ -468,17 +469,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
                         const events = JSON.parse(JSON.stringify(HtmlInputComponent.getEvents(htmlevent.ga.property, GaugeEventType.enter)));
-                        events.forEach(ev => {
-                            if (htmlevent.value) {
-                                let parameters = <ScriptParam[]>ev.actoptions[SCRIPT_PARAMS_MAP];
-                                parameters.forEach(param => {
-                                    if (param.type === self.scriptParameterValue && !param.value) {
-                                        param.value = htmlevent.value;
-                                    }
-                                });
-                            }
-                            self.onRunScript(ev);
-                        });
+                        self.eventForScript(events, htmlevent.value);
                     }
                 } else if (ev.key == 'Escape') {
                     htmlevent.dom.blur();
@@ -551,8 +542,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 htmlevent.id = htmlevent.dom.id;
                 htmlevent.value = htmlevent.dom.value;
                 self.gaugesManager.putEvent(htmlevent);
+                if (htmlevent.ga.type === HtmlSelectComponent.TypeTag) {
+                    const events = JSON.parse(JSON.stringify(HtmlSelectComponent.getEvents(htmlevent.ga.property, GaugeEventType.select)));
+                    self.eventForScript(events, htmlevent.value);
+                }
             };
         }
+    }
+
+    private eventForScript(events: GaugeEvent[], value: any) {
+        events.forEach(ev => {
+            if (value) {
+                let parameters = <ScriptParam[]>ev.actoptions[SCRIPT_PARAMS_MAP];
+                parameters.forEach(param => {
+                    if (param.type === this.scriptParameterValue && !param.value) {
+                        param.value = value;
+                    }
+                });
+            }
+            this.onRunScript(ev);
+        });
     }
 
     private setInputDialogStyle(element: any, style: string, sourceBound: DOMRect) {

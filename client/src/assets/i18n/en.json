@@ -644,6 +644,7 @@
     "shapes.event-mouseup": "MouseUp",
     "shapes.event-mousedown": "MouseDown",
     "shapes.event-enter": "Enter",
+    "shapes.event-select": "Select",
     "shapes.event-onpage": "Open Page",
     "shapes.event-onwindow": "Open Card",
     "shapes.event-ondialog": "Open Dialog",

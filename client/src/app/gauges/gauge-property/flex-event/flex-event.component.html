@@ -16,12 +16,12 @@
         <div class="my-form-field" style="width: 140px;padding-left: 20px">
             <span>{{'gauges.property-event-action' | translate}}</span>
             <mat-select [(value)]="item.action" (change)="item.actparam = '';">
-                <ng-container *ngIf="item.type !== 'enter'; else enterAction">
+                <ng-container *ngIf="!isEnterOrSelect(item.type); else enterOrSelectAction">
                     <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
                         {{ type.value }}
                     </mat-option>
                 </ng-container>
-                <ng-template #enterAction>
+                <ng-template #enterOrSelectAction>
                     <mat-option *ngFor="let type of enterActionType | enumToArray" [value]="type.key">
                         {{ type.value }}
                     </mat-option>
@@ -129,7 +129,7 @@
             <div style="margin-left: 10px; display: inline-block;">
                 <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
                     <span>{{'gauges.property-event-script-param-value' | translate}}</span>
-                    <ng-container *ngIf="item.type !== 'enter'; else enterParamValue">
+                    <ng-container *ngIf="!isEnterOrSelect(item.type); else enterParamValue">
                         <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
                     </ng-container>
                     <ng-template #enterParamValue>
