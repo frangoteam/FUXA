@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../_services/user.service';
 import { User, UserGroups } from '../_models/user';
 import { UserEditComponent } from './user-edit/user-edit.component';
+import { ProjectService } from '../_services/project.service';
 
 @Component({
 	selector: 'app-users',
@@ -15,15 +16,17 @@ import { UserEditComponent } from './user-edit/user-edit.component';
 })
 export class UsersComponent implements OnInit, AfterViewInit {
 
-	displayedColumns = ['select', 'username', 'fullname', 'groups', 'remove'];
+	displayedColumns = ['select', 'username', 'fullname', 'groups', 'start', 'remove'];
 	dataSource = new MatTableDataSource([]);
 
 	users: User[];
+	usersInfo = {};
 
 	@ViewChild(MatTable, {static: false}) table: MatTable<any>;
 	@ViewChild(MatSort, {static: false}) sort: MatSort;
 
 	constructor(private dialog: MatDialog,
+		private projectService: ProjectService,
 		private userService: UserService) { }
 
 	ngOnInit() {
@@ -59,11 +62,21 @@ export class UsersComponent implements OnInit, AfterViewInit {
 		return UserGroups.GroupToLabel(grp);
 	}
 
+	getViewStartName(username: string) {
+		return this.usersInfo[username];
+	}
+
 	private loadUsers() {
 		this.users = [];
+		this.usersInfo = {};
 		this.userService.getUsers(null).subscribe(result => {
-			Object.values<User>(result).forEach(u => {
-				this.users.push(u);
+			Object.values<User>(result).forEach(user => {
+				if (user.info) {
+					const start = JSON.parse(user.info)?.start;
+					const view = this.projectService.getViewFromId(start);
+					this.usersInfo[user.username] = view?.name;
+				}
+				this.users.push(user);
 			});
 			this.bindToTable(this.users);
 		}, err => {

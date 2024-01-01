@@ -41,32 +41,51 @@ function _bind() {
             logger.info(`usrstorage.connected ${dbfile} database`, true);
         });
         // prepare query
-        var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, fullname TEXT, password TEXT, groups INTEGER);";
+        var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, fullname TEXT, password TEXT, groups INTEGER, info TEXT);";
         db_usr.exec(sql, function (err) {
             if (err) {
                 logger.error(`usrstorage.bind failed! ${err}`);
                 reject();
             } else {
-                _checkUpdate().then(() => {
+                const columnsToAdd = [{ name: 'fullname', type: 'TEXT' },
+                { name: 'info', type: 'TEXT' }];
+                _checkUpdate(columnsToAdd).then(() => {
                     resolve(dbfileExist);
                 }).catch(() => {
                     resolve(dbfileExist);
                 });
             }
-        });  
+        });
     });
 }
 
-function _checkUpdate() {
-    return new Promise(function (resolve, reject)  {
-        var sql = "ALTER TABLE users ADD COLUMN fullname TEXT;";
-        db_usr.exec(sql, function (err, rows) {
-            if (err) {
-                resolve();
+function _checkUpdate(columnsToAdd) {
+    return new Promise(function (resolve, reject) {
+
+        const addColumn = (column, callback) => {
+            const { name, type } = column;
+            const addColumnQuery = `ALTER TABLE users ADD COLUMN ${name} ${type};`;
+
+            db_usr.run(addColumnQuery, err => {
+                if (err) {
+                    if (!err.message.includes('duplicate column name')) {
+                        logger.error(`usrstorage._checkUpdate error! ${err}`);
+                    }
+                }
+                callback();
+            });
+        };
+
+        const addColumnsInSerie = index => {
+            if (index < columnsToAdd.length) {
+                addColumn(columnsToAdd[index], () => {
+                    addColumnsInSerie(index + 1);
+                });
             } else {
                 resolve();
             }
-        });  
+        };
+        addColumnsInSerie(0);
     });
 }
 
@@ -77,7 +96,7 @@ function setDefault() {
     return new Promise(function (resolve, reject) {
         // prepare query
         var sql = "";
-        sql += "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('admin', 'Administrator Account', '"+ bcrypt.hashSync('123456', 10) + "','-1');";
+        sql += "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('admin', 'Administrator Account', '" + bcrypt.hashSync('123456', 10) + "','-1');";
         db_usr.exec(sql, function (err) {
             if (err) {
                 logger.error(`usrstorage.set failed! ${err}`);
@@ -85,7 +104,7 @@ function setDefault() {
             } else {
                 resolve();
             }
-        });     
+        });
     });
 }
 
@@ -94,9 +113,9 @@ function setDefault() {
  */
 function getUsers(user) {
     return new Promise(function (resolve, reject) {
-        var sql = "SELECT username, fullname, groups FROM users";
+        var sql = "SELECT username, fullname, groups, info FROM users";
         if (user && user.username) {
-            sql = "SELECT username, fullname, password, groups FROM users WHERE username = '" + user.username + "'";
+            sql = "SELECT username, fullname, password, groups, info FROM users WHERE username = '" + user.username + "'";
         }
         db_usr.all(sql, function (err, rows) {
             if (err) {
@@ -104,31 +123,31 @@ function getUsers(user) {
             } else {
                 resolve(rows);
             }
-        });   
+        });
     });
 }
 
 /**
  * Set user value in database
  */
-function setUser(usr, fullname, pwd, groups) {
+function setUser(usr, fullname, pwd, groups, info) {
     return new Promise(function (resolve, reject) {
         // prepare query
         var exist = false;
-        getUsers({username: usr}).then(function(data) {
+        getUsers({ username: usr }).then(function (data) {
             if (data && data.length) {
                 exist = true;
             }
             var sql = "";
             if (pwd) {
-                sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('" + usr +"','" + fullname + "','"+ bcrypt.hashSync(pwd, 10) + "','" + groups + "');";
+                sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups, info) VALUES('" + usr + "','" + fullname + "','" + bcrypt.hashSync(pwd, 10) + "','" + groups + "','" + info + "');";
                 if (exist) {
-                    sql = "UPDATE users SET password = '"+ bcrypt.hashSync(pwd, 10) + "', groups = '" + groups + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
+                    sql = "UPDATE users SET password = '" + bcrypt.hashSync(pwd, 10) + "', info = '" + info + "', groups = '" + groups + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
                 }
             } else {
-                sql = "INSERT OR REPLACE INTO users (username, fullname, groups) VALUES('" + usr + "','" + fullname + "','" + groups + "');";
+                sql = "INSERT OR REPLACE INTO users (username, fullname, groups, info) VALUES('" + usr + "','" + fullname + "','" + groups + "','" + info + "');";
                 if (exist) {
-                    sql = "UPDATE users SET groups = '" + groups + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
+                    sql = "UPDATE users SET groups = '" + groups + "', info = '" + info + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
                 }
             }
             db_usr.exec(sql, function (err) {
@@ -138,10 +157,10 @@ function setUser(usr, fullname, pwd, groups) {
                 } else {
                     resolve();
                 }
-            });  
-        }).catch(function(err) {
+            });
+        }).catch(function (err) {
             reject();
-        });   
+        });
     });
 }
 
@@ -159,7 +178,7 @@ function removeUser(usr) {
             } else {
                 resolve();
             }
-        });     
+        });
     });
 }
 

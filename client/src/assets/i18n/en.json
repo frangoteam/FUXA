@@ -118,6 +118,7 @@
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
+    "dlg.userproperty-start": "Start View",
 
     "dlg.gauge-permission-title": "Authorization",
     "dlg.gauge-permission-label": "(void = full for everyone)",
@@ -906,6 +907,7 @@
     "users.list-name": "Username",
 	"users.list-fullname": "Full Name",
     "users.list-groups": "Groups",
+    "users.list-start": "Start View",
 
     "gauges.property-props": "Property",
     "gauges.property-events": "Events",

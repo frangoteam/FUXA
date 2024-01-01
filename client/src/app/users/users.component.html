@@ -4,7 +4,6 @@
 <div class="work-panel">
 	<div class="container">
 		<mat-table #table [dataSource]="dataSource" matSort>
-			<!-- Edit Column -->
 			<ng-container matColumnDef="select">
 				<mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
 					<button mat-icon-button (click)="onAddUser()" class="remove">
@@ -18,25 +17,26 @@
 				</mat-cell>
 			</ng-container>
 
-			<!-- Username Column -->
 			<ng-container matColumnDef="username">
 				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-name' | translate}} </mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{element.username}} </mat-cell>
 			</ng-container>
 
-			<!-- Fullname Column -->
 			<ng-container matColumnDef="fullname">
 				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-fullname' | translate}} </mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{element.fullname}} </mat-cell>
 			</ng-container>
 			
-			<!-- Access Column -->
 			<ng-container matColumnDef="groups">
 				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-groups' | translate}} </mat-header-cell>
 				<mat-cell *matCellDef="let element"> {{groupValueToLabel(element.groups)}} </mat-cell>
 			</ng-container>
 
-			<!-- Button remove Column -->
+			<ng-container matColumnDef="start">
+				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-start' | translate}} </mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{getViewStartName(element.username)}} </mat-cell>
+			</ng-container>
+
 			<ng-container matColumnDef="remove">
 				<mat-header-cell *matHeaderCellDef> </mat-header-cell>
 				<mat-cell *matCellDef="let element">
