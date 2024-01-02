@@ -62,6 +62,7 @@
     "dlg.layout-lbl-anchor": "Direction",
     "dlg.layout-lbl-margin-left": "Margin left",
     "dlg.layout-lbl-margin-right": "Margin right",
+    "dlg.layout-lbl-login-info": "Login info",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -117,6 +118,7 @@
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
+    "dlg.userproperty-start": "Start View",
 
     "dlg.gauge-permission-title": "Authorization",
     "dlg.gauge-permission-label": "(void = full for everyone)",
@@ -180,6 +182,11 @@
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",
     "item.notifymode-float": "Push",
+
+    "item.logininfo-type-nothing": "Nothing",
+    "item.logininfo-type-username": "Username",
+    "item.logininfo-type-fullname": "Full name",
+    "item.logininfo-type-both": "Username & Full name",
 
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Manually",
@@ -644,6 +651,7 @@
     "shapes.event-mouseup": "MouseUp",
     "shapes.event-mousedown": "MouseDown",
     "shapes.event-enter": "Enter",
+    "shapes.event-select": "Select",
     "shapes.event-onpage": "Open Page",
     "shapes.event-onwindow": "Open Card",
     "shapes.event-ondialog": "Open Dialog",
@@ -899,6 +907,7 @@
     "users.list-name": "Username",
 	"users.list-fullname": "Full Name",
     "users.list-groups": "Groups",
+    "users.list-start": "Start View",
 
     "gauges.property-props": "Property",
     "gauges.property-events": "Events",
