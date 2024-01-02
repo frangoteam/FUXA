@@ -27,6 +27,7 @@ import panzoom from 'panzoom';
 import { debounceTime, filter, last, map, takeUntil } from 'rxjs/operators';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { User } from '../_models/user';
+import { UserInfo } from '../users/user-edit/user-edit.component';
 // declare var panzoom: any;
 
 @Component({
@@ -246,10 +247,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else {
             let dialogRef = this.dialog.open(LoginComponent, {
-                // minWidth: '250px',
                 data: {}
             });
             dialogRef.afterClosed().subscribe(result => {
+                const userInfo = new UserInfo(this.authService.getUser()?.info);
+                if (userInfo.start) {
+                    this.onGoToPage(userInfo.start);
+                }
             });
         }
     }
@@ -312,7 +316,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             let viewToShow = null;
-            if (this.hmi.layout && this.hmi.layout.start) {
+            if (this.hmi.layout?.start) {
                 viewToShow = this.hmi.views.find(x => x.id === this.hmi.layout.start);
             }
             if (!viewToShow) {
