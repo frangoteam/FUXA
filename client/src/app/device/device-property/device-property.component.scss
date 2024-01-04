@@ -13,6 +13,14 @@
         background-color:var(--formExtBackground);
         border-radius: 2px;
     }
+
+    .error {
+        display: block;
+        line-height: 20px;
+        width: 315px;
+        color: red;
+        font-size: 13px;
+    }
 }
 
 .multiline {

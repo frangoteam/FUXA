@@ -39,6 +39,7 @@
     "node-snap7": "1.0.6",
     "nodemailer": "6.7.4",
     "nopt": "5.0.0",
+    "odbc": "^2.4.8",
     "pdfmake": "^0.2.5",
     "socket.io": "2.5.0",
     "sqlite3": "5.1.5",

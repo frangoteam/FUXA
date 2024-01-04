@@ -439,7 +439,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     getDeviceStatusText(device: Device) {
         if (this.devicesStatus[device.id]) {
-            let st = this.devicesStatus[device.id].status.replace('connect-', '');
+            let st = this.devicesStatus[device.id]?.status?.replace('connect-', '');
             if (this.deviceStatusType[st]) {
                 return this.deviceStatusType[st];
             }

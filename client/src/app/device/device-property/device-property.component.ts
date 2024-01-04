@@ -144,8 +144,13 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 					this.propertyError = res.error;
 				}
 			} else if (res.type === DeviceType.BACnet) {
+			} else if (res.type === DeviceType.ODBC) {
+				if (res?.error) {
+					this.propertyError = res.error;
+				} else {
+					console.log('odbc', res);
+				}
 			}
-
 			this.propertyLoading = false;
 		});
 		// check security
@@ -224,6 +229,12 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		this.propertyLoading = true;
 		this.result = '';
 		this.hmiService.askWebApiProperty(this.data.device.property);
+	}
+
+	onCheckOdbc() {
+		this.propertyLoading = true;
+		this.result = '';
+		this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
 	}
 
 	// onCheckBACnetDevice() {

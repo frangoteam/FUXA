@@ -182,7 +182,8 @@ export enum DeviceType {
     WebAPI = 'WebAPI',
     MQTTclient = 'MQTTclient',
     internal = 'internal',
-    EthernetIP = 'EthernetIP'
+    EthernetIP = 'EthernetIP',
+    ODBC = 'ODBC'
     // Template: 'template'
 }
 

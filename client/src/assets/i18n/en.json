@@ -812,6 +812,9 @@
     "device.webapi-property-gettags": "URL GET Tags",
     "device.webapi-property-posttags": "URL POST Tags",
     "device.webapi-property-loadtags": "Load Tags",
+    "device.property-dsn": "Data Source Name",
+    "device.property-odbc-result": "Result of tables found",
+    "device.not-odbc-result": "Database tables result",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
