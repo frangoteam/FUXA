@@ -1,10 +1,11 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AuthService } from '../_services/auth.service';
 import { ProjectService } from '../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
 
 @Component({
 	selector: 'app-login',
@@ -12,6 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 	styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+
+    @ViewChild('touchKeyboard', {static: false}) touchKeyboard: NgxTouchKeyboardDirective;
 
 	loading = false;
 	showPassword = false;
@@ -58,5 +61,15 @@ export class LoginComponent {
 
     keyDownStopPropagation(event) {
         event.stopPropagation();
+    }
+
+	onFocus(event: FocusEvent) {
+		const hmi = this.projectService.getHmi();
+		if (hmi?.layout?.inputdialog === 'keyboard') {
+			this.touchKeyboard.closePanel();
+			const targetElement = event.target as HTMLInputElement;
+			const elementRef = new ElementRef<HTMLInputElement>(targetElement);
+			this.touchKeyboard.openPanel(elementRef);
+		}
     }
 }
