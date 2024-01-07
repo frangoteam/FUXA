@@ -52,7 +52,7 @@ export class HtmlChartComponent extends GaugeBaseComponent {
 
                 componentRef.instance.rangeType = chartRange;
                 componentRef.instance.id = gab.id;
-                componentRef.instance.type = gab.property.type;
+                componentRef.instance.type = gab.property?.type;
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlChart.appendChild(componentRef.location.nativeElement);
