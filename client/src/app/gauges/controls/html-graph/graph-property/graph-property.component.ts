@@ -12,6 +12,7 @@ import { GraphBarComponent } from '../graph-bar/graph-bar.component';
 import { GraphOptions, GraphThemeType } from '../graph-base/graph-base.component';
 import { GaugeGraphProperty } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
+import { GraphPieComponent } from '../graph-pie/graph-pie.component';
 
 @Component({
     selector: 'app-graph-property',
@@ -46,14 +47,8 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.checkInitProperty();
         if (this.data.settings.type.endsWith('bar')) {
-            this.graphType = GraphType.bar;
-            if (!this.data.settings.property) {
-                this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
-            }
-            if (!this.data.settings.property.options) {
-                this.data.settings.property.options = GraphBarComponent.DefaultOptions();
-            }
             Object.keys(this.lastRangeType).forEach(key => {
                 this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
             });
@@ -71,16 +66,12 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
 
     private _reload() {
         // check default value, undefined if new
+        this.checkInitProperty();
         if (this.data.settings.type.endsWith('bar')) {
-            this.graphType = GraphType.bar;
-            if (!this.data.settings.property) {
-                this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
-            }
-            if (!this.data.settings.property.options) {
-                this.data.settings.property.options = GraphBarComponent.DefaultOptions();
-            }
+            this.options = Utils.mergeDeep(GraphBarComponent.DefaultOptions(), this.data.settings.property.options);
+        } else if (this.data.settings.type.endsWith('pie')) {
+            this.options = Utils.mergeDeep(GraphPieComponent.DefaultOptions(), this.data.settings.property.options);
         }
-        this.options = Utils.mergeDeep(GraphBarComponent.DefaultOptions(), this.data.settings.property.options);
         // load graphs list to choise
         this.loadGraphs();
         let graph = null;
@@ -90,24 +81,48 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
         this.graphCtrl.setValue(graph);
     }
 
+    private checkInitProperty() {
+        if (this.data.settings.type.endsWith('bar')) {
+            this.graphType = GraphType.bar;
+            if (!this.data.settings.property) {
+                this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
+            }
+            if (!this.data.settings.property.options) {
+                this.data.settings.property.options = GraphBarComponent.DefaultOptions();
+            }
+        } else if (this.data.settings.type.endsWith('pie')) {
+            this.graphType = GraphType.pie;
+            if (!this.data.settings.property) {
+                this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
+            }
+            if (!this.data.settings.property.options) {
+                this.data.settings.property.options = GraphPieComponent.DefaultOptions();
+            }
+        }
+    }
+
     onGraphChanged() {
         this.data.settings.property = <GaugeGraphProperty>{ id: null, type: null, options: null };
         if (this.graphCtrl.value) {
             this.data.settings.property.id = this.graphCtrl.value.id;
             this.data.settings.property.type = this.graphCtrl.value.type;
-            if (!this.isDateTime(this.graphCtrl.value)) {
-                this.options.lastRange = null;
-                this.options.dateGroup = null;
-            } else {
-                this.options.offline = true;
-                this.options.lastRange = <GraphRangeType>Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d);
-                this.options.dateGroup = <GraphDateGroupType>Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
+            if (this.data.settings.type.endsWith('bar')) {
+                if (!this.isDateTime(this.graphCtrl.value)) {
+                    this.options.lastRange = null;
+                    this.options.dateGroup = null;
+                } else {
+                    this.options.offline = true;
+                    this.options.lastRange = <GraphRangeType>Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d);
+                    this.options.dateGroup = <GraphDateGroupType>Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
+                }
             }
         }
-        this.options.scales['y'].grid.color = this.options.gridLinesColor;
-        this.options.scales['y'].grid.display = this.options.gridLinesShow;
-        this.options.scales['x'].grid.color = this.options.gridLinesColor;
-        this.options.scales['x'].grid.display = this.options.gridLinesShow;
+        if (this.data.settings.type.endsWith('bar')) {
+            this.options.scales['y'].grid.color = this.options.gridLinesColor;
+            this.options.scales['y'].grid.display = this.options.gridLinesShow;
+            this.options.scales['x'].grid.color = this.options.gridLinesColor;
+            this.options.scales['x'].grid.display = this.options.gridLinesShow;
+        }
         this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
         this.onPropChanged.emit(this.data.settings);
     }

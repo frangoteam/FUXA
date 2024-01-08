@@ -648,6 +648,13 @@ function getDevices() {
 }
 
 /**
+ * Return Device from name
+ */
+function getDevice(name) {
+    return Object.values(data.devices).find(device => device.name === name);
+}
+
+/**
  * Get the device property
  */
 function getDeviceProperty(query) {
@@ -933,6 +940,7 @@ module.exports = {
     init: init,
     load: load,
     getDevices: getDevices,
+    getDevice: getDevice,
     getAlarms: getAlarms,
     getNotifications: getNotifications,
     getScripts: getScripts,

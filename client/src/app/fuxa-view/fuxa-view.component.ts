@@ -15,16 +15,17 @@ import {
 import { Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
-import { ScriptParam, SCRIPT_PARAMS_MAP } from '../_models/script';
+import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../_services/project.service';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
 import { HmiService } from '../_services/hmi.service';
+import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
 
 declare var SVG: any;
 
@@ -51,6 +52,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('touchKeyboard', {static: false}) touchKeyboard: NgxTouchKeyboardDirective;
 
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+    scriptParameterValue = Utils.getEnumKey(ScriptParamType, ScriptParamType.value);
 
     cards: CardModel[] = [];
     iframes: CardModel[] = [];
@@ -233,7 +235,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     }
                 } catch (err) {
-                    console.error('loadWatch: ' + err);
+                    console.error('loadWatch: ' + key, err);
                 }
             }
             if (!this.subscriptionOnChange) {
@@ -249,7 +251,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
             // set subscription to server
-            this.hmiService.tagsSubscribe(this.gaugesManager.getBindedSignalsId());
+            this.hmiService.viewsTagsSubscribe(this.gaugesManager.getBindedSignalsId());
         }
     }
 
@@ -456,14 +458,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
-
                     let res = HtmlInputComponent.validateValue(htmlevent.dom.value, htmlevent.ga);
                     if(!res.valid){
                         self.setInputValidityMessage(res, htmlevent.dom);
                     }
-                    else{
+                    else {
+                        htmlevent.value = res.value;
                         self.gaugesManager.putEvent(htmlevent);
                         htmlevent.dom.blur();
+                    }
+                    if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
+                        const events = JSON.parse(JSON.stringify(HtmlInputComponent.getEvents(htmlevent.ga.property, GaugeEventType.enter)));
+                        self.eventForScript(events, htmlevent.value);
                     }
                 } else if (ev.key == 'Escape') {
                     htmlevent.dom.blur();
@@ -483,7 +489,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                         self.gaugeInputCurrent = htmlevent.dom.value;
                         document.body.appendChild(self.inputDialogRef.nativeElement);
-
+                        HtmlInputComponent.checkInputType(self.inputValueRef.nativeElement, htmlevent.ga.property?.options);
                         setTimeout(() => {
                             self.inputValueRef.nativeElement.focus();
                         }, 300);
@@ -496,7 +502,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dom.onfocus = function(ev) {
                         self.touchKeyboard.closePanel();
                         let eleRef = new ElementRef(htmlevent.dom);
-                        if (htmlevent.ga?.property?.options?.numeric) {
+                        if (htmlevent.ga?.property?.options?.numeric || htmlevent.ga?.property?.options?.type === InputOptionType.number ||
+                            htmlevent.ga?.property?.options?.type === InputOptionType.datetime || htmlevent.ga?.property?.options?.type === InputOptionType.date ||
+                            htmlevent.ga?.property?.options?.type === InputOptionType.time) {
                             eleRef.nativeElement.inputMode = 'decimal';
                         }
                         self.touchKeyboard.openPanel(eleRef);
@@ -534,8 +542,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 htmlevent.id = htmlevent.dom.id;
                 htmlevent.value = htmlevent.dom.value;
                 self.gaugesManager.putEvent(htmlevent);
+                if (htmlevent.ga.type === HtmlSelectComponent.TypeTag) {
+                    const events = JSON.parse(JSON.stringify(HtmlSelectComponent.getEvents(htmlevent.ga.property, GaugeEventType.select)));
+                    self.eventForScript(events, htmlevent.value);
+                }
             };
         }
+    }
+
+    private eventForScript(events: GaugeEvent[], value: any) {
+        events.forEach(ev => {
+            if (value) {
+                let parameters = <ScriptParam[]>ev.actoptions[SCRIPT_PARAMS_MAP];
+                parameters.forEach(param => {
+                    if (param.type === this.scriptParameterValue && !param.value) {
+                        param.value = value;
+                    }
+                });
+            }
+            this.onRunScript(ev);
+        });
     }
 
     private setInputDialogStyle(element: any, style: string, sourceBound: DOMRect) {
@@ -604,9 +630,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (view.profile.bkcolor) {
             this.dialog.bkcolor = view.profile.bkcolor;
         }
+        this.dialog.disableDefaultClose = options.hideClose;
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
+        if (options.singleCard) {
+            this.cards = [];
+        }
         let view: View = this.getView(viewref);
         if (!view) {
             return;
@@ -631,6 +661,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.height = view.profile.height;
         card.view = view;
         card.variablesMapping = options.variablesMapping;
+        card.disableDefaultClose = options.hideClose;
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
@@ -799,16 +830,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onOkClick(evintput) {
         if (this.inputDialog.target.dom) {
             let res = HtmlInputComponent.validateValue(evintput, this.inputDialog.target.ga);
-            if(!res.valid){
+            if(!res.valid) {
                 this.setInputValidityMessage(res, this.inputValueRef.nativeElement);
             }
-            else{
+            else {
                 this.inputValueRef.nativeElement.setCustomValidity('');
                 this.inputDialog.target.dom.value = evintput;
                 this.inputDialog.target.dbg = 'key pressed ' + this.inputDialog.target.dom.id + ' ' + this.inputDialog.target.dom.value;
                 this.inputDialog.target.id = this.inputDialog.target.dom.id;
                 this.inputDialog.target.value = this.inputDialog.target.dom.value;
-                this.gaugesManager.putEvent(this.inputDialog.target);
+                this.gaugesManager.putEvent({...this.inputDialog.target, value: res.value});
             }
         }
     }
@@ -828,6 +859,8 @@ export class CardModel {
     public variablesMapping: any = [];
     public view: View;
 
+    disableDefaultClose: boolean;
+
     constructor(id: string) {
         this.id = id;
     }
@@ -842,6 +875,8 @@ export class DialogModalModel {
     public bkcolor: string;
     public view: View;
     public variablesMapping: any = [];
+
+    disableDefaultClose: boolean;
 
     constructor(id: string) {
         this.id = id;

@@ -10,7 +10,7 @@
 }
 
 .tabs-container .tab-system {
-    width: 320px;
+    min-width: 320px;
 }
 
 .tabs-container .tab-smtp {
@@ -27,4 +27,8 @@
 
 .input-row {
     width: 100%;
+}
+
+.system-input {
+    width: 320px;
 }

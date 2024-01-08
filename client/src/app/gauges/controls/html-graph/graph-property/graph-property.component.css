@@ -65,17 +65,3 @@
 .section-inline-color span {
     width: 65px;
 }
-
-.section-inline-margin {
-    display: inline-block;
-    width: 12px;
-}
-
-.section-inline-margin2 {
-    display: inline-block;
-    width: 16px;
-}
-
-.section-newline {
-    margin-top: 5px;
-}

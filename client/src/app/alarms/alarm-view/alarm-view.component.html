@@ -38,7 +38,7 @@
         </ng-container>
         <ng-container matColumnDef="ack">
             <mat-header-cell *matHeaderCellDef>
-                <button mat-icon-button (click)="onAckAllAlarm()">
+                <button mat-icon-button (click)="onAckAllAlarm()" matTooltip="{{'alarms.view-ack-all-alarms' | translate}}">
                     <mat-icon>check_circle_outline</mat-icon>
                 </button>
             </mat-header-cell>

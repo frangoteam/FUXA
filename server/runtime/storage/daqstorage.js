@@ -6,8 +6,9 @@
 
 const fs = require('fs');
 const path = require('path');
-var SqliteDB = require("./sqlite");
-var InfluxDB = require("./influxdb");
+const SqliteDB = require("./sqlite");
+const InfluxDB = require("./influxdb");
+const CurrentStorage = require("./sqlite/currentstorage");
 // var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
 var utils = require('../utils');
@@ -17,12 +18,13 @@ var daqStoreType;
 var settings;
 var logger;
 var daqDB = {};                 // list of daqDB node: SQlite one pro device, influxDB only one
-var timeSerieDB;
+var currentStorateDB;
 
 function init(_settings, _log) {
     settings = _settings;
     logger = _log;
     logger.info("daqstorage: init successful!", true);
+    currentStorateDB = CurrentStorage.create(_settings, _log);
 }
 
 function reset() {
@@ -42,9 +44,9 @@ function addDaqNode(_id, fncgetprop) {
     }
     if (!daqDB[id]) {
         if (id === DaqStoreTypeEnum.influxDB || id === DaqStoreTypeEnum.influxDB18) {
-            daqDB[id] = InfluxDB.create(settings, logger);
+            daqDB[id] = InfluxDB.create(settings, logger, currentStorateDB);
         } else {
-            daqDB[id] = SqliteDB.create(settings, logger, id);
+            daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
         }
     }
     return daqDB[id].setCall(fncgetprop);
@@ -138,6 +140,10 @@ function checkRetention() {
     });
 }
 
+function getCurrentStorageFnc() {
+    return currentStorateDB.getValuesByDeviceId;
+}
+
 function _getDaqNode(tagid) {
     var nodes = Object.values(daqDB);
     for (var i = 0; i < nodes.length; i++) {
@@ -174,4 +180,5 @@ module.exports = {
     getNodeValues: getNodeValues,
     getNodesValues: getNodesValues,
     checkRetention: checkRetention,
+    getCurrentStorageFnc: getCurrentStorageFnc,
 };

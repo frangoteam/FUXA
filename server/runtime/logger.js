@@ -6,6 +6,7 @@ const path = require('path');
 
 var initialized = false;
 var filelogger;
+var settings;
 var logDir = '';
 
 const env = process.env.NODE_ENV || 'development';
@@ -14,9 +15,10 @@ const errorFileName = 'fuxa-err.log';
 
 var log = module.exports = {
 
-    init: function (logdir) {
-        if (logdir) {
-            logDir = logdir;
+    init: function (_settings) {
+        settings = _settings;
+        if (settings.logDir) {
+            logDir = settings.logDir;
         }
         filelogger = createLogger({
             level: env === 'production' ? 'info' : 'debug',
@@ -60,12 +62,12 @@ var log = module.exports = {
             filelogger.debug(str);
         }
     },
-    info: function (str, flag) {
+    info: function (str, notConsoleLog = false, onlyFull = false) {
         //	debug color: Default (White / Black)
-        if (initialized && (null == flag || false === flag)) {
+        if (initialized && notConsoleLog === false) {
             console.log(new Date().toISOString() + ' [INF] ' + "\t" + processInput(str));
         }
-        if (initialized && (null == flag || true === flag)) {
+        if (initialized && !(onlyFull && !settings.logFull)) {
             filelogger.info(str);
         }
     },

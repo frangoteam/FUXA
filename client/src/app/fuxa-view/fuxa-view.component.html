@@ -1,16 +1,27 @@
 <div #dataContainer class="view-container" id="content">
 </div>
-<div *ngFor="let card of cards; let i = index" [style.height]="getCardHeight(card.height) + 'px'" [style.left]="card.x + 'px'" [style.top]="card.y +'px'"
-    [style.width]="card.width +'px'" class="fab-card" style="cursor: auto  !important;" ngDraggable>
-    <a (click)="onCloseCard(card);" class="card-close">
-        <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
-    </a>
+<div *ngFor="let card of cards; let i = index"
+     [style.height]="getCardHeight(card.height) + 'px'" 
+     [style.left]="card.x + 'px'" 
+     [style.top]="card.y +'px'"
+     [style.width]="card.width +'px'" 
+     class="fab-card" 
+     style="cursor: auto !important;" 
+     [handle]="DemoHandle"
+     ngDraggable>
+    <div #DemoHandle
+         class="card-move-area">
+         <a (click)="onCloseCard(card);" class="card-close" *ngIf="!card.disableDefaultClose">
+            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
+        </a>
+    </div>
+
     <app-fuxa-view (onclose)="onCloseCard(card)" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [parentcards]="cards" [variablesMapping]="card.variablesMapping"
         [view]="card.view"></app-fuxa-view>
 </div>
 <div *ngIf="dialog" class="dialog-modal">
     <div [style.background-color]="dialog.bkcolor" [style.height]="dialog.height + 'px'" [style.width]="dialog.width +'px'" class="dialog-modal-content">
-        <a (click)="onCloseDialog();" class="dialog-modal-close">
+        <a (click)="onCloseDialog();" class="dialog-modal-close" *ngIf="!dialog.disableDefaultClose">
             <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
         </a>
         <app-fuxa-view (onclose)="onCloseDialog()" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [variablesMapping]="dialog.variablesMapping" [view]="dialog.view">

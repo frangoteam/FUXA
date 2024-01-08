@@ -42,6 +42,8 @@ export class HmiService {
 
     private addFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.add);
     private removeFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.remove);
+    private homeTagsSubscription = [];
+    private viewsTagsSubscription = [];
 
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
@@ -78,25 +80,26 @@ export class HmiService {
      * @param value
      */
     putSignalValue(sigId: string, value: string, fnc: string = null) {
-        if (this.variables[sigId]) {
-            this.variables[sigId].value = this.getValueInFunction(this.variables[sigId].value, value, fnc);
-            if (this.socket) {
-                let device = this.projectService.getDeviceFromTagId(sigId);
-                if (device) {
-                    this.variables[sigId]['source'] = device.id;
-                }
-                if (device?.type === DeviceType.internal) {
-                    this.variables[sigId].timestamp = new Date().getTime();
-                    this.setSignalValue(this.variables[sigId]);
-                } else {
-                    this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
-                }
-            } else if (this.bridge) {
-                this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
-            } else if (!environment.serverEnabled) {
-                // for demo, only frontend
-                this.setSignalValue(this.variables[sigId]);
+        if (!this.variables[sigId]) {
+            this.variables[sigId] = new Variable(sigId, null, null);
+        }
+        this.variables[sigId].value = this.getValueInFunction(this.variables[sigId].value, value, fnc);
+        if (this.socket) {
+            let device = this.projectService.getDeviceFromTagId(sigId);
+            if (device) {
+                this.variables[sigId]['source'] = device.id;
             }
+            if (device?.type === DeviceType.internal) {
+                this.variables[sigId].timestamp = new Date().getTime();
+                this.setSignalValue(this.variables[sigId]);
+            } else {
+                this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'set', var: this.variables[sigId], fnc: [fnc, value] });
+            }
+        } else if (this.bridge) {
+            this.bridge.setDeviceValue(this.variables[sigId], { fnc: [fnc, value] });
+        } else if (!environment.serverEnabled) {
+            // for demo, only frontend
+            this.setSignalValue(this.variables[sigId]);
         }
     }
 
@@ -343,14 +346,28 @@ export class HmiService {
         }
     }
 
-    /**
-     * Subscribe to tags values
-     */
-    public tagsSubscribe(tagsId: string[]) {
+    private tagsSubscribe() {
         if (this.socket) {
-            let msg = { tagsId: tagsId };
+            const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription);
+            let msg = { tagsId: [...new Set(mergedArray)] };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
         }
+    }
+
+    /**
+     * Subscribe views tags values
+     */
+    public viewsTagsSubscribe(tagsId: string[]) {
+        this.viewsTagsSubscription = tagsId;
+        this.tagsSubscribe();
+    }
+
+    /**
+     * Subscribe only home tags value
+     */
+    public homeTagsSubscribe(tagsId: string[]) {
+        this.homeTagsSubscription = tagsId;
+        this.tagsSubscribe();
     }
 
     /**

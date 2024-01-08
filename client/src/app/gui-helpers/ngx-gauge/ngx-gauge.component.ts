@@ -1,6 +1,8 @@
-import { Component, OnInit, AfterViewInit, OnChanges, ViewChild, HostListener, ElementRef, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnChanges, ViewChild, HostListener, ElementRef, Input, SimpleChanges, OnDestroy } from '@angular/core';
 
 import { GaugeOptions, GaugeType } from './gaugeOptions';
+import { Utils } from '../../_helpers/utils';
+import { Subject, interval, take, takeUntil } from 'rxjs';
 
 declare const Gauge: any;
 declare const Donut: any;
@@ -10,7 +12,7 @@ declare const Donut: any;
     templateUrl: './ngx-gauge.component.html',
     styleUrls: ['./ngx-gauge.component.css']
 })
-export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
+export class NgxGaugeComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
     @Input() public id: string;
     @Input() public options: GaugeOptions;
@@ -18,6 +20,8 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     @ViewChild('panel', {static: false}) public panel: ElementRef;
     @ViewChild('gauge', {static: false}) public canvas: ElementRef;
     @ViewChild('gaugetext', {static: false}) public gaugetext: ElementRef;
+
+    private destroy$ = new Subject<void>();
 
     gauge: any;
     type = GaugeType.Gauge;
@@ -31,16 +35,29 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {
+        interval(100).pipe(
+            take(10),
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
             this.onResize(null);
-        }, 100);
+            this.setOptions(this.options);
+        });
+    }
+
+    ngOnDestroy() {
+        try {
+            this.destroy$.next();
+            this.destroy$.unsubscribe();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
         if (this.gauge) {
             if (changes) {
                 if (changes.value) {
-                    this.gauge.set(changes.value.currentValue);
+                    this.setValue(changes.value.currentValue);
                 }
             }
         }
@@ -82,15 +99,11 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
         this.gauge.render();
     }
 
-    setValue(value) {
-        let val = parseFloat(value);
-        if (Number.isNaN(val)) {
-            // maybe boolean
-            val = Number(value);
-        } else {
-            val = parseFloat(val.toFixed(5));
-        }
-        this.gauge.set(val);
+    setValue(val) {
+        let value = Utils.toFloatOrNumber(val);
+        value = Math.max(value, Number(this.options.minValue));
+        value = Math.min(value, Number(this.options.maxValue));
+        this.gauge.set(value);
     }
 
     setOptions(options: GaugeOptions) {
@@ -128,8 +141,9 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnChanges {
             this.gauge = new Donut(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         }
+        const value = Number(this.options.minValue) + 1;
         this.setOptions(this.options);
-        this.gauge.set(this.value);
+        this.setValue(value);
         this.initialized = true;
     }
 }

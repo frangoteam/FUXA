@@ -1,0 +1,36 @@
+<form [formGroup]="formGroup">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'dlg.userproperty-title' | translate}}</h1>
+    <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field block mb10">
+            <span>{{'general.username' | translate}}</span>
+            <input formControlName="username" type="text" style="width: 125px">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'general.fullname' | translate}}</span>
+            <input formControlName="fullname" type="text" style="width: 250px">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'general.password' | translate}}</span>
+            <input autocomplete="off" formControlName="password" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'"
+                placeholder="•••••••" style="width: 250px">
+            <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'dlg.userproperty-groups' | translate}}</span>
+            <sel-options #seloptions [selected]="selectedGroups" [disabled]="isAdmin()" [options]="groups"></sel-options>
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'dlg.userproperty-start' | translate}}</span>
+            <mat-select formControlName="start" style="width: 250px;">
+                <mat-option *ngFor="let view of views" [value]="view.id">
+                    {{ view.name }}
+                </mat-option>
+            </mat-select>
+        </div>        
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onCancelClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

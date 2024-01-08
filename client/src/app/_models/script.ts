@@ -48,7 +48,29 @@ export interface ScriptConsoleMessage {
 }
 
 export interface ScriptScheduling {
+    mode: ScriptSchedulingMode;
     interval: number;
+    schedules: SchedulerData[];
+}
+
+export interface SchedulerData {
+    date?: Date;
+    days?: any[];
+    time?: string;
+    hour?: number;
+    minute?: number;
+    type?: SchedulerType;
+}
+
+export enum ScriptSchedulingMode {
+    interval = 'interval',
+    start = 'start',
+    scheduling = 'scheduling',
+}
+
+export enum SchedulerType {
+    weekly = 0,
+    date = 1,
 }
 
 export class SystemFunctions {
@@ -59,7 +81,13 @@ export class SystemFunctions {
         name: '$getTag', text: 'script.sys-fnc-gettag-text', tooltip: 'script.sys-fnc-gettag-tooltip', params: [true]
     },
     {
+        name: '$getTagId', text: 'script.sys-fnc-getTagId-text', tooltip: 'script.sys-fnc-getTagId-tooltip', params: [false], paramsText: 'script.sys-fnc-getTagId-params'
+    },
+    {
         name: '$setView', text: 'script.sys-fnc-setview-text', tooltip: 'script.sys-fnc-setview-tooltip', params: [false]
+    },
+    {
+        name: '$enableDevice', text: 'script.sys-fnc-enableDevice-text', tooltip: 'script.sys-fnc-enableDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-enableDevice-params'
     }];
 }
 
@@ -68,6 +96,7 @@ export interface SystemFunction {
     text: string;       // button text
     tooltip: string;    // description
     params: [boolean];  // array of function parameter where true is for tag and false for any (value)
+    paramsText: string; // to add as parameter description in function
 }
 
 export enum ScriptMode {

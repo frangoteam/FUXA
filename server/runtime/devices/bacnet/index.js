@@ -169,8 +169,8 @@ function BACNETclient(_data, _logger, _events) {
                                     let varsValueChanged = _updateVarsValue(deviceId, result);
                                     lastTimestampValue = new Date().getTime();
                                     _emitValues(Object.values(varsValue));
-                                    if (this.addDaq) {
-                                        this.addDaq(varsValueChanged, data.name);
+                                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                        this.addDaq(varsValueChanged, data.name, data.id);
                                     }
                                 }
                             }
@@ -263,7 +263,7 @@ function BACNETclient(_data, _logger, _events) {
             var obj = _extractId(data.tags[tagId].address);
             value = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
             _writeProperty(_getDeviceAddress(devices[data.tags[tagId].memaddress]), obj, value).then(result => {
-                logger.info(`'${data.name}' setValue(${tagId}, ${result})`, true);
+                logger.info(`'${data.name}' setValue(${tagId}, ${result})`, true, true);
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeProperty error! ${reason.stack}`);

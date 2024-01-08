@@ -80,7 +80,7 @@ export class ValueComponent extends GaugeBaseComponent {
                     let digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
 
                     if (!Utils.isNullOrUndefined(digit) && Utils.isNumeric(val)) {
-                        val = parseFloat(val).toFixed(digit);
+                        val = parseFloat(sig.value).toFixed(digit);
                     }
                     if (ga.property.variableId === sig.id) {
                         try {

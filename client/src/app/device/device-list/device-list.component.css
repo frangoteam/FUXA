@@ -68,7 +68,11 @@
 }
 
 .mat-column-value {
-    flex: 0 0 180px;
+    flex: 2 1 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
 }
 
 .mat-column-timestamp {

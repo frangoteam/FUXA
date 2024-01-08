@@ -65,7 +65,7 @@ function getUsers(user) {
 function setUsers(query) {
     return new Promise(function (resolve, reject) {
         if (query.username) {
-            usrstorage.setUser(query.username, query.fullname, query.password, query.groups).then(() => {
+            usrstorage.setUser(query.username, query.fullname, query.password, query.groups, query.info).then(() => {
                 resolve();
             }).catch(function (err) {
                 logger.error(`users.usrstorage-set-users-list failed! ${err}`);

@@ -183,7 +183,8 @@ export enum GaugeDialogType {
     Graph,
     Iframe,
     Table,
-    Input
+    Input,
+    Panel
 }
 
 @Component({

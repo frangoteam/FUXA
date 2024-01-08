@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 import { ScriptEditorComponent } from '../script-editor/script-editor.component';
 import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/script-scheduling.component';
-import { Script, SCRIPT_PREFIX, ScriptScheduling } from '../../_models/script';
+import { Script, SCRIPT_PREFIX, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
 import { Utils } from '../../_helpers/utils';
 import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
 import { ScriptModeComponent } from '../script-mode/script-mode.component';
@@ -20,7 +20,7 @@ import { ScriptModeComponent } from '../script-mode/script-mode.component';
 })
 export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'params', 'scheduling', 'type', 'mode', 'options', 'remove'];
+    displayedColumns = ['select', 'name', 'params', 'scheduling', 'mode', 'options', 'remove'];
     dataSource = new MatTableDataSource([]);
 
     private subscriptionLoad: Subscription;
@@ -38,9 +38,6 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
             this.loadScripts();
         });
-        // Object.values(this.alarmsEnum).forEach(key => {
-        //     this.translateService.get('alarm.property-' + key).subscribe((txt: string) => { this.alarmsType[key] = txt });
-        // });
     }
 
     ngAfterViewInit() {
@@ -58,6 +55,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onAddScript() {
         let script = new Script(Utils.getGUID(SCRIPT_PREFIX));
+        script.name = Utils.getNextName('script_', this.dataSource.data.map(s => s.name));
 		this.editScript(script, 1);
     }
 
@@ -108,8 +106,17 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
     getScheduling(script: Script) {
         if (script.scheduling) {
             let result = '';
-            if (script.scheduling.interval) {
-                result += `${script.scheduling.interval} sec.`;
+            if (script.scheduling.mode) {
+                result = this.translateService.instant('script.scheduling-' + script.scheduling.mode) + ' - ';
+            }
+            if (script.scheduling.mode ===  ScriptSchedulingMode.interval || script.scheduling.mode === ScriptSchedulingMode.start) {
+                if (script.scheduling.interval) {
+                    result += `${script.scheduling.interval} sec.`;
+                } else {
+                    result += this.translateService.instant('report.scheduling-none');
+                }
+            } else if (script.scheduling.mode === ScriptSchedulingMode.scheduling) {
+                result += `${script.scheduling.schedules?.length}`;
             }
             return result;
         }

@@ -106,6 +106,7 @@ export class HeaderSettings {
     fontSize = 13;
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
+    loginInfo: LoginInfoType;
 }
 
 export interface HeaderItem {
@@ -121,6 +122,8 @@ export interface HeaderItem {
     status: GaugeStatus;
     element: HTMLElement;
 }
+
+export type LoginInfoType = 'nothing' | 'username' | 'fullname' | 'both';
 
 export type HeaderItemType = 'button' | 'label' | 'image';
 
@@ -182,7 +185,30 @@ export interface InputOptionsProperty {
     numeric?: boolean;
     min?: number;
     max?: number;
+    type?: InputOptionType;
+    timeformat?: InputTimeFormatType;
+    convertion?: InputConvertionType;
 }
+
+export enum InputOptionType {
+    number = 'number',
+    text = 'text',
+    date = 'date',
+    time = 'time',
+    datetime = 'datetime'
+}
+
+export enum InputTimeFormatType {
+    normal = 'normal',
+    seconds = 'seconds',
+    milliseconds = 'milliseconds',
+}
+
+export enum InputConvertionType {
+    milliseconds = 'milliseconds',
+    string = 'string',
+}
+
 export interface IPropertyVariable {
     /** Tag id */
     variableId: string;
@@ -266,6 +292,8 @@ export enum GaugeEventType {
     click = 'shapes.event-click',
     mousedown = 'shapes.event-mousedown',
     mouseup = 'shapes.event-mouseup',
+    enter = 'shapes.event-enter',
+    select = 'shapes.event-select',
 }
 
 export enum GaugeEventActionType {
@@ -311,6 +339,12 @@ export interface GaugeGraphProperty {
 
 export interface GaugeIframeProperty {
     address: string;
+    variableId: string;
+}
+
+export interface GaugePanelProperty {
+    viewName: string;
+    variableId: string;
 }
 
 export interface GaugeTableProperty {

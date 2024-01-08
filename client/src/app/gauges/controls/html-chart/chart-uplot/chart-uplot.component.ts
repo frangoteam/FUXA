@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType, IDateRange } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, timer } from 'rxjs';
+import { Subject, interval, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataConverterService } from '../../../../_services/data-converter.service';
 
@@ -36,6 +36,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range = { from: Date.now(), to: Date.now() };
     mapData = {};
     private destroy$ = new Subject<void>();
+    type: ChartViewType;
 
     constructor(
         private dataService: DataConverterService,
@@ -164,7 +165,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.panel.height = height;
             this.options.height = height;
             this.options.height -= 40;      // legend
-            if (this.withToolbar) {
+            if (this.withToolbar && !this.options.hideToolbar) {
                 this.options.height -= 34;  // toolbar
             }
             let size = Utils.getDomTextHeight(this.options.titleHeight, this.options.fontFamily);
@@ -182,6 +183,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (options) {
             this.options = options;
         }
+        this.destroy$.next();
+        if (this.type === ChartViewType.history && this.options.refreshInterval) {
+            interval(this.options.refreshInterval * 60000).pipe(
+                takeUntil(this.destroy$)
+            ).subscribe((res) => {
+                this.onRefresh();
+            });
+        }
         this.updateCanvasOptions(this.nguplot);
         if (this.options.panel) {
             this.resize(this.options.panel.height, this.options.panel.width);
@@ -190,14 +199,23 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.updateDomOptions(this.nguplot);
     }
 
-    public setRange(startRange) {
+    public setInitRange(startRange?: string) {
         if (this.withToolbar) {
             if (startRange) {
                 this.rangeTypeValue = this.options.lastRange;
             } else if (this.options.lastRange) {
                 this.rangeTypeValue = this.options.lastRange;
             }
+        }
+        if (this.type === ChartViewType.history) {
             this.onRangeChanged(this.rangeTypeValue);
+        } else if (this.options.loadOldValues && this.options.realtime) {
+            this.lastDaqQuery.gid = this.id;
+            this.lastDaqQuery.sids = Object.keys(this.mapData);
+            var now = new Date();
+            this.lastDaqQuery.from = new Date(now.getTime() - this.options.realtime * 60000).getTime();
+            this.lastDaqQuery.to = Date.now();
+            this.onDaqQuery();
         }
     }
 

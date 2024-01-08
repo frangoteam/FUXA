@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
 import { format } from 'fecha';
-import { Subject, timer } from 'rxjs';
+import { BehaviorSubject, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
 
@@ -27,7 +27,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatSort, {static: false}) sort: MatSort;
     @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-    @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
+    onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
 
     loading = false;
     id: string;
@@ -45,8 +45,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     tableOptions = DataTableComponent.DefaultOptions();
     data = [];
     reloadActive = false;
+    withToolbar = false;
     private lastDaqQuery = new DaqQuery();
     private destroy$ = new Subject<void>();
+    private historyDateformat = '';
 
     constructor(
         private dataService: DataConverterService,
@@ -118,7 +120,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onDaqQuery() {
-        this.onTimeRange.emit(this.lastDaqQuery);
+        this.onTimeRange$.next(this.lastDaqQuery);
         if (this.type === TableType.history) {
             this.setLoading(true);
         }
@@ -132,7 +134,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setOptions(options: TableOptions): void {
         this.tableOptions = { ...this.tableOptions, ...options };
         this.loadData();
-        this.onRangeChanged(TableRangeType.last1h);
+        this.onRangeChanged(this.tableOptions.lastRange || TableRangeType.last1h);
     }
 
     addValue(variableId: string, dt: number, variableValue: string) {
@@ -154,13 +156,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setValues(values) {
         // merge the data to have rows with 0:timestamp, n:variable values
+        const rounder = {H: 3600000, m: 60000, s: 1000};
+        const roundIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
         let data = [];
         data.push([]);    // timestamp, index 0
         let xmap = {};
         for (var i = 0; i < values.length; i++) {
             data.push([]);    // line
             for (var x = 0; x < values[i].length; x++) {
-                let t = values[i][x].dt;
+                let t = Math.round(values[i][x].dt / roundIndex) * roundIndex;
                 if (data[0].indexOf(t) === -1) {
                     data[0].push(t);
                     xmap[t] = {};
@@ -179,6 +183,16 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
+        for (var x = 1; x < data.length; x++) {
+            let lastValue = null;
+            for (var i = data[x].length - 1; i >= 0; i--) {
+                if (data[x][i] === null) {
+                    data[x][i] = lastValue;
+                } else {
+                    lastValue = data[x][i];
+                }
+            }
+        }
         // create the table data
         let dataTable = [];
         for (let i = 0; i < data[0].length; i++) {
@@ -191,7 +205,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (column.type === TableCellType.timestamp) {
                     row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
                 } else if (column.type === TableCellType.variable) {
-                    row[column.id].stringValue = (data[colPos][i]) ? Utils.formatValue(data[x][i], column.valueFormat) : '';
+                    const tempValue = data[x][i];
+                    if (Utils.isNumeric(tempValue)) {
+                        row[column.id].stringValue = (data[colPos][i]) ? Utils.formatValue(tempValue, column.valueFormat) : '';
+                    } else {
+                        row[column.id].stringValue = tempValue;
+                    }
                     colPos++;
                 } else if (column.type === TableCellType.device) {
                     row[column.id].stringValue = column.exname;
@@ -258,6 +277,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (cn.variableId) {
                     this.addColumnToMap(cn);
                 }
+                if (cn.type === TableCellType.timestamp) {
+                    this.historyDateformat = cn.valueFormat;
+                }
             }
         });
         this.displayedColumns = columnIds;
@@ -278,6 +300,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
         this.dataSource.data = this.data;
+        this.withToolbar = this.type === this.tableHistoryType && (this.tableOptions.paginator.show || this.tableOptions.filter.show || this.tableOptions.daterange.show);
     }
 
     private mapCellContent(cell: TableCellData): void {

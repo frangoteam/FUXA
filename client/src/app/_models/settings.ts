@@ -7,6 +7,8 @@ export class AppSettings {
     secureEnabled = false;
     /** Expiration of authanticated token (15m)*/
     tokenExpiresIn = '1h';
+    /** authentication are valid only for edit mode */
+    secureOnlyEditor = false;
     /** Broadcast all tags, without check the frontend views */
     broadcastAll = true;
     /** Smtp to send mails */
@@ -15,6 +17,8 @@ export class AppSettings {
     daqstore = new DaqStore();
     /** Alarms store settings */
     alarms = new AlarmsSettings();
+    /** Log Full enabled to log all setValue */
+    logFull = false;
 }
 
 export class SmtpSettings {
@@ -107,6 +111,8 @@ export enum DaqStoreRetentionType {
     days30 = 'days30',
     days90 = 'days90',
     year1 = 'year1',
+    year3 = 'year3',
+    year5 = 'year5',
 }
 
 export enum AlarmsRetentionType {

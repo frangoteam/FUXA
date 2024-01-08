@@ -2,14 +2,18 @@
     <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'device.tag-options-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="block mt10" style="text-align: center;">
-            <div class="my-form-field" style="float: left;">
+        <div class="block mt10 flex" style="text-align: center;">
+            <div class="my-form-field w100">
                 <span>{{'device.tag-daq-enabled' | translate}}</span>
                 <mat-slide-toggle color="primary" formControlName="enabled"></mat-slide-toggle>
             </div>
-            <div class="my-form-field" style="display: inline-block;">
+            <div class="my-form-field w100">
                 <span>{{'device.tag-daq-changed' | translate}}</span>
                 <mat-slide-toggle color="primary" formControlName="changed"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field w100">
+                <span>{{'device.tag-daq-restored' | translate}}</span>
+                <mat-slide-toggle color="primary" formControlName="restored"></mat-slide-toggle>
             </div>
         </div>
         <div class="my-form-field block">
@@ -28,27 +32,41 @@
                 </mat-option>
             </mat-select>
         </div>
-        <ng-container *ngIf="formGroup.controls.scaleMode.value !== 'undefined'">
-            <div class="block mt5">
-                <div class="my-form-field">
-                    <span>{{'device.tag-raw-low' | translate}}</span>
-                    <input formControlName="rawLow" type="number" style="width:140px">
+        <ng-container [ngSwitch]="formGroup.controls.scaleMode.value">
+            <ng-container *ngSwitchCase="'convertDateTime'">
+                <div class="my-form-field block mt10">
+                    <span>{{'device.tag-convert-datetime-format' | translate}}</span>
+                    <input formControlName="dateTimeFormat" style="width:300px">
                 </div>
-                <div class="my-form-field ftr">
-                    <span>{{'device.tag-raw-high' | translate}}</span>
-                    <input formControlName="rawHigh" type="number" style="width:140px">
+            </ng-container>
+            <ng-container *ngSwitchCase="'convertTickTime'">
+                <div class="my-form-field block mt10">
+                    <span>{{'device.tag-convert-ticktime-format' | translate}}</span>
+                    <input formControlName="dateTimeFormat" style="width:300px">
                 </div>
-            </div>
-            <div class="block mt5">
-                <div class="my-form-field">
-                    <span>{{'device.tag-scaled-low' | translate}}</span>
-                    <input formControlName="scaledLow" type="number" style="width:140px">
+            </ng-container>
+            <ng-container *ngSwitchCase="'linear'">
+                <div class="block mt5">
+                    <div class="my-form-field">
+                        <span>{{'device.tag-raw-low' | translate}}</span>
+                        <input formControlName="rawLow" type="number" style="width:140px">
+                    </div>
+                    <div class="my-form-field ftr">
+                        <span>{{'device.tag-raw-high' | translate}}</span>
+                        <input formControlName="rawHigh" type="number" style="width:140px">
+                    </div>
                 </div>
-                <div class="my-form-field ftr">
-                    <span>{{'device.tag-scaled-high' | translate}}</span>
-                    <input formControlName="scaledHigh" type="number" style="width:140px">
+                <div class="block mt5">
+                    <div class="my-form-field">
+                        <span>{{'device.tag-scaled-low' | translate}}</span>
+                        <input formControlName="scaledLow" type="number" style="width:140px">
+                    </div>
+                    <div class="my-form-field ftr">
+                        <span>{{'device.tag-scaled-high' | translate}}</span>
+                        <input formControlName="scaledHigh" type="number" style="width:140px">
+                    </div>
                 </div>
-            </div>
+            </ng-container>
         </ng-container>
     </div>
     <div mat-dialog-actions class="dialog-action">

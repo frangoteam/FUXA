@@ -62,7 +62,7 @@ export class HtmlTableComponent {
                 htmlTable.appendChild(componentRef.location.nativeElement);
                 // let opt = <GraphOptions>{ panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
                 let opt = DataTableComponent.DefaultOptions();
-                componentRef.instance.setOptions(opt);
+                // componentRef.instance.setOptions(opt);
 
                 componentRef.instance['myComRef'] = componentRef;
                 return componentRef.instance;

@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType } from '../_models/chart';
 
-import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableRangeType } from '../_models/hmi';
+import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -34,6 +34,9 @@ import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
+import { HtmlImageComponent } from './controls/html-image/html-image.component';
+import { PanelComponent } from './controls/panel/panel.component';
+import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 
 @Injectable()
 export class GaugesManager {
@@ -61,14 +64,15 @@ export class GaugesManager {
     static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
-    ApeShapesComponent.TypeTag];
+        ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
-        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent];
+        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent];
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
+        HtmlImageComponent, PanelComponent];
 
     constructor(private hmiService: HmiService,
         private winRef: WindowRef,
@@ -530,6 +534,15 @@ export class GaugesManager {
                         });
                     }
                     break;
+                } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
+                    if (this.memorySigGauges[sig.id]) {
+                        Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                            if (k === ga.id && this.mapGauges[k]) {
+                                PanelComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                            }
+                        });
+                    }
+                    break;
                 } else if (typeof GaugesManager.Gauges[i]['processValue'] === 'function') {
                     GaugesManager.Gauges[i]['processValue'](ga, svgele, sig, gaugeStatus);
                     break;
@@ -738,7 +751,7 @@ export class GaugesManager {
                     this.hmiService.queryDaqValues(data);
                 });
                 if (isview) {
-                    gauge.setRange(null);
+                    gauge.setInitRange();
                 }
                 this.mapGauges[ga.id] = gauge;
             }
@@ -784,18 +797,22 @@ export class GaugesManager {
             if (gauge) {
                 this.setTablePropety(gauge, ga.property);
                 this.mapTable[ga.id] = gauge;
-                gauge.onTimeRange.subscribe(data => {
+                gauge.onTimeRange$.subscribe(data => {
                     this.hmiService.queryDaqValues(data);
                 });
                 this.mapGauges[ga.id] = gauge;
-                if (isview) {
-                    gauge.onRangeChanged(Utils.getEnumKey(TableRangeType, TableRangeType.last1h));
-                }
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.initElement(ga, isview);
             return true;
+        } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
+            HtmlImageComponent.initElement(ga, isview);
+            return true;
+        } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
+            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.projectService.getHmi(), isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge;
         } else {
             return true;
         }

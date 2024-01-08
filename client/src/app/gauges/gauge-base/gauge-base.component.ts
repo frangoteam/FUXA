@@ -44,7 +44,7 @@ export class GaugeBaseComponent {
         return coords;
     }
 
-    static getEvents(pro: GaugeProperty, type: GaugeEventType) {
+    static getEvents(pro: GaugeProperty, type: GaugeEventType): GaugeEvent[] {
         let res: GaugeEvent[] = [];
         if (!pro || !pro.events) {
             return null;

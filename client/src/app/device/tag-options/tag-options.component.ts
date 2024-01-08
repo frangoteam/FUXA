@@ -25,12 +25,14 @@ export class TagOptionsComponent implements OnInit {
             interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(1)]],
             changed: [{value: false, disabled: true}],
             enabled: [false],
+            restored: [false],
             format: [null, [Validators.min(0)]],
             scaleMode: 'undefined',
             rawLow: null,
             rawHigh: null,
             scaledLow: null,
-            scaledHigh: null
+            scaledHigh: null,
+            dateTimeFormat: null
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -48,12 +50,14 @@ export class TagOptionsComponent implements OnInit {
             let enabled = { value: null, valid: true };
             let changed = { value: null, valid: true };
             let interval = { value: null, valid: true };
+            let restored = { value: null, valid: true };
             let format = { value: null, valid: true };
             let scaleMode = { value: null, valid: true };
             let rawLow = { value: null, valid: true };
             let rawHigh = { value: null, valid: true };
             let scaledLow = { value: null, valid: true };
             let scaledHigh = { value: null, valid: true };
+            let dateTimeFormat = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -68,6 +72,11 @@ export class TagOptionsComponent implements OnInit {
                     changed.value = daq.changed;
                 } else if (changed.value !== daq.changed) {
                     changed.valid = false;
+                }
+                if (!restored.value) {
+                    restored.value = daq.restored;
+                } else if (restored.value !== daq.restored) {
+                    restored.valid = false;
                 }
                 if (!interval.value) {
                     interval.value = daq.interval;
@@ -85,6 +94,7 @@ export class TagOptionsComponent implements OnInit {
                     rawHigh.value = this.data.tags[i].scale?.rawHigh;
                     scaledLow.value = this.data.tags[i].scale?.scaledLow;
                     scaledHigh.value = this.data.tags[i].scale?.scaledHigh;
+                    dateTimeFormat.value = this.data.tags[i].scale?.dateTimeFormat;
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
@@ -96,6 +106,9 @@ export class TagOptionsComponent implements OnInit {
             }
             if (changed.valid && changed.value !== null) {
                 values = {...values, changed: changed.value};
+            }
+            if (restored.valid && restored.value !== null) {
+                values = {...values, restored: restored.value};
             }
             if (interval.valid && interval.value) {
                 values = {...values, interval: interval.value};
@@ -109,7 +122,8 @@ export class TagOptionsComponent implements OnInit {
                     rawLow: rawLow.value,
                     rawHigh: rawHigh.value,
                     scaledLow: scaledLow.value,
-                    scaledHigh: scaledHigh.value
+                    scaledHigh: scaledHigh.value,
+                    dateTimeFormat: dateTimeFormat.value
                 };
             }
             this.formGroup.patchValue(values);
@@ -152,15 +166,17 @@ export class TagOptionsComponent implements OnInit {
             daq: new TagDaq(
                 this.formGroup.value.enabled,
                 this.formGroup.value.changed,
-                this.formGroup.value.interval
+                this.formGroup.value.interval,
+                this.formGroup.value.restored,
             ),
             format: this.formGroup.value.format,
             scale: (this.formGroup.value.scaleMode !== 'undefined') ? {
                 mode: this.formGroup.value.scaleMode,
-                    rawLow: this.formGroup.value.rawLow,
-                    rawHigh: this.formGroup.value.rawHigh,
-                    scaledLow: this.formGroup.value.scaledLow,
-                    scaledHigh: this.formGroup.value.scaledHigh
+                rawLow: this.formGroup.value.rawLow,
+                rawHigh: this.formGroup.value.rawHigh,
+                scaledLow: this.formGroup.value.scaledLow,
+                scaledHigh: this.formGroup.value.scaledHigh,
+                dateTimeFormat: this.formGroup.value.dateTimeFormat
             } : null,
         });
     }

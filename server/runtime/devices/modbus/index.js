@@ -141,8 +141,8 @@ function MODBUSclient(_data, _logger, _events) {
                     let varsValueChanged = _updateVarsValue(result);
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } else {
                     // console.error('then error');
@@ -300,7 +300,7 @@ function MODBUSclient(_data, _logger, _events) {
             }
             try {
                 await _writeMemory(parseInt(memaddr), offset, val).then(result => {
-                    logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
+                    logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
                 }, reason => {
                     if (reason && reason.stack) {
                         logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
@@ -315,6 +315,8 @@ function MODBUSclient(_data, _logger, _events) {
                 console.log(err);
             }
             return true;
+        } else {
+            logger.error(`'${data.name}' setValue(${sigid}, ${value}) Tag not found`, true, true);
         }
         return false;
     }

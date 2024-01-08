@@ -238,12 +238,17 @@ export class NgxTouchKeyboardComponent {
       return;
     }
 
-    const commonParams: [number, number, boolean] = [
+    let commonParams: [number, number, boolean] = [
       this._caretPosition || 0,
       this._caretPositionEnd || 0,
       true,
     ];
+
     let output = this._activeInputElement?.value || '';
+    if (this._caretPosition === null && this._caretPositionEnd === null) {
+      commonParams[0] = this._activeInputElement?.inputMode === 'decimal' ? output.length : 0;
+      commonParams[1] = this._activeInputElement?.inputMode === 'decimal' ? output.length : 0;
+    }
 
     if (!this.isStandardButton(button)) {
       // Handel functional button

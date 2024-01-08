@@ -125,11 +125,15 @@ export class ShapesComponent extends GaugeBaseComponent {
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
+        console.log('asdf');
         if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
             return;
         }
         if (element.timeline) {
             element.timeline().stop();
+        }
+        if (gaugeStatus.actionRef?.animr) {
+            gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);

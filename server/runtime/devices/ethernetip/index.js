@@ -121,8 +121,8 @@ function EthernetIPclient(_data, _logger, _events) {
                             let varsValueChanged = _updateVarsValue(result);
                             lastTimestampValue = new Date().getTime();
                             _emitValues(varsValue);
-                            if (this.addDaq) {
-                                this.addDaq(varsValueChanged, data.name);
+                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                this.addDaq(varsValueChanged, data.name, data.id);
                             }
                         } else {
                             // console.error('then error');
@@ -210,7 +210,7 @@ function EthernetIPclient(_data, _logger, _events) {
                 if (error) {
                     logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
                 } else {
-                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true);
+                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true, true);
                 }
             });
             return true;

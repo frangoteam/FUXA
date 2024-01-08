@@ -1,5 +1,5 @@
 <div class="mychart-panel" #chartPanel>
-    <div class="mychart-toolbar" *ngIf="withToolbar">
+    <div class="mychart-toolbar" *ngIf="withToolbar" [style.display]="(options.hideToolbar)?'none':'block'">
         <div style="display: block; padding-right: 5px;text-align: center;" class="my-form-field">
             <div *ngIf="isEditor" >
                 <button class="mychart-toolbar-editor" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">

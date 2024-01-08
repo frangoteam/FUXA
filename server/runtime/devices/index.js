@@ -167,6 +167,7 @@ function loadDevice(device) {
     if (runtime.settings.daqEnabled) {
         var fncToSaveDaqValue = runtime.daqStorage.addDaqNode(device.id, activeDevices[device.id].getTagProperty);
         activeDevices[device.id].bindSaveDaqValue(fncToSaveDaqValue);
+        activeDevices[device.id].bindGetDaqValueToRestore(runtime.daqStorage.getCurrentStorageFnc());
     }
     return true;
 }
@@ -210,7 +211,7 @@ function getDeviceValue(deviceid, sigid) {
 
 /**
  * Get the Device Tag value
- * used from Alarms
+ * used from Alarms, Script
  * @param {*} sigid 
  * @param {*} fully, struct with timestamp
  */
@@ -223,6 +224,26 @@ function getDeviceValue(deviceid, sigid) {
                 return result;
             } else if (result) {
                 return result.value;
+            }
+        }
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+}
+
+/**
+ * Get the Device Tag Id
+ * used from Script
+ * @param {*} tagName 
+ */
+function getTagId(tagName) {
+    try {
+        const devices = runtime.project.getDevices();
+        for (var id in devices) {
+            const tag = Object.values(devices[id].tags).find(tag => tag.name === tagName);
+            if (tag) {
+                return tag.id;
             }
         }
     } catch (err) {
@@ -247,6 +268,26 @@ function getDeviceValue(deviceid, sigid) {
         console.error(err);
     }
     return null;
+}
+
+/**
+ * Enable/disable Device connection
+ * used from Scripts
+ * @param {*} deviceName
+ * @param {*} enable 
+ */
+function enableDevice(deviceName, enable) {
+    try {
+        let device = runtime.project.getDevice(deviceName);
+        enable = (typeof enable === 'string') ? enable === "true" : Boolean(enable);
+        if (device && device.enabled !== enable) {
+            device.enabled = enable;
+            updateDevice(device);
+        }
+        runtime.logger.info(`devices.enableDevice: '${deviceName} - ${enable}'`, true);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 /**
@@ -393,7 +434,7 @@ var devices = module.exports = {
     getDevicesValues: getDevicesValues,
     getDeviceValue: getDeviceValue,
     getTagValue: getTagValue,
-    setTagValue: setTagValue,
+    setTagValue: setTagValue,    
     setDeviceValue: setDeviceValue,
     getDeviceIdFromTag: getDeviceIdFromTag,
     browseDevice: browseDevice,
@@ -402,5 +443,7 @@ var devices = module.exports = {
     isWoking: isWoking,
     getSupportedProperty: getSupportedProperty,
     getRequestResult: getRequestResult,
-    getTagFormat: getTagFormat
+    getTagFormat: getTagFormat,
+    enableDevice: enableDevice,
+    getTagId: getTagId,
 }

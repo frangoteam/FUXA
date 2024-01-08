@@ -14,6 +14,8 @@ import {
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script';
 
 import { Utils } from '../../../_helpers/utils';
+import { HtmlInputComponent } from '../../controls/html-input/html-input.component';
+import { HtmlSelectComponent } from '../../controls/html-select/html-select.component';
 
 
 @Component({
@@ -33,24 +35,36 @@ export class FlexEventComponent implements OnInit {
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 
     events: GaugeEvent[];
-    eventType = GaugeEventType;
+    eventType = {};
     setValueType = GaugeEventSetValueType;
+    enterActionType = {};
     actionType = GaugeEventActionType;
     eventActionOnCard = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
     eventWithPosition = [Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard),
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow),
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oniframe)];
+    cardDestination = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
 
     constructor(private translateService: TranslateService) {
     }
 
     ngOnInit() {
-        Object.keys(this.eventType).forEach(key => {
-            this.translateService.get(this.eventType[key]).subscribe((txt: string) => { this.eventType[key] = txt; });
-        });
+        if (this.data.settings.type === HtmlInputComponent.TypeTag) {
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.enter)] = this.translateService.instant(GaugeEventType.enter);
+        } else if (this.data.settings.type === HtmlSelectComponent.TypeTag) {
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.select)] = this.translateService.instant(GaugeEventType.select);
+        } else {
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.click)] = this.translateService.instant(GaugeEventType.click);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
+        }
+
+        this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
+
         Object.keys(this.actionType).forEach(key => {
             this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt; });
         });
+
         Object.keys(this.setValueType).forEach(key => {
             this.translateService.get(this.setValueType[key]).subscribe((txt: string) => { this.setValueType[key] = txt; });
         });
@@ -161,6 +175,15 @@ export class FlexEventComponent implements OnInit {
 
     setScriptParam(scriptParam: ScriptParam, event) {
         scriptParam.value = event.variableId;
+    }
+
+    destinationWithHideClose(action: GaugeEventActionType) {
+        return action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow) ||
+            action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.ondialog);
+    }
+
+    isEnterOrSelect(type: string) {
+        return type === 'enter' || type === 'select';
     }
 
     private addEvent(ge: GaugeEvent) {

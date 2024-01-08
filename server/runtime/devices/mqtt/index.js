@@ -3,7 +3,7 @@
  */
 'use strict';
 const mqtt = require('mqtt');
-var utils = require('../../utils');
+const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const path = require('path');
 const fs = require('fs');
@@ -154,8 +154,8 @@ function MQTTclient(_data, _logger, _events) {
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);
@@ -318,6 +318,7 @@ function MQTTclient(_data, _logger, _events) {
                 }
                 tag.changed = true;
                 _publishValues([tag]);
+                // logger.info(`'${data.name}' setValue(${tagId}, ${value})`, true, true);
                 return true;
             }
         }
@@ -520,6 +521,7 @@ function MQTTclient(_data, _logger, _events) {
     var _publishValues = function (tags) {
         Object.keys(tags).forEach(key => {
             try {
+                const topicOptions = { retain: true };
                 // publish only tags with pubs and value changed
                 if (tags[key].options && tags[key].options.pubs && tags[key].options.pubs.length) {
                     var topicTopuplish = {};
@@ -547,16 +549,16 @@ function MQTTclient(_data, _logger, _events) {
                     });
                     // payloand
                     if (tags[key].type === 'json') {
-                        client.publish(tags[key].address, JSON.stringify(topicTopuplish));
+                        client.publish(tags[key].address, JSON.stringify(topicTopuplish), topicOptions);
                     } else if (topicTopuplish[0] !== undefined) { // payloand with row data
-                        client.publish(tags[key].address, Object.values(topicTopuplish)[0].toString());
+                        client.publish(tags[key].address, Object.values(topicTopuplish)[0].toString(), topicOptions);
                     }
                 } else if (tags[key].type === 'json' && tags[key].options && tags[key].options.subs && tags[key].options.subs.length) {
                     let obj = {};
                     obj[tags[key].memaddress] = tags[key].value;
-                    client.publish(tags[key].address, JSON.stringify(obj));
+                    client.publish(tags[key].address, JSON.stringify(obj), topicOptions);
                 } else if (tags[key].value !== undefined) {   // whitout payload
-                    client.publish(tags[key].address, tags[key].value.toString());
+                    client.publish(tags[key].address, tags[key].value.toString(), topicOptions);
                     tags[key].value = null;
                 }
             } catch (err) {

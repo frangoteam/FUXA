@@ -8,7 +8,7 @@
     </canvas>
 </div>
 <div class="graph-toolbar" *ngIf="barChartOptions.offline">
-    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="barChartOptions.plugins.title.color">
+    <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="barChartOptions.plugins?.title?.color || 'black'">
         <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
     </button>
 </div>

@@ -112,8 +112,8 @@ function S7client(_data, _logger, _events) {
                     let varsValueChanged = _updateVarsValue(result);
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } else {
                     // console.error('not');
@@ -227,7 +227,7 @@ function S7client(_data, _logger, _events) {
             value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
             item.value = value;
             _writeVars([item], (item instanceof DbItem)).then(result => {
-                logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true);
+                logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeVars error! ${reason.stack}`);

@@ -1,4 +1,4 @@
-<div *ngIf="type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)" class="table-toolbar"
+<div *ngIf="withToolbar" class="table-toolbar"
     [style.backgroundColor]="tableOptions.row.background">
     <div *ngIf="tableOptions.filter.show" class="my-form-field" style="float: left; padding-left: 20px;">
         <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" style="width: 250px;" type="text"
@@ -37,7 +37,7 @@
     </mat-paginator>
 </div>
 <mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort
-    [style.height]="(type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)) ? 'calc(100% - 42px)' : '100%'">
+    [style.height]="withToolbar ? 'calc(100% - 42px)' : '100%'">
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th *matHeaderCellDef mat-sort-header [style.minWidth.px]="columnsStyle[column].width" [ngClass]="columnsStyle[column].align" [style.color]="tableOptions.header.color"
             [style.fontSize.px]="tableOptions.header.fontSize">
@@ -56,7 +56,11 @@
         [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
 </mat-table>
 <div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
-    <button mat-icon-button (click)="onRefresh()" class="small-icon-button default-color" [style.color]="tableOptions.header.color">
+    <button mat-icon-button 
+            (click)="onRefresh()" 
+            class="small-icon-button default-color"
+            [style.color]="tableOptions.header.color"
+            [style.top.px]="withToolbar ? 45 : 0">
         <mat-icon [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
     </button>
 </div>

@@ -9,6 +9,7 @@ const path = require('path');
 var Module = module.constructor;
 
 // const eventsIncludes = 'var events = require("../events").create();';
+const requireInclude = `const path = require('path');`;
 const eventsIncludes = 'var events; var id; var console = { log: function (msg) { if (events) events.emit(\'script-console\', { msg: msg, type: \'log\', id: id });}};';
 // const eventsIncludes = 'var events = require("../events").create();';// var console = { log: function (msg) { if (events) events.emit(\'script-console\', { msg: msg, type: \'log\' });}}';
 const initEvents = { name: 'init', code: 'events = _events; id = _id', parameters: [{ name: '_events' }, { name: '_id' }] };
@@ -108,7 +109,7 @@ function MyScriptsModule(_events, _logger) {
             if (_includes) {
                 code = `${_includes}`;
             }
-            var code = `${code} ${functions} module.exports = { ${toexport} };`;
+            var code = `${requireInclude} ${code} ${functions} module.exports = { ${toexport} };`;
             var filename = path.resolve(__dirname, 'msm-scripts.js');
             result.module = _requireFromString(code, filename);
         } catch(ex) {

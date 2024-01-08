@@ -3,6 +3,7 @@ export class User {
 	fullname: string;
     password: string;
     groups: number;
+    info: string;
 }
 
 export class UserGroups {

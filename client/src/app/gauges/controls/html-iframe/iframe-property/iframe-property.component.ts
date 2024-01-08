@@ -16,7 +16,7 @@ export class IframePropertyComponent implements OnInit {
         this._reload();
     }
 
-    property: GaugeIframeProperty ;
+    property: GaugeIframeProperty;
 
     constructor(private translateService: TranslateService) {
     }
@@ -29,9 +29,14 @@ export class IframePropertyComponent implements OnInit {
         this.onPropChanged.emit(this.data.settings);
     }
 
+    onTagChanged(variableId: string) {
+        this.data.settings.property.variableId = variableId;
+        this.onPropChanged.emit(this.data.settings);
+    }
+
     private _reload() {
         if (!this.data.settings.property) {
-            this.data.settings.property = <GaugeIframeProperty>{ address: null };
+            this.data.settings.property = <GaugeIframeProperty>{ address: null, variableId: null };
         }
         this.property = this.data.settings.property;
     }

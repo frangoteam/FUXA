@@ -72,7 +72,7 @@
         <!-- Value Column -->
         <ng-container matColumnDef="value">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.value}}"> {{element.value}} </mat-cell>
         </ng-container>
 
         <!-- Timestamp Column -->

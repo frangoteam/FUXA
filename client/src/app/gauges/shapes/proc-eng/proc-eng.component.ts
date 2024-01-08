@@ -128,7 +128,10 @@ export class ProcEngComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            element.timeline().stop(true);
+            element.timeline().stop();
+        }
+        if (gaugeStatus.actionRef?.animr) {
+            gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);

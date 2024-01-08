@@ -66,7 +66,11 @@ export class HtmlGraphComponent extends GaugeBaseComponent {
                 componentRef.changeDetectorRef.detectChanges();
                 htmlGraph.appendChild(componentRef.location.nativeElement);
                 let opt = <GraphOptions>{ panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
-                opt = { ...GraphBarComponent.DefaultOptions(), ...opt };
+                if (gab.type.endsWith(this.suffixBar)) {
+                    opt = { ...GraphBarComponent.DefaultOptions(), ...opt };
+                } else {
+                    opt = { ...GraphPieComponent.DefaultOptions(), ...opt };
+                }
                 componentRef.instance.setOptions(opt);
                 if (gab.property?.options?.backgroundColor) {
                     window['svgEditor']?.setColor(gab.property.options.backgroundColor, 100, 'fill');

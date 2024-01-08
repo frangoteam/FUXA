@@ -695,6 +695,12 @@ select#start_marker option[value="D"] {
     background-repeat: no-repeat; /* Do not repeat the image */
 }
 
+.material-icon-tool {
+    text-align: center;
+    line-height: 30px;
+    font-size: 22px;
+}
+
 .icon-switch {
     background: url("/assets/images/switch.svg") no-repeat center center;
 }
@@ -730,9 +736,6 @@ select#start_marker option[value="D"] {
 }
 .icon-graphbar {
     background: url("/assets/images/graphbar.svg") no-repeat center center;
-}
-.icon-graphpie {
-    background: url("/assets/images/graphpie.svg") no-repeat center center;
 }
 .icon-table {
     background: url("/assets/images/table.svg") no-repeat center center;
