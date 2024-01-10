@@ -16,15 +16,18 @@
             [style.width.px]="getDeviceConnectionWidth()" [style.height.px]="lineDeviceSize"></div>
     </div>
     <div class="container">
-        <div class="main-device" *ngIf="server && server.property" [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()" [style.width.px]="mainWidth"
+        <div class="main-device" *ngIf="server?.property" [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()" [style.width.px]="mainWidth"
             [style.height.px]="mainHeight" [style.borderWidth.px]="mainBorder">
             <span class="device-header" style="padding-top: 10px;">{{ server.name }}</span>
             <span class="device-pro">{{ server.property.address }}</span>
             <!-- <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon> -->
             <!-- <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit" >edit</mat-icon> -->
-            <button *ngIf="!readonly" mat-icon-button (click)="onListDevice(server)" class="device-icon device-list mat-button-sm" [style.right.px]="2" matTooltip="{{'device.property-tags' | translate}}">
+            <button *ngIf="!readonly" mat-icon-button (click)="onListDevice(server)" class="device-icon device-list mat-button-sm" [style.right.px]="(readonly) ? 2 : 30" matTooltip="{{'device.property-tags' | translate}}">
                 <mat-icon>link</mat-icon>
-            </button>         
+            </button>    
+            <button *ngIf="!readonly" mat-icon-button (click)="onEditDevice(server)" class="device-edit mat-button-sm" matTooltip="{{'device.property-edit' | translate}}">
+                <mat-icon style="font-size: 17px">edit</mat-icon>
+            </button>     
         </div>
 
         <div *ngFor="let flow of devicesValue('flow'); index as i" class="node-flow" [style.color]="(flow.enabled) ? '#000000' : '#828282'"
@@ -77,7 +80,7 @@
                 <button *ngIf="!readonly" mat-icon-button (click)="onListDevice(element)" class="remove" matTooltip="{{'device.property-tags' | translate}}">
                     <mat-icon>link</mat-icon>
                 </button>
-                <button *ngIf="!readonly && !isServer(element)" mat-icon-button (click)="onEditDevice(element)" class="remove" matTooltip="{{'device.property-edit' | translate}}">
+                <button *ngIf="!readonly" mat-icon-button (click)="onEditDevice(element)" class="remove" matTooltip="{{'device.property-edit' | translate}}">
                     <mat-icon>edit</mat-icon>
                 </button>
             </mat-cell>
