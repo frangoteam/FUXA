@@ -247,7 +247,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else {
             let dialogRef = this.dialog.open(LoginComponent, {
-                data: {}
+                data: {},
+                disableClose: true
             });
             dialogRef.afterClosed().subscribe(result => {
                 const userInfo = new UserInfo(this.authService.getUser()?.info);
