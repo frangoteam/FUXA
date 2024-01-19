@@ -142,6 +142,10 @@ export class NgxTouchKeyboardComponent {
       inputMode &&
       ['numeric', 'decimal', 'tel'].some((i) => i === inputMode)
     ) {
+      const currentType = this._activeInputElement?.getAttribute('type');
+      if (currentType === 'number') {
+        this._activeInputElement?.setAttribute('type', 'text');
+      }
       this.layoutName = 'default';
     } else {
       this.layoutName = 'alphabetic';
