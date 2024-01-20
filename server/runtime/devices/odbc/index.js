@@ -25,6 +25,9 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.connect = function () {
         console.error('Not supported!');
+        return new Promise((resolve, reject) => {
+            reject('Not supported!');
+        })
         // events.emit('device-status:changed', { id: data.id, status: 'connect-ok' });
         // events.emit('device-status:changed', { id: data.id, status: 'connect-error' });
     }
@@ -36,6 +39,9 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.disconnect = function () {
         console.error('Not supported!');
+        return new Promise((resolve, reject) => {
+            reject('Not supported!');
+        })
         // events.emit('device-status:changed', { id: data.id, status: 'connect-off' });
     }
 
@@ -116,34 +122,41 @@ function ODBCclient(_data, _logger, _events) {
 /**
  * Return tables list
  */
-function getTables(endpointUrl) {
+function getTables(endpoint, fncGetProperty) {
     return new Promise( async function (resolve, reject) {
         if (loadOdbcLib()) { 
+            var connection;
             try {
+                var security
+                await fncGetProperty({query: 'security', name: endpoint.id}).then((result, error) => {
+                    if (result) {
+                        security = utils.JsonTryToParse(result.value);
+                    }
+                });
+                var connectionsString = endpoint.address;
+                if (endpoint.uid || security.uid) {
+                    connectionsString += `;UID=${endpoint.uid || security.uid}`;
+                }
+                if (endpoint.pwd || security.pwd) {
+                    connectionsString += `;PWD=${endpoint.pwd || security.pwd}`;
+                }
                 const connectionConfig = {
-                    connectionString: 'DSN=MYDSN'+ endpointUrl,
+                    connectionString: connectionsString,//'DSN=TestDatabase;UID=SA;PWD=Pippo-07',//+ endpointUrl,
                     connectionTimeout: 10,
                     loginTimeout: 10,
                 }
-                const connection = await odbc.connect(connectionConfig);
-                // if (err) {
-                //     reject('getendpoints-connect-error: ' + err.message);
-                // } else {
-                //     const endpoints = client.getEndpoints().then(endpoints => {
-                //         const reducedEndpoints = endpoints.map(endpoint => ({ 
-                //             endpointUrl: endpoint.endpointUrl, 
-                //             securityMode: endpoint.securityMode.toString(), 
-                //             securityPolicy: endpoint.securityPolicyUri.toString(),
-                //         }));
-                //         resolve( reducedEndpoints);
-                //         client.disconnect();
-                //     }, reason => {
-                //         reject('getendpoints-error: ' + reason);
-                //         client.disconnect();
-                //     });
-                // }
+                connection = await odbc.connect(connectionConfig)
+                var tables = await connection.tables(null, 'dbo', null, null);
+                if (tables.length <= 0) {
+                    tables = await connection.tables(null, null, null, null);
+                }
+                const resultEndpoints = tables.map(table => table.TABLE_NAME);
+                resolve(resultEndpoints);
             } catch (err) {
                 reject('getendpoints-error: ' + err);
+            }
+            if (connection) {
+                connection.close();
             }
         } else {
             reject('getendpoints-error: node-opcua not found!');

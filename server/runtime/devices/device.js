@@ -22,6 +22,8 @@ var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
 
+var fncGetDeviceProperty;
+
 function Device(data, runtime) {
     var property = { id: data.id, name: data.name };        // Device property (name, id)
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
@@ -37,6 +39,8 @@ function Device(data, runtime) {
     var comm;                                               // Interface to OPCUA/S7/.. Device
                                                             // required: connect, disconnect, isConnected, polling, init, load, getValue, 
                                                             // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
+    fncGetDeviceProperty = runtime.project.getDeviceProperty;
+    
     if (data.type === DeviceEnum.S7) {
         if (!S7client) {
             return null;
@@ -128,7 +132,9 @@ function Device(data, runtime) {
             comm.disconnect().then(function () {
                 status = DeviceStatusEnum.INIT;
                 resolve();
-            });
+            }).catch(function (err) {
+                reject(err);
+            });;
         });
     }
 
@@ -398,6 +404,7 @@ function Device(data, runtime) {
  * @param {*} type 
  */
 function getSupportedProperty(endpoint, type) {
+    var self = this;
     return new Promise(function (resolve, reject) {
         if (type === DeviceEnum.OPCUA) {
             OpcUAclient.getEndPoints(endpoint).then(function (result) {
@@ -406,7 +413,7 @@ function getSupportedProperty(endpoint, type) {
                 reject(err);
             });
         } else if (type === DeviceEnum.ODBC) {
-            ODBCclient.getTables(endpoint).then(function (result) {
+            ODBCclient.getTables(endpoint, fncGetDeviceProperty).then(function (result) {
                 resolve(result);
             }).catch(function (err) {
                 reject(err);

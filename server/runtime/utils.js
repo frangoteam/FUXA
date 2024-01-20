@@ -106,6 +106,14 @@ var utils = module.exports = {
         return (ele === null || ele === undefined) ? true : false;
     },
 
+    JsonTryToParse(value) {
+        try {
+            if (value) {
+                return JSON.parse(value);
+            }    
+        } catch { }
+    },
+
     dayOfYear: function (date) {
         if (date) {
             return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);

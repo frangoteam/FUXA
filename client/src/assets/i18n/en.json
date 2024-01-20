@@ -812,7 +812,7 @@
     "device.webapi-property-gettags": "URL GET Tags",
     "device.webapi-property-posttags": "URL POST Tags",
     "device.webapi-property-loadtags": "Load Tags",
-    "device.property-dsn": "Data Source Name",
+    "device.property-dsn": "Data Source Name (DSN=Database name)",
     "device.property-odbc-result": "Result of tables found",
     "device.not-odbc-result": "Database tables result",
 
