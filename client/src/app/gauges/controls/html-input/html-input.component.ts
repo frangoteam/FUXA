@@ -144,48 +144,85 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     input.value = '';
                     HtmlInputComponent.checkInputType(input, gab.property.options);
                     input.setAttribute('autocomplete', 'off');
-                    if (gab.property.options && gab.property.options.numeric) {
-                        const min = parseFloat(gab.property.options.min);
-                        const max = parseFloat(gab.property.options.max);
-                        input.addEventListener('keydown', (event: KeyboardEvent) => {
-                            try {
-                                if (event.code === 'Enter' && !event.view) {
-                                    const value = parseFloat(input.value);
-                                    let warningMessage = '';
-                                    if (min > value) {
-                                        warningMessage += `Min=${min} `;
+                    if (gab.property.options) {
+                        if (gab.property.options.numeric) {
+                            const min = parseFloat(gab.property.options.min);
+                            const max = parseFloat(gab.property.options.max);
+                            input.addEventListener('keydown', (event: KeyboardEvent) => {
+                                try {
+                                    if (event.code === 'Enter' && !event.view) {
+                                        const value = parseFloat(input.value);
+                                        let warningMessage = '';
+                                        if (min > value) {
+                                            warningMessage += `Min=${min} `;
+                                        }
+                                        if (max < value) {
+                                            warningMessage += `Max=${max} `;
+                                        }
+                                        if (warningMessage) {
+                                            let inputPosition = input.getBoundingClientRect();
+                                            const tooltip = document.createElement('div');
+                                            tooltip.innerText = warningMessage;
+                                            tooltip.style.position = 'absolute';
+                                            tooltip.style.top = `${inputPosition.top + input.offsetHeight + 3}px`;
+                                            tooltip.style.left = `${inputPosition.left}px`;
+                                            tooltip.style.zIndex = '99999';
+                                            tooltip.style.padding = '3px 5px';
+                                            tooltip.style.border = '1px solid black';
+                                            tooltip.style.backgroundColor = 'white';
+                                            document.body.appendChild(tooltip);
+                                            setTimeout(() => {
+                                                document.body.removeChild(tooltip);
+                                            }, 2000);
+                                        }
                                     }
-                                    if (max < value) {
-                                        warningMessage += `Max=${max} `;
-                                    }
-                                    if (warningMessage) {
-                                        let inputPosition = input.getBoundingClientRect();
-                                        const tooltip = document.createElement('div');
-                                        tooltip.innerText = warningMessage;
-                                        tooltip.style.position = 'absolute';
-                                        tooltip.style.top = `${inputPosition.top + input.offsetHeight + 3}px`;
-                                        tooltip.style.left = `${inputPosition.left}px`;
-                                        tooltip.style.zIndex = '99999';
-                                        tooltip.style.padding = '3px 5px';
-                                        tooltip.style.border = '1px solid black';
-                                        tooltip.style.backgroundColor = 'white';
-                                        document.body.appendChild(tooltip);
-                                        setTimeout(() => {
-                                            document.body.removeChild(tooltip);
-                                        }, 2000);
-                                    }
+                                } catch (err) {
+                                    console.error(err);
                                 }
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        });
-                    }
+                            });
+                        }
+                        // Check DateTime
+                        if (['date','time', 'datetime'].includes(gab.property.options?.type)) {
+                            const setButton = document.createElement('button');
+                            setButton.style.position = 'absolute';
+                            setButton.style.left = '0';
+                            setButton.style.height = '100%';
+                            setButton.style.display = 'flex';
+                            setButton.style.alignItems = 'center';
+                            setButton.style.padding = '0 5px';
+                            setButton.style.backgroundColor = 'unset';
+                            setButton.style.border = 'none';
+                            setButton.style.cursor = 'pointer';
+                            const icon = document.createElement('i');
+                            icon.className = 'material-icons';
+                            icon.innerText = 'done';
+                            icon.style.fontSize = window.getComputedStyle(input).getPropertyValue('font-size');
+                            icon.style.fontWeight = 'bold';
+                            setButton.appendChild(icon);
+                            input.parentElement.insertBefore(setButton, input);
 
+                            setButton.addEventListener('mousedown', startButtonPress);
+                            setButton.addEventListener('touchstart', startButtonPress);
+                            setButton.addEventListener('mouseup', resetButtonPress);
+                            setButton.addEventListener('touchend', resetButtonPress);
+                            function startButtonPress() {
+                              setButton.style.backgroundColor = 'rgba(0,0,0,0.2)';
+                            }
+                            function resetButtonPress() {
+                              setButton.style.backgroundColor = 'unset';
+                            }
+
+                            setButton.addEventListener('click', function() {
+                              const enterKeyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+                              input.dispatchEvent(enterKeyEvent);
+                            });
+                        }
+                    }
                     // Adjust the width to better fit the surrounding svg rect
-                    input.style.width = 'calc(100% - 5px)';
+                    input.style.margin = '1px 1px';
+                    input.style.display = 'flex';
                 }
             }
-
             if (ele) {
                 // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
                 let fobj = ele.getElementsByTagName('foreignObject');

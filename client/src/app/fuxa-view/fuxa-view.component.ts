@@ -502,12 +502,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dom.onfocus = function(ev) {
                         self.touchKeyboard.closePanel();
                         let eleRef = new ElementRef(htmlevent.dom);
-                        if (htmlevent.ga?.property?.options?.numeric || htmlevent.ga?.property?.options?.type === InputOptionType.number ||
-                            htmlevent.ga?.property?.options?.type === InputOptionType.datetime || htmlevent.ga?.property?.options?.type === InputOptionType.date ||
-                            htmlevent.ga?.property?.options?.type === InputOptionType.time) {
+                        if (htmlevent.ga?.property?.options?.numeric || htmlevent.ga?.property?.options?.type === InputOptionType.number) {
                             eleRef.nativeElement.inputMode = 'decimal';
                         }
-                        self.touchKeyboard.openPanel(eleRef);
+                        if (htmlevent.ga?.property?.options?.type !== InputOptionType.datetime && htmlevent.ga?.property?.options?.type !== InputOptionType.date &&
+                            htmlevent.ga?.property?.options?.type !== InputOptionType.time) {
+                            self.touchKeyboard.openPanel(eleRef);
+                        }
                         // if(htmlevent.ga.property){
                         //     let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
                         //     if(unit && htmlevent.dom.value.endsWith(unit)){
