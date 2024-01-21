@@ -199,6 +199,7 @@
     "item.inputmode-disabled": "Disabled",
     "item.inputmode-enabled": "Dialog",
     "item.inputmode-keyboard": "Virtual-Keyboard",
+    "item.inputmode-keyboard-full-screen": "Virtual-Keyboard full screen",
 
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",

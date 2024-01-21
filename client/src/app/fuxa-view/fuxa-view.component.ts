@@ -452,6 +452,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private onBindHtmlEvent(htmlevent: Event) {
         let self = this;
         // let htmlevent = this.getHtmlElement(ga.id);
+        if (this.hmi.layout?.inputdialog === 'keyboardFullScreen') {
+            this.touchKeyboard.ngxTouchKeyboardFullScreen = true;
+        }
         if (htmlevent.type === 'key-enter') {
             htmlevent.dom.onkeydown = function(ev) {
                 if (ev.key == 'Enter') {
@@ -498,7 +501,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
-                if (this.hmi.layout?.inputdialog === 'keyboard' && htmlevent.ga?.type === HtmlInputComponent.TypeTag) {
+                if (this.hmi.layout?.inputdialog.startsWith('keyboard') && htmlevent.ga?.type === HtmlInputComponent.TypeTag) {
                     htmlevent.dom.onfocus = function(ev) {
                         self.touchKeyboard.closePanel();
                         let eleRef = new ElementRef(htmlevent.dom);
