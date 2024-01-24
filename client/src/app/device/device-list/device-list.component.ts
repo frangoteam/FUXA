@@ -191,7 +191,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     onAddTag() {
-        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
+        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI
+            || this.deviceSelected.type === DeviceType.ODBC) {
             this.addOpcTags(null);
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics();
