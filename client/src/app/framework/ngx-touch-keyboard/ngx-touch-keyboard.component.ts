@@ -27,6 +27,7 @@ export class NgxTouchKeyboardComponent {
   layoutMode = 'text';
   layoutName = 'alphabetic';
   debug = false;
+  fullScreen = false;
 
   @Output() closePanel = new EventEmitter<void>();
 
@@ -339,6 +340,9 @@ export class NgxTouchKeyboardComponent {
     this._removeActiveButton();
   }
 
+  get current() {
+    return this._activeInputElement.value;
+  }
   // -----------------------------------------------------------------------------------------------------
   // @ Private methods
   // -----------------------------------------------------------------------------------------------------
