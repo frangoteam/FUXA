@@ -219,6 +219,17 @@ var utils = module.exports = {
         return chunks;
     },
 
+    extractArray: function (object) {
+        let index = 0;
+        const array = [];
+        
+        while (object[index] !== undefined) {
+            array.push(object[index]);
+            index++;
+        }
+        return array;
+    },
+
     getNetworkInterfaces: function () {
         const interfaces = os.networkInterfaces();
         var result = [];

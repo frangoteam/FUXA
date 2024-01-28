@@ -14,10 +14,13 @@ function ODBCclient(_data, _logger, _events) {
     var varsValue = {};                     // Tags to send to frontend { id, type, value }
     var events = _events;                   // Events to commit change to runtime
     var connection = null;                  // ODBC connection
+    var pool = null;                        // ODBC pool
     var working = false;                    // Working flag to manage overloading polling and connection
     var overloading = 0;                    // Overloading counter to mange the break connection
+    var lastTimestampValue;                 // Last Timestamp of asked values
     var getProperty = null;                 // Function to ask property (security)
     var currentTable = null;                // Current Tablename
+    var tableMap = [];                      // Column name to ask
     /**
      * initialize the device type 
      */
@@ -54,7 +57,8 @@ function ODBCclient(_data, _logger, _events) {
                             connectionTimeout: 10,
                             loginTimeout: 10,
                         }
-                        connection = await odbc.connect(connectionConfig)
+                        connection = await odbc.connect(connectionConfig);
+                        pool = await odbc.pool(connectionConfig);
                         var tables = await connection.tables(null, 'dbo', null, null);
                         if (tables.length <= 0) {
                             tables = await connection.tables(null, null, null, null);
@@ -98,10 +102,11 @@ function ODBCclient(_data, _logger, _events) {
      * Emit connection status to clients, clear all Tags values
      */
     this.disconnect = function () {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (connection) {
                 try {
-                    connection.close();
+                    await pool.close();
+                    await connection.close();
                 } catch { }
                 _checkWorking(false);
                 _emitStatus('connect-off');
@@ -144,7 +149,48 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.polling = function () {
         if (_checkWorking(true)) {
-            _checkWorking(false);
+            if (this.isConnected()) {
+                try {
+                    _readValues().then(result => {
+                        _checkWorking(false);
+                        if (result) {
+                            const values = utils.extractArray(result);
+                        //     let varsValueChanged = _updateVarsValue(result);
+                        //     lastTimestampValue = new Date().getTime();
+                        //     _emitValues(varsValue);
+                        //     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        //         this.addDaq(varsValueChanged, data.name, data.id);
+                        //     }
+                        // } else {
+                        //     // console.error('then error');
+                        }
+                    }, reason => {
+                        logger.error(`'${data.name}' _readValues error! ${reason}`);
+                        _checkWorking(false);
+                    });
+                } catch (err) {
+                    logger.error(`'${data.name}' polling error: ${err}`);
+                    _checkWorking(false);
+                }
+            } else {
+                _checkWorking(false);
+            }
+            // if (client) {
+            //     try {
+            //         var varsValueChanged = _checkVarsChanged();
+            //         lastTimestampValue = new Date().getTime();
+            //         _emitValues(varsValue);
+
+            //         if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+            //             this.addDaq(varsValueChanged, data.name, data.id);
+            //         }
+            //     } catch (err) {
+            //         logger.error(`'${data.name}' polling error: ${err}`);
+            //     }
+            //     _checkWorking(false);
+            // } else {
+            //     _checkWorking(false);
+            // }
         }
     }
 
@@ -152,7 +198,14 @@ function ODBCclient(_data, _logger, _events) {
      * Load Tags attribute to read with polling
      */
     this.load = function (_data) {
-        console.error('Not supported!');
+        data = JSON.parse(JSON.stringify(_data));
+        tableMap = Object.values(data.tags).map(tag => tag.name);
+        try {
+            var count = Object.keys(data.tags).length;
+            logger.info(`'${data.name}' data loaded (${count})`, true);
+        } catch (err) {
+            logger.error(`'${data.name}' load error! ${err}`);
+        }
     }
 
     /**
@@ -230,7 +283,7 @@ function ODBCclient(_data, _logger, _events) {
             // !The driver don't give the break connection
             if (overloading >= 3) {
                 try {
-                    if (connection) connection.close();
+                    this.disconnect();
                 } catch (e) {
                     console.error(e);
                 }
@@ -241,6 +294,22 @@ function ODBCclient(_data, _logger, _events) {
         working = check;
         overloading = 0;
         return true;
+    }
+
+    var _readValues = function () {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const param = tableMap.join(', ');
+                const query = `SELECT ${param} from ${currentTable}`;
+                const result = await pool.query(query);
+                lastTimestampValue = new Date().getTime();
+                resolve(result);
+                return;
+            } catch (err) {
+                logger.error(`'${data.name}' load error! ${err}`);
+            }
+            reject();
+        });
     }
 
     /**
@@ -260,7 +329,26 @@ function ODBCclient(_data, _logger, _events) {
     var _emitStatus = function (status) {
         lastStatus = status;
         events.emit('device-status:changed', { id: data.name, status: status });
-    }    
+    }
+
+    /**
+     * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
+     */
+    var _checkVarsChanged = () => {
+        const timestamp = new Date().getTime();
+        var result = {};
+        for (var id in data.tags) {
+            if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
+                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
+                if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
+                    result[id] = data.tags[id];
+                }
+            }
+            data.tags[id].changed = false;
+            varsValue[id] = data.tags[id];
+        }
+        return result;
+    }
 }
 
 /**

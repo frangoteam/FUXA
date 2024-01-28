@@ -178,6 +178,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     // Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)]
                 } else if (this.isOdbc()) {
                     node.class = Node.strToType(n.class);
+                    node.type = n.type;
                 }
                 let enabled = true;
                 if (node.class === NodeType.Variable) {
@@ -286,7 +287,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             } else if (n.class === NodeType.Variable && n.checked) {
                 // let objNode = new Node(n.id.split('>').join(''), n.text);
                 let objNode = new Node(n.id, n.text);
-                objNode.type = Utils.getType(n.property);
+                objNode.type = this.isOdbc() ? n.type : Utils.getType(n.property);
                 objNode.checked = n.checked;
                 objNode.enabled = n.enabled;
                 result.push(objNode);
