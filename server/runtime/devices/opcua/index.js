@@ -310,12 +310,15 @@ function OpcUAclient(_data, _logger, _events) {
     this.polling = function () {
         if (_checkWorking(true)) {
             if (!monitored) {
-                _startMonitor(function (ok) {
+                _startMonitor().then(ok => {
                     if (ok && connected) {
                         monitored = true;
                     }
+                    _checkWorking(false);
+                }).catch(function (err) {
+                    logger.error(`'${data.name}' polling error (_startMonitor): ${err}`);
+                    _checkWorking(false);
                 });
-                _checkWorking(false);
             } else if (the_session && client) {
                 try {
                     var varsValueChanged = _checkVarsChanged();
@@ -472,11 +475,11 @@ function OpcUAclient(_data, _logger, _events) {
         if (the_session) {
             const parameters = {
                 requestedPublishingInterval: 500,
-                requestedLifetimeCount: 1000,
-                requestedMaxKeepAliveCount: 12,
-                maxNotificationsPerPublish: 100,
+                requestedLifetimeCount: 600,
+                requestedMaxKeepAliveCount: 10,
+                maxNotificationsPerPublish: 0,
                 publishingEnabled: true,
-                priority: 10
+                priority: 0
             };
             the_session.createSubscription2(
                 parameters,
@@ -496,27 +499,31 @@ function OpcUAclient(_data, _logger, _events) {
      * samplingInterval = 1000 msec.
      * @param {*} callback 
      */
-    var _startMonitor = async function (callback) {
-        if (the_session && the_subscription) {
-            tagsIdMap = {};
-            for (var id in data.tags) {
-                try {
-                    var nodeId = data.tags[id].address;
-                    tagsIdMap[nodeId] = id;
-                    var monitoredItem = await the_subscription.monitor(
-                        { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
-                        { samplingInterval: data.polling || 1000, discardOldest: true, queueSize: 1 },
-                        opcua.TimestampsToReturn.Both
-                    );
-                    monitoredItem.on('changed', _monitorcallback(nodeId));
-                } catch (err) {
-                    logger.error(`'${nodeId}' _startMonitor ${err}`);
+    var _startMonitor = function () {
+        return new Promise(async function (resolve, reject) {
+            if (the_session && the_subscription) {
+                tagsIdMap = {};
+                var count = 0;
+                for (var id in data.tags) {
+                    count++;
+                    try {
+                        var nodeId = data.tags[id].address;
+                        tagsIdMap[nodeId] = id;
+                        var monitoredItem = await the_subscription.monitor(
+                            { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
+                            { samplingInterval: data.polling || 1000, discardOldest: true, queueSize: 1 },
+                            opcua.TimestampsToReturn.Both
+                        );
+                        monitoredItem.on('changed', _monitorcallback(nodeId));
+                    } catch (err) {
+                        logger.error(`'${nodeId}' _startMonitor ${err}`);
+                    }
                 }
+                resolve(true);
+            } else {
+                reject();
             }
-            callback(true);
-        } else {
-            callback(false);
-        }
+        });
     }
 
     /**
@@ -573,7 +580,9 @@ function OpcUAclient(_data, _logger, _events) {
      */
     var _checkWorking = function (check) {
         if (check && working) {
-            logger.warn(`'${data.name}' working (connection || polling) overload!`);
+            if (monitored) {
+                logger.warn(`'${data.name}' working (connection || polling) overload!`);
+            }
             return false;
         }
         working = check;
