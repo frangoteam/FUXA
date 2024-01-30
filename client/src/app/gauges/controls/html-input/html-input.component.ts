@@ -114,7 +114,11 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                         if (datetime) {
                             input.value = datetime;
                         } else {
-                            input.value = val;
+                            if (ga.property?.options?.type === InputOptionType.text) {
+                                input.value = sig.value;
+                            } else {
+                                input.value = val;
+                            }
                             if (unit) {
                                 input.value += ' ' + unit;
                             }
