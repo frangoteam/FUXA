@@ -529,7 +529,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     let svgeles = FuxaViewComponent.getSvgElements(htmlevent.ga.id);
 
                     if (variables.length && svgeles.length) {
-                        self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
+                        if (htmlevent.ga?.type !== HtmlInputComponent.TypeTag && !HtmlInputComponent.InputDateTimeType.includes(htmlevent.ga?.property.options?.type)) {
+                            self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
+                        }
                     }
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');

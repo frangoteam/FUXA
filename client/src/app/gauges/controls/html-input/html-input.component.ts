@@ -20,6 +20,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
     static prefix = 'I-HXI_';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show };
+    static InputDateTimeType = ['date','time', 'datetime'];
 
     constructor() {
         super();
@@ -110,7 +111,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     }
 
                     // Do not update value if input is in focus!
-                    if (ga.property.options && ga.property.options.updated && !(document.hasFocus && input.id == document.activeElement.id)) {
+                    if (ga.property?.options?.updated && !(document.hasFocus && input.id == document.activeElement.id)) {
                         if (datetime) {
                             input.value = datetime;
                         } else {
@@ -186,7 +187,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                             });
                         }
                         // Check DateTime
-                        if (['date','time', 'datetime'].includes(gab.property.options?.type)) {
+                        if (HtmlInputComponent.InputDateTimeType.includes(gab.property.options?.type)) {
                             const setButton = document.createElement('button');
                             setButton.style.position = 'absolute';
                             setButton.style.left = '0';
