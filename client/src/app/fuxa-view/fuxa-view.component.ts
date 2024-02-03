@@ -153,7 +153,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * load the svg content to show in browser, clear all binded to this view
      * @param view
      */
-    public loadHmi(view: View) {
+    public loadHmi(view: View, legacyProfile?: boolean) {
         if (this.id) {
             try {
                 this.gaugesManager.unbindGauge(this.id);
@@ -173,7 +173,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
             }
-            if (view.profile.bkcolor && this.child) {
+            if (view.profile.bkcolor && (this.child || legacyProfile)) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
         }

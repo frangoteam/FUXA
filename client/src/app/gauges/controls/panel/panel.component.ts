@@ -40,7 +40,7 @@ export class PanelComponent extends GaugeBaseComponent {
         try {
             const view = PanelComponent.hmi.views.find(x => x.name === sig.value);
             if (view) {
-                gauge?.loadHmi(view);
+                gauge?.loadHmi(view, true);
             }
         } catch (err) {
             console.error(err);
@@ -53,7 +53,7 @@ export class PanelComponent extends GaugeBaseComponent {
                        gaugeManager: GaugesManager,
                        hmi: Hmi,
                        isview?: boolean): FuxaViewComponent {
-        if (!PanelComponent.hmi) {
+        if (hmi) {
             PanelComponent.hmi = hmi;
         }
         let ele = document.getElementById(gaugeSettings.id);
