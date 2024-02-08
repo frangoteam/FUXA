@@ -137,7 +137,13 @@ select:disabled {
 * {
     /* font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif; */
     text-decoration: none;
-    scrollbar-width: thin;
+    scrollbar-width: auto;
+}
+
+@-moz-document url-prefix() {
+    * {
+        scrollbar-width: thin;
+    }
 }
 
 *:focus {
