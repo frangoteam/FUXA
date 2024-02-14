@@ -58,7 +58,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     cards: CardModel[] = [];
     iframes: CardModel[] = [];
-    dialog: DialogModalModel;
     mapGaugeStatus = {};
     inputDialog = { show: false, timer: null, x: 0, y: 0, target: null };
     gaugeInput = '';
@@ -727,10 +726,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onCloseCard(card: CardModel) {
         this.cards.splice(this.cards.indexOf(card), 1);
-    }
-
-    onCloseDialog() {
-        delete this.dialog;
     }
 
     private onClose($event) {
