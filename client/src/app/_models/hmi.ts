@@ -346,6 +346,13 @@ export interface GaugeIframeProperty {
 export interface GaugePanelProperty {
     viewName: string;
     variableId: string;
+    scaleMode: PanelPropertyScaleModeType;
+}
+
+export enum PanelPropertyScaleModeType {
+    none = 'none',
+    contain = 'contain',
+    stretch = 'stretch'
 }
 
 export interface GaugeTableProperty {

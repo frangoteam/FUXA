@@ -369,6 +369,10 @@
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
     "panel.property-name": "Name",
+    "panel.property-scalemode": "Scale mode",
+    "panel.property-scalemode-none": "None",
+    "panel.property-scalemode-contain": "Contain",
+    "panel.property-scalemode-stretch": "Stretch",
 
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
