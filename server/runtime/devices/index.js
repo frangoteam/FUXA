@@ -236,14 +236,17 @@ function getDeviceValue(deviceid, sigid) {
  * Get the Device Tag Id
  * used from Script
  * @param {*} tagName 
+ * @param {*} deviceName 
  */
-function getTagId(tagName) {
+function getTagId(tagName, deviceName) {
     try {
         const devices = runtime.project.getDevices();
         for (var id in devices) {
-            const tag = Object.values(devices[id].tags).find(tag => tag.name === tagName);
-            if (tag) {
-                return tag.id;
+            if (!deviceName || devices[id].name === deviceName) {
+                const tag = Object.values(devices[id].tags).find(tag => tag.name === tagName);
+                if (tag) {
+                    return tag.id;
+                }
             }
         }
     } catch (err) {
