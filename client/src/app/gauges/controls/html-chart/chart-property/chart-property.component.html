@@ -32,23 +32,27 @@
             </div>
             <div class="section-inline-margin"></div>
             <ng-container *ngIf="chartViewValue !== chartViewType.realtime1">
-                <div class="my-form-field section-item inbk" style="width: 110px">
-                    <span>{{'chart.property-date-last-range' | translate}}</span>
-                    <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
-                        <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                            {{ ev.value | translate }}
-                        </mat-option>
-                    </mat-select>
-                </div>
+                <ng-container *ngIf="chartViewValue === chartViewType.history">
+                    <div class="my-form-field section-item inbk" style="width: 110px">
+                        <span>{{'chart.property-date-last-range' | translate}}</span>
+                        <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                                {{ ev.value | translate }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </ng-container>
                 <div class="block mt5">
                     <div class="my-form-field field-number inbk" style="width: 120px">
                         <span style="width: 120px;">{{'chart.property-refresh-interval' | translate}}</span>
                         <input numberOnly [(ngModel)]="options.refreshInterval"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0">
-                    </div>   
-                    <div class="my-form-field inbk ml10 tac">
-                        <span>{{'chart.property-hide-toolbar' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
                     </div>
+                    <ng-container *ngIf="chartViewValue === chartViewType.history">
+                        <div class="my-form-field inbk ml10 tac">
+                            <span>{{'chart.property-hide-toolbar' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                        </div>
+                    </ng-container>
                 </div>
             </ng-container>
             <ng-container *ngIf="chartViewValue === chartViewType.realtime1">
