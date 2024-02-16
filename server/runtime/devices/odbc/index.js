@@ -155,14 +155,13 @@ function ODBCclient(_data, _logger, _events) {
                         _checkWorking(false);
                         if (result) {
                             const values = utils.extractArray(result);
-                        //     let varsValueChanged = _updateVarsValue(result);
-                        //     lastTimestampValue = new Date().getTime();
-                        //     _emitValues(varsValue);
-                        //     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                        //         this.addDaq(varsValueChanged, data.name, data.id);
-                        //     }
-                        // } else {
-                        //     // console.error('then error');
+                            var varsValueChanged = _updateVarsValue(values);
+                            lastTimestampValue = new Date().getTime();
+                            _emitValues(varsValue);
+        
+                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                this.addDaq(varsValueChanged, data.name, data.id);
+                            }
                         }
                     }, reason => {
                         logger.error(`'${data.name}' _readValues error! ${reason}`);
@@ -175,22 +174,6 @@ function ODBCclient(_data, _logger, _events) {
             } else {
                 _checkWorking(false);
             }
-            // if (client) {
-            //     try {
-            //         var varsValueChanged = _checkVarsChanged();
-            //         lastTimestampValue = new Date().getTime();
-            //         _emitValues(varsValue);
-
-            //         if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-            //             this.addDaq(varsValueChanged, data.name, data.id);
-            //         }
-            //     } catch (err) {
-            //         logger.error(`'${data.name}' polling error: ${err}`);
-            //     }
-            //     _checkWorking(false);
-            // } else {
-            //     _checkWorking(false);
-            // }
         }
     }
 
@@ -323,30 +306,39 @@ function ODBCclient(_data, _logger, _events) {
     }
 
     /**
+     * Emit the PLC Tags values array { id: <name>, value: <value>, type: <type> }
+     * @param {*} values 
+     */
+    var _emitValues = function (values) {
+        events.emit('device-value:changed', { id: data.id, values: values });
+    }
+
+    /**
      * Emit the odbc connection status
      * @param {*} status 
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        events.emit('device-status:changed', { id: data.name, status: status });
+        events.emit('device-status:changed', { id: data.id, status: status });
     }
 
     /**
-     * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
+     * Update the Tags values read
+     * @param {*} vars 
      */
-    var _checkVarsChanged = () => {
+    var _updateVarsValue = (vars) => {
         const timestamp = new Date().getTime();
         var result = {};
-        for (var id in data.tags) {
-            if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
-                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
-                if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
-                    result[id] = data.tags[id];
-                }
-            }
-            data.tags[id].changed = false;
-            varsValue[id] = data.tags[id];
-        }
+        // for (var id in data.tags) {
+        //     if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
+        //         data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
+        //         if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
+        //             result[id] = data.tags[id];
+        //         }
+        //     }
+        //     data.tags[id].changed = false;
+        //     varsValue[id] = data.tags[id];
+        // }
         return result;
     }
 }
