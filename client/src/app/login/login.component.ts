@@ -65,7 +65,10 @@ export class LoginComponent {
 
 	onFocus(event: FocusEvent) {
 		const hmi = this.projectService.getHmi();
-		if (hmi?.layout?.inputdialog === 'keyboard') {
+		if (hmi?.layout?.inputdialog?.includes('keyboard')) {
+			if (hmi.layout.inputdialog === 'keyboardFullScreen') {
+				this.touchKeyboard.ngxTouchKeyboardFullScreen = true;
+			}
 			this.touchKeyboard.closePanel();
 			const targetElement = event.target as HTMLInputElement;
 			const elementRef = new ElementRef<HTMLInputElement>(targetElement);

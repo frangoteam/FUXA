@@ -85,6 +85,10 @@
 }
 
 /* Modal Content/Box */
+::ng-deep .fuxa-dialog-property .mat-dialog-container {
+    padding: 0;
+}
+
 .dialog-modal-content {
     border: 1px solid #888;
     box-shadow: 0 0 12px #000000 !important;

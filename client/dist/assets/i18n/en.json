@@ -199,6 +199,7 @@
     "item.inputmode-disabled": "Disabled",
     "item.inputmode-enabled": "Dialog",
     "item.inputmode-keyboard": "Virtual-Keyboard",
+    "item.inputmode-keyboard-full-screen": "Virtual-Keyboard full screen",
 
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",
@@ -368,6 +369,10 @@
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
     "panel.property-name": "Name",
+    "panel.property-scalemode": "Scale mode",
+    "panel.property-scalemode-none": "None",
+    "panel.property-scalemode-contain": "Contain",
+    "panel.property-scalemode-stretch": "Stretch",
 
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
@@ -1142,9 +1147,9 @@
     "script.sys-fnc-enableDevice-text": "$enableDevice (Device name, enable True/False)",
     "script.sys-fnc-enableDevice-tooltip": "System function to enable Device connection: $enableDevice (Device name as string, enable as boolean)",
     "script.sys-fnc-enableDevice-params": "'Device name', true",
-    "script.sys-fnc-getTagId-text": "$getTagId (Tag name)",
-    "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string)",
-    "script.sys-fnc-getTagId-params": "'Tag name'",
+    "script.sys-fnc-getTagId-text": "$getTagId (Tag name, [Device name])",
+    "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string, [Optional Device name as string])",
+    "script.sys-fnc-getTagId-params": "'Tag name', '[Device name]'",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",

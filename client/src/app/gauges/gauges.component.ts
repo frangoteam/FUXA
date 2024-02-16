@@ -810,7 +810,7 @@ export class GaugesManager {
             HtmlImageComponent.initElement(ga, isview);
             return true;
         } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
-            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.projectService.getHmi(), isview);
+            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.hmi, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else {

@@ -463,6 +463,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         exist.push('server');
         let tempdevice = JSON.parse(JSON.stringify(device));
         let dialogRef = this.dialog.open(DevicePropertyComponent, {
+            disableClose: true,
             panelClass: 'dialog-property',
             data: {
                 device: tempdevice, remove: toremove, exist: exist, availableType: this.plugins,

@@ -26,6 +26,8 @@ import { ProjectService } from '../_services/project.service';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
 import { HmiService } from '../_services/hmi.service';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
+import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/fuxa-view-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 declare var SVG: any;
 
@@ -56,7 +58,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     cards: CardModel[] = [];
     iframes: CardModel[] = [];
-    dialog: DialogModalModel;
     mapGaugeStatus = {};
     inputDialog = { show: false, timer: null, x: 0, y: 0, target: null };
     gaugeInput = '';
@@ -76,7 +77,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         private scriptService: ScriptService,
         private projectService: ProjectService,
         private hmiService: HmiService,
-        private resolver: ComponentFactoryResolver) {
+        private resolver: ComponentFactoryResolver,
+        private fuxaDialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -153,7 +155,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * load the svg content to show in browser, clear all binded to this view
      * @param view
      */
-    public loadHmi(view: View) {
+    public loadHmi(view: View, legacyProfile?: boolean) {
+        if (!this.hmi) {
+            this.hmi = this.projectService.getHmi();
+        }
         if (this.id) {
             try {
                 this.gaugesManager.unbindGauge(this.id);
@@ -173,7 +178,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
             }
-            if (view.profile.bkcolor && this.child) {
+            if (view.profile.bkcolor && (this.child || legacyProfile)) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
         }
@@ -452,6 +457,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private onBindHtmlEvent(htmlevent: Event) {
         let self = this;
         // let htmlevent = this.getHtmlElement(ga.id);
+        if (this.hmi.layout?.inputdialog === 'keyboardFullScreen') {
+            this.touchKeyboard.ngxTouchKeyboardFullScreen = true;
+        }
         if (htmlevent.type === 'key-enter') {
             htmlevent.dom.onkeydown = function(ev) {
                 if (ev.key == 'Enter') {
@@ -498,16 +506,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 // Register events to remove and add unit on input focus and blur. We don'w want units to be part of input value during editing
                 // When input dialog is enabled, these event gets overridden (by binding of HtmlEvent) and are not called.
-                if (this.hmi.layout?.inputdialog === 'keyboard' && htmlevent.ga?.type === HtmlInputComponent.TypeTag) {
+                if (this.hmi.layout?.inputdialog.startsWith('keyboard') && htmlevent.ga?.type === HtmlInputComponent.TypeTag) {
                     htmlevent.dom.onfocus = function(ev) {
                         self.touchKeyboard.closePanel();
                         let eleRef = new ElementRef(htmlevent.dom);
-                        if (htmlevent.ga?.property?.options?.numeric || htmlevent.ga?.property?.options?.type === InputOptionType.number ||
-                            htmlevent.ga?.property?.options?.type === InputOptionType.datetime || htmlevent.ga?.property?.options?.type === InputOptionType.date ||
-                            htmlevent.ga?.property?.options?.type === InputOptionType.time) {
+                        if (htmlevent.ga?.property?.options?.numeric || htmlevent.ga?.property?.options?.type === InputOptionType.number) {
                             eleRef.nativeElement.inputMode = 'decimal';
                         }
-                        self.touchKeyboard.openPanel(eleRef);
+                        if (htmlevent.ga?.property?.options?.type !== InputOptionType.datetime && htmlevent.ga?.property?.options?.type !== InputOptionType.date &&
+                            htmlevent.ga?.property?.options?.type !== InputOptionType.time) {
+                            self.touchKeyboard.openPanel(eleRef);
+                        }
                         // if(htmlevent.ga.property){
                         //     let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
                         //     if(unit && htmlevent.dom.value.endsWith(unit)){
@@ -525,7 +534,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     let svgeles = FuxaViewComponent.getSvgElements(htmlevent.ga.id);
 
                     if (variables.length && svgeles.length) {
-                        self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
+                        if (htmlevent.ga?.type !== HtmlInputComponent.TypeTag && !HtmlInputComponent.InputDateTimeType.includes(htmlevent.ga?.property.options?.type)) {
+                            self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
+                        }
                     }
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
@@ -617,20 +628,20 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     openDialog(event, viewref: string, options: any = {}) {
-        let view: View = this.getView(viewref);
-        if (!view) {
-            return;
-        }
-        this.dialog = new DialogModalModel(viewref);
-        this.dialog.width = view.profile.width;
-        this.dialog.height = view.profile.height + 26;
-        this.dialog.view = view;
-        this.dialog.bkcolor = 'trasparent';
-        this.dialog.variablesMapping = options.variablesMapping;
-        if (view.profile.bkcolor) {
-            this.dialog.bkcolor = view.profile.bkcolor;
-        }
-        this.dialog.disableDefaultClose = options.hideClose;
+        let dialogData = <FuxaViewDialogData>{
+            view: this.getView(viewref),
+            bkColor: 'trasparent',
+            variablesMapping: options.variablesMapping,
+            disableDefaultClose: options.hideClose,
+            gaugesManager: this.gaugesManager
+        };
+        let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
+            panelClass: 'fuxa-dialog-property',
+            disableClose: true,
+            data: dialogData,
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe();
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
@@ -715,10 +726,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onCloseCard(card: CardModel) {
         this.cards.splice(this.cards.indexOf(card), 1);
-    }
-
-    onCloseDialog() {
-        delete this.dialog;
     }
 
     private onClose($event) {

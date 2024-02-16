@@ -65,7 +65,7 @@
                             <mat-icon *ngIf="item.type === cardViewType" matTooltip="{{'editor.view-cards' | translate}}" class="leftbar-item-type">
                                 grid_view
                             </mat-icon>
-                            <span>{{item.name}}</span>
+                            <span class="view-item-text" matTooltip="{{item.name}}">{{item.name}}</span>
                             <mat-icon aria-label="More" [matMenuTriggerFor]="menuview">more_vert</mat-icon>
                             <mat-menu #menuview="matMenu" class="leftbar-item-menu">
                                 <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>

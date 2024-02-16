@@ -348,10 +348,12 @@ function startFuxa() {
         }
     }).catch(function (err) {
         logger.error('server.failed-to-start');
-        if (err.stack) {
-            logger.error(err.stack);
-        } else {
-            logger.error(err);
+        if (err) {
+            if (err.stack) {
+                logger.error(err.stack);
+            } else {
+                logger.error(err);
+            }
         }
     });
 }

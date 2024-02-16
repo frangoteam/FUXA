@@ -19,15 +19,6 @@
     <app-fuxa-view (onclose)="onCloseCard(card)" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [parentcards]="cards" [variablesMapping]="card.variablesMapping"
         [view]="card.view"></app-fuxa-view>
 </div>
-<div *ngIf="dialog" class="dialog-modal">
-    <div [style.background-color]="dialog.bkcolor" [style.height]="dialog.height + 'px'" [style.width]="dialog.width +'px'" class="dialog-modal-content">
-        <a (click)="onCloseDialog();" class="dialog-modal-close" *ngIf="!dialog.disableDefaultClose">
-            <i class="material-icons" style="font-size: 22px; cursor: pointer;">close</i>
-        </a>
-        <app-fuxa-view (onclose)="onCloseDialog()" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [variablesMapping]="dialog.variablesMapping" [view]="dialog.view">
-        </app-fuxa-view>
-    </div>
-</div>
 <div (rzResizing)="onIframeResizing(iframe, $event)" *ngFor="let iframe of iframes; let i = index" [handle]="iframeHandle" [style.height]="(iframe.height + 22) + 'px'"
     [style.left]="iframe.x + 'px'" [style.top]="iframe.y + 'px'" [style.width]="iframe.width + 'px'" class="fab-iframe" ngDraggable ngResizable>
     <div #iframeHandle class="iframe-header">
@@ -43,7 +34,7 @@
     <input matInput [(ngModel)]="gaugeInputCurrent" autocomplete="off" type="text" disabled>
     <input matInput #inputValueRef [(ngModel)]="gaugeInput" autocomplete="off" type="text" (focus)="toggleShowInputDialog(true)" (focusout)="toggleShowInputDialog(false)" (ngModelChange)="inputOnChange()">
     <div style="display: block; padding-top: 4px; width: fit-content; margin: auto;">
-        <button mat-raised-button (click)="onOkClick(gaugeInput)" style="min-width: 16px; padding-left: 4px; padding-right: 4px; margin-right: 4px;" color="primary" cdkFocusInitial>
+        <button mat-raised-button (click)="onOkClick(gaugeInput)" style="min-width: 16px; padding-left: 4px; padding-right: 4px; margin-right: 4px;" color="primary">
             <mat-icon>done</mat-icon>
         </button>
         <button mat-raised-button (click)="onNoClick()" style="min-width:16px; padding-left: 4px; padding-right: 4px;">

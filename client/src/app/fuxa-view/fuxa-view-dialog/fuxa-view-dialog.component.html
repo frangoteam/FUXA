@@ -1,0 +1,15 @@
+<div class="fuxa-view-dialog">
+    <a class="dialog-modal-close"
+       *ngIf="!data.disableDefaultClose">
+        <i (click)="onCloseDialog()"
+           class="material-icons"
+           style="font-size: 22px; cursor: pointer;">close</i>
+    </a>
+    <app-fuxa-view (onclose)="onCloseDialog()"
+                   [child]='true'
+                   [gaugesManager]="data.gaugesManager"
+                   [hmi]="hmi"
+                   [variablesMapping]="data.variablesMapping"
+                   [view]="data.view">
+    </app-fuxa-view>
+</div>

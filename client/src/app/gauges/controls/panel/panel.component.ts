@@ -40,7 +40,10 @@ export class PanelComponent extends GaugeBaseComponent {
         try {
             const view = PanelComponent.hmi.views.find(x => x.name === sig.value);
             if (view) {
-                gauge?.loadHmi(view);
+                gauge?.loadHmi(view, true);
+                if (ga?.property?.scaleMode) {
+                    Utils.resizeViewExt('.view-container', ga?.id, ga?.property?.scaleMode);
+                }
             }
         } catch (err) {
             console.error(err);
@@ -53,7 +56,7 @@ export class PanelComponent extends GaugeBaseComponent {
                        gaugeManager: GaugesManager,
                        hmi: Hmi,
                        isview?: boolean): FuxaViewComponent {
-        if (!PanelComponent.hmi) {
+        if (hmi) {
             PanelComponent.hmi = hmi;
         }
         let ele = document.getElementById(gaugeSettings.id);
@@ -76,7 +79,7 @@ export class PanelComponent extends GaugeBaseComponent {
                     svgPanelContainer.appendChild(span);
                     return null;
                 }
-                PanelComponent.processValue(null,
+                PanelComponent.processValue(gaugeSettings,
                                             null,
                                             <Variable> {
                                                 value: gaugeSettings.property.viewName
