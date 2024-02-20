@@ -94,6 +94,7 @@ export enum DaqStoreType {
     SQlite = 'SQlite',
     influxDB = 'influxDB',
     influxDB18 = 'influxDB 1.8',
+    TDengine = 'TDengine' ,
 }
 
 export enum influxDBVersionType {
