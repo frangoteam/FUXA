@@ -69,12 +69,16 @@ function TDengine(_settings, _log, _currentStorage) {
     this.getDaqValue = function (tagid, fromts, tots) {
         return new Promise(function (resolve, reject) {
             const cursor = conn.cursor()
-            cursor.query(`SELECT dt, tag_value as \`value\`
+            let data =[]
+            cursor.query(`SELECT CAST(dt as BIGINT) as dt, tag_value
                           FROM ${database}.meters
                           WHERE dt >= ${fromts}
                             and dt < ${tots} `).then((result) => {
-                logger.debug(result)
-                resolve(result.getResult().rows)
+                // logger.debug(result)
+                result.getData().forEach((row) =>{
+                    data.push({dt: row[0],value: row[1]})
+                })
+                resolve(data)
             }).catch((error) => {
                 logger.error(`TDengine-getDaqValue failed! ${error}`)
                 reject(error)
@@ -86,6 +90,11 @@ function TDengine(_settings, _log, _currentStorage) {
         //do noting
     }
 
+    this.getDaqMap = function (tagid) {
+        var dummy = {};
+        dummy[tagid] = true;
+        return dummy;
+    }
 
     this.init().then(() => logger.info("TDengine connected"))
 }
