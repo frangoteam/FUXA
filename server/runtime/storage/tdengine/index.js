@@ -69,7 +69,7 @@ function TDengine(_settings, _log, _currentStorage) {
     this.getDaqValue = function (tagid, fromts, tots) {
         return new Promise(function (resolve, reject) {
             const cursor = conn.cursor()
-            cursor.query(`SELECT *
+            cursor.query(`SELECT dt, tag_value as \`value\`
                           FROM ${database}.meters
                           WHERE dt >= ${fromts}
                             and dt < ${tots} `).then((result) => {
