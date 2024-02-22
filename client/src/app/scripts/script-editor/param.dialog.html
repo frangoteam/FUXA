@@ -10,7 +10,7 @@
             <span>{{'script.param-type' | translate}}</span>
             <mat-select [(value)]="data.type" placeholder="{{'script.paramtype' | translate}}" style="width: 300px;">
                 <mat-option *ngFor="let type of paramType | enumToArray" [value]="type.key">
-                    {{ type.value }}
+                    {{ 'script.paramtype-' + type.value | translate }}
                 </mat-option>
             </mat-select>
         </div>

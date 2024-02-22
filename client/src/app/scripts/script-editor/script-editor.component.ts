@@ -11,7 +11,7 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { DeviceTagDialog } from '../../device/device.component';
-import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage } from '../../_models/script';
+import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode } from '../../_models/script';
 import { DevicesUtils, DeviceType } from '../../_models/device';
 
 @Component({
@@ -34,6 +34,8 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         lint: true,
     };
     systemFunctions = new SystemFunctions();
+    templatesCode = new TemplatesCode();
+
     checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
     parameters: ScriptParam[] = [];
     testParameters: ScriptParam[] = [];
@@ -66,6 +68,10 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         this.systemFunctions.functions.forEach(fnc => {
             this.translateService.get(fnc.text).subscribe((txt: string) => { fnc.text = txt; });
             this.translateService.get(fnc.tooltip).subscribe((txt: string) => { fnc.tooltip = txt; });
+        });
+        this.templatesCode.functions.forEach(fnc => {
+            fnc.text = this.translateService.instant(fnc.text);
+            fnc.tooltip = this.translateService.instant(fnc.tooltip);
         });
         this.subscriptionScriptConsole = this.hmiService.onScriptConsole.subscribe((scriptConsole: ScriptConsoleMessage) => {
             this.console.push(scriptConsole.msg);
@@ -171,6 +177,12 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         }
     }
 
+    onAddTemplateCode(tmpfnc: SystemFunction) {
+        if (tmpfnc.code) {
+            this.insertText(tmpfnc.code);
+        }
+    }
+
     onAddSystemFunctionTag(sysfnc: SystemFunction) {
         let dialogRef = this.dialog.open(DeviceTagDialog, {
             position: { top: '60px' },
@@ -215,7 +227,9 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         torun.outputId = this.script.id;
         torun.code = this.script.code;
         this.scriptService.runScript(torun).subscribe(result => {
-
+            if (result) {
+                this.console.push(JSON.stringify(result));
+            }
         }, err => {
             this.console.push((err.message) ? err.message : err);
         });

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
-import { ChartRangeType } from '../_models/chart';
+import { ChartRangeType, ChartViewType } from '../_models/chart';
 
 import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
@@ -487,7 +487,7 @@ export class GaugesManager {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                    if (ga.property.type === ChartViewType.realtime1 && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id && this.mapGauges[k]) {
                                 HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);

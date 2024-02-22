@@ -49,7 +49,7 @@ function MyScriptsModule(_events, _logger) {
         if (result.module) {
             var paramsValue = _script.parameters.map(p => p.value);
             result.module[initEvents.name](events, _script.outputId);
-            result.module[_script.name](...paramsValue);
+            return result.module[_script.name](...paramsValue);
         }
     }
 
@@ -60,7 +60,7 @@ function MyScriptsModule(_events, _logger) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
             try {
-                scriptsModule[_script.name](...paramsValue);
+                return scriptsModule[_script.name](...paramsValue);
             } catch (err) {
                 console.error(err);
             }

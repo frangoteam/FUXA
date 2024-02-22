@@ -34,8 +34,9 @@ export class ScriptParam {
 }
 
 export enum ScriptParamType {
-    tagid = 'script.paramtype-tagid',
-    value = 'script.paramtype-value',
+    tagid = 'tagid',
+    value = 'value',
+    chart = 'chart'
 }
 
 export const SCRIPT_PREFIX = 's_';
@@ -91,12 +92,37 @@ export class SystemFunctions {
     }];
 }
 
+export class TemplatesCode {
+    functions = <SystemFunction[]>[{
+        name: 'chart-data', text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
+        code: `if (paramLines && Array.isArray(paramLines)) {
+    const count = 10;
+    paramLines.forEach(line => {
+        var y = [];
+        var x = [];
+        for (var i = 0; i < count; i++) {
+            const randomNumber = Math.floor(Math.random() * 21);
+            y.push(randomNumber);
+            x.push(i);
+        }
+        line['y'] = y;
+        line['x'] = x;
+    });
+    return paramLines;
+} else {
+    return 'Missing chart lines';
+}`
+    }];
+}
+
+
 export interface SystemFunction {
-    name: string;       // javascript function defined in backend
-    text: string;       // button text
-    tooltip: string;    // description
-    params: [boolean];  // array of function parameter where true is for tag and false for any (value)
-    paramsText: string; // to add as parameter description in function
+    name: string;           // javascript function defined in backend
+    text: string;           // button text
+    tooltip: string;        // description
+    params?: [boolean];     // array of function parameter where true is for tag and false for any (value)
+    paramsText?: string;    // to add as parameter description in function
+    code?: string;          // Code to paste
 }
 
 export enum ScriptMode {
