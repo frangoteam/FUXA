@@ -8,12 +8,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class ConfirmDialogComponent {
 
-    msgtoconfirm = '';
+    msgToConfirm = '';
 
     constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
+        @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {
 
-        this.msgtoconfirm = this.data.msg;
+        this.msgToConfirm = this.data.msg;
     }
 
     onNoClick(): void {
@@ -23,4 +23,9 @@ export class ConfirmDialogComponent {
     onOkClick(): void {
         this.dialogRef.close(true);
     }
+}
+
+export interface ConfirmDialogData {
+    msg: string;
+    hideCancel?: boolean;
 }

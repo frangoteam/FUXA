@@ -14,6 +14,10 @@ import { ChartConfigComponent, IDataChartResult } from '../../../../editor/chart
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
 import { ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
+import { ProjectService } from '../../../../_services/project.service';
+import { Script } from '../../../../_models/script';
+import { MatSelectChange } from '@angular/material/select';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 
 @Component({
@@ -43,17 +47,20 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     public filteredChart: ReplaySubject<Chart[]> = new ReplaySubject<Chart[]>(1);
     options: ChartOptions = ChartUplotComponent.DefaultOptions();
     autoScala = { enabled: true, min: 0, max: 10 };
+    scripts: Script[];
 
     private _onDestroy = new Subject<void>();
 
     constructor(
         public dialog: MatDialog,
+        public projectService: ProjectService,
         private translateService: TranslateService) { }
 
     ngOnInit() {
         Object.keys(this.legendModes).forEach(key => {
             this.translateService.get(this.legendModes[key]).subscribe((txt: string) => { this.legendModes[key] = txt; });
         });
+        this.scripts = this.projectService.getScripts();
     }
 
     ngOnDestroy() {
@@ -108,6 +115,19 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
                 this.onChartChanged();
             }
         });
+    }
+
+    onShowChartSelectionMessage(event: MatSelectChange) {
+        if (event.value === ChartViewType.custom) {
+            let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                data: <ConfirmDialogData> {
+                    msg: this.translateService.instant('msg.chart-with-script'),
+                    hideCancel: true
+                },
+                position: { top: '60px' }
+            });
+            dialogRef.afterClosed().subscribe();
+        }
     }
 
     private loadChart(toset?: string) {

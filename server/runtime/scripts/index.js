@@ -69,14 +69,14 @@ function ScriptsManager(_runtime) {
     this.runScript = function (script) {
         return new Promise(async function (resolve, reject) {
             try {
+                var result;
                 if (script.test) {
-                    scriptModule.runTestScript(script);
+                    result = scriptModule.runTestScript(script);
                 } else {
                     logger.info(`Run script ${script.name}`);
-                    scriptModule.runScript(script);
+                    result = scriptModule.runScript(script);
                 }
-                // this.runtime.project.getScripts();
-                resolve(`Script OK: ${script.name}`);
+                resolve(result || `Script OK: ${script.name}`);
             } catch (err) {
                 reject(err);
             }

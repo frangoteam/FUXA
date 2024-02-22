@@ -24,7 +24,7 @@
             <div class="section-newline"></div>
             <div class="my-form-field section-item" style="display: inline-block; width: 120px">
                 <span>{{'chart.property-chart-type' | translate}}</span>
-                <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged()">
+                <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged();onShowChartSelectionMessage($event)">
                     <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
                         {{'chart.viewtype-' + ev.value | translate }}
                     </mat-option>
@@ -39,6 +39,14 @@
                             <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
                                 {{ ev.value | translate }}
                             </mat-option>
+                        </mat-select>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="chartViewValue === chartViewType.custom">
+                    <div class="my-form-field inbk" style="width: 180px">
+                        <span>{{'chart.property-script' | translate}}</span>
+                        <mat-select [(value)]="options.scriptId" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
                         </mat-select>
                     </div>
                 </ng-container>
