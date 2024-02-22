@@ -453,6 +453,8 @@ export interface ChartOptions extends NgxOptions {
     hideToolbar?: boolean;
     refreshInterval?: number;
     loadOldValues?: boolean;
+
+    scriptId?: string;
 }
 
 export interface NgxSeries extends Series {
