@@ -10,7 +10,7 @@ import { Report, ReportSchedulingType, REPORT_PREFIX } from '../../_models/repor
 import { CommandService } from '../../_services/command.service';
 import { DiagnoseService } from '../../_services/diagnose.service';
 import { ProjectService } from '../../_services/project.service';
-import { ReportEditorComponent } from '../report-editor/report-editor.component';
+import { ReportEditorComponent, ReportEditorData } from '../report-editor/report-editor.component';
 import * as FileSaver from 'file-saver';
 
 @Component({
@@ -91,10 +91,12 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     editReport(report: Report, toAdd: number) {
         let dlgwidth = (toAdd < 0) ? 'auto' : '80%';
-        let reports = this.dataSource.data.filter(s => s.id !== report.id);
 		let mreport: Report = JSON.parse(JSON.stringify(report));
         let dialogRef = this.dialog.open(ReportEditorComponent, {
-            data: { report: mreport, editmode: toAdd, reports: reports, devices: Object.values(this.projectService.getDevices()) },
+            data: <ReportEditorData> {
+                report: mreport,
+                editmode: toAdd
+            },
             width: dlgwidth,
             position: { top: '80px' }
         });

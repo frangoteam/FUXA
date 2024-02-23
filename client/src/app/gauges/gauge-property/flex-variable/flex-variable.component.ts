@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Tag, DevicesUtils, Device } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
-import { DeviceTagDialog } from '../../../device/device.component';
 import { BitmaskComponent } from '../../../gui-helpers/bitmask/bitmask.component';
 import { Observable, map, startWith } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
+import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../device/device-tag-selection/device-tag-selection.component';
 
 interface Variable {
     id: string;
@@ -174,9 +174,12 @@ export class FlexVariableComponent implements OnInit {
     }
 
     onBindTag() {
-        let dialogRef = this.dialog.open(DeviceTagDialog, {
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: { variableId: this.variableId, devices: this.data.devices }
+            data: <DeviceTagSelectionData> {
+                variableId: this.variableId
+            }
         });
 
         dialogRef.afterClosed().subscribe((result) => {

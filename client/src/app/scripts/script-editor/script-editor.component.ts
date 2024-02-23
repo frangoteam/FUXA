@@ -10,9 +10,9 @@ import { ScriptService } from '../../_services/script.service';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { DeviceTagDialog } from '../../device/device.component';
 import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode } from '../../_models/script';
 import { DevicesUtils, DeviceType } from '../../_models/device';
+import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 
 @Component({
     selector: 'app-script-editor',
@@ -184,11 +184,11 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     onAddSystemFunctionTag(sysfnc: SystemFunction) {
-        let dialogRef = this.dialog.open(DeviceTagDialog, {
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: {
+            data: <DeviceTagSelectionData> {
                 variableId: null,
-                devices: this.data.devices,
                 multiSelection: false,
                 deviceFilter: [ DeviceType.internal ]
             }
@@ -204,11 +204,11 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     onSetTestTagParam(param: ScriptParam) {
-        let dialogRef = this.dialog.open(DeviceTagDialog, {
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: {
+            data: <DeviceTagSelectionData> {
                 variableId: null,
-                devices: this.data.devices,
                 multiSelection: false,
                 deviceFilter: [ DeviceType.internal ]
             }

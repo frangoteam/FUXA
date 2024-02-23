@@ -1,8 +1,6 @@
-<div style="min-width:930px; position: relative;">
-    <h1 mat-dialog-title style="display:inline-block;cursor: move;" mat-dialog-draggable>{{'device-tag-dialog-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">
-        clear
-    </mat-icon>
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device-tag-dialog-title' | translate}}</h1>
+    <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
     <mat-table #table [dataSource]="dataSource" matSort style="height:620px" class="dialog-mdsd-table">
         <!-- Checkbox Column -->
         <ng-container matColumnDef="toogle">
@@ -15,10 +13,10 @@
                 <mat-checkbox (click)="$event.stopPropagation()" (change)="onToogle(element)" [(ngModel)]="element.checked">
                 </mat-checkbox>
             </mat-cell>
-        </ng-container>        
+        </ng-container>
         <!-- Name Column -->
         <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter"> 
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
                 <span>{{'device.list-name' | translate}}</span>
                 <input (click)="$event.stopPropagation()" [formControl]="nameFilter" style="width: 200px" class="my-header-filter-input" type="text">
             </mat-header-cell>
@@ -26,16 +24,16 @@
         </ng-container>
         <!-- Address Column -->
         <ng-container matColumnDef="address">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter"> 
-                <span>{{'device.list-address' | translate}}</span> 
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
+                <span>{{'device.list-address' | translate}}</span>
                 <input (click)="$event.stopPropagation()" [formControl]="addressFilter" style="width: 360px" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
         </ng-container>
         <!-- Device Column -->
         <ng-container matColumnDef="device">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter"> 
-                <span>{{'device.list-device' | translate}}</span> 
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
+                <span>{{'device.list-device' | translate}}</span>
                 <input (click)="$event.stopPropagation()" [formControl]="deviceFilter" style="width: 200px" class="my-header-filter-input" type="text">
             </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.device}} </mat-cell>
@@ -43,6 +41,12 @@
         <!-- Select Column -->
         <ng-container matColumnDef="select">
             <mat-header-cell *matHeaderCellDef style="padding-right: 0px;">
+                <!-- <button mat-icon-button [matMenuTriggerFor]="devicesMenu" class="remove">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button> -->
+                <mat-menu #devicesMenu [overlapTrigger]="false">
+                    <button *ngFor="let device of devices" mat-menu-item (click)="onAddDeviceTag(device)">{{ device.name }}</button>
+                </mat-menu>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" style="padding-right: 0px;">
                 <button mat-icon-button (click)="onSelect(element)">

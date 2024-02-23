@@ -10,8 +10,8 @@ import { Utils } from '../../_helpers/utils';
 import { Device, DevicesUtils, Tag } from '../../_models/device';
 import { Chart, ChartLine } from '../../_models/chart';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
-import { DeviceTagDialog } from '../../device/device.component';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
+import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -116,9 +116,13 @@ export class ChartConfigComponent implements OnInit {
     }
 
     onAddChartLine(chart: Chart) {
-        let dialogRef = this.dialog.open(DeviceTagDialog, {
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: { variableId: null, devices: this.data.devices, multiSelection: true }
+            data: <DeviceTagSelectionData> {
+                variableId: null,
+                multiSelection: true
+            }
         });
 
         dialogRef.afterClosed().subscribe((result) => {

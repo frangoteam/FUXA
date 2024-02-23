@@ -135,7 +135,7 @@
                 {{'device.browsetag-property-title' | translate}}
             </h1>
             <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
-            <div style="overflow-y: auto; overflow-x: hidden;">
+            <div style="overflow: auto;">
                 <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
             </div>
         </div>
