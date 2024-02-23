@@ -628,6 +628,7 @@ mat-toolbar-row {
 .mat-dialog-title {
     margin: 0 0 12px !important;
     width: calc(100% - 50px);
+    cursor: move;
 }
 
 .mat-raised-button {
@@ -841,9 +842,9 @@ mat-toolbar-row {
 }
 
 .dialog-title {
-    display:inline-block; 
-    cursor:move;
-    display: unset !important;
+    display: inline-block !important;
+    cursor: move;
+    width: calc(100% - 50px);
 }
 
 .dialog-close-btn {

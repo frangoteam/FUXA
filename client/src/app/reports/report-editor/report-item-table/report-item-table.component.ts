@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { DeviceTagDialog } from '../../../device/device.component';
 import { EditNameComponent } from '../../../gui-helpers/edit-name/edit-name.component';
 import { Utils } from '../../../_helpers/utils';
 import { DeviceType, Tag } from '../../../_models/device';
 import { ReportDateRangeType, ReportFunctionType, ReportIntervalType, ReportItemTable, ReportTableColumn, ReportTableColumnType } from '../../../_models/report';
 import { ProjectService } from '../../../_services/project.service';
+import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../device/device-tag-selection/device-tag-selection.component';
 
 @Component({
     selector: 'app-report-item-table',
@@ -52,11 +52,11 @@ export class ReportItemTableComponent implements OnInit {
     }
 
     onAddItem(index: number) {
-        let dialogRef = this.dialog.open(DeviceTagDialog, {
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: {
+            data: <DeviceTagSelectionData> {
                 variableId: null,
-                devices: Object.values(this.projectService.getDevices()),
                 multiSelection: true,
                 deviceFilter: [ DeviceType.internal ]
             }
