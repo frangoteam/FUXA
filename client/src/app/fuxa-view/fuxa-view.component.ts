@@ -62,7 +62,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     inputDialog = { show: false, timer: null, x: 0, y: 0, target: null };
     gaugeInput = '';
     gaugeInputCurrent = '';
-
+    parent: FuxaViewComponent;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
     private subscriptionOnChange: Subscription;
@@ -209,7 +209,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     continue;
                 }
                 try {
-                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true);
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this);
                     this.gaugesManager.bindGauge(gauge, this.id, items[key],
                         (gaToBindMouseEvents) => {
                             this.onBindMouseEvents(gaToBindMouseEvents);
@@ -377,7 +377,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ga
      */
     private onBindMouseEvents(ga: GaugeSettings) {
-        let self = this;
+        let self = this.parent || this;
         let svgele = FuxaViewComponent.getSvgElement(ga.id);
         if (svgele) {
             let clickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);

@@ -728,8 +728,9 @@ export class GaugesManager {
      * @param res reference to factory
      * @param ref reference to factory
      * @param isview in view or editor, in editor have to disable mouse activity
+     * @param parent parent that call the function, should be from a FuxaViewComponent
      */
-    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent) {
         if (!ga || !ga.type) {
             console.error('!TOFIX', ga);
             return null;
@@ -810,7 +811,7 @@ export class GaugesManager {
             HtmlImageComponent.initElement(ga, isview);
             return true;
         } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
-            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.hmi, isview);
+            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.hmi, isview, parent);
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else {
