@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@influxdata/influxdb-client": "^1.25.0",
+    "@tdengine/rest": "^3.0.2",
     "@types/socket.io": "^2.1.2",
     "app-root-path": "2.2.1",
     "async": "3.2.3",

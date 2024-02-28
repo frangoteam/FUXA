@@ -29,7 +29,7 @@
                         </div>
                         <div class="my-form-field ml20">
                             <span>{{'dlg.app-settings-auth-only-editor' | translate}}</span>
-                            <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor" [disabled]="authentication === ''"></mat-slide-toggle>    
+                            <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor" [disabled]="authentication === ''"></mat-slide-toggle>
                         </div>
                     </div>
                     <div class="my-form-field block mt15 system-input">
@@ -58,7 +58,7 @@
                         <div class="my-form-field lbk ml10">
                             <span>{{'dlg.app-settings-smtp-port' | translate}}</span>
                             <input numberOnly [(ngModel)]="settings.smtp.port" style="width: 80px" type="text">
-                        </div>                    
+                        </div>
                     </div>
                     <div class="my-form-field block mt15 w100">
                         <span>{{'dlg.app-settings-smtp-mailsender' | translate}}</span>
@@ -139,7 +139,25 @@
                                     <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
                                     <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="" class="input-row" type="text">
                                 </div>
-                            </div>                            
+                            </div>
+                            <div *ngSwitchCase="daqstoreType.TDengine">
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-url' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.url" placeholder="http://localhost:6041/rest/sql" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-database' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.database" placeholder="fuxa" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-username' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="root" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="taosdata" class="input-row" type="text">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,7 +174,7 @@
                     </div>
                     <div class="block mt20 mb20">
                         <button mat-raised-button color="basic" (click)="onAlarmsClear()">{{'dlg.app-settings-alarms-clear' | translate}}</button>
-                    </div>                    
+                    </div>
                 </div>
             </mat-tab>
         </mat-tab-group>
