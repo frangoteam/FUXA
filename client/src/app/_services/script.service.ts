@@ -23,7 +23,7 @@ export class ScriptService {
                     let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                     let params = { script: script };
                     this.http.post<any>(this.endPointConfig + '/api/runscript', { headers: header, params: params }).subscribe(result => {
-                        observer.next();
+                        observer.next(result);
                     }, err => {
                         console.error(err);
                         observer.error(err);

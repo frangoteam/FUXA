@@ -232,6 +232,7 @@
     "chart.property-realtime-max": "Max minutes",
     "chart.viewtype-realtime1": "Realtime",
     "chart.viewtype-history": "History",
+    "chart.viewtype-custom": "Custom",
     "chart.property-general": "General",
     "chart.property-font": "Font",
     "chart.property-font.titlesize": "Title size",
@@ -1111,6 +1112,7 @@
 
     "script.property-title": "Script",
     "script.property-systems": "System functions",
+    "script.property-templates": "Templates",
     "script.property-test": "Test",
     "script.property-test-params": "Function parameters",
     "script.property-test-console": "Console",
@@ -1123,7 +1125,8 @@
     "script.param-type": "Type",
     "script.paramtype": "",
     "script.paramtype-tagid": "Tag ID",
-    "script.paramtype-value": "Value (number or string)",
+    "script.paramtype-value": "Value (number/string/object)",
+    "script.paramtype-chart": "Chart lines (array)",
     "script.param-name-exist": "The parameter name already exist!",
     "script.sys-fnc-settag-text": "$setTag (TagID, value)",
     "script.sys-fnc-settag-tooltip": "System function to set Tag value: $setTag (TagID as string, value as string or number)",
@@ -1150,6 +1153,9 @@
     "script.sys-fnc-getTagId-text": "$getTagId (Tag name, [Device name])",
     "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string, [Optional Device name as string])",
     "script.sys-fnc-getTagId-params": "'Tag name', '[Device name]'",
+
+    "script.template-chart-data-text": "Customized chart data",
+    "script.template-chart-data-tooltip": "Code template of customized chart data to return",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
@@ -1392,5 +1398,6 @@
     "msg.import-devices-error": "Import devices failed!",
     "msg.report-build-forced": "Send to build Report successful",
     "msg.report-build-error": "Send to build Report failed!",
-    "msg.device-tags-request-result": "Load {{value}} of {{current}}"
+    "msg.device-tags-request-result": "Load {{value}} of {{current}}",
+    "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'"
 }

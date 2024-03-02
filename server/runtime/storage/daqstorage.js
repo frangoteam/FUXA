@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const SqliteDB = require("./sqlite");
 const InfluxDB = require("./influxdb");
+const TDengine  =require("./tdengine");
 const CurrentStorage = require("./sqlite/currentstorage");
 // var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
@@ -39,12 +40,14 @@ function reset() {
 function addDaqNode(_id, fncgetprop) {
     var id = _id;
     const dbType = _getDbType();
-    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18) {
+    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18 || dbType === DaqStoreTypeEnum.TDengine) {
         id = dbType;
     }
     if (!daqDB[id]) {
         if (id === DaqStoreTypeEnum.influxDB || id === DaqStoreTypeEnum.influxDB18) {
             daqDB[id] = InfluxDB.create(settings, logger, currentStorateDB);
+        } else if(id === DaqStoreTypeEnum.TDengine){
+            daqDB[id] = TDengine.create(settings, logger, currentStorateDB);
         } else {
             daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
         }
@@ -154,7 +157,7 @@ function _getDaqNode(tagid) {
 }
 
 function _getDbType() {
-    if (settings.daqstore && settings.daqstore) {
+    if (settings.daqstore && settings.daqstore.type) {
         return settings.daqstore.type;
     }
     return DaqStoreTypeEnum.SQlite;
@@ -164,6 +167,7 @@ var DaqStoreTypeEnum = {
     SQlite: 'SQlite',
     influxDB: 'influxDB',
     influxDB18: 'influxDB18',
+    TDengine: 'TDengine',
 }
 
 function _getValue(value) {

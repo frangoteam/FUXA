@@ -49,6 +49,13 @@
                                 </div>
                             </div>
                         </mat-tab>
+                        <mat-tab label="{{'script.property-templates' | translate}}">
+                            <div style="margin-top: 10px; padding: 7px;">
+                                <div *ngFor="let code of templatesCode.functions; index as i" class="system-function">
+                                    <button mat-raised-button (click)="onAddTemplateCode(code)" matTooltip="{{code.tooltip}}">{{code.text}}</button>
+                                </div>
+                            </div>
+                        </mat-tab>                        
                         <mat-tab label="{{'script.property-test' | translate}}">
                             <div style="width: 100%">
                                 <div class="test-panel">

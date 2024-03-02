@@ -123,6 +123,9 @@
 :host ::ng-deep .mat-tab-label {
     height: var(--tab-height) !important;
     color: white;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    min-width: 100px;
 }
 
 :host ::ng-deep .cm-system-function {
