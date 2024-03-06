@@ -11,7 +11,7 @@ module.exports = {
             tag.timestamp = timestamp;
             if (tag.changed && (tag.daq.changed || tag.daq.restored)) {
                 return true;
-            } else if (!tag.daq.lastDaqSaved || timestamp - parseInt(tag.daq.interval) * 1000 > tag.daq.lastDaqSaved) {
+            } else if (!tag.daq.lastDaqSaved || (tag.daq.interval && timestamp - parseInt(tag.daq.interval) * 1000 > tag.daq.lastDaqSaved)) {
                 tag.daq.lastDaqSaved = timestamp;
                 return true;
             }

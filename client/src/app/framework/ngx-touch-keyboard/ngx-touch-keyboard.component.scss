@@ -39,6 +39,17 @@ ngx-touch-keyboard {
   flex: 1 1 auto;
   max-width: 840px;
 
+  .content {
+    margin: 5px 5px 8px 5px;
+    text-align: center;
+    display: block;
+
+    span {
+      padding: 3px 5px 3px 5px;
+      background-color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
   .touch-keyboard-row {
     display: flex;
     flex-direction: row;

@@ -1,6 +1,6 @@
 
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
@@ -134,13 +134,15 @@ export class ProjectService {
     /**
      * Save Project
      */
-    save(skipNotification = false): boolean {
+    save(skipNotification = false): Subject<boolean> {
         // check project change don't work some svg object change the order and this to check isn't easy...boooo
+        const subject = new Subject<boolean>();
         this.storage.setServerProject(this.projectData).subscribe(result => {
             this.load();
             if (!skipNotification) {
                 this.notifySuccessMessage('msg.project-save-success');
             }
+            subject.next(true);
         }, err => {
             console.error(err);
             var msg = '';
@@ -150,8 +152,9 @@ export class ProjectService {
                 closeButton: true,
                 disableTimeOut: true
             });
+            subject.next(false);
         });
-        return true;
+        return subject;
     }
 
     saveAs() {

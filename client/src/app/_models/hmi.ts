@@ -145,6 +145,7 @@ export enum InputModeType {
     false = 'item.inputmode-disabled',
     true = 'item.inputmode-enabled',
     keyboard = 'item.inputmode-keyboard',
+    keyboardFullScreen = 'item.inputmode-keyboard-full-screen',
 }
 
 export enum HeaderBarModeType {
@@ -345,6 +346,13 @@ export interface GaugeIframeProperty {
 export interface GaugePanelProperty {
     viewName: string;
     variableId: string;
+    scaleMode: PanelPropertyScaleModeType;
+}
+
+export enum PanelPropertyScaleModeType {
+    none = 'none',
+    contain = 'contain',
+    stretch = 'stretch'
 }
 
 export interface GaugeTableProperty {

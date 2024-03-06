@@ -49,10 +49,10 @@ export class HtmlChartComponent extends GaugeBaseComponent {
                 }
                 htmlChart.innerHTML = '';
                 componentRef.instance.isEditor = !isview;
-
                 componentRef.instance.rangeType = chartRange;
                 componentRef.instance.id = gab.id;
-                componentRef.instance.type = gab.property?.type;
+                componentRef.instance.property = gab.property;
+                componentRef.instance.chartName = gab.name;
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlChart.appendChild(componentRef.location.nativeElement);

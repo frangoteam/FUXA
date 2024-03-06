@@ -512,6 +512,13 @@ li {
     color: var(--toolboxColor);
 }
 
+.view-item-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 54px);
+}
+
 select#start_marker option[value="A"] {
     background: url("/assets/images/select-pointer.svg");
 }
