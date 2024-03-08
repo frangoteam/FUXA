@@ -1,0 +1,20 @@
+.webcam-player-dialog {
+    //position: relative;
+    .dialog-modal-close {
+        //position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 22px;
+        width: 100%;
+        //color: rgba(0, 0, 0, 0.7);
+        background-color: transparent;
+        font-size: 12px;
+        cursor: move !important;
+        i {
+            float: right;
+        }
+    }
+    app-webcam-player {
+        padding-top: 22px;
+    }
+}
