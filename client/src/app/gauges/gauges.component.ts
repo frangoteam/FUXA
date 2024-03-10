@@ -815,6 +815,8 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else {
+            let ele = document.getElementById(ga.id);
+            ele.setAttribute('data-gauge-name', ga.name);
             return true;
         }
     }
