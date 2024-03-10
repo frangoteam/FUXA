@@ -6,7 +6,7 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
 import { Script, ScriptMode } from '../_models/script';
 import { ProjectService } from './project.service';
-import { HmiService } from './hmi.service';
+import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 
 @Injectable({
     providedIn: 'root'
@@ -41,9 +41,7 @@ export class ScriptService {
                     console.warn('TODO: Script with mode CLIENT not work with parameters.');
                 }
                 try {
-                    let code = script.code.replace(/\$getTag\(/g, 'this.$getTag(');
-                    code = code.replace(/\$setTag\(/g, 'this.$setTag(');
-                    const result = eval(code);
+                    const result = eval(this.addSysFunctions(script.code));
                     observer.next(result);
                 } catch (err) {
                     console.error(err);
@@ -58,12 +56,19 @@ export class ScriptService {
             console.warn('TODO: Script with mode CLIENT not work with parameters.');
         }
         try {
-            let code = script.code.replace(/\$getTag\(/g, 'this.$getTag(');
-            code = code.replace(/\$setTag\(/g, 'this.$setTag(');
-            eval(code);
+            eval(this.addSysFunctions(script.code));
         } catch (err) {
             console.error(err);
         }
+    }
+
+    private addSysFunctions(scriptCode: string): string {
+        let code = scriptCode.replace(/\$getTag\(/g, 'this.$getTag(');
+        code = code.replace(/\$setTag\(/g, 'this.$setTag(');
+        code = code.replace(/\$getTagId\(/g, 'this.$getTagId(');
+        code = code.replace(/\$setView\(/g, 'this.$setView(');
+        code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
+        return code;
     }
 
     public $getTag(id: string) {
@@ -71,6 +76,21 @@ export class ScriptService {
     }
 
     public $setTag(id: string, value: any) {
-        const tag = this.hmiService.putSignalValue(id, value);
+        this.hmiService.putSignalValue(id, value);
+    }
+
+    public $getTagId(tagName: string, deviceName?: string) {
+        return this.projectService.getTagIdFromName(tagName, deviceName);
+    }
+
+    public $setView(viewName: string, force?: boolean) {
+        this.hmiService.onScriptCommand(<ScriptCommandMessage>{
+            command: ScriptCommandEnum.SETVIEW,
+            params: [viewName, force]
+        });
+    }
+
+    public $enableDevice(deviceName: string, enable: boolean) {
+        this.hmiService.deviceEnable(deviceName, enable);
     }
 }

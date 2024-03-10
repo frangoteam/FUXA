@@ -947,6 +947,19 @@ export class ProjectService {
         return null;
     }
 
+    getTagIdFromName(tagName: string, deviceName?: string): string {
+        let devices = <Device[]>Object.values(this.projectData.devices);
+        for (let i = 0; i < devices.length; i++) {
+            if (!deviceName || devices[i].name === deviceName) {
+                let result = <Tag>Object.values(devices[i].tags).find((tag: Tag) => tag.name === tagName);
+                if (result) {
+                    return result.id;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Check to add or remove system Tags, example connection status to add in device FUXA server
      */
