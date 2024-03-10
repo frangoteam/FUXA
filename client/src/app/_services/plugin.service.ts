@@ -5,20 +5,17 @@ import { Observable } from 'rxjs';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { Plugin } from '../_models/plugin';
 import { environment } from '../../environments/environment';
-import { ToastrService } from 'ngx-toastr';
-import { TranslateService } from '@ngx-translate/core';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class PluginService {
 
     @Output() onPluginsChanged: EventEmitter<any> = new EventEmitter();
 
     private endPointConfig: string = EndPointApi.getURL();
 
-    constructor(private http: HttpClient,
-        private translateService: TranslateService,
-        private toastr: ToastrService) {
-
+    constructor(private http: HttpClient) {
     }
 
     getPlugins() {
