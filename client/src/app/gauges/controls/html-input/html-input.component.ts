@@ -144,6 +144,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
         if (isView) {
             let ele = document.getElementById(gab.id);
             if (ele && gab.property) {
+                ele?.setAttribute('data-name', gab.name);
                 let input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
                     input.value = '';

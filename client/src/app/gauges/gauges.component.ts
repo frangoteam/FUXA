@@ -816,7 +816,7 @@ export class GaugesManager {
             return gauge;
         } else {
             let ele = document.getElementById(ga.id);
-            ele.setAttribute('data-gauge-name', ga.name);
+            ele?.setAttribute('data-name', ga.name);
             return true;
         }
     }

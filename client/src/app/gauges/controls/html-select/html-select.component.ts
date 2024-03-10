@@ -98,6 +98,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
     static initElement(ga: GaugeSettings, isview: boolean = false) {
         let ele = document.getElementById(ga.id);
         if (ele) {
+            ele?.setAttribute('data-name', ga.name);
             let select = Utils.searchTreeStartWith(ele, this.prefix);
             if (select) {
                 if (ga.property) {

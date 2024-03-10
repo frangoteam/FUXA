@@ -45,6 +45,7 @@ export class HtmlGraphComponent extends GaugeBaseComponent {
     static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean): GraphBaseComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
+            ele?.setAttribute('data-name', gab.name);
             let htmlGraph = Utils.searchTreeStartWith(ele, this.prefixD);
             if (htmlGraph) {
                 let factory = resolver.resolveComponentFactory(GraphBaseComponent);

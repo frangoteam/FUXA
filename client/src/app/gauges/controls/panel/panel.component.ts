@@ -62,6 +62,7 @@ export class PanelComponent extends GaugeBaseComponent {
         }
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
+            ele?.setAttribute('data-name', gaugeSettings.name);
             let svgPanelContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgPanelContainer) {
                 const factory = resolver.resolveComponentFactory(FuxaViewComponent);
