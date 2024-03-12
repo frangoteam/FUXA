@@ -28,7 +28,7 @@ import { HmiService } from '../_services/hmi.service';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
 import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/fuxa-view-dialog.component';
 import {DialogPosition, MatDialog} from '@angular/material/dialog';
-import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from "../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component";
+import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 
 declare var SVG: any;
 
@@ -777,7 +777,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onMonitor(ga: GaugeSettings, event:any, viewref: string, options: any = {}){
-        console.info("onMonitor");
+        // console.info('onMonitor');
         let dialogData = <WebcamPlayerDialogData>{
             view: this.getView(viewref),
             bkColor: 'transparent',

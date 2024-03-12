@@ -237,7 +237,7 @@ export enum GaugeActionsType {
     downup = 'shapes.action-downup',
     rotate = 'shapes.action-rotate',
     move = 'shapes.action-move',
-    monitor = "shapes.action-monitor",
+    monitor = 'shapes.action-monitor',
 }
 
 export class GaugeAction {
@@ -309,7 +309,7 @@ export enum GaugeEventActionType {
     onSetInput = 'shapes.event-onsetinput',
     onclose = 'shapes.event-onclose',
     onRunScript = 'shapes.event-onrunscript',
-    onMonitor = "shapes.event-onmonitor",
+    onMonitor = 'shapes.event-onmonitor',
 }
 
 export enum GaugeEventSetValueType {

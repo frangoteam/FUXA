@@ -13,7 +13,7 @@ import {HmiService} from "../../_services/hmi.service";
 })
 export class WebcamPlayerComponent implements OnInit {
 
-    @ViewChild("xgplayer", {static: true}) xgplayerRef: ElementRef;
+    @ViewChild('xgplayer', {static: true}) xgplayerRef: ElementRef;
     @Input() data: WebcamPlayerDialogData;
     @Output() onclose = new EventEmitter();
     player: Player;
@@ -32,7 +32,7 @@ export class WebcamPlayerComponent implements OnInit {
         }
         let plugins:any = [];
         //add http-flv support
-        if (new URL(url).pathname.endsWith("flv")) {
+        if (new URL(url).pathname.endsWith('flv')) {
             plugins.push(FlvJsPlugin)
         }
         this.player = new Player({
