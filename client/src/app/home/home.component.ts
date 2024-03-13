@@ -14,7 +14,7 @@ import { HmiService, ScriptSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType, LoginOverlayColorType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -266,10 +266,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else {
-            let dialogRef = this.dialog.open(LoginComponent, {
+            let dialogConfig = {
                 data: {},
-                disableClose: true
-            });
+                disableClose: true,
+                ...(this.hmi.layout.loginoverlaycolor && this.hmi.layout.loginoverlaycolor.toString() !== 'void') && {
+                    backdropClass: this.hmi.layout.loginoverlaycolor.toString() == 
+                        'black' ? 'backdrop-black' : 'backdrop-white'
+                }
+            };
+            
+            let dialogRef = this.dialog.open(LoginComponent, dialogConfig);
             dialogRef.afterClosed().subscribe(result => {
                 const userInfo = new UserInfo(this.authService.getUser()?.info);
                 if (userInfo.start) {
