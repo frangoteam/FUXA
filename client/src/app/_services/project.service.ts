@@ -1,6 +1,6 @@
 
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, firstValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
@@ -857,6 +857,11 @@ export class ProjectService {
         return this.storage.getDaqValues(query);
     }
     //#endregion
+
+    async getTagsValues(tagsIds: string[]): Promise<any[]> {
+        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds));
+        return values;
+    }
 
     /**
      * Set Project data and save resource to backend

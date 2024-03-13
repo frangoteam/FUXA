@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { Script, ScriptMode } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
+import { Utils } from '../_helpers/utils';
 
 @Injectable({
     providedIn: 'root'
@@ -41,7 +42,8 @@ export class ScriptService {
                     console.warn('TODO: Script with mode CLIENT not work with parameters.');
                 }
                 try {
-                    const result = eval(this.addSysFunctions(script.code));
+                    const asyncScript = `(async () => { ${this.addSysFunctions(script.code)} })();`;
+                    const result = eval(asyncScript);
                     observer.next(result);
                 } catch (err) {
                     console.error(err);
@@ -56,14 +58,15 @@ export class ScriptService {
             console.warn('TODO: Script with mode CLIENT not work with parameters.');
         }
         try {
-            eval(this.addSysFunctions(script.code));
+            const asyncScript = `(async () => { ${this.addSysFunctions(script.code)} })();`;
+            eval(asyncScript);
         } catch (err) {
             console.error(err);
         }
     }
 
     private addSysFunctions(scriptCode: string): string {
-        let code = scriptCode.replace(/\$getTag\(/g, 'this.$getTag(');
+        let code = scriptCode.replace(/\$getTag\(/g, 'await this.$getTag(');
         code = code.replace(/\$setTag\(/g, 'this.$setTag(');
         code = code.replace(/\$getTagId\(/g, 'this.$getTagId(');
         code = code.replace(/\$setView\(/g, 'this.$setView(');
@@ -71,8 +74,13 @@ export class ScriptService {
         return code;
     }
 
-    public $getTag(id: string) {
-        return this.projectService.getTagFromId(id)?.value;
+    public async $getTag(id: string) {
+        let tag = this.projectService.getTagFromId(id);
+        if (!Utils.isNullOrUndefined(tag?.value)) {
+            return tag.value;
+        }
+        let values = await this.projectService.getTagsValues([id]);
+        return values[0]?.value;
     }
 
     public $setTag(id: string, value: any) {
