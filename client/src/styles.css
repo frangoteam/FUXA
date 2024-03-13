@@ -413,6 +413,7 @@ app-root {
 .menu-item-content-inline {
     text-align: left;
     padding: 10px 10px 10px 10px;
+    display: flex;
 }
 
 .menu-item-content-inline .mat-icon {

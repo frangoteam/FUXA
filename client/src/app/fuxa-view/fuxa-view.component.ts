@@ -12,7 +12,7 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType } from '../_models/hmi';
@@ -68,7 +68,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
     protected plainVariableMapping: any = {};
-    private subscriptionLoad: Subscription;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private translateService: TranslateService,
@@ -96,13 +96,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.loadHmi(this.view);
         /* check if already loaded */
-        if (this.projectService.getHmi()) {
-            this.projectService.initScheduledScripts();
-        } else {
-            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(
-                load => {this.projectService.initScheduledScripts();
-            });
-        }
+        // if (this.projectService.getHmi()) {
+        //     this.initScheduledScripts();
+        // } else {
+        //     this.projectService.onLoadHmi.pipe(
+        //         takeUntil(this.destroy$)
+        //     ).subscribe(() => {
+        //         this.initScheduledScripts();
+        //     });
+        // }
         try {
             this.gaugesManager.emitBindedSignals(this.id);
         } catch (err) {
@@ -112,10 +114,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         try {
-			if (this.subscriptionLoad) {
-				this.subscriptionLoad.unsubscribe();
-			}
-            this.projectService.clearScheduledScripts();
+            this.destroy$.next();
+            this.destroy$.complete();
             this.gaugesManager.unbindGauge(this.id);
             this.clearGaugeStatus();
             if (this.subscriptionOnChange) {
@@ -214,8 +214,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         (gaToBindMouseEvents) => {
                             this.onBindMouseEvents(gaToBindMouseEvents);
                         },
-                        (gatobindhtmlevent) => {
-                            this.onBindHtmlEvent(gatobindhtmlevent);
+                        (gaToBindHtmlEvent) => {
+                            this.onBindHtmlEvent(gaToBindHtmlEvent);
                         });
                     if (items[key].property) {
                         let gaugeSetting = items[key];
@@ -639,6 +639,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             panelClass: 'fuxa-dialog-property',
             disableClose: true,
             data: dialogData,
+            autoFocus: false,
             position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe();
