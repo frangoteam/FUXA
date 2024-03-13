@@ -214,8 +214,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         (gaToBindMouseEvents) => {
                             this.onBindMouseEvents(gaToBindMouseEvents);
                         },
-                        (gatobindhtmlevent) => {
-                            this.onBindHtmlEvent(gatobindhtmlevent);
+                        (gaToBindHtmlEvent) => {
+                            this.onBindHtmlEvent(gaToBindHtmlEvent);
                         });
                     if (items[key].property) {
                         let gaugeSetting = items[key];
@@ -639,6 +639,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             panelClass: 'fuxa-dialog-property',
             disableClose: true,
             data: dialogData,
+            autoFocus: false,
             position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe();
