@@ -91,7 +91,7 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixels",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixels",
     "dlg.docproperty-margin": "Margin",
-    
+
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",
@@ -354,7 +354,7 @@
     "graph.property-datalabels-show": "Show",
     "graph.property-datalabels-fontsize": "Font size",
     "graph.property-datalabels-align": "Align",
-    
+
     "graph.rangetype-last1h": "Last hour",
     "graph.rangetype-last1d": "Last day",
     "graph.rangetype-last3d": "Last 3 days",
@@ -389,7 +389,7 @@
     "table.property-row-height": "Height",
     "table.property-row-background": "Background",
     "table.property-row-color": "Color",
-    "table.property-row-fontSize": "Font size",    
+    "table.property-row-fontSize": "Font size",
     "table.property-layout": "Layout",
     "table.property-filter": "Filter",
     "table.property-paginator": "Paginator",
@@ -671,6 +671,7 @@
     "shapes.event-setvalue-set": "set",
     "shapes.event-setvalue-add": "increase",
     "shapes.event-setvalue-remove": "decrease",
+    "shapes.event-onmonitor": "Monitor",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
@@ -848,7 +849,7 @@
     "device.topic-name-exist": "The Topic name '{{value}}' already exist",
     "device.topic-subs-address-exist": "The Topic to subscribe with address '{{value}}' already exist",
     "device.topic-pubs-address-exist": "The Topic to publish with address '{{value}}' already exist",
-    
+
     "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",
@@ -865,8 +866,8 @@
     "device.tag-property-obj-name": "Name",
     "device.tag-property-path": "Path",
     "device.tag-property-unit": "Unit",
-    "device.tag-property-digits": "Decimal",    
-    "device.tag-property-initvalue": "Init value",    
+    "device.tag-property-digits": "Decimal",
+    "device.tag-property-initvalue": "Init value",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
@@ -1060,7 +1061,7 @@
     "alarms.view-offtime": "OFF Date/Time",
     "alarms.view-acktime": "ACK Date/Time",
     "alarms.view-userack": "ACK User",
-    "alarms.view-ack-all-alarms": "ACK All Alarms",    
+    "alarms.view-ack-all-alarms": "ACK All Alarms",
     "alarm.status-active": "Active",
     "alarm.status-passive": "Passive",
     "alarm.status-active-ack": "Active-ACK",
@@ -1212,7 +1213,7 @@
     "report.item-interval-min10": "10 minutes",
     "report.item-interval-min30": "30 minutes",
     "report.item-interval-hour": "1 Hour",
-    "report.item-interval-day": "1 Day",    
+    "report.item-interval-day": "1 Day",
     "report.item-function-type": "Function type",
     "report.item-function-min": "Min",
     "report.item-function-max": "Max",

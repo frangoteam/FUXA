@@ -1,0 +1,8 @@
+<div class="webcam-player-dialog" mat-dialog-draggable>
+    <a class="dialog-modal-close">
+        <i (click)="onCloseDialog()"
+           class="material-icons"
+           style="font-size: 22px; cursor: pointer;">close</i>
+    </a>
+    <app-webcam-player (onclose)="onCloseDialog()" [data]="data" ></app-webcam-player>
+</div>

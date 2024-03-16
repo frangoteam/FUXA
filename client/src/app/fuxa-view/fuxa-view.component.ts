@@ -27,7 +27,8 @@ import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-t
 import { HmiService } from '../_services/hmi.service';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
 import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/fuxa-view-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import {DialogPosition, MatDialog} from '@angular/material/dialog';
+import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 
 declare var SVG: any;
 
@@ -427,7 +428,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 self.openWindow(ga.id, ev, events[i].actparam, events[i].actoptions);
             } else if (eventTypes.indexOf(GaugeEventActionType.onclose) === actindex) {
                 self.onClose(ev);
-            } else if (events[i].action === this.eventRunScript) {
+            } else if (eventTypes.indexOf(GaugeEventActionType.onMonitor) === actindex) {
+                self.onMonitor(ga, ev, events[i].actparam, events[i].actoptions);
+            }else if (events[i].action === this.eventRunScript) {
                 self.onRunScript(events[i]);
             }
         }
@@ -772,6 +775,25 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 console.error(err);
             });
         }
+    }
+
+    onMonitor(ga: GaugeSettings, event:any, viewref: string, options: any = {}){
+        // console.info('onMonitor');
+        let dialogData = <WebcamPlayerDialogData>{
+            view: this.getView(viewref),
+            bkColor: 'transparent',
+            gaugesManager: this.gaugesManager,
+            ga: ga
+        };
+        let pos =<DialogPosition>{ top: event.layerY+30+'px', left: event.layerX+10+'px'}
+        // let pos =<DialogPosition>{ top: '60px'}
+        let dialogRef = this.fuxaDialog.open(WebcamPlayerDialogComponent, {
+            panelClass: 'fuxa-dialog-property',
+            disableClose: false,
+            data: dialogData,
+            position: pos
+        });
+        dialogRef.afterClosed().subscribe();
     }
 
     getCardHeight(height) {
