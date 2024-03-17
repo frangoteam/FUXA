@@ -8,6 +8,7 @@ import { Script, ScriptMode } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
+import { TagDaq } from '../_models/device';
 
 @Injectable({
     providedIn: 'root'
@@ -69,6 +70,8 @@ export class ScriptService {
         let code = scriptCode.replace(/\$getTag\(/g, 'await this.$getTag(');
         code = code.replace(/\$setTag\(/g, 'this.$setTag(');
         code = code.replace(/\$getTagId\(/g, 'this.$getTagId(');
+        code = code.replace(/\$getTagDaqSettings\(/g, 'await this.$getTagDaqSettings(');
+        code = code.replace(/\$setTagDaqSettings\(/g, 'await this.$setTagDaqSettings(');
         code = code.replace(/\$setView\(/g, 'this.$setView(');
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
         return code;
@@ -89,6 +92,15 @@ export class ScriptService {
 
     public $getTagId(tagName: string, deviceName?: string) {
         return this.projectService.getTagIdFromName(tagName, deviceName);
+    }
+
+    public async $getTagDaqSettings(id: string) {
+        let daqSettings = await this.projectService.runSysFunctionSync('$getTagDaqSettings', [id]);
+        return daqSettings;
+    }
+
+    public async $setTagDaqSettings(id: string, daq: TagDaq) {
+        return await this.projectService.runSysFunctionSync('$setTagDaqSettings', [id, daq]);
     }
 
     public $setView(viewName: string, force?: boolean) {

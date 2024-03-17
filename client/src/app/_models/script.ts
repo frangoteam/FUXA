@@ -85,6 +85,12 @@ export class SystemFunctions {
         name: '$getTagId', text: 'script.sys-fnc-getTagId-text', tooltip: 'script.sys-fnc-getTagId-tooltip', params: [false], paramsText: 'script.sys-fnc-getTagId-params'
     },
     {
+        name: '$getTagDaqSettings', text: 'script.sys-fnc-getTagDaqSettings-text', tooltip: 'script.sys-fnc-getTagDaqSettings-tooltip', params: [true], paramsText: 'script.sys-fnc-getTagDaqSettings-params'
+    },
+    {
+        name: '$setTagDaqSettings', text: 'script.sys-fnc-setTagDaqSettings-text', tooltip: 'script.sys-fnc-setTagDaqSettings-tooltip', params: [true, false], paramsText: 'script.sys-fnc-setTagDaqSettings-params'
+    },
+    {
         name: '$setView', text: 'script.sys-fnc-setview-text', tooltip: 'script.sys-fnc-setview-tooltip', params: [false]
     },
     {

@@ -168,6 +168,12 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
+    runSysFunction(functionName: string, params?: any): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
     heartbeat(activity: boolean): Observable<any> {
         return new Observable(observer => {
             observer.error('Not supported!');

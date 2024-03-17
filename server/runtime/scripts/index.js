@@ -96,6 +96,15 @@ function ScriptsManager(_runtime) {
         return false;
     }
 
+    this.sysFunctionExist = (functionName) => {
+        const sysFncs = _getSystemFunctions();
+        return !!sysFncs[functionName];
+    }
+
+    this.runSysFunction = (functionName, params) => {
+        return scriptModule.runSysFunction(functionName, params);
+    }
+
     /**
      * Check the Scripts state machine
      */
@@ -211,6 +220,8 @@ function ScriptsManager(_runtime) {
         sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
         sysFncs['$enableDevice'] = runtime.devices.enableDevice;
+        sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
+        sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         return sysFncs;
     }
 
