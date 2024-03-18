@@ -137,7 +137,13 @@ select:disabled {
 * {
     /* font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif; */
     text-decoration: none;
-    scrollbar-width: thin;
+    scrollbar-width: auto;
+}
+
+@-moz-document url-prefix() {
+    * {
+        scrollbar-width: thin;
+    }
 }
 
 *:focus {
@@ -407,6 +413,7 @@ app-root {
 .menu-item-content-inline {
     text-align: left;
     padding: 10px 10px 10px 10px;
+    display: flex;
 }
 
 .menu-item-content-inline .mat-icon {
@@ -622,6 +629,7 @@ mat-toolbar-row {
 .mat-dialog-title {
     margin: 0 0 12px !important;
     width: calc(100% - 50px);
+    cursor: move;
 }
 
 .mat-raised-button {
@@ -835,9 +843,9 @@ mat-toolbar-row {
 }
 
 .dialog-title {
-    display:inline-block; 
-    cursor:move;
-    display: unset !important;
+    display: inline-block !important;
+    cursor: move;
+    width: calc(100% - 50px);
 }
 
 .dialog-close-btn {
@@ -1076,6 +1084,10 @@ mat-toolbar-row {
 
 .mr5 {
     margin-right: 5px;
+}
+
+.mb5 {
+    margin-bottom: 5px;
 }
 
 .mb10 {

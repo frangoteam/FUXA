@@ -82,10 +82,11 @@ function FuxaServer(_data, _logger, _events) {
         connectionTags = [];
         for (var id in data.tags) {
             tagsMap[id] = data.tags[id];
-            if (data.tags[id].init) {
-                data.tags[id].value = _parseValue(data.tags[id].init);
+            const dataTag = data.tags[id];
+            if (dataTag.init) {
+                data.tags[id].value = _parseValue(dataTag.init, dataTag.type);
             }
-            if (data.tags[id].sysType === TagSystemTypeEnum.deviceConnectionStatus) {
+            if (dataTag.sysType === TagSystemTypeEnum.deviceConnectionStatus) {
                 data.tags[id].timestamp = Date.now();
                 connectionTags.push(data.tags[id]);
             }
@@ -178,6 +179,24 @@ function FuxaServer(_data, _logger, _events) {
      */
      this.lastReadTimestamp = () => {
         return lastTimestampValue;
+    }
+
+    /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        return data.tags[tagId] ? data.tags[tagId].daq : null;
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        if (data.tags[tagId]) {
+            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
+        }
     }
 
     /**

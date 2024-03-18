@@ -69,14 +69,14 @@ function ScriptsManager(_runtime) {
     this.runScript = function (script) {
         return new Promise(async function (resolve, reject) {
             try {
+                var result;
                 if (script.test) {
-                    scriptModule.runTestScript(script);
+                    result = scriptModule.runTestScript(script);
                 } else {
                     logger.info(`Run script ${script.name}`);
-                    scriptModule.runScript(script);
+                    result = scriptModule.runScript(script);
                 }
-                // this.runtime.project.getScripts();
-                resolve(`Script OK: ${script.name}`);
+                resolve(result || `Script OK: ${script.name}`);
             } catch (err) {
                 reject(err);
             }
@@ -94,6 +94,15 @@ function ScriptsManager(_runtime) {
             logger.error(err);
         }
         return false;
+    }
+
+    this.sysFunctionExist = (functionName) => {
+        const sysFncs = _getSystemFunctions();
+        return !!sysFncs[functionName];
+    }
+
+    this.runSysFunction = (functionName, params) => {
+        return scriptModule.runSysFunction(functionName, params);
     }
 
     /**
@@ -211,6 +220,8 @@ function ScriptsManager(_runtime) {
         sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
         sysFncs['$enableDevice'] = runtime.devices.enableDevice;
+        sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
+        sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         return sysFncs;
     }
 

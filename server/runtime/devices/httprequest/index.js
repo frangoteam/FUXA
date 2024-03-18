@@ -230,6 +230,24 @@ function HTTPclient(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        return data.tags[tagId] ? data.tags[tagId].daq : null;
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        if (data.tags[tagId]) {
+            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
+        }
+    }
+
     var _checkConnection = function () {
         if (data.property.address) {
             apiProperty.getTags = data.property.address;

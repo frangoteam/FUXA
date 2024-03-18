@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
 import { ProjectService } from '../../../_services/project.service';
 import { Device, DevicesUtils, Tag } from '../../../_models/device';
-import { DeviceTagDialog } from '../../../device/device.component';
+import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../device/device-tag-selection/device-tag-selection.component';
 
 export const _filter = (opt: DeviceTagOption[], value: string): DeviceTagOption[] => {
     const filterValue = value.toLowerCase();
@@ -108,9 +108,12 @@ export class FlexDeviceTagComponent implements OnInit {
     }
 
     onBindTag() {
-        let dialogRef = this.dialog.open(DeviceTagDialog, {
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: { variableId: this.variableId, devices: this.devices }
+            data: <DeviceTagSelectionData> {
+                variableId: this.variableId
+            }
         });
 
         dialogRef.afterClosed().subscribe((result) => {

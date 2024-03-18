@@ -91,7 +91,7 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixels",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixels",
     "dlg.docproperty-margin": "Margin",
-    
+
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",
@@ -199,6 +199,7 @@
     "item.inputmode-disabled": "Disabled",
     "item.inputmode-enabled": "Dialog",
     "item.inputmode-keyboard": "Virtual-Keyboard",
+    "item.inputmode-keyboard-full-screen": "Virtual-Keyboard full screen",
 
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",
@@ -231,6 +232,7 @@
     "chart.property-realtime-max": "Max minutes",
     "chart.viewtype-realtime1": "Realtime",
     "chart.viewtype-history": "History",
+    "chart.viewtype-custom": "Custom",
     "chart.property-general": "General",
     "chart.property-font": "Font",
     "chart.property-font.titlesize": "Title size",
@@ -352,7 +354,7 @@
     "graph.property-datalabels-show": "Show",
     "graph.property-datalabels-fontsize": "Font size",
     "graph.property-datalabels-align": "Align",
-    
+
     "graph.rangetype-last1h": "Last hour",
     "graph.rangetype-last1d": "Last day",
     "graph.rangetype-last3d": "Last 3 days",
@@ -368,6 +370,10 @@
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
     "panel.property-name": "Name",
+    "panel.property-scalemode": "Scale mode",
+    "panel.property-scalemode-none": "None",
+    "panel.property-scalemode-contain": "Contain",
+    "panel.property-scalemode-stretch": "Stretch",
 
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
@@ -383,7 +389,7 @@
     "table.property-row-height": "Height",
     "table.property-row-background": "Background",
     "table.property-row-color": "Color",
-    "table.property-row-fontSize": "Font size",    
+    "table.property-row-fontSize": "Font size",
     "table.property-layout": "Layout",
     "table.property-filter": "Filter",
     "table.property-paginator": "Paginator",
@@ -665,6 +671,7 @@
     "shapes.event-setvalue-set": "set",
     "shapes.event-setvalue-add": "increase",
     "shapes.event-setvalue-remove": "decrease",
+    "shapes.event-onmonitor": "Monitor",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
@@ -842,7 +849,7 @@
     "device.topic-name-exist": "The Topic name '{{value}}' already exist",
     "device.topic-subs-address-exist": "The Topic to subscribe with address '{{value}}' already exist",
     "device.topic-pubs-address-exist": "The Topic to publish with address '{{value}}' already exist",
-    
+
     "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",
@@ -859,8 +866,8 @@
     "device.tag-property-obj-name": "Name",
     "device.tag-property-path": "Path",
     "device.tag-property-unit": "Unit",
-    "device.tag-property-digits": "Decimal",    
-    "device.tag-property-initvalue": "Init value",    
+    "device.tag-property-digits": "Decimal",
+    "device.tag-property-initvalue": "Init value",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
@@ -1054,7 +1061,7 @@
     "alarms.view-offtime": "OFF Date/Time",
     "alarms.view-acktime": "ACK Date/Time",
     "alarms.view-userack": "ACK User",
-    "alarms.view-ack-all-alarms": "ACK All Alarms",    
+    "alarms.view-ack-all-alarms": "ACK All Alarms",
     "alarm.status-active": "Active",
     "alarm.status-passive": "Passive",
     "alarm.status-active-ack": "Active-ACK",
@@ -1106,6 +1113,7 @@
 
     "script.property-title": "Script",
     "script.property-systems": "System functions",
+    "script.property-templates": "Templates",
     "script.property-test": "Test",
     "script.property-test-params": "Function parameters",
     "script.property-test-console": "Console",
@@ -1118,7 +1126,8 @@
     "script.param-type": "Type",
     "script.paramtype": "",
     "script.paramtype-tagid": "Tag ID",
-    "script.paramtype-value": "Value (number or string)",
+    "script.paramtype-value": "Value (number/string/object)",
+    "script.paramtype-chart": "Chart lines (array)",
     "script.param-name-exist": "The parameter name already exist!",
     "script.sys-fnc-settag-text": "$setTag (TagID, value)",
     "script.sys-fnc-settag-tooltip": "System function to set Tag value: $setTag (TagID as string, value as string or number)",
@@ -1142,9 +1151,18 @@
     "script.sys-fnc-enableDevice-text": "$enableDevice (Device name, enable True/False)",
     "script.sys-fnc-enableDevice-tooltip": "System function to enable Device connection: $enableDevice (Device name as string, enable as boolean)",
     "script.sys-fnc-enableDevice-params": "'Device name', true",
-    "script.sys-fnc-getTagId-text": "$getTagId (Tag name)",
-    "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string)",
-    "script.sys-fnc-getTagId-params": "'Tag name'",
+    "script.sys-fnc-getTagId-text": "$getTagId (Tag name, [Device name])",
+    "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string, [Optional Device name as string])",
+    "script.sys-fnc-getTagId-params": "'Tag name', '[Device name]'",
+    "script.sys-fnc-getTagDaqSettings-text": "$getTagDaqSettings (TagID)",
+    "script.sys-fnc-getTagDaqSettings-tooltip": "System function to get Tag DAQ settings: $getTagDaqSettings (TagID as string)",
+    "script.sys-fnc-getTagDaqSettings-params": "'TagID'",
+    "script.sys-fnc-setTagDaqSettings-text": "$setTagDaqSettings (TagID, DaqSettings)",
+    "script.sys-fnc-setTagDaqSettings-tooltip": "System function to set Tag DAQ settings: $setTagDaqSettings (TagID as string, DaqSettings as object {restored: boolean, enabled: boolean, changed: boolean, interval: number, lastDaqSaved: number} )",
+    "script.sys-fnc-setTagDaqSettings-params": "'TagID', 'DaqSettings'",
+
+    "script.template-chart-data-text": "Customized chart data",
+    "script.template-chart-data-tooltip": "Code template of customized chart data to return",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
@@ -1201,7 +1219,7 @@
     "report.item-interval-min10": "10 minutes",
     "report.item-interval-min30": "30 minutes",
     "report.item-interval-hour": "1 Hour",
-    "report.item-interval-day": "1 Day",    
+    "report.item-interval-day": "1 Day",
     "report.item-function-type": "Function type",
     "report.item-function-min": "Min",
     "report.item-function-max": "Max",
@@ -1387,5 +1405,6 @@
     "msg.import-devices-error": "Import devices failed!",
     "msg.report-build-forced": "Send to build Report successful",
     "msg.report-build-error": "Send to build Report failed!",
-    "msg.device-tags-request-result": "Load {{value}} of {{current}}"
+    "msg.device-tags-request-result": "Load {{value}} of {{current}}",
+    "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'"
 }

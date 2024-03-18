@@ -108,6 +108,9 @@ export class GaugeBaseComponent {
         }
         gaugeStatus.actionRef.type = act.type;
         if (toEnable) {
+            if (gaugeStatus.actionRef.timer) {
+                return;
+            }
             GaugeBaseComponent.clearAnimationTimer(gaugeStatus.actionRef);
             var blinkStatus = false;
             // save action (dummy) id and colors to restore on break

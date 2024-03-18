@@ -41,6 +41,7 @@ export class HtmlTableComponent {
     static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean): DataTableComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
+            ele?.setAttribute('data-name', gab.name);
             let htmlTable = Utils.searchTreeStartWith(ele, this.prefixD);
             if (htmlTable) {
                 let factory = resolver.resolveComponentFactory(DataTableComponent);

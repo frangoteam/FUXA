@@ -48,6 +48,7 @@ export class HtmlIframeComponent extends GaugeBaseComponent {
     static initElement(gaugeSettings: GaugeSettings, isview: boolean) {
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
+            ele?.setAttribute('data-name', gaugeSettings.name);
             let svgIframeContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgIframeContainer) {
                 svgIframeContainer.innerHTML = '';

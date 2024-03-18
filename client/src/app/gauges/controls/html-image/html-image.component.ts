@@ -25,6 +25,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static initElement(gaugeSettings: GaugeSettings, isview: boolean) {
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
+            ele?.setAttribute('data-name', gaugeSettings.name);
             let svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
                 svgImageContainer.innerHTML = '';

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
-import { ChartRangeType } from '../_models/chart';
+import { ChartRangeType, ChartViewType } from '../_models/chart';
 
 import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
@@ -487,7 +487,7 @@ export class GaugesManager {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                    if (ga.property.type === ChartViewType.realtime1 && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id && this.mapGauges[k]) {
                                 HtmlChartComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
@@ -728,8 +728,9 @@ export class GaugesManager {
      * @param res reference to factory
      * @param ref reference to factory
      * @param isview in view or editor, in editor have to disable mouse activity
+     * @param parent parent that call the function, should be from a FuxaViewComponent
      */
-    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean) {
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent) {
         if (!ga || !ga.type) {
             console.error('!TOFIX', ga);
             return null;
@@ -810,10 +811,12 @@ export class GaugesManager {
             HtmlImageComponent.initElement(ga, isview);
             return true;
         } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
-            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.projectService.getHmi(), isview);
+            let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.hmi, isview, parent);
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else {
+            let ele = document.getElementById(ga.id);
+            ele?.setAttribute('data-name', ga.name);
             return true;
         }
     }

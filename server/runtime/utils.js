@@ -106,6 +106,17 @@ var utils = module.exports = {
         return (ele === null || ele === undefined) ? true : false;
     },
 
+    mergeObjectsValues: function (obj1, obj2) {
+        if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+            for (let key in obj2) {
+                if (obj1.hasOwnProperty(key)) {
+                    obj1[key] = obj2[key];
+                }
+            }
+        }    
+        return obj1;
+    },
+
     dayOfYear: function (date) {
         if (date) {
             return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);

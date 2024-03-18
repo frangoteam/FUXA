@@ -1,10 +1,10 @@
 <div style="width: 100%;position: relative;padding-bottom: 40px">
     <div style="margin-top: 20px;margin-bottom: 20px;">
-        {{msgtoconfirm}}
+        {{ msgToConfirm }}
     </div>
 
     <div mat-dialog-actions class="dialog-action">
-        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button *ngIf="!data.hideCancel" (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data">{{'dlg.ok' | translate}}</button>
     </div>
 </div>

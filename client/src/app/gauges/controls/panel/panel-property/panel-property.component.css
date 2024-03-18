@@ -10,6 +10,6 @@
     width: 100%;
 }
 
-.section-item-block input, span {
+.section-item-block input, span, mat-select {
     width:calc(100% - 10px);
 }

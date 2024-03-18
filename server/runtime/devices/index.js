@@ -236,14 +236,17 @@ function getDeviceValue(deviceid, sigid) {
  * Get the Device Tag Id
  * used from Script
  * @param {*} tagName 
+ * @param {*} deviceName 
  */
-function getTagId(tagName) {
+function getTagId(tagName, deviceName) {
     try {
         const devices = runtime.project.getDevices();
         for (var id in devices) {
-            const tag = Object.values(devices[id].tags).find(tag => tag.name === tagName);
-            if (tag) {
-                return tag.id;
+            if (!deviceName || devices[id].name === deviceName) {
+                const tag = Object.values(devices[id].tags).find(tag => tag.name === tagName);
+                if (tag) {
+                    return tag.id;
+                }
             }
         }
     } catch (err) {
@@ -258,11 +261,46 @@ function getTagId(tagName) {
  * @param {*} tagid 
  * @param {*} value 
  */
- function setTagValue(tagid, value) {
+function setTagValue(tagid, value) {
     try {
         let deviceid = getDeviceIdFromTag(tagid)
         if (activeDevices[deviceid]) {
             return activeDevices[deviceid].setValue(tagid, value);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+}
+
+/**
+ * Get the Device Tag Daq settings
+ * used from Scripts
+ * @param {*} tagid
+ */
+function getTagDaqSettings(tagId) {
+    try {
+        let deviceId = getDeviceIdFromTag(tagId)
+        if (activeDevices[deviceId]) {
+            return activeDevices[deviceId].getTagDaqSettings(tagId);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+}
+
+/**
+ * Set the Device Tag Daq settings
+ * used from Scripts
+ * @param {*} tagId
+ * @param {*} settings
+ */
+function setTagDaqSettings(tagId, settings) {
+    try {
+        let deviceId = getDeviceIdFromTag(tagId)
+        if (activeDevices[deviceId]) {
+            return activeDevices[deviceId].setTagDaqSettings(tagId, settings);
         }
     } catch (err) {
         console.error(err);
@@ -434,7 +472,7 @@ var devices = module.exports = {
     getDevicesValues: getDevicesValues,
     getDeviceValue: getDeviceValue,
     getTagValue: getTagValue,
-    setTagValue: setTagValue,    
+    setTagValue: setTagValue,
     setDeviceValue: setDeviceValue,
     getDeviceIdFromTag: getDeviceIdFromTag,
     browseDevice: browseDevice,
@@ -446,4 +484,6 @@ var devices = module.exports = {
     getTagFormat: getTagFormat,
     enableDevice: enableDevice,
     getTagId: getTagId,
+    getTagDaqSettings: getTagDaqSettings,
+    setTagDaqSettings: setTagDaqSettings,
 }

@@ -46,6 +46,10 @@ export abstract class ResourceStorageService {
 
     public abstract downloadFile(fileName: string, type: CommanType): Observable<Blob>;
 
+    public abstract getTagsValues(query: string[]): Observable<any>;
+
+    public abstract runSysFunction(functionName: string, params?: any): Observable<any>;
+
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) {return source;}
         let destination = JSON.parse(JSON.stringify(source));

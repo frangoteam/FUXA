@@ -2,14 +2,14 @@
 // add the shape library: with file name as parameter (have to be unique)
 (function () {
     'use strict';
-    var shapesGroupName = 'editor.processeng'; // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
+    var shapesGroupName = 'editor.processeng'; // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse
     var typeId = 'proceng';          // used to identify shapes type, 'proc-eng' is binded with angular component 'ProcEngComponent'
-    // if you make a new type you have to implement the angular component too 
+    // if you make a new type you have to implement the angular component too
 
     // add in this array your schapes data, the shape object has the following attributes:
     // 'name': is unique for shape type
     // 'ico': path icon displayed in editor menu
-    // 'content': array of svg element 
+    // 'content': array of svg element
     // 'id': element id used if you like make a animation managed in angular component
     // 'type': svg element type (path, text, circle,...) see svg description
     // 'attr': element attribute, depending of type
@@ -63,19 +63,19 @@
         {
             name: 'pumpcentri2', ico: 'assets/lib/svgeditor/shapes/img/pumpcentri2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 49.57 17.86 C 47.84 7.6 38.98 0.06 28.57 0 L 0 0 L 0 14.29 L 8.25 14.29 C 5.53 21.93 7.35 30.45 12.96 36.31 C 18.57 42.17 27.01 44.35 34.76 41.96 C 42.51 39.57 48.24 33 49.57 25' } }]
-        },        
+        },
         {
             name: 'pumpscreew', ico: 'assets/lib/svgeditor/shapes/img/pumpscreew.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 86.46 0 C 82.18 3.8 79.73 9.26 79.73 15 C 79.73 20.74 82.18 26.2 86.46 30 L 116.27 30 C 120.55 26.2 123 20.74 123 15 C 123 9.26 120.55 3.8 116.27 0 Z M 74.53 15 L 79.5 15 M 14.91 25 L 14.91 35 M 59.63 25 L 59.63 35' } },
                 { id: '', type: 'path', attr: { d: 'M 0,5 H 74.529999 V 25 H 0 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 4.47 15 C 5.42 11.35 7.57 9 9.94 9 C 12.31 9 14.46 11.35 15.4 15 C 16.35 18.65 18.5 21 20.87 21 C 23.24 21 25.39 18.65 26.34 15 C 27.28 11.35 29.43 9 31.8 9 C 34.17 9 36.32 11.35 37.27 15 C 38.21 18.65 40.36 21 42.73 21 C 45.1 21 47.25 18.65 48.2 15 C 49.15 11.35 51.29 9 53.66 9 C 56.04 9 58.18 11.35 59.13 15 C 60.08 18.65 62.22 21 64.6 21 C 66.97 21 69.11 18.65 70.06 15 M 86.46 0 L 86.46 30 M 116.27 0 L 116.27 30' } }]
-        }, 
+        },
         {
             name: 'pumpblower', ico: 'assets/lib/svgeditor/shapes/img/pumpblower.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 15.71 37.5 L 7.41 46.53 L 48.9 46.53 L 40.61 37.5' } },
                 { id: '', type: 'path', attr: { d: 'M 0.5 0 L 28.16 0 C 37.18 0.07 45.13 5.98 47.81 14.63 C 50.5 23.28 47.31 32.68 39.93 37.89 C 32.54 43.09 22.65 42.91 15.47 37.43 C 8.28 31.95 5.44 22.43 8.45 13.89 L 0.5 13.72 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 35.074673,20.83 A 6.9146729,6.9447761 0 0 1 28.16,27.774776 6.9146729,6.9447761 0 0 1 21.245327,20.83 6.9146729,6.9447761 0 0 1 28.16,13.885224 6.9146729,6.9447761 0 0 1 35.074673,20.83' } }]
-        },     
+        },
         {
             name: 'pumpgear2', ico: 'assets/lib/svgeditor/shapes/img/pumpgear2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 13.16 71.93 L 6.58 79.82 L 43.42 79.82 L 36.75 71.93' } },
@@ -83,17 +83,17 @@
                 { id: '', type: 'path', attr: { d: 'M 39.035088,52.630001 A 14.035088,14.034286 0 0 1 25,66.664287 14.035088,14.034286 0 0 1 10.964912,52.630001 14.035088,14.034286 0 0 1 25,38.595716 14.035088,14.034286 0 0 1 39.035088,52.630001' } },
                 { id: '', type: 'path', attr: { d: 'M 39.035088,20.17 A 14.035088,14.034286 0 0 1 25,34.204286 14.035088,14.034286 0 0 1 10.964912,20.17 14.035088,14.034286 0 0 1 25,6.1357145 14.035088,14.034286 0 0 1 39.035088,20.17' } },
                 { id: '', type: 'path', attr: { d: 'M 50 27.63 L 50 45.17 M 42.54 36.4 L 50 36.4 M 0 28.07 L 0 45.61 M 0 36.4 L 7.46 36.4' } }]
-        },       
+        },
         {
             name: 'pumphorizo', ico: 'assets/lib/svgeditor/shapes/img/pumphorizo.svg', content: [
                 { id: '', type: 'path', attr: { d: 'm 39.73,70.360001 h 2.74 V 79.56 h -2.74 z' } },
                 { id: '', type: 'path', attr: { d: 'M 30.82 4.61 C 33.42 1.68 37.16 0 41.09 0 C 45.03 0 48.77 1.68 51.37 4.61 L 51.37 65.93 C 48.77 68.87 45.03 70.55 41.1 70.55 C 37.16 70.55 33.42 68.87 30.82 65.93 Z M 71.92 79.56 C 74.86 82.15 76.55 85.87 76.55 89.78 C 76.55 93.69 74.86 97.41 71.92 100 L 10.27 100 C 7.33 97.41 5.64 93.69 5.64 89.78 C 5.64 85.87 7.33 82.15 10.27 79.56 Z M 76.37 89.78 L 82.19 89.78 M 82.19 82.97 L 82.19 96.59 M 0 89.78 L 5.82 89.78 M 0 82.97 L 0 96.59 M 30.82 65.93 L 51.37 65.93 M 30.82 4.61 L 51.37 4.61' } }]
-        },       
+        },
         {
             name: 'pumpscreew2', ico: 'assets/lib/svgeditor/shapes/img/pumpscreew2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 8.57 38.01 L 0 47.16 L 42.86 47.16 L 34.29 38.01' } },
                 { id: '', type: 'path', attr: { d: 'M 0.43 17.58 C 2.18 7.43 11.11 0 21.55 0 C 32 0 40.93 7.43 42.68 17.58 L 50 17.58 L 50 24.63 L 42.68 24.63 C 40.93 34.78 32 42.21 21.55 42.21 C 11.11 42.21 2.18 34.78 0.43 24.63' } }]
-        },   
+        },
         {
             name: 'pumpperis', ico: 'assets/lib/svgeditor/shapes/img/pumpperis.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 9.6 45.08 L 0 55.48 L 48 55.48 L 38.4 45.08' } },
@@ -102,7 +102,7 @@
                 { id: '', type: 'path', attr: { d: 'm 18.88,35.080002 a 8,8 0 0 1 -8,8 8,8 0 0 1 -7.9999999,-8 8,8 0 0 1 7.9999999,-8 8,8 0 0 1 8,8' } },
                 { id: '', type: 'path', attr: { d: 'm 45.119999,35.080002 a 8,8 0 0 1 -8,8 8,8 0 0 1 -8,-8 8,8 0 0 1 8,-8 8,8 0 0 1 8,8' } },
                 { id: '', type: 'path', attr: { d: 'M 17.04 6.04 L 3.68 31.48 M 30.96 6.04 L 44.32 31.48 M 10.88 43.08 L 37.12 43.08 M 16 0.28 L 16 9.88 M 32 0.28 L 32 9.88' } }]
-        },          
+        },
         {
             name: 'pumpfeed', ico: 'assets/lib/svgeditor/shapes/img/pumpfeed.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0.5 0 L 52.5 0 L 52.5 8 L 80.5 8 L 80.5 24 L 52.5 24 L 52.5 32 L 0.5 32 Z' } }]
@@ -139,12 +139,12 @@
             name: 'comprotary', ico: 'assets/lib/svgeditor/shapes/img/comprotary.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 40,20 A 20,20 0 0 1 20,40 20,20 0 0 1 0,20 20,20 0 0 1 20,0 20,20 0 0 1 40,20' } },
                 { id: '', type: 'path', attr: { d: 'M 10 2.8 L 38 11.2 M 10 37.2 L 38 28.8 M 12 20 L 28 20 M 26 14.8 C 28.56 17.79 28.56 22.21 26 25.2 M 14 14.8 C 11.44 17.79 11.44 22.21 14 25.2' } }]
-        },        
+        },
         {
             name: 'compscrew', ico: 'assets/lib/svgeditor/shapes/img/compscrew.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 40,20 A 20,20 0 0 1 20,40 20,20 0 0 1 0,20 20,20 0 0 1 20,0 20,20 0 0 1 40,20' } },
                 { id: '', type: 'path', attr: { d: 'M 10 2.8 L 38 11.2 M 10 37.2 L 38 28.8 M 10 18 L 12 16 L 16 20 L 20 16 L 24 20 L 28 16 L 30 18 M 10 22 L 12 20 L 16 24 L 20 20 L 24 24 L 28 20 L 30 22' } }]
-        },                
+        },
         {
             name: 'compair', ico: 'assets/lib/svgeditor/shapes/img/compair.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 7.79 25.33 L 92.21 25.33 C 100 37.64 100 53.17 92.21 65.48 L 7.79 65.48 C 0 53.17 0 37.64 7.79 25.33 Z' } },
@@ -207,7 +207,7 @@
         {
             name: 'exchtube', ico: 'assets/lib/svgeditor/shapes/img/exchanger-tube.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 7.04,0 V 40 M 80.96,0 V 40 M 7.04,5 H 80.96 M 7.04,10 H 80.96 M 7.04,15 H 80.96 M 7.04,20 H 80.96 M 7.04,25 H 80.96 M 7.04,30 H 80.96 M 7.04,35 H 80.96 M 0,0 H 88 V 40 H 0 Z' } }]
-        },        
+        },
         {
             name: 'agitator-prop', ico: 'assets/lib/svgeditor/shapes/img/agitator-prop.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 30 0 L 30 78.2 M 49.41 71.68 C 52.4 70.31 55.93 71.17 57.97 73.77 C 60 76.37 60 80.03 57.97 82.64 C 55.93 85.24 52.4 86.1 49.41 84.72 L 10.59 71.68 C 7.6 70.31 4.07 71.17 2.03 73.77 C 0 76.37 0 80.03 2.03 82.64 C 4.07 85.24 7.6 86.1 10.59 84.72 Z' } }]
@@ -255,7 +255,7 @@
             name: 'crusher1', ico: 'assets/lib/svgeditor/shapes/img/crusher1.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 0 L 80 0 L 64 48 L 16 48 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 16 0 L 16 48 M 64 0 L 64 48' } }]
-        },        
+        },
         {
             name: 'crusher2', ico: 'assets/lib/svgeditor/shapes/img/crusher2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 0 L 80 0 L 64 48 L 16 48 Z' } },
@@ -333,7 +333,7 @@
         {
             name: 'nozzle2', ico: 'assets/lib/svgeditor/shapes/img/nozzle2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 0 L 35 0 L 35 10 M 10 20 L 35 10 L 60 20 M 25 20 L 35 10 L 45 20' } }]
-        },        
+        },
         {
             name: 'feeder', ico: 'assets/lib/svgeditor/shapes/img/feeder.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 30 L 60 30 M 45.48 4.2 L 14.52 55.8 M 14.52 4.2 L 45.48 55.8' } },
@@ -348,7 +348,7 @@
         {
             name: 'feeder3', ico: 'assets/lib/svgeditor/shapes/img/feeder3.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 80 0 C 80 22.09 62.09 40 40 40 C 17.91 40 0 22.09 0 0 L 300 0 C 300 22.09 282.09 40 260 40 C 237.91 40 220 22.09 220 0 Z M 150 1 L 180 50 L 120 50 Z' } }]
-        },     
+        },
         {
             name: 'exchheat', ico: 'assets/lib/svgeditor/shapes/img/exchanger-heat.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 70,0 0,40 M 0,0 H 70 V 40 H 0 Z' } }]
@@ -383,7 +383,7 @@
             name: 'fitting4', ico: 'assets/lib/svgeditor/shapes/img/fitting4.svg', content: [
                 { id: '', type: 'path', attr: { d: 'm 0,0.5 h 40 v 40 H 0 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 40 10.5 L 80 0.5 L 80 40.5 L 40 30.5 Z' } }]
-        },        
+        },
         {
             name: 'fitting5', ico: 'assets/lib/svgeditor/shapes/img/fitting5.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0,0.30000001 H 50 V 100.3 H 0 Z' } },
@@ -445,7 +445,7 @@
             name: 'misc4', ico: 'assets/lib/svgeditor/shapes/img/misc4.svg', content: [
                 { id: '', type: 'path', attr: { d: 'm 0,0.5 h 70 v 20 H 0 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 10 14.5 L 60 6.5 C 62.21 6.5 64 8.29 64 10.5 C 64 12.71 62.21 14.5 60 14.5 L 10 6.5 C 7.79 6.5 6 8.29 6 10.5 C 6 12.71 7.79 14.5 10 14.5 Z' } }]
-        },        
+        },
         {
             name: 'misc5', ico: 'assets/lib/svgeditor/shapes/img/misc5.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 15 100.5 L 0 85.5 L 0 0.5 L 80 0.5 L 80 85.5 L 65 100.5 Z' } },
@@ -454,48 +454,48 @@
         {
             name: 'misc6', ico: 'assets/lib/svgeditor/shapes/img/misc6.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 100.5 L 0 83.83 L 22.5 0.5 L 67.5 0.5 L 90 83.83 L 90 100.5 Z M 90 83.83 L 0 83.83' } }]
-        },             
+        },
         {
             name: 'misc7', ico: 'assets/lib/svgeditor/shapes/img/misc7.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 60 L 0 0 L 7.5 0 L 7.5 52 L 56.25 52 L 56.25 0 L 63.75 0 L 63.75 52 L 112.5 52 L 112.5 0 L 120 0 L 120 60 Z M 0 4 L 3.75 0 M 0 12 L 7.5 4 M 0 20 L 7.5 12 M 0 28 L 7.5 20 M 0 36 L 7.5 28 M 0 44 L 7.5 36 M 30 60 L 37.5 52 M 0 52 L 7.5 44 M 0 60 L 7.5 52 M 7.5 60 L 15 52 M 15 60 L 22.5 52 M 22.5 60 L 30 52 M 37.5 60 L 45 52 M 45 60 L 52.5 52 M 52.5 60 L 63.75 48 M 60 60 L 67.5 52 M 67.5 60 L 75 52 M 82.5 60 L 90 52 M 90 60 L 97.5 52 M 97.5 60 L 105 52 M 105 60 L 120 44 M 112.5 60 L 120 52 M 112.5 44 L 120 36 M 112.5 36 L 120 28 M 112.5 28 L 120 20 M 112.5 20 L 120 12 M 112.5 12 L 120 4 M 112.5 4 L 116.25 0 M 75 60 L 82.5 52 M 56.25 48 L 63.75 40 M 56.25 40 L 63.75 32 M 56.25 32 L 63.75 24 M 56.25 24 L 63.75 16 M 56.25 16 L 63.75 8 M 56.25 8 L 63.75 0' } }]
-        },          
+        },
         {
             name: 'misc8', ico: 'assets/lib/svgeditor/shapes/img/misc8.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0.19 0 L 7.69 0 L 7.69 52 L 112.69 52 L 112.69 0 L 120.19 0 L 120.19 60 L 0.19 60 Z M 0.19 4 L 3.94 0 M 0.19 12 L 7.69 4 M 0.19 20 L 7.69 12 M 0.19 28 L 7.69 20 M 0.19 36 L 7.69 28 M 0.19 44 L 7.69 36 M 30.19 60 L 37.69 52 M 0.19 52 L 7.69 44 M 0.19 60 L 7.69 52 M 7.69 60 L 15.19 52 M 15.19 60 L 22.69 52 M 22.69 60 L 30.19 52 M 37.69 60 L 45.19 52 M 45.19 60 L 52.69 52 M 52.69 60 L 60.19 52 M 60.19 60 L 67.69 52 M 67.69 60 L 75.19 52 M 82.69 60 L 90.19 52 M 90.19 60 L 97.69 52 M 97.69 60 L 105.19 52 M 105.19 60 L 120.19 44 M 112.69 60 L 120.19 52 M 112.69 44 L 120.19 36 M 112.69 36 L 120.19 28 M 112.69 28 L 120.19 20 M 112.69 20 L 120.19 12 M 112.69 12 L 120.19 4 M 112.69 4 L 116.44 0 M 75.19 60 L 82.69 52' } }]
-        },    
+        },
         {
             name: 'tank1', ico: 'assets/lib/svgeditor/shapes/img/tank1.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0.5 0.25 L 80.5 0.25 L 90.5 20.25 L 100.5 20.25 L 100.5 40.25 L 90.5 40.25 L 80.5 60.25 L 0.5 60.25 Z' } }]
-        },    
+        },
         {
             name: 'tank2', ico: 'assets/lib/svgeditor/shapes/img/tank2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 87.34 14.93 C 91.57 14.93 95.01 23.88 95.01 34.93 C 95.02 45.97 91.59 54.93 87.36 54.93 L 7.68 54.97 C 3.45 54.97 0.01 46.02 0.01 34.97 C 0 23.93 3.43 14.97 7.66 14.97 L 52.48 14.94 L 52.47 4.94 C 52.47 2.18 56.93 -0.06 62.43 -0.07 C 67.93 -0.07 72.39 2.17 72.39 4.93 L 72.4 14.93 Z' } }]
-        },    
+        },
         {
             name: 'tank3', ico: 'assets/lib/svgeditor/shapes/img/tank3.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 9.75 15.42 C 9.75 7.18 16.47 0.5 24.75 0.5 C 33.03 0.5 39.75 7.18 39.75 15.42 L 39.75 40.29 L 49.75 50.24 L 49.75 85.06 C 49.75 91.93 38.56 97.5 24.75 97.5 C 10.94 97.5 -0.25 91.93 -0.25 85.06 L -0.25 50.49 L 9.75 40.29 Z' } }]
-        },   
+        },
         {
             name: 'tank4', ico: 'assets/lib/svgeditor/shapes/img/tank4.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 15 C 0 6.72 11.19 0 25 0 C 38.81 0 50 6.72 50 15 L 50 105 C 50 113.28 38.81 120 25 120 C 11.19 120 0 113.28 0 105 Z' } }]
-        },   
+        },
         {
             name: 'tank5', ico: 'assets/lib/svgeditor/shapes/img/tank5.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 40 8.16 L 40 87.84 C 40 92.07 31.05 95.5 20 95.5 C 8.95 95.5 0 92.07 0 87.84 L 0 8.16 C 0 3.93 8.95 0.5 20 0.5 C 31.05 0.5 40 3.93 40 8.16 Z M 0 8.16 L 40 8.16 M 0 87.84 L 40 87.84' } }]
-        },   
+        },
         {
             name: 'tank6', ico: 'assets/lib/svgeditor/shapes/img/tank6.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0,25.34 H 100 V 95.000004 H 0 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 0 25.34 C 28.47 0 71.53 0 100 25.34 Z' } }]
-        },   
+        },
         {
             name: 'tank7', ico: 'assets/lib/svgeditor/shapes/img/tank7.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 20 L 0 90 L 100 90 L 100 20 L 50 0 Z M 0 20 L 100 20' } }]
-        },   
+        },
         {
             name: 'tank8', ico: 'assets/lib/svgeditor/shapes/img/tank8.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 53 23 L 61.5 23 M 61.5 13 L 61.5 33 M 65.5 13 L 65.5 33 M 13 83 L 4.5 83 M 4.5 73 L 4.5 93 M 0 73 L 0 93 M 53 13 L 53 93 C 53 97.25 44.05 100.69 33 100.69 C 21.95 100.69 13 97.25 13 93 L 13 13 C 13 8.75 21.95 5.31 33 5.31 C 44.05 5.31 53 8.75 53 13 Z' } }]
-        },   
+        },
         {
             name: 'tank9', ico: 'assets/lib/svgeditor/shapes/img/tank9.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 147.39 12.95 C 151.6 12.95 155 21.86 155 32.86 C 155 43.86 151.6 52.77 147.39 52.77 L 18.8 52.77 C 14.59 52.77 11.19 43.86 11.19 32.86 C 11.19 21.86 14.59 12.95 18.8 12.95 Z' } },
@@ -503,12 +503,12 @@
                 { id: '', type: 'path', attr: { d: 'M 3.96 79.66 L 12.86 79.66 M 3.96 105.54 L 12.86 105.54 M 3.96 69.7 L 3.96 89.61 M 0 69.7 L 0 89.61 M 3.96 95.59 L 3.96 115.5 M 0 95.59 L 0 115.5 M 137.5 12.95 L 137.5 4.48 M 127.61 4.48 L 147.39 4.48 M 127.61 0.5 L 147.39 0.5 M 28.69 12.95 L 28.69 4.48 M 18.8 4.48 L 38.58 4.48 M 18.8 0.5 L 38.58 0.5' } },
                 { id: '', type: 'path', attr: { d: 'm 33.630001,52.77 h 9.89 v 19.91 h -9.89 z' } },
                 { id: '', type: 'path', attr: { d: 'm 117.72,52.77 h 9.89 v 19.91 h -9.89 z' } }]
-        },   
+        },
         {
             name: 'exchanger1', ico: 'assets/lib/svgeditor/shapes/img/exchanger1.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0,0 H 100 V 30 H 0 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 15 0 L 15 30 M 85 0 L 85 30 M 85 7.5 L 15 7.5 M 85 15 L 15 15 M 85 22.5 L 15 22.5' } }]
-        },   
+        },
         {
             name: 'exchanger2', ico: 'assets/lib/svgeditor/shapes/img/exchanger2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'm 0,0.5 h 100 v 30 H 0 Z' } },
@@ -517,36 +517,36 @@
         {
             name: 'exchanger3', ico: 'assets/lib/svgeditor/shapes/img/exchanger3.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 30.5 L 15 30.5 L 15 24.5 L 75 24.5 L 75 30.5 L 90 30.5 L 90 0.5 L 75 0.5 L 75 6.5 L 15 6.5 L 15 0.5 L 0 0.5 Z M 15 6.5 L 15 24.5 M 75 6.5 L 75 24.5' } }]
-        },  
+        },
         {
             name: 'exchanger4', ico: 'assets/lib/svgeditor/shapes/img/exchanger4.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 14.88 24.5 L 14.88 30.5 L 0 30.5 L 0 0.5 L 14.88 0.5 L 14.88 6.5 L 84.31 6.5 C 88 6.5 91 10.53 91 15.5 C 91 20.47 88 24.5 84.31 24.5 L 14.88 24.5 Z M 14.88 6.5 L 14.88 24.5 M 0 15.5 L 14.88 15.5' } }]
-        },          
+        },
         {
             name: 'exchanger5', ico: 'assets/lib/svgeditor/shapes/img/exchanger5.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 4.48 15 L 16.41 15 L 16.41 30 L 4.48 30 C 2 30 0 26.64 0 22.5 C 0 18.36 2 15 4.48 15 M 19.39 15 L 26.36 15 L 41.27 0 L 86.03 0 C 88.77 0 91 6.72 91 15 C 91 23.28 88.77 30 86.03 30 L 19.39 30 Z M 4.48 15 L 4.48 30 M 41.27 0 L 41.27 30 M 86.03 0 L 86.03 30' } },
                 { id: '', type: 'path', attr: { d: 'm 16.41,12 h 2.98 v 21 h -2.98 z' } }]
-        },  
+        },
         {
             name: 'exchanger6', ico: 'assets/lib/svgeditor/shapes/img/exchanger6.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 10 L 80 10 L 80 80 L 40 120 L 0 80 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 25 30 L 25 95 M 55 30 L 55 95 M 25 40 L 55 40 M 25 85 L 55 85 M 40 0 L 40 40 M 0 30 L 15 30 L 15 95 M 80 30 L 65 30 L 65 95' } }]
-        },  
+        },
         {
             name: 'exchanger7', ico: 'assets/lib/svgeditor/shapes/img/exchanger7.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 3 10.5 L 20 10.5 C 20 4.98 24.48 0.5 30 0.5 L 70 0.5 C 75.52 0.5 80 4.98 80 10.5 L 97 10.5 L 97 20.5 L 80 20.5 C 80 26.02 75.52 30.5 70 30.5 L 30 30.5 C 24.48 30.5 20 26.02 20 20.5 L 3 20.5 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 0 5.5 L 0 25.5 M 3 5.5 L 3 25.5 M 100 5.5 L 100 25.5 M 97 5.5 L 97 25.5' } }]
-        },  
+        },
         {
             name: 'exchanger8', ico: 'assets/lib/svgeditor/shapes/img/exchanger8.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 20 0 L 80 0 L 88.5 20 L 80 40 L 20 40 L 11.5 20 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 0 10 L 0 30 M 3 10 L 3 30 M 3 20 L 11.5 20 M 100 10 L 100 30 M 97 10 L 97 30 M 97 20 L 88.5 20 M 20 0 L 20 40 M 30 0 L 30 40 M 40 0 L 40 40 M 50 0 L 50 40 M 60 0 L 60 40 M 70 0 L 70 40 M 80 0 L 80 40' } }]
-        },  
+        },
         {
             name: 'exchanger9', ico: 'assets/lib/svgeditor/shapes/img/exchanger9.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0,0 H 100 V 40 H 0 Z' } },
                 { id: '', type: 'path', attr: { d: 'M 8 0 L 8 40 M 92 0 L 92 40 M 8 5 L 92 5 M 8 10 L 92 10 M 8 15 L 92 15 M 8 20 L 92 20 M 8 25 L 92 25 M 8 30 L 92 30 M 8 35 L 92 35' } }]
-        },  
+        },
         {
             name: 'exchfilter', ico: 'assets/lib/svgeditor/shapes/img/exchanger-filter.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0,0 70,70 M 14,0 70,56 M 28,0 70,42 M 42,0 70,28 M 56,0 70,14 M 0,14 56,70 M 0,28 42,70 M 0,42 28,70 M 0,56 14,70 M 0,14 14,0 M 0,28 28,0 M 0,42 42,0 M 0,56 56,0 M 0,70 70,0 M 70,14 14,70 M 28,70 70,28 M 70,42 42,70 M 56,70 70,56 M 0,0 H 70 V 70 H 0 Z' } }]
@@ -555,37 +555,44 @@
             name: 'pipi1', ico: 'assets/lib/svgeditor/shapes/img/pipi1.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 35,10.29 A 10,10.294118 0 0 1 25,20.584118 10,10.294118 0 0 1 15,10.29 10,10.294118 0 0 1 25,-0.00411797 10,10.294118 0 0 1 35,10.29' } },
                 { id: '', type: 'path', attr: { d: 'M 0 10.29 L 50 10.29 M 50 0 L 50 20.59 M 0 0 L 0 20.59 M 40 35 L 50 26.25 M 45 30.88 L 32.2 17.5' } }]
-        },  
+        },
         {
             name: 'pipi2', ico: 'assets/lib/svgeditor/shapes/img/pipi2.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 35,30 A 10,10 0 0 1 25,40 10,10 0 0 1 15,30 10,10 0 0 1 25,20 10,10 0 0 1 35,30' } },
                 { id: '', type: 'path', attr: { d: 'M 35,10 A 10,10 0 0 1 25,20 10,10 0 0 1 15,10 10,10 0 0 1 25,0 10,10 0 0 1 35,10' } },
                 { id: '', type: 'path', attr: { d: 'M 0 20 L 50 20 M 50 10 L 50 30 M 0 10 L 0 30' } }]
-        }, 
+        },
         {
             name: 'pipi3', ico: 'assets/lib/svgeditor/shapes/img/pipi3.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 10.79 L 50 10.79 M 50 0.5 L 50 21.09 M 0 0.5 L 0 21.09 M 25 10.79 L 45 31.38 M 40 35.5 L 50 26.75' } }]
-        }, 
+        },
         {
             name: 'pipi4', ico: 'assets/lib/svgeditor/shapes/img/pipi4.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 40 0 L 40 30 C 40 38.28 33.28 45 25 45 C 16.72 45 10 38.28 10 30 L 10 0 Z M 50 15 L 50 35 M 0 15 L 0 35 M 0 25 L 10 25 M 40 25 L 50 25' } }]
-        }, 
+        },
         {
             name: 'pipi5', ico: 'assets/lib/svgeditor/shapes/img/pipi5.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 30,15 A 15,15 0 0 1 15,30 15,15 0 0 1 0,15 15,15 0 0 1 15,0 15,15 0 0 1 30,15' } },
                 { id: '', type: 'path', attr: { d: 'M 24 3 L 0 15 L 24 27' } }]
-        }, 
+        },
         {
             name: 'pipi6', ico: 'assets/lib/svgeditor/shapes/img/pipi6.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 6 L 7 6 C 7 3.51 9.01 1.5 11.5 1.5 C 13.99 1.5 16 3.51 16 6 C 16 3.51 18.01 1.5 20.5 1.5 C 22.99 1.5 25 3.51 25 6 C 25 3.51 27.01 1.5 29.5 1.5 C 31.99 1.5 34 3.51 34 6 C 34 3.51 36.01 1.5 38.5 1.5 C 40.99 1.5 43 3.51 43 6 L 50 6 L 50 14 L 43 14 C 43 16.49 40.99 18.5 38.5 18.5 C 36.01 18.5 34 16.49 34 14 C 34 16.49 31.99 18.5 29.5 18.5 C 27.01 18.5 25 16.49 25 14 C 25 16.49 22.99 18.5 20.5 18.5 C 18.01 18.5 16 16.49 16 14 C 16 16.49 13.99 18.5 11.5 18.5 C 9.01 18.5 7 16.49 7 14 L 0 14 Z Z M 50 0 L 50 20 M 0 0 L 0 20' } }]
-        }, 
+        },
         {
             name: 'pipi7', ico: 'assets/lib/svgeditor/shapes/img/pipi7.svg', content: [
                 { id: '', type: 'path', attr: { d: 'm 35,10.5 a 10,10 0 0 1 -10,10 10,10 0 0 1 -10,-10 10,10 0 0 1 10,-10 10,10 0 0 1 10,10' } },
                 { id: '', type: 'path', attr: { d: 'M 0 10.5 L 15 10.5 M 35 10.5 L 50 10.5' } }]
+        }, {
+            name: 'webcam', ico: 'assets/lib/svgeditor/shapes/img/webcam.svg', content: [
+                {
+                    id: '',
+                    type: 'path',
+                    attr: {d: 'M 11.351562 19.464844 L 9.113281 23.34375 L 1.347656 18.863281 L 3.589844 14.980469 L 2.296875 14.234375 L 10.511719 0 L 20.863281 5.976562 L 17.238281 12.253906 L 17.796875 15.035156 L 22.414062 15.035156 L 22.414062 12.046875 L 23.90625 12.046875 L 23.90625 19.515625 L 22.414062 19.515625 L 22.414062 16.527344 L 16.570312 16.527344 L 16.109375 14.214844 L 12.648438 20.210938 Z M 8.566406 21.304688 L 10.804688 17.421875 L 12.101562 18.167969 L 18.824219 6.523438 L 11.058594 2.042969 L 4.335938 13.6875 L 5.628906 14.433594 L 3.390625 18.316406 Z M 8.566406 21.304688 '}
+                },]
         }];
 
-    // merge shapes groups        
+    // merge shapes groups
     for (var i = 0; i < shapes.length; i++) {
         shapes[i].name = typeId + '-' + shapes[i].name;
     }
