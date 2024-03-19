@@ -78,10 +78,10 @@ export class ProcEngComponent extends GaugeBaseComponent {
                             }
                         }
                         if (propertyColor.fill) {
-                            svgele.node.setAttribute('fill', propertyColor.fill);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'fill', propertyColor.fill);
                         }
                         if (propertyColor.stroke) {
-                            svgele.node.setAttribute('stroke', propertyColor.stroke);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'stroke', propertyColor.stroke);
                         }
                     }
                     // check actions

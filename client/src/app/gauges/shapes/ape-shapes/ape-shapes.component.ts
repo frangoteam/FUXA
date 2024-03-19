@@ -3,7 +3,7 @@
  */
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugeProperty } from '../../../_models/hmi';
+import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionStatus, GaugeActionsType, GaugeProperty, GaugePropertyColor } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { Utils } from '../../../_helpers/utils';
 import { ShapesComponent } from '../shapes.component';
@@ -80,19 +80,18 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                 if (ga.property) {
                     let propValue = GaugeBaseComponent.checkBitmask((<GaugeProperty>ga.property).bitmask, value);
                     if (ga.property.variableId === sig.id && ga.property.ranges) {
-                        let fill = null;
-                        let stroke = null;
+                        let propertyColor = new GaugePropertyColor();
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= propValue && ga.property.ranges[idx].max >= propValue) {
-                                fill = ga.property.ranges[idx].color;
-                                stroke = ga.property.ranges[idx].stroke;
+                                propertyColor.fill = ga.property.ranges[idx].color;
+                                propertyColor.stroke = ga.property.ranges[idx].stroke;
                             }
                         }
-                        if (fill) {
-                            svgele.node.setAttribute('fill', fill);
+                        if (propertyColor.fill) {
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'fill', propertyColor.fill);
                         }
-                        if (stroke) {
-                            svgele.node.setAttribute('stroke', stroke);
+                        if (propertyColor.stroke) {
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'stroke', propertyColor.stroke);
                         }
                     }
                     // check actions

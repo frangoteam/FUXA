@@ -74,10 +74,10 @@ export class ShapesComponent extends GaugeBaseComponent {
                         }
                         // check if general shape (line/path/fpath/text) to set the stroke
                         if (propertyColor.fill) {
-                            svgele.node.setAttribute('fill', propertyColor.fill);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'fill', propertyColor.fill);
                         }
                         if (propertyColor.stroke) {
-                            svgele.node.setAttribute('stroke', propertyColor.stroke);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'stroke', propertyColor.stroke);
                         }
 
                     }
@@ -125,7 +125,6 @@ export class ShapesComponent extends GaugeBaseComponent {
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
-        console.log('asdf');
         if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
             return;
         }

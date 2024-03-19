@@ -16,6 +16,16 @@ export class Utils {
 
     static svgTagToType = ['rect', 'line', 'path', 'circle', 'ellipse', 'text'];
 
+    static walkTree(elem, cbFn) {
+        if (elem && elem.nodeType == 1) {
+            cbFn(elem);
+            var i = elem.childNodes.length;
+            while (i--) {
+                this.walkTree(elem.childNodes.item(i), cbFn);
+            }
+        }
+    }
+
     static searchTreeStartWith(element, matchingStart) {
         if (element.id.startsWith(matchingStart)) {
             return element;
