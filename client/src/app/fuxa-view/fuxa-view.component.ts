@@ -777,16 +777,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onMonitor(ga: GaugeSettings, event:any, viewref: string, options: any = {}){
-        // console.info('onMonitor');
+    onMonitor(gaugeSettings: GaugeSettings, event: any, viewref: string, options: any = {}) {
         let dialogData = <WebcamPlayerDialogData>{
             view: this.getView(viewref),
             bkColor: 'transparent',
             gaugesManager: this.gaugesManager,
-            ga: ga
+            ga: gaugeSettings
         };
-        let pos =<DialogPosition>{ top: event.layerY+30+'px', left: event.layerX+10+'px'}
-        // let pos =<DialogPosition>{ top: '60px'}
+        let pos = <DialogPosition> {
+            top: event.layerY + 30 + 'px',
+            left: event.layerX + 10 + 'px'
+        };
         let dialogRef = this.fuxaDialog.open(WebcamPlayerDialogComponent, {
             panelClass: 'fuxa-dialog-property',
             disableClose: false,
