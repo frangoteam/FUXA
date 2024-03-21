@@ -51,7 +51,7 @@ export class LayoutSettings {
     /** Show login by start */
     loginonstart?: boolean = false;
     /** Overlay color for login modal */
-    loginoverlaycolor?: LoginOverlayColorType = LoginOverlayColorType.void;
+    loginoverlaycolor?: LoginOverlayColorType = LoginOverlayColorType.none;
     /** Show connection error toast */
     show_connection_error? = true;
 }
@@ -76,9 +76,9 @@ export class NavigationSettings {
 }
 
 export enum LoginOverlayColorType {
-    void = 'item.overlaycolor-none',
-    black = 'item.overlaycolor-black',
-    white = 'item.overlaycolor-white',
+    none = 'none',
+    black = 'black',
+    white = 'white',
 }
 
 export enum NaviModeType {

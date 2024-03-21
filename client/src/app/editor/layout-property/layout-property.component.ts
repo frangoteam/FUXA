@@ -39,10 +39,10 @@ export class LayoutPropertyComponent implements OnInit {
     navType: any;
     notifyMode: any;
     zoomMode: any;
-    loginOverlayColor: any;
     inputMode = InputModeType;
     headerMode = HeaderBarModeType;
     logo = null;
+    loginOverlayColor = LoginOverlayColorType;
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: ILayoutPropertyData,
         public dialog: MatDialog,
@@ -73,7 +73,6 @@ export class LayoutPropertyComponent implements OnInit {
         this.navType = NaviItemType;
         this.notifyMode = NotificationModeType;
         this.zoomMode = ZoomModeType;
-        this.loginOverlayColor = LoginOverlayColorType;
 
         Object.keys(this.navMode).forEach(key => {
             this.translateService.get(this.navMode[key]).subscribe((txt: string) => {this.navMode[key] = txt;});
@@ -92,9 +91,6 @@ export class LayoutPropertyComponent implements OnInit {
         });
         Object.keys(this.headerMode).forEach(key => {
             this.translateService.get(this.headerMode[key]).subscribe((txt: string) => {this.headerMode[key] = txt;});
-        });
-        Object.keys(this.loginOverlayColor).forEach(key => {
-            this.translateService.get(this.loginOverlayColor[key]).subscribe((txt: string) => {this.loginOverlayColor[key] = txt;});
         });
     }
 

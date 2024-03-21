@@ -269,12 +269,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             let dialogConfig = {
                 data: {},
                 disableClose: true,
-                ...(this.hmi.layout.loginoverlaycolor && this.hmi.layout.loginoverlaycolor.toString() !== 'void') && {
-                    backdropClass: this.hmi.layout.loginoverlaycolor.toString() == 
-                        'black' ? 'backdrop-black' : 'backdrop-white'
+                autoFocus: false,
+                ...(this.hmi.layout.loginoverlaycolor && this.hmi.layout.loginoverlaycolor !== LoginOverlayColorType.none) && {
+                    backdropClass: this.hmi.layout.loginoverlaycolor === LoginOverlayColorType.black ? 'backdrop-black' : 'backdrop-white'
                 }
             };
-            
+
             let dialogRef = this.dialog.open(LoginComponent, dialogConfig);
             dialogRef.afterClosed().subscribe(result => {
                 const userInfo = new UserInfo(this.authService.getUser()?.info);

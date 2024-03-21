@@ -25,7 +25,7 @@
                             <span>{{'dlg.layout-lbl-login-overlay-color' | translate}}</span>
                             <mat-select [(value)]="data.layout.loginoverlaycolor" style="width: 400px">
                                 <mat-option *ngFor="let color of loginOverlayColor | enumToArray" [value]="color.key">
-                                    {{ color.value }}
+                                    {{ 'item.overlaycolor-' + color.value | translate }}
                                 </mat-option>
                             </mat-select>    
                         </div>
