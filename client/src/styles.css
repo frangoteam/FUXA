@@ -304,6 +304,14 @@ app-root {
     line-height: 46px;
 }
 
+.backdrop-white {
+    background-color: rgb(255, 255, 255);
+}
+
+.backdrop-black {
+    background-color: rgba(0, 0, 0);
+}
+
 .sidenav-menu {
     padding: 0px 0px 0px 0px;
     background-color: rgba(244, 245, 247, 1);
