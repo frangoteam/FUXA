@@ -1,7 +1,4 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-
-import { TranslateService } from '@ngx-translate/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType, ChartViewType } from '../_models/chart';
 
@@ -75,9 +72,7 @@ export class GaugesManager {
         HtmlImageComponent, PanelComponent];
 
     constructor(private hmiService: HmiService,
-        private winRef: WindowRef,
-        private translateService: TranslateService,
-        private dialog: MatDialog) {
+        private winRef: WindowRef) {
         // subscription to the change of variable value, then emit to the gauges of fuxa-view
         this.hmiService.onVariableChanged.subscribe(sig => {
             try {
@@ -100,6 +95,7 @@ export class GaugesManager {
 
             }
         });
+        this.hmiService.getGaugeMapped = this.getGaugeFromName.bind(this);
         // make the list of gauges tags to speed up the check
         GaugesManager.Gauges.forEach(g => {
             this.gaugesTags.push(g.TypeTag);
@@ -366,6 +362,11 @@ export class GaugesManager {
                 }
             }
         }
+    }
+
+    getGaugeFromName(gaugeName: string) {
+        const gauge = Object.values(this.mapGauges).find((gauge: any) => gauge.name === gaugeName);
+        return gauge;
     }
 
     getGaugeValue(gaugeId: string) {

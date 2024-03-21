@@ -74,6 +74,7 @@ export class ScriptService {
         code = code.replace(/\$setTagDaqSettings\(/g, 'await this.$setTagDaqSettings(');
         code = code.replace(/\$setView\(/g, 'this.$setView(');
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
+        code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         return code;
     }
 
@@ -112,5 +113,12 @@ export class ScriptService {
 
     public $enableDevice(deviceName: string, enable: boolean) {
         this.hmiService.deviceEnable(deviceName, enable);
+    }
+
+    public $invokeObject(gaugeName: string, fncName: string, params: any) {
+        const gauge = this.hmiService.getGaugeMapped(gaugeName);
+        if (gauge[fncName]) {
+            gauge[fncName](params);
+        }
     }
 }

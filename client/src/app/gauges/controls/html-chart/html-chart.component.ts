@@ -61,6 +61,7 @@ export class HtmlChartComponent extends GaugeBaseComponent {
                 componentRef.instance.setOptions(opt);
 
                 componentRef.instance['myComRef'] = componentRef;
+                componentRef.instance['name'] = gab.name;
                 return componentRef.instance;
             }
         }

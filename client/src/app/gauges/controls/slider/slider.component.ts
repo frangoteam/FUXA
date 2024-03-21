@@ -84,6 +84,7 @@ export class SliderComponent {
                     }
                 }
                 componentRef.instance['myComRef'] = componentRef;
+                componentRef.instance['name'] = gab.name;
                 return componentRef.instance;
             }
         }

@@ -66,6 +66,7 @@ export class HtmlTableComponent {
                 // componentRef.instance.setOptions(opt);
 
                 componentRef.instance['myComRef'] = componentRef;
+                componentRef.instance['name'] = gab.name;
                 return componentRef.instance;
             }
         }

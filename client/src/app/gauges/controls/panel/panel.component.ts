@@ -89,6 +89,7 @@ export class PanelComponent extends GaugeBaseComponent {
                                             },
                                             null,
                                             componentRef.instance);
+                componentRef.instance['name'] = gaugeSettings.name;
                 return componentRef.instance;
             }
         }
