@@ -35,7 +35,7 @@
     "morgan": "1.10.0",
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
-    "node-opcua": "2.78.0",
+    "node-opcua": "2.123.0",
     "node-schedule": "2.1.1",
     "node-snap7": "1.0.6",
     "nodemailer": "6.7.4",
