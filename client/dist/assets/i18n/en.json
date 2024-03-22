@@ -42,6 +42,7 @@
     "dlg.layout-lbl-icon": "Icon",
     "dlg.layout-lbl-sview": "Start View",
     "dlg.layout-lbl-login-start": "Show login on start",
+    "dlg.layout-lbl-login-overlay-color": "Overlay color",
     "dlg.layout-lbl-zoom": "Zoom",
     "dlg.layout-navigation-mode": "Show Navigation",
     "dlg.layout-connection-message": "Show connection error (Toast)",
@@ -161,6 +162,10 @@
 
     "tester.title": "Variable",
     "tester.send": "Send",
+
+    "item.overlaycolor-none": "None",
+    "item.overlaycolor-black": "Black",
+    "item.overlaycolor-white": "White",
 
     "item.navsmode-none": "None",
     "item.navsmode-push": "Push",

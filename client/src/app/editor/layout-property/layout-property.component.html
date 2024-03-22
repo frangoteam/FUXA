@@ -19,7 +19,15 @@
                             <mat-select [(value)]="data.layout.loginonstart" style="width: 400px">
                                 <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
                                 <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
-                            </mat-select>
+                            </mat-select>    
+                        </div>
+                        <div class="my-form-field block mt10" *ngIf="data.layout.loginonstart">
+                            <span>{{'dlg.layout-lbl-login-overlay-color' | translate}}</span>
+                            <mat-select [(value)]="data.layout.loginoverlaycolor" style="width: 400px">
+                                <mat-option *ngFor="let color of loginOverlayColor | enumToArray" [value]="color.key">
+                                    {{ 'item.overlaycolor-' + color.value | translate }}
+                                </mat-option>
+                            </mat-select>    
                         </div>
                         <div class="my-form-field block mt10">
                             <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
