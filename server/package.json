@@ -38,7 +38,7 @@
     "node-opcua": "2.123.0",
     "node-schedule": "2.1.1",
     "node-snap7": "1.0.6",
-    "nodemailer": "6.7.4",
+    "nodemailer": "6.9.9",
     "nopt": "5.0.0",
     "pdfmake": "0.2.5",
     "socket.io": "2.5.0",
