@@ -19,26 +19,7 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14.21.3 (npm 6.14.18) || 16.20.2 (npm 8.19.4) || 18.18.2 (npm 9.8.1).
-
-**WARNING** In linux with nodejs Version 16.20.2 || 18.18.2 there are problems with the node-snap7 library for communication with Siemens S7 PLCs, if you don't intend to use it you can remove it from the server/package.json
-
-Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (first option)
-In linux to use only with nodejs Version 14.21.3
-```
-npm install -g --unsafe-perm @frangoteam/fuxa
-fuxa
-```
-
-Or [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it (second option)
-
-```
-cd ./server
-npm install
-npm start
-```
-
-Or in linux running from docker (third option)
+running from docker (first option)
 ```
 docker pull frangoteam/fuxa:latest
 docker run -d -p 1881:1881 frangoteam/fuxa:latest
@@ -50,6 +31,25 @@ docker run -d -p 1881:1881 -v fuxa_appdata:/usr/src/app/FUXA/server/_appdata -v 
 // persistent storage will be at ./appdata ./db ./logs and ./images
 wget https://github.com/frangoteam/FUXA/blob/master/compose.yml
 docker compose up -d
+```
+
+Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (second option)
+In linux to use only with nodejs Version 14.21.3
+```
+npm install -g --unsafe-perm @frangoteam/fuxa
+fuxa
+```
+
+Or [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it (second option)
+
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14.21.3 (npm 6.14.18) || 16.20.2 (npm 8.19.4) || 18.18.2 (npm 9.8.1).
+
+**WARNING** In linux with nodejs Version 16.20.2 || 18.18.2 there are problems with the node-snap7 library for communication with Siemens S7 PLCs, if you don't intend to use it you can remove it from the server/package.json
+
+```
+cd ./server
+npm install
+npm start
 ```
 
 Open up a browser (better Chrome) and navigate to http://localhost:1881
