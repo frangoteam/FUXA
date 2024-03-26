@@ -48,7 +48,7 @@ docker run -d -p 1881:1881 -v fuxa_appdata:/usr/src/app/FUXA/server/_appdata -v 
 
 // with Docker compose
 // persistent storage will be at ./appdata ./db ./logs and ./images
-wget https://raw.github.com/frangoteam/FUXA/blob/master/compose.yml
+wget https://raw.githubusercontent.com/frangoteam/FUXA/master/compose.yml
 docker compose up -d
 ```
 
