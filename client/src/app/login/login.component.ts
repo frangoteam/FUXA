@@ -6,6 +6,7 @@ import { AuthService } from '../_services/auth.service';
 import { ProjectService } from '../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
+import { LoginOverlayColorType } from '../_models/hmi';
 
 @Component({
 	selector: 'app-login',
@@ -23,12 +24,16 @@ export class LoginComponent {
 	username: UntypedFormControl = new UntypedFormControl();
 	password: UntypedFormControl = new UntypedFormControl();
 	errorEnabled = false;
+	disableCancel = false;
 
 	constructor(private authService: AuthService,
-		private projectService: ProjectService,
-		private translateService: TranslateService,
-		private dialogRef: MatDialogRef<LoginComponent>,
-		@Inject(MAT_DIALOG_DATA) private data: any) { }
+				private projectService: ProjectService,
+				private translateService: TranslateService,
+				private dialogRef: MatDialogRef<LoginComponent>,
+				@Inject(MAT_DIALOG_DATA) private data: any) {
+		const hmi = this.projectService.getHmi();
+		this.disableCancel = hmi.layout?.loginonstart && hmi.layout?.loginoverlaycolor !== LoginOverlayColorType.none;
+	}
 
 	onNoClick(): void {
 		this.dialogRef.close();

@@ -271,6 +271,7 @@
     "chart.property-axis-y4": "Y4 label",
     "chart.property-axis-y4-min": "Y4 Min",
     "chart.property-axis-y4-max": "Y4 Max",
+    "chart.property-script": "Script data source",
 
     "chart.rangetype-last8h": "Last 8 hours",
     "chart.rangetype-last1d": "Last day",
