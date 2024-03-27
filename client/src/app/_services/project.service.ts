@@ -863,6 +863,11 @@ export class ProjectService {
         return values;
     }
 
+    async runSysFunctionSync(functionName: string, params: any): Promise<any> {
+        let values = await firstValueFrom(this.storage.runSysFunction(functionName, params));
+        return values;
+    }
+
     /**
      * Set Project data and save resource to backend
      * Used from open and upload JSON Project file

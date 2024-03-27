@@ -76,6 +76,10 @@ function MyScriptsModule(_events, _logger) {
         }
     }
 
+    this.runSysFunction = function (functionName, params) {
+        return global[functionName](...params);
+    }
+
     this.getScript = function (_script) {
         return Object.values(scriptsMap).find(s => s.id === _script.id);
     }

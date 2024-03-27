@@ -50,7 +50,12 @@
               "panzoom",
               "pdfmake/build/pdfmake",
               "pdfmake/build/vfs_fonts",
-              "socket.io-client"
+              "socket.io-client",
+                "eventemitter3",
+                "delegate",
+                "flv.js",
+                "danmu.js",
+                "downloadjs"
             ]
           },
           "configurations": {
