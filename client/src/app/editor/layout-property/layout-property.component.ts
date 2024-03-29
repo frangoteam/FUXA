@@ -1,12 +1,12 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType, DateTimeDisplayMode} from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
@@ -31,6 +31,9 @@ export class LayoutPropertyComponent implements OnInit {
     fonts = Define.fonts;
     anchorType = <AnchorType[]>['left', 'center', 'right'];
     loginInfoType = <LoginInfoType[]>['nothing', 'username', 'fullname', 'both'];
+    dateTimeDisplay: string;
+    dateTimeTimer: any;
+    currentDateTime: Date;
 
     startView: string;
     sideMode: string;
@@ -39,6 +42,7 @@ export class LayoutPropertyComponent implements OnInit {
     navType: any;
     notifyMode: any;
     zoomMode: any;
+    dateTimeDisplayMode: any;
     inputMode = InputModeType;
     headerMode = HeaderBarModeType;
     logo = null;
@@ -68,11 +72,16 @@ export class LayoutPropertyComponent implements OnInit {
         });
     }
 
+    ngOnDestroy() {
+        clearInterval(this.dateTimeTimer);
+    }
+
     ngOnInit() {
         this.navMode = NaviModeType;
         this.navType = NaviItemType;
         this.notifyMode = NotificationModeType;
         this.zoomMode = ZoomModeType;
+        this.dateTimeDisplayMode = DateTimeDisplayMode;
 
         Object.keys(this.navMode).forEach(key => {
             this.translateService.get(this.navMode[key]).subscribe((txt: string) => {this.navMode[key] = txt;});
@@ -92,6 +101,16 @@ export class LayoutPropertyComponent implements OnInit {
         Object.keys(this.headerMode).forEach(key => {
             this.translateService.get(this.headerMode[key]).subscribe((txt: string) => {this.headerMode[key] = txt;});
         });
+        Object.keys(this.dateTimeDisplayMode).forEach(key => {
+            this.translateService.get(this.dateTimeDisplayMode[key]).subscribe((txt: string) => {this.dateTimeDisplayMode[key] = txt;});
+        });
+
+        if (this.dateTimeDisplay != DateTimeDisplayMode.disabled) {
+            this.dateTimeTimer.timer = setInterval(() => {
+                this.currentDateTime = new Date();
+            }, 1);    
+        }
+        
     }
 
     onAddMenuItem(item: NaviItem = null) {

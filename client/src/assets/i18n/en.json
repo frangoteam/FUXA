@@ -57,6 +57,7 @@
     "dlg.layout-header-fgcolor": "Color",
     "dlg.layout-lbl-title": "Title",
     "dlg.layout-lbl-alarms": "Alarms notification mode",
+    "dlg.layout-lbl-datetime": "Date and time display",
     "dlg.layout-lbl-infos": "Info notification mode",
     "dlg.layout-lbl-font": "Font family",
     "dlg.layout-lbl-font-size": "Font size",
@@ -205,6 +206,12 @@
     "item.inputmode-enabled": "Dialog",
     "item.inputmode-keyboard": "Virtual-Keyboard",
     "item.inputmode-keyboard-full-screen": "Virtual-Keyboard full screen",
+
+    "item.datetimedisplaymode-disabled": "Disabled",
+    "item.datetimedisplaymode-onlydate": "Only date",
+    "item.datetimedisplaymode-onlytime": "Only time",
+    "item.datetimedisplaymode-dateandtime": "Date and time",
+
 
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",

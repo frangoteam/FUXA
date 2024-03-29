@@ -97,7 +97,15 @@
         text-align: right;
         line-height: 46px
     }
-    
+
+    .header-date-time {
+        line-height: 46px;
+        border-left-width: 1px;
+        border-left-style: solid;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
     .header-login {
         line-height: 46px;
         border-left-width: 1px;

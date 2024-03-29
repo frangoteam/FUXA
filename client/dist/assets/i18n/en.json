@@ -197,6 +197,11 @@
     "item.zoommode-enabled": "Manually",
     "item.zoommode-autoresize": "Auto-resize",
 
+    "item.datetimedisplaymode-disabled": "Disabled",
+    "item.datetimedisplaymode-onlydate": "Only Date",
+    "item.datetimedisplaymode-onlytime": "Only Time",
+    "item.datetimedisplaymode-dateandtime": "Date and Time",
+    
     "item.headerbarmode-hide": "Hide",
     "item.headerbarmode-show": "Show",
 

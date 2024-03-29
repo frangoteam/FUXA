@@ -115,6 +115,7 @@ export class HeaderSettings {
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
     loginInfo: LoginInfoType;
+    dateTimeDisplay: DateTimeDisplayMode;
 }
 
 export interface HeaderItem {
@@ -147,6 +148,13 @@ export enum ZoomModeType {
     disabled = 'item.zoommode-disabled',
     enabled = 'item.zoommode-enabled',
     autoresize = 'item.zoommode-autoresize',
+}
+
+export enum DateTimeDisplayMode {
+    disabled = 'item.datetimedisplaymode-disabled',
+    onlydate = 'item.datetimedisplaymode-onlydate',
+    onlytime =  'item.datetimedisplaymode-onlytime',
+    dateandtime = 'item.datetimedisplaymode-dateandtime' 
 }
 
 export enum InputModeType {

@@ -111,6 +111,17 @@
     }
 }
 
+.header-date-time {
+    line-height: 46px;
+    border-left-width: 1px;
+    border-left-style: solid;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    right: 45px;    
+    display: inline-block;
+}
+
 .header-button {  
     float: right;
     line-height: 46px;
