@@ -231,7 +231,12 @@
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </button>
                             <div class="header-date-time" *ngIf="data.layout.header.dateTimeDisplay != 'disabled'">
-                                {{currentDateTime}}
+                                <span *ngIf="data.layout.header.dateTimeDisplay == 'onlydate' || data.layout.header.dateTimeDisplay == 'dateandtime' ">
+                                    {{currentDateTime.toLocaleDateString()}}
+                                </span>
+                                <span *ngIf="data.layout.header.dateTimeDisplay == 'onlytime' || data.layout.header.dateTimeDisplay == 'dateandtime' ">
+                                    {{currentDateTime.toLocaleTimeString()}}
+                                </span>
                             </div>
                             <div *ngIf="data.securityEnabled" class="header-login">
                                 <button mat-icon-button>
