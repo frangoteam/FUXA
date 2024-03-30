@@ -57,6 +57,7 @@
     "dlg.layout-header-fgcolor": "Color",
     "dlg.layout-lbl-title": "Title",
     "dlg.layout-lbl-alarms": "Alarms notification mode",
+    "dlg.layout-lbl-datetime": "Date and time format (dd/MM/yyyy - hh:mm a)",
     "dlg.layout-lbl-infos": "Info notification mode",
     "dlg.layout-lbl-font": "Font family",
     "dlg.layout-lbl-font-size": "Font size",
