@@ -39,11 +39,17 @@ export class ScriptService {
                     observer.next();
                 }
             } else {
-                if (script.parameters?.length > 0) {
-                    console.warn('TODO: Script with mode CLIENT not work with parameters.');
-                }
+                let parameterToAdd = '';
+                script.parameters?.forEach(param => {
+                    if (Utils.isNumeric(param.value)) {
+                        parameterToAdd += `let ${param.name} = ${param.value};`;
+                    } else {
+                        parameterToAdd += `let ${param.name} = '${param.value}';`;
+                    }
+                });
                 try {
-                    const asyncScript = `(async () => { ${this.addSysFunctions(script.code)} })();`;
+                    const code = `${parameterToAdd}${script.code}`;
+                    const asyncScript = `(async () => { ${this.addSysFunctions(code)} })();`;
                     const result = eval(asyncScript);
                     observer.next(result);
                 } catch (err) {
@@ -118,7 +124,8 @@ export class ScriptService {
     public $invokeObject(gaugeName: string, fncName: string, params: any) {
         const gauge = this.hmiService.getGaugeMapped(gaugeName);
         if (gauge[fncName]) {
-            gauge[fncName](params);
+            return gauge[fncName](params);
         }
+        return null;
     }
 }

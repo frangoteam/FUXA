@@ -121,6 +121,15 @@ export class TemplatesCode {
 } else {
     return 'Missing chart lines';
 }`
+    },
+    {
+        name: 'invoke-chart-update-options', text: 'script.template-invoke-chart-update-options-text', tooltip: 'script.template-invoke-chart-update-options-tooltip',
+        code: `let opt = $invokeObject('chart_1', 'getOptions');
+if (opt) {
+    opt.scaleY1min = 100;
+    opt.scaleY1max = 200;
+}
+$invokeObject('chart_1', 'updateOptions', opt);`
     }];
 }
 

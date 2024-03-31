@@ -1172,6 +1172,8 @@
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
+    "script.template-invoke-chart-update-options-text": "Update Chart options",
+    "script.template-invoke-chart-update-options-tooltip": "Code template to update Chart options (Y-axis scale range). CLIENT mode only!",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
