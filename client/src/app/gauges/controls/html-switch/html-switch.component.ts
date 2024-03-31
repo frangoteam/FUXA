@@ -98,6 +98,7 @@ export class HtmlSwitchComponent {
                         }
                     }
                 }
+                componentRef.instance['name'] = ga.name;
                 return componentRef.instance;
             }
         }

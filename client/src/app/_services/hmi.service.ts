@@ -45,6 +45,8 @@ export class HmiService {
     private homeTagsSubscription = [];
     private viewsTagsSubscription = [];
 
+    getGaugeMapped: (gaugeName: string) => void; // function binded in GaugeManager
+
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
         private authService: AuthService,

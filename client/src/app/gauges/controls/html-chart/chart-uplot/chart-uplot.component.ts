@@ -195,8 +195,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    public init(options: ChartOptions = null) {
-        this.mapData = {};
+    public init(options: ChartOptions = null, reset = true) {
+        if (reset) {
+            this.mapData = {};
+        }
         if (options) {
             this.options = options;
         }
@@ -243,6 +245,20 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.init(this.options);
         this.redraw();
+    }
+
+    public updateOptions(options: ChartOptions) {
+        this.options = { ...this.options, ...options };
+        this.init(this.options, false);
+        Object.keys(this.mapData).forEach(key => {
+            this.nguplot.addSerie(this.mapData[key].index, this.mapData[key].attribute);
+        });
+        this.setInitRange();
+        this.redraw();
+    }
+
+    public getOptions(): ChartOptions {
+        return this.options;
     }
 
     public addLine(id: string, name: string, line: ChartLine, addYaxisToLabel: boolean) {
