@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { Tag, DevicesUtils, Device } from '../../../_models/device';
+import { Tag, DevicesUtils, Device, PlaceholderDevice } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { BitmaskComponent } from '../../../gui-helpers/bitmask/bitmask.component';
 import { Observable, map, startWith } from 'rxjs';
@@ -54,6 +54,7 @@ export class FlexVariableComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.devices.push(PlaceholderDevice);
         Object.values(this.data.devices).forEach((device: Device) => {
             let deviceGroup = <DeviceGroup> {
                 name: device.name,
@@ -157,13 +158,18 @@ export class FlexVariableComponent implements OnInit {
     }
 
     onChanged() {
-        let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);
-        if (tag) {
-            this.value.variableId = tag.id;
-            this.value.variableRaw = tag;
-        } else {
-            this.value.variableId = null;
+        if (this.tagFilter.value.startsWith(PlaceholderDevice.id)) {
+            this.value.variableId = this.tagFilter.value;
             this.value.variableRaw = null;
+        } else {
+            let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);
+            if (tag) {
+                this.value.variableId = tag.id;
+                this.value.variableRaw = tag;
+            } else {
+                this.value.variableId = null;
+                this.value.variableRaw = null;
+            }
         }
         if (this.withBitmask) {
             this.value.bitmask = this.bitmask;
