@@ -54,7 +54,7 @@ export class FlexVariableComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.devices.push(PlaceholderDevice);
+        this.devices.push(Utils.clone(PlaceholderDevice));
         Object.values(this.data.devices).forEach((device: Device) => {
             let deviceGroup = <DeviceGroup> {
                 name: device.name,
@@ -82,6 +82,13 @@ export class FlexVariableComponent implements OnInit {
             };
         } else if (this.value.variableId) {
             this.variableId = this.value.variableId;
+        }
+        if (this.variableId?.startsWith(PlaceholderDevice.id)) {
+            this.devices[0].tags.push({
+                id: this.variableId,
+                name: this.variableId,
+                device: '@'
+            });
         }
         this._setSelectedTag();
     }
@@ -158,7 +165,7 @@ export class FlexVariableComponent implements OnInit {
     }
 
     onChanged() {
-        if (this.tagFilter.value.startsWith(PlaceholderDevice.id)) {
+        if (this.tagFilter.value.startsWith && this.tagFilter.value.startsWith(PlaceholderDevice.id)) {
             this.value.variableId = this.tagFilter.value;
             this.value.variableRaw = null;
         } else {
