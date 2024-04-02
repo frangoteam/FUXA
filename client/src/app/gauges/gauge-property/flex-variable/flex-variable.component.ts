@@ -37,6 +37,8 @@ export class FlexVariableComponent implements OnInit {
     @Input() tagTitle = '';
     @Input() bitmask: number;
     @Input() readonly = false;
+    @Input() placeholders = [];
+    @Input() devicesOnly = false;
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
@@ -54,7 +56,6 @@ export class FlexVariableComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.devices.push(Utils.clone(PlaceholderDevice));
         Object.values(this.data.devices).forEach((device: Device) => {
             let deviceGroup = <DeviceGroup> {
                 name: device.name,
@@ -83,12 +84,23 @@ export class FlexVariableComponent implements OnInit {
         } else if (this.value.variableId) {
             this.variableId = this.value.variableId;
         }
-        if (this.variableId?.startsWith(PlaceholderDevice.id)) {
-            this.devices[0].tags.push({
-                id: this.variableId,
-                name: this.variableId,
-                device: '@'
+        if (!this.devicesOnly) {
+            let devPlaceholders = Utils.clone(PlaceholderDevice);
+            this.placeholders?.forEach(placeholder => {
+                devPlaceholders.tags.push({
+                    id: placeholder.variableId,
+                    name: placeholder.variableId,
+                    device: '@'
+                });
             });
+            if (this.variableId?.startsWith(PlaceholderDevice.id) && !devPlaceholders.tags.find(placeholder => placeholder.id === this.variableId)) {
+                devPlaceholders.tags.push({
+                    id: this.variableId,
+                    name: this.variableId,
+                    device: '@'
+                });
+            }
+            this.devices.unshift(devPlaceholders);
         }
         this._setSelectedTag();
     }
@@ -165,8 +177,11 @@ export class FlexVariableComponent implements OnInit {
     }
 
     onChanged() {
-        if (this.tagFilter.value.startsWith && this.tagFilter.value.startsWith(PlaceholderDevice.id)) {
+        if (this.tagFilter.value?.startsWith && this.tagFilter.value.startsWith(PlaceholderDevice.id)) {
             this.value.variableId = this.tagFilter.value;
+            this.value.variableRaw = null;
+        } else if (this.tagFilter.value?.id?.startsWith && this.tagFilter.value.id.startsWith(PlaceholderDevice.id)) {
+            this.value.variableId = this.tagFilter.value.id;
             this.value.variableRaw = null;
         } else {
             let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);

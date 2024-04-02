@@ -10,7 +10,7 @@ export class FlexVariableMapComponent implements OnInit {
     @Input() view: View;
     @Input() data: any;
     @Input() value: any;
-    @Input() fromVariables: any = [];
+    @Input() placeholders: any = [];
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
 
     constructor() {
