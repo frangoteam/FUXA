@@ -83,15 +83,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit() {
-        try {
-            if (this.variablesMapping) {
-                this.variablesMapping.forEach(variableMapping => {
-                    this.plainVariableMapping[variableMapping.from.variableId] = variableMapping.to.variableId;
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
+        this.loadVariableMapping();
     }
 
     ngAfterViewInit() {
@@ -125,6 +117,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.inputDialogRef) {
                 this.inputDialogRef.nativeElement.style.display = 'none';
             }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    private loadVariableMapping(variablesMapped?: any) {
+        try {
+            if (variablesMapped) {
+                this.variablesMapping = variablesMapped;
+            }
+            this.variablesMapping?.forEach(variableMapping => {
+                this.plainVariableMapping[variableMapping.from.variableId] = variableMapping.to.variableId;
+            });
         } catch (err) {
             console.error(err);
         }
@@ -411,7 +416,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             let actindex = Object.keys(GaugeEventActionType).indexOf(events[i].action);
             let eventTypes = Object.values(GaugeEventActionType);
             if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
-                self.loadPage(ev, events[i].actparam);
+                self.loadPage(ev, events[i].actparam, events[i].actoptions);
             } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
                 self.onOpenCard(ga.id, ev, events[i].actparam, events[i].actoptions);
             } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
@@ -623,9 +628,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private loadPage(event, viewref: string) {
+    private loadPage(event, viewref: string, options: any) {
         let view: View = this.getView(viewref);
         if (view) {
+            if (options?.variablesMapping) {
+                this.loadVariableMapping(options.variablesMapping);
+            }
             this.loadHmi(view);
         }
     }
