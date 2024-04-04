@@ -58,6 +58,7 @@ export class HtmlBagComponent extends GaugeBaseComponent {
                     componentRef.instance.setOptions(gab.property.options);
                     componentRef.instance.init(gab.property.options.type);
                 }
+                componentRef.instance['name'] = gab.name;
                 return componentRef.instance;
             }
         }
