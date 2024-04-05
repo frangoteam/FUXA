@@ -140,12 +140,13 @@ export class HtmlInputComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(gab: GaugeSettings, isView: boolean) {
+    static initElement(gab: GaugeSettings, isView: boolean): HtmlInputElement {
+        let input: HTMLInputElement  = null;
         if (isView) {
             let ele = document.getElementById(gab.id);
             if (ele && gab.property) {
                 ele?.setAttribute('data-name', gab.name);
-                let input = Utils.searchTreeStartWith(ele, this.prefix);
+                input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
                     input.value = '';
                     HtmlInputComponent.checkInputType(input, gab.property.options);
@@ -243,6 +244,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                 }
             }
         }
+        return new HtmlInputElement(input);
     }
 
     static checkInputType(input: HTMLElement, options?: any) {
@@ -358,4 +360,16 @@ export interface InputValueValidation {
     min: number;
     max: number;
     value: any;
+}
+
+export class HtmlInputElement {
+    source: HTMLInputElement;
+
+    constructor(input: HTMLInputElement) {
+        this.source = input;
+    }
+
+    getValue(): string {
+        return this.source.value;
+    }
 }

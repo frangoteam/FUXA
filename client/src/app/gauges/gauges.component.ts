@@ -782,14 +782,14 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
-            HtmlInputComponent.initElement(ga, isview);
-            return true;
+            let gauge = HtmlInputComponent.initElement(ga, isview);
+            return gauge || true;
         } else if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
-            HtmlSelectComponent.initElement(ga, isview);
-            return true;
+            let gauge = HtmlSelectComponent.initElement(ga, isview);
+            return gauge || true;
         } else if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
-            GaugeProgressComponent.initElement(ga);
-            return true;
+            let gauge = GaugeProgressComponent.initElement(ga);
+            return gauge || true;
         } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
             let gauge = HtmlSwitchComponent.initElement(ga, res, ref, isview);
             this.mapGauges[ga.id] = gauge;
@@ -806,11 +806,11 @@ export class GaugesManager {
             }
             return gauge;
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
-            HtmlIframeComponent.initElement(ga, isview);
-            return true;
+            let gauge = HtmlIframeComponent.initElement(ga, isview);
+            return gauge || true;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
-            HtmlImageComponent.initElement(ga, isview);
-            return true;
+            let gauge = HtmlImageComponent.initElement(ga, isview);
+            return gauge || true;
         } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
             let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.hmi, isview, parent);
             this.mapGauges[ga.id] = gauge;
@@ -818,7 +818,7 @@ export class GaugesManager {
         } else {
             let ele = document.getElementById(ga.id);
             ele?.setAttribute('data-name', ga.name);
-            return true;
+            return ele || true;
         }
     }
 

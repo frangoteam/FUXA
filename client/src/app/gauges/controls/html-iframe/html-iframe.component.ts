@@ -45,11 +45,12 @@ export class HtmlIframeComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(gaugeSettings: GaugeSettings, isview: boolean) {
+    static initElement(gaugeSettings: GaugeSettings, isview: boolean): HTMLElement {
+        let svgIframeContainer = null;
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
             ele?.setAttribute('data-name', gaugeSettings.name);
-            let svgIframeContainer = Utils.searchTreeStartWith(ele, this.prefixD);
+            svgIframeContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgIframeContainer) {
                 svgIframeContainer.innerHTML = '';
                 let iframe = document.createElement('iframe');
@@ -75,9 +76,10 @@ export class HtmlIframeComponent extends GaugeBaseComponent {
                 svgIframeContainer.appendChild(iframe);
             }
         }
+        return svgIframeContainer;
     }
 
-    static detectChange(gab: GaugeSettings): void {
+    static detectChange(gab: GaugeSettings): HTMLElement {
         return HtmlIframeComponent.initElement(gab, false);
     }
 }
