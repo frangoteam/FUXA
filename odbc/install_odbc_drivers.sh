@@ -63,9 +63,8 @@ case $debian_version in
         ;;
 esac
 
-# Install Microsoft SQL Server ODBC Driver 18 if not ARM AND Debian version >= 11
-if [ "$architecture" != "arm64" ] && [ "$architecture" != "armhf" ] && [ "$debian_version" -ge 11 ]; then
-
+# Check architecture and Debian version
+if [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ]; then
     echo "Package URL: $package_url "
     # Download appropriate package for the OS version
     curl $package_url | tee /etc/apt/sources.list.d/mssql-release.list
@@ -73,10 +72,23 @@ if [ "$architecture" != "arm64" ] && [ "$architecture" != "armhf" ] && [ "$debia
     # Update apt package index
     apt-get update
 
+    # Install Microsoft SQL Server ODBC Driver 18
     ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
+elif [ "$architecture" == "arm64" ] && [ "$debian_version" -ge 11 ]; then
+    echo "Package URL: $package_url "
+    # Download appropriate package for the OS version
+    curl $package_url | tee /etc/apt/sources.list.d/mssql-release.list
+
+    # Update apt package index
+    apt-get update
+
+    # Install Microsoft SQL Server ODBC Driver 18
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18
 else
-    echo "MS SQL ODBC driver installation skipped due to ARM architecture AND Debian version less than 11."
+    echo "MS SQL ODBC driver installation skipped due to unsupported architecture or Debian version."
+    echo "Architecture: $architecture"
+    echo "Debian Version: $debian_version"
 fi
 
 # Check if /usr/lib/odbc/ directory exists, if not, create it
