@@ -38,10 +38,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     rangeTypeValue = Utils.getEnumKey(ChartRangeType, ChartRangeType.last8h);
     rangeType: ChartRangeType;
     range = { from: Date.now(), to: Date.now() };
-    mapData = {};
+    mapData: MapDataDictionary = {};
     private destroy$ = new Subject<void>();
     property: GaugeChartProperty;
     chartName: string;
+    addValueInterval = 0;
 
     constructor(
         private dataService: DataConverterService,
@@ -276,9 +277,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 serie.fill = line.fill;
             }
             serie.lineInterpolation = line.lineInterpolation;
-            this.mapData[id] = {
+            this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
-                attribute: serie
+                attribute: serie,
+                lastValueTime: 0
             };
             this.nguplot.addSerie(this.mapData[id].index, this.mapData[id].attribute);
         }
@@ -295,7 +297,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     public addValue(id: string, x, y) {
         if (this.mapData[id]) {
+            if (this.addValueInterval && Utils.getTimeDifferenceInSeconds(this.mapData[id].lastValueTime) < this.addValueInterval) {
+                return;
+            }
             this.nguplot.addValue(this.mapData[id].index, x, y, this.options.realtime * 60);
+            this.mapData[id].lastValueTime = Date.now();
         }
     }
 
@@ -340,6 +346,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public redraw() {
         this.nguplot.redraw();
+    }
+
+    public setProperty(property: any, value: any): boolean {
+        if (Utils.isNullOrUndefined(this[property])) {
+            return false;
+        }
+        this[property] = value;
+        return true;
     }
 
     public static DefaultOptions() {
@@ -476,4 +490,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setLoading(false);
         }, 500);
     }
+}
+
+interface MapDataType {
+    index: number;
+    attribute: NgxSeries;
+    lastValueTime: number;
+}
+
+interface MapDataDictionary {
+    [key: string]: MapDataType;
 }

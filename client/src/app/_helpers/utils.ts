@@ -513,6 +513,12 @@ export class Utils {
         return dateString;
     }
 
+    static getTimeDifferenceInSeconds(timestamp: number): number {
+        const currentTimestamp = Date.now();
+        const differenceInMilliseconds = currentTimestamp - timestamp;
+        return Math.floor(differenceInMilliseconds / 1000);
+    }
+
     static isValidUrl(url: string): boolean {
         try {
             new URL(url);

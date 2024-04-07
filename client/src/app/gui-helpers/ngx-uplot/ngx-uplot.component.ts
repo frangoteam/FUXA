@@ -244,7 +244,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         this.init(this.options, this.rawData);
     }
 
-    addSerie(index: string, attribute: Series) {
+    addSerie(index: number, attribute: Series) {
         this.data.push([null,null]);
         if (attribute.lineInterpolation === this.lineInterpolations.stepAfter) {
             attribute.paths = uPlot.paths.stepped({ align: 1 });
