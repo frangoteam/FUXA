@@ -178,10 +178,21 @@ function Device(data, runtime) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
         }
         return comm.connect().then(function () {
-            devicePolling = setInterval(function () {
+            devicePolling = bindClockTick(function(ms) {
                 self.polling();
-            }, pollingInterval);
+                // console.log(data.name + " - > pollingInterval: " + pollingInterval + " " + new Date().toLocaleString())
+            }) 
         });
+    }
+
+    function bindClockTick(callback) {
+        var SECOND = pollingInterval;
+        function tick() {
+            var now = Date.now();         
+            callback(now);         
+            setTimeout(tick, SECOND - (now % SECOND));
+        }        
+        tick();
     }
 
     /**
