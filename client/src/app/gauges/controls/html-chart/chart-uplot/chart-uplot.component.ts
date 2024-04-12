@@ -10,7 +10,6 @@ import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dial
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, interval, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { DataConverterService } from '../../../../_services/data-converter.service';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { ScriptParam, ScriptParamType } from '../../../../_models/script';
@@ -45,7 +44,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     addValueInterval = 0;
 
     constructor(
-        private dataService: DataConverterService,
         private projectService: ProjectService,
         private hmiService: HmiService,
         private scriptService: ScriptService,
@@ -138,7 +136,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    onDaqQuery() {
+    onDaqQuery(daqQuery?: DaqQuery) {
+        if (daqQuery) {
+            this.lastDaqQuery = <DaqQuery>Utils.mergeDeep(this.lastDaqQuery, daqQuery);
+        }
         this.onTimeRange.emit(this.lastDaqQuery);
         if (this.withToolbar) {
             this.setLoading(true);
