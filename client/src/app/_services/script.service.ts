@@ -121,10 +121,10 @@ export class ScriptService {
         this.hmiService.deviceEnable(deviceName, enable);
     }
 
-    public $invokeObject(gaugeName: string, fncName: string, params: any) {
+    public $invokeObject(gaugeName: string, fncName: string, ...params: any[]) {
         const gauge = this.hmiService.getGaugeMapped(gaugeName);
         if (gauge[fncName]) {
-            return gauge[fncName](params);
+            return gauge[fncName](...params);
         }
         return null;
     }

@@ -22,11 +22,12 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         super();
     }
 
-    static initElement(gaugeSettings: GaugeSettings, isview: boolean) {
+    static initElement(gaugeSettings: GaugeSettings, isview: boolean): HTMLElement {
+        let svgImageContainer = null;
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
             ele?.setAttribute('data-name', gaugeSettings.name);
-            let svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
+            svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
                 svgImageContainer.innerHTML = '';
                 let image = document.createElement('img');
@@ -39,6 +40,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                 svgImageContainer.appendChild(image);
             }
         }
+        return svgImageContainer;
     }
 
     static getSignals(pro: any) {

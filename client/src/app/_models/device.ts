@@ -1,6 +1,19 @@
 import { Utils } from '../_helpers/utils';
 
-export const FuxaServer = {id: '0', name: 'FUXA' };
+export const FuxaServer = {
+    id: '0',
+    name: 'FUXA'
+};
+
+export const PlaceholderDevice = {
+    id: '@',
+    name: 'Placeholder',
+    tags: [{
+        id: '@',
+        name: '@',
+        device: '@'
+    }]
+};
 
 export class Device {
     /** Device id, GUID */

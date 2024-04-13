@@ -3,8 +3,9 @@ import { UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
 import { ProjectService } from '../../../_services/project.service';
-import { Device, DevicesUtils, Tag } from '../../../_models/device';
+import { Device, DevicesUtils, PlaceholderDevice, Tag } from '../../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../device/device-tag-selection/device-tag-selection.component';
+import { Utils } from '../../../_helpers/utils';
 
 export const _filter = (opt: DeviceTagOption[], value: string): DeviceTagOption[] => {
     const filterValue = value.toLowerCase();
@@ -34,6 +35,7 @@ export class FlexDeviceTagComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.devicesGroups.push(Utils.clone(PlaceholderDevice));
         this.devices = Object.values(this.projectService.getDevices());
         this.devices.forEach((device: Device) => {
             let deviceGroup = <DeviceGroup> {
@@ -55,6 +57,13 @@ export class FlexDeviceTagComponent implements OnInit {
             startWith(''),
             map(value => this._filterGroup(value || '')),
         );
+        if (this.variableId?.startsWith(PlaceholderDevice.id)) {
+            this.devicesGroups[0].tags.push({
+                id: this.variableId,
+                name: this.variableId,
+                device: '@'
+            });
+        }
         this._setSelectedTag();
     }
 
@@ -127,9 +136,6 @@ export class FlexDeviceTagComponent implements OnInit {
 
     onChanged() {
         this.change.emit(this.variableId);   // Legacy
-    }
-
-    onInputBlur() {
     }
 }
 

@@ -95,11 +95,12 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(ga: GaugeSettings, isview: boolean = false) {
+    static initElement(ga: GaugeSettings, isview: boolean = false): HTMLElement {
+        let select = null;
         let ele = document.getElementById(ga.id);
         if (ele) {
             ele?.setAttribute('data-name', ga.name);
-            let select = Utils.searchTreeStartWith(ele, this.prefix);
+            select = Utils.searchTreeStartWith(ele, this.prefix);
             if (select) {
                 if (ga.property) {
                     if (ga.property.readonly) {
@@ -134,6 +135,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
                 }
             }
         }
+        return select;
     }
 
     static initElementColor(bkcolor, color, ele) {
