@@ -36,8 +36,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     private lastDaqQuery = new DaqQuery();
     rangeTypeValue = Utils.getEnumKey(ChartRangeType, ChartRangeType.last8h);
     rangeType: ChartRangeType;
-    range = { from: Date.now(), to: Date.now() };
+    range: ZoomRangeType = { from: Date.now(), to: Date.now(), zoomStep: 0 };
     mapData: MapDataDictionary = {};
+    pauseMemoryValue: ValueDictionary = {};
     private destroy$ = new Subject<void>();
     property: GaugeChartProperty;
     chartName: string;
@@ -297,12 +298,22 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param y
      */
     public addValue(id: string, x, y) {
-        if (this.mapData[id]) {
-            if (this.addValueInterval && Utils.getTimeDifferenceInSeconds(this.mapData[id].lastValueTime) < this.addValueInterval) {
+        const property = this.mapData[id];
+        if (property) {
+            if (this.addValueInterval && Utils.getTimeDifferenceInSeconds(property.lastValueTime) < this.addValueInterval) {
                 return;
             }
-            this.nguplot.addValue(this.mapData[id].index, x, y, this.options.realtime * 60);
-            this.mapData[id].lastValueTime = Date.now();
+            if (this.range?.zoomStep) {
+                // save value in pause to if zoom will be resetted
+                if (!this.pauseMemoryValue[id]) {
+                    this.pauseMemoryValue[id] = [];
+                }
+                this.pauseMemoryValue[id].push({ x, y });
+                return;
+            }
+            this.nguplot.addValue(property.index, x, y, this.options.realtime * 60);
+            property.lastValueTime = Date.now();
+            this.range.to = Date.now();
         }
     }
 
@@ -347,6 +358,27 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public redraw() {
         this.nguplot.redraw();
+    }
+
+    setZoom(range: ZoomRangeType) {
+        this.range = range;
+        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+        // if zoom resetted then add values in saved in pause
+        if (!range.zoomStep) {
+            Object.keys(this.pauseMemoryValue).forEach((id) => {
+                const data = this.pauseMemoryValue[id];
+                if (data) {
+                    Object.values(data).forEach((value) => {
+                        this.addValue(id, value.x, value.y);
+                    });
+                }
+            });
+            this.pauseMemoryValue = {};
+        }
+    }
+
+    getZoomStatus() {
+        return this.range;
     }
 
     public setProperty(property: any, value: any): boolean {
@@ -501,4 +533,19 @@ interface MapDataType {
 
 interface MapDataDictionary {
     [key: string]: MapDataType;
+}
+
+interface ZoomRangeType {
+    from: number;
+    to: number;
+    zoomStep: number;
+}
+
+interface ValueType {
+    x: any;
+    y: any;
+}
+
+interface ValueDictionary {
+    [key: string]: ValueType[];
 }
