@@ -41,8 +41,7 @@ RUN npm ci --production && \
 WORKDIR /usr/src/app
 
 # Clone FUXA repository
-#RUN git clone -b odbc https://github.com/frangoteam/FUXA.git
-RUN git clone -b odbc https://github.com/MatthewReed303/FUXA.git
+RUN git clone -b odbc https://github.com/frangoteam/FUXA.git
 
 # Change working directory to FUXA
 WORKDIR /usr/src/app/FUXA
