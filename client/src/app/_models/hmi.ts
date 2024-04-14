@@ -388,6 +388,7 @@ export interface TableOptions {
     daterange: {
         show: boolean;
     };
+    realtime?: boolean;
     lastRange?: TableRangeType;
     gridColor?: string;
     header?: {

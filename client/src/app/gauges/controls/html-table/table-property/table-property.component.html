@@ -11,7 +11,7 @@
                 <span>{{'table.property-name' | translate}}</span>
                 <input [(ngModel)]="data.settings.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text">
             </div>
-            <div class="my-form-field" style="width: 140px">
+            <div class="my-form-field table-type">
                 <span>{{'table.property-type' | translate}}</span>
                 <mat-select [formControl]="tableTypeCtrl" (selectionChange)="onTableChanged()">
                     <mat-option [value]="tableType.data">{{'table.property-type-data' | translate}}</mat-option>
@@ -19,14 +19,20 @@
                 </mat-select>
             </div>
             <div class="section-inline-margin2"></div>
-            <div *ngIf="tableTypeCtrl.value === tableType.history" class="my-form-field" style="display: inline-block; width: 140px">
-                <span>{{'table.property-date-last-range' | translate}}</span>
-                <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
-                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>            
+            <ng-container *ngIf="tableTypeCtrl.value === tableType.history">
+                <div class="my-form-field inbk data-range">
+                    <span>{{'table.property-date-last-range' | translate}}</span>
+                    <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
+                        <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                            {{ ev.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field inbk tac data-realtime">
+                    <span>{{'table.property-type-with-realtime' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.realtime" (change)="onTableChanged()"></mat-slide-toggle>
+                </div>
+            </ng-container>
         </div>
         <div class="element-property-header">
             <span>{{'table.property-header' | translate}}</span>
