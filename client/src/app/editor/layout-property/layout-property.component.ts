@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,7 +13,7 @@ import { Utils } from '../../_helpers/utils';
 import { UploadFile } from '../../_models/project';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
-import { map, Observable, of } from 'rxjs';
+import { interval, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { GaugeDialogType, GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
 import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-button.component';
 
@@ -22,7 +22,7 @@ import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-butt
     templateUrl: './layout-property.component.html',
     styleUrls: ['./layout-property.component.scss']
 })
-export class LayoutPropertyComponent implements OnInit {
+export class LayoutPropertyComponent implements OnInit, OnDestroy {
 
     draggableListLeft = [];
     headerItems: HeaderItem[];
@@ -31,6 +31,8 @@ export class LayoutPropertyComponent implements OnInit {
     fonts = Define.fonts;
     anchorType = <AnchorType[]>['left', 'center', 'right'];
     loginInfoType = <LoginInfoType[]>['nothing', 'username', 'fullname', 'both'];
+    currentDateTime: Date;
+    private unsubscribeTimer$ = new Subject<void>();
 
     startView: string;
     sideMode: string;
@@ -92,6 +94,26 @@ export class LayoutPropertyComponent implements OnInit {
         Object.keys(this.headerMode).forEach(key => {
             this.translateService.get(this.headerMode[key]).subscribe((txt: string) => {this.headerMode[key] = txt;});
         });
+    }
+
+    ngOnDestroy() {
+        this.unsubscribeTimer$.next();
+        this.unsubscribeTimer$.complete();
+    }
+
+    checkTimer(): void {
+        if (this.data.layout.header?.dateTimeDisplay) {
+            if (!this.currentDateTime) {
+                interval(1000).pipe(
+                    takeUntil(this.unsubscribeTimer$)
+                ).subscribe(() => {
+                    this.currentDateTime = new Date();
+                });
+            }
+        } else {
+            this.unsubscribeTimer$.next();
+            this.currentDateTime = null;
+        }
     }
 
     onAddMenuItem(item: NaviItem = null) {

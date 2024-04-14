@@ -115,6 +115,7 @@ export class HeaderSettings {
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
     loginInfo: LoginInfoType;
+    dateTimeDisplay: string;
 }
 
 export interface HeaderItem {

@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
+import { combineLatest, interval, Observable, Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -69,6 +69,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
     intervalsScript = new Intervals();
+    currentDateTime: Date = new Date();
     private headerItemsMap = new Map<string, HeaderItem[]>();
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
@@ -95,6 +96,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (this.projectService.getHmi()) {
                     this.loadHmi();
                     this.initScheduledScripts();
+                    this.checkDateTimeTimer();
                 }
             }, error => {
                 console.error(`Error loadHMI: ${error}`);
@@ -158,6 +160,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.destroy$.complete();
             this.intervalsScript.clearIntervals();
         } catch (e) {
+        }
+    }
+
+    private checkDateTimeTimer(): void {
+        if (this.hmi.layout?.header?.dateTimeDisplay) {
+            interval(1000).pipe(
+                takeUntil(this.destroy$)
+            ).subscribe(() => {
+                this.currentDateTime = new Date();
+            });
         }
     }
 
