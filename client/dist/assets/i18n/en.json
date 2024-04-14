@@ -387,6 +387,7 @@
     "table.property-date-last-range": "Date range",
     "table.property-name": "Name",
     "table.property-type": "Type",
+    "table.property-type-with-realtime": "Realtime",
     "table.property-header": "Header",
     "table.property-header-height": "Height",
     "table.property-header-background": "Background",
