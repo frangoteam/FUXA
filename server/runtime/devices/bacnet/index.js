@@ -154,7 +154,7 @@ function BACNETclient(_data, _logger, _events) {
                                 value.values.forEach(data => { 
                                     if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIdentifier.PRESENT_VALUE) {
                                         let address = _formatId(data.objectId.type, data.objectId.instance);
-                                        if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTags.ERROR) {
+                                        if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTag.ERROR) {
                                             errors.push({ address: address, value: data.values[0].value.value, type:  data.objectId.type });    
                                         } else {
                                             result.push({ 
@@ -356,14 +356,15 @@ function BACNETclient(_data, _logger, _events) {
             devices = {};
             try {
                 client.on('iAm', (device) => {
-                    if (device &&  device.deviceId && !devices[device.id]) {
+                    if (device && device.payload &&  device.payload.deviceId && !devices[device.id]) {
                         if (tdelay) {
                             clearTimeout(tdelay);
                         }
                         device = {
-                            ...device,
-                            id: device.deviceId,
-                            name: 'DeviceId ' + device.deviceId
+                            ...device.payload,
+                            ...device.header,
+                            id: device.payload.deviceId,
+                            name: 'DeviceId ' + device.payload.deviceId
                         };
                         devices[device.id] = device;
                         resolve();
@@ -509,23 +510,23 @@ function BACNETclient(_data, _logger, _events) {
 
     var _writeProperty = function(address, bacobj, value) {
         return new Promise(function (resolve, reject) {
-            var tvalue = {type: bacnet.enum.ApplicationTags.NULL, value: value};
+            var tvalue = {type: bacnet.enum.ApplicationTag.NULL, value: value};
             bacobj.type = parseInt(bacobj.type);
             bacobj.instance = parseInt(bacobj.instance);
             if (bacobj.type === bacnet.enum.ObjectType.ANALOG_INPUT || 
                 bacobj.type === bacnet.enum.ObjectType.ANALOG_OUTPUT || 
                 bacobj.type === bacnet.enum.ObjectType.ANALOG_VALUE) {
-                tvalue.type = bacnet.enum.ApplicationTags.REAL;
+                tvalue.type = bacnet.enum.ApplicationTag.REAL;
                 tvalue.value = parseFloat(value);
             } else if (bacobj.type === bacnet.enum.ObjectType.BINARY_INPUT || 
                 bacobj.type === bacnet.enum.ObjectType.BINARY_OUTPUT || 
                 bacobj.type === bacnet.enum.ObjectType.BINARY_VALUE) {
-                tvalue.type = bacnet.enum.ApplicationTags.ENUMERATED;
+                tvalue.type = bacnet.enum.ApplicationTag.ENUMERATED;
                 tvalue.value = parseInt(value);
             } else if (bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_INPUT ||
                 bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_OUTPUT ||
                 bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_VALUE) {
-                tvalue.type = bacnet.enum.ApplicationTags.UNSIGNED_INTEGER;
+                tvalue.type = bacnet.enum.ApplicationTag.UNSIGNED_INTEGER;
                 tvalue.value = parseInt(value);
             }
 
@@ -738,8 +739,8 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager) {
-        try { bacnet = require('bacstack'); } catch { }
-        if (!bacnet && manager) { try { bacnet = manager.require('bacstack'); } catch { } }
+        try { bacnet = require('node-bacnet'); } catch { }
+        if (!bacnet && manager) { try { bacnet = manager.require('node-bacnet'); } catch { } }
         if (!bacnet) return null;
         return new BACNETclient(data, logger, events);
     }
