@@ -523,6 +523,11 @@ function BACNETclient(_data, _logger, _events) {
                 bacobj.type === bacnet.enum.ObjectType.BINARY_VALUE) {
                 tvalue.type = bacnet.enum.ApplicationTag.ENUMERATED;
                 tvalue.value = parseInt(value);
+            } else if (bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_INPUT ||
+                bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_OUTPUT ||
+                bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_VALUE) {
+                tvalue.type = bacnet.enum.ApplicationTag.UNSIGNED_INTEGER;
+                tvalue.value = parseInt(value);
             }
 
             client.writeProperty(address, bacobj, bacnet.enum.PropertyIdentifier.PRESENT_VALUE, [tvalue], { priority: 16 }, (err, result) => {
@@ -583,6 +588,12 @@ function BACNETclient(_data, _logger, _events) {
             return 'Variable';
         } else if (type === bacnet.enum.ObjectType.BINARY_VALUE) {
             return 'Variable';
+        } else if (type === bacnet.enum.ObjectType.MULTI_STATE_INPUT) {
+            return 'Variable';
+        } else if (type === bacnet.enum.ObjectType.MULTI_STATE_OUTPUT) {
+            return 'Variable';
+        } else if (type === bacnet.enum.ObjectType.MULTI_STATE_VALUE) {
+            return 'Variable';
         } else {
             return 'Object';
         }
@@ -606,6 +617,12 @@ function BACNETclient(_data, _logger, _events) {
         } else if (type === bacnet.enum.ObjectType.BINARY_OUTPUT) {
             return true;
         } else if (type === bacnet.enum.ObjectType.BINARY_VALUE) {
+            return true;
+        } else if (type === bacnet.enum.ObjectType.MULTI_STATE_INPUT) {
+            return true;
+        } else if (type === bacnet.enum.ObjectType.MULTI_STATE_OUTPUT) {
+            return true;
+        } else if (type === bacnet.enum.ObjectType.MULTI_STATE_VALUE) {
             return true;
         } else {
             return false;
