@@ -154,7 +154,7 @@ function BACNETclient(_data, _logger, _events) {
                                 value.values.forEach(data => { 
                                     if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIdentifier.PRESENT_VALUE) {
                                         let address = _formatId(data.objectId.type, data.objectId.instance);
-                                        if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTag.ERROR) {
+                                        if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTags.ERROR) {
                                             errors.push({ address: address, value: data.values[0].value.value, type:  data.objectId.type });    
                                         } else {
                                             result.push({ 
@@ -346,7 +346,7 @@ function BACNETclient(_data, _logger, _events) {
             }
             console.log(settings);
             client = new bacnet(settings);
-            //  let options = { maxSegments: bacnet.enum.MaxSegments.MAX_SEG2, maxAdpu: bacnet.enum.MaxAdpu.MAX_APDU1476 };
+            // let options = { maxSegments: bacnet.enum.MaxSegmentsAccepted.SEGMENTS_2, maxAdpu: bacnet.enum.MaxApduLengthAccepted.OCTETS_1476 };
             //  client.deviceCommunicationControl(ipAddress, 0, bacnet.enum.EnableDisable.DISABLE, (err, value) => {
             //     console.log('value: ', value);
             //   });
@@ -356,15 +356,14 @@ function BACNETclient(_data, _logger, _events) {
             devices = {};
             try {
                 client.on('iAm', (device) => {
-                    if (device && device.payload &&  device.payload.deviceId && !devices[device.id]) {
+                    if (device &&  device.deviceId && !devices[device.id]) {
                         if (tdelay) {
                             clearTimeout(tdelay);
                         }
                         device = {
-                            ...device.payload,
-                            ...device.header,
-                            id: device.payload.deviceId,
-                            name: 'DeviceId ' + device.payload.deviceId
+                            ...device,
+                            id: device.deviceId,
+                            name: 'DeviceId ' + device.deviceId
                         };
                         devices[device.id] = device;
                         resolve();
@@ -450,28 +449,41 @@ function BACNETclient(_data, _logger, _events) {
                         var object = value.values[index].value;
                         object.parent = instance;
                         if (_isObjectToShow(object.type)) {
-                            objects.push(object);
-                            try {
-                                readfnc.push(_readProperty(_getDeviceAddress(devices[instance]), { type: object.type, instance: object.instance}, bacnet.enum.PropertyIdentifier.OBJECT_NAME));
-                            } catch (error) {
-                                logger.error(`'${data.name}' _readObjectList error! ${error}`);
-                            }
+                            objects.push({
+                                objectId: {
+                                  type: object.type,
+                                  instance: object.instance
+                                },
+                                properties: [{id: bacnet.enum.PropertyIdentifier.OBJECT_NAME}]
+                              });
                         }
                     }
+                    try {
+                        
+                        var chunkedObjects = _chunkArray(objects, 50);
+                        //readfnc.push(_readPropertyMultiple(_getDeviceAddress(devices[instance]), objects));
+                        chunkedObjects.forEach(chunk => {
+                            readfnc.push(_readPropertyMultiple(_getDeviceAddress(devices[instance]), chunk));
+                        });
+                    } catch (error) {
+                        logger.error(`'${data.name}' _readObjectList error! ${error}`);
+                    }   
                     Promise.all(readfnc).then(results => {
                         if (results) {
-                            for (var index in results) {
-                                if (results[index]) {
-                                    var object = _getObject(objects, results[index].type, results[index].instance);
-                                    if (object) {
-                                        object.id = _formatId(object.type, object.instance);
-                                        object.name = results[index].value;
-                                        object.class = _getObjectClass(object.type);
+                            for (var i in results){
+                                for (var index in results[i]) {
+                                    if (results[i][index]) {
+                                        var object = _getObject(objects, results[i][index].type, results[i][index].instance);
+                                        if (object) {
+                                            object.id = _formatId(object.objectId.type, object.objectId.instance);
+                                            object.name = results[i][index].value;
+                                            object.class = _getObjectClass(object.objectId.type);
+                                        }
                                     }
                                 }
                             }
                         }
-                        resolve(objects);          
+                        resolve(objects);         
                     }, reason => {
                         if (reason) {
                             if (reason.stack) {
@@ -508,35 +520,55 @@ function BACNETclient(_data, _logger, _events) {
         });
     }
 
+    /**
+     * Read Object Multi property, Object are defined with type and instance
+     * @param {*} bacobjarray
+     * @param {*} property 
+     */
+    var _readPropertyMultiple = function(address, bacobjarray) {
+        return new Promise(function (resolve, reject) {
+            client.readPropertyMultiple(address, bacobjarray, (err, value) => {
+                let results = [];
+                if (err) {
+                    resolve();
+                } else if (value.values) {
+                        value.values.forEach(data => { 
+                            results.push({ 
+                                type: data.objectId.type,
+                                instance: data.objectId.instance,
+                                value: data.values[0].value[0].value
+                            });
+                        });
+                    resolve(results);
+                } else {
+                     resolve();
+                 }
+            });
+        });
+    }
     var _writeProperty = function(address, bacobj, value) {
         return new Promise(function (resolve, reject) {
-            var tvalue = {type: bacnet.enum.ApplicationTag.NULL, value: value};
+            var tvalue = {type: bacnet.enum.ApplicationTags.NULL, value: value};
             bacobj.type = parseInt(bacobj.type);
             bacobj.instance = parseInt(bacobj.instance);
             if (bacobj.type === bacnet.enum.ObjectType.ANALOG_INPUT || 
                 bacobj.type === bacnet.enum.ObjectType.ANALOG_OUTPUT || 
                 bacobj.type === bacnet.enum.ObjectType.ANALOG_VALUE) {
-                tvalue.type = bacnet.enum.ApplicationTag.REAL;
+                tvalue.type = bacnet.enum.ApplicationTags.REAL;
                 tvalue.value = parseFloat(value);
             } else if (bacobj.type === bacnet.enum.ObjectType.BINARY_INPUT || 
                 bacobj.type === bacnet.enum.ObjectType.BINARY_OUTPUT || 
                 bacobj.type === bacnet.enum.ObjectType.BINARY_VALUE) {
-                tvalue.type = bacnet.enum.ApplicationTag.ENUMERATED;
+                tvalue.type = bacnet.enum.ApplicationTags.ENUMERATED;
                 tvalue.value = parseInt(value);
             } else if (bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_INPUT ||
                 bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_OUTPUT ||
                 bacobj.type === bacnet.enum.ObjectType.MULTI_STATE_VALUE) {
-                tvalue.type = bacnet.enum.ApplicationTag.UNSIGNED_INTEGER;
+                tvalue.type = bacnet.enum.ApplicationTags.UNSIGNED_INTEGER;
                 tvalue.value = parseInt(value);
             }
-
-            client.writeProperty(address, bacobj, bacnet.enum.PropertyIdentifier.PRESENT_VALUE, [tvalue], { priority: 16 }, (err, result) => {
-                if (err) {
-                    reject(err);
-                    console.error('value: ', err);
-                } else {
-                    resolve();
-                }
+            client.writeProperty(address, bacobj, bacnet.enum.PropertyIdentifier.PRESENT_VALUE, [tvalue], { priority: 16 }, (err, value) => {
+                resolve();
             });
         });
     }
@@ -562,11 +594,24 @@ function BACNETclient(_data, _logger, _events) {
      */
     var _getObject = function (objs, type, instance) {
         for (var index in objs) {
-            if (objs[index] && objs[index].type === type && objs[index].instance === instance) {
+            if (objs[index] && objs[index].objectId.type === type && objs[index].objectId.instance === instance) {
                 return objs[index];
             }
         }
         return null;
+    }
+
+    /**
+     * Split array into chunks
+     * @param {*} objects
+     * @param {*} chunkSize
+     */
+    var _chunkArray = function (objects, chunkSize) {
+        var chunks = [];
+        for (let i = 0; i < objects.length; i += chunkSize) {
+            chunks.push(objects.slice(i, i + chunkSize));
+        }
+        return chunks;
     }
 
     /**
@@ -739,8 +784,8 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager) {
-        try { bacnet = require('node-bacnet'); } catch { }
-        if (!bacnet && manager) { try { bacnet = manager.require('node-bacnet'); } catch { } }
+        try { bacnet = require('bacstack'); } catch { }
+        if (!bacnet && manager) { try { bacnet = manager.require('bacstack'); } catch { } }
         if (!bacnet) return null;
         return new BACNETclient(data, logger, events);
     }
