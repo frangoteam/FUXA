@@ -97,6 +97,14 @@ Please ensure you follow the coding standards used through-out the existing code
 - Indent with 4-spaces, no tabs.
 - Opening brace on same line as if/for/function and so on, closing brace on its own line.
 
+## Some collaborations
+<div >
+    <a href="https://www.seeedstudio.com/raspberry-pi" target="_blank" style="margin-right: 100px; line-height: 60px">
+        <img src="https://frangoteam.org/assets/images/seeed-studio2.png" alt="" style="vertical-align: top"></a>
+    <a href="https://ubidots.com/" target="_blank">
+        <img src="https://frangoteam.org/assets/images/ubidots-logo2.png" alt="" style="vertical-align: top"></a>
+</div>
+
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.
 
