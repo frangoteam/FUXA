@@ -115,6 +115,7 @@ export class HeaderSettings {
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
     loginInfo: LoginInfoType;
+    dateTimeDisplay: string;
 }
 
 export interface HeaderItem {
@@ -387,6 +388,7 @@ export interface TableOptions {
     daterange: {
         show: boolean;
     };
+    realtime?: boolean;
     lastRange?: TableRangeType;
     gridColor?: string;
     header?: {

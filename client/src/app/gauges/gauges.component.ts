@@ -2,7 +2,7 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType, ChartViewType } from '../_models/chart';
 
-import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery } from '../_models/hmi';
+import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableType } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -527,7 +527,7 @@ export class GaugesManager {
                     });
                     break;
                 } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
-                    if (ga.property.type !== 'history' && this.memorySigGauges[sig.id]) {
+                    if ((ga.property.type === TableType.data || ga.property.options?.realtime) && this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
                             if (k === ga.id && this.mapGauges[k]) {
                                 HtmlTableComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);

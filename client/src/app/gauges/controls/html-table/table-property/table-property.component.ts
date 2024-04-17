@@ -14,7 +14,7 @@ import { Utils } from '../../../../_helpers/utils';
 @Component({
     selector: 'app-table-property',
     templateUrl: './table-property.component.html',
-    styleUrls: ['./table-property.component.css']
+    styleUrls: ['./table-property.component.scss']
 })
 export class TablePropertyComponent implements OnInit, OnDestroy {
 

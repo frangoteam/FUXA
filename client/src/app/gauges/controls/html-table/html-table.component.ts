@@ -12,7 +12,7 @@ export class HtmlTableComponent {
     static prefixD = 'D-OXC_';
 
     static getSignals(pro: ITableProperty): string[] {
-        if (pro.type === TableType.data && pro.options && pro.options.rows) {
+        if (pro.type === TableType.data && pro.options?.rows) {
             let signalIds = [];
             pro.options.rows.forEach(row => {
                 row.cells.forEach(cell => {
@@ -20,6 +20,14 @@ export class HtmlTableComponent {
                         signalIds.push(cell.variableId);
                     }
                 });
+            });
+            return signalIds;
+        } else if (pro.options?.realtime) {
+            let signalIds = [];
+            pro.options.columns?.forEach(col => {
+                if (col.variableId && col.type === TableCellType.variable) {
+                        signalIds.push(col.variableId);
+                }
             });
             return signalIds;
         }
