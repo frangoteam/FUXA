@@ -101,8 +101,6 @@ Please ensure you follow the coding standards used through-out the existing code
 <div >
     <a href="https://www.seeedstudio.com/raspberry-pi" target="_blank" style="margin-right: 100px; line-height: 60px">
         <img src="https://frangoteam.org/assets/images/seeed-studio2.png" alt="" style="vertical-align: top"></a>
-    <a href="https://ubidots.com/" target="_blank">
-        <img src="https://frangoteam.org/assets/images/ubidots-logo2.png" alt="" style="vertical-align: top"></a>
 </div>
 
 ## Let us know!
