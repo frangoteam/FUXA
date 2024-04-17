@@ -99,7 +99,7 @@ Please ensure you follow the coding standards used through-out the existing code
 
 ## Some collaborations
 <div >
-    <a href="https://www.seeedstudio.com/raspberry-pi" target="_blank" style="margin-right: 100px; line-height: 60px">
+    <a href="https://wiki.seeedstudio.com/reTerminal-DM_intro_FUXA/" target="_blank" style="margin-right: 100px; line-height: 60px">
         <img src="https://frangoteam.org/assets/images/seeed-studio2.png" alt="" style="vertical-align: top"></a>
 </div>
 
