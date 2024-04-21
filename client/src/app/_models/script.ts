@@ -98,6 +98,9 @@ export class SystemFunctions {
     },
     {
         name: '$invokeObject', text: 'script.sys-fnc-invokeObject-text', tooltip: 'script.sys-fnc-invokeObject-tooltip', params: [false, false, false], paramsText: 'script.sys-fnc-invokeObject-params'
+    },
+    {
+        name: '$runServerScript', text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
     }];
 }
 
@@ -132,7 +135,6 @@ if (opt) {
 $invokeObject('chart_1', 'updateOptions', opt);`
     }];
 }
-
 
 export interface SystemFunction {
     name: string;           // javascript function defined in backend

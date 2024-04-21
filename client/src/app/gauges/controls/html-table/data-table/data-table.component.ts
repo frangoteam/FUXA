@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
+import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -51,6 +51,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private historyDateformat = '';
     addValueInterval = 0;
     private pauseMemoryValue: TableMapValueDictionary = {};
+    setOfSourceTableData = false;
 
     constructor(
         private dataService: DataConverterService,
@@ -300,6 +301,23 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         return true;
     }
 
+    setTableAndData(tableData: TableData) {
+        this.setOfSourceTableData = true;
+        this.displayedColumns = tableData.columns.map(cln => cln.id);
+        this.columnsStyle = tableData.columns;
+        tableData.columns.forEach(clnData => {
+            let column = clnData;
+            column.fontSize = tableData.header?.fontSize;
+            column.color = column.color || tableData.header?.color;
+            column.background = column.background || tableData.header?.background;
+            column.width = column.width || 100;
+            column.align = column.align || TableCellAlignType.left;
+            this.columnsStyle[column.id] = column;
+        });
+        this.dataSource = new MatTableDataSource(tableData.rows);
+        this.bindTableControls();
+    }
+
     applyFilter(filterValue: string) {
         filterValue = filterValue.trim(); // Remove whitespace
         filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -482,4 +500,59 @@ export class TableRangeConverter {
 
 interface TableMapValueDictionary {
     [key: string]: number;
+}
+
+/**
+ * Interface definition for setTableAndData from script
+ */
+interface TableData {
+    paginator?: TableDataPaginatorOptions;
+    filter?: TableDataFilterOptions;
+    gridColor?: string;
+    header?: TableDataHeaderStyle;
+    rowStyle?: TableDataRowStyle;
+    columns: TableDataColumnData[];
+    rows: TableDataRow[];
+}
+
+interface TableDataPaginatorOptions {
+    show: boolean;
+    pageSize: number;
+}
+
+interface TableDataFilterOptions {
+    show: boolean;
+}
+
+interface TableDataHeaderStyle {
+    show: boolean;
+    height: number;
+    fontSize: number;
+    background: string;
+    color: string;
+}
+
+interface TableDataRowStyle {
+    height: number;
+    fontSize: number;
+    background: string;
+    color: string;
+}
+
+interface TableDataColumnData {
+    id: string;
+    label: string;
+    align?: string;
+    width?: number;
+    color?: string;
+    fontSize: number;
+    background: string;
+}
+
+interface TableDataRow {
+    cells: TableDataCell[];
+}
+
+interface TableDataCell {
+    value: string;
 }

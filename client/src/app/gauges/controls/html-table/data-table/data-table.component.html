@@ -39,13 +39,22 @@
 <mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort
     [style.height]="withToolbar ? 'calc(100% - 42px)' : '100%'">
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef mat-sort-header [style.minWidth.px]="columnsStyle[column].width" [ngClass]="columnsStyle[column].align" [style.color]="tableOptions.header.color"
+        <th *matHeaderCellDef
+            mat-sort-header
+            [style.minWidth.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
+            [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
+            [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
             [style.fontSize.px]="tableOptions.header.fontSize">
-            {{ columnsStyle[column].label }}
+            {{ columnsStyle[column]?.label }}
         </th>
         <td *matCellDef="let element; index as i" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
             [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell">
-            {{element[column].stringValue}}
+            <ng-container *ngIf="setOfSourceTableData; else stringValue">
+                {{element[column]}}
+            </ng-container>
+            <ng-template #stringValue>
+                {{element[column]?.stringValue}}
+            </ng-template>
         </td>
     </ng-container>
 
