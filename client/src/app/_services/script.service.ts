@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
@@ -31,12 +31,14 @@ export class ScriptService {
                     let params = { script: script };
                     this.http.post<any>(this.endPointConfig + '/api/runscript', { headers: header, params: params }).subscribe(result => {
                         observer.next(result);
+                        observer.complete();
                     }, err => {
                         console.error(err);
                         observer.error(err);
                     });
                 } else {
                     observer.next();
+                    observer.complete();
                 }
             } else {
                 let parameterToAdd = '';
@@ -56,6 +58,7 @@ export class ScriptService {
                     console.error(err);
                     observer.error(err);
                 }
+                observer.complete();
             }
         });
     }
@@ -81,6 +84,7 @@ export class ScriptService {
         code = code.replace(/\$setView\(/g, 'this.$setView(');
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
+        code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         return code;
     }
 
@@ -127,5 +131,11 @@ export class ScriptService {
             return gauge[fncName](...params);
         }
         return null;
+    }
+
+    public async $runServerScript(scriptName: string, ...params: any[]) {
+        let scriptToRun = this.projectService.getScripts().find(dataScript => dataScript.name == scriptName);
+        scriptToRun.parameters = params;
+        return await await lastValueFrom(this.runScript(scriptToRun));
     }
 }

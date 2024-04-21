@@ -97,7 +97,7 @@ function MyScriptsModule(_events, _logger) {
                             if (params.length) params += ',';
                             params += `${script.parameters[i].name}`;
                         }
-                        functions += `function ${script.name} (${params}) { try { ${script.code} } catch (e) { console.error(e); } }`;
+                        functions += `async function ${script.name} (${params}) { try { ${script.code} } catch (e) { console.error(e); } }`;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {
