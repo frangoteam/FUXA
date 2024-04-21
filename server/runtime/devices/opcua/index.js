@@ -729,7 +729,7 @@ function OpcUAclient(_data, _logger, _events) {
     var _toValue = function (type, value) {
         switch (type) {
             case opcua.DataType.Boolean:
-                if (value.toLowerCase() === 'true' || value === '1') {
+                if (typeof value === 'string' && (value.toLowerCase() === 'true' || value === '1')) {
                     return true;
                 }
                 return false;

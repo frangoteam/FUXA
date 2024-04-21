@@ -997,7 +997,7 @@
     "gauges.property-tooltip-add-event": "Add event",
     "gauges.property-interval-msec": "Interval (msec.)",
     "gauges.property-tag-label": "Tag",
-    "gauges.property-tag-internal-title": "Set a Tag of internal device",
+    "gauges.property-tag-internal-title": "Set placeholder of Destination (or Tag of internal device)",
     "gauges.property-input-range": "Allowed input range",
 
     "bag.property-ticks": "Ticks",
@@ -1172,6 +1172,9 @@
     "script.sys-fnc-invokeObject-text": "$invokeObject (Object name, Function name, [Parameter])",
     "script.sys-fnc-invokeObject-tooltip": "System function to call Object function: $invokeObject (Object name as string, function name as string , [parameter])",
     "script.sys-fnc-invokeObject-params": "'Object name', 'function name', ",
+    "script.sys-fnc-runServerScript-text": "$runServerScript (Script name, [Parameter])",
+    "script.sys-fnc-runServerScript-tooltip": "Client function to call Server script function: $runServerScript (Script name as string, [parameter])",
+    "script.sys-fnc-runServerScript-params": "'Server script name', ",
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
