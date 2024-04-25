@@ -71,7 +71,7 @@ function ScriptsManager(_runtime) {
             try {
                 var result;
                 if (script.test) {
-                    result = scriptModule.runTestScript(script);
+                    result = await scriptModule.runTestScript(script);
                 } else {
                     logger.info(`Run script ${script.name}`);
                     result = scriptModule.runScript(script);
