@@ -63,6 +63,7 @@ function MyScriptsModule(_events, _logger) {
                 return scriptsModule[_script.name](...paramsValue);
             } catch (err) {
                 console.error(err);
+                return err;
             }
         }
     }
@@ -72,7 +73,12 @@ function MyScriptsModule(_events, _logger) {
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
-            scriptsModule[_script.name]();
+            try {
+                return scriptsModule[_script.name]();
+            } catch (err) {
+                console.error(err);
+                return err;
+            }
         }
     }
 
@@ -97,7 +103,7 @@ function MyScriptsModule(_events, _logger) {
                             if (params.length) params += ',';
                             params += `${script.parameters[i].name}`;
                         }
-                        functions += `async function ${script.name} (${params}) { try { ${script.code} } catch (e) { console.error(e); } }`;
+                        functions += `async function ${script.name} (${params}) { try { ${script.code} } catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {

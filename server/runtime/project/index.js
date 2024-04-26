@@ -792,6 +792,10 @@ function getAlarms() {
 function setDeviceProperty(query) {
     return new Promise(function (resolve, reject) {
         if (query.query === 'security') {
+            if (!query.value) {
+                resolve();
+                return;
+            }
             prjstorage.setSection({ table: prjstorage.TableType.DEVICESSECURITY, name: query.name, value: query.value }).then(() => {
                 resolve();
             }).catch(function (err) {
