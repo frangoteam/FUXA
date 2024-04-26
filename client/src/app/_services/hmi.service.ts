@@ -257,7 +257,7 @@ export class HmiService {
     /**
      * Ask device status to backend
      */
-    public askDeviceProperty(endpoint, type) {
+    public askDeviceProperty(endpoint: EndPointSettings & any, type) {
         if (this.socket) {
             let msg = { endpoint: endpoint, type: type };
             this.socket.emit(IoEventTypes.DEVICE_PROPERTY, msg);
@@ -652,4 +652,11 @@ export interface ScriptCommandMessage {
 export interface ScriptSetView {
     viewName: string;
     force: boolean;
+}
+
+export interface EndPointSettings {
+    address: string;
+    uid: string;
+    pwd: string;
+    id?: string;
 }

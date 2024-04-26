@@ -11,6 +11,7 @@ var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
+var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
 
 const path = require('path');
@@ -20,6 +21,8 @@ var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
+
+var fncGetDeviceProperty;
 
 function Device(data, runtime) {
     var property = { id: data.id, name: data.name };        // Device property (name, id)
@@ -36,6 +39,8 @@ function Device(data, runtime) {
     var comm;                                               // Interface to OPCUA/S7/.. Device
                                                             // required: connect, disconnect, isConnected, polling, init, load, getValue, 
                                                             // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
+    fncGetDeviceProperty = runtime.project.getDeviceProperty;
+    
     if (data.type === DeviceEnum.S7) {
         if (!S7client) {
             return null;
@@ -77,6 +82,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = FuxaServer.create(data, logger, events, manager);     
+    } else if (data.type === DeviceEnum.ODBC) {
+        if (!ODBCclient) {
+            return null;
+        }
+        comm = ODBCclient.create(data, logger, events, manager);        
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -122,7 +132,9 @@ function Device(data, runtime) {
             comm.disconnect().then(function () {
                 status = DeviceStatusEnum.INIT;
                 resolve();
-            });
+            }).catch(function (err) {
+                reject(err);
+            });;
         });
     }
 
@@ -252,6 +264,12 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            } else if (data.type === DeviceEnum.ODBC) {
+                comm.browse(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
             } else {
                 reject('Browse not supported!');
             }
@@ -316,7 +334,7 @@ function Device(data, runtime) {
      * Bind function to ask project stored property (security)
      */
     this.bindGetProperty = function (fnc) {
-        if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient) {
+        if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient || data.type === DeviceEnum.ODBC) {
             comm.bindGetProperty(fnc);
         }
     }
@@ -400,9 +418,16 @@ function Device(data, runtime) {
  * @param {*} type 
  */
 function getSupportedProperty(endpoint, type) {
+    var self = this;
     return new Promise(function (resolve, reject) {
         if (type === DeviceEnum.OPCUA) {
             OpcUAclient.getEndPoints(endpoint).then(function (result) {
+                resolve(result);
+            }).catch(function (err) {
+                reject(err);
+            });
+        } else if (type === DeviceEnum.ODBC) {
+            ODBCclient.getTables(endpoint, fncGetDeviceProperty).then(function (result) {
                 resolve(result);
             }).catch(function (err) {
                 reject(err);
@@ -452,6 +477,8 @@ function loadPlugin(type, module) {
         EthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
         FuxaServer = require(module);
+    } else if (type === DeviceEnum.ODBC) {
+        ODBCclient = require(module);
     }
 }
 
@@ -487,6 +514,7 @@ var DeviceEnum = {
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
+    ODBC: 'ODBC',
     // Template: 'template'
 }
 

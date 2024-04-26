@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, ServerTagType } from './../../_models/device';
 import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
@@ -23,9 +23,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     config = { width: '100%', height: '600px', type: '' };
     memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
 
-    private subscriptionBrowse: Subscription;
-    private subscriptionNodeAttribute: Subscription;
-	private subscriptionDeviceWebApiRequest: Subscription;
+    private destroy$ = new Subject<void>();
 
     @ViewChild(TreetableComponent, {static: false}) treetable: TreetableComponent;
 
@@ -36,7 +34,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.isOpcua() || this.isBACnet() || this.isWebApi()) {
+        if (this.isOpcua() || this.isBACnet() || this.isWebApi() || this.isOdbc()) {
             this.dialogType = EditTagDialogType.Tree;
             this.config.height = '640px';
             this.config.width = '1000px';
@@ -66,8 +64,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.dialogType === EditTagDialogType.Tree) {
-            if (this.isOpcua() || this.isBACnet()) {
-                this.subscriptionBrowse = this.hmiService.onDeviceBrowse.subscribe(values => {
+            if (this.isOpcua() || this.isBACnet() || this.isOdbc()) {
+                this.hmiService.onDeviceBrowse.pipe(
+                    takeUntil(this.destroy$),
+                ).subscribe(values => {
                     if (this.data.device.id === values.device) {
                         if (values.error) {
                             this.addError(values.node, values.error);
@@ -76,7 +76,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                         }
                     }
                 });
-                this.subscriptionNodeAttribute = this.hmiService.onDeviceNodeAttribute.subscribe(values => {
+                this.hmiService.onDeviceNodeAttribute.pipe(
+                    takeUntil(this.destroy$),
+                ).subscribe(values => {
                     if (this.data.device.id === values.device) {
                         if (values.error) {
                             //   this.addError(values.node, values.error);
@@ -89,7 +91,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     }
                 });
             } else if (this.isWebApi()) {
-                this.hmiService.onDeviceWebApiRequest.subscribe(res => {
+                this.hmiService.onDeviceWebApiRequest.pipe(
+                    takeUntil(this.destroy$),
+                ).subscribe(res => {
                     if (res.result) {
                         this.addTreeNodes(res.result);
                         this.treetable.update(false);
@@ -105,15 +109,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         // this.checkToSave();
         try {
-            if (this.subscriptionBrowse) {
-                this.subscriptionBrowse.unsubscribe();
-            }
-            if (this.subscriptionNodeAttribute) {
-                this.subscriptionNodeAttribute.unsubscribe();
-            }
-            if (this.subscriptionDeviceWebApiRequest) {
-				this.subscriptionDeviceWebApiRequest.unsubscribe();
-			}
+            this.destroy$.next();
+            this.destroy$.complete();
         } catch (e) {
         }
     }
@@ -124,7 +121,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         this.data.nodes = [];
-        if (this.isWebApi()) {
+        if (this.isWebApi() || this.isOdbc()) {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
             result.forEach((n: Node) => {
                 if (n.checked && n.enabled) {
@@ -179,6 +176,9 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                     }
                     // node.property = Object.keys(BACnetObjectType)[Object.values(BACnetObjectType).indexOf(n.type)] + '   ' + node.property;
                     // Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)]
+                } else if (this.isOdbc()) {
+                    node.class = Node.strToType(n.class);
+                    node.type = n.type;
                 }
                 let enabled = true;
                 if (node.class === NodeType.Variable) {
@@ -187,8 +187,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                         enabled = false;
                     }
                 }
-                this.treetable.addNode(node, parent, enabled);
-                if (node.class === NodeType.Variable && this.data.device.type !== DeviceType.BACnet) {
+                this.treetable.addNode(node, parent, enabled, this.isOdbc());
+                if (node.class === NodeType.Variable && this.data.device.type !== DeviceType.BACnet && this.data.device.type !== DeviceType.ODBC) {
                     this.hmiService.askNodeAttributes(this.data.device.id, n);
                 }
             });
@@ -287,7 +287,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             } else if (n.class === NodeType.Variable && n.checked) {
                 // let objNode = new Node(n.id.split('>').join(''), n.text);
                 let objNode = new Node(n.id, n.text);
-                objNode.type = Utils.getType(n.property);
+                objNode.type = this.isOdbc() ? n.type : Utils.getType(n.property);
                 objNode.checked = n.checked;
                 objNode.enabled = n.enabled;
                 result.push(objNode);
@@ -368,6 +368,10 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 		return (this.data.device.type === DeviceType.FuxaServer) ? true : false;
     }
 
+    isOdbc() {
+		return (this.data.device.type === DeviceType.ODBC) ? true : false;
+    }
+
     checkMemAddress(memaddress) {
         if (memaddress === '000000' || memaddress === '100000') {
             this.data.tag.type = ModbusTagType.Bool;
@@ -377,7 +381,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isValidate() {
         if (this.error) {
             return false;
-        } else if (this.isOpcua() || this.isWebApi()) {
+        } else if (this.isOpcua() || this.isWebApi() || this.isOdbc()) {
             return true;
         } else if (this.isInternal()) {
             return (this.data.tag.name) ? true : false;
