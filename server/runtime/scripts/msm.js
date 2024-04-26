@@ -51,6 +51,7 @@ function MyScriptsModule(_events, _logger) {
             result.module[initEvents.name](events, _script.outputId);
             return result.module[_script.name](...paramsValue);
         }
+        throw new Error(result);
     }
 
     this.runScript = function (_script) {
@@ -124,6 +125,7 @@ function MyScriptsModule(_events, _logger) {
             result.module = _requireFromString(code, filename);
         } catch(ex) {
             logger.error(`load.script error: ${(ex.stack) ? ex.stack : ex}`);
+            return ex;
         }
         return result;
     }

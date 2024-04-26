@@ -3,7 +3,7 @@ import { Component, OnInit, Inject, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { ChangeDetectorRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { HmiService } from '../../_services/hmi.service';
 import { ScriptService } from '../../_services/script.service';
@@ -45,7 +45,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     script: Script;
     msgRemoveScript = '';
     ready = false;
-    private subscriptionScriptConsole: Subscription;
+    private destroy$ = new Subject<void>();
 
     constructor(public dialogRef: MatDialogRef<ScriptEditorComponent>,
         public dialog: MatDialog,
@@ -73,20 +73,17 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             fnc.text = this.translateService.instant(fnc.text);
             fnc.tooltip = this.translateService.instant(fnc.tooltip);
         });
-        this.subscriptionScriptConsole = this.hmiService.onScriptConsole.subscribe((scriptConsole: ScriptConsoleMessage) => {
+        this.hmiService.onScriptConsole.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((scriptConsole: ScriptConsoleMessage) => {
             this.console.push(scriptConsole.msg);
         });
         this.loadTestParameter();
     }
 
     ngOnDestroy() {
-        try {
-            if (this.subscriptionScriptConsole) {
-                this.subscriptionScriptConsole.unsubscribe();
-            }
-        } catch (e) {
-            console.error(e);
-        }
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     setCM() {
@@ -234,6 +231,9 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             }
         }, err => {
             this.console.push((err.message) ? err.message : err);
+            if (err.error) {
+                this.console.push((err.error.message) ? err.error.message : err.error);
+            }
         });
     }
 
