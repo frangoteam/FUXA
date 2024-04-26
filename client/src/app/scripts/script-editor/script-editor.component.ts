@@ -134,6 +134,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         this.translateService.get(label).subscribe((txt: string) => { label = txt; });
         this.translateService.get(error).subscribe((txt: string) => { error = txt; });
         let dialogRef = this.dialog.open(EditNameComponent, {
+            disableClose: true,
             position: { top: '60px' },
             data: { name: this.script.name, title: title, label: label, exist: exist, error: error, validator: this.validateName }
         });
@@ -148,6 +149,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         let error = 'dlg.item-name-error';
         let exist = this.parameters.map(p => p.name);
         let dialogRef = this.dialog.open(DialogScriptParam, {
+            disableClose: true,
             position: { top: '60px' },
             data: { name: '', exist: exist, error: error, validator: this.validateName  }
         });
