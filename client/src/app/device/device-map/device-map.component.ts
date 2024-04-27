@@ -365,6 +365,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.goto.emit(device);
     }
 
+    withListConfig(device: Device): boolean {
+        return device.type !== DeviceType.ODBC;
+    }
+
     isDevicePropertyToShow(device: Device) {
         if (device.property && device.type !== 'OPCUA') {
             return true;

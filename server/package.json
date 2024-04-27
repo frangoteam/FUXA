@@ -1,6 +1,6 @@
 {
   "name": "fuxa-server",
-  "version": "1.1.19-1573",
+  "version": "1.1.19-1574",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
@@ -40,7 +40,6 @@
     "node-snap7": "1.0.6",
     "nodemailer": "6.9.9",
     "nopt": "5.0.0",
-    "odbc": "2.4.8",
     "pdfmake": "0.2.5",
     "socket.io": "2.5.0",
     "sqlite3": "5.1.5",
