@@ -4,7 +4,7 @@ import { GaugePanelProperty, PanelPropertyScaleModeType } from '../../../../_mod
 @Component({
     selector: 'app-panel-property',
     templateUrl: './panel-property.component.html',
-    styleUrls: ['./panel-property.component.css']
+    styleUrls: ['./panel-property.component.scss']
 })
 export class PanelPropertyComponent implements OnInit {
 

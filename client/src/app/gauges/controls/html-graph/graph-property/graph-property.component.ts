@@ -17,7 +17,7 @@ import { GraphPieComponent } from '../graph-pie/graph-pie.component';
 @Component({
     selector: 'app-graph-property',
     templateUrl: './graph-property.component.html',
-    styleUrls: ['./graph-property.component.css']
+    styleUrls: ['./graph-property.component.scss']
 })
 export class GraphPropertyComponent implements OnInit, OnDestroy {
 
