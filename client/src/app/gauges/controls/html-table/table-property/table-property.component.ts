@@ -127,7 +127,6 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
             let script = scripts.find(s => s.id === scriptId);
             event.actoptions[SCRIPT_PARAMS_MAP] = [];
             if (script && script.parameters) {
-                debugger;
                 event.actoptions[SCRIPT_PARAMS_MAP] = Utils.clone(script.parameters);
             }
         }

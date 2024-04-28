@@ -14,6 +14,9 @@ import { format } from 'fecha';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
+import { ScriptService } from '../../../../_services/script.service';
+import { ProjectService } from '../../../../_services/project.service';
+import { SCRIPT_PARAMS_MAP, ScriptParam } from '../../../../_models/script';
 
 declare const numeral: any;
 @Component({
@@ -58,6 +61,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(
         private dataService: DataConverterService,
+        private projectService: ProjectService,
+        private scriptService: ScriptService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
 
@@ -249,11 +254,30 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     selectRow(index: number) {
         if (this.isSelectable()) {
             this.selectedRow = this.dataSource.data[index];
+            this.events.forEach(event => {
+                this.runScript(event, this.selectedRow);
+            });
         }
     }
 
     isSelected(row: MatRow) {
         return this.selectedRow === row;
+    }
+
+    private runScript(event: GaugeEvent, selected: MatRow) {
+        if (event.actparam) {
+            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
+            torun.parameters = <ScriptParam[]>Utils.clone(event.actoptions[SCRIPT_PARAMS_MAP]);
+            torun.parameters.forEach(param => {
+                if (Utils.isNullOrUndefined(param.value)) {
+                    param.value = selected;
+                }
+            });
+            this.scriptService.runScript(torun).subscribe(result => {
+            }, err => {
+                console.error(err);
+            });
+        }
     }
 
     private addRowDataToTable(dt: number, tagId: string, value: any) {
