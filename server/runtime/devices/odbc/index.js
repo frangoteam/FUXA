@@ -346,9 +346,9 @@ function ODBCclient(_data, _logger, _events) {
 /**
  * Return tables list
  */
-function getTables(endpoint, fncGetProperty) {
+function getTables(endpoint, fncGetProperty, packagerManager) {
     return new Promise( async function (resolve, reject) {
-        if (loadOdbcLib()) { 
+        if (loadOdbcLib(packagerManager)) { 
             var connection;
             try {
                 var security
@@ -383,12 +383,12 @@ function getTables(endpoint, fncGetProperty) {
                 connection.close();
             }
         } else {
-            reject('getendpoints-error: node-opcua not found!');
+            reject('getendpoints-error: odbc not found!');
         }
     });
 }
 
-function loadOdbcLib() {
+function loadOdbcLib(manager) {
     if (!odbc) {
         try { odbc = require('odbc'); } catch { }
         if (!odbc && manager) { try { odbc = manager.require('odbc'); } catch { } }
@@ -401,7 +401,7 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager) {
-        if (!loadOdbcLib()) return null;
+        if (!loadOdbcLib(manager)) return null;
         return new ODBCclient(data, logger, events);
     },
     getTables: getTables

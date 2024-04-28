@@ -417,7 +417,7 @@ function Device(data, runtime) {
  * @param {*} endpoint 
  * @param {*} type 
  */
-function getSupportedProperty(endpoint, type) {
+function getSupportedProperty(endpoint, type, packagerManager) {
     var self = this;
     return new Promise(function (resolve, reject) {
         if (type === DeviceEnum.OPCUA) {
@@ -427,7 +427,7 @@ function getSupportedProperty(endpoint, type) {
                 reject(err);
             });
         } else if (type === DeviceEnum.ODBC) {
-            ODBCclient.getTables(endpoint, fncGetDeviceProperty).then(function (result) {
+            ODBCclient.getTables(endpoint, fncGetDeviceProperty, packagerManager).then(function (result) {
                 resolve(result);
             }).catch(function (err) {
                 reject(err);
