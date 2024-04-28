@@ -129,7 +129,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 }
             });
             // this.data.nodes = result;
-        } else if (this.isModbus() || this.isSiemensS7() || this.isEthernetIp()) {
+        } else if (this.isModbus() || this.isEthernetIp()) {
         } else if (this.isInternal() || this.isServer()) {
             let tags = <Tag[]>Object.values(this.data.device.tags);
             this.error = '';
@@ -335,10 +335,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         }
         return result;
     }
-
-    isSiemensS7() {
-		return (this.data.device.type === DeviceType.SiemensS7) ? true : false;
-	}
 
 	isModbus() {
 		return (this.data.device.type === DeviceType.ModbusRTU || this.data.device.type === DeviceType.ModbusTCP) ? true : false;

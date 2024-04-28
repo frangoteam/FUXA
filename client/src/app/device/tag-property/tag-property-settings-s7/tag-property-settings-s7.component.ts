@@ -26,7 +26,8 @@ export class TagPropertySettingsS7Component implements OnInit {
             deviceName: [this.data.device.name, Validators.required],
             tagName: [this.data.tag.name, [Validators.required, this.validateName()]],
             tagType: [this.data.tag.type, Validators.required],
-            tagAddress: [this.data.tag.address, Validators.required]
+            tagAddress: [this.data.tag.address, Validators.required],
+            tagDescription: [this.data.tag.description]
         });
         this.formGroup.updateValueAndValidity();
         Object.keys(this.data.device.tags).forEach((key) => {

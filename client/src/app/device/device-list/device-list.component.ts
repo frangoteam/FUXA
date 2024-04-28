@@ -341,6 +341,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 tag.name = result.tagName;
                 tag.type = result.tagType;
                 tag.address = result.tagAddress;
+                tag.description = result.tagDescription;
                 if (checkToAdd) {
                     this.checkToAdd(tag, this.deviceSelected);
                 } else if (tag.id !== oldTagId) {
