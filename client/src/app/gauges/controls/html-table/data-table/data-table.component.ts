@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType } from '../../../../_models/hmi';
+import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -52,6 +52,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     addValueInterval = 0;
     private pauseMemoryValue: TableMapValueDictionary = {};
     setOfSourceTableData = false;
+    selectedRow = null;
+    events: GaugeEvent[];
+    eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
 
     constructor(
         private dataService: DataConverterService,
@@ -237,6 +240,20 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setLoading(false);
         }, 500);
         this.reloadActive = false;
+    }
+
+    isSelectable(): boolean {
+        return this.events?.some(event => event.type === this.eventSelectionType);
+    }
+
+    selectRow(index: number) {
+        if (this.isSelectable()) {
+            this.selectedRow = this.dataSource.data[index];
+        }
+    }
+
+    isSelected(row: MatRow) {
+        return this.selectedRow === row;
     }
 
     private addRowDataToTable(dt: number, tagId: string, value: any) {
@@ -464,6 +481,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 fontSize: 10,
                 background: '#F9F9F9',
                 color: '#000000',
+
+            },
+            selection: {
+                background: '#3059AF',
+                color: '#FFFFFF',
+                fontBold: true,
             },
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
             rows: [],

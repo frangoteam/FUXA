@@ -5,7 +5,7 @@
         bottom: 0px;
         overflow: auto;
         width:calc(100% - 10px);
-
+        padding-top: 5px;
         .table-type {
             width: 120px;
         }
@@ -118,5 +118,49 @@
         padding-top: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid var(--toolboxBorder);
+    }
+
+    .events-section {
+        display: contents;
+
+        .event-item {
+            margin-top: 5px;
+        }
+        .event-type {
+            width: 120px;
+        }
+        .event-action {
+            width: 120px;
+        }
+        .event-remove {
+            float: right;
+        }
+        .event-action-ext {
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .event-script {
+            padding-left: 10px;
+            .script-selection {
+                width: calc(100% - 15px);
+            }
+            .event-script-param {
+                width: 120px;
+            }
+            .event-script-value {
+                width: calc(100% - 120px);
+            }
+            .event-script-tag {
+                width: calc(100% - 125px);
+            }
+        }
+    }
+    .events-toolbox {
+        display: block;
+        width: 100%;
+        
+        button {
+            margin-left: 10px;
+        }
     }
 }
