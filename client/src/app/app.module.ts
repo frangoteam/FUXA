@@ -39,7 +39,7 @@ import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.c
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
-import { ScriptEditorComponent, DialogScriptParam } from './scripts/script-editor/script-editor.component';
+import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
 import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
 import { ScriptPermissionComponent } from './scripts/script-permission/script-permission.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
@@ -178,6 +178,7 @@ import { FuxaViewDialogComponent } from './fuxa-view/fuxa-view-dialog/fuxa-view-
 import { DeviceTagSelectionComponent } from './device/device-tag-selection/device-tag-selection.component';
 import { WebcamPlayerComponent } from './gui-helpers/webcam-player/webcam-player.component';
 import { WebcamPlayerDialogComponent } from './gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
+import { ScriptEditorParamComponent } from './scripts/script-editor/script-editor-param/script-editor-param.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -288,7 +289,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ScriptModeComponent,
         ReportListComponent,
         ReportEditorComponent,
-        DialogScriptParam,
+        ScriptEditorParamComponent,
         TextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
