@@ -6,7 +6,7 @@ import { GaugeIframeProperty } from '../../../../_models/hmi';
 @Component({
     selector: 'app-iframe-property',
     templateUrl: './iframe-property.component.html',
-    styleUrls: ['./iframe-property.component.css']
+    styleUrls: ['./iframe-property.component.scss']
 })
 export class IframePropertyComponent implements OnInit {
 

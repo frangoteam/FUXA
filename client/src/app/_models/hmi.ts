@@ -371,6 +371,7 @@ export interface GaugeTableProperty {
     id: string;
     type: TableType;
     options: TableOptions;
+    events: GaugeEvent[];
 }
 
 export enum TableType {

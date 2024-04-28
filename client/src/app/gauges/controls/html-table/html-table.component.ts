@@ -58,7 +58,12 @@ export class HtmlTableComponent {
                 //     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 // }
                 if (!gab.property) {
-                    gab.property = <GaugeTableProperty>{ id: null, type: TableType.data, options: DataTableComponent.DefaultOptions() };
+                    gab.property = <GaugeTableProperty>{
+                        id: null,
+                        type: TableType.data,
+                        options: DataTableComponent.DefaultOptions(),
+                        events: []
+                    };
                 }
                 htmlTable.innerHTML = '';
                 (<DataTableComponent>componentRef.instance).isEditor = !isview;
@@ -66,6 +71,7 @@ export class HtmlTableComponent {
                 // componentRef.instance.rangeType = chartRange;
                 (<DataTableComponent>componentRef.instance).id = gab.id;
                 (<DataTableComponent>componentRef.instance).type = gab.property.type;
+                (<DataTableComponent>componentRef.instance).events = gab.property.events;
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlTable.appendChild(componentRef.location.nativeElement);
