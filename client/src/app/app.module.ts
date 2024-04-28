@@ -179,6 +179,7 @@ import { DeviceTagSelectionComponent } from './device/device-tag-selection/devic
 import { WebcamPlayerComponent } from './gui-helpers/webcam-player/webcam-player.component';
 import { WebcamPlayerDialogComponent } from './gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 import { ScriptEditorParamComponent } from './scripts/script-editor/script-editor-param/script-editor-param.component';
+import { TagPropertySettingsS7Component } from './device/tag-property/tag-property-settings-s7/tag-property-settings-s7.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -202,6 +203,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DeviceComponent,
         DeviceTagSelectionComponent,
         TagPropertyComponent,
+        TagPropertySettingsS7Component,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,

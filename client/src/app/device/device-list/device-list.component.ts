@@ -19,6 +19,7 @@ import { HmiService } from '../../_services/hmi.service';
 import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
+import { TagPropertySettingsS7Component } from '../tag-property/tag-property-settings-s7/tag-property-settings-s7.component';
 
 @Component({
     selector: 'app-device-list',
@@ -282,6 +283,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
+        if (this.deviceSelected.type === DeviceType.SiemensS7) {
+            this.editTagSettingsS7(tag, checkToAdd);
+            return;
+        }
         let oldtag = tag.id;
         let temptag: Tag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
@@ -319,6 +324,31 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     }
                     this.projectService.setDeviceTags(this.deviceSelected);
                 }
+            }
+        });
+    }
+
+    private editTagSettingsS7(tag: Tag, checkToAdd: boolean) {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertySettingsS7Component, {
+            disableClose: true,
+            data: { device: this.deviceSelected, tag: tagToEdit },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                tag.name = result.tagName;
+                tag.type = result.tagType;
+                tag.address = result.tagAddress;
+                if (checkToAdd) {
+                    this.checkToAdd(tag, this.deviceSelected);
+                } else if (tag.id !== oldTagId) {
+                    //remove old tag device reference
+                    delete this.deviceSelected.tags[oldTagId];
+                    this.checkToAdd(tag, this.deviceSelected);
+                }
+                this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
     }
