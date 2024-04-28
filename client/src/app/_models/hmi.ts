@@ -405,6 +405,11 @@ export interface TableOptions {
         color?: string;
         background?: string;
     };
+    selection?: {
+        fontBold?: boolean;
+        color?: string;
+        background?: string;
+    };
     columns: TableColumn[];
     rows: TableRow[];
 }
