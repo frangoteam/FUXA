@@ -884,6 +884,7 @@
     "device.tag-property-unit": "Unit",
     "device.tag-property-digits": "Decimal",
     "device.tag-property-initvalue": "Init value",
+    "device.tag-property-description": "Description",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
