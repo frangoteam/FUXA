@@ -45,6 +45,8 @@ export class ScriptService {
                 script.parameters?.forEach(param => {
                     if (Utils.isNumeric(param.value)) {
                         parameterToAdd += `let ${param.name} = ${param.value};`;
+                    } else if (Utils.isObject(param.value)) {
+                        parameterToAdd += `let ${param.name} = ${JSON.stringify(param.value)};`;
                     } else {
                         parameterToAdd += `let ${param.name} = '${param.value}';`;
                     }
@@ -136,6 +138,6 @@ export class ScriptService {
     public async $runServerScript(scriptName: string, ...params: any[]) {
         let scriptToRun = this.projectService.getScripts().find(dataScript => dataScript.name == scriptName);
         scriptToRun.parameters = params;
-        return await await lastValueFrom(this.runScript(scriptToRun));
+        return await lastValueFrom(this.runScript(scriptToRun));
     }
 }
