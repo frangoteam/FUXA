@@ -1,16 +1,17 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { Device, Tag, TagType } from '../../../_models/device';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-tag-property-settings-s7',
-    templateUrl: './tag-property-settings-s7.component.html',
-    styleUrls: ['./tag-property-settings-s7.component.scss']
+    selector: 'app-tag-property-edit-s7',
+    templateUrl: './tag-property-edit-s7.component.html',
+    styleUrls: ['./tag-property-edit-s7.component.scss']
 })
-export class TagPropertySettingsS7Component implements OnInit {
+export class TagPropertyEditS7Component implements OnInit {
 
+    @Output() result = new EventEmitter<any>();
     formGroup: UntypedFormGroup;
     tagType = TagType;
     existingNames = [];
@@ -18,7 +19,7 @@ export class TagPropertySettingsS7Component implements OnInit {
 
     constructor(private fb: UntypedFormBuilder,
         private translateService: TranslateService,
-        public dialogRef: MatDialogRef<TagPropertySettingsS7Component>,
+        public dialogRef: MatDialogRef<TagPropertyEditS7Component>,
         @Inject(MAT_DIALOG_DATA) public data: TagProperty) { }
 
     ngOnInit() {
@@ -53,11 +54,11 @@ export class TagPropertySettingsS7Component implements OnInit {
     }
 
     onNoClick(): void {
-        this.dialogRef.close();
+        this.result.emit();
     }
 
     onOkClick(): void {
-        this.dialogRef.close(this.formGroup.getRawValue());
+        this.result.emit(this.formGroup.getRawValue());
     }
 
 }

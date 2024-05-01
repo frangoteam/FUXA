@@ -19,7 +19,7 @@ import { HmiService } from '../../_services/hmi.service';
 import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
-import { TagPropertySettingsS7Component } from '../tag-property/tag-property-settings-s7/tag-property-settings-s7.component';
+import { TagPropertyService } from '../tag-property/tag-property.service';
 
 @Component({
     selector: 'app-device-list',
@@ -61,6 +61,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
         private projectService: ProjectService,
+        private tagPropertyService: TagPropertyService,
         private toastr: ToastrService) { }
 
     ngOnInit() {
@@ -193,8 +194,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     onAddTag() {
-        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI
-            || this.deviceSelected.type === DeviceType.ODBC) {
+        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             this.addOpcTags(null);
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics();
@@ -284,7 +284,19 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     editTag(tag: Tag, checkToAdd: boolean) {
         if (this.deviceSelected.type === DeviceType.SiemensS7) {
-            this.editTagSettingsS7(tag, checkToAdd);
+            this.tagPropertyService.editTagPropertyS7(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+                console.log(result);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.FuxaServer) {
+            this.tagPropertyService.editTagPropertyServer(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+                console.log(result);
+            });
             return;
         }
         let oldtag = tag.id;
@@ -311,10 +323,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     if (this.deviceSelected.type === DeviceType.internal) {
                         tag.value = '0';
                     }
-                    if (this.deviceSelected.type === DeviceType.FuxaServer) {
-                        tag.init = temptag.init;
-                        tag.value = temptag.init;
-                    }
                     if (checkToAdd) {
                         this.checkToAdd(tag, result.device);
                     } else if (tag.id !== oldtag) {
@@ -324,32 +332,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     }
                     this.projectService.setDeviceTags(this.deviceSelected);
                 }
-            }
-        });
-    }
-
-    private editTagSettingsS7(tag: Tag, checkToAdd: boolean) {
-        let oldTagId = tag.id;
-        let tagToEdit: Tag = Utils.clone(tag);
-        let dialogRef = this.dialog.open(TagPropertySettingsS7Component, {
-            disableClose: true,
-            data: { device: this.deviceSelected, tag: tagToEdit },
-            position: { top: '60px' }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                tag.name = result.tagName;
-                tag.type = result.tagType;
-                tag.address = result.tagAddress;
-                tag.description = result.tagDescription;
-                if (checkToAdd) {
-                    this.checkToAdd(tag, this.deviceSelected);
-                } else if (tag.id !== oldTagId) {
-                    //remove old tag device reference
-                    delete this.deviceSelected.tags[oldTagId];
-                    this.checkToAdd(tag, this.deviceSelected);
-                }
-                this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
     }
