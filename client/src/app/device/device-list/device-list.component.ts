@@ -287,7 +287,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.tagPropertyService.editTagPropertyS7(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
-                console.log(result);
             });
             return;
         }
@@ -295,7 +294,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.tagPropertyService.editTagPropertyServer(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
-                console.log(result);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.ModbusRTU || this.deviceSelected.type === DeviceType.ModbusTCP) {
+            this.tagPropertyService.editTagPropertyModbus(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
             });
             return;
         }
