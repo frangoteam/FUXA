@@ -1,0 +1,57 @@
+<div class="header-item-dialog">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'dlg.headeritem-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn" cdkFocusInitial>clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field block mb10">
+            <span>{{'dlg.headeritem-icon' | translate}}</span>
+            <mat-select [(value)]="item.icon" class="icons-selector" #iconsel>
+                <mat-select-trigger>
+                    <mat-icon>{{iconsel.value}}</mat-icon>
+                </mat-select-trigger>
+                <!-- <mat-option [value]="'image'" (click)="imagefile.value = '';imagefile.click();">
+                    {{'dlg.menuitem-image' | translate}}
+                    <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
+                </mat-option> -->
+                <mat-option *ngFor="let icon of icons$ | async" [value]="icon" (click)="item.image = ''" style="display: inline-block !important;">
+                    <mat-icon class="">{{ icon }}</mat-icon>
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="block mt10">
+            <div class="my-form-field ftl">
+                <span>{{'dlg.layout-lbl-type' | translate}}</span>
+                <mat-select [(ngModel)]="item.type" style="width: 120px">
+                    <mat-option *ngFor="let type of headerType" [value]="type">
+                        {{ 'item.headertype-' + type | translate }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="ftr ml10">
+                <div class="my-form-field lbk field-input-60">
+                    <span>{{'dlg.layout-lbl-margin-left' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.marginLeft" min="0" step="1" type="number">
+                </div>
+                <div class="my-form-field lbk field-input-60 ml5">
+                    <span>{{'dlg.layout-lbl-margin-right' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.marginRight" min="0" step="1" type="number">
+                </div>
+            </div>
+        </div>
+        <div class="my-form-field ftl mt10">
+            <span>{{'dlg.layout-nav-bkcolor' | translate}}</span>
+            <input [(colorPicker)]="item.bkcolor" [style.background]="item.bkcolor" [cpAlphaChannel]="'always'"
+                class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+        </div>
+        <div class="my-form-field ftr mt10">
+            <span>{{'dlg.layout-nav-fgcolor' | translate}}</span>
+            <input [(colorPicker)]="item.fgcolor" [style.background]="item.fgcolor" [cpAlphaChannel]="'always'"
+                class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>    
+</div>

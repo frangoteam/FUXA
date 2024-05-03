@@ -109,6 +109,22 @@ function DeviceTemplate(_data, _logger, _events) {
     this.lastReadTimestamp = () => {
         console.error('Not supported!');
     }
+
+    /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        console.error('Not supported!');
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        console.error('Not supported!');
+    }
 }
 
 module.exports = {

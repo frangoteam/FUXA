@@ -365,6 +365,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.goto.emit(device);
     }
 
+    withListConfig(device: Device): boolean {
+        return device.type !== DeviceType.ODBC;
+    }
+
     isDevicePropertyToShow(device: Device) {
         if (device.property && device.type !== 'OPCUA') {
             return true;
@@ -439,7 +443,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     getDeviceStatusText(device: Device) {
         if (this.devicesStatus[device.id]) {
-            let st = this.devicesStatus[device.id].status.replace('connect-', '');
+            let st = this.devicesStatus[device.id]?.status?.replace('connect-', '');
             if (this.deviceStatusType[st]) {
                 return this.deviceStatusType[st];
             }
@@ -463,6 +467,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         exist.push('server');
         let tempdevice = JSON.parse(JSON.stringify(device));
         let dialogRef = this.dialog.open(DevicePropertyComponent, {
+            disableClose: true,
             panelClass: 'dialog-property',
             data: {
                 device: tempdevice, remove: toremove, exist: exist, availableType: this.plugins,
@@ -525,10 +530,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     plcs(): Device[] {
-        return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI && d.type !== DeviceType.FuxaServer);
+        return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI
+            && d.type !== DeviceType.FuxaServer
+            && d.type !== DeviceType.ODBC);
     }
 
     flows(): Device[] {
-        return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI);
+        return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI
+            || d.type === DeviceType.ODBC);
     }
 }

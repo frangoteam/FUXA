@@ -1,20 +1,22 @@
 import { Component, EventEmitter, OnInit, Input, Output, ViewChild, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject, of, takeUntil } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatDialog } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { TableType, TableCellType, TableCellAlignType, TableRangeType } from '../../../../_models/hmi';
+import { TableType, TableCellType, TableCellAlignType, TableRangeType, GaugeTableProperty, GaugeEvent, GaugeEventType, GaugeEventActionType } from '../../../../_models/hmi';
 import { DataTableComponent } from '../data-table/data-table.component';
 import { TableCustomizerComponent, ITableCustom } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
+import { SCRIPT_PARAMS_MAP, Script } from '../../../../_models/script';
+import { ProjectService } from '../../../../_services/project.service';
 
 @Component({
     selector: 'app-table-property',
     templateUrl: './table-property.component.html',
-    styleUrls: ['./table-property.component.css']
+    styleUrls: ['./table-property.component.scss']
 })
 export class TablePropertyComponent implements OnInit, OnDestroy {
 
@@ -33,41 +35,51 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
     lastRangeType = TableRangeType;
     defaultColor = Utils.defaultColor;
 
-    private _onDestroy = new Subject<void>();
+    private destroy$ = new Subject<void>();
+    property: GaugeTableProperty;
+    eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.select)];
+    selectActionType = {};
+    actionRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+    scripts$: Observable<Script[]>;
 
-    constructor(
-        private dialog: MatDialog,
-        private translateService: TranslateService) {
-        }
+    constructor(private dialog: MatDialog,
+                private projectService: ProjectService,
+                private translateService: TranslateService) {
+        // this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow)] = this.translateService.instant(GaugeEventActionType.onwindow);
+        // this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.ondialog)] = this.translateService.instant(GaugeEventActionType.ondialog);
+        this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
+    }
 
     ngOnInit() {
         Object.keys(this.lastRangeType).forEach(key => {
             this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
         });
         this._reload();
+        this.scripts$ = of(this.projectService.getScripts()).pipe(takeUntil(this.destroy$));
     }
 
     ngOnDestroy() {
-        this._onDestroy.next();
-        this._onDestroy.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private _reload() {
-        if (this.data.settings.property) {
-            this.tableTypeCtrl.setValue(this.data.settings.property.type);
-            Object.assign(this.options, DataTableComponent.DefaultOptions(), this.data.settings.property.options);
+        this.property = this.data.settings.property;
+        if (this.property) {
+            this.tableTypeCtrl.setValue(this.property.type);
+            this.options = Object.assign(this.options, DataTableComponent.DefaultOptions(), this.property.options);
         } else {
             this.ngOnInit();
         }
     }
 
     onTableChanged() {
-        this.data.settings.property.options = JSON.parse(JSON.stringify(this.options));
-        this.data.settings.property.type = this.tableTypeCtrl.value;
+        this.property.options = JSON.parse(JSON.stringify(this.options));
+        this.property.type = this.tableTypeCtrl.value;
         this.onPropChanged.emit(this.data.settings);
     }
 
-    onAdd() {
+    onCustomize() {
         // if (this.grptabs.selectedIndex === 0) { // columns
         //     this.options.columns.push(new TableColumn());
         // } else if (this.grptabs.selectedIndex === 1) { // rows
@@ -78,7 +90,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
             data: <ITableCustom> {
                 columns: JSON.parse(JSON.stringify(this.options.columns)),
                 rows: JSON.parse(JSON.stringify(this.options.rows)),
-                type: <TableType>this.data.settings.property.type
+                type: <TableType>this.property.type
             },
             position: { top: '60px' }
         });
@@ -90,5 +102,34 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
                 this.onTableChanged();
             }
         });
+    }
+
+    onAddEvent() {
+        const gaugeEvent = new GaugeEvent();
+        this.addEvent(gaugeEvent);
+    }
+
+    private addEvent(gaugeEvent: GaugeEvent) {
+        if (!this.property.events) {
+            this.property.events = [];
+        }
+        this.property.events.push(gaugeEvent);
+    }
+
+    onRemoveEvent(index: number) {
+        this.property.events.splice(index, 1);
+        this.onTableChanged();
+    }
+
+    onScriptChanged(scriptId, event) {
+        const scripts = this.projectService.getScripts();
+        if (event && scripts) {
+            let script = scripts.find(s => s.id === scriptId);
+            event.actoptions[SCRIPT_PARAMS_MAP] = [];
+            if (script && script.parameters) {
+                event.actoptions[SCRIPT_PARAMS_MAP] = Utils.clone(script.parameters);
+            }
+        }
+        this.onTableChanged();
     }
 }

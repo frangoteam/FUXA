@@ -648,6 +648,13 @@ function getDevices() {
 }
 
 /**
+ * Return Device from name
+ */
+function getDevice(name) {
+    return Object.values(data.devices).find(device => device.name === name);
+}
+
+/**
  * Get the device property
  */
 function getDeviceProperty(query) {
@@ -785,6 +792,10 @@ function getAlarms() {
 function setDeviceProperty(query) {
     return new Promise(function (resolve, reject) {
         if (query.query === 'security') {
+            if (!query.value) {
+                resolve();
+                return;
+            }
             prjstorage.setSection({ table: prjstorage.TableType.DEVICESSECURITY, name: query.name, value: query.value }).then(() => {
                 resolve();
             }).catch(function (err) {
@@ -933,6 +944,7 @@ module.exports = {
     init: init,
     load: load,
     getDevices: getDevices,
+    getDevice: getDevice,
     getAlarms: getAlarms,
     getNotifications: getNotifications,
     getScripts: getScripts,

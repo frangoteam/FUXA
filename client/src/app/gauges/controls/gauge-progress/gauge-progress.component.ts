@@ -54,16 +54,18 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
                     if (val < gap.min) {val = gap.min;}
                     let k = (heightBase - 0) / (gap.max - gap.min);
                     let vtoy = k * (val - gap.min);
-                    rect.setAttribute('y', yBase + heightBase - vtoy);
-                    rect.setAttribute('height', vtoy);
-                    if (gap.style[1]) {
-                        let htmlValue = Utils.searchTreeStartWith(svgele.node, this.prefixValue);
-                        if (htmlValue) {
-                            htmlValue.innerHTML = val;
-                            if (gap.text) {
-                                htmlValue.innerHTML += ' ' + gap.text;
+                    if (!Number.isNaN(vtoy)) {
+                        rect.setAttribute('y', yBase + heightBase - vtoy);
+                        rect.setAttribute('height', vtoy);
+                        if (gap.style[1]) {
+                            let htmlValue = Utils.searchTreeStartWith(svgele.node, this.prefixValue);
+                            if (htmlValue) {
+                                htmlValue.innerHTML = val;
+                                if (gap.text) {
+                                    htmlValue.innerHTML += ' ' + gap.text;
+                                }
+                                htmlValue.style.top = (heightBase - vtoy - 7).toString() + 'px';
                             }
-                            htmlValue.style.top = (heightBase - vtoy - 7).toString() + 'px';
                         }
                     }
                 }
@@ -73,9 +75,10 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(ga: GaugeSettings, isview: boolean = false) {
+    static initElement(ga: GaugeSettings, isview: boolean = false): HTMLElement {
         let ele = document.getElementById(ga.id);
         if (ele) {
+            ele?.setAttribute('data-name', ga.name);
             if (!ga.property) {
                 ga.property = new GaugeProperty();
                 let ip: GaugeRangeProperty = new GaugeRangeProperty();
@@ -112,6 +115,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
                 }
             }
         }
+        return ele;
     }
 
     static initElementColor(bkcolor, color, ele) {

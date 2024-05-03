@@ -141,8 +141,8 @@ function MODBUSclient(_data, _logger, _events) {
                     let varsValueChanged = _updateVarsValue(result);
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } else {
                     // console.error('then error');
@@ -300,7 +300,7 @@ function MODBUSclient(_data, _logger, _events) {
             }
             try {
                 await _writeMemory(parseInt(memaddr), offset, val).then(result => {
-                    logger.info(`'${data.name}' setValue(${sigid}, ${val})`, true);
+                    logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
                 }, reason => {
                     if (reason && reason.stack) {
                         logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
@@ -314,7 +314,11 @@ function MODBUSclient(_data, _logger, _events) {
             } catch (err) {
                 console.log(err);
             }
+            return true;
+        } else {
+            logger.error(`'${data.name}' setValue(${sigid}, ${value}) Tag not found`, true, true);
         }
+        return false;
     }
 
     /**
@@ -340,6 +344,24 @@ function MODBUSclient(_data, _logger, _events) {
      */
      this.lastReadTimestamp = () => {
         return lastTimestampValue;
+    }
+
+    /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        return data.tags[tagId] ? data.tags[tagId].daq : null;
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        if (data.tags[tagId]) {
+            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
+        }
     }
 
     /**

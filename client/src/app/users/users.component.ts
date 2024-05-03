@@ -1,13 +1,13 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Inject, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { SelOptionsComponent } from '../gui-helpers/sel-options/sel-options.component';
+import { MatDialog } from '@angular/material/dialog';
 
 import { UserService } from '../_services/user.service';
 import { User, UserGroups } from '../_models/user';
+import { UserEditComponent } from './user-edit/user-edit.component';
+import { ProjectService } from '../_services/project.service';
 
 @Component({
 	selector: 'app-users',
@@ -16,15 +16,17 @@ import { User, UserGroups } from '../_models/user';
 })
 export class UsersComponent implements OnInit, AfterViewInit {
 
-	displayedColumns = ['select', 'username', 'fullname', 'groups', 'remove'];
+	displayedColumns = ['select', 'username', 'fullname', 'groups', 'start', 'remove'];
 	dataSource = new MatTableDataSource([]);
 
 	users: User[];
+	usersInfo = {};
 
 	@ViewChild(MatTable, {static: false}) table: MatTable<any>;
 	@ViewChild(MatSort, {static: false}) sort: MatSort;
 
 	constructor(private dialog: MatDialog,
+		private projectService: ProjectService,
 		private userService: UserService) { }
 
 	ngOnInit() {
@@ -60,11 +62,21 @@ export class UsersComponent implements OnInit, AfterViewInit {
 		return UserGroups.GroupToLabel(grp);
 	}
 
+	getViewStartName(username: string) {
+		return this.usersInfo[username];
+	}
+
 	private loadUsers() {
 		this.users = [];
+		this.usersInfo = {};
 		this.userService.getUsers(null).subscribe(result => {
-			Object.values<User>(result).forEach(u => {
-				this.users.push(u);
+			Object.values<User>(result).forEach(user => {
+				if (user.info) {
+					const start = JSON.parse(user.info)?.start;
+					const view = this.projectService.getViewFromId(start);
+					this.usersInfo[user.username] = view?.name;
+				}
+				this.users.push(user);
 			});
 			this.bindToTable(this.users);
 		}, err => {
@@ -75,7 +87,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 	private editUser(user: User, current: User) {
 		let muser: User = JSON.parse(JSON.stringify(user));
 		muser.password = '';
-		let dialogRef = this.dialog.open(DialogUser, {
+		let dialogRef = this.dialog.open(UserEditComponent, {
 			position: { top: '60px' },
 			data: { user: muser, current: current, users: this.users.map((u: User) => u.username) }
 		});
@@ -103,56 +115,3 @@ export class UsersComponent implements OnInit, AfterViewInit {
 	}
 }
 
-@Component({
-	selector: 'app-dialog-user',
-	templateUrl: './user.dialog.html',
-})
-export class DialogUser {
-	selectedGroups = [];
-	groups = UserGroups.Groups;
-	showPassword: boolean;
-
-	@ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
-
-	constructor(public dialogRef: MatDialogRef<DialogUser>,
-		@Inject(MAT_DIALOG_DATA) public data: any) {
-		this.selectedGroups = UserGroups.ValueToGroups(this.data.user.groups);
-	}
-
-	onNoClick(): void {
-		this.dialogRef.close();
-	}
-
-	onOkClick(): void {
-		if (this.seloptions) {
-			this.data.user.groups = UserGroups.GroupsToValue(this.seloptions.selected);
-		}
-		this.dialogRef.close(this.data.user);
-	}
-
-	isValid(name): boolean {
-		if (!this.data.current) {	// to remove
-			return true;
-		} else if (name) {
-			let editname = (this.data.user) ? this.data.user.username : null;
-			return (this.data.users.find((n) => n === name && n !== editname)) ? false : true;
-		}
-		return false;
-	}
-
-	isNewUser() {
-		return (this.data.current && this.data.current.username) ? true : false;
-	}
-
-	isAdmin(): boolean {
-		if (this.data.user && this.data.user.username === 'admin') {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-    keyDownStopPropagation(event) {
-        event.stopPropagation();
-    }
-}

@@ -74,10 +74,14 @@ export class ProcEngComponent extends GaugeBaseComponent {
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= propValue && ga.property.ranges[idx].max >= propValue) {
                                 propertyColor.fill = ga.property.ranges[idx].color;
+                                propertyColor.stroke = ga.property.ranges[idx].stroke;
                             }
                         }
                         if (propertyColor.fill) {
-                            svgele.node.setAttribute('fill', propertyColor.fill);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'fill', propertyColor.fill);
+                        }
+                        if (propertyColor.stroke) {
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(svgele.node, 'stroke', propertyColor.stroke);
                         }
                     }
                     // check actions
@@ -128,7 +132,10 @@ export class ProcEngComponent extends GaugeBaseComponent {
             return;
         }
         if (element.timeline) {
-            element.timeline().stop(true);
+            element.timeline().stop();
+        }
+        if (gaugeStatus.actionRef?.animr) {
+            gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.clockwise) {
             gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);

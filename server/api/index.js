@@ -5,7 +5,7 @@
 const fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
-var authJwt = require('./jwt-helper');
+const authJwt = require('./jwt-helper');
 const rateLimit = require("express-rate-limit");
 
 var prjApi = require('./projects');
@@ -34,7 +34,7 @@ function init(_server, _runtime) {
             var maxApiRequestSize = runtime.settings.apiMaxLength || '35mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize,extended:true}));
-            authJwt.init(runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
+            authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
             prjApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(prjApi.app());
             usersApi.init(runtime, authJwt.verifyToken, verifyGroups);
@@ -110,6 +110,28 @@ function init(_server, _runtime) {
                 }
             });
 
+            /**
+             * GET Heartbeat to check token
+             */
+            apiApp.post('/api/heartbeat', authJwt.verifyToken, function (req, res) {
+                if (!runtime.settings.secureEnabled) {
+                    res.end();
+                } else if (res.statusCode === 403) {
+                    runtime.logger.error("api post heartbeat: Tocken Expired");
+                } else if (req.body.params) {
+                    const token = authJwt.getNewToken(req.headers)
+                    if (token) {
+                        res.status(200).json({ 
+                            message: 'tokenRefresh',
+                            token: token 
+                        });
+                    } else {
+                        res.end();
+                    }
+                } else {
+                    res.end();
+                }
+            });
             runtime.logger.info('api: init successful!', true);
         } else {
         }
@@ -123,6 +145,7 @@ function mergeUserSettings(settings) {
     }
     runtime.settings.broadcastAll = settings.broadcastAll;
     runtime.settings.secureEnabled = settings.secureEnabled;
+    runtime.settings.logFull = settings.logFull;
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
     }
@@ -153,5 +176,6 @@ module.exports = {
     stop: stop,
 
     get apiApp() { return apiApp; },
-    get server() { return server; }
+    get server() { return server; },
+    get authJwt() { return authJwt; }
 };

@@ -32,7 +32,7 @@
 
 .system-function button {
     width: 100%;
-    font-size: 13px !important;
+    font-size: 12px !important;
     font-weight: 100 !important;
     margin-top: 2px;
     margin-bottom: 2px;
@@ -123,6 +123,9 @@
 :host ::ng-deep .mat-tab-label {
     height: var(--tab-height) !important;
     color: white;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    min-width: 100px;
 }
 
 :host ::ng-deep .cm-system-function {

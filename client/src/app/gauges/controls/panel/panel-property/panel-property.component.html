@@ -1,0 +1,31 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'editor.controls-panel-settings' | translate}}
+    </div>
+    <div class="panel-selection">
+        <div class="element-property-header">
+            <span>{{'panel.property-data' | translate}}</span>
+        </div>
+        <div>
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'panel.property-name' | translate}}</span>
+                <input [(ngModel)]="data.settings.name" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'panel.property-view-name' | translate}}</span>
+                <input [(ngModel)]="property.viewName" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <app-flex-device-tag class="block mt5 item-device-tag" (change)="onTagChanged($event)" [variableId]="property.variableId">
+            </app-flex-device-tag>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'panel.property-scalemode' | translate}}</span>
+                <mat-select [(value)]="property.scaleMode" (selectionChange)="onPropertyChanged()">
+                    <mat-option *ngFor="let mode of scaleMode | enumToArray" [value]="mode.key">
+                        {{'panel.property-scalemode-' + mode.value | translate }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="section-newline"></div>
+        </div>
+    </div>
+</div>

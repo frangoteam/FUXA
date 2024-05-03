@@ -19,6 +19,7 @@ import { HmiService } from '../../_services/hmi.service';
 import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
+import { TagPropertySettingsS7Component } from '../tag-property/tag-property-settings-s7/tag-property-settings-s7.component';
 
 @Component({
     selector: 'app-device-list',
@@ -30,7 +31,6 @@ import { Utils } from '../../_helpers/utils';
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'logger', 'options', 'remove'];
-    readonly defClientColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
@@ -41,7 +41,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     dataSource = new MatTableDataSource([]);
     selection = new SelectionModel<Element>(true, []);
     devices: Device[];
-    dirty = false;
     deviceType = DeviceType;
     tableWidth = this.defAllRowWidth;
     tagsMap = {};
@@ -93,7 +92,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             tags = {};
         }
         this.dataSource.data = Object.values(tags);
-        this.hmiService.tagsSubscribe(Object.keys(tags));
+        this.hmiService.viewsTagsSubscribe(Object.keys(tags));
     }
 
     onDeviceChange(source) {
@@ -141,6 +140,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         let msg = '';
         this.translateService.get('msg.tags-remove-all').subscribe((txt: string) => { msg = txt; });
         let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            disableClose: true,
             data: { msg: msg },
             position: { top: '60px' }
         });
@@ -193,7 +193,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     onAddTag() {
-        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
+        if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI
+            || this.deviceSelected.type === DeviceType.ODBC) {
             this.addOpcTags(null);
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics();
@@ -205,13 +206,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     addOpcTags(tag: Tag) {
         let dialogRef = this.dialog.open(TagPropertyComponent, {
+            disableClose: true,
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: tag, devices: this.devices },
             position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.dirty = true;
                 if (this.deviceSelected.type === DeviceType.WebAPI) {
                     // this.clearTags();
                 }
@@ -282,9 +283,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
+        if (this.deviceSelected.type === DeviceType.SiemensS7) {
+            this.editTagSettingsS7(tag, checkToAdd);
+            return;
+        }
         let oldtag = tag.id;
         let temptag: Tag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
+            disableClose: true,
             panelClass: 'dialog-property',
             data: { device: this.deviceSelected, tag: temptag, devices: this.devices },
             position: { top: '60px' }
@@ -297,7 +303,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     });
                     this.projectService.setDeviceTags(this.deviceSelected);
                 } else {
-                    this.dirty = true;
                     tag.name = temptag.name;
                     tag.type = temptag.type;
                     tag.address = temptag.address;
@@ -323,8 +328,35 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         });
     }
 
+    private editTagSettingsS7(tag: Tag, checkToAdd: boolean) {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertySettingsS7Component, {
+            disableClose: true,
+            data: { device: this.deviceSelected, tag: tagToEdit },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                tag.name = result.tagName;
+                tag.type = result.tagType;
+                tag.address = result.tagAddress;
+                tag.description = result.tagDescription;
+                if (checkToAdd) {
+                    this.checkToAdd(tag, this.deviceSelected);
+                } else if (tag.id !== oldTagId) {
+                    //remove old tag device reference
+                    delete this.deviceSelected.tags[oldTagId];
+                    this.checkToAdd(tag, this.deviceSelected);
+                }
+                this.projectService.setDeviceTags(this.deviceSelected);
+            }
+        });
+    }
+
     editTagOptions(tags: Tag[]) {
         let dialogRef = this.dialog.open(TagOptionsComponent, {
+            disableClose: true,
             data: { device: this.deviceSelected, tags: tags },
             position: { top: '60px' }
         });
@@ -383,6 +415,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             // edit only name (subscription)
             let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) {return t;} }).map((t: Tag) => t.name);
             let dialogRef = this.dialog.open(DialogTagName, {
+                disableClose: true,
                 position: { top: '60px' },
                 data: { name: topic.name, exist: existNames }
             });
@@ -397,6 +430,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         } else {
             // edit new topic or publish
             let dialogRef = this.dialog.open(TopicPropertyComponent, {
+                disableClose: true,
                 panelClass: 'dialog-property',
                 data: { device: this.deviceSelected, devices: Object.values(this.devices), topic: topic },
                 position: { top: '60px' }
@@ -406,6 +440,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             dialogRef.afterClosed().subscribe(result => {
             });
         }
+    }
+
+    onCopyTagToClipboard(tag: Tag) {
+        Utils.copyToClipboard(JSON.stringify(tag));
     }
 
     private addTopicSubscription(oldTopic: Tag, topics: Tag[]) {

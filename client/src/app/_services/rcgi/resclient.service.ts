@@ -7,6 +7,7 @@ import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/proje
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
+import { CommanType } from '../command.service';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -99,7 +100,7 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
-    uploadFile(file: any): Observable<UploadFile> {
+    uploadFile(file: any, destination?: string): Observable<UploadFile> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });
@@ -157,6 +158,30 @@ export class ResClientService implements ResourceStorageService {
 
     getDaqValues(query: DaqQuery): Observable<any> {
         return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getTagsValues(query: string[]): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    runSysFunction(functionName: string, params?: any): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    heartbeat(activity: boolean): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    downloadFile(fileName: string, type: CommanType): Observable<Blob> {
+        return new Observable(observer => {
             observer.error('Not supported!');
         });
     }

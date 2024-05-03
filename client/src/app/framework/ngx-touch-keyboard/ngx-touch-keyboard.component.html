@@ -1,4 +1,9 @@
 <div dir="ltr" class="touch-keyboard" [ngClass]="'layout-' + layoutName">
+  <div *ngIf="fullScreen" class="content">
+    <span>
+      {{ current }}
+    </span>
+  </div>
   <ng-container
     *ngFor="
       let row of locale.layouts[layoutMode + '_' + layoutName];

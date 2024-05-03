@@ -1,0 +1,48 @@
+<form [formGroup]="formGroup" class="container">
+    <mat-tab-group class="inbk" [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabSelectionChange($event)">
+        <mat-tab label="{{'script.scheduling-weekly' | translate}}">
+            <mat-button-toggle-group formControlName="days" multiple class="mt15">
+                <mat-button-toggle value="mon" matTooltip="{{'general.monday' | translate}}">{{'general.monday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="tue" matTooltip="{{'general.tuesday' | translate}}">{{'general.tuesday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="wed" matTooltip="{{'general.wednesday' | translate}}">{{'general.wednesday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="thu" matTooltip="{{'general.thursday' | translate}}">{{'general.thursday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="fri" matTooltip="{{'general.friday' | translate}}">{{'general.friday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="sat" matTooltip="{{'general.saturday' | translate}}">{{'general.saturday-short' | translate}}</mat-button-toggle>
+                <mat-button-toggle value="sun" matTooltip="{{'general.sunday' | translate}}">{{'general.sunday-short' | translate}}</mat-button-toggle>
+            </mat-button-toggle-group>
+            <div class="inbk ml10 mr10 hour-time">
+                <div class="my-form-field hour">
+                    <span>{{'script.scheduling-hour' | translate}}</span>
+                    <input numberOnly type="number" formControlName="hour" min="0" max="23" step="1">
+                </div>
+                <span> : </span>
+                <div class="my-form-field minute">
+                    <span>{{'script.scheduling-minute' | translate}}</span>
+                    <input numberOnly type="number" formControlName="minute"  min="0" max="59" step="1">
+                </div>
+            </div>
+            <ng-container *ngIf="removable">
+                <button mat-icon-button (click)="onRemoveScheduling()" class="ml10" type="button">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </ng-container>            
+        </mat-tab>
+        <mat-tab label="{{'script.scheduling-date' | translate}}">
+            <div class="mt10">
+                <div class="my-form-field inbk ml10 mr10">
+                    <span>{{'script.scheduling-date' | translate}}</span>
+                    <input type="date" matInput formControlName="date" class="time">
+                </div>
+                <div class="my-form-field inbk ml10 mr10">
+                    <span>{{'script.scheduling-time' | translate}}</span>
+                    <input type="time" matInput formControlName="time" class="time">
+                </div>
+                <ng-container *ngIf="removable">
+                    <button mat-icon-button (click)="onRemoveScheduling()" class="ftr" type="button">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </ng-container> 
+            </div>     
+        </mat-tab>
+    </mat-tab-group>
+</form>

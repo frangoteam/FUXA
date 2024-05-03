@@ -67,11 +67,15 @@
 }
 
 .mat-column-fullname {
-    flex: 0 0 250px;
+    flex: 2 1 250px;
 }
 
 .mat-column-groups {
-    flex: 0 0 750px;
+    flex: 2 1 650px;
+}
+
+.mat-column-start {
+    flex: 2 1 250px;
 }
 
 .mat-column-remove {
@@ -82,7 +86,7 @@
     flex: 0 0 50px;
  }
 
- .show-password {
+.show-password {
     bottom: 2px;
     right: 8px;
     position: absolute;

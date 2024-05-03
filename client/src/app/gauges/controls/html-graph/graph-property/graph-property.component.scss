@@ -1,0 +1,69 @@
+:host {
+    .graph-selection {
+        position: absolute;
+        top: 35px;
+        bottom: 0px;
+        overflow: auto;
+        width:calc(100% - 10px);
+    }
+
+    .section-item {
+        width: 100%;
+    }
+
+    .section-item-block mat-select, input, span {
+        width:calc(100% - 15px);
+    }
+
+    .section-inline-number {
+        display: inline-block;
+        width: 60px;
+    }
+
+    .section-inline-number input {
+        width: inherit;
+        text-align: center;
+    }
+
+    .section-inline-number span {
+        width: 65px;
+        text-align: left;
+    }
+
+    .section-inline-toggle {
+        display: inline-block;
+        width: 50px;
+        text-align: center;
+    }
+
+    .section-inline-toggle span {
+        width: inherit;
+    }
+
+    .section-inline-toggle mat-slide-toggle {
+        width: inherit;
+        padding-left: 10px;
+    }
+
+    .section-inline-toggle-ext span {
+        width: 85px;
+    }
+
+    .section-inline-toggle-ext mat-slide-toggle {
+        padding-left: 20px;
+    }
+
+    .section-inline-color {
+        display: inline-block;
+        width: 60px;
+    }
+
+    .section-inline-color input {
+        width: 60px !important;
+        text-align: center;
+    }
+
+    .section-inline-color span {
+        width: 65px;
+    }
+}

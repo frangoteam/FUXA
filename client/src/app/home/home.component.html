@@ -2,7 +2,7 @@
 	<mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
 	</mat-progress-bar>
 </div>
-<div *ngIf="serverErrorBanner" class="banner">
+<div *ngIf="serverErrorBanner$ | async" class="banner">
 	<div>
 		<span>{{'msg.server-connection-failed' | translate}}</span>
 		<mat-icon>block</mat-icon>
@@ -14,17 +14,49 @@
 	</mat-sidenav>
 	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
 		<div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
-			<button mat-icon-button *ngIf="showSidenav && showSidenav !== 'side'" 
-				(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()" class="sidenav-toogle">
-				<mat-icon aria-label="Menu">menu</mat-icon>
-			</button>
-			<div class="header-title">
-				{{title}}
-			</div>
-			<div *ngIf="securityEnabled" class="header-login">
-				<button mat-icon-button (click)="onLogin()">
-					<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
+			<div *ngIf="showSidenav && showSidenav !== 'side'" class="sidenav-toogle">
+				<button mat-icon-button 
+					(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()">
+					<mat-icon aria-label="Menu">menu</mat-icon>
 				</button>
+			</div>
+			<div #header class="items" [style.textAlign]="layoutHeader.itemsAnchor">
+				<ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
+					<ng-container *ngSwitchCase="'button'">
+						<button mat-raised-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.fontFamily]="layoutHeader.fontFamily"
+								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							{{ item.property?.text ?? item.type }}
+						</button>
+					</ng-container>
+					<ng-container *ngSwitchCase="'label'">
+						<button mat-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.fontFamily]="layoutHeader.fontFamily"
+								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							{{ item.property?.text ?? item.type }}
+						</button>
+					</ng-container>
+					<ng-container *ngSwitchCase="'image'">
+						<button mat-icon-button
+								[id]="item.id"
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
+								[style.marginLeft.px]="item.marginLeft"
+								[style.marginRight.px]="item.marginRight">
+							<mat-icon>{{ item.icon }}</mat-icon>
+						</button>
+					</ng-container>
+				</ng-container>
 			</div>
 			<div class="header-button">
 				<div class="alarm-layout" style="min-width: 40px;">
@@ -38,6 +70,28 @@
 						<mat-icon aria-label="Info">error_outline</mat-icon>
 						<div class="button-counter info-color" [style.opacity]="infos.count?'':'0'">{{infos.count}}</div>
 					</button>
+				</div>
+				<div class="header-date-time" *ngIf="layoutHeader.dateTimeDisplay">
+                    {{ currentDateTime | date: layoutHeader.dateTimeDisplay }}
+				</div>				
+				<div *ngIf="securityEnabled" class="header-login">
+					<button mat-icon-button (click)="onLogin()">
+						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
+					</button>
+					<div *ngIf="layoutHeader.loginInfo && loggedUser$ | async as user" class="info">
+						<ng-container [ngSwitch]="layoutHeader.loginInfo">
+							<ng-container *ngSwitchCase="'username'">
+								<span class="primary">{{ user?.username }}</span>
+							</ng-container>
+							<ng-container *ngSwitchCase="'fullname'">
+								<span class="primary">{{ user?.fullname }}</span>
+							</ng-container>
+							<ng-container *ngSwitchCase="'both'">
+								<span class="primary">{{ user?.username }}</span>
+								<span class="secondary">{{ user?.fullname }}</span>
+							</ng-container>
+						</ng-container>
+					</div>
 				</div>
 			</div>
 		</div>

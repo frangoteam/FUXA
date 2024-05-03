@@ -39,6 +39,7 @@ export const THEMES = {
         chipsBackground: '#F1F1F1',
         chipSelectedBackground: '#3059AF',
         chipSelectedColor: '#FFFFFF',
+        inputTime: 'invert(0%)',
     },
     dark: {
         headerBackground: '#333333',
@@ -82,5 +83,6 @@ export const THEMES = {
         chipsBackground: '#242424',
         chipSelectedBackground: '#3059AF',
         chipSelectedColor: '#FFFFFF',
+        inputTime: 'invert(100%)',
     }
 };

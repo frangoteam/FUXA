@@ -4,9 +4,12 @@
     </div>
     <div class="svg-selector-list">
         <div *ngFor="let svgElement of svgElements" class="svg-selector-item" [ngClass]="{'svg-selector-active': isSelected(svgElement)}"
-            (click)="onSelected(svgElement)" (mouseout)="onSvgElementPreview(svgElement, false)" (mouseover)="onSvgElementPreview(svgElement, true)">
+            (click)="$event.stopPropagation();onSelected(svgElement)" (mouseout)="onSvgElementPreview(svgElement, false)" (mouseover)="onSvgElementPreview(svgElement, true)">
             <div class="name">{{ svgElement.name }}</div>
             <div class="id">{{ svgElement.id }}</div>
+            <button mat-icon-button (click)="$event.stopPropagation();onEditElement(svgElement)" class="edit">
+                <mat-icon>edit</mat-icon>
+            </button>
         </div>
     </div>
 </div>

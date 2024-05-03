@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings } from '../../../_models/hmi';
+import { GaugeSettings, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
@@ -18,14 +18,39 @@ export class HtmlIframeComponent extends GaugeBaseComponent {
         super();
     }
 
+    static getSignals(pro: any) {
+        let res: string[] = [];
+        if (pro.variableId) {
+            res.push(pro.variableId);
+        }
+        return res;
+    }
+
     static getDialogType(): GaugeDialogType {
         return GaugeDialogType.Iframe;
     }
 
-    static initElement(gaugeSettings: GaugeSettings, isview: boolean) {
+    static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
+        try {
+            if (sig.value && svgele?.node?.children?.length >= 1) {
+                const parentIframe = Utils.searchTreeStartWith(svgele.node, this.prefixD);
+                const iframe = parentIframe.querySelector('iframe');
+                const src = iframe.getAttribute('src');
+                if (src !== sig.value && Utils.isValidUrl(sig.value)) {
+                    iframe.setAttribute('src', sig.value);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    static initElement(gaugeSettings: GaugeSettings, isview: boolean): HTMLElement {
+        let svgIframeContainer = null;
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
-            let svgIframeContainer = Utils.searchTreeStartWith(ele, this.prefixD);
+            ele?.setAttribute('data-name', gaugeSettings.name);
+            svgIframeContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgIframeContainer) {
                 svgIframeContainer.innerHTML = '';
                 let iframe = document.createElement('iframe');
@@ -41,15 +66,20 @@ export class HtmlIframeComponent extends GaugeBaseComponent {
                 }
                 iframe.setAttribute('title', 'iframe');
                 if (gaugeSettings.property && gaugeSettings.property.address && isview) {
-                    iframe.setAttribute('src', gaugeSettings.property.address);
+                    if (Utils.isValidUrl(gaugeSettings.property.address)) {
+                        iframe.setAttribute('src', gaugeSettings.property.address);
+                    } else {
+                        console.error('IFRAME URL not valid');
+                    }
                 }
                 iframe.innerHTML = '&nbsp;';
                 svgIframeContainer.appendChild(iframe);
             }
         }
+        return svgIframeContainer;
     }
 
-    static detectChange(gab: GaugeSettings): void {
+    static detectChange(gab: GaugeSettings): HTMLElement {
         return HtmlIframeComponent.initElement(gab, false);
     }
 }

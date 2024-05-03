@@ -1,0 +1,105 @@
+:host {
+    .container {
+        min-width: 930px;
+    }
+
+    .mat-table {
+        overflow: auto;
+        /* min-width: 1500px; */
+        height: 100%;
+    }
+      
+    .mat-header-cell.mat-sort-header-sorted {
+        /* color: black; */
+    }
+    
+    .mat-row {
+        min-height: 34px;
+        height: 34px;
+        border-bottom-color: rgba(0,0,0,0.06);
+    }
+    
+    .mat-cell {
+        font-size: 13px;
+    }
+    
+    .mat-cell ::ng-deep .mat-checkbox-inner-container {
+        height: 16px;
+        width: 16px;
+        margin-left: 2px;
+    }
+    
+    .mat-header-row {
+        top: 0;
+        position: sticky;
+        z-index: 1;
+        /* background-color: rgba(0,0,0,0.7); */
+        /* background-color: rgb(30, 30, 30); */
+        /* color: white; */
+    }
+    .mat-header-cell {
+        /* color: white; */
+        font-size: 11px;
+    }
+    
+    .mat-column-toogle {
+        overflow: visible;
+        flex: 0 0 40px;
+    }
+    
+    .mat-column-name {
+        flex: 0 0 220px;
+    }
+    
+    .mat-column-address {
+        flex: 0 0 380px;
+    }
+    
+    .mat-column-device {
+        flex: 0 0 220px;
+    }
+    
+    .mat-column-select {
+        flex: 0 0 40px;
+    }
+    
+    .my-header-filter ::ng-deep .mat-sort-header-content {
+        display: unset;
+        text-align: left;
+    }
+    
+    .my-header-filter ::ng-deep .mat-sort-header-button {
+        display: block;
+        text-align: left;
+        margin-top: 5px;
+    }
+    
+    .my-header-filter span {
+        padding-left: 5px;
+    
+    }
+    
+    .my-header-filter ::ng-deep .mat-sort-header-arrow {
+        /* color: white; */
+        top: -14px;
+        right: 20px;
+    }
+    
+    .my-header-filter-input {
+        display: block; 
+        margin-top: 4px;
+        margin-bottom: 6px;
+        /* color: white; */
+        padding: 3px 1px 3px 2px;
+        border-radius: 2px;
+        border: 1px solid var(--formInputBackground);
+        background-color: var(--formInputBackground);
+        color: var(--formInputColor);
+    }
+    
+    .my-header-filter-input:focus {
+        padding: 3px 1px 3px 2px;
+        border: 1px solid var(--formInputBorderFocus);
+        background-color: var(--formInputBackgroundFocus);
+    }
+}

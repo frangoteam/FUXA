@@ -1,0 +1,57 @@
+::ng-deep .mat-expansion-panel-body {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+.my-expansion-panel {
+    width: 356px; 
+    display: block;
+    margin-top: 10px;
+    mat-expansion-panel {
+        box-shadow: none !important;
+        background-color:var(--formExtBackground);
+        border-radius: 2px;
+    }
+
+    .my-expansion-conent {
+        padding-bottom: 10px !important;
+        max-height: 320px;
+        overflow: auto;
+    }
+
+    .error {
+        display: block;
+        line-height: 20px;
+        width: 315px;
+        color: red;
+        font-size: 13px;
+    }
+}
+
+.multiline {
+    overflow: auto;
+    max-height: 300px;
+}
+
+.address {
+    width: 350px;
+}
+
+.adpu {
+    width: 120px;
+}
+
+.header {
+    font-size: 13px;
+    padding-left: 5px;
+    padding-right: 15px;
+}
+
+.expand-panel {
+    display: block;
+    margin: 5px 10px 10px 10px;
+
+    .my-form-field {
+        margin-top: 5px;
+    }
+}

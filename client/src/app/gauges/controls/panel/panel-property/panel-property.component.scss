@@ -1,0 +1,21 @@
+:host {
+    .panel-selection {
+        position: absolute;
+        top: 35px;
+        bottom: 0px;
+        overflow: auto;
+        width:calc(100% - 10px);
+    }
+
+    .section-item {
+        width: 100%;
+    }
+
+    .section-item-block input, span, mat-select {
+        width:calc(100% - 15px);
+    }
+
+    .item-device-tag {
+        width:calc(100% - 5px);
+    }
+}

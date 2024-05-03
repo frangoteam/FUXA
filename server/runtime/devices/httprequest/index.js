@@ -91,8 +91,8 @@ function HTTPclient(_data, _logger, _events) {
                         let varsValueChanged = _updateVarsValue(result);
                         lastTimestampValue = new Date().getTime();
                         _emitValues(varsValue);
-                        if (this.addDaq) {
-                            this.addDaq(varsValueChanged, data.name);
+                        if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                            this.addDaq(varsValueChanged, data.name, data.id);
                         }
                         if (lastStatus !== 'connect-ok') {
                             _emitStatus('connect-ok');                    
@@ -185,16 +185,18 @@ function HTTPclient(_data, _logger, _events) {
                 data.tags[tagId].value = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
                 axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
                     lastTimestampRequest = new Date().getTime();
-                    logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true);
+                    logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
                 }).catch(err => {
                     logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
                 });
             } else {
                 logger.error(`postTags undefined (setValue)`, true);
             }
+            return true;
         } else {
             logger.error(`setValue not supported!`, true);
         }
+        return false;
     }
 
     /**
@@ -226,6 +228,24 @@ function HTTPclient(_data, _logger, _events) {
                 reject(err);
             }
         });
+    }
+
+    /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        return data.tags[tagId] ? data.tags[tagId].daq : null;
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        if (data.tags[tagId]) {
+            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
+        }
     }
 
     var _checkConnection = function () {

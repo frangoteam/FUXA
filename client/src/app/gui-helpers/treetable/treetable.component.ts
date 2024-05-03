@@ -60,13 +60,19 @@ export class TreetableComponent implements OnInit {
         });
     }
 
-    addNode(node: Node, parent: Node, enabled: boolean) {
+    addNode(node: Node, parent: Node, enabled: boolean, flat?: boolean) {
         if (parent) {
             let refp = this.nodes[parent.id];
             node.setParent(refp);
             if (node.parent) {
                 node.parent.waiting = false;
             }
+            node.enabled = enabled;
+            if (!enabled) {
+                node.checked = true;
+            }
+        }
+        if (flat) {
             node.enabled = enabled;
             if (!enabled) {
                 node.checked = true;

@@ -45,21 +45,24 @@ export class SettingsService {
 
     setSettings(settings: AppSettings) {
         var dirty = false;
-        if (settings.language && settings.language != this.appSettings.language) {
+        if (settings.language && settings.language !== this.appSettings.language) {
             this.fuxaLanguage.use(settings.language);
             this.appSettings.language = settings.language;
             dirty = true;
         }
-        if (settings.uiPort && settings.uiPort != this.appSettings.uiPort) {
+        if (settings.uiPort && settings.uiPort !== this.appSettings.uiPort) {
             this.appSettings.uiPort = settings.uiPort;
             dirty = true;
         }
-        if (settings.secureEnabled != this.appSettings.secureEnabled || settings.tokenExpiresIn != this.appSettings.tokenExpiresIn) {
+        if (settings.secureEnabled !== this.appSettings.secureEnabled ||
+            settings.tokenExpiresIn !== this.appSettings.tokenExpiresIn ||
+            settings.secureOnlyEditor !== this.appSettings.secureOnlyEditor) {
             this.appSettings.secureEnabled = settings.secureEnabled;
             this.appSettings.tokenExpiresIn = settings.tokenExpiresIn;
+            this.appSettings.secureOnlyEditor = settings.secureOnlyEditor;
             dirty = true;
         }
-        if (settings.broadcastAll != this.appSettings.broadcastAll) {
+        if (settings.broadcastAll !== this.appSettings.broadcastAll) {
             this.appSettings.broadcastAll = settings.broadcastAll;
             dirty = true;
         }
@@ -71,6 +74,14 @@ export class SettingsService {
         }
         if (settings.daqstore && !this.appSettings.daqstore.isEquals(settings.daqstore)) {
             this.appSettings.daqstore = new DaqStore(settings.daqstore);
+            dirty = true;
+        }
+        if (settings.logFull !== this.appSettings.logFull) {
+            this.appSettings.logFull = settings.logFull;
+            dirty = true;
+        }
+        if (settings.alarms && settings.alarms.retention !== this.appSettings.alarms?.retention) {
+            this.appSettings.alarms.retention = settings.alarms.retention ?? this.appSettings.alarms?.retention;
             dirty = true;
         }
         return dirty;

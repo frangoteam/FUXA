@@ -121,8 +121,8 @@ function EthernetIPclient(_data, _logger, _events) {
                             let varsValueChanged = _updateVarsValue(result);
                             lastTimestampValue = new Date().getTime();
                             _emitValues(varsValue);
-                            if (this.addDaq) {
-                                this.addDaq(varsValueChanged, data.name);
+                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                this.addDaq(varsValueChanged, data.name, data.id);
                             }
                         } else {
                             // console.error('then error');
@@ -210,10 +210,12 @@ function EthernetIPclient(_data, _logger, _events) {
                 if (error) {
                     logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
                 } else {
-                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true);
+                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true, true);
                 }
             });
+            return true;
         }
+        return false;
     }
 
     /**
@@ -237,6 +239,24 @@ function EthernetIPclient(_data, _logger, _events) {
      */
      this.lastReadTimestamp = () => {
         return lastTimestampValue;
+    }
+
+    /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        return data.tags[tagId] ? data.tags[tagId].daq : null;
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        if (data.tags[tagId]) {
+            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
+        }
     }
 
     /**

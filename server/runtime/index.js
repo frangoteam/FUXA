@@ -17,7 +17,7 @@ var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
 var jobs = require('./jobs');
 
-var apiDevice;
+var api;
 var settings
 var logger;
 var io;
@@ -31,9 +31,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
     settings = _settings;
     logger = _log;
-    if (_api) {
-        apiDevice = _api;
-    }
+    api = _api;
     // check runtime init dependency and send to main if ready
     var checkInit = function () {
         if (!events.listenerCount('init-plugins-ok') && !events.listenerCount('init-users-ok') && !events.listenerCount('init-project-ok')) {
@@ -81,9 +79,28 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('tag-change:subscription', subscriptionTagChange);
     events.on('script-console', scriptConsoleOutput);
 
-    io.on('connection', (socket) => {
-        logger.info(`socket.io client connected`);
+    io.on('connection', async (socket) => {
+        logger.info(`socket.io client connected`);        
         socket.tagsClientSubscriptions = [];
+        // check authorizations
+        if (settings.secureEnabled && !settings.secureOnlyEditor) {
+            const token = socket.handshake.query.token;
+            if (!token || token === 'null') {
+                socket.disconnect();
+                logger.error(`Token is missing!`);
+            } else {
+                try {
+                    const authenticated = await api.authJwt.verify(token);
+                    if (!authenticated) {
+                        logger.error(`Token error!`);
+                        socket.disconnect();
+                    }
+                } catch (error) {
+                    logger.error(`Token error: ${error}`);
+                    socket.disconnect();
+                }
+            }
+        }
         // client ask device status
         socket.on(Events.IoEventTypes.DEVICE_STATUS, (message) => {
             if (message === 'get') {
@@ -277,6 +294,13 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 logger.error(`${Events.IoEventTypes.DEVICE_TAGS_UNSUBSCRIBE}: ${err}`);
             }
         });
+        socket.on(Events.IoEventTypes.DEVICE_ENABLE, (message) => {
+            try {
+                devices.enableDevice(message.deviceName, message.enable);
+            } catch (err) {
+                logger.error(`${Events.IoEventTypes.DEVICE_ENABLE}: ${err}`);
+            }
+        });
     });
 }
 
@@ -428,12 +452,7 @@ function updateDevice(event) {
 function updateDeviceValues(event) {
     try {
         //!TOFIX
-        if (settings.broadcastAll || !settings.broadcastAll) {
-            io.emit(Events.IoEventTypes.DEVICE_VALUES, { 
-                id: event.id,
-                values: Object.values(event.values) 
-            });
-        } else {
+        if (settings.broadcastAll === false) {
             Object.values(io.sockets.sockets).forEach((socket) => {
                 const tags = Object.values(event.values).filter((tag) => {
                     return socket.tagsClientSubscriptions.includes(tag.id);
@@ -442,6 +461,11 @@ function updateDeviceValues(event) {
                     id: event.id,
                     values: Object.values(tags)
                 });
+            });
+        } else {
+            io.emit(Events.IoEventTypes.DEVICE_VALUES, { 
+                id: event.id,
+                values: Object.values(event.values) 
             });
         }
         tagsSubscription.forEach((key, value) => {

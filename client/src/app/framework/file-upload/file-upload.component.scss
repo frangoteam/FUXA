@@ -1,0 +1,14 @@
+.file-upload {
+    background-color: rgba(0,0,0, 0.1);
+    mat-icon {
+        line-height: 30px;
+    }
+    .clear {
+        float: right;
+    }
+    span {
+        vertical-align: text-bottom;
+        margin-left: 10px;
+        font-size: 13px;
+    }
+}

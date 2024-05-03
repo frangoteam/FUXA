@@ -52,6 +52,31 @@ module.exports = {
             }
         });
 
+        /**
+         * POST run server script and return result value
+         */
+        scriptsApp.post("/api/runSysFunction", secureFnc, async function (req, res, next) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post runSysFunction: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post runSysFunction: Unauthorized");
+            } else {
+                try {
+                    if (runtime.scriptsMgr.sysFunctionExist(req.body.params.functionName)) {
+                        const result = runtime.scriptsMgr.runSysFunction(req.body.params.functionName, req.body.params.parameters);
+                        res.json(result);
+                    } else {
+                        res.status(400).json({ error: "not_found", message: 'script not found!'});
+                        runtime.logger.error("api post runSysFunction: " + 'script not found!');
+                    }
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    runtime.logger.error("api post runSysFunction: " + error);
+                }                
+            }            
+        });
         return scriptsApp;
     }
 }

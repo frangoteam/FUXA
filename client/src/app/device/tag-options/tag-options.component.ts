@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FuxaServer, TagDaq, TagScale, TagScaleModeType } from '../../_models/device';
+import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-tag-options',
@@ -22,15 +23,17 @@ export class TagOptionsComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(1)]],
+            interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(0)]],
             changed: [{value: false, disabled: true}],
             enabled: [false],
+            restored: [false],
             format: [null, [Validators.min(0)]],
             scaleMode: 'undefined',
             rawLow: null,
             rawHigh: null,
             scaledLow: null,
-            scaledHigh: null
+            scaledHigh: null,
+            dateTimeFormat: null
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -48,12 +51,14 @@ export class TagOptionsComponent implements OnInit {
             let enabled = { value: null, valid: true };
             let changed = { value: null, valid: true };
             let interval = { value: null, valid: true };
+            let restored = { value: null, valid: true };
             let format = { value: null, valid: true };
             let scaleMode = { value: null, valid: true };
             let rawLow = { value: null, valid: true };
             let rawHigh = { value: null, valid: true };
             let scaledLow = { value: null, valid: true };
             let scaledHigh = { value: null, valid: true };
+            let dateTimeFormat = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -69,7 +74,12 @@ export class TagOptionsComponent implements OnInit {
                 } else if (changed.value !== daq.changed) {
                     changed.valid = false;
                 }
-                if (!interval.value) {
+                if (!restored.value) {
+                    restored.value = daq.restored;
+                } else if (restored.value !== daq.restored) {
+                    restored.valid = false;
+                }
+                if (Utils.isNullOrUndefined(interval.value)) {
                     interval.value = daq.interval;
                 } else if (interval.value !== daq.interval) {
                     interval.valid = false;
@@ -85,6 +95,7 @@ export class TagOptionsComponent implements OnInit {
                     rawHigh.value = this.data.tags[i].scale?.rawHigh;
                     scaledLow.value = this.data.tags[i].scale?.scaledLow;
                     scaledHigh.value = this.data.tags[i].scale?.scaledHigh;
+                    dateTimeFormat.value = this.data.tags[i].scale?.dateTimeFormat;
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
@@ -97,7 +108,10 @@ export class TagOptionsComponent implements OnInit {
             if (changed.valid && changed.value !== null) {
                 values = {...values, changed: changed.value};
             }
-            if (interval.valid && interval.value) {
+            if (restored.valid && restored.value !== null) {
+                values = {...values, restored: restored.value};
+            }
+            if (interval.valid && !Utils.isNullOrUndefined(interval.value)) {
                 values = {...values, interval: interval.value};
             }
             if (format.valid && format.value) {
@@ -109,7 +123,8 @@ export class TagOptionsComponent implements OnInit {
                     rawLow: rawLow.value,
                     rawHigh: rawHigh.value,
                     scaledLow: scaledLow.value,
-                    scaledHigh: scaledHigh.value
+                    scaledHigh: scaledHigh.value,
+                    dateTimeFormat: dateTimeFormat.value
                 };
             }
             this.formGroup.patchValue(values);
@@ -127,19 +142,23 @@ export class TagOptionsComponent implements OnInit {
 
     onCheckScaleMode(value: string) {
         switch (value) {
-            case 'undefined':
-            this.formGroup.controls.rawLow.clearValidators();
-            this.formGroup.controls.rawHigh.clearValidators();
-            this.formGroup.controls.scaledLow.clearValidators();
-            this.formGroup.controls.scaledHigh.clearValidators();
-            break;
             case 'linear':
-            this.formGroup.controls.rawLow.setValidators(Validators.required);
-            this.formGroup.controls.rawHigh.setValidators(Validators.required);
-            this.formGroup.controls.scaledLow.setValidators(Validators.required);
-            this.formGroup.controls.scaledHigh.setValidators(Validators.required);
-            break;
+                this.formGroup.controls.rawLow.setValidators(Validators.required);
+                this.formGroup.controls.rawHigh.setValidators(Validators.required);
+                this.formGroup.controls.scaledLow.setValidators(Validators.required);
+                this.formGroup.controls.scaledHigh.setValidators(Validators.required);
+                break;
+            default:
+                this.formGroup.controls.rawLow.clearValidators();
+                this.formGroup.controls.rawHigh.clearValidators();
+                this.formGroup.controls.scaledLow.clearValidators();
+                this.formGroup.controls.scaledHigh.clearValidators();
+                break;
         }
+        this.formGroup.controls.rawLow.updateValueAndValidity();
+        this.formGroup.controls.rawHigh.updateValueAndValidity();
+        this.formGroup.controls.scaledLow.updateValueAndValidity();
+        this.formGroup.controls.scaledHigh.updateValueAndValidity();
         this.formGroup.updateValueAndValidity();
     }
 
@@ -152,15 +171,17 @@ export class TagOptionsComponent implements OnInit {
             daq: new TagDaq(
                 this.formGroup.value.enabled,
                 this.formGroup.value.changed,
-                this.formGroup.value.interval
+                this.formGroup.value.interval,
+                this.formGroup.value.restored,
             ),
             format: this.formGroup.value.format,
             scale: (this.formGroup.value.scaleMode !== 'undefined') ? {
                 mode: this.formGroup.value.scaleMode,
-                    rawLow: this.formGroup.value.rawLow,
-                    rawHigh: this.formGroup.value.rawHigh,
-                    scaledLow: this.formGroup.value.scaledLow,
-                    scaledHigh: this.formGroup.value.scaledHigh
+                rawLow: this.formGroup.value.rawLow,
+                rawHigh: this.formGroup.value.rawHigh,
+                scaledLow: this.formGroup.value.scaledLow,
+                scaledHigh: this.formGroup.value.scaledHigh,
+                dateTimeFormat: this.formGroup.value.dateTimeFormat
             } : null,
         });
     }

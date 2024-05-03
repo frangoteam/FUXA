@@ -59,8 +59,8 @@ function FuxaServer(_data, _logger, _events) {
                     var varsValueChanged = _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
-                    if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 }
                 _checkConnectionStatus();
@@ -82,13 +82,15 @@ function FuxaServer(_data, _logger, _events) {
         connectionTags = [];
         for (var id in data.tags) {
             tagsMap[id] = data.tags[id];
-            if (data.tags[id].init) {
-                data.tags[id].value = _parseValue(data.tags[id].init);
+            const dataTag = data.tags[id];
+            if (dataTag.init) {
+                data.tags[id].value = _parseValue(dataTag.init, dataTag.type);
             }
-            if (data.tags[id].sysType === TagSystemTypeEnum.deviceConnectionStatus) {
+            if (dataTag.sysType === TagSystemTypeEnum.deviceConnectionStatus) {
                 data.tags[id].timestamp = Date.now();
                 connectionTags.push(data.tags[id]);
             }
+            varsValue[id] = data.tags[id];
         }
         tocheck = !utils.isEmptyObject(data.tags);
         logger.info(`'${data.name}' data loaded (${count})`, true);
@@ -134,11 +136,13 @@ function FuxaServer(_data, _logger, _events) {
      */
     this.setValue = function (id, value) {
         if (varsValue[id]) {
-            var val = _parseValue(value);
+            var val = _parseValue(value, varsValue[id].type);
             varsValue[id].value = val;
             varsValue[id].changed = true;
-            logger.info(`'${data.name}' setValue(${id}, ${value})`, true);
+            logger.info(`'${data.name}' setValue(${id}, ${value})`, true, true);
+            return true;
         }
+        return false;
     }
 
     /**
@@ -178,22 +182,51 @@ function FuxaServer(_data, _logger, _events) {
     }
 
     /**
+     * Return the Daq settings of Tag
+     * @returns 
+     */
+    this.getTagDaqSettings = (tagId) => {
+        return data.tags[tagId] ? data.tags[tagId].daq : null;
+    }
+
+    /**
+     * Set Daq settings of Tag
+     * @returns 
+     */
+    this.setTagDaqSettings = (tagId, settings) => {
+        if (data.tags[tagId]) {
+            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
+        }
+    }
+
+    /**
      * Cheack and parse the value return converted value
      * @param {*} value as string
      */
-    var _parseValue = function (value) {
-        let val = parseFloat(value);
-        if (Number.isNaN(val)) {
-            // maybe boolean
-            val = Number(value);
-            // maybe string
-            if (Number.isNaN(val)) {
-                val = value;
+    var _parseValue = function (value, type) {
+        if (type === 'number') {
+            return parseFloat(value); 
+        } else if (type === 'boolean') {
+            if (typeof value === 'string') {
+                return value.toLowerCase() !== 'false';
             }
+            return Boolean(value);
+        } else if (type === 'string') {
+            return value;
         } else {
-            val = parseFloat(val.toFixed(5));
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            return val;
         }
-        return val;
     }
 
     /**

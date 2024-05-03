@@ -1,4 +1,4 @@
-<div *ngIf="type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)" class="table-toolbar"
+<div *ngIf="withToolbar" class="table-toolbar"
     [style.backgroundColor]="tableOptions.row.background">
     <div *ngIf="tableOptions.filter.show" class="my-form-field" style="float: left; padding-left: 20px;">
         <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" style="width: 250px;" type="text"
@@ -37,26 +37,51 @@
     </mat-paginator>
 </div>
 <mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort
-    [style.height]="(type === tableHistoryType && (tableOptions.paginator.show || tableOptions.filter.show || tableOptions.daterange.show)) ? 'calc(100% - 42px)' : '100%'">
+    [style.height]="withToolbar ? 'calc(100% - 42px)' : '100%'">
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef mat-sort-header [style.minWidth.px]="columnsStyle[column].width" [ngClass]="columnsStyle[column].align" [style.color]="tableOptions.header.color"
+        <th *matHeaderCellDef
+            mat-sort-header
+            [style.minWidth.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
+            [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
+            [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
             [style.fontSize.px]="tableOptions.header.fontSize">
-            {{ columnsStyle[column].label }}
+            {{ columnsStyle[column]?.label }}
         </th>
-        <td *matCellDef="let element; index as i" [style.minWidth.px]="columnsStyle[column].width" [style.textAlign]="columnsStyle[column].align"
-            [style.color]="tableOptions.row.color" [style.fontSize.px]="tableOptions.row.fontSize" class="data-table-row-cell">
-            {{element[column].stringValue}}
+        <td *matCellDef="let element; index as i"
+            class="data-table-row-cell"
+            [ngStyle]="{
+                'min-width.px': columnsStyle[column].width,
+                'text-align': columnsStyle[column].align,
+                'font-size.px': tableOptions.row.fontSize}">
+            <ng-container *ngIf="setOfSourceTableData; else stringValue">
+                {{element[column]}}
+            </ng-container>
+            <ng-template #stringValue>
+                {{element[column]?.stringValue}}
+            </ng-template>
         </td>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
         [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
     </mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" class="data-table-row" [style.height.px]="tableOptions.row.height"
-        [style.backgroundColor]="tableOptions.row.background" [style.borderBottomColor]="tableOptions.gridColor"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+             (click)="selectRow(i)"
+             class="data-table-row"
+             [ngStyle]="{
+                'cursor': isSelectable() ? 'pointer': 'unset',
+                'height.px': tableOptions.row.height,
+                'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
+                'border-bottom-color': tableOptions.gridColor,
+                'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+    </mat-row>
 </mat-table>
 <div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
-    <button mat-icon-button (click)="onRefresh()" class="small-icon-button default-color" [style.color]="tableOptions.header.color">
+    <button mat-icon-button 
+            (click)="onRefresh()" 
+            class="small-icon-button default-color"
+            [style.color]="tableOptions.header.color"
+            [style.top.px]="withToolbar ? 45 : 0">
         <mat-icon [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
     </button>
 </div>

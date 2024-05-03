@@ -179,21 +179,23 @@ function AlarmsManager(_runtime) {
 
     /**
      * Set Ack to alarm
-     * @param {*} alarmname 
+     * @param {*} alarmName 
      * @returns 
      */
-    this.setAlarmAck = function (alarmname, userId, groups) {
+    this.setAlarmAck = function (alarmName, userId, groups) {
         return new Promise(function (resolve, reject) {
             var changed = [];
             var authError = false;
             Object.keys(alarms).forEach(alrkey => {
                 alarms[alrkey].forEach(alr => {
-                    if (alr.getId() === alarmname) {
+                    if (alarmName === null || alr.getId() === alarmName) {
                         var mask = ((alr.tagproperty.permission >> 8) & 255);
                         var canack = (mask) ? mask & groups : 1;
                         if (canack) {
-                            alr.setAck(userId);
-                            changed.push(alr);
+                            if (alr.isToAck() > 0) {
+                                alr.setAck(userId);
+                                changed.push(alr);
+                            }
                         } else {
                             authError = true;
                         }

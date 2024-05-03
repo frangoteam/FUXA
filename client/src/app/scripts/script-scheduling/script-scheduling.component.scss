@@ -1,0 +1,16 @@
+
+.container {
+
+    min-width: 510px;
+    .sel-type {
+        width: 400px;
+    }
+    .row-input {
+        width: 400px;
+    }
+
+    .schedulig-list {
+        max-height: 500px;
+        overflow: auto;
+    }
+}

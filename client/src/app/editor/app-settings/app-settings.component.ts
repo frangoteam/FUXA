@@ -20,7 +20,7 @@ export class AppSettingsComponent implements OnInit {
                      { text: 'dlg.app-language-ua', value: 'ua' }, { text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
                      { text: 'dlg.app-language-pt', value: 'pt' }, { text: 'dlg.app-language-tr', value: 'tr' },
                      { text: 'dlg.app-language-ko', value: 'ko' }, { text: 'dlg.app-language-es', value: 'es' },
-		                 { text: 'dlg.app-language-fr', value: 'fr' },];
+                     { text: 'dlg.app-language-fr', value: 'fr' }, { text: 'dlg.app-language-de', value: 'de' },];
     authType = [ { text: 'dlg.app-auth-disabled', value: '' }, { text: 'dlg.app-auth-expiration-15m', value: '15m' },
                         { text: 'dlg.app-auth-expiration-1h', value: '1h' }, { text: 'dlg.app-auth-expiration-3h', value: '3h' },
                         { text: 'dlg.app-auth-expiration-1d', value: '1d' }];
@@ -34,6 +34,7 @@ export class AppSettingsComponent implements OnInit {
     daqstoreType = DaqStoreType;
     retationType = DaqStoreRetentionType;
     alarmsRetationType = AlarmsRetentionType;
+    influxDB18 = Utils.getEnumKey(DaqStoreType, DaqStoreType.influxDB18);
 
     constructor(private settingsService: SettingsService,
         private diagnoseService: DiagnoseService,
@@ -55,7 +56,10 @@ export class AppSettingsComponent implements OnInit {
             this.authentication = this.settings.tokenExpiresIn;
         }
         if (Utils.isNullOrUndefined(this.settings.broadcastAll)) {
-            this.settings.broadcastAll = false;
+            this.settings.broadcastAll = true;
+        }
+        if (Utils.isNullOrUndefined(this.settings.logFull)) {
+            this.settings.logFull = false;
         }
         if (!this.settings.smtp) {
             this.settings.smtp = new SmtpSettings();

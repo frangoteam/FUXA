@@ -1,2 +1,7 @@
 <div style="display: block;" [style.height]="height + 'px'" [style.width]="width + 'px'">
-  </div>
+    <canvas baseChart #chart  
+            [data]="pieChartData"
+            [options]="pieChartOptions"
+            [type]="pieChartType">
+    </canvas>
+</div>

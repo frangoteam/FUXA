@@ -6,12 +6,12 @@
         <div class="element-property-header">
             <span>{{'graph.property-data' | translate}}</span>
         </div>
-        <div class="_section-newline">
+        <div>
             <div class="my-form-field section-item section-item-block">
                 <span>{{'graph.property-name' | translate}}</span>
                 <input [(ngModel)]="data.settings.name" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="text">
             </div>
-            <div class="my-form-field section-item section-item-block">
+            <div class="my-form-field section-item section-item-block mt5">
                 <span>{{'graph.property-graph' | translate}}</span>
                 <mat-select [formControl]="graphCtrl" (selectionChange)="onGraphChanged()">
                     <mat-select-search [formControl]="graphFilterCtrl"></mat-select-search>
@@ -21,36 +21,37 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="section-newline"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'graph.property-date-last-range' | translate}}</span>
-                <mat-select [(value)]="options.lastRange" [disabled]="!isDateTime(graphCtrl.value)" (selectionChange)="onGraphChanged()">
-                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'graph.property-date-group' | translate}}</span>
-                <mat-select [(value)]="options.dateGroup" [disabled]="!isDateTime(graphCtrl.value)" (selectionChange)="onGraphChanged()">
-                    <mat-option *ngFor="let ev of dateGroupType | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'graph.property-offline' | translate}}</span>
-                <mat-slide-toggle color="primary" [checked]="!options.offline" (change)="options.offline = !options.offline;onGraphChanged();" 
-                                [disabled]="isDateTime(graphCtrl.value)">
-                </mat-slide-toggle>
-            </div>
+            <ng-container *ngIf="graphType === graphBarType">
+                <div class="my-form-field section-item mt5 inbk" style="width: 120px">
+                    <span>{{'graph.property-date-last-range' | translate}}</span>
+                    <mat-select [(value)]="options.lastRange" [disabled]="!isDateTime(graphCtrl.value)" (selectionChange)="onGraphChanged()">
+                        <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                            {{ ev.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field section-item ml15" style="display: inline-block; width: 120px">
+                    <span>{{'graph.property-date-group' | translate}}</span>
+                    <mat-select [(value)]="options.dateGroup" [disabled]="!isDateTime(graphCtrl.value)" (selectionChange)="onGraphChanged()">
+                        <mat-option *ngFor="let ev of dateGroupType | enumToArray" [value]="ev.key">
+                            {{ ev.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field section-inline-toggle slider-field ml10">
+                    <span>{{'graph.property-offline' | translate}}</span>
+                    <mat-slide-toggle color="primary" [checked]="!options.offline" (change)="options.offline = !options.offline;onGraphChanged();" 
+                                    [disabled]="isDateTime(graphCtrl.value)">
+                    </mat-slide-toggle>
+                </div>
+            </ng-container>
         </div>
-        <div class="element-property-header">
-            <span>{{'graph.property-general' | translate}}</span>
-        </div>
-        <div class="_section-newline">
+        <ng-container *ngIf="graphType === graphBarType">
+            <div class="element-property-header">
+                <span>{{'graph.property-general' | translate}}</span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="graphType === graphBarType">
             <div class="my-form-field section-item section-item-block">
                 <span>{{'graph.property-graph-oriantation' | translate}}</span>
                 <mat-select [(value)]="options.indexAxis" (selectionChange)="onGraphChanged()">
@@ -58,73 +59,69 @@
                     <mat-option value="y">{{'graph.property-ori-horizontal' | translate}}</mat-option>
                 </mat-select>
             </div>
-        </div>
+        </ng-container>
         <div class="element-property-header">
             <span>{{'graph.property-title' | translate}}</span>
         </div>
-        <div class="_section-newline">
+        <div>
             <div class="my-form-field section-inline-number">
                 <span>{{'graph.property-title-font' | translate}}</span>
                 <input numberOnly [(ngModel)]="options.plugins.title.font.size" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
+            <div class="my-form-field section-inline-toggle slider-field ml10">
                 <span>{{'graph.property-title-show' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.title.display" (change)="onGraphChanged()"></mat-slide-toggle>
             </div>
         </div>
-        <div class="element-property-header">
-            <span>{{'graph.property-yaxis' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-inline-number">
-                <span>{{'graph.property-yaxis-min' | translate}}</span>
-                <input numberOrNullOnly [(ngModel)]="options.scales['y'].min" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+        <ng-container *ngIf="graphType === graphBarType">
+            <div class="element-property-header">
+                <span>{{'graph.property-yaxis' | translate}}</span>
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number">
-                <span>{{'graph.property-yaxis-max' | translate}}</span>
-                <input numberOrNullOnly [(ngModel)]="options.scales['y'].max" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+            <div>
+                <div class="my-form-field section-inline-number">
+                    <span>{{'graph.property-yaxis-min' | translate}}</span>
+                    <input numberOrNullOnly [(ngModel)]="options.scales['y'].min" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+                </div>
+                <div class="my-form-field section-inline-number ml15">
+                    <span>{{'graph.property-yaxis-max' | translate}}</span>
+                    <input numberOrNullOnly [(ngModel)]="options.scales['y'].max" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+                </div>
+                <div class="my-form-field section-inline-number ml15">
+                    <span>{{'graph.property-stepsize' | translate}}</span>
+                    <input numberOnly [(ngModel)]="options.scales['y'].ticks.stepSize" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+                </div>
+                <div class="mt5"></div>
+                <div class="my-form-field section-inline-number">
+                    <span>{{'graph.property-yaxis-fontsize' | translate}}</span>
+                    <input numberOnly [(ngModel)]="options.scales['y'].ticks.font.size" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
+                </div>
+                <div class="my-form-field section-inline-number section-toogle ml15">
+                    <span>{{'graph.property-decimals' | translate}}</span>
+                    <input numberOnly [(ngModel)]="options.decimals" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="0">
+                </div>          
+                <div class="my-form-field section-inline-toggle slider-field ml10">
+                    <span>{{'graph.property-yaxis-show' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.scales['y'].display" (change)="onGraphChanged()"></mat-slide-toggle>
+                </div>
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number">
-                <span>{{'graph.property-stepsize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.scales['y'].ticks.stepSize" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number">
+            <div class="element-property-header">
+                <span>{{'graph.property-xaxis' | translate}}</span>
             </div>
-            <div class="section-newline"></div>
-            <div class="my-form-field section-inline-number">
-                <span>{{'graph.property-yaxis-fontsize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.scales['y'].ticks.font.size" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
+            <div>
+                <div class="my-form-field section-inline-number section-toogle">
+                    <span>{{'graph.property-xaxis-fontsize' | translate}}</span>
+                    <input numberOnly [(ngModel)]="options.scales['x'].ticks.font.size" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
+                </div>
+                <div class="my-form-field section-inline-toggle slider-field ml10">
+                    <span>{{'graph.property-xaxis-show' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.scales['x'].display" (change)="onGraphChanged()"></mat-slide-toggle>
+                </div>
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number section-toogle">
-                <span>{{'graph.property-decimals' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.decimals" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="0">
-            </div>          
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'graph.property-yaxis-show' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.scales['y'].display" (change)="onGraphChanged()"></mat-slide-toggle>
-            </div>
-        </div>
-        <div class="element-property-header">
-            <span>{{'graph.property-xaxis' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-inline-number section-toogle">
-                <span>{{'graph.property-xaxis-fontsize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.scales['x'].ticks.font.size" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'graph.property-xaxis-show' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.scales['x'].display" (change)="onGraphChanged()"></mat-slide-toggle>
-            </div>
-        </div>
+        </ng-container>
         <div class="element-property-header">
             <span>{{'graph.property-legend' | translate}}</span>
         </div>
-        <div class="_section-newline">
+        <div>
             <div class="my-form-field section-item" style="display: inline-block; width: 80px">
                 <span>{{'graph.property-legend-display' | translate}}</span>
                 <mat-select [(value)]="options.plugins.legend.position" (selectionChange)="onGraphChanged()">
@@ -134,8 +131,7 @@
                     <mat-option value="right">{{'graph.property-legend-right' | translate}}</mat-option>
                 </mat-select>
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 80px">
+            <div class="my-form-field section-item ml15" style="display: inline-block; width: 80px">
                 <span>{{'graph.property-legend-align' | translate}}</span>
                 <mat-select [(value)]="options.plugins.legend.align" (selectionChange)="onGraphChanged()">
                     <mat-option value="center">{{'graph.property-legend-center' | translate}}</mat-option>
@@ -143,120 +139,117 @@
                     <mat-option value="end">{{'graph.property-legend-end' | translate}}</mat-option>
                 </mat-select>
             </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-number section-toogle">
+            <div class="my-form-field section-inline-number section-toogle ml15">
                 <span>{{'graph.property-legend-fontsize' | translate}}</span>
                 <input numberOnly [(ngModel)]="options.plugins.legend.labels.font.size" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
+            <div class="my-form-field section-inline-toggle slider-field ml10">
                 <span>{{'graph.property-legend-show' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.legend.display" (change)="onGraphChanged()"></mat-slide-toggle>
             </div>
         </div>
-        <div class="element-property-header">
-            <span>{{'graph.property-theme' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-item section-item-block">
-                <span>{{'graph.property-theme-type' | translate}}</span>
-                <mat-select [(value)]="options.theme" (selectionChange)="onGraphThemaChanged()">
-                    <mat-option [value]="themeType.customise">{{'graph.property-theme-owner' | translate}}</mat-option>
-                    <mat-option [value]="themeType.light">{{'graph.property-theme-light' | translate}}</mat-option>
-                    <mat-option [value]="themeType.dark">{{'graph.property-theme-dark' | translate}}</mat-option>
-                </mat-select>
+        <ng-container *ngIf="graphType === graphBarType">
+            <div class="element-property-header">
+                <span>{{'graph.property-theme' | translate}}</span>
             </div>
-            <div *ngIf="options.theme === themeType.customise" class="section-newline">
-                <div class="my-form-field section-inline-color color-field">
-                    <span>{{'graph.property-title-color' | translate}}</span>
-                    <input [(colorPicker)]="options.plugins.title.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.plugins.title.color"
-                        [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                        [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()" />
+            <div>
+                <div class="my-form-field section-item section-item-block">
+                    <span>{{'graph.property-theme-type' | translate}}</span>
+                    <mat-select [(value)]="options.theme" (selectionChange)="onGraphThemaChanged()">
+                        <mat-option [value]="themeType.customise">{{'graph.property-theme-owner' | translate}}</mat-option>
+                        <mat-option [value]="themeType.light">{{'graph.property-theme-light' | translate}}</mat-option>
+                        <mat-option [value]="themeType.dark">{{'graph.property-theme-dark' | translate}}</mat-option>
+                    </mat-select>
                 </div>
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-color color-field">
-                    <span>{{'graph.property-yaxis-color' | translate}}</span>
-                    <input [(colorPicker)]="options.scales['y'].ticks.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.scales['y'].ticks.color"
-                        [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                        [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()"/>
-                </div>
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-color color-field">
-                    <span>{{'graph.property-xaxis-color' | translate}}</span>
-                    <input [(colorPicker)]="options.scales['x'].ticks.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.scales['x'].ticks.color"
-                        [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                        [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()"/>
-                </div>
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-color color-field">
-                    <span>{{'graph.property-grid-color' | translate}}</span>
-                    <input [(colorPicker)]="options.gridLinesColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridLinesColor"
-                        [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                        [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()"/>
-                </div>
-                <div class="section-newline"></div>
-                <div class="my-form-field section-inline-color color-field">
-                    <span>{{'graph.property-legend-color' | translate}}</span>
-                    <input [(colorPicker)]="options.plugins.legend.labels.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.plugins.legend.labels.color"
-                        [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                        [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()" />
-                </div>
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-color color-field">
-                    <span>{{'graph.property-datalabels-color' | translate}}</span>
-                    <input [(colorPicker)]="options.plugins.datalabels.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.plugins.datalabels.color"
-                        [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                        [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                        [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()" />
+                <div *ngIf="options.theme === themeType.customise" class="mt5">
+                    <div class="my-form-field section-inline-color color-field">
+                        <span>{{'graph.property-title-color' | translate}}</span>
+                        <input [(colorPicker)]="options.plugins.title.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.plugins.title.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
+                            [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'graph.property-yaxis-color' | translate}}</span>
+                        <input [(colorPicker)]="options.scales['y'].ticks.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.scales['y'].ticks.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
+                            [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()"/>
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'graph.property-xaxis-color' | translate}}</span>
+                        <input [(colorPicker)]="options.scales['x'].ticks.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.scales['x'].ticks.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
+                            [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()"/>
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'graph.property-grid-color' | translate}}</span>
+                        <input [(colorPicker)]="options.gridLinesColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridLinesColor"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
+                            [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()"/>
+                    </div>
+                    <div class="mt5">
+                        <div class="my-form-field section-inline-color color-field">
+                            <span>{{'graph.property-legend-color' | translate}}</span>
+                            <input [(colorPicker)]="options.plugins.legend.labels.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.plugins.legend.labels.color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
+                                [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()" />
+                        </div>
+                        <div class="my-form-field section-inline-color color-field ml15">
+                            <span>{{'graph.property-datalabels-color' | translate}}</span>
+                            <input [(colorPicker)]="options.plugins.datalabels.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.plugins.datalabels.color"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
+                                [cpPosition]="'auto'" (colorPickerChange)="onGraphChanged()" />
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </ng-container>
         <div class="element-property-header">
             <span>{{'graph.property-layout' | translate}}</span>
         </div>
-        <div class="_section-newline">
+        <div>
             <div class="my-form-field section-inline-number">
                 <span>{{'graph.property-border' | translate}}</span>
                 <input numberOnly [(ngModel)]="options.borderWidth" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="0">
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span style="width: 60px">{{'graph.property-gridline' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.gridLinesShow" (change)="onGraphChanged()"></mat-slide-toggle>
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-toggle section-inline-toggle-ext slider-field">
+            <ng-container *ngIf="graphType === graphBarType">
+                <div class="my-form-field section-inline-toggle slider-field ml10">
+                    <span style="width: 60px">{{'graph.property-gridline' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.gridLinesShow" (change)="onGraphChanged()"></mat-slide-toggle>
+                </div>
+            </ng-container>
+            <div class="my-form-field section-inline-toggle section-inline-toggle-ext slider-field ml10">
                 <span>{{'graph.property-tooltip' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.tooltip.enabled" (change)="onGraphChanged()"></mat-slide-toggle>
             </div>
         </div>
-        <div class="element-property-header">
-            <span>{{'graph.property-datalabels' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-item" style="display: inline-block; width: 80px">
-                <span>{{'graph.property-datalabels-align' | translate}}</span>
-                <mat-select [(value)]="options.plugins.datalabels.anchor" (selectionChange)="onGraphChanged()">
-                    <mat-option value="center">{{'graph.property-legend-center' | translate}}</mat-option>
-                    <mat-option value="start">{{'graph.property-legend-start' | translate}}</mat-option>
-                    <mat-option value="end">{{'graph.property-legend-end' | translate}}</mat-option>
-                </mat-select>
+        <ng-container *ngIf="graphType === graphBarType">
+            <div class="element-property-header">
+                <span>{{'graph.property-datalabels' | translate}}</span>
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number section-toogle">
-                <span>{{'graph.property-datalabels-fontsize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.plugins.datalabels.font['size']" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
+            <div>
+                <div class="my-form-field section-item" style="display: inline-block; width: 80px">
+                    <span>{{'graph.property-datalabels-align' | translate}}</span>
+                    <mat-select [(value)]="options.plugins.datalabels.anchor" (selectionChange)="onGraphChanged()">
+                        <mat-option value="center">{{'graph.property-legend-center' | translate}}</mat-option>
+                        <mat-option value="start">{{'graph.property-legend-start' | translate}}</mat-option>
+                        <mat-option value="end">{{'graph.property-legend-end' | translate}}</mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field section-inline-number section-toogle ml15">
+                    <span>{{'graph.property-datalabels-fontsize' | translate}}</span>
+                    <input numberOnly [(ngModel)]="options.plugins.datalabels.font['size']" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
+                </div>
+                <div class="my-form-field section-inline-toggle slider-field ml10">
+                    <span>{{'graph.property-datalabels-show' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.datalabels.display" (change)="onGraphChanged()"></mat-slide-toggle>
+                </div>
             </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'graph.property-datalabels-show' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.datalabels.display" (change)="onGraphChanged()"></mat-slide-toggle>
-            </div>
-        </div>
+        </ng-container>
     </div>
 </div>

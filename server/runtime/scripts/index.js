@@ -5,6 +5,7 @@
 'use strict';
 
 const MyScriptModule = require('./msm');
+const nodeSchedule = require('node-schedule');
 
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
@@ -68,14 +69,14 @@ function ScriptsManager(_runtime) {
     this.runScript = function (script) {
         return new Promise(async function (resolve, reject) {
             try {
+                var result;
                 if (script.test) {
-                    scriptModule.runTestScript(script);
+                    result = await scriptModule.runTestScript(script);
                 } else {
                     logger.info(`Run script ${script.name}`);
-                    scriptModule.runScript(script);
+                    result = scriptModule.runScript(script);
                 }
-                // this.runtime.project.getScripts();
-                resolve(`Script OK: ${script.name}`);
+                resolve(result || `Script OK: ${script.name}`);
             } catch (err) {
                 reject(err);
             }
@@ -93,6 +94,15 @@ function ScriptsManager(_runtime) {
             logger.error(err);
         }
         return false;
+    }
+
+    this.sysFunctionExist = (functionName) => {
+        const sysFncs = _getSystemFunctions();
+        return !!sysFncs[functionName];
+    }
+
+    this.runSysFunction = (functionName, params) => {
+        return scriptModule.runSysFunction(functionName, params);
     }
 
     /**
@@ -142,8 +152,12 @@ function ScriptsManager(_runtime) {
      */
     var _init = function () {
         return new Promise(function (resolve, reject) {
-            scriptModule.init(_getSystemFunctions());
-            resolve();
+            try {
+                scriptModule.init(_getSystemFunctions());
+                resolve();
+            } catch (err) {
+                logger.error(err);
+            }
         });
     }
 
@@ -162,12 +176,31 @@ function ScriptsManager(_runtime) {
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
             schedulingMap = {};
+            try {
+                nodeSchedule.gracefulShutdown();
+            } catch (e) {
+                logger.error(e);
+            }
             runtime.project.getScripts().then((scripts) => {
                 if (scripts) {
                     var lr = scriptModule.loadScripts(scripts);
                     Object.values(scripts).forEach((script) => {
-                        if (script.scheduling && script.scheduling.interval && script.mode != 'CLIENT') {
-                            schedulingMap[script.name] = new ScriptSchedule(script);
+                        if (script.scheduling) {
+                            const scriptSchedule = new ScriptSchedule(script);
+                            if (script.scheduling.interval && script.mode != 'CLIENT') {
+                                schedulingMap[script.name] = scriptSchedule;
+                            } else if (script.scheduling.mode === ScriptSchedulingMode.scheduling) {
+                                try {
+                                    scriptSchedule.getScheduleRules().forEach((scheduleRule) => {
+                                        logger.info(`Load script-schedule ${script.name} - ${JSON.stringify(scheduleRule)}`);
+                                        nodeSchedule.scheduleJob(scheduleRule, function() {
+                                            scriptModule.runScriptWithoutParameter(script);
+                                        });
+                                    });
+                                } catch (er) {
+                                    logger.error(er);
+                                }
+                            }
                         }
                     });
                     resolve(lr.messages);
@@ -184,7 +217,11 @@ function ScriptsManager(_runtime) {
         var sysFncs = {};
         sysFncs['$getTag'] = runtime.devices.getTagValue;
         sysFncs['$setTag'] = runtime.devices.setTagValue;
+        sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
+        sysFncs['$enableDevice'] = runtime.devices.enableDevice;
+        sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
+        sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         return sysFncs;
     }
 
@@ -214,12 +251,63 @@ function ScriptSchedule(script) {
     this.name = script.name;
     this.scheduling = script.scheduling;
     this.lastRun = 0;
+    this.created = new Date().getTime();
 
     this.isToRun = function(time) {
-        return (time - this.lastRun > this.scheduling.interval * 1000);
+        if (this.scheduling.mode === ScriptSchedulingMode.start) {
+            return !this.lastRun && (time - this.created > this.scheduling.interval * 1000);
+        } else if (this.scheduling.mode !== ScriptSchedulingMode.scheduling) {
+            return (time - this.lastRun > this.scheduling.interval * 1000);
+        }
+    }
+
+    this.getScheduleRules = function() {
+        let result = [];
+        if (this.scheduling.schedules) {
+            this.scheduling.schedules.forEach(schedule => {
+
+                if (schedule.type === SchedulerType.date && schedule.date) {
+                    var date = new Date(schedule.date);
+                    if (schedule.time) {
+                        const [hour, minute, seconds] = schedule.time.split(':');
+                        if (hour) date.setHours(hour);
+                        if (minute) date.setMinutes(minute);
+                        if (seconds) date.setSeconds(seconds);
+                    }
+                    result.push(date);
+                } else {
+                    const rule = new nodeSchedule.RecurrenceRule();
+                    if (schedule.hour) rule.hour = schedule.hour;
+                    if (schedule.minute) rule.minute = schedule.minute;
+                    if (schedule.days) {
+                        rule.dayOfWeek = [];
+                        if (schedule.days.includes('sun')) rule.dayOfWeek.push(0);
+                        if (schedule.days.includes('mon')) rule.dayOfWeek.push(1);
+                        if (schedule.days.includes('tue')) rule.dayOfWeek.push(2);
+                        if (schedule.days.includes('wed')) rule.dayOfWeek.push(3);
+                        if (schedule.days.includes('thu')) rule.dayOfWeek.push(4);
+                        if (schedule.days.includes('fri')) rule.dayOfWeek.push(5);
+                        if (schedule.days.includes('sat')) rule.dayOfWeek.push(6);
+                    }
+                    result.push(rule);
+                }
+            });
+        }
+        return result;
     }
 }
 
 const ScriptCommandEnum = {
     SETVIEW: 'SETVIEW',
+}
+
+const ScriptSchedulingMode = {
+    interval: 'interval',
+    start: 'start',
+    scheduling: 'scheduling',
+}
+
+const SchedulerType = {
+    weekly: 0,
+    date: 1,
 }

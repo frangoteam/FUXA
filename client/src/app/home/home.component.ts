@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject, Subscription } from 'rxjs';
+import { combineLatest, interval, Observable, Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -14,7 +14,7 @@ import { HmiService, ScriptSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType, LoginOverlayColorType } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -24,7 +24,13 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, filter, last, map, takeUntil } from 'rxjs/operators';
+import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
+import { User } from '../_models/user';
+import { UserInfo } from '../users/user-edit/user-edit.component';
+import { Intervals } from '../_helpers/intervals';
+import { Script, ScriptMode } from '../_models/script';
+import { ScriptService } from '../_services/script.service';
 // declare var panzoom: any;
 
 @Component({
@@ -40,6 +46,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('cardsview', { static: false }) cardsview: CardsViewComponent;
     @ViewChild('alarmsview', { static: false }) alarmsview: AlarmViewComponent;
     @ViewChild('container', { static: false }) container: ElementRef;
+    @ViewChild('header', { static: false }) header: ElementRef;
 
     iframes: IiFrame[] = [];
     isLoading = true;
@@ -58,14 +65,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     showNavigation = true;
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
-    serverErrorBanner = false;
+    serverErrorBanner$: Observable<boolean>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     gridOptions = <GridsterConfig>new GridOptions();
-
+    intervalsScript = new Intervals();
+    currentDateTime: Date = new Date();
+    private headerItemsMap = new Map<string, HeaderItem[]>();
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
     private subscriptiongoTo: Subscription;
     private destroy$ = new Subject<void>();
+    loggedUser$: Observable<User>;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -73,6 +83,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private hmiService: HmiService,
+        private scriptService: ScriptService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
         this.gridOptions.draggable = { enabled: false };
@@ -81,10 +92,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         try {
-            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
-                let hmi = this.projectService.getHmi();
-                if (hmi) {
+            this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(() => {
+                if (this.projectService.getHmi()) {
                     this.loadHmi();
+                    this.initScheduledScripts();
+                    this.checkDateTimeTimer();
                 }
             }, error => {
                 console.error(`Error loadHMI: ${error}`);
@@ -95,13 +107,26 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
-            this.hmiService.onServerConnection$.pipe(
-                takeUntil(this.destroy$)
-            ).subscribe(status => {
-                this.serverErrorBanner = !status;
+
+            this.serverErrorBanner$ = combineLatest([
+                this.hmiService.onServerConnection$,
+                this.authService.currentUser$
+            ]).pipe(
+                map(([connectionStatus, userProfile]) => (this.securityEnabled && !userProfile) ? false : !connectionStatus),
+                takeUntil(this.destroy$),
+                debounceTime(1000),
+                last()
+            );
+
+            this.loggedUser$ = this.authService.currentUser$;
+
+            this.gaugesManager.onchange.pipe(
+                takeUntil(this.destroy$),
+                filter(varTag => this.headerItemsMap.has(varTag.id))
+            ).subscribe(varTag => {
+                this.processValueInHeaderItem(varTag);
             });
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
     }
@@ -133,15 +158,40 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.destroy$.next();
             this.destroy$.complete();
+            this.intervalsScript.clearIntervals();
         } catch (e) {
         }
+    }
+
+    private checkDateTimeTimer(): void {
+        if (this.hmi.layout?.header?.dateTimeDisplay) {
+            interval(1000).pipe(
+                takeUntil(this.destroy$)
+            ).subscribe(() => {
+                this.currentDateTime = new Date();
+            });
+        }
+    }
+
+    private initScheduledScripts() {
+        this.intervalsScript.clearIntervals();
+        this.projectService.getScripts()?.forEach((script: Script) => {
+            if (script.mode == ScriptMode.CLIENT && script.scheduling?.interval > 0) {
+                this.intervalsScript.addInterval(
+                    script.scheduling.interval * 1000,
+                    this.scriptService.evalScript,
+                    script,
+                    this.scriptService
+                );
+            }
+        });
     }
 
     onGoToPage(viewId: string, force: boolean = false) {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (this.homeView && viewId !== this.homeView.id || force || !this.homeView) {
+        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview.view?.id !== viewId) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
@@ -228,11 +278,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else {
-            let dialogRef = this.dialog.open(LoginComponent, {
-                // minWidth: '250px',
-                data: {}
-            });
+            let dialogConfig = {
+                data: {},
+                disableClose: true,
+                autoFocus: false,
+                ...(this.hmi.layout.loginoverlaycolor && this.hmi.layout.loginoverlaycolor !== LoginOverlayColorType.none) && {
+                    backdropClass: this.hmi.layout.loginoverlaycolor === LoginOverlayColorType.black ? 'backdrop-black' : 'backdrop-white'
+                }
+            };
+
+            let dialogRef = this.dialog.open(LoginComponent, dialogConfig);
             dialogRef.afterClosed().subscribe(result => {
+                const userInfo = new UserInfo(this.authService.getUser()?.info);
+                if (userInfo.start) {
+                    this.onGoToPage(userInfo.start);
+                }
             });
         }
     }
@@ -269,6 +329,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    private processValueInHeaderItem(varTag: Variable) {
+        this.headerItemsMap.get(varTag.id)?.forEach(item => {
+            if (item.status.variablesValue[varTag.id] !== varTag.value) {
+                HtmlButtonComponent.processValue(
+                    <GaugeSettings>{ property: item.property },
+                    item.element ?? Utils.findElementByIdRecursive(this.header.nativeElement, item.id),
+                    varTag,
+                    item.status,
+                    item.type === 'label'
+                );
+            }
+            item.status.variablesValue[varTag.id] = varTag.value;
+        });
+    }
+
     private goTo(destination: string) {
         this.router.navigate([destination]);//, this.ID]);
     }
@@ -280,13 +355,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (this.hmi && this.hmi.views && this.hmi.views.length > 0) {
             let viewToShow = null;
-            if (this.hmi.layout && this.hmi.layout.start) {
+            if (this.hmi.layout?.start) {
                 viewToShow = this.hmi.views.find(x => x.id === this.hmi.layout.start);
             }
             if (!viewToShow) {
                 viewToShow = this.hmi.views[0];
             }
-            let startView = this.hmi.views.find(x => x.name === this.route.snapshot.paramMap.get('viewName')?.trim());
+            let startView = this.hmi.views.find(x => x.name === this.route.snapshot.queryParamMap.get('viewName')?.trim());
             if (startView) {
                 viewToShow = startView;
             }
@@ -320,6 +395,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     this.checkHeaderButton();
                     this.layoutHeader = this.hmi.layout.header;
+                    this.changeDetector.detectChanges();
+                    this.loadHeaderItems();
                 }
                 if (this.hmi.layout.zoom && ZoomModeType[this.hmi.layout.zoom] === ZoomModeType.enabled) {
                     setTimeout(() => {
@@ -343,6 +420,59 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.securityEnabled = this.projectService.isSecurityEnabled();
         if (this.securityEnabled && !this.isLoggedIn() && this.hmi.layout.loginonstart) {
             this.onLogin();
+        }
+    }
+
+    private loadHeaderItems() {
+        this.headerItemsMap.clear();
+        if (!this.showNavigation) {
+            return;
+        }
+        this.layoutHeader.items?.forEach(item => {
+            item.status = item.status ?? new GaugeStatus();
+            item.status.onlyChange = true;
+            item.status.variablesValue = {};
+            item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);
+            const signalsIds = HtmlButtonComponent.getSignals(item.property);
+            signalsIds.forEach(sigId => {
+                if (!this.headerItemsMap.has(sigId)) {
+                    this.headerItemsMap.set(sigId, []);
+                }
+                this.headerItemsMap.get(sigId).push(item);
+            });
+            const settingsProperty = <GaugeSettings>{
+                property: item.property,
+                type: HtmlButtonComponent.TypeTag
+            };
+            this.onBindMouseEvents(item.element, settingsProperty);
+        });
+        this.hmiService.homeTagsSubscribe(Array.from(this.headerItemsMap.keys()));
+    }
+
+    private onBindMouseEvents(element: HTMLElement, ga: GaugeSettings) {
+        if (element) {
+            let clickEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
+            if (clickEvents && clickEvents.length > 0) {
+                element.onclick = (ev: MouseEvent) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                };
+                element.ontouchstart = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                };
+
+            }
+            let mouseDownEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
+            if (mouseDownEvents && mouseDownEvents.length > 0) {
+                element.onmousedown = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseDownEvents);
+                };
+            }
+            let mouseUpEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
+            if (mouseUpEvents && mouseUpEvents.length > 0) {
+                element.onmouseup = (ev) => {
+                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseUpEvents);
+                };
+            }
         }
     }
 

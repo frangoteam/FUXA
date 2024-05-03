@@ -11,7 +11,7 @@
                 <span>{{'chart.property-name' | translate}}</span>
                 <input [(ngModel)]="data.settings.name" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="text">
             </div>
-            <div class="my-form-field field-block lbk">
+            <div class="my-form-field field-block lbk mt5">
                 <span>{{'chart.property-chart' | translate}}</span>
                 <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
                     <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
@@ -24,25 +24,55 @@
             <div class="section-newline"></div>
             <div class="my-form-field section-item" style="display: inline-block; width: 120px">
                 <span>{{'chart.property-chart-type' | translate}}</span>
-                <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged()">
+                <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged();onShowChartSelectionMessage($event)">
                     <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
+                        {{'chart.viewtype-' + ev.value | translate }}
                     </mat-option>
                 </mat-select>
             </div>
             <div class="section-inline-margin"></div>
-            <div *ngIf="chartViewValue !== chartViewRealtime" class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'chart.property-date-last-range' | translate}}</span>
-                <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
-                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                        {{ ev.value | translate }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div *ngIf="chartViewValue === chartViewRealtime" class="my-form-field field-number lbk section-item">
-                <span style="width: 100px">{{'chart.property-realtime-max' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.realtime"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="1">
-            </div>            
+            <ng-container *ngIf="chartViewValue !== chartViewType.realtime1">
+                <ng-container *ngIf="chartViewValue === chartViewType.history">
+                    <div class="my-form-field section-item inbk" style="width: 110px">
+                        <span>{{'chart.property-date-last-range' | translate}}</span>
+                        <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                                {{ ev.value | translate }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="chartViewValue === chartViewType.custom">
+                    <div class="my-form-field inbk" style="width: 180px">
+                        <span>{{'chart.property-script' | translate}}</span>
+                        <mat-select [(value)]="options.scriptId" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+                        </mat-select>
+                    </div>
+                </ng-container>
+                <div class="block mt5">
+                    <div class="my-form-field field-number inbk" style="width: 120px">
+                        <span style="width: 120px;">{{'chart.property-refresh-interval' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.refreshInterval"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0">
+                    </div>
+                    <ng-container *ngIf="chartViewValue === chartViewType.history">
+                        <div class="my-form-field inbk ml10 tac">
+                            <span>{{'chart.property-hide-toolbar' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="chartViewValue === chartViewType.realtime1">
+                <div class="my-form-field field-number lbk section-item">
+                    <span style="width: 100px">{{'chart.property-realtime-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="options.realtime"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="1">
+                </div>
+                <div class="my-form-field inbk ml20 tac" style="max-width: 100px;">
+                    <span>{{'chart.property-load-old-values' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="options.loadOldValues" (change)="onChartChanged()"></mat-slide-toggle>
+                </div>
+            </ng-container>
             <div class="element-property-header">
                 <span>{{'chart.property-general' | translate}}</span>
             </div>

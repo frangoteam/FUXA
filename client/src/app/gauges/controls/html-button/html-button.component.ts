@@ -21,18 +21,17 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
     static prefixRect = 'svg_';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink };
-    // static actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
 
     constructor() {
         super();
     }
 
-    static getSignals(pro: any) {
+    static getSignals(pro: any): string[] {
         let res: string[] = [];
-        if (pro.variableId) {
+        if (pro?.variableId) {
             res.push(pro.variableId);
         }
-        if (pro.actions && pro.actions.length) {
+        if (pro?.actions && pro.actions.length) {
             pro.actions.forEach(act => {
                 res.push(act.variableId);
             });
@@ -77,10 +76,17 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         }
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
+    static processValue(ga: GaugeSettings, element: HTMLElement | any, sig: Variable, gaugeStatus: GaugeStatus, isLabelType = false) {
         try {
-            if (svgele.node && svgele.node.children && svgele.node.children.length >= 1) {
-                let button = Utils.searchTreeStartWith(svgele.node, this.prefixB);
+            let button: HTMLElement = element instanceof HTMLElement ? element : null;
+            if (button === null && element.node?.children && element.node.children.length >= 1) {
+                button = Utils.searchTreeStartWith(element.node, this.prefixB);
+            }
+            if (button) {
+                if (isLabelType) {
+                    button.textContent = sig.value;
+                    return;
+                }
                 let val = parseFloat(sig.value);
                 if (Number.isNaN(val)) {
                     // maybe boolean
@@ -92,17 +98,21 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
                         for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                             if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
                                 propertyColor.fill = ga.property.ranges[idx].color;
+                                propertyColor.stroke = ga.property.ranges[idx].stroke;
                             }
                         }
                         if (propertyColor.fill) {
                             button.style.backgroundColor = propertyColor.fill;
+                        }
+                        if (propertyColor.stroke) {
+                            button.style.color = propertyColor.stroke;
                         }
                     }
                     // check actions
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
                             if (act.variableId === sig.id) {
-                                HtmlButtonComponent.processAction(act, svgele, button, val, gaugeStatus, propertyColor);
+                                HtmlButtonComponent.processAction(act, element, button, val, gaugeStatus, propertyColor);
                             }
                         });
                     }
@@ -145,16 +155,24 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         return ele.getAttribute('stroke');
     }
 
-    static processAction(act: GaugeAction, svgele: any, button: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, button: HTMLElement | any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= value && act.range.max >= value) {
-                let element = SVG.adopt(svgele.node);
-                this.runActionHide(element, act.type, gaugeStatus);
+                if (button === svgele) {
+                    button.style.display = 'none';
+                } else {
+                    let element = SVG.adopt(svgele.node);
+                    this.runActionHide(element, act.type, gaugeStatus);
+                }
             }
         } else if (this.actionsType[act.type] === this.actionsType.show) {
             if (act.range.min <= value && act.range.max >= value) {
-                let element = SVG.adopt(svgele.node);
-                this.runActionShow(element, act.type, gaugeStatus);
+                if (button === svgele) {
+                    button.style.display = 'unset';
+                } else {
+                    let element = SVG.adopt(svgele.node);
+                    this.runActionShow(element, act.type, gaugeStatus);
+                }
             }
         } else if (this.actionsType[act.type] === this.actionsType.blink) {
             let inRange = (act.range.min <= value && act.range.max >= value);

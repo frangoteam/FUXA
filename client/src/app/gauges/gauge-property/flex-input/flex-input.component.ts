@@ -1,8 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { GaugeProperty, GaugeRangeProperty, InputOptionsProperty } from '../../../_models/hmi';
+import { GaugeProperty, GaugeRangeProperty, InputConvertionType, InputOptionType, InputOptionsProperty, InputTimeFormatType } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
     selector: 'flex-input',
@@ -26,6 +27,9 @@ export class FlexInputComponent implements OnInit {
     slideView = true;
     defaultColor = Utils.defaultColor;
     valueresult = '123';
+    inputOptionType = InputOptionType;
+    inputTimeFormatType = InputTimeFormatType;
+    inputConvertionType = InputConvertionType;
 
     constructor() {
     }
@@ -58,6 +62,7 @@ export class FlexInputComponent implements OnInit {
         }
         if (this.isInputCtrl()) {
             this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
+            this.property.options.type = this.property.options.type ? this.property.options.type : this.property.options.numeric ? this.inputOptionType.number : this.inputOptionType.text;
         }
         this.ranges.forEach(range => {
             if (!range.color) {
@@ -117,7 +122,7 @@ export class FlexInputComponent implements OnInit {
     changeTag(_tag) {
         this.tag = _tag;
         if (this.isOutputCtrl()) {
-            let device = DevicesUtils.getDeviceFromTagId(this.data.devices, _tag.id);
+            let device = DevicesUtils.getDeviceFromTagId(this.data.devices, _tag?.id);
             if (device) {
                 if (this.varunit) {
                     this.varunit.setVariable(DevicesUtils.getTagFromTagAddress(device, _tag.address + 'OpcEngUnit'));
@@ -168,6 +173,15 @@ export class FlexInputComponent implements OnInit {
     onUnitChanged(range: GaugeRangeProperty, event) {
         range.textId = event.variableId;
         range.text = event.variableValue;
+    }
+
+    onTypeChange(select: MatSelectChange) {
+        if (!this.property.options.timeformat && (select.value === InputOptionType.time || select.value === InputOptionType.datetime)) {
+            this.property.options.timeformat = InputTimeFormatType.normal;
+        }
+        if (!this.property.options.convertion && (select.value === InputOptionType.time || select.value === InputOptionType.date || select.value === InputOptionType.datetime)) {
+            this.property.options.convertion = InputConvertionType.milliseconds;
+        }
     }
 
     private addInput(gap: GaugeRangeProperty) {

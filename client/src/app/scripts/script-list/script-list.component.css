@@ -68,15 +68,11 @@
     flex: 1 1 120px;
 }
 
-.mat-column-type {
-    flex: 0 0 100px;
-}
-
 .mat-column-params {
     flex: 3 1 180px;
 }
 .mat-column-scheduling {
-    flex: 3 1 180px;
+    flex: 3 1 280px;
 }
 .mat-column-options {
     flex: 0 0 60px;

@@ -26,7 +26,7 @@ import { ViewComponent } from './view/view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
-import { LayoutPropertyComponent, DialogMenuItem } from './editor/layout-property/layout-property.component';
+import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
@@ -39,12 +39,12 @@ import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.c
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
-import { ScriptEditorComponent, DialogScriptParam } from './scripts/script-editor/script-editor.component';
+import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
 import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
 import { ScriptPermissionComponent } from './scripts/script-permission/script-permission.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
-import { DeviceComponent, DeviceTagDialog } from './device/device.component';
+import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
 import { TagPropertyComponent } from './device/tag-property/tag-property.component';
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
@@ -118,7 +118,7 @@ import { HtmlTableComponent } from './gauges/controls/html-table/html-table.comp
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
-import { UsersComponent, DialogUser } from './users/users.component';
+import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
 import { DialogUserInfo } from './home/home.component';
 import { ShapesComponent } from './gauges/shapes/shapes.component';
@@ -162,10 +162,34 @@ import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
 import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
+import { HeartbeatService } from './_services/heartbeat.service';
+import { RcgiService } from './_services/rcgi/rcgi.service';
+import { ToastNotifierService } from './_services/toast-notifier.service';
+import { MyFileService } from './_services/my-file.service';
+import { TagsIdsConfigComponent } from './editor/tags-ids-config/tags-ids-config.component';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipDefaultOptions } from '@angular/material/tooltip';
+import { HtmlImageComponent } from './gauges/controls/html-image/html-image.component';
+import { NgxSchedulerComponent } from './gui-helpers/ngx-scheduler/ngx-scheduler.component';
+import { FlexDeviceTagComponent } from './gauges/gauge-property/flex-device-tag/flex-device-tag.component';
+import { PanelComponent } from './gauges/controls/panel/panel.component';
+import { PanelPropertyComponent } from './gauges/controls/panel/panel-property/panel-property.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
+import { FuxaViewDialogComponent } from './fuxa-view/fuxa-view-dialog/fuxa-view-dialog.component';
+import { DeviceTagSelectionComponent } from './device/device-tag-selection/device-tag-selection.component';
+import { WebcamPlayerComponent } from './gui-helpers/webcam-player/webcam-player.component';
+import { WebcamPlayerDialogComponent } from './gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
+import { ScriptEditorParamComponent } from './scripts/script-editor/script-editor-param/script-editor-param.component';
+import { TagPropertySettingsS7Component } from './device/tag-property/tag-property-settings-s7/tag-property-settings-s7.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
+
+export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
+    showDelay: 1000,
+    hideDelay: 1000,
+    touchendHideDelay: 1000,
+};
 
 @NgModule({
     declarations: [
@@ -177,21 +201,25 @@ export function createTranslateLoader(http: HttpClient) {
         AppComponent,
         LabComponent,
         DeviceComponent,
-        DeviceTagDialog,
+        DeviceTagSelectionComponent,
         TagPropertyComponent,
+        TagPropertySettingsS7Component,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
+        TagsIdsConfigComponent,
         PluginsComponent,
         AppSettingsComponent,
         SetupComponent,
         DialogMenuItem,
+        DialogHeaderItem,
         DeviceListComponent,
         DialogTagName,
         DeviceMapComponent,
         FuxaViewComponent,
+        FuxaViewDialogComponent,
         DialogDocProperty,
         DialogDocName,
         DialogNewDoc,
@@ -207,6 +235,7 @@ export function createTranslateLoader(http: HttpClient) {
         HtmlChartComponent,
         HtmlGraphComponent,
         HtmlIframeComponent,
+        HtmlImageComponent,
         HtmlBagComponent,
         GaugeProgressComponent,
         GaugeSemaphoreComponent,
@@ -224,6 +253,7 @@ export function createTranslateLoader(http: HttpClient) {
         TesterComponent,
         TutorialComponent,
         FlexInputComponent,
+        FlexDeviceTagComponent,
         FlexAuthComponent,
         FlexHeadComponent,
         FlexEventComponent,
@@ -261,15 +291,16 @@ export function createTranslateLoader(http: HttpClient) {
         ScriptModeComponent,
         ReportListComponent,
         ReportEditorComponent,
-        DialogScriptParam,
+        ScriptEditorParamComponent,
         TextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,
+        NgxSchedulerComponent,
         DialogChartLine,
         DialogGraphSource,
         UsersComponent,
-        DialogUser,
+        UserEditComponent,
         LoginComponent,
         DialogUserInfo,
         ViewComponent,
@@ -291,7 +322,11 @@ export function createTranslateLoader(http: HttpClient) {
         ReportItemTextComponent,
         ReportItemTableComponent,
         ReportItemAlarmsComponent,
-        ReportItemChartComponent
+        ReportItemChartComponent,
+        PanelComponent,
+        PanelPropertyComponent,
+        WebcamPlayerComponent,
+        WebcamPlayerDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -328,11 +363,13 @@ export function createTranslateLoader(http: HttpClient) {
         ResWebApiService,
         ResDemoService,
         HmiService,
+        RcgiService,
         AppService,
         ProjectService,
         UserService,
         DiagnoseService,
         CommandService,
+        HeartbeatService,
         DataConverterService,
         ScriptService,
         ResourcesService,
@@ -352,7 +389,10 @@ export function createTranslateLoader(http: HttpClient) {
         Dictionary,
         ModalPositionCache,
         Define,
-        AuthGuard
+        AuthGuard,
+        ToastNotifierService,
+        MyFileService,
+        {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]
 })

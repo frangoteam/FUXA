@@ -16,13 +16,20 @@
         <div class="my-form-field" style="width: 140px;padding-left: 20px">
             <span>{{'gauges.property-event-action' | translate}}</span>
             <mat-select [(value)]="item.action" (change)="item.actparam = '';">
-                <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
-                    {{ type.value }}
-                </mat-option>
+                <ng-container *ngIf="!isEnterOrSelect(item.type); else enterOrSelectAction">
+                    <mat-option *ngFor="let type of actionType | enumToArray" [value]="type.key">
+                        {{ type.value }}
+                    </mat-option>
+                </ng-container>
+                <ng-template #enterOrSelectAction>
+                    <mat-option *ngFor="let type of enterActionType | enumToArray" [value]="type.key">
+                        {{ type.value }}
+                    </mat-option>
+                </ng-template>
             </mat-select>
         </div>
     </div>
-    <div class="my-form-field" style="width: 260px;padding-left: 20px" *ngIf="withDestination(item.action)">
+    <div class="my-form-field" style="width: 240px;padding-left: 20px" *ngIf="withDestination(item.action)">
         <span>{{'gauges.property-event-destination' | translate}}</span>
         <mat-select [(value)]="item.actparam">
             <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
@@ -36,7 +43,15 @@
                 <span>{{'general-y' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.top" type="number" style="width: 60px">
             </div>
+            <div *ngIf="cardDestination === item.action" class="my-form-field lbk ml10 tac" style="max-width: 70px;">
+                <span>{{'gauges.property-event-single-card' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.singleCard"></mat-slide-toggle>
+            </div>
         </div>
+    </div>
+    <div *ngIf="destinationWithHideClose(item.action)" class="my-form-field lbk ml10 tac" style="max-width: 60px;">
+        <span>{{'gauges.property-event-destination-hide-close' | translate}}</span>
+        <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.hideClose"></mat-slide-toggle>
     </div>
     <div *ngIf="withDestination(item.action)" style="padding-left: 25px;">
         <flex-variables-mapping [(mapping)]="item.actoptions['variablesMapping']" [view]="getView(item.actparam)" [data]="data"></flex-variables-mapping>
@@ -97,29 +112,37 @@
             </div>
         </div>
     </div>
-    <div style="display: inline-block" *ngIf="withRunScript(item.action)">
-        <div class="my-form-field" style="width: 260px;padding-left: 20px;">
+    <ng-container *ngIf="withRunScript(item.action)">
+        <div class="my-form-field inbk" style="width: 260px;padding-left: 20px;">
             <span>{{'gauges.property-event-script' | translate}}</span>
             <mat-select [(value)]="item.actparam" (selectionChange)="onScriptChanged($event.value, item)">
                 <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
             </mat-select>
         </div>
-    </div>
-    <div *ngIf="withRunScript(item.action)" style="display: table; padding-top: 5px;">
-        <div *ngFor="let scriptParam of item.actoptions['params']; index as i" style="padding-left: 10px; padding-top: 5px;">
-            <div class="my-form-field">
-                <span>{{'gauges.property-event-script-param-name' | translate}}</span>
-                <input [(ngModel)]="scriptParam.name" type="text" style="width: 160px" readonly [disabled]="true">
-            </div>
-            <div style="margin-left: 10px; display: inline-block;">
-                <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
-                    <span>{{'gauges.property-event-script-param-value' | translate}}</span>
-                    <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+        <div style="display: table; padding-top: 5px;">
+            <div *ngFor="let scriptParam of item.actoptions['params']; index as i" style="padding-left: 10px; padding-top: 5px;">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-event-script-param-name' | translate}}</span>
+                    <input [(ngModel)]="scriptParam.name" type="text" style="width: 160px" readonly [disabled]="true">
                 </div>
-                <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
-                    <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value" [withStaticValue]="false"></flex-variable>
+                <div style="margin-left: 10px; display: inline-block;">
+                    <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
+                        <span>{{'gauges.property-event-script-param-value' | translate}}</span>
+                        <ng-container *ngIf="!isEnterOrSelect(item.type); else enterParamValue">
+                            <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                        </ng-container>
+                        <ng-template #enterParamValue>
+                            <input [(ngModel)]="scriptParam.value" 
+                                placeholder="{{'gauges.property-event-script-param-input-value' | translate}}" 
+                                type="text" 
+                                style="width: 260px">
+                        </ng-template>
+                    </div>
+                    <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
+                        <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value" [withStaticValue]="false"></flex-variable>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </ng-container>
 </div>

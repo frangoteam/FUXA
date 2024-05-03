@@ -2,14 +2,14 @@
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
-<mat-drawer #svgSelectorPanel class="editor-sidenav" mode="side" position="end">
+<mat-drawer #svgSelectorPanel class="sidepanel-selector" mode="side" position="end">
     <button mat-icon-button (click)="svgSelectorPanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
     </button>
     <button mat-icon-button (click)="checkSvgElementsMap(true)" style="position: absolute; top: 3px; right: 40px;">
         <mat-icon>autorenew</mat-icon>
     </button>
-    <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
+    <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" (onEdit)="onGaugeEdit($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
 </mat-drawer>
 <mat-drawer #sidePanel class="editor-sidenav" mode="side" position="end">
     <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
@@ -27,6 +27,9 @@
         </div>
         <div *ngSwitchCase="gaugeDialogType.Table">
             <app-table-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-table-property>
+        </div>
+        <div *ngSwitchCase="gaugeDialogType.Panel">
+            <app-panel-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-panel-property>
         </div>
     </div>
 </mat-drawer>
@@ -62,7 +65,7 @@
                             <mat-icon *ngIf="item.type === cardViewType" matTooltip="{{'editor.view-cards' | translate}}" class="leftbar-item-type">
                                 grid_view
                             </mat-icon>
-                            <span>{{item.name}}</span>
+                            <span class="view-item-text" matTooltip="{{item.name}}">{{item.name}}</span>
                             <mat-icon aria-label="More" [matMenuTriggerFor]="menuview">more_vert</mat-icon>
                             <mat-menu #menuview="matMenu" class="leftbar-item-menu">
                                 <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
@@ -179,10 +182,6 @@
                                 (click)="setMode('html_graph-bar')">
                                 <span class="icon-tool icon-graphbar"></span>
                             </div>
-                            <!-- <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
-                                (click)="setMode('html_graph-pie')">
-                                <span class="icon-tool icon-graphpie"></span>
-                            </div> -->
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-table' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-table')}"
                                 (click)="setMode('own_ctrl-table')">
                                 <span class="icon-tool icon-table"></span>
@@ -191,6 +190,19 @@
                                 (click)="setMode('own_ctrl-iframe')">
                                 <span class="icon-tool icon-iframe"></span>
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
+                                (click)="setMode('html_graph-pie')">
+                                <span class="material-icon-tool material-icons">pie_chart</span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-image' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-image')}"
+                                (click)="imageLink.value = '';imageLink.click()">
+                                <span class="material-icon-tool material-icons">photo_size_select_actual</span>
+                                <input #imageLink type="file" style="display: none;" (change)="onSetImageAsLink($event)" accept="image/png|jpg|svg" />
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-panel' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-panel')}"
+                                (click)="setMode('own_ctrl-panel')">
+                                <span class="material-icon-tool material-icons" style="font-size: 25px;">web_asset</span>
+                            </div>                            
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->
@@ -616,7 +628,7 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
                         <div class="rightbar_panel">
-                            <gauge-base #gaugepanel *ngIf="selectedElement" [settings]=getGaugeSettings(selectedElement) (edit)="onGaugeEdit($event)"></gauge-base>
+                            <gauge-base #gaugepanel *ngIf="selectedElement" [settings]="getGaugeSettings(selectedElement)" (edit)="onGaugeEdit($event)"></gauge-base>
                         </div>
                     </mat-expansion-panel>
                 </div>
@@ -1020,6 +1032,9 @@
     <ul id="cmenu_canvas" class="contextMenu svg-workarea-contextmenu">
         <li>
             <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">{{'editor.interactivity' | translate}}</a>
+        </li>
+        <li>
+            <a id="#editBindOfTags" (click)="editBindOfTags(selectedElement)">{{'editor.edit-bind-of-tags' | translate}}</a>
         </li>
         <li class="separator">
             <a id="#cut">{{'editor.cmenu-cut' | translate}}</a>

@@ -1,10 +1,12 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AuthService } from '../_services/auth.service';
 import { ProjectService } from '../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
+import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
+import { LoginOverlayColorType } from '../_models/hmi';
 
 @Component({
 	selector: 'app-login',
@@ -13,6 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class LoginComponent {
 
+    @ViewChild('touchKeyboard', {static: false}) touchKeyboard: NgxTouchKeyboardDirective;
+
 	loading = false;
 	showPassword = false;
 	submitLoading = false;
@@ -20,12 +24,16 @@ export class LoginComponent {
 	username: UntypedFormControl = new UntypedFormControl();
 	password: UntypedFormControl = new UntypedFormControl();
 	errorEnabled = false;
+	disableCancel = false;
 
 	constructor(private authService: AuthService,
-		private projectService: ProjectService,
-		private translateService: TranslateService,
-		private dialogRef: MatDialogRef<LoginComponent>,
-		@Inject(MAT_DIALOG_DATA) private data: any) { }
+				private projectService: ProjectService,
+				private translateService: TranslateService,
+				private dialogRef: MatDialogRef<LoginComponent>,
+				@Inject(MAT_DIALOG_DATA) private data: any) {
+		const hmi = this.projectService.getHmi();
+		this.disableCancel = hmi.layout?.loginonstart && hmi.layout?.loginoverlaycolor !== LoginOverlayColorType.none;
+	}
 
 	onNoClick(): void {
 		this.dialogRef.close();
@@ -47,9 +55,8 @@ export class LoginComponent {
 	signIn() {
 		this.submitLoading = true;
 		this.authService.signIn(this.username.value, this.password.value).subscribe(result => {
-			// 		this.router.navigate([this.returnUrl]);
 			this.submitLoading = false;
-			this.dialogRef.close(this.data.user);
+			this.dialogRef.close(true);
 			this.projectService.reload();
 		}, error => {
 			this.submitLoading = false;
@@ -59,5 +66,18 @@ export class LoginComponent {
 
     keyDownStopPropagation(event) {
         event.stopPropagation();
+    }
+
+	onFocus(event: FocusEvent) {
+		const hmi = this.projectService.getHmi();
+		if (hmi?.layout?.inputdialog?.includes('keyboard')) {
+			if (hmi.layout.inputdialog === 'keyboardFullScreen') {
+				this.touchKeyboard.ngxTouchKeyboardFullScreen = true;
+			}
+			this.touchKeyboard.closePanel();
+			const targetElement = event.target as HTMLInputElement;
+			const elementRef = new ElementRef<HTMLInputElement>(targetElement);
+			this.touchKeyboard.openPanel(elementRef);
+		}
     }
 }

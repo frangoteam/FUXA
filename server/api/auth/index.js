@@ -36,7 +36,17 @@ module.exports = {
                 if (userInfo && userInfo.length && userInfo[0].password) {
                     if (bcrypt.compareSync(req.body.password, userInfo[0].password)) {
                         const token = jwt.sign({ id: userInfo[0].username, groups: userInfo[0].groups }, secretCode, { expiresIn: tokenExpiresIn });//'1h' });
-                        res.json({ status: 'success', message: 'user found!!!', data: { username: userInfo[0].username, fullname: userInfo[0].fullname, groups: userInfo[0].groups , token: token } });
+                        res.json({
+                            status: 'success',
+                            message: 'user found!!!',
+                            data: {
+                                username: userInfo[0].username,
+                                fullname: userInfo[0].fullname,
+                                groups: userInfo[0].groups,
+                                info: userInfo[0].info,
+                                token: token
+                            }
+                        });
                         runtime.logger.info('api-signin: ' + userInfo[0].username + ' ' + userInfo[0].fullname + ' ' + userInfo[0].groups);
                     } else {
                         res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });

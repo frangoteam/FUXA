@@ -1,0 +1,38 @@
+
+.device-input {
+    display: inline-block;
+    width: 100%;
+    input {
+        padding-left: 30px;
+        width: calc(100% - 36px);
+
+    }
+    button {
+        position: absolute;
+        left: 0px;
+        line-height: 22px;
+        height:28px;
+        width:28px;
+        vertical-align: middle;
+    }
+}
+
+::ng-deep .device-group-label span {
+    line-height: 28px;
+    height: 28px;
+}
+
+::ng-deep .device-option-label  {
+
+    line-height: 28px !important;
+    height: 28px !important;
+
+    span {
+        font-size: 13px;
+    }
+}
+::ng-deep .device-variable-input {
+    font-size: 13px;
+    vertical-align: unset !important;
+    width: unset;
+}
