@@ -81,9 +81,11 @@ export class FlexVariableComponent implements OnInit {
             this.value = {
                 variableId: this.variableId
             };
-        } else if (this.value.variableId) {
+        } else {
             this.variableId = this.value.variableId;
+            this.variableValue = this.value.variableValue;
         }
+
         if (!this.devicesOnly) {
             let devPlaceholders = Utils.clone(PlaceholderDevice);
             this.placeholders?.forEach(placeholder => {

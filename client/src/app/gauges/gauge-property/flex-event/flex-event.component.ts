@@ -31,7 +31,6 @@ export class FlexEventComponent implements OnInit {
     @Input() data: any;
     @Input() scripts: Script[];
 
-    variablesMapping = 'variablesMapping';
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 
     events: GaugeEvent[];
@@ -74,7 +73,9 @@ export class FlexEventComponent implements OnInit {
             // compatibility with <= 1.0.4
             this.events.forEach(element => {
                 if (!element.actoptions || Object.keys(element.actoptions).length == 0) {
-                    element.actoptions = {variablesMapping: []};
+                    element.actoptions = {
+                        variablesMapping: []
+                    };
                 }
             });
         }
@@ -90,7 +91,7 @@ export class FlexEventComponent implements OnInit {
                 if (element.type) {
                     // clean unconfig
                     if (element.action === this.eventRunScript) {
-                        delete element.actoptions[this.variablesMapping];
+                        delete element.actoptions['variablesMapping'];
                     } else {
                         delete element.actoptions[SCRIPT_PARAMS_MAP];
                     }
