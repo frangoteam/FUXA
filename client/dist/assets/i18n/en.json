@@ -944,6 +944,7 @@
     "gauges.property-event-type": "Type",
     "gauges.property-event-action": "Action",
     "gauges.property-event-destination": "Destination",
+    "gauges.property-event-destination-panel": "Panel",
     "gauges.property-event-destination-hide-close": "Hide Close",
     "gauges.property-event-single-card": "Single Card",
     "gauges.property-event-value": "Value",
