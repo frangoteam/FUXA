@@ -16,6 +16,7 @@ import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script'
 import { Utils } from '../../../_helpers/utils';
 import { HtmlInputComponent } from '../../controls/html-input/html-input.component';
 import { HtmlSelectComponent } from '../../controls/html-select/html-select.component';
+import { PanelComponent } from '../../controls/panel/panel.component';
 
 
 @Component({
@@ -43,6 +44,8 @@ export class FlexEventComponent implements OnInit {
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow),
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oniframe)];
     cardDestination = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
+    panelDestination = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onViewToPanel);
+    viewPanels: PanelData[];
 
     constructor(private translateService: TranslateService) {
     }
@@ -57,7 +60,7 @@ export class FlexEventComponent implements OnInit {
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
         }
-
+        this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === PanelComponent.TypeTag);
         this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
 
         Object.keys(this.actionType).forEach(key => {
@@ -126,7 +129,8 @@ export class FlexEventComponent implements OnInit {
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onpage);
         let c = Object.values(this.actionType).indexOf(GaugeEventActionType.onwindow);
         let d = Object.values(this.actionType).indexOf(GaugeEventActionType.ondialog);
-        return a === b || a === c || a === d;
+        let e = Object.values(this.actionType).indexOf(GaugeEventActionType.onViewToPanel);
+        return a === b || a === c || a === d || a === e;
     }
 
     withPosition(eventAction: GaugeEventActionType) {
@@ -187,10 +191,21 @@ export class FlexEventComponent implements OnInit {
         return type === 'enter' || type === 'select';
     }
 
+    isWithPanel(action) {
+        let a = Object.keys(this.actionType).indexOf(action);
+        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onViewToPanel);
+        return a === b;
+    }
+
     private addEvent(ge: GaugeEvent) {
         if (!this.events) {
             this.events = [];
         }
         this.events.push(ge);
     }
+}
+
+interface PanelData {
+    id: string;
+    name: string;
 }
