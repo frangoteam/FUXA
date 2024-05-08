@@ -205,6 +205,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     addOpcTags(tag: Tag) {
+        if (this.deviceSelected.type === DeviceType.OPCUA) {
+            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, tag, this.tagsMap).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+
         let dialogRef = this.dialog.open(TagPropertyComponent, {
             disableClose: true,
             panelClass: 'dialog-property',
@@ -312,6 +319,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             return;
         }
 
+
         let oldtag = tag.id;
         let temptag: Tag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
@@ -333,9 +341,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     tag.address = temptag.address;
                     tag.memaddress = temptag.memaddress;
                     tag.divisor = temptag.divisor;
-                    if (this.deviceSelected.type === DeviceType.internal) {
-                        tag.value = '0';
-                    }
                     if (checkToAdd) {
                         this.checkToAdd(tag, result.device);
                     } else if (tag.id !== oldtag) {

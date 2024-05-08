@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Device, Tag } from '../../_models/device';
+import { Device, TAG_PREFIX, Tag } from '../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyEditS7Component } from './tag-property-edit-s7/tag-property-edit-s7.component';
 import { Observable, map } from 'rxjs';
@@ -8,6 +8,8 @@ import { ProjectService } from '../../_services/project.service';
 import { TagPropertyEditServerComponent } from './tag-property-edit-server/tag-property-edit-server.component';
 import { TagPropertyEditModbusComponent } from './tag-property-edit-modbus/tag-property-edit-modbus.component';
 import { TagPropertyEditInternalComponent, TagPropertyInternalData } from './tag-property-edit-internal/tag-property-edit-internal.component';
+import { TagPropertyEditOpcuaComponent, TagPropertyOpcUaData } from './tag-property-edit-opcua/tag-property-edit-opcua.component';
+import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 
 @Injectable({
     providedIn: 'root'
@@ -151,6 +153,34 @@ export class TagPropertyService {
                     }
                     this.projectService.setDeviceTags(device);
                 }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
+    public editTagPropertyOpcUa(device: Device, tag: Tag, tagsMap: any): Observable<any> {
+        let dialogRef = this.dialog.open(TagPropertyEditOpcuaComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertyOpcUaData> {
+                device: device,
+                tag: tag
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                result?.nodes.forEach((n: Node) => {
+                    let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                    tag.name = n.text;
+                    tag.label = n.text;
+                    tag.type = n.type;
+                    tag.address = n.id;
+                    this.checkToAdd(tag, result.device);
+                    tagsMap[tag.id] = tag;
+                });
+                this.projectService.setDeviceTags(device);
                 dialogRef.close();
                 return result;
             })

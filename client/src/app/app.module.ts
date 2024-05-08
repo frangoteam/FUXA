@@ -183,6 +183,7 @@ import { TagPropertyEditS7Component } from './device/tag-property/tag-property-e
 import { TagPropertyEditServerComponent } from './device/tag-property/tag-property-edit-server/tag-property-edit-server.component';
 import { TagPropertyEditModbusComponent } from './device/tag-property/tag-property-edit-modbus/tag-property-edit-modbus.component';
 import { TagPropertyEditInternalComponent } from './device/tag-property/tag-property-edit-internal/tag-property-edit-internal.component';
+import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -210,6 +211,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditServerComponent,
         TagPropertyEditModbusComponent,
         TagPropertyEditInternalComponent,
+        TagPropertyEditOpcuaComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
