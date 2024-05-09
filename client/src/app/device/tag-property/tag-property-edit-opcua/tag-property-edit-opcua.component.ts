@@ -137,6 +137,5 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
 
 export interface TagPropertyOpcUaData {
     device: Device;
-    tag: Tag;
     nodes: Node[];
 }

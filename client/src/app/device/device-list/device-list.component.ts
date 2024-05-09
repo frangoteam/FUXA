@@ -16,7 +16,6 @@ import { TopicPropertyComponent } from './../topic-property/topic-property.compo
 import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
-import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyService } from '../tag-property/tag-property.service';
@@ -195,7 +194,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     onAddTag() {
         if (this.deviceSelected.type === DeviceType.OPCUA || this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
-            this.addOpcTags(null);
+            this.addOpcTags();
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics();
         } else {
@@ -204,53 +203,25 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
     }
 
-    addOpcTags(tag: Tag) {
+    addOpcTags() {
         if (this.deviceSelected.type === DeviceType.OPCUA) {
-            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, tag, this.tagsMap).subscribe(result => {
+            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, this.tagsMap).subscribe(result => {
                 this.bindToTable(this.deviceSelected.tags);
             });
             return;
         }
         if (this.deviceSelected.type === DeviceType.BACnet) {
-            this.tagPropertyService.editTagPropertyBacnet(this.deviceSelected, tag, this.tagsMap).subscribe(result => {
+            this.tagPropertyService.editTagPropertyBacnet(this.deviceSelected, this.tagsMap).subscribe(result => {
                 this.bindToTable(this.deviceSelected.tags);
             });
             return;
         }
-
-        let dialogRef = this.dialog.open(TagPropertyComponent, {
-            disableClose: true,
-            panelClass: 'dialog-property',
-            data: { device: this.deviceSelected, tag: tag, devices: this.devices },
-            position: { top: '60px' }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                if (this.deviceSelected.type === DeviceType.WebAPI) {
-                    // this.clearTags();
-                }
-                result.nodes.forEach((n: Node) => {
-                    let tag = new Tag(Utils.getGUID(TAG_PREFIX));
-                    tag.name = n.text;
-                    tag.label = n.text;
-                    tag.type = n.type;
-                    if (this.deviceSelected.type === DeviceType.BACnet) {
-                        tag.label = n.text;
-                        tag.memaddress = n.parent?.id;
-                    } else if (this.deviceSelected.type === DeviceType.WebAPI) {
-                        tag.label = n.text;
-                        if (n.class === NodeType.Reference) {
-                            tag.memaddress = n.property;        // in memaddress save the address of the value
-                            tag.options = n.todefine;           // save the id and value in text to set by select list
-                            tag.type = n.type;
-                        }
-                    }
-                    tag.address = n.id;
-                    this.checkToAdd(tag, result.device);
-                });
-                this.projectService.setDeviceTags(this.deviceSelected);
-            }
-        });
+        if (this.deviceSelected.type === DeviceType.WebAPI) {
+            this.tagPropertyService.editTagPropertyWebapi(this.deviceSelected, this.tagsMap).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
     }
 
     getTagLabel(tag: Tag) {

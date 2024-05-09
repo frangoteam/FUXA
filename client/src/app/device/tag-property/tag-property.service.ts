@@ -9,8 +9,9 @@ import { TagPropertyEditServerComponent } from './tag-property-edit-server/tag-p
 import { TagPropertyEditModbusComponent } from './tag-property-edit-modbus/tag-property-edit-modbus.component';
 import { TagPropertyEditInternalComponent, TagPropertyInternalData } from './tag-property-edit-internal/tag-property-edit-internal.component';
 import { TagPropertyEditOpcuaComponent, TagPropertyOpcUaData } from './tag-property-edit-opcua/tag-property-edit-opcua.component';
-import { Node } from '../../gui-helpers/treetable/treetable.component';
-import { TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
+import { TagPropertyBacNetata, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
 
 @Injectable({
     providedIn: 'root'
@@ -160,13 +161,12 @@ export class TagPropertyService {
         );
     }
 
-    public editTagPropertyOpcUa(device: Device, tag: Tag, tagsMap: any): Observable<any> {
+    public editTagPropertyOpcUa(device: Device, tagsMap: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditOpcuaComponent, {
             disableClose: true,
             position: { top: '60px' },
             data: <TagPropertyOpcUaData> {
                 device: device,
-                tag: tag
             },
         });
 
@@ -188,13 +188,12 @@ export class TagPropertyService {
         );
     }
 
-    public editTagPropertyBacnet(device: Device, tag: Tag, tagsMap: any): Observable<any> {
+    public editTagPropertyBacnet(device: Device, tagsMap: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditBacnetComponent, {
             disableClose: true,
             position: { top: '60px' },
-            data: <TagPropertyOpcUaData> {
+            data: <TagPropertyBacNetata> {
                 device: device,
-                tag: tag
             },
         });
 
@@ -208,6 +207,39 @@ export class TagPropertyService {
                     tag.address = n.id;
                     tag.label = n.text;
                     tag.memaddress = n.parent?.id;
+                    this.checkToAdd(tag, result.device);
+                    tagsMap[tag.id] = tag;
+                });
+                this.projectService.setDeviceTags(device);
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
+    public editTagPropertyWebapi(device: Device, tagsMap: any): Observable<any> {
+        let dialogRef = this.dialog.open(TagPropertyEditWebapiComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertyWebApiData> {
+                device: device,
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                result?.nodes.forEach((n: Node) => {
+                    let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                    tag.name = n.text;
+                    tag.label = n.text;
+                    tag.type = n.type;
+                    tag.label = n.text;
+                    if (n.class === NodeType.Reference) {
+                        tag.memaddress = n.property;        // in memaddress save the address of the value
+                        tag.options = n.todefine;           // save the id and value in text to set by select list
+                        tag.type = n.type;
+                    }
+                    tag.address = n.id;
                     this.checkToAdd(tag, result.device);
                     tagsMap[tag.id] = tag;
                 });

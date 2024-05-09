@@ -1,0 +1,13 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device.browsetag-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content style="display: contents;">
+        <div style="overflow: auto;">
+            <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

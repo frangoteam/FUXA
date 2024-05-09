@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
-import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType } from './../../_models/device';
+import { Device, TagType, Tag, DeviceType, ModbusTagType } from './../../_models/device';
 import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,7 +21,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     TypeOfDialog = EditTagDialogType;
 	dialogType = EditTagDialogType.Standard;
     config = { width: '100%', height: '600px', type: '' };
-    memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
 
     private destroy$ = new Subject<void>();
 
@@ -34,40 +33,21 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.isWebApi()) {
-            this.dialogType = EditTagDialogType.Tree;
-            this.config.height = '640px';
-            this.config.width = '1000px';
-            this.config.type = (this.isWebApi()) ? 'todefine' : '';
-        } else {
-            this.config.height = '0px';
-            Object.keys(this.data.device.tags).forEach((key) => {
-                let tag = this.data.device.tags[key];
-                if (tag.id) {
-                    if (tag.id !== this.data.tag.id) {
-                        this.existing.push(tag.name);
-                    }
-                } else if (tag.name !== this.data.tag.name) {
+        this.config.height = '0px';
+        Object.keys(this.data.device.tags).forEach((key) => {
+            let tag = this.data.device.tags[key];
+            if (tag.id) {
+                if (tag.id !== this.data.tag.id) {
                     this.existing.push(tag.name);
                 }
-            });
-        }
+            } else if (tag.name !== this.data.tag.name) {
+                this.existing.push(tag.name);
+            }
+        });
     }
 
     ngOnInit() {
         if (this.dialogType === EditTagDialogType.Tree) {
-            if (this.isWebApi()) {
-                this.hmiService.onDeviceWebApiRequest.pipe(
-                    takeUntil(this.destroy$),
-                ).subscribe(res => {
-                    if (res.result) {
-                        this.addTreeNodes(res.result);
-                        this.treetable.update(false);
-                    }
-                });
-        		this.hmiService.askWebApiProperty(this.data.device.property);
-                return;
-            }
             this.queryNext(null);
         }
     }
@@ -87,15 +67,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         this.data.nodes = [];
-        if (this.isWebApi()) {
-            let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
-            result.forEach((n: Node) => {
-                if (n.checked && n.enabled) {
-                    this.data.nodes.push(n);
-                }
-            });
-            // this.data.nodes = result;
-        } else if (this.isEthernetIp()) {
+        if (this.isEthernetIp()) {
         } else {
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
@@ -279,14 +251,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         return result;
     }
 
-    isOpcua() {
-		return (this.data.device.type === DeviceType.OPCUA) ? true : false;
-    }
-
-    isWebApi() {
-		return (this.data.device.type === DeviceType.WebAPI) ? true : false;
-    }
-
     isEthernetIp() {
 		return (this.data.device.type === DeviceType.EthernetIP) ? true : false;
     }
@@ -300,8 +264,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isValidate() {
         if (this.error) {
             return false;
-        } else if (this.isOpcua() || this.isWebApi()) {
-            return true;
         } else if (this.data.tag && !this.data.tag.name) {
             return false;
         } else if ((!this.data.tag.address || parseInt(this.data.tag.address) <= 0)) {
