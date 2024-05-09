@@ -34,7 +34,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any) {
 
         this.tagType = TagType;
-        if (this.isOpcua() || this.isBACnet() || this.isWebApi() || this.isOdbc()) {
+        if (this.isWebApi()) {
             this.dialogType = EditTagDialogType.Tree;
             this.config.height = '640px';
             this.config.width = '1000px';
@@ -56,33 +56,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.dialogType === EditTagDialogType.Tree) {
-            if (this.isOpcua() || this.isBACnet() || this.isOdbc()) {
-                this.hmiService.onDeviceBrowse.pipe(
-                    takeUntil(this.destroy$),
-                ).subscribe(values => {
-                    if (this.data.device.id === values.device) {
-                        if (values.error) {
-                            this.addError(values.node, values.error);
-                        } else {
-                            this.addNodes(values.node, values.result);
-                        }
-                    }
-                });
-                this.hmiService.onDeviceNodeAttribute.pipe(
-                    takeUntil(this.destroy$),
-                ).subscribe(values => {
-                    if (this.data.device.id === values.device) {
-                        if (values.error) {
-                            //   this.addError(values.node, values.error);
-                        } else if (values.node) {
-                            if (values.node.attribute[14]) {    // datatype
-                                values.node.type = values.node.attribute[14];
-                            }
-                            this.treetable.setNodeProperty(values.node, this.attributeToString(values.node.attribute));
-                        }
-                    }
-                });
-            } else if (this.isWebApi()) {
+            if (this.isWebApi()) {
                 this.hmiService.onDeviceWebApiRequest.pipe(
                     takeUntil(this.destroy$),
                 ).subscribe(res => {
@@ -113,7 +87,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         this.data.nodes = [];
-        if (this.isWebApi() || this.isOdbc()) {
+        if (this.isWebApi()) {
             let result = this.getSelectedTreeNodes(Object.values(this.treetable.nodes), null);
             result.forEach((n: Node) => {
                 if (n.checked && n.enabled) {
@@ -149,19 +123,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 let node = new Node(n.id, n.name);
                 node.class = n.class;
                 node.property = this.getProperty(n);
-                if (this.isBACnet()) {
-                    node.class = Node.strToType(n.class);
-                    node.type = n.type;
-                    var typetext = Object.values(BACnetObjectType)[n.type];
-                    if (typetext) {
-                        node.property = typetext;
-                    }
-                    // node.property = Object.keys(BACnetObjectType)[Object.values(BACnetObjectType).indexOf(n.type)] + '   ' + node.property;
-                    // Object.keys(AlarmAckMode)[Object.values(AlarmAckMode).indexOf(AlarmAckMode.float)]
-                } else if (this.isOdbc()) {
-                    node.class = Node.strToType(n.class);
-                    node.type = n.type;
-                }
                 let enabled = true;
                 if (node.class === NodeType.Variable) {
                     const selected = tempTags.find((t: Tag) => t.address === n.id);
@@ -169,8 +130,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                         enabled = false;
                     }
                 }
-                this.treetable.addNode(node, parent, enabled, this.isOdbc());
-                if (node.class === NodeType.Variable && this.data.device.type !== DeviceType.BACnet && this.data.device.type !== DeviceType.ODBC) {
+                this.treetable.addNode(node, parent, enabled, false);
+                if (node.class === NodeType.Variable && this.data.device.type !== DeviceType.BACnet) {
                     this.hmiService.askNodeAttributes(this.data.device.id, n);
                 }
             });
@@ -269,7 +230,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             } else if (n.class === NodeType.Variable && n.checked) {
                 // let objNode = new Node(n.id.split('>').join(''), n.text);
                 let objNode = new Node(n.id, n.text);
-                objNode.type = this.isOdbc() ? n.type : Utils.getType(n.property);
+                objNode.type = Utils.getType(n.property);
                 objNode.checked = n.checked;
                 objNode.enabled = n.enabled;
                 result.push(objNode);
@@ -299,7 +260,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 
     queryNext(node: Node) {
         let n = (node) ? { id: node.id } : null;
-        if (this.isBACnet() && node) {
+        if (node) {
             n['parent'] = (node.parent) ? node.parent.id : null;
         }
         this.hmiService.askDeviceBrowse(this.data.device.id, n);
@@ -326,16 +287,8 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 		return (this.data.device.type === DeviceType.WebAPI) ? true : false;
     }
 
-    isBACnet() {
-        return (this.data.device.type === DeviceType.BACnet) ? true : false;
-    }
-
     isEthernetIp() {
 		return (this.data.device.type === DeviceType.EthernetIP) ? true : false;
-    }
-
-    isOdbc() {
-		return (this.data.device.type === DeviceType.ODBC) ? true : false;
     }
 
     checkMemAddress(memaddress) {
@@ -347,7 +300,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
     isValidate() {
         if (this.error) {
             return false;
-        } else if (this.isOpcua() || this.isWebApi() || this.isOdbc()) {
+        } else if (this.isOpcua() || this.isWebApi()) {
             return true;
         } else if (this.data.tag && !this.data.tag.name) {
             return false;

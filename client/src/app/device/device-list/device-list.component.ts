@@ -211,6 +211,12 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.BACnet) {
+            this.tagPropertyService.editTagPropertyBacnet(this.deviceSelected, tag, this.tagsMap).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
 
         let dialogRef = this.dialog.open(TagPropertyComponent, {
             disableClose: true,
