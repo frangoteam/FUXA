@@ -380,5 +380,6 @@ export class MqttPayloadItem {
 
 export interface TopicPropertyData {
     device: Device;
+    devices: Device[];
     topic: Tag;
 }

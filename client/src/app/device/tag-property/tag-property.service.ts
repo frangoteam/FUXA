@@ -302,7 +302,8 @@ export class TagPropertyService {
             panelClass: 'dialog-property',
             data: <TopicPropertyData>{
                 device: device,
-                topic: topic
+                topic: topic,
+                devices: this.projectService.getServerDevices()
             },
             position: { top: '60px' }
         });
