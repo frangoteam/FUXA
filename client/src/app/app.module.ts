@@ -46,10 +46,9 @@ import { TextListComponent, DialogItemText } from './text-list/text-list.compone
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
-import { TagPropertyComponent } from './device/tag-property/tag-property.component';
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
-import { DeviceListComponent, DialogTagName } from './device/device-list/device-list.component';
+import { DeviceListComponent } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
@@ -209,7 +208,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LabComponent,
         DeviceComponent,
         DeviceTagSelectionComponent,
-        TagPropertyComponent,
         TagPropertyEditS7Component,
         TagPropertyEditServerComponent,
         TagPropertyEditModbusComponent,
@@ -230,7 +228,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DialogMenuItem,
         DialogHeaderItem,
         DeviceListComponent,
-        DialogTagName,
         DeviceMapComponent,
         FuxaViewComponent,
         FuxaViewDialogComponent,

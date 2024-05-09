@@ -13,6 +13,10 @@ import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component'
 import { TagPropertyBacNetData, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from './tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
+import { TopicPropertyComponent, TopicPropertyData } from '../topic-property/topic-property.component';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
+import { DeviceListComponent } from '../device-list/device-list.component';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +24,8 @@ import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from '.
 export class TagPropertyService {
 
     constructor(private dialog: MatDialog,
+        private translateService: TranslateService,
+        private toastService: ToastrService,
         private projectService: ProjectService) { }
 
     public editTagPropertyS7(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
@@ -213,7 +219,9 @@ export class TagPropertyService {
                     tag.type = n.type;
                     tag.address = n.id;
                     this.checkToAdd(tag, result.device);
-                    tagsMap[tag.id] = tag;
+                    if (tagsMap) {
+                        tagsMap[tag.id] = tag;
+                    }
                 });
                 this.projectService.setDeviceTags(device);
                 dialogRef.close();
@@ -242,7 +250,9 @@ export class TagPropertyService {
                     tag.label = n.text;
                     tag.memaddress = n.parent?.id;
                     this.checkToAdd(tag, result.device);
-                    tagsMap[tag.id] = tag;
+                    if (tagsMap) {
+                        tagsMap[tag.id] = tag;
+                    }
                 });
                 this.projectService.setDeviceTags(device);
                 dialogRef.close();
@@ -275,13 +285,30 @@ export class TagPropertyService {
                     }
                     tag.address = n.id;
                     this.checkToAdd(tag, result.device);
-                    tagsMap[tag.id] = tag;
+                    if (tagsMap) {
+                        tagsMap[tag.id] = tag;
+                    }
                 });
                 this.projectService.setDeviceTags(device);
                 dialogRef.close();
                 return result;
             })
         );
+    }
+
+    editTagPropertyMqtt(device: Device, topic: Tag, tagsMap: {}, callbackModify: () => void) {
+        let dialogRef = this.dialog.open(TopicPropertyComponent, {
+            disableClose: true,
+            panelClass: 'dialog-property',
+            data: <TopicPropertyData>{
+                device: device,
+                topic: topic
+            },
+            position: { top: '60px' }
+        });
+        dialogRef.componentInstance.invokeSubscribe = (oldtopic, newtopics) => this.addTopicSubscription(device, oldtopic, newtopics, tagsMap, callbackModify);
+        dialogRef.componentInstance.invokePublish = (oldtopic, newtopic) => this.addTopicToPublish(device, oldtopic, newtopic, tagsMap, callbackModify);
+        dialogRef.afterClosed().subscribe();
     }
 
     checkToAdd(tag: Tag, device: Device, overwrite: boolean = false) {
@@ -298,5 +325,78 @@ export class TagPropertyService {
         if (!exist) {
             device.tags[tag.id] = tag;
         }
+    }
+
+    private addTopicSubscription(device: Device, oldTopic: Tag, topics: Tag[], tagsMap: {}, callbackModify: () => void) {
+        if (topics) {
+            let existNames = Object.values(device.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
+            topics.forEach((topic: Tag) => {
+                // check if name exist
+                if (existNames.indexOf(topic.name) !== -1) {
+                    const msg = this.translateService.instant('device.topic-name-exist', { value: topic.name });
+                    this.notifyError(msg);
+                } else {
+                    // check if subscriptions address exist for new topic
+                    let exist = null;
+                    if (!oldTopic) {
+                        Object.keys(device.tags).forEach((key) => {
+                            if (device.tags[key].address === topic.address && device.tags[key].memaddress === topic.memaddress &&
+                                device.tags[key].id != topic.id && device.tags[key].options.subs) {
+                                exist = DeviceListComponent.formatAddress(topic.address, topic.memaddress);
+                            }
+                        });
+                    }
+                    if (exist) {
+                        const msg = this.translateService.instant('device.topic-subs-address-exist', { value: exist });
+                        this.notifyError(msg);
+                    } else {
+                        device.tags[topic.id] = topic;
+                        tagsMap[topic.id] = topic;
+                    }
+                }
+            });
+            this.projectService.setDeviceTags(device);
+            if (callbackModify) {
+                callbackModify();
+            }
+        }
+    }
+
+    private addTopicToPublish(device: Device, oldTopic: Tag, topic: Tag, tagsMap: {}, callbackModify: () => void) {
+        if (topic) {
+            let existNames = Object.values(device.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
+            // check if name exist
+            if (existNames.indexOf(topic.name) !== -1) {
+                const msg = this.translateService.instant('device.topic-name-exist', { value: topic.name });
+                this.notifyError(msg);
+            } else {
+                // check if publish address exist
+                let exist = null;
+                Object.keys(device.tags).forEach((key) => {
+                    if (device.tags[key].address === topic.address && device.tags[key].id != topic.id) {
+                        exist = topic.address;
+                    }
+                });
+                if (exist) {
+                    const msg = this.translateService.instant('device.topic-pubs-address-exist', { value: exist });
+                    this.notifyError(msg);
+                } else {
+                    device.tags[topic.id] = topic;
+                    tagsMap[topic.id] = topic;
+                }
+                this.projectService.setDeviceTags(device);
+                if (callbackModify) {
+                    callbackModify();
+                }
+            }
+        }
+    }
+
+    private notifyError(error: string) {
+        this.toastService.error(error, '', {
+            timeOut: 3000,
+            closeButton: true
+            // disableTimeOut: true
+        });
     }
 }

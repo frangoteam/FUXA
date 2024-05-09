@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, Inject, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,17 +8,15 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
-import { ToastrService } from 'ngx-toastr';
 
-import { TagPropertyComponent } from './../tag-property/tag-property.component';
 import { ITagOption, TagOptionsComponent } from './../tag-options/tag-options.component';
-import { TopicPropertyComponent } from './../topic-property/topic-property.component';
 import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyService } from '../tag-property/tag-property.service';
+import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 
 @Component({
     selector: 'app-device-list',
@@ -60,8 +58,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
         private projectService: ProjectService,
-        private tagPropertyService: TagPropertyService,
-        private toastr: ToastrService) { }
+        private tagPropertyService: TagPropertyService
+        ) { }
 
     ngOnInit() {
         this.devices = this.projectService.getDevices();
@@ -302,40 +300,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
-
-
-        let oldtag = tag.id;
-        let temptag: Tag = JSON.parse(JSON.stringify(tag));
-        let dialogRef = this.dialog.open(TagPropertyComponent, {
-            disableClose: true,
-            panelClass: 'dialog-property',
-            data: { device: this.deviceSelected, tag: temptag, devices: this.devices },
-            position: { top: '60px' }
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                if (this.deviceSelected.type === DeviceType.MQTTclient) {
-                    result.nodes.forEach((ta: Tag) => {
-                        this.checkToAdd(tag, result.device);
-                    });
-                    this.projectService.setDeviceTags(this.deviceSelected);
-                } else {
-                    tag.name = temptag.name;
-                    tag.type = temptag.type;
-                    tag.address = temptag.address;
-                    tag.memaddress = temptag.memaddress;
-                    tag.divisor = temptag.divisor;
-                    if (checkToAdd) {
-                        this.checkToAdd(tag, result.device);
-                    } else if (tag.id !== oldtag) {
-                        //remove old tag device reference
-                        delete result.device.tags[oldtag];
-                        this.checkToAdd(tag, result.device);
-                    }
-                    this.projectService.setDeviceTags(this.deviceSelected);
-                }
-            }
-        });
     }
 
     editTagOptions(tags: Tag[]) {
@@ -354,24 +318,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 this.projectService.setDeviceTags(this.deviceSelected);
             }
         });
-    }
-
-    checkToAdd(tag: Tag, device: Device, overwrite: boolean = false) {
-        let exist = false;
-        Object.keys(device.tags).forEach((key) => {
-            if (device.tags[key].id) {
-                if (device.tags[key].id === tag.id) {
-                    exist = true;
-                }
-            } else if (device.tags[key].name === tag.name) {
-                exist = true;
-            }
-        });
-        if (!exist || overwrite) {
-            device.tags[tag.id] = tag;
-        }
-        this.tagsMap[tag.id] = tag;
-        this.bindToTable(this.deviceSelected.tags);
     }
 
     updateDeviceValue() {
@@ -398,10 +344,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (topic && topic.options && topic.options.subs) {
             // edit only name (subscription)
             let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) {return t;} }).map((t: Tag) => t.name);
-            let dialogRef = this.dialog.open(DialogTagName, {
+            let dialogRef = this.dialog.open(EditNameComponent, {
                 disableClose: true,
                 position: { top: '60px' },
-                data: { name: topic.name, exist: existNames }
+                data: {
+                    name: topic.name,
+                    exist: existNames,
+                    error: this.translateService.instant('msg.device-tag-exist')
+                }
             });
             dialogRef.afterClosed().subscribe(result => {
                 if (result) {
@@ -412,17 +362,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 }
             });
         } else {
-            // edit new topic or publish
-            let dialogRef = this.dialog.open(TopicPropertyComponent, {
-                disableClose: true,
-                panelClass: 'dialog-property',
-                data: { device: this.deviceSelected, devices: Object.values(this.devices), topic: topic },
-                position: { top: '60px' }
-            });
-            dialogRef.componentInstance.invokeSubscribe = (oldtopic, newtopics) => this.addTopicSubscription(oldtopic, newtopics);
-            dialogRef.componentInstance.invokePublish = (oldtopic, newtopic) => this.addTopicToPublish(oldtopic, newtopic);
-            dialogRef.afterClosed().subscribe(result => {
-            });
+            this.tagPropertyService.editTagPropertyMqtt(
+                this.deviceSelected,
+                topic,
+                this.tagsMap,
+                () => {
+                    this.bindToTable(this.deviceSelected.tags);
+                }
+            );
         }
     }
 
@@ -430,80 +377,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         Utils.copyToClipboard(JSON.stringify(tag));
     }
 
-    private addTopicSubscription(oldTopic: Tag, topics: Tag[]) {
-        if (topics) {
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
-            topics.forEach((topic: Tag) => {
-                // check if name exist
-                if (existNames.indexOf(topic.name) !== -1) {
-                    let msg = '';
-                    this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt; });
-                    this.notifyError(msg);
-                } else {
-                    // check if subscriptions address exist for new topic
-                    let exist = null;
-                    if (!oldTopic) {
-                        Object.keys(this.deviceSelected.tags).forEach((key) => {
-                            if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].memaddress === topic.memaddress &&
-                                this.deviceSelected.tags[key].id != topic.id && this.deviceSelected.tags[key].options.subs) {
-                                exist = DeviceListComponent.formatAddress(topic.address, topic.memaddress);
-                            }
-                        });
-                    }
-                    if (exist) {
-                        let msg = '';
-                        this.translateService.get('device.topic-subs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt; });
-                        this.notifyError(msg);
-                    } else {
-                        this.deviceSelected.tags[topic.id] = topic;
-                        this.tagsMap[topic.id] = topic;
-                    }
-                }
-            });
-            this.bindToTable(this.deviceSelected.tags);
-            this.projectService.setDeviceTags(this.deviceSelected);
-        }
-    }
-
-    private addTopicToPublish(oldTopic: Tag, topic: Tag) {
-        if (topic) {
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
-            // check if name exist
-            if (existNames.indexOf(topic.name) !== -1) {
-                let msg = '';
-                this.translateService.get('device.topic-name-exist', { value: topic.name }).subscribe((txt: string) => { msg = txt; });
-                this.notifyError(msg);
-            } else {
-                // check if publish address exist
-                let exist = null;
-                Object.keys(this.deviceSelected.tags).forEach((key) => {
-                    if (this.deviceSelected.tags[key].address === topic.address && this.deviceSelected.tags[key].id != topic.id) {
-                        exist = topic.address;
-                    }
-                });
-                if (exist) {
-                    let msg = '';
-                    this.translateService.get('device.topic-pubs-address-exist', { value: exist }).subscribe((txt: string) => { msg = txt; });
-                    this.notifyError(msg);
-                } else {
-                    this.deviceSelected.tags[topic.id] = topic;
-                    this.tagsMap[topic.id] = topic;
-                }
-                this.bindToTable(this.deviceSelected.tags);
-                this.projectService.setDeviceTags(this.deviceSelected);
-            }
-        }
-    }
-
-    private notifyError(error: string) {
-        this.toastr.error(error, '', {
-            timeOut: 3000,
-            closeButton: true
-            // disableTimeOut: true
-        });
-    }
-
-    private static formatAddress(adr: string, mem: string): string {
+    static formatAddress(adr: string, mem: string): string {
         let result = adr;
         if (mem) {
             result += '[' + mem + ']';
@@ -512,27 +386,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 }
 
-@Component({
-    templateUrl: 'tagname.dialog.html',
-})
-export class DialogTagName {
-    constructor(
-        public dialogRef: MatDialogRef<DialogTagName>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    isValid(name): boolean {
-        return (this.data.exist.find((n) => n === name)) ? false : true;
-    }
-}
-
 export interface Element extends Tag {
     position: number;
 }
-function ngAfterViewInit() {
-    throw new Error('Function not implemented.');
-}
+
 
