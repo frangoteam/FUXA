@@ -23,7 +23,7 @@ export class TagPropertyEditBacnetComponent implements OnInit, OnDestroy {
     constructor(
         private hmiService: HmiService,
         public dialogRef: MatDialogRef<TagPropertyEditBacnetComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: TagPropertyBacNetata) {
+        @Inject(MAT_DIALOG_DATA) public data: TagPropertyBacNetData) {
     }
 
     ngOnInit() {
@@ -137,7 +137,7 @@ export class TagPropertyEditBacnetComponent implements OnInit, OnDestroy {
     }
 }
 
-export interface TagPropertyBacNetata {
+export interface TagPropertyBacNetData {
     device: Device;
     nodes: Node[];
 }

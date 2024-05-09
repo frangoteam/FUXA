@@ -19,13 +19,6 @@
                         <span>{{'device.tag-property-name' | translate}}</span>
                         <input [(ngModel)]="data.tag.name" style="width: 350px" type="text" (input)="onCheckValue($event)">
                     </div>
-
-                    <div *ngIf="isEthernetIp()">
-                        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
-                            <span>{{'device.tag-property-address-sample' | translate}}</span>
-                            <input [(ngModel)]="data.tag.address" style="width: 350px" type="text">
-                        </div>
-                    </div>
                     <div class="error" *ngIf="error">
                         <span>{{error}}</span>
                     </div>

@@ -10,8 +10,9 @@ import { TagPropertyEditModbusComponent } from './tag-property-edit-modbus/tag-p
 import { TagPropertyEditInternalComponent, TagPropertyInternalData } from './tag-property-edit-internal/tag-property-edit-internal.component';
 import { TagPropertyEditOpcuaComponent, TagPropertyOpcUaData } from './tag-property-edit-opcua/tag-property-edit-opcua.component';
 import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
-import { TagPropertyBacNetata, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { TagPropertyBacNetData, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
+import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from './tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 
 @Injectable({
     providedIn: 'root'
@@ -161,6 +162,39 @@ export class TagPropertyService {
         );
     }
 
+    public editTagPropertyEthernetIp(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertyEditEthernetipComponent, {
+            disableClose: true,
+            data: <TagPropertyEthernetIpData> {
+                device: device,
+                tag: tagToEdit
+            },
+            position: { top: '60px' }
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.name = result.tagName;
+                    tag.address = result.tagAddress;
+                    tag.description = result.tagDescription;
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
+                        //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
     public editTagPropertyOpcUa(device: Device, tagsMap: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditOpcuaComponent, {
             disableClose: true,
@@ -192,7 +226,7 @@ export class TagPropertyService {
         let dialogRef = this.dialog.open(TagPropertyEditBacnetComponent, {
             disableClose: true,
             position: { top: '60px' },
-            data: <TagPropertyBacNetata> {
+            data: <TagPropertyBacNetData> {
                 device: device,
             },
         });

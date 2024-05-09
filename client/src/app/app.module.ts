@@ -186,6 +186,7 @@ import { TagPropertyEditInternalComponent } from './device/tag-property/tag-prop
 import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
 import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
+import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -216,6 +217,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditOpcuaComponent,
         TagPropertyEditBacnetComponent,
         TagPropertyEditWebapiComponent,
+        TagPropertyEditEthernetipComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
