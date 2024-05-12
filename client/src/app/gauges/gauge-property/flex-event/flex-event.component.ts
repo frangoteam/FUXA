@@ -16,7 +16,6 @@ import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script'
 import { Utils } from '../../../_helpers/utils';
 import { HtmlInputComponent } from '../../controls/html-input/html-input.component';
 import { HtmlSelectComponent } from '../../controls/html-select/html-select.component';
-import { PanelComponent } from '../../controls/panel/panel.component';
 
 
 @Component({
@@ -60,7 +59,7 @@ export class FlexEventComponent implements OnInit {
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
         }
-        this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === PanelComponent.TypeTag);
+        this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === 'svg-ext-own_ctrl-panel');//#issue on build  PanelComponent.TypeTag);
         this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
 
         Object.keys(this.actionType).forEach(key => {
