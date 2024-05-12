@@ -201,7 +201,7 @@ export class TagPropertyService {
         );
     }
 
-    public editTagPropertyOpcUa(device: Device, tagsMap: any): Observable<any> {
+    public editTagPropertyOpcUa(device: Device, tagsMap?: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditOpcuaComponent, {
             disableClose: true,
             position: { top: '60px' },
@@ -230,7 +230,7 @@ export class TagPropertyService {
         );
     }
 
-    public editTagPropertyBacnet(device: Device, tagsMap: any): Observable<any> {
+    public editTagPropertyBacnet(device: Device, tagsMap?: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditBacnetComponent, {
             disableClose: true,
             position: { top: '60px' },
@@ -261,7 +261,7 @@ export class TagPropertyService {
         );
     }
 
-    public editTagPropertyWebapi(device: Device, tagsMap: any): Observable<any> {
+    public editTagPropertyWebapi(device: Device, tagsMap?: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditWebapiComponent, {
             disableClose: true,
             position: { top: '60px' },

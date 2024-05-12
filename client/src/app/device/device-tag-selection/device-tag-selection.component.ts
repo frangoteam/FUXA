@@ -1,22 +1,27 @@
-import { AfterViewInit, Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { Device, DeviceType, Tag } from '../../_models/device';
+import { Device, DeviceType, TAG_PREFIX, Tag } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
+import { Subject, takeUntil } from 'rxjs';
+import { Utils } from '../../_helpers/utils';
+// import { TagPropertyService } from '../tag-property/tag-property.service';
 
 @Component({
     selector: 'app-device-tag-selection',
     templateUrl: './device-tag-selection.component.html',
     styleUrls: ['./device-tag-selection.component.scss']
 })
-export class DeviceTagSelectionComponent implements OnInit, AfterViewInit {
+export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @ViewChild(MatTable, { static: false }) table: MatTable<any>;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
     @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
+    private destroy$ = new Subject<void>();
 
     dataSource = new MatTableDataSource([]);
     nameFilter = new UntypedFormControl();
@@ -29,30 +34,42 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit {
     };
 
     readonly defColumns = ['toogle', 'name', 'address', 'device', 'select'];
+    deviceTagNotEditable = [DeviceType.MQTTclient, DeviceType.ODBC];
 
     constructor(public dialogRef: MatDialogRef<DeviceTagSelectionComponent>,
         private projectService: ProjectService,
+        // private tagPropertyService: TagPropertyService,
         @Inject(MAT_DIALOG_DATA) public data: DeviceTagSelectionData) {
         this.loadDevicesTags();
     }
 
     ngOnInit() {
-
-        this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
+        this.nameFilter.valueChanges.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((nameFilterValue) => {
             this.filteredValues['name'] = nameFilterValue;
             this.dataSource.filter = JSON.stringify(this.filteredValues);
         });
 
-        this.addressFilter.valueChanges.subscribe((addressFilterValue) => {
+        this.addressFilter.valueChanges.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((addressFilterValue) => {
             this.filteredValues['address'] = addressFilterValue;
             this.dataSource.filter = JSON.stringify(this.filteredValues);
         });
 
-        this.deviceFilter.valueChanges.subscribe((deviceFilterValue) => {
+        this.deviceFilter.valueChanges.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((deviceFilterValue) => {
             this.filteredValues['device'] = deviceFilterValue;
             this.dataSource.filter = JSON.stringify(this.filteredValues);
         });
         this.dataSource.filterPredicate = this.customFilterPredicate();
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     customFilterPredicate() {
@@ -106,6 +123,46 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit {
     onSelect(element: TagElement) {
         this.data.variableId = element.id;
         this.dialogRef.close(this.data);
+    }
+
+    onAddDeviceTag(device: Device) {
+        // if (device.type === DeviceType.OPCUA) {
+        //     this.tagPropertyService.editTagPropertyOpcUa(device).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.BACnet) {
+        //     this.tagPropertyService.editTagPropertyBacnet(device).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.WebAPI) {
+        //     this.tagPropertyService.editTagPropertyWebapi(device).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.SiemensS7) {
+        //     this.tagPropertyService.editTagPropertyS7(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.FuxaServer) {
+        //     this.tagPropertyService.editTagPropertyServer(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.ModbusRTU || device.type === DeviceType.ModbusTCP) {
+        //     this.tagPropertyService.editTagPropertyModbus(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.internal) {
+        //     this.tagPropertyService.editTagPropertyInternal(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // } else if (device.type === DeviceType.EthernetIP) {
+        //     this.tagPropertyService.editTagPropertyEthernetIp(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
+        //         // this.bindToTable(this.deviceSelected.tags);
+        //     });
+        // }
+    }
+
+    isDeviceTagEditable(type: DeviceType) {
+        return !this.deviceTagNotEditable.includes(type);
     }
 
     private loadDevicesTags() {

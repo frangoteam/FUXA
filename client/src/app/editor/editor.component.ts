@@ -1365,6 +1365,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             let title = this.getGaugeTitle(settings.type);
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 position: { top: '60px' },
+                disableClose: true,
                 data: {
                     settings: tempsettings,
                     devices: Object.values(this.projectService.getDevices()),
