@@ -27,8 +27,8 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
 
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'warning', 'logger', 'options', 'remove'];
-    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'options', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
+    readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
