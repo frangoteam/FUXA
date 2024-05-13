@@ -213,7 +213,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onGoToLink(event: string) {
-        if (event.indexOf('://') >= 0) {
+        if (event.indexOf('://') >= 0 || event[0] == '/') {
             this.showHomeLink = true;
             this.changeDetector.detectChanges();
             this.setIframe(event);
