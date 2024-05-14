@@ -81,6 +81,8 @@ export class Tag {
     scale: TagScale;
     /** System Tag used in FUXA Server, example device status connection */
     sysType: TagSystemType;
+    /** Description */
+    description?: string;
 
     constructor(_id: string) {
         this.id = _id;

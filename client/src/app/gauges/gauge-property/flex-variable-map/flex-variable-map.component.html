@@ -1,4 +1,6 @@
 <div class="flex-variable-mapping">
+    <div class="flex-join">
+    </div>
     <div style="display: inline-block;">
         <flex-variable style="display: block"
                        [(value)]="value.from"
@@ -14,14 +16,9 @@
                        [data]="data"
                        (valueChange)="onValueChange()"
                        [allowManualEdit]="false"
-                       [withStaticValue]="false"
+                       [withStaticValue]="true"
                        [devicesOnly]="true">
         </flex-variable>
-    </div>
-    <div style="display: inline-block;">
-        <div style="display: inline-block; margin-bottom: 2px; width: 12px; border-radius: 2px; height: 45px; 
-            border-radius: 0px 3px 3px 0px; border-top: 2px solid #cacaca; border-right: 2px solid #cacaca; border-bottom: 2px solid #cacaca;">
-        </div>
     </div>
     <ng-content></ng-content>
 </div>

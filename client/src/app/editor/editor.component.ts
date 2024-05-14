@@ -1365,11 +1365,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             let title = this.getGaugeTitle(settings.type);
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 position: { top: '60px' },
+                disableClose: true,
                 data: {
-                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()), title: title,
-                    views: hmi.views, dlgType: dlgType, withEvents: eventsSupported, withActions: actionsSupported, default: defaultValue,
+                    settings: tempsettings,
+                    devices: Object.values(this.projectService.getDevices()),
+                    title: title,
+                    views: hmi.views,
+                    view: this.currentView,
+                    dlgType: dlgType,
+                    withEvents: eventsSupported,
+                    withActions: actionsSupported,
+                    default: defaultValue,
                     inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
-                    names: names, scripts: this.projectService.getScripts(), withBitmask: bitmaskSupported
+                    names: names,
+                    scripts: this.projectService.getScripts(),
+                    withBitmask: bitmaskSupported
                 }
             });
         }

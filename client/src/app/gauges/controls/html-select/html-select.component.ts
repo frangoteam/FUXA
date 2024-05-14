@@ -124,7 +124,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
                     option.innerHTML = 'Choose...';
                     select.appendChild(option);
                 } else {
-                    ga.property.ranges.forEach(element => {
+                    ga.property?.ranges?.forEach(element => {
                         let option = document.createElement('option');
                         option.value = element.min;
                         if (element.text) {

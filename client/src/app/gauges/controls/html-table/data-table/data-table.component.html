@@ -69,6 +69,7 @@
              (click)="selectRow(i)"
              class="data-table-row"
              [ngStyle]="{
+                'cursor': isSelectable() ? 'pointer': 'unset',
                 'height.px': tableOptions.row.height,
                 'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
                 'border-bottom-color': tableOptions.gridColor,

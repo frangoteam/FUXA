@@ -55,6 +55,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('inputValueRef', {static: false}) inputValueRef: ElementRef;
     @ViewChild('touchKeyboard', {static: false}) touchKeyboard: NgxTouchKeyboardDirective;
 
+    eventViewToPanel = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onViewToPanel);
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
     scriptParameterValue = Utils.getEnumKey(ScriptParamType, ScriptParamType.value);
 
@@ -70,7 +71,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
-    protected plainVariableMapping: any = {};
+    protected plainVariableMapping: VariableMappingDictionary = {};
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -130,7 +131,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.variablesMapping = variablesMapped;
             }
             this.variablesMapping?.forEach(variableMapping => {
-                this.plainVariableMapping[variableMapping.from.variableId] = variableMapping.to.variableId;
+                this.plainVariableMapping[variableMapping.from.variableId] = variableMapping.to;
             });
         } catch (err) {
             console.error(err);
@@ -234,7 +235,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         let gaugeStatus = this.getGaugeStatus(gaugeSetting);
                         let variables = [];
                         // prepare the start value to precess
-                        if (items[key].property.variableValue && gaugeSetting.property.variableId) {
+                        if (items[key].property.variableValue || gaugeSetting.property.variableId) {
                             let variable: Variable = <Variable>{ id: gaugeSetting.property.variableId, value: gaugeSetting.property.variableValue };
                             if (this.checkStatusValue(gaugeSetting.id, gaugeStatus, variable)) {
                                 variables = [variable];
@@ -359,7 +360,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         if (this.plainVariableMapping.hasOwnProperty(target.variableId)) {
-            target.variableId = this.plainVariableMapping[target.variableId];
+            target.variableValue = this.plainVariableMapping[target.variableId]?.variableValue;
+            target.variableId = this.plainVariableMapping[target.variableId]?.variableId;
         }
     }
 
@@ -443,6 +445,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 self.onMonitor(ga, ev, events[i].actparam, events[i].actoptions);
             } else if (events[i].action === this.eventRunScript) {
                 self.onRunScript(events[i]);
+            } else if (events[i].action === this.eventViewToPanel) {
+                self.onSetViewToPanel(events[i]);
             }
         }
     }
@@ -634,7 +638,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private loadPage(event, viewref: string, options: any) {
+    loadPage(event: GaugeEvent, viewref: string, options: any) {
         let view: View = this.getView(viewref);
         if (view) {
             if (options?.variablesMapping) {
@@ -819,6 +823,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe();
     }
 
+    onSetViewToPanel(event: GaugeEvent) {
+        if (event.actparam && event.actoptions) {
+            let panel = <FuxaViewComponent>this.mapControls[event.actoptions['panelId']];
+            panel.loadPage(event, event.actparam, event.actoptions);
+        }
+    }
+
     getCardHeight(height) {
         return parseInt(height) + 4;
     }
@@ -911,6 +922,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
     }
+}
+
+interface VariableMappingType {
+    variableId: string;
+    variableValue: any;
+}
+
+interface VariableMappingDictionary {
+    [key: string]: VariableMappingType;
 }
 
 export class CardModel {
