@@ -46,10 +46,9 @@ import { TextListComponent, DialogItemText } from './text-list/text-list.compone
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
-import { TagPropertyComponent } from './device/tag-property/tag-property.component';
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
-import { DeviceListComponent, DialogTagName } from './device/device-list/device-list.component';
+import { DeviceListComponent } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
@@ -182,6 +181,11 @@ import { ScriptEditorParamComponent } from './scripts/script-editor/script-edito
 import { TagPropertyEditS7Component } from './device/tag-property/tag-property-edit-s7/tag-property-edit-s7.component';
 import { TagPropertyEditServerComponent } from './device/tag-property/tag-property-edit-server/tag-property-edit-server.component';
 import { TagPropertyEditModbusComponent } from './device/tag-property/tag-property-edit-modbus/tag-property-edit-modbus.component';
+import { TagPropertyEditInternalComponent } from './device/tag-property/tag-property-edit-internal/tag-property-edit-internal.component';
+import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
+import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
+import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -204,10 +208,14 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LabComponent,
         DeviceComponent,
         DeviceTagSelectionComponent,
-        TagPropertyComponent,
         TagPropertyEditS7Component,
         TagPropertyEditServerComponent,
         TagPropertyEditModbusComponent,
+        TagPropertyEditInternalComponent,
+        TagPropertyEditOpcuaComponent,
+        TagPropertyEditBacnetComponent,
+        TagPropertyEditWebapiComponent,
+        TagPropertyEditEthernetipComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
@@ -220,7 +228,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DialogMenuItem,
         DialogHeaderItem,
         DeviceListComponent,
-        DialogTagName,
         DeviceMapComponent,
         FuxaViewComponent,
         FuxaViewDialogComponent,

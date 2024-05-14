@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { Tag, TAG_PREFIX } from '../../_models/device';
+import { Device, Tag, TAG_PREFIX } from '../../_models/device';
 
 @Component({
     selector: 'app-topic-property',
@@ -49,7 +49,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         private hmiService: HmiService,
         private translateService: TranslateService,
         public dialogRef: MatDialogRef<TopicPropertyComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
+        @Inject(MAT_DIALOG_DATA) public data: TopicPropertyData) {
     }
 
     ngOnInit() {
@@ -376,4 +376,10 @@ export class MqttPayloadItem {
     key = '';
     value = '';
     name;
+}
+
+export interface TopicPropertyData {
+    device: Device;
+    devices: Device[];
+    topic: Tag;
 }

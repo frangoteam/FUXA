@@ -41,12 +41,14 @@
         <!-- Select Column -->
         <ng-container matColumnDef="select">
             <mat-header-cell *matHeaderCellDef style="padding-right: 0px;">
-                <!-- <button mat-icon-button [matMenuTriggerFor]="devicesMenu" class="remove">
+                <button mat-icon-button [matMenuTriggerFor]="devicesMenu" class="remove">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
                 <mat-menu #devicesMenu [overlapTrigger]="false">
-                    <button *ngFor="let device of devices" mat-menu-item (click)="onAddDeviceTag(device)">{{ device.name }}</button>
-                </mat-menu> -->
+                    <ng-container *ngFor="let device of devices">
+                        <button *ngIf="isDeviceTagEditable(device.type)" mat-menu-item (click)="onAddDeviceTag(device)">{{ device.name }}</button>                        
+                    </ng-container>
+                </mat-menu>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" style="padding-right: 0px;">
                 <button mat-icon-button (click)="onSelect(element)">
