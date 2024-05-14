@@ -270,7 +270,7 @@ export class TagPropertyService {
         });
 
         return dialogRef.componentInstance.result.pipe(
-            map(result => {
+            map((result: TagPropertyWebApiData) => {
                 result?.nodes.forEach((n: Node) => {
                     let tag = new Tag(Utils.getGUID(TAG_PREFIX));
                     tag.name = n.text;

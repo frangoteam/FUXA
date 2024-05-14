@@ -13,7 +13,7 @@ import { Utils } from '../../../_helpers/utils';
 })
 export class TagPropertyEditWebapiComponent implements OnInit, OnDestroy {
 
-    @Output() result = new EventEmitter<any>();
+    @Output() result = new EventEmitter<TagPropertyWebApiData>();
     private destroy$ = new Subject<void>();
     @ViewChild(TreetableComponent, { static: false }) treetable: TreetableComponent;
 
