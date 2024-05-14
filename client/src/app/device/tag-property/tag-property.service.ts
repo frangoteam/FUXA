@@ -16,7 +16,6 @@ import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from '.
 import { TopicPropertyComponent, TopicPropertyData } from '../topic-property/topic-property.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import { DeviceListComponent } from '../device-list/device-list.component';
 
 @Injectable({
     providedIn: 'root'
@@ -328,6 +327,14 @@ export class TagPropertyService {
         }
     }
 
+    formatAddress(adr: string, mem: string): string {
+        let result = adr;
+        if (mem) {
+            result += '[' + mem + ']';
+        }
+        return result;
+    }
+
     private addTopicSubscription(device: Device, oldTopic: Tag, topics: Tag[], tagsMap: {}, callbackModify: () => void) {
         if (topics) {
             let existNames = Object.values(device.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
@@ -343,7 +350,7 @@ export class TagPropertyService {
                         Object.keys(device.tags).forEach((key) => {
                             if (device.tags[key].address === topic.address && device.tags[key].memaddress === topic.memaddress &&
                                 device.tags[key].id != topic.id && device.tags[key].options.subs) {
-                                exist = DeviceListComponent.formatAddress(topic.address, topic.memaddress);
+                                exist = this.formatAddress(topic.address, topic.memaddress);
                             }
                         });
                     }

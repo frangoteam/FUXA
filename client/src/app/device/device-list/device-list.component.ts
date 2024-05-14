@@ -24,7 +24,6 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
     styleUrls: ['./device-list.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
@@ -245,7 +244,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             return tag.address;
         } else if (this.deviceSelected.type === DeviceType.MQTTclient) {
             if (tag.options && tag.options.subs && tag.type === 'json') {
-                return DeviceListComponent.formatAddress(tag.address, tag.memaddress);
+                return this.tagPropertyService.formatAddress(tag.address, tag.memaddress);
             }
             return tag.address;
         }
@@ -375,14 +374,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     onCopyTagToClipboard(tag: Tag) {
         Utils.copyToClipboard(JSON.stringify(tag));
-    }
-
-    static formatAddress(adr: string, mem: string): string {
-        let result = adr;
-        if (mem) {
-            result += '[' + mem + ']';
-        }
-        return result;
     }
 }
 

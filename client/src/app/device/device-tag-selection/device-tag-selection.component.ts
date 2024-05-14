@@ -8,7 +8,7 @@ import { Device, DeviceType, TAG_PREFIX, Tag } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { Subject, takeUntil } from 'rxjs';
 import { Utils } from '../../_helpers/utils';
-// import { TagPropertyService } from '../tag-property/tag-property.service';
+import { TagPropertyService } from '../tag-property/tag-property.service';
 
 @Component({
     selector: 'app-device-tag-selection',
@@ -38,7 +38,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
 
     constructor(public dialogRef: MatDialogRef<DeviceTagSelectionComponent>,
         private projectService: ProjectService,
-        // private tagPropertyService: TagPropertyService,
+        private tagPropertyService: TagPropertyService,
         @Inject(MAT_DIALOG_DATA) public data: DeviceTagSelectionData) {
         this.loadDevicesTags();
     }
@@ -75,9 +75,10 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     customFilterPredicate() {
         const myFilterPredicate = (data: TagElement, filter: string): boolean => {
             let searchString = JSON.parse(filter);
-            return (!data.name || data.name.toString().trim().toLowerCase().indexOf(searchString.name.toLowerCase()) !== -1) &&
-                (!data.address || data.address.toString().trim().toLowerCase().indexOf(searchString.address.toLowerCase()) !== -1) &&
-                data.device.toString().trim().toLowerCase().indexOf(searchString.device.toLowerCase()) !== -1;
+            return (data.name.toString().trim().toLowerCase().indexOf(searchString.name.toLowerCase()) !== -1)
+                && ((searchString.address && data.address && data.address?.toString().trim().toLowerCase().indexOf(searchString.address.toLowerCase()) !== -1)
+                    || !searchString.address)
+                && (data.device.toString().trim().toLowerCase().indexOf(searchString.device.toLowerCase()) !== -1);
         };
         return myFilterPredicate;
     }
@@ -85,7 +86,6 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        // this.dataSource.data = this.data.tags;
     }
 
     onToogle(element: TagElement) {
@@ -120,52 +120,55 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
         this.dialogRef.close(this.data);
     }
 
-    onSelect(element: TagElement) {
+    onSelect(element: TagElement, deviceName?: string) {
+        this.data.deviceName = deviceName;
         this.data.variableId = element.id;
         this.dialogRef.close(this.data);
     }
 
     onAddDeviceTag(device: Device) {
-        // if (device.type === DeviceType.OPCUA) {
-        //     this.tagPropertyService.editTagPropertyOpcUa(device).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.BACnet) {
-        //     this.tagPropertyService.editTagPropertyBacnet(device).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.WebAPI) {
-        //     this.tagPropertyService.editTagPropertyWebapi(device).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.SiemensS7) {
-        //     this.tagPropertyService.editTagPropertyS7(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.FuxaServer) {
-        //     this.tagPropertyService.editTagPropertyServer(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.ModbusRTU || device.type === DeviceType.ModbusTCP) {
-        //     this.tagPropertyService.editTagPropertyModbus(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.internal) {
-        //     this.tagPropertyService.editTagPropertyInternal(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // } else if (device.type === DeviceType.EthernetIP) {
-        //     this.tagPropertyService.editTagPropertyEthernetIp(device, new Tag(Utils.getGUID(TAG_PREFIX)), true).subscribe(result => {
-        //         // this.bindToTable(this.deviceSelected.tags);
-        //     });
-        // }
+        let newTag = new Tag(Utils.getGUID(TAG_PREFIX));
+        if (device.type === DeviceType.OPCUA) {
+            this.tagPropertyService.editTagPropertyOpcUa(device).subscribe(result => {
+                this.loadDevicesTags();
+            });
+        } else if (device.type === DeviceType.BACnet) {
+            this.tagPropertyService.editTagPropertyBacnet(device).subscribe(result => {
+                this.loadDevicesTags();
+            });
+        } else if (device.type === DeviceType.WebAPI) {
+            this.tagPropertyService.editTagPropertyWebapi(device).subscribe(result => {
+                this.loadDevicesTags();
+            });
+        } else if (device.type === DeviceType.SiemensS7) {
+            this.tagPropertyService.editTagPropertyS7(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.FuxaServer) {
+            this.tagPropertyService.editTagPropertyServer(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.ModbusRTU || device.type === DeviceType.ModbusTCP) {
+            this.tagPropertyService.editTagPropertyModbus(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.internal) {
+            this.tagPropertyService.editTagPropertyInternal(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.EthernetIP) {
+            this.tagPropertyService.editTagPropertyEthernetIp(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        }
     }
 
     isDeviceTagEditable(type: DeviceType) {
         return !this.deviceTagNotEditable.includes(type);
     }
 
-    private loadDevicesTags() {
+    private loadDevicesTags(newTag?: Tag, deviceName?: string) {
+        this.tags = [];
         this.devices = Object.values(this.projectService.getDevices());
         if (this.devices) {
             this.devices.forEach((device: Device) => {
@@ -183,7 +186,13 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             }
             );
         }
-        this.dataSource = new MatTableDataSource(this.tags);
+        this.dataSource.data = this.tags;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+
+        if (newTag && deviceName) {
+            this.onSelect(<TagElement>{ id: newTag.id }, deviceName);
+        }
     }
 }
 
@@ -201,4 +210,5 @@ export interface DeviceTagSelectionData {
     multiSelection?: boolean;
     deviceFilter?: DeviceType[];
     variablesId?: string[];
+    deviceName?: string;
 }
