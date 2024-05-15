@@ -409,6 +409,10 @@ function Device(data, runtime) {
         return comm.setTagDaqSettings ? comm.setTagDaqSettings(tagId, settings) : null;
     }
 
+    this.getComm = () => {
+        return comm;
+    }
+
     this.load(data);
 }
 
