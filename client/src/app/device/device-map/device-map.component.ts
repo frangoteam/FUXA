@@ -427,8 +427,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.devicesStatus[device.id]) {
             let milli = new Date().getTime();
             if (this.devicesStatus[device.id].last + 15000 < milli) {
-                this.devicesStatus[device.id].status = 'connect-error';
-                this.devicesStatus[device.id].last = new Date().getTime();
+                if (this.devicesStatus[device.id].status !== 'connect-off') {
+                    this.devicesStatus[device.id].status = 'connect-error';
+                    this.devicesStatus[device.id].last = new Date().getTime();
+                }
             }
             let st = this.devicesStatus[device.id].status;
             if (st === 'connect-ok') {
