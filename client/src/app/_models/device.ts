@@ -152,6 +152,8 @@ export class DeviceNetProperty {
     format: string;
     /** Connection option used for Modbus RTU/TCP */
     connectionOption: string;
+    /** Delay used for Modbus RTU/TCP delay between frame*/
+    delay: number = 10;
 
     static descriptor = {
         address: 'Device address (IP)',
