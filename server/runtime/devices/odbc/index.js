@@ -33,7 +33,10 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.connect = function () {
         return new Promise(async (resolve, reject) => {
-            if (data.property && data.property.address) {
+            if (!data.enabled) {
+                _emitStatus('connect-off');
+                reject();
+            } else if (data.property && data.property.address) {
                 try {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
@@ -64,8 +67,10 @@ function ODBCclient(_data, _logger, _events) {
                         return;
                     }
                 } catch (err) {
-                    logger.error(`'${data.name}' try to connect error! ${err}`);
-                    _emitStatus('connect-error');
+                    if (data.enabled) {
+                        logger.error(`'${data.name}' try to connect error! ${err}`);
+                        _emitStatus('connect-error');
+                    }
                 }
                 if (this.connection) {
                     try {
@@ -94,10 +99,10 @@ function ODBCclient(_data, _logger, _events) {
                     await this.pool.close();
                     await this.connection.close();
                 } catch { }
-                _checkWorking(false);
-                _emitStatus('connect-off');
-                resolve(true);
             }
+            _checkWorking(false);
+            _emitStatus('connect-off');
+            resolve(true);
         })
     }
 
@@ -152,6 +157,8 @@ function ODBCclient(_data, _logger, _events) {
      * Load Tags attribute to read with polling
      */
     this.load = function (_data) {
+        data = JSON.parse(JSON.stringify(_data));
+        logger.info(`'${data.name}' data loaded`, true);
     }
 
     /**
