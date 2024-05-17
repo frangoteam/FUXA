@@ -68,6 +68,13 @@
                 </div>
             </ng-container>
         </ng-container>
+        <div class="my-form-field block mt10" style="width: 300px">
+            <span>{{'gauges.property-event-script' | translate}}</span>
+            <mat-select formControlName="scaleFunction" (selectionChange)="onScriptChanged($event.value)">
+                <mat-option (click)="formGroup.controls.scaleFunction.reset()"></mat-option>
+                <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+            </mat-select>
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

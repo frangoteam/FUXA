@@ -9,7 +9,7 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const TOKEN_LIMIT = 100;
 
-function MODBUSclient(_data, _logger, _events) {
+function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;  
@@ -23,6 +23,7 @@ function MODBUSclient(_data, _logger, _events) {
     var overloading = 0;                // Overloading counter to mange the break connection
     var lastTimestampValue;             // Last Timestamp of asked values
     var type;
+    var runtime = _runtime;             // Access runtime config such as scripts
 
     /**
      * initialize the modubus type 
@@ -288,7 +289,24 @@ function MODBUSclient(_data, _logger, _events) {
             var memaddr = data.tags[sigid].memaddress;
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
             value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
-            var val = datatypes[data.tags[sigid].type].formatter(convertValue(value, data.tags[sigid].divisor, true));
+
+            //var val = datatypes[data.tags[sigid].type].formatter(convertValue(value, data.tags[sigid].divisor, true));
+            const divVal = convertValue(value, data.tags[sigid].divisor, true);
+            var val;
+            if (data.tags[sigid].scaleFunction) {
+                //const script = runtime.scriptsMgr.scriptModule.getScript({id: data.tags[sigid].scaleFunction });
+                const script = {id: data.tags[sigid].scaleFunction, name: null, parameters: [{name: 'value', type: 'value', value: divVal}] };
+                const bufVal = await runtime.scriptsMgr.runScript(script);
+                val = [];
+                for (let i = 0; i < bufVal.length;) {
+                    val.push(bufVal.readUInt16BE(i));
+                    i = i + 2;
+                }
+
+            } else {
+                val = datatypes[data.tags[sigid].type].formatter(divVal);
+            }
+            
             if (type === ModbusTypes.RTU) {
                 const start = Date.now();
                 let now = start;
@@ -707,11 +725,11 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         try { ModbusRTU = require('modbus-serial'); } catch { }
         if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
         if (!ModbusRTU) return null;
-        return new MODBUSclient(data, logger, events);
+        return new MODBUSclient(data, logger, events, runtime);
     },
     ModbusTypes: ModbusTypes
 }

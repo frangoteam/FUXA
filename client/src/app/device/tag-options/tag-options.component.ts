@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FuxaServer, TagDaq, TagScale, TagScaleModeType } from '../../_models/device';
 import { Utils } from '../../_helpers/utils';
+import { ProjectService } from '../../_services/project.service';
+import { Subscription } from 'rxjs';
+import { Script, ScriptMode } from '../../_models/script';
 
 @Component({
     selector: 'app-tag-options',
@@ -10,18 +13,26 @@ import { Utils } from '../../_helpers/utils';
     styleUrls: ['./tag-options.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TagOptionsComponent implements OnInit {
+export class TagOptionsComponent implements OnInit, OnDestroy {
 
     formGroup: UntypedFormGroup;
     scaleModeType = TagScaleModeType;
+    scripts: Script[];
+
+    private subscriptionLoad: Subscription;
 
     constructor(
         public dialogRef: MatDialogRef<TagOptionsComponent>,
         private fb: UntypedFormBuilder,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private projectService: ProjectService) {
     }
 
     ngOnInit() {
+        this.loadScripts();
+        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
+            this.loadScripts();
+        });
         this.formGroup = this.fb.group({
             interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(0)]],
             changed: [{value: false, disabled: true}],
@@ -33,7 +44,8 @@ export class TagOptionsComponent implements OnInit {
             rawHigh: null,
             scaledLow: null,
             scaledHigh: null,
-            dateTimeFormat: null
+            dateTimeFormat: null,
+            scaleFunction: null
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -59,6 +71,7 @@ export class TagOptionsComponent implements OnInit {
             let scaledLow = { value: null, valid: true };
             let scaledHigh = { value: null, valid: true };
             let dateTimeFormat = { value: null, valid: true };
+            let scaleFunction = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -99,7 +112,9 @@ export class TagOptionsComponent implements OnInit {
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
-
+                if (!scaleFunction.value) {
+                    scaleFunction.value = this.data.tags[i].scaleFunction;
+                }
             }
             let values = {};
             if (enabled.valid && enabled.value !== null) {
@@ -127,6 +142,9 @@ export class TagOptionsComponent implements OnInit {
                     dateTimeFormat: dateTimeFormat.value
                 };
             }
+            if (scaleFunction.valid && scaleFunction.value) {
+                values = {...values, scaleFunction: scaleFunction.value};
+            }
             this.formGroup.patchValue(values);
             if (this.data.device?.id === FuxaServer.id) {
                 this.formGroup.controls.scaleMode.disable();
@@ -139,7 +157,14 @@ export class TagOptionsComponent implements OnInit {
             this.onCheckScaleMode(value);
         });
     }
-
+    ngOnDestroy() {
+        try {
+            if (this.subscriptionLoad) {
+                this.subscriptionLoad.unsubscribe();
+            }
+        } catch (e) {
+        }
+    }
     onCheckScaleMode(value: string) {
         switch (value) {
             case 'linear':
@@ -183,12 +208,32 @@ export class TagOptionsComponent implements OnInit {
                 scaledHigh: this.formGroup.value.scaledHigh,
                 dateTimeFormat: this.formGroup.value.dateTimeFormat
             } : null,
+            scaleFunction: this.formGroup.value.scaleFunction,
         });
     }
+
+    onScriptChanged(scriptId) {
+        console.log(`Selected script ${scriptId}`);
+        // if (event && this.scripts) {
+        //     let script = this.scripts.find(s => s.id === scriptId);
+        //     event.actoptions[SCRIPT_PARAMS_MAP] = [];
+        //     if (script && script.parameters) {
+        //         event.actoptions[SCRIPT_PARAMS_MAP] = JSON.parse(JSON.stringify(script.parameters));
+        //     }
+        // }
+    }
+
+    private loadScripts() {
+        //scripts that can be used to scale a tag must take exactly one parameter (new tag value) and be
+        //run on the server
+        const filteredScripts = this.projectService.getScripts().filter(script => script.parameters.length === 1 && script.mode === ScriptMode.SERVER);
+        this.scripts = filteredScripts;
+	}
 }
 
 export interface ITagOption {
     daq: TagDaq;
     format: number;
     scale: TagScale;
+    scaleFunction: string;
 }

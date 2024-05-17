@@ -353,6 +353,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     tags[i].daq = tagOption.daq;
                     tags[i].format = tagOption.format;
                     tags[i].scale = tagOption.scale;
+                    tags[i].scaleFunction = tagOption.scaleFunction;
                 }
                 this.projectService.setDeviceTags(this.deviceSelected);
             }

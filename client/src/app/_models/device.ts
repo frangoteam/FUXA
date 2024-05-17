@@ -79,6 +79,7 @@ export class Tag {
     init: string;
     /** Value scaling properties */
     scale: TagScale;
+    scaleFunction: string;
     /** System Tag used in FUXA Server, example device status connection */
     sysType: TagSystemType;
     /** Description */

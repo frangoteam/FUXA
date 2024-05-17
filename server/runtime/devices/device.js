@@ -55,7 +55,7 @@ function Device(data, runtime) {
         if (!MODBUSclient) {
             return null;
         }
-        comm = MODBUSclient.create(data, logger, events, manager);        
+        comm = MODBUSclient.create(data, logger, events, manager, runtime);        
     } else if (data.type === DeviceEnum.BACnet) {
         if (!BACNETclient) {
             return null;
