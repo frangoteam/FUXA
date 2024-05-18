@@ -297,6 +297,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 try {
 
                     const bufVal = await runtime.scriptsMgr.runScript(script);
+                    if ((bufVal.length % 2) !== 0 ) {
+                        logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
+                        return false;
+                    }
                     val = [];
                     for (let i = 0; i < bufVal.length;) {
                         val.push(bufVal.readUInt16BE(i));
