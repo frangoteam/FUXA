@@ -290,17 +290,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
             value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
 
-            //var val = datatypes[data.tags[sigid].type].formatter(convertValue(value, data.tags[sigid].divisor, true));
             const divVal = convertValue(value, data.tags[sigid].divisor, true);
             var val;
             if (data.tags[sigid].scaleFunction) {
-                //const script = runtime.scriptsMgr.scriptModule.getScript({id: data.tags[sigid].scaleFunction });
-                const script = {id: data.tags[sigid].scaleFunction, name: null, parameters: [{name: 'value', type: 'value', value: divVal}] };
-                const bufVal = await runtime.scriptsMgr.runScript(script);
-                val = [];
-                for (let i = 0; i < bufVal.length;) {
-                    val.push(bufVal.readUInt16BE(i));
-                    i = i + 2;
+                const script = { id: data.tags[sigid].scaleFunction, name: null, parameters: [{ name: 'value', type: 'value', value: divVal }] };
+                try {
+
+                    const bufVal = await runtime.scriptsMgr.runScript(script);
+                    val = [];
+                    for (let i = 0; i < bufVal.length;) {
+                        val.push(bufVal.readUInt16BE(i));
+                        i = i + 2;
+                    }
+                } catch (error) {
+                    logger.error(`'${data.tags[sigid].name}' setValue script error! ${error.toString()}`);
+                    return false;
                 }
 
             } else {
