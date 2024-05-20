@@ -1,6 +1,6 @@
 services:
   fuxa:
-    image: ohputra/fuxa:latest
+    image: frangoteam/fuxa:latest
     restart: unless-stopped
     volumes:
       - './appdata:/usr/src/app/FUXA/server/_appdata'
