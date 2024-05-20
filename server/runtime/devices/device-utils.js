@@ -21,7 +21,9 @@ module.exports = {
 
     tagValueCompose: async function (value, tag, runtime = undefined) {
         var obj = {value: null };
-        value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams, runtime, true, value);
+        if (tag.scaleReadFunction) {
+            value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams ? tag.scaleReadParams : undefined, runtime, true, value);
+        }
      
         if (tag && utils.isNumber(value, obj)) {
             try {
@@ -58,7 +60,9 @@ module.exports = {
                 console.error(err);
             }
         }
-        value = await callScaleScript(tag.scaleWriteFunction, tag.scaleWriteParams, runtime, false, value);
+        if (tag.scaleWriteFunction) {
+            value = await callScaleScript(tag.scaleWriteFunction, tag.scaleWriteParams ? tag.scaleWriteParams : undefined, runtime, false, value);
+        }
         
         return value;
     }
