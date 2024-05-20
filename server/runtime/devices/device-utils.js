@@ -4,13 +4,7 @@ const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
 
-const TagScriptScaleWrite = 1;
-const TagScriptScaleRead = 0;
-
 module.exports = {
-
-    TagScriptScaleWrite,
-    TagScriptScaleRead,
 
     tagDaqToSave: function (tag, timestamp) {
         if (tag.daq && (tag.daq.enabled || tag.daq.restored)) {
@@ -27,28 +21,8 @@ module.exports = {
 
     tagValueCompose: async function (value, tag, runtime = undefined) {
         var obj = {value: null };
-        if (tag.scaleReadFunction && runtime !== undefined) {
-            let tagParams = [];
-            if (tag.scaleReadParams) {
-                try {
-                    tagParams = JSON.parse(tag.scaleReadParams);
-                } catch (error) {
-                    runtime.logger.error(`'${tag.name}' error decoding read scale script params ${error.toString()}`);
-                }
-            }
-            let parameters = [{ name: 'value', type: 'value', value: value }];
-            parameters = [...parameters, ...tagParams];
-            const script = {
-                id: tag.scaleReadFunction,
-                name: null,
-                parameters: parameters
-            };
-            try {
-                value = await runtime.scriptsMgr.runScript(script);
-            } catch (error) {
-                runtime.logger.error(`'${tag.name}' read scale script error! ${error.toString()}`);
-            }
-        }
+        value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams, runtime, true, value);
+     
         if (tag && utils.isNumber(value, obj)) {
             try {
                 value = obj.value;
@@ -84,30 +58,8 @@ module.exports = {
                 console.error(err);
             }
         }
-        if (tag.scaleWriteFunction && runtime !== undefined) {
-            let parameters = [
-                { name: 'value', type: 'value', value: value }
-            ];
-            let tagParams = [];
-            if (tag.scaleWriteParams) {
-                try {
-                    tagParams = JSON.parse(tag.scaleWriteParams);
-                } catch (error) {
-                    runtime.logger.error(`'${tag.name}' error decoding write scale script params ${error.toString()}`);
-                }
-                parameters = [...parameters, ...tagParams];
-            }
-            const script = {
-                id: tag.scaleWriteFunction,
-                name: null,
-                parameters: parameters
-            };
-            try {
-                value = await runtime.scriptsMgr.runScript(script);
-            } catch (error) {
-                runtime.logger.error(`'${tag.name}' setValue script error! ${error.toString()}`);
-            }
-        }
+        value = await callScaleScript(tag.scaleWriteFunction, tag.scaleWriteParams, runtime, false, value);
+        
         return value;
     }
 }
@@ -145,4 +97,32 @@ const durationToTimeFormat = (duration, format) => {
     result += `${count.toString().padStart(secondPart.length, '0')}`;
   }
   return result;
+}
+
+const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
+    if (scriptId && runtime !== undefined) {
+        let parameters = [
+            { name: 'value', type: 'value', value: value }
+        ];
+        let tagParams = [];
+        if (params) {
+            try {
+                tagParams = JSON.parse(params);
+            } catch (error) {
+                runtime.logger.error(`'${tag.name}' error decoding ${isRead ? 'read' : 'write' } scale script params ${error.toString()}`);
+            }
+            parameters = [...parameters, ...tagParams];
+        }
+        const script = {
+            id: scriptId,
+            name: null,
+            parameters: parameters
+        };
+        try {
+            value = await runtime.scriptsMgr.runScript(script);
+        } catch (error) {
+            runtime.logger.error(`'${tag.name}' ${isRead ? 'read' : 'write'} script error! ${error.toString()}`);
+        }
+        return value;
+    }
 }
