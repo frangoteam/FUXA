@@ -7,8 +7,9 @@ var bacnet;
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
-function BACNETclient(_data, _logger, _events) {
+function BACNETclient(_data, _logger, _events, _runtime) {
 
+    var runtime = _runtime;
     var data = _data;                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;               // Logger
     var working = false;                // Working flag to manage overloading polling and connection
@@ -258,10 +259,10 @@ function BACNETclient(_data, _logger, _events) {
     /**
      * Set Tag value, used to set value from frontend
      */
-    this.setValue = function (tagId, value) {
+    this.setValue = async function (tagId, value) {
         if (data.tags[tagId]) {
             var obj = _extractId(data.tags[tagId].address);
-            value = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
+            value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
             _writeProperty(_getDeviceAddress(devices[data.tags[tagId].memaddress]), obj, value).then(result => {
                 logger.info(`'${data.name}' setValue(${tagId}, ${result})`, true, true);
             }, reason => {
@@ -616,7 +617,7 @@ function BACNETclient(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = (deviceId, vars) => {
+    var _updateVarsValue = async (deviceId, vars) => {
         const timestamp = new Date().getTime();
         var someval = false;
         var changed = {};
@@ -631,7 +632,7 @@ function BACNETclient(_data, _logger, _events) {
                 varsValue[tag.id].changed = varsValue[tag.id].rawValue !== vars[index].rawValue;
                 if (!utils.isNullOrUndefined(vars[index].rawValue)) {
                     varsValue[tag.id].rawValue = vars[index].rawValue;
-                    varsValue[tag.id].value = deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[tag.id]);
+                    varsValue[tag.id].value = await deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[tag.id]);
                     vars[index].value = varsValue[tag.id].value;
                     if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[tag.id], timestamp)) {
                         changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq, timestamp: timestamp };
@@ -721,10 +722,10 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         try { bacnet = require('node-bacnet'); } catch { }
         if (!bacnet && manager) { try { bacnet = manager.require('node-bacnet'); } catch { } }
         if (!bacnet) return null;
-        return new BACNETclient(data, logger, events);
+        return new BACNETclient(data, logger, events, runtime);
     }
 }

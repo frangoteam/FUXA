@@ -136,10 +136,12 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
             }
             // _checkWorking(false);
-            Promise.all(readVarsfnc).then(result => {
+            try{
+                const result = await Promise.all(readVarsfnc);
+             
                 _checkWorking(false);
                 if (result.length) {
-                    let varsValueChanged = _updateVarsValue(result);
+                    let varsValueChanged = await _updateVarsValue(result);
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
@@ -151,7 +153,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');                    
                 }
-            }, reason => {
+            } catch (reason) {
                 if (reason) {
                     if (reason.stack) {
                         logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
@@ -162,7 +164,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     logger.error(`'${data.name}' _readVars error! ${reason}`);
                 }
                 _checkWorking(false);
-            });
+            };
         } else {
             _emitStatus('connect-busy');
         }
@@ -288,12 +290,22 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         if (data.tags[sigid]) {
             var memaddr = data.tags[sigid].memaddress;
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
-            value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
+            value = await deviceUtils.tagRawCalculator(value, data.tags[sigid]);
 
             const divVal = convertValue(value, data.tags[sigid].divisor, true);
             var val;
-            if (data.tags[sigid].scaleFunction) {
-                const script = { id: data.tags[sigid].scaleFunction, name: null, parameters: [{ name: 'value', type: 'value', value: divVal }] };
+            if (data.tags[sigid].scaleWriteFunction) {
+                let parameters = [
+                    { name: 'value', type: 'value', value: divVal }
+                ];
+                if (data.tags[sigid].scaleWriteParams) {
+                    const extraParamsWithValues = JSON.parse(data.tags[sigid].scaleWriteParams);
+                    parameters = [...parameters, ...extraParamsWithValues];
+
+                }
+                const script = { id: data.tags[sigid].scaleWriteFunction,
+                    name: null,
+                    parameters};
                 try {
 
                     const bufVal = await runtime.scriptsMgr.runScript(script);
@@ -565,7 +577,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = (vars) => {
+    var _updateVarsValue = async (vars) => {
         var someval = false;
         var tempTags = {};
         for (var vid in vars) {
@@ -605,7 +617,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             var result = {};
             for (var id in tempTags) {
                 if (!utils.isNullOrUndefined(tempTags[id].rawValue)) {
-                    tempTags[id].value = deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref);
+                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref, runtime);
                     tempTags[id].timestamp = timestamp;
                     if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
                         result[id] = tempTags[id];

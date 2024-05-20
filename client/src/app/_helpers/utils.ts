@@ -1,4 +1,5 @@
 import { Injectable, Pipe, PipeTransform } from '@angular/core';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
 declare const numeral: any;
@@ -556,3 +557,15 @@ export class EscapeHtmlPipe implements PipeTransform {
         return this.sanitizer.bypassSecurityTrustHtml(content);
     }
 }
+//https://stackoverflow.com/questions/55748238/how-to-create-a-custom-form-validator-to-accept-only-valid-json-in-angular
+export function jsonValidator(control: AbstractControl): ValidationErrors | null {
+    try {
+        if (control.value && control.value.length > 0) {
+            JSON.parse(control.value);
+        }
+    } catch (e) {
+        console.log(e.toString());
+        return { jsonInvalid: true };
+    }
+    return null;
+};

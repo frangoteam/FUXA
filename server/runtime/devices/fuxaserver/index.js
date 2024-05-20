@@ -56,7 +56,7 @@ function FuxaServer(_data, _logger, _events) {
         if (_checkWorking(true)) {
             try {
                 if (tocheck) {
-                    var varsValueChanged = _checkVarsChanged();
+                    var varsValueChanged = await _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
@@ -242,12 +242,12 @@ function FuxaServer(_data, _logger, _events) {
     /**
      * Return the Tags that have value changed and clear value changed flag of all Tags 
      */
-    var _checkVarsChanged = () => {
+    var _checkVarsChanged = async () => {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
             if (!utils.isNullOrUndefined(data.tags[id].value)) {
-                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
+                data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].value, data.tags[id]);
                 data.tags[id].timestamp = timestamp;
                 if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                     result[id] = data.tags[id];

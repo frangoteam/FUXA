@@ -265,7 +265,9 @@ function setTagValue(tagid, value) {
     try {
         let deviceid = getDeviceIdFromTag(tagid)
         if (activeDevices[deviceid]) {
-            return activeDevices[deviceid].setValue(tagid, value);
+            activeDevices[deviceid].setValue(tagid, value).then(result => {
+                return result;
+            });
         }
     } catch (err) {
         console.error(err);
@@ -371,9 +373,9 @@ function isWoking() {
  * @param {*} sigid 
  * @param {*} value 
  */
-function setDeviceValue(deviceid, sigid, value, fnc) {
+async function setDeviceValue(deviceid, sigid, value, fnc) {
     if (activeDevices[deviceid]) {
-        activeDevices[deviceid].setValue(sigid, value, fnc);
+        await activeDevices[deviceid].setValue(sigid, value, fnc);
     }
 }
 

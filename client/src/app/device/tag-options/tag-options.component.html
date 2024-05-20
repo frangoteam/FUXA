@@ -69,15 +69,46 @@
             </ng-container>
         </ng-container>
         <div class="my-form-field block mt10" style="width: 300px">
-            <span>{{'gauges.property-event-script' | translate}}</span>
-            <mat-select formControlName="scaleFunction" (selectionChange)="onScriptChanged($event.value)">
-                <mat-option (click)="formGroup.controls.scaleFunction.reset()"></mat-option>
+            <span>{{'device.tag-scale-read-script' | translate}}</span>
+            <mat-select formControlName="scaleReadFunction" (selectionChange)="onReadScriptChanged($event.value)" matTooltip="{{'device.tag-scale-read-script-tooltip' | translate}}">
+                <mat-option (click)="formGroup.controls.scaleReadFunction.reset()"></mat-option>
                 <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
             </mat-select>
+        </div>
+        <div *ngIf="configedReadParams[formGroup.value.scaleReadFunction]?.length > 0" class="my-form-field block mt10" style="width: 300px">
+            <span>{{'device.tag-scale-read-script-params' | translate}}</span>
+            <mat-list matTooltip="{{'device.tag-scale-script-params-tooltip' | translate}}">
+                    <mat-list-item *ngFor="let item of configedReadParams[formGroup.value.scaleReadFunction]">
+                        <div class="block mt10 flex" >
+                            <span>{{item.name}}:</span>
+                            <input [(ngModel)]="item.value"  style="width:140px;margin-left: 10px;" [ngModelOptions]="{standalone: true}">                            
+                        </div>
+                    </mat-list-item>                    
+            </mat-list>
+        </div>
+       
+        <div class="my-form-field block mt10" style="width: 300px">
+            <span>{{'device.tag-scale-write-script' | translate}}</span>
+            <mat-select formControlName="scaleWriteFunction" (selectionChange)="onWriteScriptChanged($event.value)" matTooltip="{{'device.tag-scale-write-script-tooltip' | translate}}">
+                <mat-option (click)="formGroup.controls.scaleWriteFunction.reset()"></mat-option>
+                <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+            </mat-select>
+        </div>
+        
+        <div *ngIf="configedWriteParams[formGroup.value.scaleWriteFunction]?.length > 0" class="my-form-field block mt10" style="width: 300px">
+            <span>{{'device.tag-scale-write-script-params' | translate}}</span>
+            <mat-list matTooltip="{{'device.tag-scale-script-params-tooltip' | translate}}">
+                    <mat-list-item *ngFor="let item of configedWriteParams[formGroup.value.scaleWriteFunction]">
+                        <div class="block mt10 flex" >
+                            <span>{{item.name}}:</span>
+                            <input [(ngModel)]="item.value"  style="width:140px;margin-left: 10px;" [ngModelOptions]="{standalone: true}">                            
+                        </div>
+                    </mat-list-item>
+            </mat-list>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="formGroup.invalid">{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="disableForm()">{{'dlg.ok' | translate}}</button>
     </div>
 </form>
