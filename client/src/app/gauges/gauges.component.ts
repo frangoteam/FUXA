@@ -815,6 +815,9 @@ export class GaugesManager {
             let gauge: FuxaViewComponent = PanelComponent.initElement(ga, res, ref, this, this.hmiService.hmi, isview, parent);
             this.mapGauges[ga.id] = gauge;
             return gauge;
+        } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
+            let gauge = HtmlButtonComponent.initElement(ga);
+            return gauge || true;
         } else {
             let ele = document.getElementById(ga.id);
             ele?.setAttribute('data-name', ga.name);
