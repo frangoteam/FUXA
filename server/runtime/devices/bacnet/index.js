@@ -143,7 +143,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
             for (var deviceId in objectsMapToRead) {
                 try {
                     const deviceAddress = _getDeviceAddress(devices[deviceId]);
-                    await client.readPropertyMultiple(deviceAddress, objectsMapToRead[deviceId], (err, value) => {
+                    await client.readPropertyMultiple(deviceAddress, objectsMapToRead[deviceId], async (err, value) => {
                         if (err) {        
                             logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
                         } else {
@@ -167,7 +167,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                                     }
                                 });
                                 if (result.length) {
-                                    let varsValueChanged = _updateVarsValue(deviceId, result);
+                                    let varsValueChanged = await _updateVarsValue(deviceId, result);
                                     lastTimestampValue = new Date().getTime();
                                     _emitValues(Object.values(varsValue));
                                     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
