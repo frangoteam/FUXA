@@ -291,6 +291,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
         }
         return false;
     }
+    isFuxaServerTag() {
+        return this.data.device?.id === FuxaServer.id;
+    }
 
     private loadScripts() {
         //scripts that can be used to scale a tag must have the first parameter named "value" of
