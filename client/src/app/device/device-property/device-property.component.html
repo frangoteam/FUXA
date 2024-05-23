@@ -173,9 +173,15 @@
                             </mat-option>
                         </mat-select>
                     </div>
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
-                        <span>{{'device.property-tockenized' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 100px; text-align: center;">
+                            <span>{{'device.property-tockenized' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk" style="display: inline-block;margin-left: 50px;">
+                            <span>{{'device.property-delay' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.delay" style="width: 100px" type="number">
+                        </div>
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
@@ -195,10 +201,16 @@
                         <span>{{'device.property-slave-id' | translate}}</span>
                         <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 65px" type="text">
                     </div>
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
-                        <span>{{'device.property-tockenized' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
-                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 100px; text-align: center;">
+                            <span>{{'device.property-tockenized' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk" style="display: inline-block;margin-left: 50px;">
+                            <span>{{'device.property-delay' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.delay" style="width: 100px" type="number">
+                        </div>
+                    </div>                        
                 </div>
                 <div *ngSwitchCase="deviceType.WebAPI">
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">

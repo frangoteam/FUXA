@@ -808,6 +808,7 @@
     "device.property-databits": "Data Bits",
     "device.property-stopbits": "Stop Bits",
     "device.property-parity": "Parity",
+    "device.property-delay": "Frame delay (msec.)",
     "device.property-method": "Method",
     "device.property-format": "Format",
     "device.property-internal": "Frontend only",

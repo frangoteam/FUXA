@@ -36,6 +36,7 @@ function Device(data, runtime) {
     var connectionStatus = ConnectionStatusEnum.OFF;        // Connection status depending of read tag value response
     var pollingInterval = DEVICE_POLLING_INTERVAL;
     var sharedDevices = data.sharedDevices;
+    var tryToConnect = 0;
     var comm;                                               // Interface to OPCUA/S7/.. Device
                                                             // required: connect, disconnect, isConnected, polling, init, load, getValue, 
                                                             // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
@@ -143,11 +144,15 @@ function Device(data, runtime) {
      */
     this.checkStatus = function () {
         if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START) {
-            this.connect().then(function () {
+            const self = this;
+            this.connect().then(() => {
+                tryToConnect = 0;
                 status = DeviceStatusEnum.IDLE;
             }).catch(function (err) {
-                if (err) {
-                    console.error(err);
+                logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
+                if (tryToConnect++ > 3) {
+                    tryToConnect = 0;
+                    self.disconnect().then(() => {});
                 }
             });
         } else if (status === DeviceStatusEnum.IDLE && !comm.isConnected()) {
