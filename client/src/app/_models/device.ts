@@ -81,6 +81,8 @@ export class Tag {
     scale: TagScale;
     /** System Tag used in FUXA Server, example device status connection */
     sysType: TagSystemType;
+    /** Description */
+    description?: string;
 
     constructor(_id: string) {
         this.id = _id;
@@ -150,6 +152,8 @@ export class DeviceNetProperty {
     format: string;
     /** Connection option used for Modbus RTU/TCP */
     connectionOption: string;
+    /** Delay used for Modbus RTU/TCP delay between frame*/
+    delay: number = 10;
 
     static descriptor = {
         address: 'Device address (IP)',

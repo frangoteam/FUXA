@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 import { View } from '../../../_models/hmi';
+import { VariableMapItemType } from '../flex-variable-map/flex-variable-map.component';
 
 @Component({
     selector: 'flex-variables-mapping',
@@ -71,7 +72,10 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
 
     addVariableMapping($event) {
         $event.preventDefault();
-        this.mapping.push({ from: {}, to: {} });
+        this.mapping.push(<VariableMapItemType>{
+            from: {},
+            to: {},
+        });
     }
 
     removeVariableMapping($event, i) {

@@ -13,6 +13,7 @@ import { Utils } from '../../_helpers/utils';
 import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode } from '../../_models/script';
 import { DevicesUtils, DeviceType } from '../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
+import { ScriptEditorParamComponent } from './script-editor-param/script-editor-param.component';
 
 @Component({
     selector: 'app-script-editor',
@@ -145,7 +146,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     onAddFunctionParam() {
         let error = 'dlg.item-name-error';
         let exist = this.parameters.map(p => p.name);
-        let dialogRef = this.dialog.open(DialogScriptParam, {
+        let dialogRef = this.dialog.open(ScriptEditorParamComponent, {
             disableClose: true,
             position: { top: '60px' },
             data: { name: '', exist: exist, error: error, validator: this.validateName  }
@@ -286,45 +287,5 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             params.push(p);
         }
         this.testParameters = params;
-    }
-}
-
-@Component({
-    selector: 'dlg-sript-param',
-    templateUrl: 'param.dialog.html',
-})
-export class DialogScriptParam {
-    error = '';
-    existError = 'script.param-name-exist';
-    paramType = ScriptParamType;
-    constructor(public dialogRef: MatDialogRef<DialogScriptParam>,
-        private translateService: TranslateService,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        Object.keys(this.paramType).forEach(key => {
-            this.translateService.get(this.paramType[key]).subscribe((txt: string) => {this.paramType[key] = txt;});
-        });
-        this.translateService.get(this.existError).subscribe((txt: string) => {this.existError = txt;});
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-
-    }
-
-    isValid(name): boolean {
-        if (this.data.validator && !this.data.validator(name)) {return false;}
-        if (!this.data.type) {return false;}
-        if (!this.data.name) {return false;}
-        return (this.data.exist.find((n) => n === name)) ? false : true;
-    }
-
-    onCheckValue(input: any) {
-        if (this.data.exist && this.data.exist.length && input.target.value) {
-            if (this.data.exist.find((n) => n === input.target.value)) {
-                this.error = this.existError;
-                return;
-            }
-        }
-        this.error = '';
     }
 }

@@ -53,6 +53,12 @@ if (parsedArgs.help) {
 // Define directory
 var rootDir = __dirname;
 var workDir = path.resolve(process.cwd(), '_appdata');
+
+if(process.env.userDir){
+    rootDir = process.env.userDir;
+    workDir = path.resolve(process.env.userDir, '_appdata');
+}
+
 if (parsedArgs.userDir) {
     rootDir = parsedArgs.userDir;
     workDir = path.resolve(parsedArgs.userDir, '_appdata');
@@ -66,7 +72,7 @@ if (!fs.existsSync(workDir)) {
     fs.mkdirSync(workDir);
 }
 
-// Read app settings 
+// Read app settings
 var appSettingsFile = path.join(workDir, 'settings.js');
 if (fs.existsSync(appSettingsFile)) {
     // _appdata/settings.js exists
@@ -157,7 +163,7 @@ try {
 
 // Check logger
 if (!settings.logDir) {
-    settings.logDir = path.resolve(rootDir, '_logs'); 
+    settings.logDir = path.resolve(rootDir, '_logs');
 }
 if (!fs.existsSync(settings.logDir)) {
     fs.mkdirSync(settings.logDir);
@@ -220,7 +226,7 @@ if (parsedArgs.port !== undefined){
 }
 settings.uiHost = settings.uiHost || "0.0.0.0";
 
-// Wait ending initialization 
+// Wait ending initialization
 events.once('init-runtime-ok', function () {
     logger.info('FUXA init in  ' + utils.endTime(startTime) + 'ms.');
     startFuxa();
@@ -274,7 +280,7 @@ app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileD
 app.use('/_images', express.static(settings.imagesFileDir));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
-app.use(morgan('combined', { 
+app.use(morgan('combined', {
     stream: accessLogStream,
     skip: function (req, res) { return res.statusCode < 400 }
 }));

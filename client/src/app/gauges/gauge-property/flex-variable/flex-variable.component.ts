@@ -7,6 +7,7 @@ import { BitmaskComponent } from '../../../gui-helpers/bitmask/bitmask.component
 import { Observable, map, startWith } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../device/device-tag-selection/device-tag-selection.component';
+import { ProjectService } from '../../../_services/project.service';
 
 interface Variable {
     id: string;
@@ -52,25 +53,12 @@ export class FlexVariableComponent implements OnInit {
     devicesTags$: Observable<DeviceGroup[]>;
     tagFilter = new UntypedFormControl();
 
-    constructor(public dialog: MatDialog) {
+    constructor(public dialog: MatDialog,
+        private projectService: ProjectService) {
     }
 
     ngOnInit() {
-        Object.values(this.data.devices).forEach((device: Device) => {
-            let deviceGroup = <DeviceGroup> {
-                name: device.name,
-                tags: [],
-            };
-            Object.values(device.tags).forEach((tag: Tag) => {
-                const deviceTag = <DeviceTagOption> {
-                    id: tag.id,
-                    name: this._tagToVariableName(tag),
-                    device: device.name
-                };
-                deviceGroup.tags.push(deviceTag);
-            });
-            this.devices.push(deviceGroup);
-        });
+        this.loadDevicesTags();
 
         this.devicesTags$ = this.tagFilter.valueChanges.pipe(
             startWith(''),
@@ -81,9 +69,11 @@ export class FlexVariableComponent implements OnInit {
             this.value = {
                 variableId: this.variableId
             };
-        } else if (this.value.variableId) {
+        } else {
             this.variableId = this.value.variableId;
+            this.variableValue = this.value.variableValue;
         }
+
         if (!this.devicesOnly) {
             let devPlaceholders = Utils.clone(PlaceholderDevice);
             this.placeholders?.forEach(placeholder => {
@@ -212,6 +202,9 @@ export class FlexVariableComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
+                if (result.deviceName) {
+                    this.loadDevicesTags(result.deviceName);
+                }
                 this.variableId = result.variableId;
                 this.onChanged();
                 this._setSelectedTag();
@@ -239,6 +232,29 @@ export class FlexVariableComponent implements OnInit {
                 this.bitmask = result.bitmask;
                 this.onChanged();
             }
+        });
+    }
+
+    private loadDevicesTags(deviceName?: string) {
+        const deviceUpdated = <Device>Object.values(this.projectService.getDevices()).find((device: Device) => device.name === deviceName);
+        Object.values(this.data.devices).forEach((device: Device) => {
+            let deviceGroup = <DeviceGroup> {
+                name: device.name,
+                tags: [],
+            };
+            let deviceTags = device.tags;
+            if (deviceUpdated && deviceUpdated.name === deviceName) {
+                deviceTags = deviceUpdated.tags;
+            }
+            Object.values(deviceTags).forEach((tag: Tag) => {
+                const deviceTag = <DeviceTagOption> {
+                    id: tag.id,
+                    name: this._tagToVariableName(tag),
+                    device: device.name
+                };
+                deviceGroup.tags.push(deviceTag);
+            });
+            this.devices.push(deviceGroup);
         });
     }
 }

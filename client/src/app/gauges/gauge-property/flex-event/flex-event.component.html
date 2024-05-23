@@ -4,7 +4,7 @@
             <mat-icon>clear</mat-icon>
         </button>
     </div>
-    <div style="display: inline-block;">
+    <div class="inbk" style="vertical-align: top;">
         <div class="my-form-field" style="width: 140px;">
             <span>{{'gauges.property-event-type' | translate}}</span>
             <mat-select [(value)]="item.type">
@@ -30,10 +30,28 @@
         </div>
     </div>
     <div class="my-form-field" style="width: 240px;padding-left: 20px" *ngIf="withDestination(item.action)">
-        <span>{{'gauges.property-event-destination' | translate}}</span>
-        <mat-select [(value)]="item.actparam">
-            <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
-        </mat-select>
+        <ng-container *ngIf="isWithPanel(item.action); else destination" class="inbk" style="vertical-align: top;">
+            <div class="my-form-field block" style="width: 200px;">
+                <span>{{'gauges.property-event-destination-panel' | translate}}</span>
+                <mat-select [(value)]="item.actoptions.panelId">
+                    <mat-option *ngFor="let panel of viewPanels; index as i" [value]="panel.id">{{panel.name}}</mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field block mt5" style="width: 200px;">
+                <span>{{'gauges.property-event-destination' | translate}}</span>
+                <mat-select [(value)]="item.actparam">
+                    <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
+                </mat-select>
+            </div>    
+        </ng-container>
+        <ng-template #destination>
+            <div class="my-form-field lbk" style="width: 200px;">
+                <span>{{'gauges.property-event-destination' | translate}}</span>
+                <mat-select [(value)]="item.actparam">
+                    <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
+                </mat-select>
+            </div>
+        </ng-template>
         <div *ngIf="withPosition(item.action)" class="table mt5">
             <div class="my-form-field lbk">
                 <span>{{'general-x' | translate}}</span>

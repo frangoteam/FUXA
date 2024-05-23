@@ -909,9 +909,9 @@ export class ProjectService {
         return (this.projectData) ? this.projectData.server : null;
     }
 
-    // getDevices(): any {
-    //     return (this.projectData) ? this.projectData.devices : {};
-    // }
+    getServerDevices(): Device[] {
+        return <Device[]>Object.values(this.getDevices()).filter((device: Device) => device.type !== DeviceType.internal);
+    }
 
     getDevices(): any {
         let result = {};

@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { View } from '../../../_models/hmi';
+import { IPropertyVariable, View } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-variable-map',
     templateUrl: './flex-variable-map.component.html',
-    styleUrls: ['./flex-variable-map.component.css']
+    styleUrls: ['./flex-variable-map.component.scss']
 })
 export class FlexVariableMapComponent implements OnInit {
     @Input() view: View;
@@ -31,4 +31,9 @@ export class FlexVariableMapComponent implements OnInit {
     compareVariables(v1, v2) {
         return v1 && v2 && v1.variableId == v2.variableId;
     }
+}
+
+export interface VariableMapItemType {
+    from: IPropertyVariable;
+    to: IPropertyVariable;
 }
