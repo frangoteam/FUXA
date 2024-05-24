@@ -266,7 +266,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private runScript(event: GaugeEvent, selected: MatRow) {
         if (event.actparam) {
-            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
+            let torun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam));
             torun.parameters = <ScriptParam[]>Utils.clone(event.actoptions[SCRIPT_PARAMS_MAP]);
             torun.parameters.forEach(param => {
                 if (Utils.isNullOrUndefined(param.value)) {

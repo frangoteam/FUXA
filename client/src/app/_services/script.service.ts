@@ -136,7 +136,7 @@ export class ScriptService {
     }
 
     public async $runServerScript(scriptName: string, ...params: any[]) {
-        let scriptToRun = this.projectService.getScripts().find(dataScript => dataScript.name == scriptName);
+        let scriptToRun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.name == scriptName));
         scriptToRun.parameters = params;
         return await lastValueFrom(this.runScript(scriptToRun));
     }

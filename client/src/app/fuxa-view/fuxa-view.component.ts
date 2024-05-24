@@ -785,7 +785,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onRunScript(event: GaugeEvent) {
         if (event.actparam) {
-            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
+            let torun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam));
             torun.parameters = <ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP];
             const placeholders = torun.parameters.filter(param => param.value.startsWith(PlaceholderDevice.id)).map(param => param.value);
             if (placeholders?.length) {
