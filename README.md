@@ -19,7 +19,7 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
-running from docker (first option)
+### Running from docker
 ```
 docker pull frangoteam/fuxa:latest
 docker run -d -p 1881:1881 frangoteam/fuxa:latest
@@ -33,18 +33,25 @@ wget https://raw.githubusercontent.com/frangoteam/FUXA/master/compose.yml
 docker compose up -d
 ```
 
-Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa) (second option)
-In linux to use only with nodejs Version 14.21.3
+### Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
+
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14 || 16 || 18.
+
+**WARNING** In linux with nodejs Version 16 || 18 the installation could be a challenge.
+If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
+
 ```
 npm install -g --unsafe-perm @frangoteam/fuxa
 fuxa
 ```
 
-Or [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it (second option)
+### Install from source
+[Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14.21.3 (npm 6.14.18) || 16.20.2 (npm 8.19.4) || 18.18.2 (npm 9.8.1).
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14 || 16 || 18.
 
-**WARNING** In linux with nodejs Version 16.20.2 || 18.18.2 there are problems with the node-snap7 library for communication with Siemens S7 PLCs, if you don't intend to use it you can remove it from the server/package.json
+**WARNING** In linux with nodejs Version 16 || 18 the installation could be a challenge.
+If you don't intend communicate with Siemens PLCs via S7 you can remove the node-snap7 library from the server/package.json
 
 ```
 cd ./server
@@ -99,7 +106,7 @@ In vscode: Debug ‘Server & Client’
 Build the frontend for production
 ```
 cd ./client
-ng build --prod
+ng build --configuration=production
 ```
 
 ## Contributing
