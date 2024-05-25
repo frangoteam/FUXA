@@ -26,11 +26,12 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         spline: 3,
     };
 
+    rawData = false;
     overlay: any;
     uplot: any;
     data: number[][];
-    xtime = [new Date().getTime() / 1000 - 1, new Date().getTime() / 1000];     // start and sample x time
-    sampleData = [this.xtime, [35, 71]];
+    get xSample() { return this.rawData ? [2, 7] : [new Date().getTime() / 1000 - 1, new Date().getTime() / 1000]; };     // start and sample x time
+    sampleData = [this.xSample, [35, 71]];
 
     private getShortTimeFormat(min: boolean = true) {
         if (this.options && this.options.timeFormat === 'hh_mm_ss_AA') {
@@ -178,8 +179,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         // this.uplot.redraw(false, true);
     }
 
-    init(options?: ChartOptions) {
+    init(options?: ChartOptions, rawData?: boolean) {
         this.data = [[]];
+        this.rawData = rawData;
         if (options) {
             this.options = options;
             if (!options.id) {
@@ -187,7 +189,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                 this.options.series = this.sampleSerie;
             } else {
                 // this.data = this.sampleData;
-                this.data = [this.xtime];
+                this.data = [this.xSample];
             }
         }
         let opt = this.options || this.defOptions;
@@ -199,11 +201,15 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         this.checkDateFormat();
         if (this.options.dateFormat && this.xDateFormat[this.options.dateFormat] && this.options.timeFormat && this.xTimeFormat[this.options.timeFormat]) {
             this.fmtDate = uPlot.fmtDate(this.xDateFormat[this.options.dateFormat].legendDate + ' ' + this.xTimeFormat[this.options.timeFormat]);
-            this.options.axes[0].values = this.xDateFormat[this.options.dateFormat].values;
+            if (this.rawData) {
+                this.options.axes[0].values = (self, rawValue) => rawValue;
+            } else {
+                this.options.axes[0].values = this.xDateFormat[this.options.dateFormat].values;
+            }
         }
         this.sampleSerie[1].label = this.languageLabels.serie;
         if (this.options.series.length > 0) {
-            this.options.series[0].value = (self, rawValue) => this.fmtDate(new Date(rawValue * 1e3));
+            this.options.series[0].value = (self, rawValue) => this.rawData ? rawValue : this.fmtDate(new Date(rawValue * 1e3));
             this.options.series[0].label = this.languageLabels.time;
         }
         if (this.options.axes.length > 0) {
@@ -235,10 +241,10 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     setOptions(options: Options) {
         this.options = options;
-        this.init(this.options);
+        this.init(this.options, this.rawData);
     }
 
-    addSerie(index: string, attribute: Series) {
+    addSerie(index: number, attribute: Series) {
         this.data.push([null,null]);
         if (attribute.lineInterpolation === this.lineInterpolations.stepAfter) {
             attribute.paths = uPlot.paths.stepped({ align: 1 });
@@ -252,7 +258,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     }
 
     setSample() {
-        let sample = [this.xtime];
+        let sample = [this.xSample];
         for (let i = 0; i < this.uplot.series.length; i++) {
             sample.push([Math.floor(Math.random() * 20), Math.floor(Math.random() * 30)]);
         }
@@ -340,7 +346,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                     const x = u.data[0][idx];
                     const anchor = { left: left + bLeft, top: top + bTop };
                     const time = this.fmtDate(new Date(x * 1e3));
-                    const xdiv = `<div class="ut-head">${u.series[0].label}: ${time}</div>`;
+                    const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
                     let series = '';
                     for (let i = 1; i < u.series.length; i++) {
                         let value = '';
@@ -447,6 +453,8 @@ export interface ChartOptions extends NgxOptions {
     hideToolbar?: boolean;
     refreshInterval?: number;
     loadOldValues?: boolean;
+
+    scriptId?: string;
 }
 
 export interface NgxSeries extends Series {

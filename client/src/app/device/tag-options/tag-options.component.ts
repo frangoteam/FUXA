@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FuxaServer, TagDaq, TagScale, TagScaleModeType } from '../../_models/device';
+import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-tag-options',
@@ -22,7 +23,7 @@ export class TagOptionsComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(1)]],
+            interval: [{value: 60, disabled: true}, [Validators.required, Validators.min(0)]],
             changed: [{value: false, disabled: true}],
             enabled: [false],
             restored: [false],
@@ -78,7 +79,7 @@ export class TagOptionsComponent implements OnInit {
                 } else if (restored.value !== daq.restored) {
                     restored.valid = false;
                 }
-                if (!interval.value) {
+                if (Utils.isNullOrUndefined(interval.value)) {
                     interval.value = daq.interval;
                 } else if (interval.value !== daq.interval) {
                     interval.valid = false;
@@ -110,7 +111,7 @@ export class TagOptionsComponent implements OnInit {
             if (restored.valid && restored.value !== null) {
                 values = {...values, restored: restored.value};
             }
-            if (interval.valid && interval.value) {
+            if (interval.valid && !Utils.isNullOrUndefined(interval.value)) {
                 values = {...values, interval: interval.value};
             }
             if (format.valid && format.value) {
@@ -141,19 +142,23 @@ export class TagOptionsComponent implements OnInit {
 
     onCheckScaleMode(value: string) {
         switch (value) {
-            case 'undefined':
-            this.formGroup.controls.rawLow.clearValidators();
-            this.formGroup.controls.rawHigh.clearValidators();
-            this.formGroup.controls.scaledLow.clearValidators();
-            this.formGroup.controls.scaledHigh.clearValidators();
-            break;
             case 'linear':
-            this.formGroup.controls.rawLow.setValidators(Validators.required);
-            this.formGroup.controls.rawHigh.setValidators(Validators.required);
-            this.formGroup.controls.scaledLow.setValidators(Validators.required);
-            this.formGroup.controls.scaledHigh.setValidators(Validators.required);
-            break;
+                this.formGroup.controls.rawLow.setValidators(Validators.required);
+                this.formGroup.controls.rawHigh.setValidators(Validators.required);
+                this.formGroup.controls.scaledLow.setValidators(Validators.required);
+                this.formGroup.controls.scaledHigh.setValidators(Validators.required);
+                break;
+            default:
+                this.formGroup.controls.rawLow.clearValidators();
+                this.formGroup.controls.rawHigh.clearValidators();
+                this.formGroup.controls.scaledLow.clearValidators();
+                this.formGroup.controls.scaledHigh.clearValidators();
+                break;
         }
+        this.formGroup.controls.rawLow.updateValueAndValidity();
+        this.formGroup.controls.rawHigh.updateValueAndValidity();
+        this.formGroup.controls.scaledLow.updateValueAndValidity();
+        this.formGroup.controls.scaledHigh.updateValueAndValidity();
         this.formGroup.updateValueAndValidity();
     }
 

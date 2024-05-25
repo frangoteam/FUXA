@@ -45,6 +45,8 @@ export class HmiService {
     private homeTagsSubscription = [];
     private viewsTagsSubscription = [];
 
+    getGaugeMapped: (gaugeName: string) => void; // function binded in GaugeManager
+
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
         private authService: AuthService,
@@ -255,7 +257,7 @@ export class HmiService {
     /**
      * Ask device status to backend
      */
-    public askDeviceProperty(endpoint, type) {
+    public askDeviceProperty(endpoint: EndPointSettings & any, type) {
         if (this.socket) {
             let msg = { endpoint: endpoint, type: type };
             this.socket.emit(IoEventTypes.DEVICE_PROPERTY, msg);
@@ -377,6 +379,21 @@ export class HmiService {
         if (this.socket) {
             let msg = { tagsId: tagsId };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_UNSUBSCRIBE, msg);
+        }
+    }
+
+    /**
+     * Enable device
+     * @param deviceName
+     * @param enable
+     */
+    public deviceEnable(deviceName: string, enable: boolean) {
+        if (this.socket) {
+            let msg = {
+                deviceName: deviceName,
+                enable: enable
+            };
+            this.socket.emit(IoEventTypes.DEVICE_ENABLE, msg);
         }
     }
     //#endregion
@@ -548,7 +565,7 @@ export class HmiService {
 
     //#endregion
 
-    private onScriptCommand(message: ScriptCommandMessage) {
+    public onScriptCommand(message: ScriptCommandMessage) {
         switch (message.command) {
             case ScriptCommandEnum.SETVIEW:
                 if (message.params && message.params.length) {
@@ -613,6 +630,7 @@ export enum IoEventTypes {
     DEVICE_TAGS_REQUEST = 'device-tags-request',
     DEVICE_TAGS_SUBSCRIBE = 'device-tags-subscribe',
     DEVICE_TAGS_UNSUBSCRIBE = 'device-tags-unsubscribe',
+    DEVICE_ENABLE = 'device-enable',
     DAQ_QUERY = 'daq-query',
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',
@@ -622,11 +640,11 @@ export enum IoEventTypes {
     SCRIPT_COMMAND = 'script-command'
 }
 
-const ScriptCommandEnum = {
+export const ScriptCommandEnum = {
     SETVIEW: 'SETVIEW',
 };
 
-interface ScriptCommandMessage {
+export interface ScriptCommandMessage {
     command: string;
     params: any[];
 }
@@ -634,4 +652,11 @@ interface ScriptCommandMessage {
 export interface ScriptSetView {
     viewName: string;
     force: boolean;
+}
+
+export interface EndPointSettings {
+    address: string;
+    uid: string;
+    pwd: string;
+    id?: string;
 }

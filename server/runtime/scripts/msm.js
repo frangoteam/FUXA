@@ -47,22 +47,24 @@ function MyScriptsModule(_events, _logger) {
 
         var result = _scriptsToModule(tempScripts, eventsIncludes);
         if (result.module) {
-            var paramsValue = _script.parameters.map(p => p.value);
+            var paramsValue = _script.parameters.map(p => p.value || p);
             result.module[initEvents.name](events, _script.outputId);
-            result.module[_script.name](...paramsValue);
+            return result.module[_script.name](...paramsValue);
         }
+        throw new Error(result);
     }
 
     this.runScript = function (_script) {
         if (scriptsModule) {
-            var paramsValue = _script.parameters.map(p => p.value);
+            var paramsValue = _script.parameters.map(p => p.value || p);
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
             try {
-                scriptsModule[_script.name](...paramsValue);
+                return scriptsModule[_script.name](...paramsValue);
             } catch (err) {
                 console.error(err);
+                return err;
             }
         }
     }
@@ -72,8 +74,17 @@ function MyScriptsModule(_events, _logger) {
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
-            scriptsModule[_script.name]();
+            try {
+                return scriptsModule[_script.name]();
+            } catch (err) {
+                console.error(err);
+                return err;
+            }
         }
+    }
+
+    this.runSysFunction = function (functionName, params) {
+        return global[functionName](...params);
     }
 
     this.getScript = function (_script) {
@@ -93,7 +104,7 @@ function MyScriptsModule(_events, _logger) {
                             if (params.length) params += ',';
                             params += `${script.parameters[i].name}`;
                         }
-                        functions += `function ${script.name} (${params}) { try { ${script.code} } catch (e) { console.error(e); } }`;
+                        functions += `async function ${script.name} (${params}) { try { ${script.code} } catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {
@@ -114,6 +125,7 @@ function MyScriptsModule(_events, _logger) {
             result.module = _requireFromString(code, filename);
         } catch(ex) {
             logger.error(`load.script error: ${(ex.stack) ? ex.stack : ex}`);
+            return ex;
         }
         return result;
     }

@@ -39,17 +39,16 @@ import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.c
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
-import { ScriptEditorComponent, DialogScriptParam } from './scripts/script-editor/script-editor.component';
+import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
 import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
 import { ScriptPermissionComponent } from './scripts/script-permission/script-permission.component';
 import { TextListComponent, DialogItemText } from './text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
-import { DeviceComponent, DeviceTagDialog } from './device/device.component';
+import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
-import { TagPropertyComponent } from './device/tag-property/tag-property.component';
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
-import { DeviceListComponent, DialogTagName } from './device/device-list/device-list.component';
+import { DeviceListComponent } from './device/device-list/device-list.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
@@ -174,6 +173,19 @@ import { FlexDeviceTagComponent } from './gauges/gauge-property/flex-device-tag/
 import { PanelComponent } from './gauges/controls/panel/panel.component';
 import { PanelPropertyComponent } from './gauges/controls/panel/panel-property/panel-property.component';
 import { UserEditComponent } from './users/user-edit/user-edit.component';
+import { FuxaViewDialogComponent } from './fuxa-view/fuxa-view-dialog/fuxa-view-dialog.component';
+import { DeviceTagSelectionComponent } from './device/device-tag-selection/device-tag-selection.component';
+import { WebcamPlayerComponent } from './gui-helpers/webcam-player/webcam-player.component';
+import { WebcamPlayerDialogComponent } from './gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
+import { ScriptEditorParamComponent } from './scripts/script-editor/script-editor-param/script-editor-param.component';
+import { TagPropertyEditS7Component } from './device/tag-property/tag-property-edit-s7/tag-property-edit-s7.component';
+import { TagPropertyEditServerComponent } from './device/tag-property/tag-property-edit-server/tag-property-edit-server.component';
+import { TagPropertyEditModbusComponent } from './device/tag-property/tag-property-edit-modbus/tag-property-edit-modbus.component';
+import { TagPropertyEditInternalComponent } from './device/tag-property/tag-property-edit-internal/tag-property-edit-internal.component';
+import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
+import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
+import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -195,8 +207,15 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         AppComponent,
         LabComponent,
         DeviceComponent,
-        DeviceTagDialog,
-        TagPropertyComponent,
+        DeviceTagSelectionComponent,
+        TagPropertyEditS7Component,
+        TagPropertyEditServerComponent,
+        TagPropertyEditModbusComponent,
+        TagPropertyEditInternalComponent,
+        TagPropertyEditOpcuaComponent,
+        TagPropertyEditBacnetComponent,
+        TagPropertyEditWebapiComponent,
+        TagPropertyEditEthernetipComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
@@ -209,9 +228,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DialogMenuItem,
         DialogHeaderItem,
         DeviceListComponent,
-        DialogTagName,
         DeviceMapComponent,
         FuxaViewComponent,
+        FuxaViewDialogComponent,
         DialogDocProperty,
         DialogDocName,
         DialogNewDoc,
@@ -283,7 +302,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ScriptModeComponent,
         ReportListComponent,
         ReportEditorComponent,
-        DialogScriptParam,
+        ScriptEditorParamComponent,
         TextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
@@ -316,7 +335,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ReportItemAlarmsComponent,
         ReportItemChartComponent,
         PanelComponent,
-        PanelPropertyComponent
+        PanelPropertyComponent,
+        WebcamPlayerComponent,
+        WebcamPlayerDialogComponent
     ],
     imports: [
         BrowserModule,

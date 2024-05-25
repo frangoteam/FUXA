@@ -1,0 +1,23 @@
+:host {
+    .flex-variable-mapping {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        padding-bottom: 3px;
+        padding-top: 3px;
+    }
+    
+    .flex-join {
+        float: left;
+        position: relative;
+        left: 0px;
+        top: 28px;
+        margin-bottom: 2px;
+        width: 8px;
+        border-radius: 2px;
+        height: 45px; 
+        margin-right: 3px;
+        border-radius: 3px 0px 0px 3px;
+        border-top: 2px solid #cacaca;
+        border-left: 2px solid #cacaca;
+        border-bottom: 2px solid #cacaca;
+    }
+}

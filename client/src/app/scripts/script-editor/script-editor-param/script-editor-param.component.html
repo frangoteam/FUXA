@@ -1,0 +1,25 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'script.param-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field block">
+            <span>{{'script.param-name' | translate}}</span>
+            <input [(ngModel)]="data.name" type="text" style="width:300px" [readonly]="data.readonly" (input)="onCheckValue($event)">
+        </div>
+        <div class="my-form-field mt10">
+            <span>{{'script.param-type' | translate}}</span>
+            <mat-select [(value)]="data.type" placeholder="{{'script.paramtype' | translate}}" style="width: 300px;">
+                <mat-option *ngFor="let type of paramType" [value]="type">
+                    {{ 'script.paramtype-' + type | translate }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div style="display: block; color: red; height: 22px">
+            <span *ngIf="error">{{error}}</span>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="!isValid(data.name)" color="primary" [mat-dialog-close]="data">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

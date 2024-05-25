@@ -80,16 +80,25 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-timestamp' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.timestamp | date : 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="description">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-description' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.description}}">{{ element.description }}</mat-cell>
+        </ng-container>
         
         <!-- Logger Column -->
         <ng-container matColumnDef="logger">
             <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <div *ngIf="element.daq && element.daq.enabled">
-                    <mat-icon>storage</mat-icon>
-                    <span *ngIf="element.daq.interval" style="display: inline-block;vertical-align: super;">
-                        {{element.daq.interval}} s
-                    </span>
+                <div *ngIf="element.daq">
+                    <ng-container *ngIf="element.daq.restored">
+                        <mat-icon>settings_backup_restore</mat-icon>
+                    </ng-container>
+                    <ng-container *ngIf="element.daq.enabled">
+                        <mat-icon>storage</mat-icon>
+                        <span *ngIf="element.daq.interval" style="display: inline-block;vertical-align: super;">
+                            {{element.daq.interval}} s
+                        </span>    
+                    </ng-container>
                 </div>
             </mat-cell>
         </ng-container>

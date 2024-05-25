@@ -50,6 +50,8 @@ export class LayoutSettings {
     theme = '';
     /** Show login by start */
     loginonstart?: boolean = false;
+    /** Overlay color for login modal */
+    loginoverlaycolor?: LoginOverlayColorType = LoginOverlayColorType.none;
     /** Show connection error toast */
     show_connection_error? = true;
 }
@@ -71,6 +73,12 @@ export class NavigationSettings {
         this.mode = Object.keys(NaviModeType).find(key => NaviModeType[key] === NaviModeType.over) as NaviModeType;
         this.type = Object.keys(NaviItemType).find(key => NaviItemType[key] === NaviItemType.block) as NaviItemType;
     }
+}
+
+export enum LoginOverlayColorType {
+    none = 'none',
+    black = 'black',
+    white = 'white',
 }
 
 export enum NaviModeType {
@@ -107,6 +115,7 @@ export class HeaderSettings {
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
     loginInfo: LoginInfoType;
+    dateTimeDisplay: string;
 }
 
 export interface HeaderItem {
@@ -145,6 +154,7 @@ export enum InputModeType {
     false = 'item.inputmode-disabled',
     true = 'item.inputmode-enabled',
     keyboard = 'item.inputmode-keyboard',
+    keyboardFullScreen = 'item.inputmode-keyboard-full-screen',
 }
 
 export enum HeaderBarModeType {
@@ -235,7 +245,8 @@ export enum GaugeActionsType {
     anticlockwise = 'shapes.action-anticlockwise',
     downup = 'shapes.action-downup',
     rotate = 'shapes.action-rotate',
-    move = 'shapes.action-move'
+    move = 'shapes.action-move',
+    monitor = 'shapes.action-monitor',
 }
 
 export class GaugeAction {
@@ -307,6 +318,8 @@ export enum GaugeEventActionType {
     onSetInput = 'shapes.event-onsetinput',
     onclose = 'shapes.event-onclose',
     onRunScript = 'shapes.event-onrunscript',
+    onViewToPanel = 'shapes.event-onViewToPanel',
+    onMonitor = 'shapes.event-onmonitor',
 }
 
 export enum GaugeEventSetValueType {
@@ -345,12 +358,20 @@ export interface GaugeIframeProperty {
 export interface GaugePanelProperty {
     viewName: string;
     variableId: string;
+    scaleMode: PanelPropertyScaleModeType;
+}
+
+export enum PanelPropertyScaleModeType {
+    none = 'none',
+    contain = 'contain',
+    stretch = 'stretch'
 }
 
 export interface GaugeTableProperty {
     id: string;
     type: TableType;
     options: TableOptions;
+    events: GaugeEvent[];
 }
 
 export enum TableType {
@@ -368,6 +389,7 @@ export interface TableOptions {
     daterange: {
         show: boolean;
     };
+    realtime?: boolean;
     lastRange?: TableRangeType;
     gridColor?: string;
     header?: {
@@ -380,6 +402,11 @@ export interface TableOptions {
     row?: {
         height: number;
         fontSize?: number;
+        color?: string;
+        background?: string;
+    };
+    selection?: {
+        fontBold?: boolean;
         color?: string;
         background?: string;
     };

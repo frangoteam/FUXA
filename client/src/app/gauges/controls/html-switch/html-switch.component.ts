@@ -80,6 +80,7 @@ export class HtmlSwitchComponent {
     static initElement(ga: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
         let ele = document.getElementById(ga.id);
         if (ele) {
+            ele?.setAttribute('data-name', ga.name);
             let htmlSwitch = Utils.searchTreeStartWith(ele, this.prefix);
             if (htmlSwitch) {
                 const factory = resolver.resolveComponentFactory(NgxSwitchComponent);
@@ -97,6 +98,7 @@ export class HtmlSwitchComponent {
                         }
                     }
                 }
+                componentRef.instance['name'] = ga.name;
                 return componentRef.instance;
             }
         }

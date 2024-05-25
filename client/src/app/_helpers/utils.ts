@@ -16,6 +16,16 @@ export class Utils {
 
     static svgTagToType = ['rect', 'line', 'path', 'circle', 'ellipse', 'text'];
 
+    static walkTree(elem, cbFn) {
+        if (elem && elem.nodeType == 1) {
+            cbFn(elem);
+            var i = elem.childNodes.length;
+            while (i--) {
+                this.walkTree(elem.childNodes.item(i), cbFn);
+            }
+        }
+    }
+
     static searchTreeStartWith(element, matchingStart) {
         if (element.id.startsWith(matchingStart)) {
             return element;
@@ -390,6 +400,28 @@ export class Utils {
         });
     };
 
+    static resizeViewExt = (selector: string, parentId: string, resize?: 'contain' | 'stretch' | 'none') => {
+        const parentElement = document.getElementById(parentId) as HTMLElement;
+        if (!parentElement) {
+            console.error(`resizeViewExt -> Parent element with ID '${parentId}' not found.`);
+            return;
+        }
+        const parentRect: DOMRect = parentElement.getBoundingClientRect();
+        const resizeType = resize ?? 'none';
+        parentElement.querySelectorAll(selector).forEach((scaled: any) => {
+            const ratioWidth = (parentRect?.width / scaled.offsetWidth);
+            const ratioHeight = (parentRect?.height / scaled.offsetHeight);
+            if (resizeType === 'contain') {
+                scaled.style.transform = 'scale(' + Math.min(ratioWidth, ratioHeight) + ')';
+            } else if (resizeType === 'stretch') {
+                scaled.style.transform = 'scale(' + ratioWidth + ', ' + ratioHeight + ')';
+            } else if (resizeType === 'none') {
+                scaled.style.transform = 'scale(1)';
+            }
+            scaled.style.transformOrigin = 'top left';
+        });
+    };
+
     /** Merge of array of object, the next overwrite the last */
     static mergeDeep(...objArray) {
         const result = {};
@@ -479,6 +511,12 @@ export class Utils {
             }
         }
         return dateString;
+    }
+
+    static getTimeDifferenceInSeconds(timestamp: number): number {
+        const currentTimestamp = Date.now();
+        const differenceInMilliseconds = currentTimestamp - timestamp;
+        return Math.floor(differenceInMilliseconds / 1000);
     }
 
     static isValidUrl(url: string): boolean {

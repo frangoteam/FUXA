@@ -57,7 +57,7 @@
                             <div *ngIf="propertyLoading">
                                 <mat-spinner style="margin: auto" diameter="20"></mat-spinner>
                             </div>
-                            <div *ngIf="!propertyLoading">
+                            <div *ngIf="!propertyLoading" class="my-expansion-conent">
                                 <mat-radio-group [(ngModel)]="securityRadio">
                                     <mat-radio-button style="display:block;padding-left:10px;padding-bottom:2px;font-size: 13px;" *ngFor="let sec of securityMode;"
                                         [value]="sec.value">{{sec.text}}</mat-radio-button>
@@ -173,9 +173,15 @@
                             </mat-option>
                         </mat-select>
                     </div>
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
-                        <span>{{'device.property-tockenized' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 100px; text-align: center;">
+                            <span>{{'device.property-tockenized' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk" style="display: inline-block;margin-left: 50px;">
+                            <span>{{'device.property-delay' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.delay" style="width: 100px" type="number">
+                        </div>
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
@@ -195,10 +201,16 @@
                         <span>{{'device.property-slave-id' | translate}}</span>
                         <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 65px" type="text">
                     </div>
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px; width: 100px; text-align: center;">
-                        <span>{{'device.property-tockenized' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
-                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 100px; text-align: center;">
+                            <span>{{'device.property-tockenized' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk" style="display: inline-block;margin-left: 50px;">
+                            <span>{{'device.property-delay' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.delay" style="width: 100px" type="number">
+                        </div>
+                    </div>                        
                 </div>
                 <div *ngSwitchCase="deviceType.WebAPI">
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
@@ -329,13 +341,53 @@
                             <input numberOnly [(ngModel)]="data.device.property.slot" style="width: 20px; margin-left: 5px;" type="text">
                         </div>
                     </div>
-                </div>                
+                </div>
+                <div *ngSwitchCase="deviceType.ODBC">
+                    <div class="my-form-field block">
+                        <span>{{'device.property-dsn' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field block mt5">
+                        <span>{{'general.username' | translate}}</span>
+                        <input [(ngModel)]="security.username" style="width: 350px;" type="text">
+                    </div>
+                    <div class="my-form-field block mt5">
+                        <span>{{'general.password' | translate}}</span>
+                        <input autocomplete="off" [(ngModel)]="security.password" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" style="width: 350px;">
+                        <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </div>
+                    <div class="my-form-field my-expansion-panel">
+                        <mat-expansion-panel [disabled]="!data.device.property.address" #panelProperty
+                            (closed)="onPropertyExpand(false)" (opened)="onPropertyExpand(true);onCheckOdbc()">
+                            <mat-expansion-panel-header class="header" [collapsedHeight]="'32px'" [expandedHeight]="'32px'"
+                                style="padding-left:5px !important;padding-right:17px !important;font-size: 13px;">
+                                <mat-panel-title>
+                                    <span *ngIf="propertyExpanded">{{'device.property-odbc-result' | translate}}</span>
+                                    <span *ngIf="!propertyExpanded">{{'device.not-odbc-result' | translate}}</span>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div *ngIf="propertyLoading">
+                                <mat-spinner style="margin: auto" diameter="20"></mat-spinner>
+                            </div>
+                            <div *ngIf="!propertyLoading" class="my-expansion-conent">
+                                <mat-radio-group [(ngModel)]="tableRadio">
+                                    <mat-radio-button *ngFor="let table of databaseTables;" style="display:block;padding-left:10px;padding-bottom:2px;font-size: 13px;"
+                                        [value]="table">{{table}}</mat-radio-button>
+                                </mat-radio-group>
+                                <div *ngIf="propertyError" class="error">
+                                    <span>{{propertyError}}</span>
+                                </div>
+                            </div>
+
+                        </mat-expansion-panel>
+                    </div>
+                </div> 
             </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" [disabled]="!isValid(data.device)" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' |
+        <button mat-raised-button color="primary" [disabled]="!isValid(data.device)" (click)="onOkClick()" [mat-dialog-close]="data">{{'dlg.ok' |
             translate}}</button>
     </div>
 </div>

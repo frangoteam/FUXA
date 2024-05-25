@@ -33,7 +33,7 @@
 			<mat-spinner style="margin: auto" diameter="20"></mat-spinner>
 		</div>
 		<div mat-dialog-actions class="dialog-action">
-			<button mat-raised-button [mat-dialog-close]="">{{'dlg.cancel' | translate}}</button>
+			<button mat-raised-button [disabled]="disableCancel" [mat-dialog-close]="">{{'dlg.cancel' | translate}}</button>
 			<button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="!isValidate()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
 		</div>
 	</div>

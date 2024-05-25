@@ -17,11 +17,12 @@ var manager;
  * Plugins supported
  */
 var plugins = {};
-plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '0.7.2');
+plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0');
 plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9');
 plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4');
-plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.1');
+plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.6');
 plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', true);
+plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8');
 // plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
 

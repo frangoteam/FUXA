@@ -73,6 +73,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 		let mscript: Script = JSON.parse(JSON.stringify(script));
         let dialogRef = this.dialog.open(ScriptEditorComponent, {
             data: { script: mscript, editmode: toAdd, scripts: scripts, devices: Object.values(this.projectService.getDevices()) },
+            disableClose: true,
             width: dlgwidth,
             position: { top: '80px' }
         });
@@ -126,6 +127,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
     onEditScriptScheduling(script: Script) {
         let dialogRef = this.dialog.open(ScriptSchedulingComponent, {
             data: <SchedulingData> { scheduling: script.scheduling },
+            disableClose: true,
             position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe((result: ScriptScheduling) => {
@@ -141,6 +143,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
     onEditScriptPermission(script: Script) {
         let permission = script.permission;
         let dialogRef = this.dialog.open(ScriptPermissionComponent, {
+            disableClose: true,
             position: { top: '60px' },
             data: { permission: permission }
         });
@@ -157,6 +160,7 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onEditScriptMode(script: Script) {
         let dialogRef = this.dialog.open(ScriptModeComponent, {
+            disableClose: true,
             position: { top: '60px' },
             data: { mode: script.mode }
         });

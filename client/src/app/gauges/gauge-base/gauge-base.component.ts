@@ -108,6 +108,9 @@ export class GaugeBaseComponent {
         }
         gaugeStatus.actionRef.type = act.type;
         if (toEnable) {
+            if (gaugeStatus.actionRef.timer) {
+                return;
+            }
             GaugeBaseComponent.clearAnimationTimer(gaugeStatus.actionRef);
             var blinkStatus = false;
             // save action (dummy) id and colors to restore on break
@@ -207,5 +210,13 @@ export class GaugeBaseComponent {
 
     static getBlinkActionId(act: GaugeAction) {
         return `${act.variableId}-${act.range.max}-${act.range.min}`;
+    }
+
+    static walkTreeNodeToSetAttribute(node, attributeName: string, attributeValue: string | number) {
+        Utils.walkTree(node, (element) => {
+            if (element.id?.startsWith('SHE')) {
+                element.setAttribute(attributeName, attributeValue);
+            }
+        });
     }
 }

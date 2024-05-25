@@ -7,7 +7,7 @@
     <div *ngIf="data.editmode >= 0">
         <div class="panel-header">
             <div class="panel-function">
-                <span class="function-text">function</span>
+                <span class="function-text">async function</span>
                 <span class="function-name"> {{script.name}}</span> (
                 <div *ngFor="let param of parameters; let i = index" style="display: inline-block;">
                     <div class="mychips">
@@ -49,6 +49,13 @@
                                 </div>
                             </div>
                         </mat-tab>
+                        <mat-tab label="{{'script.property-templates' | translate}}">
+                            <div style="margin-top: 10px; padding: 7px;">
+                                <div *ngFor="let code of templatesCode.functions; index as i" class="system-function">
+                                    <button mat-raised-button (click)="onAddTemplateCode(code)" matTooltip="{{code.tooltip}}">{{code.text}}</button>
+                                </div>
+                            </div>
+                        </mat-tab>                        
                         <mat-tab label="{{'script.property-test' | translate}}">
                             <div style="width: 100%">
                                 <div class="test-panel">

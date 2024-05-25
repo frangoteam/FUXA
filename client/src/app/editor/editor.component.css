@@ -14,6 +14,12 @@
     width: 370px;
 }
 
+@media (min-width: 1601px) {
+    .editor-sidenav {
+        width: 450px;
+    }
+}
+
 #svg_editor_container {
     background: #aaa;
     height: 100%;
@@ -510,6 +516,13 @@ li {
 .text-align option {
     background-color: var(--toolboxPanelBackgroung);
     color: var(--toolboxColor);
+}
+
+.view-item-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 54px);
 }
 
 select#start_marker option[value="A"] {

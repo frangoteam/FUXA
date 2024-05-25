@@ -75,9 +75,10 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(ga: GaugeSettings, isview: boolean = false) {
+    static initElement(ga: GaugeSettings, isview: boolean = false): HTMLElement {
         let ele = document.getElementById(ga.id);
         if (ele) {
+            ele?.setAttribute('data-name', ga.name);
             if (!ga.property) {
                 ga.property = new GaugeProperty();
                 let ip: GaugeRangeProperty = new GaugeRangeProperty();
@@ -114,6 +115,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
                 }
             }
         }
+        return ele;
     }
 
     static initElementColor(bkcolor, color, ele) {

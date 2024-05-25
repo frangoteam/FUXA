@@ -1,0 +1,39 @@
+<form [formGroup]="formGroup"
+      class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device.tag-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>{{'device.tag-property-device' | translate}}</span>
+            <input formControlName="deviceName" type="text" readonly>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-name' | translate}}</span>
+            <input formControlName="tagName" type="text">
+            <span *ngIf="formGroup.controls.tagName.errors?.name"
+                  class="form-input-error">
+                  {{formGroup.controls.tagName.errors?.name}}
+            </span>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-type' | translate}}</span>
+            <mat-select formControlName="tagType">
+                <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                    {{ type.value }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-address' | translate}}</span>
+            <input formControlName="tagAddress" type="text">
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-description' | translate}}</span>
+            <input formControlName="tagDescription" type="text">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="formGroup.invalid">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

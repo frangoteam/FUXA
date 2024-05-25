@@ -43,6 +43,7 @@ export class HtmlBagComponent extends GaugeBaseComponent {
     static initElement(gab: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, isview: boolean) {
         let ele = document.getElementById(gab.id);
         if (ele) {
+            ele?.setAttribute('data-name', gab.name);
             let htmlBag = Utils.searchTreeStartWith(ele, this.prefixD);
             if (htmlBag) {
                 const factory = resolver.resolveComponentFactory(NgxGaugeComponent);
@@ -57,6 +58,7 @@ export class HtmlBagComponent extends GaugeBaseComponent {
                     componentRef.instance.setOptions(gab.property.options);
                     componentRef.instance.init(gab.property.options.type);
                 }
+                componentRef.instance['name'] = gab.name;
                 return componentRef.instance;
             }
         }
