@@ -3,8 +3,9 @@ import { UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, map, startWith } from 'rxjs';
 import { ProjectService } from '../../../_services/project.service';
-import { Device, DevicesUtils, Tag } from '../../../_models/device';
+import { Device, DevicesUtils, PlaceholderDevice, Tag } from '../../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../device/device-tag-selection/device-tag-selection.component';
+import { Utils } from '../../../_helpers/utils';
 
 export const _filter = (opt: DeviceTagOption[], value: string): DeviceTagOption[] => {
     const filterValue = value.toLowerCase();
@@ -34,28 +35,7 @@ export class FlexDeviceTagComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.devices = Object.values(this.projectService.getDevices());
-        this.devices.forEach((device: Device) => {
-            let deviceGroup = <DeviceGroup> {
-                name: device.name,
-                tags: [],
-            };
-            Object.values(device.tags).forEach((tag: Tag) => {
-                const deviceTag = <DeviceTagOption> {
-                    id: tag.id,
-                    name: this._tagToVariableName(tag),
-                    device: device.name
-                };
-                deviceGroup.tags.push(deviceTag);
-            });
-            this.devicesGroups.push(deviceGroup);
-        });
-
-        this.devicesTags$ = this.tagFilter.valueChanges.pipe(
-            startWith(''),
-            map(value => this._filterGroup(value || '')),
-        );
-        this._setSelectedTag();
+        this.loadDevicesTags();
     }
 
     private _tagToVariableName(tag: Tag) {
@@ -118,6 +98,9 @@ export class FlexDeviceTagComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
+                if (result.deviceName) {
+                    this.loadDevicesTags();
+                }
                 this.variableId = result.variableId;
                 this._setSelectedTag();
                 this.onChanged();
@@ -129,7 +112,38 @@ export class FlexDeviceTagComponent implements OnInit {
         this.change.emit(this.variableId);   // Legacy
     }
 
-    onInputBlur() {
+    private loadDevicesTags() {
+        this.devicesGroups = [];
+        this.devicesGroups.push(Utils.clone(PlaceholderDevice));
+        this.devices = Object.values(this.projectService.getDevices());
+        this.devices.forEach((device: Device) => {
+            let deviceGroup = <DeviceGroup> {
+                name: device.name,
+                tags: [],
+            };
+            Object.values(device.tags).forEach((tag: Tag) => {
+                const deviceTag = <DeviceTagOption> {
+                    id: tag.id,
+                    name: this._tagToVariableName(tag),
+                    device: device.name
+                };
+                deviceGroup.tags.push(deviceTag);
+            });
+            this.devicesGroups.push(deviceGroup);
+        });
+
+        this.devicesTags$ = this.tagFilter.valueChanges.pipe(
+            startWith(''),
+            map(value => this._filterGroup(value || '')),
+        );
+        if (this.variableId?.startsWith(PlaceholderDevice.id)) {
+            this.devicesGroups[0].tags.push({
+                id: this.variableId,
+                name: this.variableId,
+                device: '@'
+            });
+        }
+        this._setSelectedTag();
     }
 }
 

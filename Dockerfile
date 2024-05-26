@@ -37,6 +37,18 @@ RUN npm ci --production && \
     ./node_modules/.bin/node-pre-gyp rebuild --production && \
     ./node_modules/.bin/node-pre-gyp package
 
+# Build and install node-odbc
+#RUN npm install
+
+# Change working directory
+WORKDIR /usr/src/app
+
+# Clone FUXA repository
+RUN git clone -b odbc https://github.com/frangoteam/FUXA.git
+
+# Change working directory to FUXA
+WORKDIR /usr/src/app/FUXA
+
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
 RUN npm install

@@ -71,7 +71,7 @@ function ScriptsManager(_runtime) {
             try {
                 var result;
                 if (script.test) {
-                    result = scriptModule.runTestScript(script);
+                    result = await scriptModule.runTestScript(script);
                 } else {
                     logger.info(`Run script ${script.name}`);
                     result = scriptModule.runScript(script);
@@ -220,6 +220,7 @@ function ScriptsManager(_runtime) {
         sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
         sysFncs['$enableDevice'] = runtime.devices.enableDevice;
+        sysFncs['$getDevice'] = runtime.devices.getDevice;
         sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
         sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         return sysFncs;

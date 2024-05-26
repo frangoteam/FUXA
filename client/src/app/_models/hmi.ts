@@ -115,6 +115,7 @@ export class HeaderSettings {
     items: HeaderItem[];
     itemsAnchor: AnchorType = 'left';
     loginInfo: LoginInfoType;
+    dateTimeDisplay: string;
 }
 
 export interface HeaderItem {
@@ -317,6 +318,7 @@ export enum GaugeEventActionType {
     onSetInput = 'shapes.event-onsetinput',
     onclose = 'shapes.event-onclose',
     onRunScript = 'shapes.event-onrunscript',
+    onViewToPanel = 'shapes.event-onViewToPanel',
     onMonitor = 'shapes.event-onmonitor',
 }
 
@@ -369,6 +371,7 @@ export interface GaugeTableProperty {
     id: string;
     type: TableType;
     options: TableOptions;
+    events: GaugeEvent[];
 }
 
 export enum TableType {
@@ -386,6 +389,7 @@ export interface TableOptions {
     daterange: {
         show: boolean;
     };
+    realtime?: boolean;
     lastRange?: TableRangeType;
     gridColor?: string;
     header?: {
@@ -398,6 +402,11 @@ export interface TableOptions {
     row?: {
         height: number;
         fontSize?: number;
+        color?: string;
+        background?: string;
+    };
+    selection?: {
+        fontBold?: boolean;
         color?: string;
         background?: string;
     };

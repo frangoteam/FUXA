@@ -97,7 +97,13 @@ export class SystemFunctions {
         name: '$enableDevice', text: 'script.sys-fnc-enableDevice-text', tooltip: 'script.sys-fnc-enableDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-enableDevice-params'
     },
     {
+        name: '$getDevice', text: 'script.sys-fnc-getDevice-text', tooltip: 'script.sys-fnc-getDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-getDevice-params'
+    },
+    {
         name: '$invokeObject', text: 'script.sys-fnc-invokeObject-text', tooltip: 'script.sys-fnc-invokeObject-tooltip', params: [false, false, false], paramsText: 'script.sys-fnc-invokeObject-params'
+    },
+    {
+        name: '$runServerScript', text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
     }];
 }
 
@@ -132,7 +138,6 @@ if (opt) {
 $invokeObject('chart_1', 'updateOptions', opt);`
     }];
 }
-
 
 export interface SystemFunction {
     name: string;           // javascript function defined in backend

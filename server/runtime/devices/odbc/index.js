@@ -11,16 +11,15 @@ function ODBCclient(_data, _logger, _events) {
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;
     var lastStatus = '';                    // Last connections status
-    var varsValue = {};                     // Tags to send to frontend { id, type, value }
     var events = _events;                   // Events to commit change to runtime
-    var connection = null;                  // ODBC connection
-    var pool = null;                        // ODBC pool
+    this.connection = null;                 // ODBC connection
+    this.pool = null;                       // ODBC pool
     var working = false;                    // Working flag to manage overloading polling and connection
     var overloading = 0;                    // Overloading counter to mange the break connection
-    var lastTimestampValue;                 // Last Timestamp of asked values
     var getProperty = null;                 // Function to ask property (security)
     var currentTable = null;                // Current Tablename
-    var tableMap = [];                      // Column name to ask
+    var lastTimestampValue;                 // Last Timestamp of values
+
     /**
      * initialize the device type 
      */
@@ -34,9 +33,11 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.connect = function () {
         return new Promise(async (resolve, reject) => {
-            if (data.property && data.property.address) {
+            if (!data.enabled) {
+                _emitStatus('connect-off');
+                reject();
+            } else if (data.property && data.property.address) {
                 try {
-                    _clearVarsValue();
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         var security
@@ -57,39 +58,29 @@ function ODBCclient(_data, _logger, _events) {
                             connectionTimeout: 10,
                             loginTimeout: 10,
                         }
-                        connection = await odbc.connect(connectionConfig);
-                        pool = await odbc.pool(connectionConfig);
-                        var tables = await connection.tables(null, 'dbo', null, null);
-                        if (tables.length <= 0) {
-                            tables = await connection.tables(null, null, null, null);
-                        }
-                        currentTable = null;
-                        const tablesToQuery = tables.find(table => table.TABLE_NAME === security.mode);
-                        if (tablesToQuery) {
-                            currentTable = security.mode;
-                            logger.info(`'${data.name}' connected!`);
-                            _emitStatus('connect-ok');
-                            _checkWorking(false);
-                            resolve();
-                            return;
-                        }
-                        logger.error(`'${data.name}' missing '${data.mode}' connection data!`);
-                        _emitStatus('connect-failed');
+                        this.connection = await odbc.connect(connectionConfig);
+                        this.pool = await odbc.pool(connectionConfig);
+                        logger.info(`'${data.name}' connected!`);
+                        _emitStatus('connect-ok');
+                        _checkWorking(false);
+                        resolve();
+                        return;
                     }
                 } catch (err) {
-                    logger.error(`'${data.name}' try to connect error! ${err}`);
-                    _emitStatus('connect-error');
+                    if (data.enabled) {
+                        logger.error(`'${data.name}' try to connect error! ${err}`);
+                        _emitStatus('connect-error');
+                    }
                 }
-                if (connection) {
+                if (this.connection) {
                     try {
-                        connection.close();
+                        this.connection.close();
                     } catch { }
                 }
                 reject();
             } else {
                 logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
-                _clearVarsValue();
                 reject();
             }
             _checkWorking(false);
@@ -103,16 +94,15 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.disconnect = function () {
         return new Promise(async (resolve, reject) => {
-            if (connection) {
+            if (this.connection) {
                 try {
-                    await pool.close();
-                    await connection.close();
+                    await this.pool.close();
+                    await this.connection.close();
                 } catch { }
-                _checkWorking(false);
-                _emitStatus('connect-off');
-                _clearVarsValue();
-                resolve(true);
             }
+            _checkWorking(false);
+            _emitStatus('connect-off');
+            resolve(true);
         })
     }
 
@@ -123,7 +113,7 @@ function ODBCclient(_data, _logger, _events) {
         return new Promise( async function (resolve, reject) {
                 if (_checkWorking(true)) {
                     try {
-                        const columns = await connection.columns(null, null, currentTable, null);
+                        const columns = await this.connection.columns(null, null, currentTable, null);
                         const result = columns.map(column => { 
                             return { 
                                 id: column.COLUMN_NAME,
@@ -151,22 +141,8 @@ function ODBCclient(_data, _logger, _events) {
         if (_checkWorking(true)) {
             if (this.isConnected()) {
                 try {
-                    _readValues().then(result => {
-                        _checkWorking(false);
-                        if (result) {
-                            const values = utils.extractArray(result);
-                            var varsValueChanged = _updateVarsValue(values);
-                            lastTimestampValue = new Date().getTime();
-                            _emitValues(varsValue);
-        
-                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                                this.addDaq(varsValueChanged, data.name, data.id);
-                            }
-                        }
-                    }, reason => {
-                        logger.error(`'${data.name}' _readValues error! ${reason}`);
-                        _checkWorking(false);
-                    });
+                    _checkWorking(false);
+                    lastTimestampValue = new Date().getTime();
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);
                     _checkWorking(false);
@@ -182,13 +158,7 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
-        tableMap = Object.values(data.tags).map(tag => tag.name);
-        try {
-            var count = Object.keys(data.tags).length;
-            logger.info(`'${data.name}' data loaded (${count})`, true);
-        } catch (err) {
-            logger.error(`'${data.name}' load error! ${err}`);
-        }
+        logger.info(`'${data.name}' data loaded`, true);
     }
 
     /**
@@ -230,7 +200,7 @@ function ODBCclient(_data, _logger, _events) {
      * Return if device is connected
      */
     this.isConnected = function () {
-        return (connection) ? connection.connected : false;
+        return (this.connection) ? this.connection.connected : false;
     }
 
     /**
@@ -245,7 +215,7 @@ function ODBCclient(_data, _logger, _events) {
      * @returns 
      */
     this.lastReadTimestamp = () => {
-        console.error('Not supported!');
+        return lastTimestampValue;
     }
 
     /**
@@ -279,40 +249,6 @@ function ODBCclient(_data, _logger, _events) {
         return true;
     }
 
-    var _readValues = function () {
-        return new Promise(async (resolve, reject) => {
-            try {
-                const param = tableMap.join(', ');
-                const query = `SELECT ${param} from ${currentTable}`;
-                const result = await pool.query(query);
-                lastTimestampValue = new Date().getTime();
-                resolve(result);
-                return;
-            } catch (err) {
-                logger.error(`'${data.name}' load error! ${err}`);
-            }
-            reject();
-        });
-    }
-
-    /**
-     * Clear local values by set all to null
-     */
-    var _clearVarsValue = function () {
-        for (var id in varsValue) {
-            varsValue[id].value = null;
-        }
-        // _emitValues(varsValue);
-    }
-
-    /**
-     * Emit the PLC Tags values array { id: <name>, value: <value>, type: <type> }
-     * @param {*} values 
-     */
-    var _emitValues = function (values) {
-        events.emit('device-value:changed', { id: data.id, values: values });
-    }
-
     /**
      * Emit the odbc connection status
      * @param {*} status 
@@ -321,34 +257,14 @@ function ODBCclient(_data, _logger, _events) {
         lastStatus = status;
         events.emit('device-status:changed', { id: data.id, status: status });
     }
-
-    /**
-     * Update the Tags values read
-     * @param {*} vars 
-     */
-    var _updateVarsValue = (vars) => {
-        const timestamp = new Date().getTime();
-        var result = {};
-        // for (var id in data.tags) {
-        //     if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
-        //         data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
-        //         if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
-        //             result[id] = data.tags[id];
-        //         }
-        //     }
-        //     data.tags[id].changed = false;
-        //     varsValue[id] = data.tags[id];
-        // }
-        return result;
-    }
 }
 
 /**
  * Return tables list
  */
-function getTables(endpoint, fncGetProperty) {
+function getTables(endpoint, fncGetProperty, packagerManager) {
     return new Promise( async function (resolve, reject) {
-        if (loadOdbcLib()) { 
+        if (loadOdbcLib(packagerManager)) { 
             var connection;
             try {
                 var security
@@ -383,12 +299,12 @@ function getTables(endpoint, fncGetProperty) {
                 connection.close();
             }
         } else {
-            reject('getendpoints-error: node-opcua not found!');
+            reject('getendpoints-error: odbc not found!');
         }
     });
 }
 
-function loadOdbcLib() {
+function loadOdbcLib(manager) {
     if (!odbc) {
         try { odbc = require('odbc'); } catch { }
         if (!odbc && manager) { try { odbc = manager.require('odbc'); } catch { } }
@@ -401,7 +317,7 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager) {
-        if (!loadOdbcLib()) return null;
+        if (!loadOdbcLib(manager)) return null;
         return new ODBCclient(data, logger, events);
     },
     getTables: getTables

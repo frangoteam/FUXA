@@ -329,6 +329,24 @@ function enableDevice(deviceName, enable) {
 }
 
 /**
+ * return Device object
+ * used from Scripts
+ * @param {*} deviceName string
+ * @param {*} asInterface boolean
+ */
+function getDevice(deviceName, asInterface) {
+    try {
+        const device = runtime.project.getDevice(deviceName);
+        if (device) {
+            return asInterface ? activeDevices[device.id].getComm() : activeDevices[device.id];
+        }
+        return null;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+/**
  * Get the Device from the tag id
  * used from Alarms
  * @param {*} sigid 
@@ -448,7 +466,7 @@ function getDeviceTagsResult(deviceId) {
  * @param {*} type 
  */
 function getSupportedProperty(endpoint, type) {
-    return Device.getSupportedProperty(endpoint, type);
+    return Device.getSupportedProperty(endpoint, type, runtime.plugins.manager);
 }
 
 /**
@@ -483,6 +501,7 @@ var devices = module.exports = {
     getRequestResult: getRequestResult,
     getTagFormat: getTagFormat,
     enableDevice: enableDevice,
+    getDevice: getDevice,
     getTagId: getTagId,
     getTagDaqSettings: getTagDaqSettings,
     setTagDaqSettings: setTagDaqSettings,

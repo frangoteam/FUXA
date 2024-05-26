@@ -448,19 +448,22 @@ function S7client(_data, _logger, _events) {
                 }
             });
             s7client.DBRead(DBNr, offset, end - offset, (err, res) => {
-                if (err) return _getErr(err);
-                vars.map(v => {
-                    let value = null;
-                    if (v.type === 'BOOL') {
-                        // check the full byte and send all bit if there is a change 
-                        value = datatypes['BYTE'].parser(res, v.Start - offset, -1);
-                    } else {
-                        value = datatypes[v.type].parser(res, v.Start - offset, v.bit);
-                    }
-                    v.changed = value !== v.value;
-                    v.value = value;
-                    return v;
-                });
+                if (err) {
+                    logger.error(`'${data.name}' ${err}: ${_getErr(err)}`, false);
+                } else {
+                    vars.map(v => {
+                        let value = null;
+                        if (v.type === 'BOOL') {
+                            // check the full byte and send all bit if there is a change 
+                            value = datatypes['BYTE'].parser(res, v.Start - offset, -1);
+                        } else {
+                            value = datatypes[v.type].parser(res, v.Start - offset, v.bit);
+                        }
+                        v.changed = value !== v.value;
+                        v.value = value;
+                        return v;
+                    });
+                }
                 resolve(vars);
             });
         });

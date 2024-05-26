@@ -1,0 +1,166 @@
+:host {
+    .table-selection {
+        position: absolute;
+        top: 35px;
+        bottom: 0px;
+        overflow: auto;
+        width:calc(100% - 10px);
+        padding-top: 5px;
+        .table-type {
+            width: 120px;
+        }
+
+        .data-range {
+            width: 100px;
+        }
+
+        .data-realtime {
+            width: 100px;
+        }
+    }
+
+    .section-item {
+        width: 100%;
+    }
+
+    .section-item-newline {
+        margin-top: 5px;
+    }
+
+    .section-newline {
+        height: 8px;
+        display: block;
+    }
+
+    .section-item-block mat-select, input, span {
+        width:calc(100% - 15px);
+    }
+
+    .section-inline-name input {
+        width: 140px;
+    }
+
+    .section-inline-number input {
+        max-width: 100px;
+    }
+
+    .section-inline-type {
+        width: 160px;
+    }
+
+    .section-inline-toggle {
+        display: inline-block;
+        width: 60px;
+        text-align: center;
+    }
+
+    .section-inline-toggle span {
+        width: inherit;
+    }
+
+    .section-inline-toggle-ext span {
+        width: 85px;
+        text-align: left;
+    }
+
+    .section-inline-toggle-ext mat-slide-toggle {
+        padding-left: 20px;
+    }
+
+    .section-inline-color {
+        display: inline-block;
+        width: 60px;
+    }
+
+    .section-inline-color input {
+        width: 60px !important;
+        text-align: center;
+    }
+
+    .section-inline-color span {
+        width: 65px;
+    }
+
+    .section-inline-margin {
+        display: inline-block;
+        width: 12px;
+    }
+
+    .section-inline-margin2 {
+        display: inline-block;
+        width: 16px;
+    }
+
+    .toolbox {
+        z-index: 1000;
+        position: absolute;
+        right: 10px;
+        top: -8px;
+        line-height: 44px;
+    }
+
+    .toolbox button {
+        /* margin-right: 8px; */
+        margin-left: 10px;
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+        min-width: 120px !important;
+        width: 140px !important;
+    }
+
+    .tab-columns-rows {
+        width:calc(100% - 15px);
+    }
+
+    .cell-item {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid var(--toolboxBorder);
+    }
+
+    .events-section {
+        display: contents;
+
+        .event-item {
+            margin-top: 5px;
+        }
+        .event-type {
+            width: 120px;
+        }
+        .event-action {
+            width: 120px;
+        }
+        .event-remove {
+            float: right;
+        }
+        .event-action-ext {
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .event-script {
+            padding-left: 10px;
+            .script-selection {
+                width: calc(100% - 15px);
+            }
+            .event-script-param {
+                width: 120px;
+            }
+            .event-script-value {
+                width: calc(100% - 120px);
+            }
+            .event-script-tag {
+                width: calc(100% - 125px);
+            }
+        }
+    }
+    .events-toolbox {
+        display: block;
+        width: 100%;
+        
+        button {
+            margin-left: 10px;
+        }
+    }
+}

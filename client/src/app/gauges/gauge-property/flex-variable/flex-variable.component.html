@@ -14,12 +14,13 @@
         <span>{{getDeviceName()}}</span>
         <input matInput
             class="variable-input"
-            title="{{tagTitle | translate}}"
-            placeholder="{{tagTitle | translate}}"
+            title="{{ tagTitle | translate }}"
+            placeholder="{{ tagTitle | translate }}"
             type="text"
             [formControl]="tagFilter"
             [matAutocomplete]="autoDevices"
-            [readonly]="readonly">
+            [readonly]="readonly"
+            (input)="onChanged()">
         <mat-autocomplete #autoDevices="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onDeviceTagSelected($event.option.value)">
             <mat-optgroup *ngFor="let device of devicesTags$ | async" class="group-label" [label]="device.name">
                 <mat-option *ngFor="let tag of device.tags" [value]="tag" class="option-label">

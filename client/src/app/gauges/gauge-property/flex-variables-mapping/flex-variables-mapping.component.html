@@ -4,8 +4,8 @@
         {{'gauges.property-map-variable' | translate}}
     </button>
 
-    <div *ngFor="let variableMap of this.mapping;index as i">
-        <flex-variable-map [data]="data" [view]="view" [value]="mapping[i]" [fromVariables]="viewVars" (valueChange)="onChange()">
+    <div *ngFor="let variableMap of mapping;index as i">
+        <flex-variable-map [data]="data" [view]="view" [value]="mapping[i]" [placeholders]="viewPlaceholders" (valueChange)="onChange()">
             <button style="float: right; margin-top: 7px;" mat-icon-button (click)="removeVariableMapping($event, i)"  matTooltip="{{'gauges.property-head-remove-mapvariable' | translate}}">
                 <mat-icon>clear</mat-icon>
             </button>

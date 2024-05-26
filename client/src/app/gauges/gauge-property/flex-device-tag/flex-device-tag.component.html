@@ -1,7 +1,14 @@
 <div class="my-form-field device-input">
     <span>{{ 'gauges.property-tag-label' | translate }} {{ getDeviceName() }}</span>
-    <input matInput class="device-variable-input" title="{{ tagTitle | translate }}" placeholder="{{ tagTitle | translate}}" type="text" [formControl]="tagFilter"
-        [matAutocomplete]="autoDevices" [readonly]="readonly" (blur)="onInputBlur()">
+    <input matInput
+           class="device-variable-input"
+           title="{{ tagTitle | translate }}"
+           placeholder="{{ tagTitle | translate}}"
+           type="text"
+           [formControl]="tagFilter"
+           [matAutocomplete]="autoDevices"
+           [readonly]="readonly"
+           (input)="onChanged()">
     <mat-autocomplete #autoDevices="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onDeviceTagSelected($event.option.value)">
         <mat-optgroup *ngFor="let device of devicesTags$ | async" class="device-group-label" [label]="device.name">
             <mat-option *ngFor="let tag of device.tags" [value]="tag" class="device-option-label">

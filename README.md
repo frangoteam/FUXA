@@ -54,8 +54,33 @@ npm start
 
 Open up a browser (better Chrome) and navigate to http://localhost:1881
 
+### Creating the Electron Application
+Electron is a framework for building cross-platform desktop applications using web technologies. An Electron application is standalone, meaning it can be run independently on your desktop without needing a web browser.
+
+To create the Electron application, you need to have node.js 18 installed. Follow these steps:
+
+Build Server and Client First
+```
+cd ./server
+npm install
+cd ../client
+npm install
+npm run build
+```
+
+Packaging
+```
+cd ./app
+npm install
+npm run package
+```
+
+After following these steps, you will have a standalone Electron application for FUXA. The application can be found in the ./app directory.
+
 ## Usage
-Look the guide in [wiki](https://github.com/frangoteam/FUXA/wiki) pages
+- Look the guide in [wiki](https://github.com/frangoteam/FUXA/wiki) pages
+- Look video from [frangoteam](https://www.youtube.com/@umbertonocelli5301)
+- Look video from [Fusion Automate - Urvish Nakum](https://youtube.com/playlist?list=PLxrSjjYyzaaK8uY3kVaFzfGnwhVXiCEAO&si=aU1OxgkUvLQ3bXHq)
 
 ## To Debug (Full Stack)
 Install and start to serve the frontend
@@ -96,6 +121,12 @@ If you want to raise a pull-request with a new feature, or a refactoring of exis
 Please ensure you follow the coding standards used through-out the existing code base. Some basic rules include:
 - Indent with 4-spaces, no tabs.
 - Opening brace on same line as if/for/function and so on, closing brace on its own line.
+
+## Some collaborations
+<div >
+    <a href="https://wiki.seeedstudio.com/reTerminal-DM_intro_FUXA/" target="_blank" style="margin-right: 100px; line-height: 60px">
+        <img src="https://frangoteam.org/assets/images/seeed-studio2.png" alt="" style="vertical-align: top"></a>
+</div>
 
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to 4frango@gmail.com and do let us know if you have any questions or suggestions regarding our work.

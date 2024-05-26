@@ -140,23 +140,24 @@ export class HtmlInputComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(gab: GaugeSettings, isView: boolean) {
+    static initElement(gab: GaugeSettings, isView: boolean): HtmlInputElement {
+        let input: HTMLInputElement  = null;
         if (isView) {
             let ele = document.getElementById(gab.id);
             if (ele && gab.property) {
                 ele?.setAttribute('data-name', gab.name);
-                let input = Utils.searchTreeStartWith(ele, this.prefix);
+                input = Utils.searchTreeStartWith(ele, this.prefix);
                 if (input) {
                     input.value = '';
                     HtmlInputComponent.checkInputType(input, gab.property.options);
                     input.setAttribute('autocomplete', 'off');
                     if (gab.property.options) {
-                        if (gab.property.options.numeric) {
+                        if (gab.property.options.numeric || gab.property.options.type === InputOptionType.number) {
                             const min = parseFloat(gab.property.options.min);
                             const max = parseFloat(gab.property.options.max);
                             input.addEventListener('keydown', (event: KeyboardEvent) => {
                                 try {
-                                    if (event.code === 'Enter' && !event.view) {
+                                    if (event.code === 'Enter' || event.code === 'NumpadEnter') {
                                         const value = parseFloat(input.value);
                                         let warningMessage = '';
                                         if (min > value) {
@@ -243,6 +244,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                 }
             }
         }
+        return new HtmlInputElement(input);
     }
 
     static checkInputType(input: HTMLElement, options?: any) {
@@ -316,7 +318,7 @@ export class HtmlInputComponent extends GaugeBaseComponent {
             min: 0,
             max: 0
         };
-        if (ga.property?.options?.numeric || ga.property?.options?.number === InputOptionType.number){
+        if (ga.property?.options?.numeric || ga.property?.options?.type === InputOptionType.number){
             if(!Utils.isNullOrUndefined(ga.property.options.min) && !Utils.isNullOrUndefined(ga.property.options.max)){
                 if(Number.isNaN(value) || !(/^-?[\d.]+$/.test(value))){
                     return {
@@ -358,4 +360,16 @@ export interface InputValueValidation {
     min: number;
     max: number;
     value: any;
+}
+
+export class HtmlInputElement {
+    source: HTMLInputElement;
+
+    constructor(input: HTMLInputElement) {
+        this.source = input;
+    }
+
+    getValue(): string {
+        return this.source.value;
+    }
 }
