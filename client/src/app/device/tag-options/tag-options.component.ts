@@ -125,31 +125,21 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 if (!scaleReadFunction.value) {
                     scaleReadFunction.value = this.data.tags[i].scaleReadFunction;
                 }
-                //if (scaleReadParams.value.length === 0) {
-                    //scaleReadParams.value = this.data.tags[i].scaleReadParams;
-                    let script = this.scripts.find(s => s.id === this.data.tags[i].scaleReadFunction);
-                    if (this.data.tags[i].scaleReadParams) {
-                        const tagParams = JSON.parse(this.data.tags[i].scaleReadParams) as ScriptParam[];
-                        const notValid = this.initializeScriptParams(script, tagParams, this.configedReadParams);
-                        // if (notValid) {
-                        //     scaleReadParams.value = undefined;
-                        // }
-                    }
-                //}
+
+                let script = this.scripts.find(s => s.id === this.data.tags[i].scaleReadFunction);
+                if (this.data.tags[i].scaleReadParams) {
+                    const tagParams = JSON.parse(this.data.tags[i].scaleReadParams) as ScriptParam[];
+                    const notValid = this.initializeScriptParams(script, tagParams, this.configedReadParams);
+                }
                 if (!scaleWriteFunction.value) {
                     scaleWriteFunction.value = this.data.tags[i].scaleWriteFunction;
                 }
-                //if (!scaleWriteParams.value) {
-                //    scaleWriteParams.value = this.data.tags[i].scaleWriteParams;
-                    script = this.scripts.find(s => s.id === this.data.tags[i].scaleWriteFunction);
-                    if (this.data.tags[i].scaleWriteParams) {
-                        const tagParams = JSON.parse(this.data.tags[i].scaleWriteParams) as ScriptParam[];
-                        const notValid = this.initializeScriptParams(script, tagParams, this.configedWriteParams);
-                        //if (notValid) {
-                        //    scaleWriteParams.value = undefined;
-                        //}
-                    }
-                //}
+
+                script = this.scripts.find(s => s.id === this.data.tags[i].scaleWriteFunction);
+                if (this.data.tags[i].scaleWriteParams) {
+                    const tagParams = JSON.parse(this.data.tags[i].scaleWriteParams) as ScriptParam[];
+                    const notValid = this.initializeScriptParams(script, tagParams, this.configedWriteParams);
+                }
             }
             let values = {};
             if (enabled.valid && enabled.value !== null) {
@@ -180,15 +170,11 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             if (scaleReadFunction.valid && scaleReadFunction.value) {
                 values = {...values, scaleReadFunction: scaleReadFunction.value};
             }
-            // if (scaleReadParams.valid && scaleReadParams.value) {
-            //     values = {...values, scaleReadParams: scaleReadParams.value};
-            // }
+
             if (scaleWriteFunction.valid && scaleWriteFunction.value) {
                 values = {...values, scaleWriteFunction: scaleWriteFunction.value};
             }
-            // if (scaleWriteParams.valid && scaleWriteParams.value) {
-            //     values = {...values, scaleWriteParams: scaleWriteParams.value};
-            // }
+
             this.formGroup.patchValue(values);
             if (this.data.device?.id === FuxaServer.id) {
                 this.formGroup.controls.scaleMode.disable();
