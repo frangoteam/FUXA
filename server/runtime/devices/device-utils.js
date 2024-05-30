@@ -129,4 +129,5 @@ const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
         }
         return value;
     }
+    return value;
 }

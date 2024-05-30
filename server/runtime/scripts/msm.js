@@ -47,7 +47,7 @@ function MyScriptsModule(_events, _logger) {
 
         var result = _scriptsToModule(tempScripts, eventsIncludes);
         if (result.module) {
-            var paramsValue = _script.parameters.map(p => p.value || p);
+            var paramsValue = _script.parameters.map(p => _isNullOrUndefined(p.value) ? p : p.value);
             result.module[initEvents.name](events, _script.outputId);
             return result.module[_script.name](...paramsValue);
         }
@@ -55,8 +55,8 @@ function MyScriptsModule(_events, _logger) {
     }
 
     this.runScript = function (_script) {
-        if (scriptsModule) {
-            var paramsValue = _script.parameters.map(p => p.value || p);
+        if (scriptsModule) {            
+            var paramsValue = _script.parameters.map(p => _isNullOrUndefined(p.value) ? p : p.value);
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
@@ -136,6 +136,9 @@ function MyScriptsModule(_events, _logger) {
         var m = new Module();
         m._compile(src, filename);
         return m.exports;
+    }
+    var _isNullOrUndefined = function (ele) {
+        return (ele === null || ele === undefined) ? true : false;
     }
 }
 
