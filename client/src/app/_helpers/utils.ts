@@ -1,5 +1,4 @@
 import { Injectable, Pipe, PipeTransform } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 
 declare const numeral: any;
@@ -557,4 +556,3 @@ export class EscapeHtmlPipe implements PipeTransform {
         return this.sanitizer.bypassSecurityTrustHtml(content);
     }
 }
-
