@@ -134,6 +134,20 @@ function BACNETclient(_data, _logger, _events, _runtime) {
         });
     }
 
+    // Next function wraps the API client.readPropertyMultiple call into a Promise
+    // and handles the callbacks with resolve and reject.
+    // https://stackoverflow.com/questions/5010288/how-to-make-a-function-wait-until-a-callback-has-been-called-using-node-js
+    this.apiFunctionWrapper = function (deviceAddress, requestArray) {
+        return new Promise((resolve, reject) => {
+            client.readPropertyMultiple(deviceAddress, requestArray, async (err, value) => {
+                if (err) {
+                    logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
+                    reject(err);
+                }
+                resolve(value);
+            });
+        });
+}
     /**
      * Take the current Objects (Tags) value (only changed), Reset the change flag, Emit Tags value
      * Save DAQ value
@@ -143,43 +157,40 @@ function BACNETclient(_data, _logger, _events, _runtime) {
             for (var deviceId in objectsMapToRead) {
                 try {
                     const deviceAddress = _getDeviceAddress(devices[deviceId]);
-                    await client.readPropertyMultiple(deviceAddress, objectsMapToRead[deviceId], async (err, value) => {
-                        if (err) {        
-                            logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
-                        } else {
-                            if (!(value && value.values && value.values[0] && value.values[0].values)) {
-                                logger.error(`'${data.name}' readPropertyMultiple error! unknow`);
-                            } else if (value.values && value.values.length) {
-                                let result = [];
-                                let errors = [];
-                                value.values.forEach(data => { 
-                                    if (data.objectId && data.values && data.values[0].id === bacnet.enum.PropertyIdentifier.PRESENT_VALUE) {
-                                        let address = _formatId(data.objectId.type, data.objectId.instance);
-                                        if (data.values[0].value && data.values[0].value.type === bacnet.enum.ApplicationTag.ERROR) {
-                                            errors.push({ address: address, value: data.values[0].value.value, type:  data.objectId.type });    
-                                        } else {
-                                            result.push({ 
-                                                address: address,
-                                                rawValue: data.values[0].value[0].value,
-                                                type: data.objectId.type
-                                            });
-                                        }
-                                    }
-                                });
-                                if (result.length) {
-                                    let varsValueChanged = await _updateVarsValue(deviceId, result);
-                                    lastTimestampValue = new Date().getTime();
-                                    _emitValues(Object.values(varsValue));
-                                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                                        this.addDaq(varsValueChanged, data.name, data.id);
-                                    }
+                    //wrap the client.readPropertyMultiple in a promise so the callback can be awaited
+                    const value = await this.apiFunctionWrapper(deviceAddress, objectsMapToRead[deviceId]);
+
+                    if (!(value && value.values && value.values[0] && value.values[0].values)) {
+                        logger.error(`'${data.name}' readPropertyMultiple error! unknow`);
+                    } else if (value.values && value.values.length) {
+                        let result = [];
+                        value.values.forEach(bacData => {
+                            if (bacData.objectId && bacData.values && bacData.values[0].id === bacnet.enum.PropertyIdentifier.PRESENT_VALUE) {
+                                let address = _formatId(bacData.objectId.type, bacData.objectId.instance);
+                                if (bacData.values[0].value && bacData.values[0].value.type === bacnet.enum.ApplicationTag.ERROR ||
+                                    bacData.values[0].value.length > 0 && bacData.values[0].value[0].type === bacnet.enum.ApplicationTag.ERROR ) {
+                                        logger.error(`'${data.name}' readPropertyMultiple error! errorClass: ${bacData.values[0].value[0].value.errorClass}, errorCode: ${bacData.values[0].value[0].value.errorCode}`);
+                                } else {
+                                    result.push({
+                                        address: address,
+                                        rawValue: bacData.values[0].value[0].value,
+                                        type: bacData.objectId.type
+                                    });
                                 }
                             }
-                            if (lastStatus !== 'connect-ok') {
-                                _emitStatus('connect-ok');                    
+                        });
+                        if (result.length) {
+                            let varsValueChanged = await _updateVarsValue(deviceId, result);
+                            lastTimestampValue = new Date().getTime();
+                            _emitValues(Object.values(varsValue));
+                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                this.addDaq(varsValueChanged, data.name, data.id);
                             }
                         }
-                    });
+                    }
+                    if (lastStatus !== 'connect-ok') {
+                        _emitStatus('connect-ok');
+                    }
                 } catch (err) {
                     if (err) {
                         logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
@@ -188,7 +199,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
             }
             _checkWorking(false);
         } else {
-            _emitStatus('connect-busy');                    
+            _emitStatus('connect-busy');
         }
 
     }
@@ -632,7 +643,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 varsValue[tag.id].changed = varsValue[tag.id].rawValue !== vars[index].rawValue;
                 if (!utils.isNullOrUndefined(vars[index].rawValue)) {
                     varsValue[tag.id].rawValue = vars[index].rawValue;
-                    varsValue[tag.id].value = await deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[tag.id]);
+                    varsValue[tag.id].value = await deviceUtils.tagValueCompose(vars[index].rawValue, tag, runtime);
                     vars[index].value = varsValue[tag.id].value;
                     if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[tag.id], timestamp)) {
                         changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq, timestamp: timestamp };
