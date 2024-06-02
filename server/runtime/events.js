@@ -21,6 +21,7 @@ const IoEventTypes = {
     ALARMS_STATUS: 'alarms-status',
     HOST_INTERFACES: 'host-interfaces',
     SCRIPT_CONSOLE: 'script-console',
+    ALIVE: 'heartbeat',
 }
 
 // module.exports = IoEventTypes;

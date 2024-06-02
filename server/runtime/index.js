@@ -302,6 +302,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
             }
         });
     });
+
+    setInterval(() => {
+        io.emit(Events.IoEventTypes.ALIVE, { message: 'FUXA server is alive!' });
+    }, 10000);
 }
 
 function start() {

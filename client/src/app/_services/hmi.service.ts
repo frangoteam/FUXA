@@ -240,7 +240,9 @@ export class HmiService {
         this.socket.on(IoEventTypes.SCRIPT_COMMAND, (message) => {
             this.onScriptCommand(message);
         });
-
+        this.socket.on(IoEventTypes.ALIVE, (message) => {
+            this.onServerConnection$.next(true);
+        });
         this.askDeviceValues();
         this.askAlarmsStatus();
     }
@@ -637,7 +639,8 @@ export enum IoEventTypes {
     ALARMS_STATUS = 'alarms-status',
     HOST_INTERFACES = 'host-interfaces',
     SCRIPT_CONSOLE = 'script-console',
-    SCRIPT_COMMAND = 'script-command'
+    SCRIPT_COMMAND = 'script-command',
+    ALIVE = 'heartbeat'
 }
 
 export const ScriptCommandEnum = {
