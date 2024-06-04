@@ -20,6 +20,7 @@
     "app-root-path": "2.2.1",
     "async": "3.2.3",
     "axios": "0.28.0",
+    "bacstack": "0.0.1-beta.14",
     "bcryptjs": "2.4.3",
     "bluebird": "3.7.2",
     "body-parser": "1.20.0",
