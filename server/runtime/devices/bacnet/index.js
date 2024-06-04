@@ -112,7 +112,6 @@ function BACNETclient(_data, _logger, _events) {
                         } else {                // BACnet device => read object list
                             _readObjectList(node.id).then(result => {
                                 resolve(result);
-                                console.log(result)
                                 _checkWorking(false);
                             }, err => {
                                 reject();
@@ -456,11 +455,10 @@ function BACNETclient(_data, _logger, _events) {
                                   instance: object.instance
                                 },
                                 properties: [{id: bacnet.enum.PropertyIdentifier.OBJECT_NAME}]
-                              });
+                            });
                         }
                     }
                     try {
-                        
                         var chunkedObjects = _chunkArray(objects, 50);
                         //readfnc.push(_readPropertyMultiple(_getDeviceAddress(devices[instance]), objects));
                         chunkedObjects.forEach(chunk => {
@@ -471,7 +469,7 @@ function BACNETclient(_data, _logger, _events) {
                     }   
                     Promise.all(readfnc).then(results => {
                         if (results) {
-                            for (var i in results){
+                            for (var i in results) {
                                 for (var index in results[i]) {
                                     if (results[i][index]) {
                                         var object = _getObject(objects, results[i][index].type, results[i][index].instance);
