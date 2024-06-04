@@ -962,6 +962,7 @@ mat-toolbar-row {
 /* Element side property */
 .element-property {
     display: block;
+    width: calc(100% - 10px);
 }
 
 .element-property-title {
@@ -1152,4 +1153,11 @@ mat-toolbar-row {
 
 .tac {
     text-align: center;
+}
+
+.form-input-error {
+    display: block;
+    color: #ff9122;
+    font-size: 12px !important;
+    font-weight: bold;
 }

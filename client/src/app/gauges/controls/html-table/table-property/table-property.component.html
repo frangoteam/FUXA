@@ -3,185 +3,275 @@
         {{'table.property-title' | translate}}
     </div>
     <div class="table-selection">
-        <div class="element-property-header">
-            <span>{{'table.property-data' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-item section-item-block">
-                <span>{{'table.property-name' | translate}}</span>
-                <input [(ngModel)]="data.settings.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text">
-            </div>
-            <div class="my-form-field" style="width: 140px">
-                <span>{{'table.property-type' | translate}}</span>
-                <mat-select [formControl]="tableTypeCtrl" (selectionChange)="onTableChanged()">
-                    <mat-option [value]="tableType.data">{{'table.property-type-data' | translate}}</mat-option>
-                    <mat-option [value]="tableType.history">{{'table.property-type-history' | translate}}</mat-option>
-                </mat-select>
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div *ngIf="tableTypeCtrl.value === tableType.history" class="my-form-field" style="display: inline-block; width: 140px">
-                <span>{{'table.property-date-last-range' | translate}}</span>
-                <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
-                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>            
-        </div>
-        <div class="element-property-header">
-            <span>{{'table.property-header' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-inline-number">
-                <span>{{'table.property-header-height' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.header.height" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0" max="100">
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number">
-                <span>{{'table.property-header-fontSize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.header.fontSize" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="8" max="30">
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'table.property-header-background' | translate}}</span>
-                <input [(colorPicker)]="options.header.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.header.background"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                    [cpPosition]="'auto'" (colorPickerChange)="onTableChanged()" /> 
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'table.property-header-color' | translate}}</span>
-                <input [(colorPicker)]="options.header.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.header.color"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                    [cpPosition]="'auto'" (colorPickerChange)="onTableChanged()"/>
-            </div>
-        </div>
-        <div class="element-property-header">
-            <span>{{'table.property-row' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field section-inline-number">
-                <span>{{'table.property-row-height' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.row.height" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0" max="100">
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-number">
-                <span>{{'table.property-row-fontSize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.row.fontSize" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="8" max="30">
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'table.property-row-background' | translate}}</span>
-                <input [(colorPicker)]="options.row.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.row.background"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                    [cpPosition]="'auto'" (colorPickerChange)="onTableChanged()" /> 
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'table.property-row-color' | translate}}</span>
-                <input [(colorPicker)]="options.row.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.row.color"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                    [cpPosition]="'auto'" (colorPickerChange)="onTableChanged()"/>
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'table.property-grid-color' | translate}}</span>
-                <input [(colorPicker)]="options.gridColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridColor"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px"
-                    [cpPosition]="'auto'" (colorPickerChange)="onTableChanged()"/>
-            </div>
-        </div>
-        <div class="element-property-header">
-            <span>{{'table.property-layout' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <!-- <div class="my-form-field section-inline-number">
-                <span>{{'graph.property-border' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.paginator.show" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0">
-            </div> -->
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-inline-toggle slider-field">
-                <span>{{'table.property-header' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="options.header.show" (change)="onTableChanged()"></mat-slide-toggle>
-            </div>
-            <div *ngIf="tableTypeCtrl.value === tableType.history" style="display: inline-block;">
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-toggle slider-field">
-                    <span>{{'table.property-filter' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="options.filter.show" (change)="onTableChanged()"></mat-slide-toggle>
+        <mat-tab-group style="height: 100%;">
+            <mat-tab label="{{'editor.settings-general' | translate}}">
+                <div class="element-property-header">
+                    <span>{{'table.property-data' | translate}}</span>
                 </div>
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-toggle slider-field">
-                    <span>{{'table.property-paginator' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
-                </div>
-                <div class="section-inline-margin2"></div>
-                <div class="my-form-field section-inline-toggle slider-field">
-                    <span>{{'table.property-daterange' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()"></mat-slide-toggle>
-                </div>
-            </div>
-        </div>
-        <div class="section-newline">&nbsp;</div>
-        <div style="position: relative">
-            <mat-tab-group style="width: 100%;" #grptabs>
-                <mat-tab label="{{'table.property-cols' | translate}}">
-                    <div class="section-newline">&nbsp;</div>
-                    <div *ngFor="let column of options.columns; index as x" class="cell-item column-item">
-                        <div class="my-form-field section-inline">
-                            <span>{{'table.property-column-name' | translate}}</span>
-                            <input [(ngModel)]="column.label" type="text" [disabled]="true">
-                        </div>
-                        <div class="my-form-field section-inline-number">
-                            <span>{{'table.property-column-type' | translate}}</span>
-                            <input [(ngModel)]="column.type" type="text" [disabled]="true">
-                        </div>                        
-                        <div class="section-item-newline">
-                            <div class="my-form-field section-inline-type">                            
-                                <span>{{'table.property-column-align' | translate}}</span>
-                                <mat-select [(value)]="column.align" (selectionChange)="onTableChanged()">
-                                    <mat-option [value]="alignType.left">{{'table.cell-align-left' | translate}}</mat-option>
-                                    <mat-option [value]="alignType.center">{{'table.cell-align-center' | translate}}</mat-option>
-                                    <mat-option [value]="alignType.right">{{'table.cell-align-right' | translate}}</mat-option>
-                                </mat-select>
-                            </div>
-                            <div class="section-inline-margin" style="margin-right: 3px;"></div>
-                            <div class="my-form-field section-inline-number">
-                                <span>{{'table.property-column-width' | translate}}</span>
-                                <input numberOnly [(ngModel)]="column.width" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="40" >
-                            </div>
-                        </div>
+                <div class="block mt5">
+                    <div class="my-form-field section-item section-item-block">
+                        <span>{{'table.property-name' | translate}}</span>
+                        <input [(ngModel)]="data.settings.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text">
                     </div>
-                </mat-tab>
-                <!-- <mat-tab *ngIf="tableTypeCtrl.value === tableType.data" label="{{'table.property-rows' | translate}}">
-                    <div class="section-newline">&nbsp;</div>
-                    <div *ngFor="let row of options.rows; index as y" class="cell-item">
-                        <div class="my-form-field section-inline-name">
-                            <span>{{'table.property-row-name' | translate}}</span>
-                            <input [(ngModel)]="row.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" >
-                        </div>    
-                        <div class="section-inline-margin"></div>
-                        <div class="my-form-field section-inline-type">                            
-                            <span>{{'table.property-row-type' | translate}}</span>
-                            <mat-select [(value)]="column.type" (selectionChange)="onTableChanged()">
-                                <mat-option [value]="columnType.label">{{'table.property-column-label' | translate}}</mat-option>
-                                <mat-option [value]="columnType.variable">{{'table.property-column-variable' | translate}}</mat-option>
-                                <mat-option [value]="columnType.timestamp">{{'table.property-column-timestamp' | translate}}</mat-option>
+                    <div class="my-form-field table-type">
+                        <span>{{'table.property-type' | translate}}</span>
+                        <mat-select [formControl]="tableTypeCtrl" (selectionChange)="onTableChanged()">
+                            <mat-option [value]="tableType.data">{{'table.property-type-data' | translate}}</mat-option>
+                            <mat-option [value]="tableType.history">{{'table.property-type-history' | translate}}</mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="section-inline-margin2"></div>
+                    <ng-container *ngIf="tableTypeCtrl.value === tableType.history">
+                        <div class="my-form-field inbk data-range">
+                            <span>{{'table.property-date-last-range' | translate}}</span>
+                            <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
+                                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                                    {{ ev.value }}
+                                </mat-option>
                             </mat-select>
                         </div>
+                        <div class="my-form-field inbk tac data-realtime">
+                            <span>{{'table.property-type-with-realtime' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.realtime" (change)="onTableChanged()"></mat-slide-toggle>
+                        </div>
+                    </ng-container>
+                </div>
+                <div class="element-property-header">
+                    <span>{{'table.property-header' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field section-inline-number">
+                        <span>{{'table.property-header-height' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.header.height" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0" max="100">
                     </div>
-                </mat-tab>                 -->
-            </mat-tab-group>
-            <div class="toolbox">
-                <button mat-icon-button (click)="onAdd()" matTooltip="{{'table.property-customize-tooltip' | translate}}">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </div>
-        </div>
+                    <div class="my-form-field section-inline-number">
+                        <span>{{'table.property-header-fontSize' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.header.fontSize" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="8" max="30">
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml5">
+                        <span>{{'table.property-header-background' | translate}}</span>
+                        <input [(colorPicker)]="options.header.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.header.background"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-header-color' | translate}}</span>
+                        <input [(colorPicker)]="options.header.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.header.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                </div>
+                <div class="element-property-header">
+                    <span>{{'table.property-row' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field section-inline-number">
+                        <span>{{'table.property-row-height' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.row.height" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0" max="100">
+                    </div>
+                    <div class="my-form-field section-inline-number">
+                        <span>{{'table.property-row-fontSize' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.row.fontSize" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="8" max="30">
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml5">
+                        <span>{{'table.property-row-background' | translate}}</span>
+                        <input [(colorPicker)]="options.row.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.row.background"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-row-color' | translate}}</span>
+                        <input [(colorPicker)]="options.row.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.row.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-grid-color' | translate}}</span>
+                        <input [(colorPicker)]="options.gridColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridColor"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                </div>
+                <div class="element-property-header">
+                    <span>{{'table.property-selection' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field section-inline-color color-field">
+                        <span>{{'table.property-row-background' | translate}}</span>
+                        <input [(colorPicker)]="options.selection.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.selection.background"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-row-color' | translate}}</span>
+                        <input [(colorPicker)]="options.selection.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.selection.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                </div>
+                <div class="element-property-header">
+                    <span>{{'table.property-layout' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <!-- <div class="my-form-field section-inline-number">
+                        <span>{{'graph.property-border' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.paginator.show" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="0">
+                    </div> -->
+                    <div class="section-inline-margin"></div>
+                    <div class="my-form-field section-inline-toggle slider-field">
+                        <span>{{'table.property-header' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="options.header.show" (change)="onTableChanged()"></mat-slide-toggle>
+                    </div>
+                    <div *ngIf="tableTypeCtrl.value === tableType.history" style="display: inline-block;">
+                        <div class="section-inline-margin2"></div>
+                        <div class="my-form-field section-inline-toggle slider-field">
+                            <span>{{'table.property-filter' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.filter.show" (change)="onTableChanged()"></mat-slide-toggle>
+                        </div>
+                        <div class="section-inline-margin2"></div>
+                        <div class="my-form-field section-inline-toggle slider-field">
+                            <span>{{'table.property-paginator' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
+                        </div>
+                        <div class="section-inline-margin2"></div>
+                        <div class="my-form-field section-inline-toggle slider-field">
+                            <span>{{'table.property-daterange' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()"></mat-slide-toggle>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-newline">&nbsp;</div>
+                <div style="position: relative">
+                    <mat-tab-group class="tab-columns-rows" #grptabs>
+                        <mat-tab label="{{'table.property-cols' | translate}}">
+                            <div class="section-newline">&nbsp;</div>
+                            <div *ngFor="let column of options.columns; index as x" class="cell-item column-item">
+                                <div class="my-form-field section-inline">
+                                    <span>{{'table.property-column-name' | translate}}</span>
+                                    <input [(ngModel)]="column.label" type="text" [disabled]="true">
+                                </div>
+                                <div class="my-form-field section-inline-number">
+                                    <span>{{'table.property-column-type' | translate}}</span>
+                                    <input [(ngModel)]="column.type" type="text" [disabled]="true">
+                                </div>
+                                <div class="section-item-newline">
+                                    <div class="my-form-field section-inline-type">
+                                        <span>{{'table.property-column-align' | translate}}</span>
+                                        <mat-select [(value)]="column.align" (selectionChange)="onTableChanged()">
+                                            <mat-option [value]="alignType.left">{{'table.cell-align-left' | translate}}</mat-option>
+                                            <mat-option [value]="alignType.center">{{'table.cell-align-center' | translate}}</mat-option>
+                                            <mat-option [value]="alignType.right">{{'table.cell-align-right' | translate}}</mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <div class="section-inline-margin" style="margin-right: 3px;"></div>
+                                    <div class="my-form-field section-inline-number">
+                                        <span>{{'table.property-column-width' | translate}}</span>
+                                        <input numberOnly [(ngModel)]="column.width" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="40">
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <!-- <mat-tab *ngIf="tableTypeCtrl.value === tableType.data" label="{{'table.property-rows' | translate}}">
+                            <div class="section-newline">&nbsp;</div>
+                            <div *ngFor="let row of options.rows; index as y" class="cell-item">
+                                <div class="my-form-field section-inline-name">
+                                    <span>{{'table.property-row-name' | translate}}</span>
+                                    <input [(ngModel)]="row.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" >
+                                </div>    
+                                <div class="section-inline-margin"></div>
+                                <div class="my-form-field section-inline-type">                            
+                                    <span>{{'table.property-row-type' | translate}}</span>
+                                    <mat-select [(value)]="column.type" (selectionChange)="onTableChanged()">
+                                        <mat-option [value]="columnType.label">{{'table.property-column-label' | translate}}</mat-option>
+                                        <mat-option [value]="columnType.variable">{{'table.property-column-variable' | translate}}</mat-option>
+                                        <mat-option [value]="columnType.timestamp">{{'table.property-column-timestamp' | translate}}</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                        </mat-tab>-->
+                    </mat-tab-group>
+                    <div class="toolbox">
+                        <button mat-icon-button (click)="onCustomize()" matTooltip="{{'table.property-customize-tooltip' | translate}}">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'editor.settings-events' | translate}}">
+                <div class="section-newline">&nbsp;</div>
+                <div class="events-toolbox">
+                    <button mat-icon-button (click)="onAddEvent()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+                <div class="events-section">
+                    <div *ngFor="let item of property?.events; index as i" class="event-item">
+                        <div class="block">
+                            <div class="my-form-field inbk mr10 event-type">
+                                <span>{{'gauges.property-event-type' | translate}}</span>
+                                <mat-select [(value)]="item.type" (selectionChange)="onTableChanged()">
+                                    <mat-option *ngFor="let evType of eventType" [value]="evType">
+                                        {{ 'shapes.event-' + evType | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field inbk ml10 event-action">
+                                <span>{{'gauges.property-event-action' | translate}}</span>
+                                <mat-select [(value)]="item.action" (change)="item.actparam = '';" (selectionChange)="item.actparam = ''; onTableChanged()">
+                                    <mat-option *ngFor="let type of selectActionType | enumToArray" [value]="type.key">
+                                        {{ type.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="item-remove inbk event-remove">
+                                <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">
+                                    <mat-icon>clear</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div [ngSwitch]="item.action" class="mt5 event-action-ext">
+                            <div *ngSwitchCase="actionRunScript" class="block event-script">
+                                <div class="my-form-field inbk script-selection">
+                                    <span>{{'gauges.property-event-script' | translate}}</span>
+                                    <mat-select [(value)]="item.actparam" (selectionChange)="onScriptChanged($event.value, item)">
+                                        <mat-option *ngFor="let script of scripts$ | async; index as i" [value]="script.id">{{script.name}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div *ngFor="let scriptParam of item.actoptions['params']; index as i" class="block mt5">
+                                    <div class="my-form-field inbk event-script-param">
+                                        <span>{{'gauges.property-event-script-param-name' | translate}}</span>
+                                        <input [(ngModel)]="scriptParam.name"
+                                                (change)="onTableChanged()" 
+                                                type="text"
+                                                readonly
+                                                matTooltip="{{scriptParam.name}}"
+                                                [disabled]="true">
+                                    </div>
+                                    <div class="my-form-field inbk event-script-value" *ngIf="scriptParam.type === 'value'">
+                                        <span>{{'gauges.property-event-script-param-value' | translate}}</span>
+                                        <input [(ngModel)]="scriptParam.value"
+                                                (change)="onTableChanged()" 
+                                                type="text">
+                                    </div>
+                                    <div class="my-form-field inbk event-script-tag" *ngIf="scriptParam.type === 'tagid'">
+                                        <app-flex-device-tag class="block mt5 item-device-tag"
+                                                            (change)="onTableChanged()"
+                                                            [variableId]="scriptParam.value">
+                                        </app-flex-device-tag>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 </div>

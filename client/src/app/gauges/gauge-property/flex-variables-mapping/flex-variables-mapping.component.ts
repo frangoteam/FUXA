@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 import { View } from '../../../_models/hmi';
+import { VariableMapItemType } from '../flex-variable-map/flex-variable-map.component';
 
 @Component({
     selector: 'flex-variables-mapping',
@@ -13,7 +14,7 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
     @Input() data: any;
     @Output() mappingChange: EventEmitter<any> = new EventEmitter();
 
-    public viewVariables;
+    public placeholders;
 
     constructor() {
     }
@@ -26,13 +27,13 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.view) {
-            this.viewVariables = null;
+            this.placeholders = null;
         }
     }
 
-    get viewVars() {
-        if (this.viewVariables) {
-            return this.viewVariables;
+    get viewPlaceholders() {
+        if (this.placeholders) {
+            return this.placeholders;
         }
         let viewVariables = {};
         if (this.view) {
@@ -58,8 +59,8 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
                 }
             });
         }
-        this.viewVariables = Object.values(viewVariables);
-        return this.viewVariables;
+        this.placeholders = Object.values(viewVariables);
+        return this.placeholders;
     }
 
     protected assignVariableTo(object, target) {
@@ -71,7 +72,10 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
 
     addVariableMapping($event) {
         $event.preventDefault();
-        this.mapping.push({ from: {}, to: {} });
+        this.mapping.push(<VariableMapItemType>{
+            from: {},
+            to: {},
+        });
     }
 
     removeVariableMapping($event, i) {

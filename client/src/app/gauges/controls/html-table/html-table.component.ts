@@ -12,7 +12,7 @@ export class HtmlTableComponent {
     static prefixD = 'D-OXC_';
 
     static getSignals(pro: ITableProperty): string[] {
-        if (pro.type === TableType.data && pro.options && pro.options.rows) {
+        if (pro.type === TableType.data && pro.options?.rows) {
             let signalIds = [];
             pro.options.rows.forEach(row => {
                 row.cells.forEach(cell => {
@@ -20,6 +20,14 @@ export class HtmlTableComponent {
                         signalIds.push(cell.variableId);
                     }
                 });
+            });
+            return signalIds;
+        } else if (pro.options?.realtime) {
+            let signalIds = [];
+            pro.options.columns?.forEach(col => {
+                if (col.variableId && col.type === TableCellType.variable) {
+                        signalIds.push(col.variableId);
+                }
             });
             return signalIds;
         }
@@ -50,7 +58,12 @@ export class HtmlTableComponent {
                 //     componentRef.instance.withToolbar = (gab.property.type === 'history') ? true : false;
                 // }
                 if (!gab.property) {
-                    gab.property = <GaugeTableProperty>{ id: null, type: TableType.data, options: DataTableComponent.DefaultOptions() };
+                    gab.property = <GaugeTableProperty>{
+                        id: null,
+                        type: TableType.data,
+                        options: DataTableComponent.DefaultOptions(),
+                        events: []
+                    };
                 }
                 htmlTable.innerHTML = '';
                 (<DataTableComponent>componentRef.instance).isEditor = !isview;
@@ -58,6 +71,7 @@ export class HtmlTableComponent {
                 // componentRef.instance.rangeType = chartRange;
                 (<DataTableComponent>componentRef.instance).id = gab.id;
                 (<DataTableComponent>componentRef.instance).type = gab.property.type;
+                (<DataTableComponent>componentRef.instance).events = gab.property.events;
 
                 componentRef.changeDetectorRef.detectChanges();
                 htmlTable.appendChild(componentRef.location.nativeElement);

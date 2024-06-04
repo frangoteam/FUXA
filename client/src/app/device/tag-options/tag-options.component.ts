@@ -142,19 +142,23 @@ export class TagOptionsComponent implements OnInit {
 
     onCheckScaleMode(value: string) {
         switch (value) {
-            case 'undefined':
-            this.formGroup.controls.rawLow.clearValidators();
-            this.formGroup.controls.rawHigh.clearValidators();
-            this.formGroup.controls.scaledLow.clearValidators();
-            this.formGroup.controls.scaledHigh.clearValidators();
-            break;
             case 'linear':
-            this.formGroup.controls.rawLow.setValidators(Validators.required);
-            this.formGroup.controls.rawHigh.setValidators(Validators.required);
-            this.formGroup.controls.scaledLow.setValidators(Validators.required);
-            this.formGroup.controls.scaledHigh.setValidators(Validators.required);
-            break;
+                this.formGroup.controls.rawLow.setValidators(Validators.required);
+                this.formGroup.controls.rawHigh.setValidators(Validators.required);
+                this.formGroup.controls.scaledLow.setValidators(Validators.required);
+                this.formGroup.controls.scaledHigh.setValidators(Validators.required);
+                break;
+            default:
+                this.formGroup.controls.rawLow.clearValidators();
+                this.formGroup.controls.rawHigh.clearValidators();
+                this.formGroup.controls.scaledLow.clearValidators();
+                this.formGroup.controls.scaledHigh.clearValidators();
+                break;
         }
+        this.formGroup.controls.rawLow.updateValueAndValidity();
+        this.formGroup.controls.rawHigh.updateValueAndValidity();
+        this.formGroup.controls.scaledLow.updateValueAndValidity();
+        this.formGroup.controls.scaledHigh.updateValueAndValidity();
         this.formGroup.updateValueAndValidity();
     }
 

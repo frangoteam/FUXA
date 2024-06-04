@@ -6,12 +6,25 @@
 .my-expansion-panel {
     width: 356px; 
     display: block;
-    margin-top
-    : 10px;
+    margin-top: 10px;
     mat-expansion-panel {
         box-shadow: none !important;
         background-color:var(--formExtBackground);
         border-radius: 2px;
+    }
+
+    .my-expansion-conent {
+        padding-bottom: 10px !important;
+        max-height: 320px;
+        overflow: auto;
+    }
+
+    .error {
+        display: block;
+        line-height: 20px;
+        width: 315px;
+        color: red;
+        font-size: 13px;
     }
 }
 

@@ -216,3 +216,20 @@ export class DialogGaugePermission {
         this.dialogRef.close(this.data);
     }
 }
+
+// export interface GaugePropertyData {
+//     settings: any;
+//     //devices: Device[];
+//     title: string;
+//     //views: View[];
+//     view: View;
+//     dlgType: GaugeDialogType;
+//     withEvents: boolean;
+//     withActions: boolean;
+//     default: any;
+//     withBitmask: boolean;
+
+//     //inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
+//     // let names = Object.values(this.currentView.items).map(gs => gs.name);
+//     // scripts: this.projectService.getScripts(),
+// }

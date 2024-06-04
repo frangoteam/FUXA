@@ -1,6 +1,19 @@
 import { Utils } from '../_helpers/utils';
 
-export const FuxaServer = {id: '0', name: 'FUXA' };
+export const FuxaServer = {
+    id: '0',
+    name: 'FUXA'
+};
+
+export const PlaceholderDevice = {
+    id: '@',
+    name: 'Placeholder',
+    tags: [{
+        id: '@',
+        name: '@',
+        device: '@'
+    }]
+};
 
 export class Device {
     /** Device id, GUID */
@@ -68,6 +81,8 @@ export class Tag {
     scale: TagScale;
     /** System Tag used in FUXA Server, example device status connection */
     sysType: TagSystemType;
+    /** Description */
+    description?: string;
 
     constructor(_id: string) {
         this.id = _id;
@@ -137,6 +152,8 @@ export class DeviceNetProperty {
     format: string;
     /** Connection option used for Modbus RTU/TCP */
     connectionOption: string;
+    /** Delay used for Modbus RTU/TCP delay between frame*/
+    delay: number = 10;
 
     static descriptor = {
         address: 'Device address (IP)',
@@ -182,7 +199,8 @@ export enum DeviceType {
     WebAPI = 'WebAPI',
     MQTTclient = 'MQTTclient',
     internal = 'internal',
-    EthernetIP = 'EthernetIP'
+    EthernetIP = 'EthernetIP',
+    ODBC = 'ODBC'
     // Template: 'template'
 }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
@@ -9,11 +9,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType } from '../../../../_models/hmi';
+import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
+import { ScriptService } from '../../../../_services/script.service';
+import { ProjectService } from '../../../../_services/project.service';
+import { SCRIPT_PARAMS_MAP, ScriptParam } from '../../../../_models/script';
 
 declare const numeral: any;
 @Component({
@@ -49,9 +52,17 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private lastDaqQuery = new DaqQuery();
     private destroy$ = new Subject<void>();
     private historyDateformat = '';
+    addValueInterval = 0;
+    private pauseMemoryValue: TableMapValueDictionary = {};
+    setOfSourceTableData = false;
+    selectedRow = null;
+    events: GaugeEvent[];
+    eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
 
     constructor(
         private dataService: DataConverterService,
+        private projectService: ProjectService,
+        private scriptService: ScriptService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
 
@@ -119,7 +130,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    onDaqQuery() {
+    onDaqQuery(daqQuery?: DaqQuery) {
+        if (daqQuery) {
+            this.lastDaqQuery = <DaqQuery>Utils.mergeDeep(this.lastDaqQuery, daqQuery);
+        }
         this.onTimeRange$.next(this.lastDaqQuery);
         if (this.type === TableType.history) {
             this.setLoading(true);
@@ -138,7 +152,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     addValue(variableId: string, dt: number, variableValue: string) {
-        if (this.tagsMap[variableId]) {
+        if (this.type === TableType.data && this.tagsMap[variableId]) {
             this.tagsMap[variableId].value = variableValue;
             this.tagsMap[variableId].cells.forEach((cell: TableCellData) => {
                 cell.stringValue = Utils.formatValue(this.tagsMap[variableId].value, cell.valueFormat);
@@ -151,6 +165,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     });
                 }
             });
+        } else if (this.type === TableType.history && this.tableOptions.realtime) {
+            if (this.addValueInterval && this.pauseMemoryValue[variableId] && Utils.getTimeDifferenceInSeconds(this.pauseMemoryValue[variableId]) < this.addValueInterval) {
+                return;
+            }
+            this.pauseMemoryValue[variableId] = dt * 1e3;
+            this.addRowDataToTable(dt * 1e3, variableId, variableValue);
         }
     }
 
@@ -204,6 +224,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 row[column.id] = <TableCellData> { stringValue: '' };
                 if (column.type === TableCellType.timestamp) {
                     row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                    row[column.id].timestamp = data[0][i];
                 } else if (column.type === TableCellType.variable) {
                     const tempValue = data[x][i];
                     if (Utils.isNumeric(tempValue)) {
@@ -224,6 +245,118 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setLoading(false);
         }, 500);
         this.reloadActive = false;
+    }
+
+    isSelectable(): boolean {
+        return this.events?.some(event => event.type === this.eventSelectionType);
+    }
+
+    selectRow(index: number) {
+        if (this.isSelectable()) {
+            this.selectedRow = this.dataSource.data[index];
+            this.events.forEach(event => {
+                this.runScript(event, this.selectedRow);
+            });
+        }
+    }
+
+    isSelected(row: MatRow) {
+        return this.selectedRow === row;
+    }
+
+    private runScript(event: GaugeEvent, selected: MatRow) {
+        if (event.actparam) {
+            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
+            torun.parameters = <ScriptParam[]>Utils.clone(event.actoptions[SCRIPT_PARAMS_MAP]);
+            torun.parameters.forEach(param => {
+                if (Utils.isNullOrUndefined(param.value)) {
+                    param.value = selected;
+                }
+            });
+            this.scriptService.runScript(torun).subscribe(result => {
+            }, err => {
+                console.error(err);
+            });
+        }
+    }
+
+    private addRowDataToTable(dt: number, tagId: string, value: any) {
+        let row = {};
+        let timestapColumnId = null;
+        let valueColumnId = null;
+        let exnameColumnId = null;
+        for (let x = 0; x < this.displayedColumns.length; x++) {
+            let column = <TableColumn>this.columnsStyle[this.displayedColumns[x]];
+            row[column.id] = <TableCellData> { stringValue: '' };
+            if (column.type === TableCellType.timestamp) {
+                timestapColumnId = column.id;
+                row[column.id].stringValue = format(new Date(dt), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                row[column.id].timestamp = dt;
+            } else if (column.variableId === tagId) {
+                const tempValue = value;
+                if (Utils.isNumeric(tempValue)) {
+                    row[column.id].stringValue = Utils.formatValue(tempValue, column.valueFormat);
+                } else {
+                    row[column.id].stringValue = tempValue;
+                }
+                valueColumnId = column.id;
+            } else if (column.type === TableCellType.device) {
+                row[column.id].stringValue = column.exname;
+                exnameColumnId = column.id;
+            }
+        }
+        if (valueColumnId) {
+            const firstRow = this.dataSource.data[0];
+            if (firstRow && firstRow[timestapColumnId].stringValue === row[timestapColumnId].stringValue) {
+                firstRow[valueColumnId].stringValue = row[valueColumnId].stringValue;
+                if (exnameColumnId) {
+                    firstRow[exnameColumnId].stringValue = row[exnameColumnId].stringValue;
+                }
+            } else {
+                this.dataSource.data.unshift(row);
+                const rangeDiff = this.lastDaqQuery.to - this.lastDaqQuery.from;
+                this.lastDaqQuery.to = row[timestapColumnId].timestamp;
+                this.lastDaqQuery.from = this.lastDaqQuery.to - rangeDiff;
+                // remove out of range values
+                let count = 0;
+                for (let i = this.dataSource.data.length - 1; i >= 0; i--) {
+                    if (this.dataSource.data[i][timestapColumnId].timestamp < this.lastDaqQuery.from) {
+                        count++;
+                    } else {
+                        break;
+                    }
+                }
+                if (count) {
+                    this.dataSource.data.splice(-count, count);
+                }
+                this.dataSource = new MatTableDataSource(this.dataSource.data);
+            }
+        }
+    }
+
+    public setProperty(property: any, value: any): boolean {
+        if (Utils.isNullOrUndefined(this[property])) {
+            return false;
+        }
+        this[property] = value;
+        return true;
+    }
+
+    setTableAndData(tableData: TableData) {
+        this.setOfSourceTableData = true;
+        this.displayedColumns = tableData.columns.map(cln => cln.id);
+        this.columnsStyle = tableData.columns;
+        tableData.columns.forEach(clnData => {
+            let column = clnData;
+            column.fontSize = tableData.header?.fontSize;
+            column.color = column.color || tableData.header?.color;
+            column.background = column.background || tableData.header?.background;
+            column.width = column.width || 100;
+            column.align = column.align || TableCellAlignType.left;
+            this.columnsStyle[column.id] = column;
+        });
+        this.dataSource = new MatTableDataSource(tableData.rows);
+        this.bindTableControls();
     }
 
     applyFilter(filterValue: string) {
@@ -357,6 +490,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             daterange: {
                 show: false
             },
+            realtime: false,
             lastRange: Utils.getEnumKey(TableRangeType, TableRangeType.last1h),
             gridColor: '#E0E0E0',
             header: {
@@ -371,6 +505,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 fontSize: 10,
                 background: '#F9F9F9',
                 color: '#000000',
+
+            },
+            selection: {
+                background: '#3059AF',
+                color: '#FFFFFF',
+                fontBold: true,
             },
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
             rows: [],
@@ -405,7 +545,61 @@ export class TableRangeConverter {
     }
 }
 
-// interface IRowDateTime {
-//     rowsIndex: number[];
-//     lastDateTime: string;
-// }
+interface TableMapValueDictionary {
+    [key: string]: number;
+}
+
+/**
+ * Interface definition for setTableAndData from script
+ */
+interface TableData {
+    paginator?: TableDataPaginatorOptions;
+    filter?: TableDataFilterOptions;
+    gridColor?: string;
+    header?: TableDataHeaderStyle;
+    rowStyle?: TableDataRowStyle;
+    columns: TableDataColumnData[];
+    rows: TableDataRow[];
+}
+
+interface TableDataPaginatorOptions {
+    show: boolean;
+    pageSize: number;
+}
+
+interface TableDataFilterOptions {
+    show: boolean;
+}
+
+interface TableDataHeaderStyle {
+    show: boolean;
+    height: number;
+    fontSize: number;
+    background: string;
+    color: string;
+}
+
+interface TableDataRowStyle {
+    height: number;
+    fontSize: number;
+    background: string;
+    color: string;
+}
+
+interface TableDataColumnData {
+    id: string;
+    label: string;
+    align?: string;
+    width?: number;
+    color?: string;
+    fontSize: number;
+    background: string;
+}
+
+interface TableDataRow {
+    cells: TableDataCell[];
+}
+
+interface TableDataCell {
+    value: string;
+}

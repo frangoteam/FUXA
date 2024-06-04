@@ -230,6 +230,9 @@
                             <button mat-icon-button>
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </button>
+                            <div class="header-date-time" *ngIf="data.layout.header.dateTimeDisplay">
+                                {{ currentDateTime | date: data.layout.header.dateTimeDisplay }}
+                            </div>
                             <div *ngIf="data.securityEnabled" class="header-login">
                                 <button mat-icon-button>
                                     <mat-icon aria-label="Login">account_circle</mat-icon>
@@ -295,6 +298,10 @@
                                     </mat-option>
                                 </mat-select>
                             </div>
+                            <div class="my-form-field block mt10">
+                                <span>{{'dlg.layout-lbl-datetime' | translate}}</span>
+                                <input [(ngModel)]="data.layout.header.dateTimeDisplay" (input)="checkTimer()" type="text" style="width: 260px">
+                            </div>                            
                             <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-alarms' | translate}}</span>
                                 <mat-select [(value)]="data.layout.header.alarms" style="width: 260px">

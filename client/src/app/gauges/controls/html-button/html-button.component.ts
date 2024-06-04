@@ -56,6 +56,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
                 htmlButton.innerHTML = (text) ? text : '<span>&nbsp;</span>';
             }
         }
+        return ele;
     }
 
     static initElementColor(bkcolor, color, ele) {
