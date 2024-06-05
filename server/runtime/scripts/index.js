@@ -6,6 +6,7 @@
 
 const MyScriptModule = require('./msm');
 const nodeSchedule = require('node-schedule');
+const utils = require('../utils');
 
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
@@ -278,8 +279,8 @@ function ScriptSchedule(script) {
                     result.push(date);
                 } else {
                     const rule = new nodeSchedule.RecurrenceRule();
-                    if (schedule.hour) rule.hour = schedule.hour;
-                    if (schedule.minute) rule.minute = schedule.minute;
+                    if (!utils.isNullOrUndefined(schedule.hour)) rule.hour = schedule.hour;
+                    if (!utils.isNullOrUndefined(schedule.minute)) rule.minute = schedule.minute;
                     if (schedule.days) {
                         rule.dayOfWeek = [];
                         if (schedule.days.includes('sun')) rule.dayOfWeek.push(0);

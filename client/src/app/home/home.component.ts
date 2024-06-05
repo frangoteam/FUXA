@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { combineLatest, interval, Observable, Subject, Subscription } from 'rxjs';
+import { combineLatest, interval, merge, Observable, of, Subject, Subscription, timer } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -24,7 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { debounceTime, filter, last, map, takeUntil } from 'rxjs/operators';
+import { filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { User } from '../_models/user';
 import { UserInfo } from '../users/user-edit/user-edit.component';
@@ -112,10 +112,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.hmiService.onServerConnection$,
                 this.authService.currentUser$
             ]).pipe(
-                map(([connectionStatus, userProfile]) => (this.securityEnabled && !userProfile) ? false : !connectionStatus),
-                takeUntil(this.destroy$),
-                debounceTime(1000),
-                last()
+                switchMap(([connectionStatus, userProfile]) =>
+                    merge(
+                        of(false),
+                        timer(20000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
+                    ).pipe (
+                        startWith(false),
+                    )
+                ),
+                takeUntil(this.destroy$)
             );
 
             this.loggedUser$ = this.authService.currentUser$;
@@ -213,7 +218,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onGoToLink(event: string) {
-        if (event.indexOf('://') >= 0) {
+        if (event.indexOf('://') >= 0 || event[0] == '/') {
             this.showHomeLink = true;
             this.changeDetector.detectChanges();
             this.setIframe(event);

@@ -1,8 +1,8 @@
 {
   "name": "fuxa",
-  "version": "1.1.19-1621",
+  "version": "1.1.19-1641",
   "keywords": [],
-  "author": "frangoteam <4frango@gmail.com>",
+  "author": "frangoteam <info@frangoteam.org>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "repository": {
     "type": "git",
