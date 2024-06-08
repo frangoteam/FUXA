@@ -223,6 +223,8 @@ function ScriptsManager(_runtime) {
         sysFncs['$enableDevice'] = runtime.devices.enableDevice;
         sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
         sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
+        sysFncs['$getDeviceSettings'] = runtime.devices.getDeviceSettings;
+        sysFncs['$setDeviceSettings'] = runtime.devices.setDeviceSettings;
         return sysFncs;
     }
 
