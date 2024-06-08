@@ -227,7 +227,6 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     }
                     // Adjust the width to better fit the surrounding svg rect
                     input.style.margin = '1px 1px';
-                    input.style.display = 'flex';
                 }
             }
             if (ele) {
