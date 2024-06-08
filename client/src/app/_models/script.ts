@@ -97,6 +97,12 @@ export class SystemFunctions {
         name: '$enableDevice', text: 'script.sys-fnc-enableDevice-text', tooltip: 'script.sys-fnc-enableDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-enableDevice-params'
     },
     {
+        name: '$getDeviceProperty', text: 'script.sys-fnc-getDeviceProperty-text', tooltip: 'script.sys-fnc-getDeviceProperty-tooltip', params: [false], paramsText: 'script.sys-fnc-getDeviceProperty-params'
+    },
+    {
+        name: '$setDeviceProperty', text: 'script.sys-fnc-setDeviceProperty-text', tooltip: 'script.sys-fnc-setDeviceProperty-tooltip', params: [false, false], paramsText: 'script.sys-fnc-setDeviceProperty-params'
+    },
+    {
         name: '$invokeObject', text: 'script.sys-fnc-invokeObject-text', tooltip: 'script.sys-fnc-invokeObject-tooltip', params: [false, false, false], paramsText: 'script.sys-fnc-invokeObject-params'
     },
     {

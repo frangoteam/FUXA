@@ -85,6 +85,8 @@ export class ScriptService {
         code = code.replace(/\$setTagDaqSettings\(/g, 'await this.$setTagDaqSettings(');
         code = code.replace(/\$setView\(/g, 'this.$setView(');
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
+        code = code.replace(/\$getDeviceProperty\(/g, 'await this.$getDeviceProperty(');
+        code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         return code;
@@ -125,6 +127,15 @@ export class ScriptService {
 
     public $enableDevice(deviceName: string, enable: boolean) {
         this.hmiService.deviceEnable(deviceName, enable);
+    }
+
+    public async $getDeviceProperty(deviceName: string) {
+        let daqSettings = await this.projectService.runSysFunctionSync('$getDeviceProperty', [deviceName]);
+        return daqSettings;
+    }
+
+    public async $setDeviceProperty(deviceName: string, property: any) {
+        return await this.projectService.runSysFunctionSync('$setDeviceProperty', [deviceName, property]);
     }
 
     public $invokeObject(gaugeName: string, fncName: string, ...params: any[]) {

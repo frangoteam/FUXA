@@ -32,7 +32,7 @@ export class LoginComponent {
 				private dialogRef: MatDialogRef<LoginComponent>,
 				@Inject(MAT_DIALOG_DATA) private data: any) {
 		const hmi = this.projectService.getHmi();
-		this.disableCancel = hmi.layout?.loginonstart && hmi.layout?.loginoverlaycolor !== LoginOverlayColorType.none;
+		this.disableCancel = hmi?.layout?.loginonstart && hmi.layout?.loginoverlaycolor !== LoginOverlayColorType.none;
 	}
 
 	onNoClick(): void {
