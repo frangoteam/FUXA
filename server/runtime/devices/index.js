@@ -329,14 +329,16 @@ function enableDevice(deviceName, enable) {
 }
 
 /**
- * Get the Device settings
+ * Get the Device property
  * used from Scripts
  * @param {*} deviceName
  */
-function getDeviceSettings(deviceName) {
+function getDeviceProperty(deviceName) {
     try {
         let device = runtime.project.getDevice(deviceName);
-        return device;
+        if (device) {
+            return device.property;
+        }
     } catch (err) {
         console.error(err);
     }
@@ -344,16 +346,17 @@ function getDeviceSettings(deviceName) {
 }
 
 /**
- * Set the Device settings
+ * Set the Device property
  * used from Scripts
  * @param {*} deviceName
- * @param {*} settings
+ * @param {*} property
  */
-function setDeviceSettings(deviceName, settings) {
+function setDeviceProperty(deviceName, property) {
     try {
         let device = runtime.project.getDevice(deviceName);
-        if (activeDevices[deviceId]) {
-            return activeDevices[deviceId].setTagDaqSettings(tagId, settings);
+        if (device) {
+            device.property = property;
+            updateDevice(device);
         }
     } catch (err) {
         console.error(err);
@@ -519,6 +522,6 @@ var devices = module.exports = {
     getTagId: getTagId,
     getTagDaqSettings: getTagDaqSettings,
     setTagDaqSettings: setTagDaqSettings,
-    getDeviceSettings: getDeviceSettings,
-    setDeviceSettings: setDeviceSettings,
+    getDeviceProperty: getDeviceProperty,
+    setDeviceProperty: setDeviceProperty,
 }
