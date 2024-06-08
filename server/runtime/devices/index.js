@@ -298,7 +298,7 @@ function getTagDaqSettings(tagId) {
  */
 function setTagDaqSettings(tagId, settings) {
     try {
-        let deviceId = getDeviceIdFromTag(tagId)
+        let deviceId = getDeviceIdFromTag(tagId);
         if (activeDevices[deviceId]) {
             return activeDevices[deviceId].setTagDaqSettings(tagId, settings);
         }
@@ -326,6 +326,39 @@ function enableDevice(deviceName, enable) {
     } catch (err) {
         console.error(err);
     }
+}
+
+/**
+ * Get the Device settings
+ * used from Scripts
+ * @param {*} deviceName
+ */
+function getDeviceSettings(deviceName) {
+    try {
+        let device = runtime.project.getDevice(deviceName);
+        return device;
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
+}
+
+/**
+ * Set the Device settings
+ * used from Scripts
+ * @param {*} deviceName
+ * @param {*} settings
+ */
+function setDeviceSettings(deviceName, settings) {
+    try {
+        let device = runtime.project.getDevice(deviceName);
+        if (activeDevices[deviceId]) {
+            return activeDevices[deviceId].setTagDaqSettings(tagId, settings);
+        }
+    } catch (err) {
+        console.error(err);
+    }
+    return null;
 }
 
 /**
@@ -486,4 +519,6 @@ var devices = module.exports = {
     getTagId: getTagId,
     getTagDaqSettings: getTagDaqSettings,
     setTagDaqSettings: setTagDaqSettings,
+    getDeviceSettings: getDeviceSettings,
+    setDeviceSettings: setDeviceSettings,
 }
