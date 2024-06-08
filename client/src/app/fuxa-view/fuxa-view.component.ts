@@ -919,8 +919,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.inputDialog.target.id = this.inputDialog.target.dom.id;
                 this.inputDialog.target.value = this.inputDialog.target.dom.value;
                 this.gaugesManager.putEvent({...this.inputDialog.target, value: res.value});
+                this.emulateEnterKey(this.inputDialog.target.dom);
             }
         }
+    }
+
+    emulateEnterKey(target: HTMLInputElement) {
+        const event = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          keyCode: 13,
+          code: 'Enter',
+          bubbles: true
+        });
+        target.dispatchEvent(event);
     }
 }
 
