@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -190,19 +190,21 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (view.profile.bkcolor && (this.child || legacyProfile)) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
+            if (view.profile.align) {
+                FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
+            }
         }
         this.changeDetector.detectChanges();
         this.loadWatch(this.view);
-        // // @ts-ignore
-        // window.dispatchEvent(new window.Event('resize'));
+        this.onResize();
     }
 
 
     @HostListener('window:resize', ['$event'])
-    onResize(event) {
+    onResize(event?) {
         let hmi = this.projectService.getHmi();
         if (hmi && hmi.layout && ZoomModeType[hmi.layout.zoom] === ZoomModeType.autoresize) {
-            Utils.resizeView('.home-body');
+            Utils.resizeViewRev(this.dataContainer.nativeElement.parentElement, this.dataContainer.nativeElement.parentElement?.parentElement, 'stretch');
         }
     }
 
@@ -932,6 +934,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
           bubbles: true
         });
         target.dispatchEvent(event);
+    }
+
+    static setAlignStyle(align: DocAlignType, nativeElement: HTMLElement) {
+        if (align === DocAlignType.middleCenter) {
+            nativeElement.style.position = 'absolute';
+            nativeElement.style.top = '50%';
+            nativeElement.style.left = '50%';
+            nativeElement.style.transform = 'translate(-50%, -50%)';
+        }
     }
 }
 

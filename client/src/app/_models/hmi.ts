@@ -25,8 +25,8 @@ export class View {
 }
 
 export enum ViewType {
-    svg = 'editor.view-svg',
-    cards ='editor.view-cards'
+    svg = 'svg',
+    cards ='cards'
 }
 
 export class LayoutSettings {
@@ -167,6 +167,12 @@ export class DocProfile {
     height = 768;
     bkcolor = '#ffffffff';
     margin = 10;
+    align = DocAlignType.topCenter;
+}
+
+export enum DocAlignType {
+    topCenter = 'topCenter',
+    middleCenter ='middleCenter'
 }
 
 export class GaugeSettings {
