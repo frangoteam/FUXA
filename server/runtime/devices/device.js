@@ -46,27 +46,27 @@ function Device(data, runtime) {
         if (!S7client) {
             return null;
         }
-        comm = S7client.create(data, logger, events, manager);
+        comm = S7client.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.OPCUA) {
         if (!OpcUAclient) {
             return null;
         }
-        comm = OpcUAclient.create(data, logger, events, manager);
+        comm = OpcUAclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.ModbusRTU || data.type === DeviceEnum.ModbusTCP) {
         if (!MODBUSclient) {
             return null;
         }
-        comm = MODBUSclient.create(data, logger, events, manager);        
+        comm = MODBUSclient.create(data, logger, events, manager, runtime);        
     } else if (data.type === DeviceEnum.BACnet) {
         if (!BACNETclient) {
             return null;
         }
-        comm = BACNETclient.create(data, logger, events, manager);        
+        comm = BACNETclient.create(data, logger, events, manager, runtime);        
     } else if (data.type === DeviceEnum.WebAPI) {
         if (!HTTPclient) {
             return null;
         }
-        comm = HTTPclient.create(data, logger, events, manager);        
+        comm = HTTPclient.create(data, logger, events, manager, runtime);        
     } else if (data.type === DeviceEnum.MQTTclient) {
         if (!MQTTclient) {
             return null;
@@ -77,7 +77,7 @@ function Device(data, runtime) {
         if (!EthernetIPclient) {
             return null;
         }
-        comm = EthernetIPclient.create(data, logger, events, manager);     
+        comm = EthernetIPclient.create(data, logger, events, manager, runtime);     
     } else if (data.type === DeviceEnum.FuxaServer) {
         if (!FuxaServer) {
             return null;
@@ -241,9 +241,9 @@ function Device(data, runtime) {
     /**
      * Call Device to set Tag value
      */
-    this.setValue = function (id, value, fnc) {
+    this.setValue = async function (id, value, fnc) {
         var fncvalue = this.getValueInFunction(this.getValue(id), value, fnc);
-        return comm.setValue(id, value);
+        return await comm.setValue(id, value);
     }
 
     /**
@@ -391,9 +391,11 @@ function Device(data, runtime) {
                     var restored = 0;
                     toRestore.forEach(element => {
                         if (element.id && !utils.isNullOrUndefined(element.value)) {
-                            if (self.setValue(element.id, element.value)) {
-                                restored++;
-                            }
+                            self.setValue(element.id, element.value).then((result) => {
+                                if (result) {
+                                    restored++;
+                                }
+                            });
                         }
                     });
                     logger.info(`'${property.name}' restored ${restored}/${toRestore.length} values`);

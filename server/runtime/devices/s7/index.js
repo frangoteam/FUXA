@@ -9,8 +9,9 @@ const deviceUtils = require('../device-utils');
 
 const MAX_MIX_ITEM = 20;
 
-function S7client(_data, _logger, _events) {
+function S7client(_data, _logger, _events, _runtime) {
 
+    var runtime = _runtime;
     var db = {};                        // Loaded Signal in DB format { DB index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;               // Logger
@@ -221,10 +222,10 @@ function S7client(_data, _logger, _events) {
      * Set the Tag value
      * Read the current Tag object, write the value in object and send to SPS 
      */
-    this.setValue = function (sigid, value) {
+    this.setValue = async function (sigid, value) {
         var item = _getTagItem(data.tags[sigid]);
         if (item) {
-            value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
+            value = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
             item.value = value;
             _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
@@ -306,7 +307,7 @@ function S7client(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = (vars) => {
+    var _updateVarsValue = async (vars) => {
         var someval = false;
         var tempTags = {};
         for (var vid in vars) {
@@ -357,7 +358,7 @@ function S7client(_data, _logger, _events) {
             var result = {};
             for (var id in tempTags) {
                 if (!utils.isNullOrUndefined(tempTags[id].rawValue)) {
-                    tempTags[id].value = deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref);
+                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref, runtime);
                     tempTags[id].timestamp = timestamp;
                     if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
                         result[id] = tempTags[id];
@@ -676,12 +677,12 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         try { snap7 = require('node-snap7'); } catch { }
         if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
         if (snap7) datatypes = require('./datatypes');
         else return null;
-        return new S7client(data, logger, events);
+        return new S7client(data, logger, events, runtime);
     }
 }
 

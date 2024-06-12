@@ -913,6 +913,14 @@
     "device.tag-convert-ticktime": "Milliseconds to Time format (Remaining or Duration)",
     "device.tag-convert-ticktime-tooltip": "Example format: 'HH:mm:ss' for 56:45:10",
     "device.tag-convert-ticktime-format": "Time format (HH:mm:ss)",
+    "device.tag-scale-read-script": "Read Scale Script",
+    "device.tag-scale-read-script-tooltip": "Script to transform value received from client",
+    "device.tag-scale-read-script-params": "Enter Read Script Parameter Values",
+    "device.tag-scale-write-script": "Write Scale Script",
+    "device.tag-scale-write-script-tooltip": "Script to transform value before write to client",
+    "device.tag-scale-write-script-params": "Enter Write Script Parameter Values",
+    "device.tag-scale-script-params-tooltip": "JSON formated array of parameters with values to pass to script",
+    
 
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
