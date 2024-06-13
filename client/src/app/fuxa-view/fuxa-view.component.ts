@@ -204,7 +204,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     onResize(event?) {
         let hmi = this.projectService.getHmi();
         if (hmi && hmi.layout && ZoomModeType[hmi.layout.zoom] === ZoomModeType.autoresize) {
-            Utils.resizeViewRev(this.dataContainer.nativeElement.parentElement, this.dataContainer.nativeElement.parentElement?.parentElement, 'stretch');
+            Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, 'stretch');
         }
     }
 
@@ -640,13 +640,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    loadPage(event: GaugeEvent, viewref: string, options: any) {
+    loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
             this.loadHmi(view);
+            if (param.scaleMode) {
+                Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
+            }
         }
     }
 
@@ -827,8 +830,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSetViewToPanel(event: GaugeEvent) {
         if (event.actparam && event.actoptions) {
-            let panel = <FuxaViewComponent>this.mapControls[event.actoptions['panelId']];
-            panel.loadPage(event, event.actparam, event.actoptions);
+            let panelCtrl = <FuxaViewComponent>this.mapControls[event.actoptions['panelId']];
+            const panelProperty = this.view.items[event.actoptions['panelId']]?.property;
+            panelCtrl.loadPage(panelProperty, event.actparam, event.actoptions);
         }
     }
 

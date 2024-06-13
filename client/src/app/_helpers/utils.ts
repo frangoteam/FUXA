@@ -428,13 +428,15 @@ export class Utils {
             const ratioHeight = (destRect?.height / origRect.clientHeight);
             if (resizeType === 'contain') {
                 origRect.style.transform = 'scale(' + Math.min(ratioWidth, ratioHeight) + ')';
-                origRect.style.margin = 'unset';
+                origRect.parentElement.style.margin = 'unset';
             } else if (resizeType === 'stretch') {
                 origRect.style.transform = 'scale(' + ratioWidth + ', ' + ratioHeight + ')';
-                origRect.style.margin = 'unset';
+                origRect.parentElement.style.margin = 'unset';
             } else if (resizeType === 'none') {
                 origRect.style.transform = 'scale(1)';
             }
+            origRect.style.top = 'unset';
+            origRect.style.left = 'unset';
             origRect.style.transformOrigin = 'top left';
         };
 
