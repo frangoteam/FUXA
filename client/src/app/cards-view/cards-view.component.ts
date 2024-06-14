@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 
 import { GaugesManager } from '../gauges/gauges.component';
@@ -9,7 +9,7 @@ import { Utils } from '../_helpers/utils';
 @Component({
     selector: 'app-cards-view',
     templateUrl: './cards-view.component.html',
-    styleUrls: ['./cards-view.component.css']
+    styleUrls: ['./cards-view.component.scss']
 })
 export class CardsViewComponent implements OnInit, AfterViewInit {
 
@@ -28,7 +28,8 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
     widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
 
-    constructor(private changeDetector: ChangeDetectorRef) {
+    constructor(private renderer: Renderer2,
+                private changeDetector: ChangeDetectorRef) {
         this.gridOptions = <GridsterConfig> new GridOptions();
         this.gridOptions.itemChangeCallback = this.itemChange;
         this.gridOptions.itemResizeCallback = this.itemChange;
@@ -46,8 +47,13 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
 
     reload() {
         let element: HTMLElement = document.querySelector('gridster');
-        if (element && this.view.profile.bkcolor) {
-            element.style.backgroundColor = this.view.profile.bkcolor;
+        if (element) {
+            if (this.view.profile.bkcolor) {
+                element.style.backgroundColor = this.view.profile.bkcolor;
+            }
+            if (!this.edit) {
+                this.renderer.setStyle(element?.parentElement, 'width', `100vw`);
+            }
         }
         if (this.view.profile.margin >= 0) {
             this.gridOptions.margin = this.view.profile.margin;
