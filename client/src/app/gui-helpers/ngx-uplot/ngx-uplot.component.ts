@@ -291,7 +291,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         }
         // remove data out of size
         let min = x - size;
-        if (this.data[0][0] < min) {
+        while (this.data[0][0] < min) {
             for (let i = 0; i < this.data.length; i++) {
                 this.data[i].shift();
             }
