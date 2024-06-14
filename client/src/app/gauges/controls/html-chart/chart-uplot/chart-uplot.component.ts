@@ -43,6 +43,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     property: GaugeChartProperty;
     chartName: string;
     addValueInterval = 0;
+    zoomSize = 0;
 
     constructor(
         private projectService: ProjectService,
@@ -83,40 +84,46 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onClick(ev: string) {
+    onClick(evStep: string) {
         if (this.isEditor) {
             return;
         }
         this.lastDaqQuery.gid = this.id;
-        this.lastDaqQuery.event = ev;
-        if (ev === 'B') {           // back
+        let timeStep = ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60;
+        if (this.zoomSize) {
+            timeStep = this.zoomSize;
+        }
+        if (evStep === 'B') {           // back
             this.range.to = new Date(this.range.from).getTime();
-            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));
-        } else if (ev === 'F') {    // forward
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (timeStep * 1000));
+        } else if (evStep === 'F') {    // forward
             this.range.from = new Date(this.range.to).getTime();
-            this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (ChartRangeConverter.ChartRangeToHours(<ChartRangeType>this.rangeTypeValue) * 60 * 60 * 1000));
+            this.range.to = new Date(this.range.from).setTime(new Date(this.range.from).getTime() + (timeStep * 1000));
         }
         this.lastDaqQuery.sids = Object.keys(this.mapData);
-        this.lastDaqQuery.from = this.range.from;
-        this.lastDaqQuery.to = this.range.to;
-        this.onDaqQuery();
+        this.updateLastDaqQueryRange(this.range);
     }
 
-    onRangeChanged(ev) {
+    onRangeChanged(ev, fromRefresh?: boolean) {
         if (this.isEditor) {
             return;
+        }
+        if (!fromRefresh) {
+            this.zoomSize = 0;
         }
         if (ev) {
             this.range.from = Date.now();
             this.range.to = Date.now();
-            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (ChartRangeConverter.ChartRangeToHours(ev) * 60 * 60 * 1000));
+            let timeStep = ChartRangeConverter.ChartRangeToHours(ev) * 60 * 60;
+            if (this.zoomSize) {
+                timeStep = this.zoomSize;
+            }
+            this.range.from = new Date(this.range.from).setTime(new Date(this.range.from).getTime() - (timeStep * 1000));
 
             this.lastDaqQuery.event = ev;
             this.lastDaqQuery.gid = this.id;
             this.lastDaqQuery.sids = Object.keys(this.mapData);
-            this.lastDaqQuery.from = this.range.from;
-            this.lastDaqQuery.to = this.range.to;
-            this.onDaqQuery();
+            this.updateLastDaqQueryRange(this.range);
         }
     }
 
@@ -130,9 +137,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.range.to = dateRange.end;
                 this.lastDaqQuery.gid = this.id;
                 this.lastDaqQuery.sids = Object.keys(this.mapData);
-                this.lastDaqQuery.from = dateRange.start;
-                this.lastDaqQuery.to = dateRange.end;
-                this.onDaqQuery();
+                this.updateLastDaqQueryRange(this.range);
             }
         });
     }
@@ -147,11 +152,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onRefresh() {
+    onRefresh(fromRefresh?: boolean) {
         if (this.property?.type === ChartViewType.custom) {
             this.getCustomData();
         } else {
-            this.onRangeChanged(this.lastDaqQuery.event);
+            this.onRangeChanged(this.lastDaqQuery.event, fromRefresh);
             this.reloadActive = true;
         }
     }
@@ -235,9 +240,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.lastDaqQuery.gid = this.id;
             this.lastDaqQuery.sids = Object.keys(this.mapData);
             var now = new Date();
-            this.lastDaqQuery.from = new Date(now.getTime() - this.options.realtime * 60000).getTime();
-            this.lastDaqQuery.to = Date.now();
-            this.onDaqQuery();
+            this.updateLastDaqQueryRange(<DaqRangeType>{
+                from: new Date(now.getTime() - this.options.realtime * 60000).getTime(),
+                to: Date.now()
+            });
         }
     }
 
@@ -311,7 +317,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.pauseMemoryValue[id].push({ x, y });
                 return;
             }
-            this.nguplot.addValue(property.index, x, y, this.options.realtime * 60);
+            this.nguplot.addValue(property.index, x, y, this.zoomSize || this.options.realtime * 60);
             property.lastValueTime = Date.now();
             this.range.to = Date.now();
         }
@@ -363,6 +369,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     setZoom(range: ZoomRangeType) {
         this.range = range;
         this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+        this.zoomSize = this.range.to / 1e3 - this.range.from / 1e3;
         // if zoom resetted then add values in saved in pause
         if (!range.zoomStep) {
             Object.keys(this.pauseMemoryValue).forEach((id) => {
@@ -375,6 +382,13 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             this.pauseMemoryValue = {};
         }
+        this.updateLastDaqQueryRange(this.range);
+    }
+
+    private updateLastDaqQueryRange(range: DaqRangeType) {
+        this.lastDaqQuery.from = range.from;
+        this.lastDaqQuery.to = range.to;
+        this.onDaqQuery();
     }
 
     getZoomStatus() {
@@ -533,6 +547,11 @@ interface MapDataType {
 
 interface MapDataDictionary {
     [key: string]: MapDataType;
+}
+
+interface DaqRangeType {
+    from: number;
+    to: number;
 }
 
 interface ZoomRangeType {

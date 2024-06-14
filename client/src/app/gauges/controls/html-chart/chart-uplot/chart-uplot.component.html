@@ -46,7 +46,7 @@
     </div>
     <ngx-uplot class="mychart-graph" #nguplot></ngx-uplot>
     <div *ngIf="!isEditor && withToolbar" class="reload-btn">
-        <button mat-icon-button (click)="onRefresh()" class="small-icon-button default-color" [style.color]="options.axisLabelColor">
+        <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="options.axisLabelColor">
             <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
         </button>
     </div>    
