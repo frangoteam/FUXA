@@ -689,6 +689,7 @@
     "shapes.event-setvalue-remove": "decrease",
     "shapes.event-onmonitor": "Monitor",
     "shapes.event-onViewToPanel": "Set View to Panel",
+    "shapes.event-onLoad": "OnLoad",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",

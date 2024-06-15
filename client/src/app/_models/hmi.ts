@@ -311,6 +311,7 @@ export enum GaugeEventType {
     mouseup = 'shapes.event-mouseup',
     enter = 'shapes.event-enter',
     select = 'shapes.event-select',
+    onLoad = 'shapes.event-onLoad',
 }
 
 export enum GaugeEventActionType {
@@ -348,6 +349,7 @@ export interface GaugeChartProperty {
     id: string;
     type: string;
     options: any;
+    events: GaugeEvent[];
 }
 
 export interface GaugeGraphProperty {
