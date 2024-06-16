@@ -103,7 +103,7 @@
     "dlg.docproperty-type": "View type",
     "dlg.item-title": "Name",
     "dlg.item-name": "Name",
-    "dlg.item-req-name": "Name (No spaced or numbers allowed)",
+    "dlg.item-req-name": "Function name (No spaced or numbers allowed)",
     "dlg.item-name-error": "Name exist!",
     "dlg.parameter-title": "Parameter",
 
@@ -689,6 +689,7 @@
     "shapes.event-setvalue-remove": "decrease",
     "shapes.event-onmonitor": "Monitor",
     "shapes.event-onViewToPanel": "Set View to Panel",
+    "shapes.event-onLoad": "OnLoad",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
@@ -1131,9 +1132,13 @@
     "script.permission-label": "(void = full for everyone)",
     "script.permission-enabled": "Enabled",
 
+    "script.create-title": "Create script",
+
     "script.mode": "Execute mode",
     "script.mode-title": "Execute mode",
-    "script.mode-label": "(Default: Server)",
+    "script.mode-label": "Execute mode",
+    "script.mode-CLIENT": "Client (Execute in browser)",
+    "script.mode-SERVER": "Server (Execute in server)",
 
     "script.property-title": "Script",
     "script.property-systems": "System functions",
@@ -1144,6 +1149,7 @@
     "script.property-test-tag": "Set Tag",
     "script.property-test-run": "Run TEST",
     "script.property-editname": "Edit Script name",
+    "script.property-name": "Name",
     "script.property-addfnc-param": "Add Script parameter",
     "script.param-title": "Script parameter",
     "script.param-name": "Name",
@@ -1444,5 +1450,6 @@
     "msg.report-build-forced": "Send to build Report successful",
     "msg.report-build-error": "Send to build Report failed!",
     "msg.device-tags-request-result": "Load {{value}} of {{current}}",
-    "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'"
+    "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'",
+    "msg.script-name-exist": "Script name exist!"
 }
