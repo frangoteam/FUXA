@@ -25,7 +25,7 @@ import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogDocProperty, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
+import { EditorComponent, DialogDocName, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
@@ -186,6 +186,7 @@ import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-propert
 import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
+import { ViewPropertyComponent } from './editor/view-property/view-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -231,7 +232,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DeviceMapComponent,
         FuxaViewComponent,
         FuxaViewDialogComponent,
-        DialogDocProperty,
+        ViewPropertyComponent,
         DialogDocName,
         DialogNewDoc,
         DialogLinkProperty,

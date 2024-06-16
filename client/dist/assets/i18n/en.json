@@ -93,6 +93,10 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixels",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixels",
     "dlg.docproperty-margin": "Margin",
+    "dlg.docproperty-align": "Align",
+    "dlg.docproperty-align-placeholder": "Alignment on the page",
+    "dlg.docproperty-align-topCenter": "Top",
+    "dlg.docproperty-align-middleCenter": "Middle",
 
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
@@ -1186,6 +1190,12 @@
     "script.sys-fnc-runServerScript-text": "$runServerScript (Script name, [Parameter])",
     "script.sys-fnc-runServerScript-tooltip": "Client function to call Server script function: $runServerScript (Script name as string, [parameter])",
     "script.sys-fnc-runServerScript-params": "'Server script name', ",
+    "script.sys-fnc-getDeviceProperty-text": "$getDeviceProperty(Device name)",
+    "script.sys-fnc-getDeviceProperty-tooltip": "System function to get Device property: $getDeviceProperty(Device name as string)",
+    "script.sys-fnc-getDeviceProperty-params": "'Device name'",
+    "script.sys-fnc-setDeviceProperty-text": "$setDeviceProperty(Device name, property)",
+    "script.sys-fnc-setDeviceProperty-tooltip": "System function to set Device property: $setDeviceProperty(Device name as string, Property as object {address, port, ...} )",
+    "script.sys-fnc-setDeviceProperty-params": "'Device name', 'Property'",
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",

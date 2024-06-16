@@ -10,7 +10,7 @@
             <span>{{'dlg.docproperty-type' | translate}}</span>
             <mat-select [(value)]="data.type" placeholder="{{'dlg.doctype' | translate}}" style="width: 300px;">
                 <mat-option *ngFor="let type of docType | enumToArray" [value]="type.key">
-                    {{ type.value }}
+                    {{ 'editor.view-' + type.value | translate }}
                 </mat-option>
             </mat-select>
         </div>
