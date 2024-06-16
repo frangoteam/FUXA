@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -253,6 +253,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                                 });
                             }
                         }
+                        // run load events
+                        if (gaugeSetting.property.events) {
+                            const loadEventType = Utils.getEnumKey(GaugeEventType, GaugeEventType.onLoad);
+                            const loadEvents = gaugeSetting.property.events?.filter((ev: GaugeEvent) => ev.type === loadEventType);
+                            if (loadEvents?.length) {
+                                this.runEvents(this, gaugeSetting, null, loadEvents);
+                            }
+                        }
                     }
                 } catch (err) {
                     console.error('loadWatch: ' + key, err);
@@ -315,7 +323,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param items
      * @protected
      */
-    protected applyVariableMapping(items) {
+    protected applyVariableMapping(items: DictionaryGaugeSettings) {
         // Deep clone
         items = JSON.parse(JSON.stringify(items));
 
@@ -792,7 +800,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (event.actparam) {
             let torun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam));
             torun.parameters = Utils.clone(<ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP]);
-            const placeholders = torun.parameters.filter(param => param.value.startsWith(PlaceholderDevice.id)).map(param => param.value);
+            const placeholders = torun.parameters.filter(param => param.value?.startsWith(PlaceholderDevice.id)).map(param => param.value);
             if (placeholders?.length) {
                 const placeholdersMap = this.getViewPlaceholderValue(placeholders);
                 torun.parameters.forEach(param => {

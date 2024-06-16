@@ -240,10 +240,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.lastDaqQuery.gid = this.id;
             this.lastDaqQuery.sids = Object.keys(this.mapData);
             var now = new Date();
-            this.updateLastDaqQueryRange(<DaqRangeType>{
-                from: new Date(now.getTime() - this.options.realtime * 60000).getTime(),
-                to: Date.now()
-            });
+            this.range.from = new Date(now.getTime() - this.options.realtime * 60000).getTime();
+            this.range.to = Date.now();
+            this.updateLastDaqQueryRange(this.range);
         }
     }
 

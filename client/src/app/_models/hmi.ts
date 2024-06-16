@@ -555,7 +555,7 @@ export class Size {
     }
 }
 
-interface DictionaryGaugeSettings {
+export interface DictionaryGaugeSettings {
     [x: string]: GaugeSettings;
 }
 
