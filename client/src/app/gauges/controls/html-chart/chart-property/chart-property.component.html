@@ -3,183 +3,185 @@
         {{'editor.controls-chart-settings' | translate}}
     </div>
     <div class="chart-selection">
-        <div class="element-property-header">
-            <span>{{'chart.property-data' | translate}}</span>
-        </div>
-        <div class="_section-newline">
-            <div class="my-form-field field-block lbk">
-                <span>{{'chart.property-name' | translate}}</span>
-                <input [(ngModel)]="data.settings.name" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="text">
-            </div>
-            <div class="my-form-field field-block lbk mt5">
-                <span>{{'chart.property-chart' | translate}}</span>
-                <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
-                    <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
-                    <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
-                    <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
-                        {{ chart.name }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-newline"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'chart.property-chart-type' | translate}}</span>
-                <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged();onShowChartSelectionMessage($event)">
-                    <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
-                        {{'chart.viewtype-' + ev.value | translate }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-inline-margin"></div>
-            <ng-container *ngIf="chartViewValue !== chartViewType.realtime1">
-                <ng-container *ngIf="chartViewValue === chartViewType.history">
-                    <div class="my-form-field section-item inbk" style="width: 110px">
-                        <span>{{'chart.property-date-last-range' | translate}}</span>
-                        <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
-                            <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                                {{ ev.value | translate }}
+        <mat-tab-group style="height: 100%;">
+            <mat-tab label="{{'editor.settings-general' | translate}}">
+                <div class="element-property-header">
+                    <span>{{'chart.property-data' | translate}}</span>
+                </div>
+                <div class="_section-newline">
+                    <div class="my-form-field field-block lbk">
+                        <span>{{'chart.property-name' | translate}}</span>
+                        <input [(ngModel)]="data.settings.name" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="text">
+                    </div>
+                    <div class="my-form-field field-block lbk mt5">
+                        <span>{{'chart.property-chart' | translate}}</span>
+                        <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
+                            <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
+                            <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
+                            <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
+                                {{ chart.name }}
                             </mat-option>
                         </mat-select>
                     </div>
-                </ng-container>
-                <ng-container *ngIf="chartViewValue === chartViewType.custom">
-                    <div class="my-form-field inbk" style="width: 180px">
-                        <span>{{'chart.property-script' | translate}}</span>
-                        <mat-select [(value)]="options.scriptId" (selectionChange)="onChartChanged()">
-                            <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+                    <div class="section-newline"></div>
+                    <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                        <span>{{'chart.property-chart-type' | translate}}</span>
+                        <mat-select [(value)]="chartViewValue" (selectionChange)="onChartChanged();onShowChartSelectionMessage($event)">
+                            <mat-option *ngFor="let ev of chartViewType | enumToArray" [value]="ev.key">
+                                {{'chart.viewtype-' + ev.value | translate }}
+                            </mat-option>
                         </mat-select>
                     </div>
-                </ng-container>
-                <div class="block mt5">
-                    <div class="my-form-field field-number inbk" style="width: 120px">
-                        <span style="width: 120px;">{{'chart.property-refresh-interval' | translate}}</span>
-                        <input numberOnly [(ngModel)]="options.refreshInterval"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0">
-                    </div>
-                    <ng-container *ngIf="chartViewValue === chartViewType.history">
-                        <div class="my-form-field inbk ml10 tac">
-                            <span>{{'chart.property-hide-toolbar' | translate}}</span>
-                            <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                    <div class="section-inline-margin"></div>
+                    <ng-container *ngIf="chartViewValue !== chartViewType.realtime1">
+                        <ng-container *ngIf="chartViewValue === chartViewType.history">
+                            <div class="my-form-field section-item inbk" style="width: 110px">
+                                <span>{{'chart.property-date-last-range' | translate}}</span>
+                                <mat-select [(value)]="options.lastRange" (selectionChange)="onChartChanged()">
+                                    <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
+                                        {{ ev.value | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="chartViewValue === chartViewType.custom">
+                            <div class="my-form-field inbk" style="width: 180px">
+                                <span>{{'chart.property-script' | translate}}</span>
+                                <mat-select [(value)]="options.scriptId" (selectionChange)="onChartChanged()">
+                                    <mat-option *ngFor="let script of scripts$ | async; index as i" [value]="script.id">{{script.name}}</mat-option>
+                                </mat-select>
+                            </div>
+                        </ng-container>
+                        <div class="block mt5">
+                            <div class="my-form-field field-number inbk" style="width: 120px">
+                                <span style="width: 120px;">{{'chart.property-refresh-interval' | translate}}</span>
+                                <input numberOnly [(ngModel)]="options.refreshInterval" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0">
+                            </div>
+                            <ng-container *ngIf="chartViewValue === chartViewType.history">
+                                <div class="my-form-field inbk ml10 tac">
+                                    <span>{{'chart.property-hide-toolbar' | translate}}</span>
+                                    <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                                </div>
+                            </ng-container>
                         </div>
                     </ng-container>
-                </div>
-            </ng-container>
-            <ng-container *ngIf="chartViewValue === chartViewType.realtime1">
-                <div class="my-form-field field-number lbk section-item">
-                    <span style="width: 100px">{{'chart.property-realtime-max' | translate}}</span>
-                    <input numberOnly [(ngModel)]="options.realtime"  (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="1">
-                </div>
-                <div class="my-form-field inbk ml20 tac" style="max-width: 100px;">
-                    <span>{{'chart.property-load-old-values' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="options.loadOldValues" (change)="onChartChanged()"></mat-slide-toggle>
-                </div>
-            </ng-container>
-            <div class="element-property-header">
-                <span>{{'chart.property-general' | translate}}</span>
-            </div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'chart.property-font' | translate}}</span>
-                <mat-select [(value)]="options.fontFamily" (selectionChange)="onChartChanged()">
-                    <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
-                        {{font}}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field field-number lbk section-toogle">
-                <span>{{'chart.property-font.titlesize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.titleHeight" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="36">
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field field-number lbk section-toogle">
-                <span>{{'chart.property-font.axissize' | translate}}</span>
-                <input numberOnly [(ngModel)]="options.axisLabelFontSize" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="24">
-            </div>
-            <div class="section-newline"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'chart.property-date.format' | translate}}</span>
-                <mat-select [(value)]="options.dateFormat" (selectionChange)="onChartChanged()">
-                    <mat-option *ngFor="let ev of dateFormat | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-inline-margin"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'chart.property-time.format' | translate}}</span>
-                <mat-select [(value)]="options.timeFormat" (selectionChange)="onChartChanged()">
-                    <mat-option *ngFor="let ev of timeFormat | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="section-newline"></div>
-            <div class="my-form-field section-item" style="display: inline-block; width: 120px">
-                <span>{{'chart.property-legend.mode' | translate}}</span>
-                <mat-select [(value)]="options.legendMode" (selectionChange)="onChartChanged()">
-                    <mat-option *ngFor="let ev of legendModes | enumToArray" [value]="ev.key">
-                        {{ ev.value }}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="element-property-header">
-                <span>{{'chart.property-yaxis' | translate}}</span>
-            </div>
-            <div class="block">
-                <div class="my-form-field field-text">
-                    <span>{{'chart.property-axis-y1' | translate}}</span>
-                    <input [(ngModel)]="options.axisLabelY1" type="text" (change)="onChartChanged()">
-                </div>
-                <div class="my-form-field field-number ml5">
-                    <span>{{'chart.property-axis-y1-min' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY1min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-                <div class="my-form-field field-number ml12">
-                    <span>{{'chart.property-axis-y1-max' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY1max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-            </div>
-            <div class="block">
-                <div class="my-form-field field-text lbk">
-                    <span>{{'chart.property-axis-y2' | translate}}</span>
-                    <input [(ngModel)]="options.axisLabelY2" type="text" (change)="onChartChanged()">
-                </div>
-                <div class="my-form-field field-number ml5">
-                    <span>{{'chart.property-axis-y2-min' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY2min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-                <div class="my-form-field field-number ml12">
-                    <span>{{'chart.property-axis-y2-max' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY2max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-            </div>            
-            <div class="block">
-                <div class="my-form-field field-text lbk">
-                    <span>{{'chart.property-axis-y3' | translate}}</span>
-                    <input [(ngModel)]="options.axisLabelY3" type="text" (change)="onChartChanged()">
-                </div>
-                <div class="my-form-field field-number ml5">
-                    <span>{{'chart.property-axis-y3-min' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY3min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-                <div class="my-form-field field-number ml12">
-                    <span>{{'chart.property-axis-y3-max' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY3max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-            </div>                     
-            <div class="block">
-                <div class="my-form-field field-text lbk">
-                    <span>{{'chart.property-axis-y4' | translate}}</span>
-                    <input [(ngModel)]="options.axisLabelY4" type="text" (change)="onChartChanged()">
-                </div>
-                <div class="my-form-field field-number ml5">
-                    <span>{{'chart.property-axis-y4-min' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY4min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-                <div class="my-form-field field-number ml12">
-                    <span>{{'chart.property-axis-y4-max' | translate}}</span>
-                    <input [(ngModel)]="options.scaleY4max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
-                </div>
-            </div>                    
+                    <ng-container *ngIf="chartViewValue === chartViewType.realtime1">
+                        <div class="my-form-field field-number lbk section-item">
+                            <span style="width: 100px">{{'chart.property-realtime-max' | translate}}</span>
+                            <input numberOnly [(ngModel)]="options.realtime" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="1">
+                        </div>
+                        <div class="my-form-field inbk ml20 tac" style="max-width: 100px;">
+                            <span>{{'chart.property-load-old-values' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.loadOldValues" (change)="onChartChanged()"></mat-slide-toggle>
+                        </div>
+                    </ng-container>
+                    <div class="element-property-header">
+                        <span>{{'chart.property-general' | translate}}</span>
+                    </div>
+                    <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                        <span>{{'chart.property-font' | translate}}</span>
+                        <mat-select [(value)]="options.fontFamily" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
+                                {{font}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="section-inline-margin"></div>
+                    <div class="my-form-field field-number lbk section-toogle">
+                        <span>{{'chart.property-font.titlesize' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.titleHeight" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="36">
+                    </div>
+                    <div class="section-inline-margin"></div>
+                    <div class="my-form-field field-number lbk section-toogle">
+                        <span>{{'chart.property-font.axissize' | translate}}</span>
+                        <input numberOnly [(ngModel)]="options.axisLabelFontSize" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number" min="0" max="24">
+                    </div>
+                    <div class="section-newline"></div>
+                    <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                        <span>{{'chart.property-date.format' | translate}}</span>
+                        <mat-select [(value)]="options.dateFormat" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let ev of dateFormat | enumToArray" [value]="ev.key">
+                                {{ ev.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="section-inline-margin"></div>
+                    <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                        <span>{{'chart.property-time.format' | translate}}</span>
+                        <mat-select [(value)]="options.timeFormat" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let ev of timeFormat | enumToArray" [value]="ev.key">
+                                {{ ev.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="section-newline"></div>
+                    <div class="my-form-field section-item" style="display: inline-block; width: 120px">
+                        <span>{{'chart.property-legend.mode' | translate}}</span>
+                        <mat-select [(value)]="options.legendMode" (selectionChange)="onChartChanged()">
+                            <mat-option *ngFor="let ev of legendModes | enumToArray" [value]="ev.key">
+                                {{ ev.value }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="element-property-header">
+                        <span>{{'chart.property-yaxis' | translate}}</span>
+                    </div>
+                    <div class="block">
+                        <div class="my-form-field field-text">
+                            <span>{{'chart.property-axis-y1' | translate}}</span>
+                            <input [(ngModel)]="options.axisLabelY1" type="text" (change)="onChartChanged()">
+                        </div>
+                        <div class="my-form-field field-number ml5">
+                            <span>{{'chart.property-axis-y1-min' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY1min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                        <div class="my-form-field field-number ml12">
+                            <span>{{'chart.property-axis-y1-max' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY1max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                    </div>
+                    <div class="block">
+                        <div class="my-form-field field-text lbk">
+                            <span>{{'chart.property-axis-y2' | translate}}</span>
+                            <input [(ngModel)]="options.axisLabelY2" type="text" (change)="onChartChanged()">
+                        </div>
+                        <div class="my-form-field field-number ml5">
+                            <span>{{'chart.property-axis-y2-min' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY2min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                        <div class="my-form-field field-number ml12">
+                            <span>{{'chart.property-axis-y2-max' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY2max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                    </div>
+                    <div class="block">
+                        <div class="my-form-field field-text lbk">
+                            <span>{{'chart.property-axis-y3' | translate}}</span>
+                            <input [(ngModel)]="options.axisLabelY3" type="text" (change)="onChartChanged()">
+                        </div>
+                        <div class="my-form-field field-number ml5">
+                            <span>{{'chart.property-axis-y3-min' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY3min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                        <div class="my-form-field field-number ml12">
+                            <span>{{'chart.property-axis-y3-max' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY3max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                    </div>
+                    <div class="block">
+                        <div class="my-form-field field-text lbk">
+                            <span>{{'chart.property-axis-y4' | translate}}</span>
+                            <input [(ngModel)]="options.axisLabelY4" type="text" (change)="onChartChanged()">
+                        </div>
+                        <div class="my-form-field field-number ml5">
+                            <span>{{'chart.property-axis-y4-min' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY4min" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                        <div class="my-form-field field-number ml12">
+                            <span>{{'chart.property-axis-y4-max' | translate}}</span>
+                            <input [(ngModel)]="options.scaleY4max" (change)="onChartChanged()" (keyup.enter)="onChartChanged()" type="number">
+                        </div>
+                    </div>
                     <!-- <div class="my-form-field slider-field" style="padding-left: 12px">
                         <span>{{'chart.property-scala.auto' | translate}}</span>
                         <mat-slide-toggle color="primary" [(ngModel)]="autoScala.enabled" (change)="onChangeOptions('autoscala', $event.value)"></mat-slide-toggle>
@@ -192,39 +194,109 @@
                         <span>{{'chart.property-scala.max' | translate}}</span>
                         <input numberOnly [disabled]="autoScala.enabled" [(ngModel)]="autoScala.max" (change)="onChangeOptions('maxscala', $event.value)" style="width: 50px;text-align: center;display:inline-block;" type="text">
                     </div> -->
-            <div class="element-property-header">
-                <span>{{'chart.property-xaxis' | translate}}</span>
-            </div>
-            <div class="my-form-field section-inline-text">
-                <span>{{'chart.property-axis-x' | translate}}</span>
-                <input [(ngModel)]="options.axisLabelX" type="text" (change)="onChartChanged()" placeholder="{{'chart.labels-time' | translate}}">
-            </div>            
-            <div class="element-property-header">
-                <span>{{'chart.property-theme' | translate}}</span>
-            </div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'chart.property-color.text' | translate}}</span>
-                <input [(colorPicker)]="options.axisLabelColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.axisLabelColor"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                    [cpPosition]="'auto'" (colorPickerChange)="onChartChanged()" />
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'chart.property-color.background' | translate}}</span>
-                <input [(colorPicker)]="options.colorBackground" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.colorBackground"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                    [cpPosition]="'auto'" (colorPickerChange)="onChartChanged()" />
-            </div>
-            <div class="section-inline-margin2"></div>
-            <div class="my-form-field section-inline-color color-field">
-                <span>{{'chart.property-color.grid' | translate}}</span>
-                <input [(colorPicker)]="options.gridLineColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridLineColor"
-                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                    [cpPosition]="'auto'" (colorPickerChange)="onChartChanged()" />
-            </div>  
-        </div>
+                    <div class="element-property-header">
+                        <span>{{'chart.property-xaxis' | translate}}</span>
+                    </div>
+                    <div class="my-form-field section-inline-text">
+                        <span>{{'chart.property-axis-x' | translate}}</span>
+                        <input [(ngModel)]="options.axisLabelX" type="text" (change)="onChartChanged()" placeholder="{{'chart.labels-time' | translate}}">
+                    </div>
+                    <div class="element-property-header">
+                        <span>{{'chart.property-theme' | translate}}</span>
+                    </div>
+                    <div class="my-form-field section-inline-color color-field">
+                        <span>{{'chart.property-color.text' | translate}}</span>
+                        <input [(colorPicker)]="options.axisLabelColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.axisLabelColor"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" [cpPosition]="'auto'"
+                            (colorPickerChange)="onChartChanged()" />
+                    </div>
+                    <div class="section-inline-margin2"></div>
+                    <div class="my-form-field section-inline-color color-field">
+                        <span>{{'chart.property-color.background' | translate}}</span>
+                        <input [(colorPicker)]="options.colorBackground" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.colorBackground"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" [cpPosition]="'auto'"
+                            (colorPickerChange)="onChartChanged()" />
+                    </div>
+                    <div class="section-inline-margin2"></div>
+                    <div class="my-form-field section-inline-color color-field">
+                        <span>{{'chart.property-color.grid' | translate}}</span>
+                        <input [(colorPicker)]="options.gridLineColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.gridLineColor"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" [cpPosition]="'auto'"
+                            (colorPickerChange)="onChartChanged()" />
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'editor.settings-events' | translate}}">
+                <div class="section-newline">&nbsp;</div>
+                <div class="events-toolbox">
+                    <button mat-icon-button (click)="onAddEvent()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+                <div class="events-section">
+                    <div *ngFor="let item of property?.events; index as i" class="event-item">
+                        <div class="block">
+                            <div class="my-form-field inbk mr10 event-type">
+                                <span>{{'gauges.property-event-type' | translate}}</span>
+                                <mat-select [(value)]="item.type" (selectionChange)="onChartChanged()">
+                                    <mat-option *ngFor="let evType of eventType" [value]="evType">
+                                        {{ 'shapes.event-' + evType | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field inbk ml10 event-action">
+                                <span>{{'gauges.property-event-action' | translate}}</span>
+                                <mat-select [(value)]="item.action" (change)="item.actparam = '';" (selectionChange)="item.actparam = ''; onChartChanged()">
+                                    <mat-option *ngFor="let type of selectActionType | enumToArray" [value]="type.key">
+                                        {{ type.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="item-remove inbk event-remove">
+                                <button mat-icon-button (click)="onRemoveEvent(i)" class="remove">
+                                    <mat-icon>clear</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div [ngSwitch]="item.action" class="mt5 event-action-ext">
+                            <div *ngSwitchCase="actionRunScript" class="block event-script">
+                                <div class="my-form-field inbk script-selection">
+                                    <span>{{'gauges.property-event-script' | translate}}</span>
+                                    <mat-select [(value)]="item.actparam" (selectionChange)="onScriptChanged($event.value, item)">
+                                        <mat-option *ngFor="let script of scripts$ | async; index as i" [value]="script.id">{{script.name}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div *ngFor="let scriptParam of item.actoptions['params']; index as i" class="block mt5">
+                                    <div class="my-form-field inbk event-script-param">
+                                        <span>{{'gauges.property-event-script-param-name' | translate}}</span>
+                                        <input [(ngModel)]="scriptParam.name"
+                                                (change)="onChartChanged()" 
+                                                type="text"
+                                                readonly
+                                                matTooltip="{{scriptParam.name}}"
+                                                [disabled]="true">
+                                    </div>
+                                    <div class="my-form-field inbk event-script-value" *ngIf="scriptParam.type === 'value'">
+                                        <span>{{'gauges.property-event-script-param-value' | translate}}</span>
+                                        <input [(ngModel)]="scriptParam.value"
+                                                (change)="onChartChanged()" 
+                                                type="text">
+                                    </div>
+                                    <div class="my-form-field inbk event-script-tag" *ngIf="scriptParam.type === 'tagid'">
+                                        <app-flex-device-tag class="block mt5 item-device-tag"
+                                                            (change)="onChartChanged()"
+                                                            [variableId]="scriptParam.value">
+                                        </app-flex-device-tag>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>            
+        </mat-tab-group>
     </div>
 </div>
