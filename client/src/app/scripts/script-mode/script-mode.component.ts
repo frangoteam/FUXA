@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ScriptMode } from '../../_models/script';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 
@@ -28,9 +28,12 @@ export class ScriptModeComponent implements OnInit {
         this.existingNames = this.projectService.getScripts()?.map(script => script.name);
 
         this.formGroup = this.fb.group({
-            name: [this.data.name, [Validators.required, this.isValidScriptName()]],
+            name: [this.data.name],
             mode: [this.data.mode, Validators.required],
         });
+		if (this.data.newScript) {
+			this.formGroup.controls.name.setValidators([Validators.required, this.isValidScriptName()]);
+		}
     }
 
 	onNoClick(): void {
@@ -38,10 +41,10 @@ export class ScriptModeComponent implements OnInit {
 	}
 
 	onOkClick(): void {
-		this.dialogRef.close(this.data);
+		this.dialogRef.close(this.formGroup.getRawValue());
 	}
 
-	isValidScriptName(): ValidationErrors {
+	isValidScriptName(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             if (this.existingNames.indexOf(control.value) !== -1) {
                 return { name: this.translateService.instant('msg.script-name-exist') };
@@ -54,4 +57,5 @@ export class ScriptModeComponent implements OnInit {
 export interface ScriptModeType {
 	name: string;
 	mode: ScriptMode;
+	newScript?: boolean;
 }

@@ -1,25 +1,32 @@
 <form [formGroup]="formGroup">
-    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'script.mode-title' | translate}}</h1>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>
+        <ng-container *ngIf="data.newScript; else mode">
+            {{'script.create-title' | translate}}
+        </ng-container>
+        <ng-template #mode>
+            {{'script.mode-title' | translate}}
+        </ng-template>
+    </h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="my-form-field block mt10">
-            <span>{{'script.property-name' | translate}}</span>
+        <div *ngIf="data.newScript" class="my-form-field block mt10">
+            <span>{{'dlg.item-req-name' | translate}}</span>
             <input formControlName="name" style="width: 300px" type="text">
             <span *ngIf="formGroup.controls.name.errors?.name" class="form-input-error">
-                {{formGroup.controls.tagName.errors?.name}}
+                {{formGroup.controls.name.errors?.name}}
             </span>
         </div>
         <div class="my-form-field block mt10">
             <span>{{'script.mode-label' | translate}}</span>
             <mat-select formControlName="mode" style="width: 300px;">
                 <mat-option *ngFor="let mode of scriptMode | enumToArray" [value]="mode.key">
-                    {{ mode.value }}
+                    {{ 'script.mode-' + mode.value | translate }}
                 </mat-option>
             </mat-select>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action mt10">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="formGroup.invalid">{{'dlg.ok' | translate}}</button>
     </div>
 </form>
