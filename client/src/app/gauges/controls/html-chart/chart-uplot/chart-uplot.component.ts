@@ -486,7 +486,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             let scriptToRun = Utils.clone(script);
             let chart = this.hmiService.getChart(this.property.id);
             this.reloadActive = true;
-            // debugger
             scriptToRun.parameters = [<ScriptParam>{ type: ScriptParamType.chart, value: chart?.lines }];
             this.scriptService.runScript(scriptToRun).subscribe(customData => {
                 this.setCustomValues(customData);

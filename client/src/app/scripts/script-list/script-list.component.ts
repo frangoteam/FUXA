@@ -66,7 +66,6 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                debugger;
                 let script = new Script(Utils.getGUID(SCRIPT_PREFIX));
                 script.name = result.name;
                 script.mode = result.mode;
