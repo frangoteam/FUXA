@@ -287,7 +287,7 @@
                                     </div>
                                     <div class="my-form-field inbk event-script-tag" *ngIf="scriptParam.type === 'tagid'">
                                         <app-flex-device-tag class="block mt5 item-device-tag"
-                                                            (change)="onChartChanged()"
+                                                            (onchange)="onChartChanged()"
                                                             [variableId]="scriptParam.value">
                                         </app-flex-device-tag>
                                     </div>

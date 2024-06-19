@@ -190,7 +190,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (view.profile.bkcolor && (this.child || legacyProfile)) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
-            if (view.profile.align) {
+            if (view.profile.align && !this.child) {
                 FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
             }
         }

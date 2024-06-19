@@ -193,7 +193,7 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
-    showDelay: 1000,
+    showDelay: 1750,
     hideDelay: 1000,
     touchendHideDelay: 1000,
 };
