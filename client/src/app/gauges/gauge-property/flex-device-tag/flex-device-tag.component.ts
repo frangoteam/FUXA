@@ -22,8 +22,9 @@ export class FlexDeviceTagComponent implements OnInit {
     @Input() tagTitle = '';
     @Input() readonly = false;
     @Input() variableId: string;
+    @Input() deviceTagValue: FlexDeviceTagValueType;
 
-    @Output() change: EventEmitter<string> = new EventEmitter();
+    @Output() onchange: EventEmitter<FlexDeviceTagValueType> = new EventEmitter();
 
     devicesGroups: DeviceGroup[] = [];
     devicesTags$: Observable<DeviceGroup[]>;
@@ -35,6 +36,13 @@ export class FlexDeviceTagComponent implements OnInit {
     }
 
     ngOnInit() {
+        if (!this.deviceTagValue) {
+            this.deviceTagValue = {
+                variableId: this.variableId
+            };
+        } else {
+            this.variableId = this.deviceTagValue.variableId;
+        }
         this.loadDevicesTags();
     }
 
@@ -74,6 +82,11 @@ export class FlexDeviceTagComponent implements OnInit {
         return deviceTag?.name;
     }
 
+    onDeviceTagSelected(deviceTag: DeviceTagOption) {
+        this.variableId = deviceTag.id;
+        this.onChanged();
+    }
+
     getDeviceName() {
         const device = DevicesUtils.getDeviceFromTagId(this.devices, this.variableId);
         if (device) {
@@ -82,9 +95,24 @@ export class FlexDeviceTagComponent implements OnInit {
         return '';
     }
 
-    onDeviceTagSelected(deviceTag: DeviceTagOption) {
-        this.variableId = deviceTag.id;
-        this.onChanged();
+    onChanged() {
+        if (this.tagFilter.value?.startsWith && this.tagFilter.value.startsWith(PlaceholderDevice.id)) {
+            this.deviceTagValue.variableId = this.tagFilter.value;
+            this.deviceTagValue.variableRaw = null;
+        } else if (this.tagFilter.value?.id?.startsWith && this.tagFilter.value.id.startsWith(PlaceholderDevice.id)) {
+            this.deviceTagValue.variableId = this.tagFilter.value.id;
+            this.deviceTagValue.variableRaw = null;
+        } else {
+            let tag = DevicesUtils.getTagFromTagId(this.devices, this.variableId);
+            if (tag) {
+                this.deviceTagValue.variableId = tag.id;
+                this.deviceTagValue.variableRaw = tag;
+            } else {
+                this.deviceTagValue.variableId = null;
+                this.deviceTagValue.variableRaw = null;
+            }
+        }
+        this.onchange.emit(this.deviceTagValue);   // Legacy
     }
 
     onBindTag() {
@@ -106,10 +134,6 @@ export class FlexDeviceTagComponent implements OnInit {
                 this.onChanged();
             }
         });
-    }
-
-    onChanged() {
-        this.change.emit(this.variableId);   // Legacy
     }
 
     private loadDevicesTags() {
@@ -147,6 +171,10 @@ export class FlexDeviceTagComponent implements OnInit {
     }
 }
 
+export interface FlexDeviceTagValueType {
+    variableId: string;
+    variableRaw?: string | Tag;
+}
 
 interface DeviceGroup {
     name: string;
