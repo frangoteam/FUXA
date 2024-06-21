@@ -6,7 +6,8 @@ const axios = require('axios');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
-function HTTPclient(_data, _logger, _events) {
+function HTTPclient(_data, _logger, _events, _runtime) {
+    var runtime = _runtime;
     var data = _data;                   // Current webapi data
     var logger = _logger;               // Logger var working = false;                // Working flag to manage overloading polling and connection
     var working = false;                // Working flag to manage overloading polling and connection
@@ -77,7 +78,7 @@ function HTTPclient(_data, _logger, _events) {
      * Read values in polling mode 
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
-    this.polling = function () {
+    this.polling = async function () {
         if (_checkWorking(true)) {
             // check connection status
             let dt = new Date().getTime();
@@ -86,9 +87,11 @@ function HTTPclient(_data, _logger, _events) {
                 _checkWorking(false);
             }
             try {
-                _readRequest().then(result => {
+                try {
+                const result = await _readRequest();
+                 
                     if (result) {
-                        let varsValueChanged = _updateVarsValue(result);
+                        let varsValueChanged = await _updateVarsValue(result);
                         lastTimestampValue = new Date().getTime();
                         _emitValues(varsValue);
                         if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
@@ -99,10 +102,10 @@ function HTTPclient(_data, _logger, _events) {
                         }
                     }
                     _checkWorking(false);
-                }, reason => {
+                } catch (reason){
                     logger.error(`'${data.name}' _readRequest error! ${reason}`);
                     _checkWorking(false);
-                });
+                };
             } catch {
                 _checkWorking(false);
             }
@@ -178,11 +181,11 @@ function HTTPclient(_data, _logger, _events) {
     /**
      * Set the Tag value, not used
      */
-    this.setValue = function (tagId, value) {
+    this.setValue = async function (tagId, value) {
         if (apiProperty.ownFlag && data.tags[tagId]) {
             if (apiProperty.postTags) {
                 value = _parseValue(data.tags[tagId].type, value);
-                data.tags[tagId].value = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
+                data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
                 axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
                     lastTimestampRequest = new Date().getTime();
                     logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
@@ -290,7 +293,7 @@ function HTTPclient(_data, _logger, _events) {
      * For WebAPI NotOwn: first convert the request data to a flat struct
      * @param {*} reqdata 
      */
-    var _updateVarsValue = (reqdata) => {
+    var _updateVarsValue = async (reqdata) => {
         const timestamp = new Date().getTime();
         var changed = {};
         if (apiProperty.ownFlag) {
@@ -306,7 +309,7 @@ function HTTPclient(_data, _logger, _events) {
                     requestItemsMap[id] = [reqdata[i]];
                     reqdata[i].changed = varsValue[id] && reqdata[i].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(reqdata[i].value)) {
-                        reqdata[i].value = deviceUtils.tagValueCompose(reqdata[i].value, data.tags[id]);
+                        reqdata[i].value = await deviceUtils.tagValueCompose(reqdata[i].value, data.tags[id]);
                         reqdata[i].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
                             changed[id] = reqdata[i];
@@ -343,7 +346,7 @@ function HTTPclient(_data, _logger, _events) {
                 for (var id in result) {
                     result[id].changed = varsValue[id] && result[id].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(result[id].value)) {
-                        result[id].value = deviceUtils.tagValueCompose(result[id].value, result[id].tagref);
+                        result[id].value = await deviceUtils.tagValueCompose(result[id].value, result[id].tagref, runtime);
                         result[id].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(result[id], timestamp)) {
                             changed[id] = result[id];
@@ -488,8 +491,8 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
-        return new HTTPclient(data, logger, events);
+    create: function (data, logger, events, runtime) {
+        return new HTTPclient(data, logger, events, runtime);
     },
     getRequestResult: getRequestResult
 }

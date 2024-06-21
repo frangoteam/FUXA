@@ -8,7 +8,8 @@ const deviceUtils = require('../device-utils');
 const path = require('path');
 const fs = require('fs');
 
-function MQTTclient(_data, _logger, _events) {
+function MQTTclient(_data, _logger, _events, _runtime) {
+    var runtime = _runtime;
     var data = _data;                   // Current data
     var logger = _logger;               // Logger var working = false;
     var working = false;                // Working flag to manage overloading polling and connection
@@ -146,11 +147,11 @@ function MQTTclient(_data, _logger, _events) {
      * Take the current Topics value (only changed), emit Topics value
      * Save DAQ value
      */
-    this.polling = function () {
+    this.polling = async function () {
         if (_checkWorking(true)) {
             if (client) {
                 try {
-                    var varsValueChanged = _checkVarsChanged();
+                    var varsValueChanged = await _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
@@ -298,23 +299,23 @@ function MQTTclient(_data, _logger, _events) {
     /**
      * Set the Topic value, publish to broker (coming from frontend)
      */
-    this.setValue = function (tagId, value) {
+    this.setValue = async function (tagId, value) {
         if (client && client.connected) {
             var tag = data.tags[tagId];
             if (tag) {
                 if (tag.options) {
                     if (tag.options.pubs) {
-                        tag.options.pubs.forEach(item => {
+                        for (const item of tag.options.pubs) {
                             if (item.type === 'value') {
-                                item.value = deviceUtils.tagRawCalculator(value, tag);
+                                item.value = await deviceUtils.tagRawCalculator(value, tag, runtime);
                             }
-                        })
+                        }
                     } else if (tag.options.subs && tag.options.subs.indexOf(tag.memaddress) !== -1) {
-                        tag.value = deviceUtils.tagRawCalculator(value, tag);
+                        tag.value = await deviceUtils.tagRawCalculator(value, tag, runtime);
                     }
                 }
                 if (tag.type === 'raw') {
-                    tag['value'] = deviceUtils.tagRawCalculator(value, tag);
+                    tag['value'] = await deviceUtils.tagRawCalculator(value, tag, runtime);
                 }
                 tag.changed = true;
                 _publishValues([tag]);
@@ -460,12 +461,12 @@ function MQTTclient(_data, _logger, _events) {
     /**
      * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
      */
-     var _checkVarsChanged = () => {
+     var _checkVarsChanged = async () => {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
             if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
-                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
+                data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
                 if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                     result[id] = data.tags[id];
                 }
@@ -612,7 +613,7 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events) {
-        return new MQTTclient(data, logger, events);
+    create: function (data, logger, events, runtime) {
+        return new MQTTclient(data, logger, events, runtime);
     }
 }

@@ -1,0 +1,23 @@
+:host {
+    .container {
+        width: 350px;
+
+        .item-block {
+            display: block;
+
+            mat-select,
+            input,
+            span {
+                width: calc(100% - 5px);
+            }
+        }
+
+        .item-param {
+            display: block;
+
+            input {
+                width: 150px;
+            }
+        }
+    }
+}

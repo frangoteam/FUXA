@@ -9,7 +9,7 @@ import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
 
-import { ITagOption, TagOptionsComponent } from './../tag-options/tag-options.component';
+import { TagOptionType, TagOptionsComponent } from './../tag-options/tag-options.component';
 import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
@@ -307,7 +307,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             data: { device: this.deviceSelected, tags: tags },
             position: { top: '60px' }
         });
-        dialogRef.afterClosed().subscribe((tagOption: ITagOption) => {
+        dialogRef.afterClosed().subscribe((tagOption: TagOptionType) => {
             if (tagOption) {
                 for (let i = 0; i < tags.length; i++) {
                     tags[i].daq = tagOption.daq;
