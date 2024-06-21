@@ -21,6 +21,7 @@ WORKDIR /usr/src/app/FUXA/odbc
 RUN ls && ./install_odbc_drivers.sh
 
 # Clone node-odbc repository
+WORKDIR /usr/src/app
 RUN git clone https://github.com/markdirish/node-odbc.git
 
 # Change working directory to node-odbc
