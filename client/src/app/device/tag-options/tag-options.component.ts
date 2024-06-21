@@ -13,7 +13,7 @@ class ScriptAndParam extends ScriptParam {
 @Component({
     selector: 'app-tag-options',
     templateUrl: './tag-options.component.html',
-    styleUrls: ['./tag-options.component.css'],
+    styleUrls: ['./tag-options.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TagOptionsComponent implements OnInit, OnDestroy {
@@ -123,21 +123,21 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     scaleMode.valid = false;
                 }
                 if (!scaleReadFunction.value) {
-                    scaleReadFunction.value = this.data.tags[i].scaleReadFunction;
+                    scaleReadFunction.value = this.data.tags[i].scale?.scaleReadFunction;
                 }
 
-                let script = this.scripts.find(s => s.id === this.data.tags[i].scaleReadFunction);
-                if (this.data.tags[i].scaleReadParams) {
-                    const tagParams = JSON.parse(this.data.tags[i].scaleReadParams) as ScriptParam[];
+                let script = this.scripts.find(s => s.id === this.data.tags[i].scale?.scaleReadFunction);
+                if (this.data.tags[i].scale?.scaleReadParams) {
+                    const tagParams = JSON.parse(this.data.tags[i].scale?.scaleReadParams) as ScriptParam[];
                     const notValid = this.initializeScriptParams(script, tagParams, this.configedReadParams);
                 }
                 if (!scaleWriteFunction.value) {
-                    scaleWriteFunction.value = this.data.tags[i].scaleWriteFunction;
+                    scaleWriteFunction.value = this.data.tags[i].scale?.scaleWriteFunction;
                 }
 
-                script = this.scripts.find(s => s.id === this.data.tags[i].scaleWriteFunction);
-                if (this.data.tags[i].scaleWriteParams) {
-                    const tagParams = JSON.parse(this.data.tags[i].scaleWriteParams) as ScriptParam[];
+                script = this.scripts.find(s => s.id === this.data.tags[i].scale?.scaleWriteFunction);
+                if (this.data.tags[i].scale?.scaleWriteParams) {
+                    const tagParams = JSON.parse(this.data.tags[i].scale?.scaleWriteParams) as ScriptParam[];
                     const notValid = this.initializeScriptParams(script, tagParams, this.configedWriteParams);
                 }
             }
@@ -234,7 +234,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
         } else {
             writeParamsStr = undefined;
         }
-        this.dialogRef.close({
+        this.dialogRef.close(<TagOptionType>{
             daq: new TagDaq(
                 this.formGroup.value.enabled,
                 this.formGroup.value.changed,
@@ -248,12 +248,12 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 rawHigh: this.formGroup.value.rawHigh,
                 scaledLow: this.formGroup.value.scaledLow,
                 scaledHigh: this.formGroup.value.scaledHigh,
-                dateTimeFormat: this.formGroup.value.dateTimeFormat
+                dateTimeFormat: this.formGroup.value.dateTimeFormat,
+                scaleReadFunction: this.formGroup.value.scaleReadFunction,
+                scaleReadParams: readParamsStr,
+                scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
+                scaleWriteParams: writeParamsStr,
             } : null,
-            scaleReadFunction: this.formGroup.value.scaleReadFunction,
-            scaleReadParams: readParamsStr,
-            scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
-            scaleWriteParams: writeParamsStr,
         });
     }
 
@@ -355,12 +355,8 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
     }
 }
 
-export interface ITagOption {
+export interface TagOptionType {
     daq: TagDaq;
     format: number;
     scale: TagScale;
-    scaleReadFunction: string;
-    scaleReadParams: string;
-    scaleWriteFunction: string;
-    scaleWriteParams: string;
 }

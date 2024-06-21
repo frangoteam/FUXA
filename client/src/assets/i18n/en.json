@@ -908,6 +908,7 @@
     "device.tag-scale-mode-undefined-tooltip": "Tag Value",
     "device.tag-scale-mode-linear": "Linear: ΔS * (Value - RL) / ΔR + SL",
     "device.tag-scale-mode-linear-tooltip": "ΔS = (Scaled High - Scaled Low)\nΔR = (Raw High - Raw Low)\nRL = Raw Low\nSL = Scaled Low",
+    "device.tag-scale-mode-script": "Script (Read/Write)",
     "device.tag-raw-low": "Raw Low",
     "device.tag-raw-high": "Raw High",
     "device.tag-scaled-low": "Scaled Low",
