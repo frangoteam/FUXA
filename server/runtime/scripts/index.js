@@ -221,6 +221,7 @@ function ScriptsManager(_runtime) {
         sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
         sysFncs['$enableDevice'] = runtime.devices.enableDevice;
+        sysFncs['$getDevice'] = runtime.devices.getDevice;
         sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
         sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         sysFncs['$getDeviceProperty'] = runtime.devices.getDeviceProperty;

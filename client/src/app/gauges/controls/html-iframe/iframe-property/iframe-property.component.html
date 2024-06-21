@@ -16,7 +16,7 @@
                 <input [(ngModel)]="property.address" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
             </div>
             <app-flex-device-tag class="block mt5 item-device-tag"
-                                 (change)="onTagChanged($event)"
+                                 (onchange)="onTagChanged($event)"
                                  [variableId]="property.variableId">
             </app-flex-device-tag>
             <div class="section-newline"></div>

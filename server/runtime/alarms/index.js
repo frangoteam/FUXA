@@ -627,10 +627,13 @@ function Alarm(name, type, subprop, tagprop) {
         if (this.subproperty.ackmode === AlarmAckModeEnum.float) {
             return -1;
         }
-        if (this.subproperty.ackmode === AlarmAckModeEnum.ackpassive && this.status === AlarmStatusEnum.ON) {
-            return 0;
+        if (this.subproperty.ackmode === AlarmAckModeEnum.ackpassive && this.status === AlarmStatusEnum.OFF) {
+            return 1;
         }
-        return 1;
+        if (this.subproperty.ackmode === AlarmAckModeEnum.ackactive && (this.status === AlarmStatusEnum.OFF || this.status === AlarmStatusEnum.ON)) {
+            return 1;
+        }
+        return 0;
     }
 }
 

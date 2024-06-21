@@ -25,8 +25,8 @@ export class View {
 }
 
 export enum ViewType {
-    svg = 'editor.view-svg',
-    cards ='editor.view-cards'
+    svg = 'svg',
+    cards ='cards'
 }
 
 export class LayoutSettings {
@@ -167,6 +167,12 @@ export class DocProfile {
     height = 768;
     bkcolor = '#ffffffff';
     margin = 10;
+    align = DocAlignType.topCenter;
+}
+
+export enum DocAlignType {
+    topCenter = 'topCenter',
+    middleCenter ='middleCenter'
 }
 
 export class GaugeSettings {
@@ -305,6 +311,7 @@ export enum GaugeEventType {
     mouseup = 'shapes.event-mouseup',
     enter = 'shapes.event-enter',
     select = 'shapes.event-select',
+    onLoad = 'shapes.event-onLoad',
 }
 
 export enum GaugeEventActionType {
@@ -342,6 +349,7 @@ export interface GaugeChartProperty {
     id: string;
     type: string;
     options: any;
+    events: GaugeEvent[];
 }
 
 export interface GaugeGraphProperty {
@@ -547,7 +555,7 @@ export class Size {
     }
 }
 
-interface DictionaryGaugeSettings {
+export interface DictionaryGaugeSettings {
     [x: string]: GaugeSettings;
 }
 

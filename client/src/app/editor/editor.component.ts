@@ -38,6 +38,7 @@ import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
 import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
 import { UploadFile } from '../_models/project';
+import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
 
 declare var Gauge: any;
 
@@ -946,7 +947,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let exist = this.hmi.views.map((v) => v.name);
         let dialogRef = this.dialog.open(DialogNewDoc, {
             position: { top: '60px' },
-            data: { name: '', type: Utils.getEnumKey(ViewType, ViewType.svg), exist: exist }
+            data: { name: '', type: ViewType.svg, exist: exist }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -1092,13 +1093,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view View to change property (height, width, background)
      */
     onPropertyView(view) {
-        let dialogRef = this.dialog.open(DialogDocProperty, {
+        let dialogRef = this.dialog.open(ViewPropertyComponent, {
             position: { top: '60px' },
-            data: { name: view.name, type: view.type, profile: view.profile }
+            disableClose: true,
+            data: <ViewPropertyType> { name: view.name, type: view.type || ViewType.svg, profile: view.profile }
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if (result && result.profile) {
+            if (result?.profile) {
                 if (result.profile.height) {view.profile.height = parseInt(result.profile.height);}
                 if (result.profile.width) {view.profile.width = parseInt(result.profile.width);}
                 if (result.profile.margin >= 0) {view.profile.margin = parseInt(result.profile.margin);}
@@ -1543,11 +1545,7 @@ interface CopiedAndPasted {
 export class DialogNewDoc {
     docType = ViewType;
     constructor(public dialogRef: MatDialogRef<DialogNewDoc>,
-        private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
-        Object.keys(this.docType).forEach(key => {
-            this.translateService.get(this.docType[key]).subscribe((txt: string) => {this.docType[key] = txt;});
-        });
     }
 
     onNoClick(): void {
@@ -1558,39 +1556,6 @@ export class DialogNewDoc {
         if (!this.data.type) {return false;}
         if (!this.data.name) {return false;}
         return (this.data.exist.find((n) => n === name)) ? false : true;
-    }
-}
-
-@Component({
-    selector: 'dialog-doc-property',
-    templateUrl: 'docproperty.dialog.html',
-    styleUrls: ['docproperty.dialog.css']
-})
-export class DialogDocProperty {
-    defaultColor = Utils.defaultColor;
-    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
-
-    propSizeType = [{ text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 } }, { text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 } },
-    { text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 } }, { text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 } },
-    { text: 'dlg.docproperty-size-1024-768', value: { width: 1024, height: 768 } }, { text: 'dlg.docproperty-size-1280-960', value: { width: 1280, height: 960 } },
-    { text: 'dlg.docproperty-size-1600-1200', value: { width: 1600, height: 1200 } }, { text: 'dlg.docproperty-size-1920-1080', value: { width: 1920, height: 1080 } }];
-    constructor(private translateService: TranslateService,
-        public dialogRef: MatDialogRef<DialogDocProperty>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        for (let i = 0; i < this.propSizeType.length; i++) {
-            this.translateService.get(this.propSizeType[i].text).subscribe((txt: string) => { this.propSizeType[i].text = txt; });
-        }
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onSizeChange(size) {
-        if (size && size.width && size.height) {
-            this.data.profile.width = size.width;
-            this.data.profile.height = size.height;
-        }
     }
 }
 

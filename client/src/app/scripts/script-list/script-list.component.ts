@@ -8,10 +8,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 import { ScriptEditorComponent } from '../script-editor/script-editor.component';
 import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/script-scheduling.component';
-import { Script, SCRIPT_PREFIX, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
+import { Script, SCRIPT_PREFIX, ScriptMode, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
 import { Utils } from '../../_helpers/utils';
 import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
-import { ScriptModeComponent } from '../script-mode/script-mode.component';
+import { ScriptModeComponent, ScriptModeType } from '../script-mode/script-mode.component';
 
 @Component({
     selector: 'app-script-list',
@@ -54,9 +54,24 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onAddScript() {
-        let script = new Script(Utils.getGUID(SCRIPT_PREFIX));
-        script.name = Utils.getNextName('script_', this.dataSource.data.map(s => s.name));
-		this.editScript(script, 1);
+        let dialogRef = this.dialog.open(ScriptModeComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <ScriptModeType> {
+                mode: ScriptMode.SERVER,
+                name: Utils.getNextName('script_', this.dataSource.data.map(s => s.name)),
+                newScript: true
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                let script = new Script(Utils.getGUID(SCRIPT_PREFIX));
+                script.name = result.name;
+                script.mode = result.mode;
+                this.editScript(script, 1);
+            }
+        });
     }
 
     onEditScript(script: Script) {
