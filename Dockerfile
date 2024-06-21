@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev
 RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odbc_drivers.sh
 
 # Execute the script
+WORKDIR /usr/src/app/FUXA/odbc
 RUN FUXA/odbc/install_odbc_drivers.sh
 
 # Clone node-odbc repository
@@ -39,6 +40,7 @@ RUN npm ci --production && \
 
 # Build and install node-odbc
 #RUN npm install
+
 
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
