@@ -87,28 +87,23 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                 _checkWorking(false);
             }
             try {
-                try {
                 const result = await _readRequest();
-                 
-                    if (result) {
-                        let varsValueChanged = await _updateVarsValue(result);
-                        lastTimestampValue = new Date().getTime();
-                        _emitValues(varsValue);
-                        if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                            this.addDaq(varsValueChanged, data.name, data.id);
-                        }
-                        if (lastStatus !== 'connect-ok') {
-                            _emitStatus('connect-ok');                    
-                        }
+                if (result) {
+                    let varsValueChanged = await _updateVarsValue(result);
+                    lastTimestampValue = new Date().getTime();
+                    _emitValues(varsValue);
+                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
-                    _checkWorking(false);
-                } catch (reason){
-                    logger.error(`'${data.name}' _readRequest error! ${reason}`);
-                    _checkWorking(false);
-                };
-            } catch {
+                    if (lastStatus !== 'connect-ok') {
+                        _emitStatus('connect-ok');                    
+                    }
+                }
                 _checkWorking(false);
-            }
+            } catch (reason){
+                logger.error(`'${data.name}' _readRequest error! ${reason}`);
+                _checkWorking(false);
+            };
         } else {
             _emitStatus('connect-busy');
         }

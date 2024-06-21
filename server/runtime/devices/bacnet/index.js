@@ -147,7 +147,8 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 resolve(value);
             });
         });
-}
+    }
+
     /**
      * Take the current Objects (Tags) value (only changed), Reset the change flag, Emit Tags value
      * Save DAQ value
