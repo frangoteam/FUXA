@@ -124,26 +124,27 @@ elif [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ]; then
     wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.3/mysql-connector-odbc-8.3.0-linux-glibc2.28-x86-64bit.tar.gz" -O mysql-connector-odbc.tar.gz
 else
     echo "MySQL ODBC Driver Unsupported architecture: $architecture"
-    exit 1
 fi
 
-# Extracting MySQL ODBC Driver
-echo "Extracting MySQL ODBC Driver..."
-tar -xzf mysql-connector-odbc.tar.gz
+if [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ] || [ "$architecture" == "arm64" ]; then
+    # Extracting MySQL ODBC Driver
+    echo "Extracting MySQL ODBC Driver..."
+    tar -xzf mysql-connector-odbc.tar.gz
 
-# Install the extracted driver
-cd mysql-connector-odbc-*
-cp -r bin/* /usr/local/bin
-cp -r lib/* /usr/local/lib
+    # Install the extracted driver
+    cd mysql-connector-odbc-*
+    cp -r bin/* /usr/local/bin
+    cp -r lib/* /usr/local/lib
 
-# Register the driver
-echo "Registering MySQL ODBC Driver..."
-myodbc-installer -a -d -n "MySQL ODBC 8.3 Unicode Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so"
-myodbc-installer -a -d -n "MySQL ODBC 8.3 ANSI Driver" -t "Driver=/usr/local/lib/libmyodbc8a.so"
+    # Register the driver
+    echo "Registering MySQL ODBC Driver..."
+    myodbc-installer -a -d -n "MySQL ODBC 8.3 Unicode Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so"
+    myodbc-installer -a -d -n "MySQL ODBC 8.3 ANSI Driver" -t "Driver=/usr/local/lib/libmyodbc8a.so"
 
-# Copy libmyodbc8*.so to odbc drivers
-cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
-cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
+    # Copy libmyodbc8*.so to odbc drivers
+    cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
+    cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
+fi
 
 # Verify that the driver is installed and registered
 echo "Verifying driver installation..."
