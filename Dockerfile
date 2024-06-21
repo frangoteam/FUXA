@@ -19,7 +19,7 @@ RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odb
 
 # Execute the script
 WORKDIR /usr/src/app/FUXA/odbc
-RUN FUXA/odbc/install_odbc_drivers.sh
+RUN install_odbc_drivers.sh
 
 # Clone node-odbc repository
 RUN git clone https://github.com/markdirish/node-odbc.git
