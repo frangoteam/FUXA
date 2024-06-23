@@ -118,10 +118,10 @@ fi
 echo "Downloading MySQL ODBC Driver..."
 if [ "$architecture" == "arm64" ]; then
     # Download MySQL ODBC Driver for ARM
-    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.3/mysql-connector-odbc-8.3.0-linux-glibc2.28-aarch64.tar.gz" -O mysql-connector-odbc.tar.gz
+    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.4/mysql-connector-odbc-8.4.0-linux-glibc2.28-aarch64.tar.gz" -O mysql-connector-odbc.tar.gz
 elif [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ]; then
     # Download MySQL ODBC Driver for x64
-    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.3/mysql-connector-odbc-8.3.0-linux-glibc2.28-x86-64bit.tar.gz" -O mysql-connector-odbc.tar.gz
+    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.4/mysql-connector-odbc-8.4.0-linux-glibc2.28-x86-64bit.tar.gz" -O mysql-connector-odbc.tar.gz
 else
     echo "MySQL ODBC Driver Unsupported architecture: $architecture"
 fi
@@ -136,19 +136,19 @@ if [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ] || [ "$architect
     cp -r bin/* /usr/local/bin
     cp -r lib/* /usr/local/lib
 
-    # Register the driver
-    echo "Registering MySQL ODBC Driver..."
-    myodbc-installer -a -d -n "MySQL ODBC 8.3 Unicode Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so"
-    myodbc-installer -a -d -n "MySQL ODBC 8.3 ANSI Driver" -t "Driver=/usr/local/lib/libmyodbc8a.so"
-
     # Copy libmyodbc8*.so to odbc drivers
     cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
     cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
+
+    # Register the driver
+    echo "Registering MySQL ODBC Driver..."
+    myodbc-installer -a -d -n "MySQL ODBC Unicode Driver" -t "Driver=/usr/lib/odbc/libmyodbc8w.so"
+    myodbc-installer -a -d -n "MySQL ODBC ANSI Driver" -t "Driver=/usr/lib/odbc/libmyodbc8a.so"  
 fi
 
 # Verify that the driver is installed and registered
 echo "Verifying driver installation..."
-/usr/local/bin/myodbc-installer -d -l
+/usr/lib/odbc/myodbc-installer -d -l
 
 # Clean up extracted files
 rm -rf mysql-connector-odbc-*
