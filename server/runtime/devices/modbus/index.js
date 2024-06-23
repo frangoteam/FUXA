@@ -9,7 +9,7 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const TOKEN_LIMIT = 100;
 
-function MODBUSclient(_data, _logger, _events) {
+function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;  
@@ -23,6 +23,7 @@ function MODBUSclient(_data, _logger, _events) {
     var overloading = 0;                // Overloading counter to mange the break connection
     var lastTimestampValue;             // Last Timestamp of asked values
     var type;
+    var runtime = _runtime;             // Access runtime config such as scripts
 
     /**
      * initialize the modubus type 
@@ -135,10 +136,12 @@ function MODBUSclient(_data, _logger, _events) {
                 }
             }
             // _checkWorking(false);
-            Promise.all(readVarsfnc).then(result => {
+            try{
+                const result = await Promise.all(readVarsfnc);
+             
                 _checkWorking(false);
                 if (result.length) {
-                    let varsValueChanged = _updateVarsValue(result);
+                    let varsValueChanged = await _updateVarsValue(result);
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
@@ -150,7 +153,7 @@ function MODBUSclient(_data, _logger, _events) {
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');                    
                 }
-            }, reason => {
+            } catch (reason) {
                 if (reason) {
                     if (reason.stack) {
                         logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
@@ -161,7 +164,7 @@ function MODBUSclient(_data, _logger, _events) {
                     logger.error(`'${data.name}' _readVars error! ${reason}`);
                 }
                 _checkWorking(false);
-            });
+            };
         } else {
             _emitStatus('connect-busy');
         }
@@ -287,8 +290,43 @@ function MODBUSclient(_data, _logger, _events) {
         if (data.tags[sigid]) {
             var memaddr = data.tags[sigid].memaddress;
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
-            value = deviceUtils.tagRawCalculator(value, data.tags[sigid]);
-            var val = datatypes[data.tags[sigid].type].formatter(convertValue(value, data.tags[sigid].divisor, true));
+            value = await deviceUtils.tagRawCalculator(value, data.tags[sigid]);
+
+            const divVal = convertValue(value, data.tags[sigid].divisor, true);
+            var val;
+            if (data.tags[sigid].scaleWriteFunction) {
+                let parameters = [
+                    { name: 'value', type: 'value', value: divVal }
+                ];
+                if (data.tags[sigid].scaleWriteParams) {
+                    const extraParamsWithValues = JSON.parse(data.tags[sigid].scaleWriteParams);
+                    parameters = [...parameters, ...extraParamsWithValues];
+
+                }
+                const script = { id: data.tags[sigid].scaleWriteFunction,
+                    name: null,
+                    parameters};
+                try {
+
+                    const bufVal = await runtime.scriptsMgr.runScript(script);
+                    if ((bufVal.length % 2) !== 0 ) {
+                        logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
+                        return false;
+                    }
+                    val = [];
+                    for (let i = 0; i < bufVal.length;) {
+                        val.push(bufVal.readUInt16BE(i));
+                        i = i + 2;
+                    }
+                } catch (error) {
+                    logger.error(`'${data.tags[sigid].name}' setValue script error! ${error.toString()}`);
+                    return false;
+                }
+
+            } else {
+                val = datatypes[data.tags[sigid].type].formatter(divVal);
+            }
+            
             if (type === ModbusTypes.RTU) {
                 const start = Date.now();
                 let now = start;
@@ -539,7 +577,7 @@ function MODBUSclient(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = (vars) => {
+    var _updateVarsValue = async (vars) => {
         var someval = false;
         var tempTags = {};
         for (var vid in vars) {
@@ -579,7 +617,7 @@ function MODBUSclient(_data, _logger, _events) {
             var result = {};
             for (var id in tempTags) {
                 if (!utils.isNullOrUndefined(tempTags[id].rawValue)) {
-                    tempTags[id].value = deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref);
+                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref, runtime);
                     tempTags[id].timestamp = timestamp;
                     if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
                         result[id] = tempTags[id];
@@ -707,11 +745,11 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         try { ModbusRTU = require('modbus-serial'); } catch { }
         if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
         if (!ModbusRTU) return null;
-        return new MODBUSclient(data, logger, events);
+        return new MODBUSclient(data, logger, events, runtime);
     },
     ModbusTypes: ModbusTypes
 }

@@ -7,8 +7,9 @@ const async = require('async');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
-function OpcUAclient(_data, _logger, _events) {
+function OpcUAclient(_data, _logger, _events, _runtime) {
 
+    var runtime = _runtime;
     var data = _data;                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;               // Logger
     var working = false;                // Working flag to manage overloading polling and connection
@@ -307,7 +308,7 @@ function OpcUAclient(_data, _logger, _events) {
      * Take the current Tags value (only changed), Reset the change flag, Emit Tags value
      * Save DAQ value
      */
-    this.polling = function () {
+    this.polling = async function () {
         if (_checkWorking(true)) {
             if (!monitored) {
                 _startMonitor().then(ok => {
@@ -321,7 +322,7 @@ function OpcUAclient(_data, _logger, _events) {
                 });
             } else if (the_session && client) {
                 try {
-                    var varsValueChanged = _checkVarsChanged();
+                    var varsValueChanged = await _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
@@ -389,11 +390,11 @@ function OpcUAclient(_data, _logger, _events) {
     /**
      * Set Tag value, used to set value from frontend
      */
-    this.setValue = function (tagId, value) {
+    this.setValue = async function (tagId, value) {
         if (the_session && data.tags[tagId]) {
             let opctype = _toDataType(data.tags[tagId].type);
             let valueToSend = _toValue(opctype, value);
-            valueToSend = deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId]);
+            valueToSend = await deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId], runtime);
             var nodesToWrite = [
                 {
                     nodeId: data.tags[tagId].address,
@@ -578,11 +579,11 @@ function OpcUAclient(_data, _logger, _events) {
     /**
      * Return the Tags that have value changed and clear value changed flag of all Tags
      */
-    var _checkVarsChanged = () => {
+    var _checkVarsChanged = async () => {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
+            data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id], runtime);
             if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }
@@ -799,9 +800,9 @@ module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         if (!loadOpcUALib()) return null;
-        return new OpcUAclient(data, logger, events);
+        return new OpcUAclient(data, logger, events, runtime);
     },
     getEndPoints: getEndPoints
 }

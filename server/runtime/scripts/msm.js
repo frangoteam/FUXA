@@ -5,6 +5,7 @@
 
 'use strict';
 const path = require('path');
+const utils = require("../utils");
 
 var Module = module.constructor;
 
@@ -47,7 +48,7 @@ function MyScriptsModule(_events, _logger) {
 
         var result = _scriptsToModule(tempScripts, eventsIncludes);
         if (result.module) {
-            var paramsValue = _script.parameters.map(p => p.value || p);
+            var paramsValue = _script.parameters.map(p => utils.isNullOrUndefined(p.value) ? p : p.value);
             result.module[initEvents.name](events, _script.outputId);
             return result.module[_script.name](...paramsValue);
         }
@@ -55,8 +56,8 @@ function MyScriptsModule(_events, _logger) {
     }
 
     this.runScript = function (_script) {
-        if (scriptsModule) {
-            var paramsValue = _script.parameters.map(p => p.value || p);
+        if (scriptsModule) {            
+            var paramsValue = _script.parameters.map(p => utils.isNullOrUndefined(p.value) ? p : p.value);
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
