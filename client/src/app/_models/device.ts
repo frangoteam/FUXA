@@ -79,6 +79,14 @@ export class Tag {
     init: string;
     /** Value scaling properties */
     scale: TagScale;
+    /** Scale function to use when reading tag */
+    scaleReadFunction?: string;
+    /** Optional JSON encoded params and values for above script */
+    scaleReadParams?: string;
+    /** Scale function to use when writing tag */
+    scaleWriteFunction?: string;
+    /** Optional JSON encoded params and values for above script */
+    scaleWriteParams?: string;
     /** System Tag used in FUXA Server, example device status connection */
     sysType: TagSystemType;
     /** Description */
@@ -554,15 +562,6 @@ export class TagScale {
     scaledLow: number;
     scaledHigh: number;
     dateTimeFormat: string;
-    /** Scale function to use when reading tag */
-    scaleReadFunction: string;
-    /** Optional JSON encoded params and values for above script */
-    scaleReadParams: string;
-    /** Scale function to use when writing tag */
-    scaleWriteFunction: string;
-    /** Optional JSON encoded params and values for above script */
-    scaleWriteParams: string;
-
 }
 
 export enum TagScaleModeType {
@@ -570,7 +569,6 @@ export enum TagScaleModeType {
     linear = 'device.tag-scale-mode-linear',
     convertDateTime = 'device.tag-convert-datetime',
     convertTickTime = 'device.tag-convert-ticktime',
-    script = 'device.tag-scale-mode-script',
 }
 
 export enum TagSystemType {

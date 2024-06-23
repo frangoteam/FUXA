@@ -70,50 +70,47 @@
                         </div>
                     </div>
                 </ng-container>
-                <ng-container *ngSwitchCase="'script'">
-                    <div class="my-form-field item-block mt5">
-                        <span>{{'device.tag-scale-read-script' | translate}}</span>
-                        <mat-select formControlName="scaleReadFunction"
-                                    matTooltip="{{'device.tag-scale-read-script-tooltip' | translate}}">
-                            <mat-option (click)="formGroup.controls.scaleReadFunction.reset()"></mat-option>
-                            <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
-                        </mat-select>
-                    </div>
-                    <div *ngIf="configedReadParams[formGroup.value.scaleReadFunction]?.length > 0"
-                         class="my-form-field block mt5 ml15">
-                        <span>{{'device.tag-scale-read-script-params' | translate}}</span>
-                        <div matTooltip="{{'device.tag-scale-script-params-tooltip' | translate}}">
-                            <div *ngFor="let item of configedReadParams[formGroup.value.scaleReadFunction]"
-                                 class="item-param mt5">
-                                <input [value]="item.name" matTooltip="item.name" type="text" readonly [disabled]="true">
-                                <input [(ngModel)]="item.value" class="ml5"
-                                       [ngModelOptions]="{standalone: true}">
-                            </div>
-                        </div>
-                    </div>
-                
-                    <div class="my-form-field item-block mt5">
-                        <span>{{'device.tag-scale-write-script' | translate}}</span>
-                        <mat-select formControlName="scaleWriteFunction"
-                                    matTooltip="{{'device.tag-scale-write-script-tooltip' | translate}}">
-                            <mat-option (click)="formGroup.controls.scaleWriteFunction.reset()"></mat-option>
-                            <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
-                        </mat-select>
-                    </div>
-                    <div *ngIf="configedWriteParams[formGroup.value.scaleWriteFunction]?.length > 0"
-                         class="my-form-field block mt5 ml15">
-                        <span>{{'device.tag-scale-write-script-params' | translate}}</span>
-                        <div matTooltip="{{'device.tag-scale-script-params-tooltip' | translate}}">
-                            <div *ngFor="let item of configedWriteParams[formGroup.value.scaleWriteFunction]"
-                                 class="item-param mt5">
-                                <input [value]="item.name" matTooltip="item.name" type="text" readonly [disabled]="true">
-                                <input [(ngModel)]="item.value" class="ml5"
-                                       [ngModelOptions]="{standalone: true}">
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
             </ng-container>
+            <div class="my-form-field item-block mt10">
+                <span>{{'device.tag-scale-read-script' | translate}}</span>
+                <mat-select formControlName="scaleReadFunction"
+                            matTooltip="{{'device.tag-scale-read-script-tooltip' | translate}}">
+                    <mat-option (click)="formGroup.controls.scaleReadFunction.reset()"></mat-option>
+                    <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+                </mat-select>
+            </div>
+            <div *ngIf="configedReadParams[formGroup.value.scaleReadFunction]?.length > 0"
+                    class="my-form-field block mt5 ml15">
+                <span>{{'device.tag-scale-read-script-params' | translate}}</span>
+                <div matTooltip="{{'device.tag-scale-script-params-tooltip' | translate}}">
+                    <div *ngFor="let item of configedReadParams[formGroup.value.scaleReadFunction]"
+                            class="item-param mt5">
+                        <input [value]="item.name" matTooltip="item.name" type="text" readonly [disabled]="true">
+                        <input [(ngModel)]="item.value" class="ml5"
+                                [ngModelOptions]="{standalone: true}">
+                    </div>
+                </div>
+            </div>
+            <div class="my-form-field item-block mt10">
+                <span>{{'device.tag-scale-write-script' | translate}}</span>
+                <mat-select formControlName="scaleWriteFunction"
+                            matTooltip="{{'device.tag-scale-write-script-tooltip' | translate}}">
+                    <mat-option (click)="formGroup.controls.scaleWriteFunction.reset()"></mat-option>
+                    <mat-option *ngFor="let script of scripts; index as i" [value]="script.id">{{script.name}}</mat-option>
+                </mat-select>
+            </div>
+            <div *ngIf="configedWriteParams[formGroup.value.scaleWriteFunction]?.length > 0"
+                    class="my-form-field block mt5 ml15">
+                <span>{{'device.tag-scale-write-script-params' | translate}}</span>
+                <div matTooltip="{{'device.tag-scale-script-params-tooltip' | translate}}">
+                    <div *ngFor="let item of configedWriteParams[formGroup.value.scaleWriteFunction]"
+                            class="item-param mt5">
+                        <input [value]="item.name" matTooltip="item.name" type="text" readonly [disabled]="true">
+                        <input [(ngModel)]="item.value" class="ml5"
+                                [ngModelOptions]="{standalone: true}">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

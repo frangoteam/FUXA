@@ -123,21 +123,21 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     scaleMode.valid = false;
                 }
                 if (!scaleReadFunction.value) {
-                    scaleReadFunction.value = this.data.tags[i].scale?.scaleReadFunction;
+                    scaleReadFunction.value = this.data.tags[i].scaleReadFunction;
                 }
 
-                let script = this.scripts.find(s => s.id === this.data.tags[i].scale?.scaleReadFunction);
-                if (this.data.tags[i].scale?.scaleReadParams) {
-                    const tagParams = JSON.parse(this.data.tags[i].scale?.scaleReadParams) as ScriptParam[];
+                let script = this.scripts.find(s => s.id === this.data.tags[i].scaleReadFunction);
+                if (this.data.tags[i].scaleReadParams) {
+                    const tagParams = JSON.parse(this.data.tags[i].scaleReadParams) as ScriptParam[];
                     const notValid = this.initializeScriptParams(script, tagParams, this.configedReadParams);
                 }
                 if (!scaleWriteFunction.value) {
-                    scaleWriteFunction.value = this.data.tags[i].scale?.scaleWriteFunction;
+                    scaleWriteFunction.value = this.data.tags[i].scaleWriteFunction;
                 }
 
-                script = this.scripts.find(s => s.id === this.data.tags[i].scale?.scaleWriteFunction);
-                if (this.data.tags[i].scale?.scaleWriteParams) {
-                    const tagParams = JSON.parse(this.data.tags[i].scale?.scaleWriteParams) as ScriptParam[];
+                script = this.scripts.find(s => s.id === this.data.tags[i].scaleWriteFunction);
+                if (this.data.tags[i].scaleWriteParams) {
+                    const tagParams = JSON.parse(this.data.tags[i].scaleWriteParams) as ScriptParam[];
                     const notValid = this.initializeScriptParams(script, tagParams, this.configedWriteParams);
                 }
             }
@@ -248,12 +248,12 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 rawHigh: this.formGroup.value.rawHigh,
                 scaledLow: this.formGroup.value.scaledLow,
                 scaledHigh: this.formGroup.value.scaledHigh,
-                dateTimeFormat: this.formGroup.value.dateTimeFormat,
-                scaleReadFunction: this.formGroup.value.scaleReadFunction,
-                scaleReadParams: readParamsStr,
-                scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
-                scaleWriteParams: writeParamsStr,
+                dateTimeFormat: this.formGroup.value.dateTimeFormat
             } : null,
+            scaleReadFunction: this.formGroup.value.scaleReadFunction,
+            scaleReadParams: readParamsStr,
+            scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
+            scaleWriteParams: writeParamsStr,
         });
     }
 
@@ -359,4 +359,8 @@ export interface TagOptionType {
     daq: TagDaq;
     format: number;
     scale: TagScale;
+    scaleReadFunction?: string;
+    scaleReadParams?: string;
+    scaleWriteFunction?: string;
+    scaleWriteParams?: string;
 }
