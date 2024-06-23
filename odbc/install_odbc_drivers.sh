@@ -148,7 +148,7 @@ fi
 
 # Verify that the driver is installed and registered
 echo "Verifying driver installation..."
-/usr/lib/odbc/myodbc-installer -d -l
+/usr/local/lib/myodbc-installer -d -l
 
 # Clean up extracted files
 rm -rf mysql-connector-odbc-*
