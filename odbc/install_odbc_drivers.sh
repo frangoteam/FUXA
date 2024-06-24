@@ -28,6 +28,7 @@ apt-get install -y \
     unixodbc \
     unixodbc-dev \
     odbc-postgresql \
+    odbc-mariadb \
     libsqliteodbc \
     freetds-dev \
     freetds-bin \
