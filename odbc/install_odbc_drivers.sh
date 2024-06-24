@@ -33,7 +33,7 @@ apt-get install -y \
     freetds-dev \
     freetds-bin \
     tdsodbc \
-    libssl1.1 \
+    libssl3 \
     libssl-dev \
     apt-transport-https
 
