@@ -133,7 +133,7 @@ if [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ] || [ "$architect
 
     # Install the extracted driver
     cd mysql-connector-odbc-*
-    cp -r bin/* /usr/lib/odbc/bin
+    cp -r bin/* /usr/local/bin
     cp -r lib/* /usr/lib/odbc
 
     # Copy libmyodbc8*.so to odbc drivers
