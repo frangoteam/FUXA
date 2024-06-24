@@ -133,12 +133,12 @@ if [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ] || [ "$architect
 
     # Install the extracted driver
     cd mysql-connector-odbc-*
-    cp -r bin/* /usr/local/bin
-    cp -r lib/* /usr/local/lib
+    cp -r bin/* /usr/lib/odbc/bin
+    cp -r lib/* /usr/lib/odbc
 
     # Copy libmyodbc8*.so to odbc drivers
-    cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
-    cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
+    #cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
+    #cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
 
     # Register the driver
     echo "Registering MySQL ODBC Driver..."
@@ -148,7 +148,7 @@ fi
 
 # Verify that the driver is installed and registered
 echo "Verifying driver installation..."
-/usr/local/bin/myodbc-installer -d -l
+myodbc-installer -d -l
 
 # Clean up extracted files
 rm -rf mysql-connector-odbc-*
