@@ -30,8 +30,8 @@ RUN git clone https://github.com/markdirish/node-odbc.git
 WORKDIR /usr/src/app/node-odbc
 
 # Install compatible versions of global npm packages
-RUN npm install -g npm-gyp && \
-    npm install -g node-@8 && \
+RUN npm install -g node-gyp && \
+    npm install -g npm@8 && \
     npm install -g node-addon-api && \
     npm install -g @mapbox/node-pre-gyp
 
