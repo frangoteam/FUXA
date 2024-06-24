@@ -152,9 +152,11 @@ echo "Verifying driver installation..."
 myodbc-installer -d -l
 
 # Clean up extracted files
+echo "Clean up Install Files"
 rm -rf mysql-connector-odbc-*
 rm -f mysql-connector-odbc.tar.gz
 
 # Clean up apt cache
-apt-get clean && rm -rf /var/lib/apt/lists/*
+rm /etc/apt/sources.list.d/mssql-release.list && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+apt-get clean 
 
