@@ -37,9 +37,6 @@ apt-get install -y \
     libssl-dev \
     apt-transport-https
 
-# Add Microsoft GPG key
-curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
-
 # Detect system architecture and Debian version
 architecture=$(get_architecture)
 debian_version=$(get_debian_version)
@@ -47,15 +44,19 @@ debian_version=$(get_debian_version)
 # Choose appropriate package URL based on Debian version
 case $debian_version in
     9)
+        curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
         package_url="https://packages.microsoft.com/config/debian/9/prod.list"
         ;;
     10)
+        curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
         package_url="https://packages.microsoft.com/config/debian/10/prod.list"
         ;;
     11)
+        curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
         package_url="https://packages.microsoft.com/config/debian/11/prod.list"
         ;;
     12)
+        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
         package_url="https://packages.microsoft.com/config/debian/12/prod.list"
         ;;
     *)
