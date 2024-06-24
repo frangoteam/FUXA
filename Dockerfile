@@ -6,7 +6,6 @@ RUN apt-get update && apt-get install -y dos2unix
 WORKDIR /usr/src/app
 
 # Clone FUXA repository
-RUN git config --global http.version HTTP/1.1
 RUN git clone https://github.com/frangoteam/FUXA.git
 
 # Copy odbcinst.ini to /etc
