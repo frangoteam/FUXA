@@ -17,11 +17,13 @@ RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odb
 WORKDIR /usr/src/app/FUXA/odbc
 RUN ./install_odbc_drivers.sh
 
+# Change working directory
+WORKDIR /usr/src/app
+
 # Copy odbcinst.ini to /etc
 RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
 
 # Clone node-odbc repository
-WORKDIR /usr/src/app
 RUN git clone https://github.com/markdirish/node-odbc.git
 
 # Change working directory to node-odbc
