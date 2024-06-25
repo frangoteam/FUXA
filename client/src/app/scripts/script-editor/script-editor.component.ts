@@ -34,10 +34,10 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         // lint: {options: {esversion: 2021}},
         lint: true,
     };
-    systemFunctions = new SystemFunctions();
-    templatesCode = new TemplatesCode();
+    systemFunctions: SystemFunctions;
+    templatesCode: TemplatesCode;
 
-    checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
+    checkSystemFnc: string[] = [];
     parameters: ScriptParam[] = [];
     testParameters: ScriptParam[] = [];
     tagParamType = Utils.getEnumKey(ScriptParamType, ScriptParamType.tagid);
@@ -56,8 +56,11 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         private scriptService: ScriptService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
             this.script = data.script;
-            this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM();}, 0));
-        }
+        this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM();}, 0));
+        this.systemFunctions = new SystemFunctions(this.script.mode);
+        this.templatesCode = new TemplatesCode(this.script.mode);
+        this.checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
+    }
 
     ngOnInit() {
         if (!this.script) {
