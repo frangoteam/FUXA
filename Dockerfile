@@ -1,4 +1,4 @@
-FROM node:14-bullseye
+FROM node:16-bookworm
 
 RUN apt-get update && apt-get install -y dos2unix
 
@@ -8,9 +8,6 @@ WORKDIR /usr/src/app
 # Clone FUXA repository
 RUN git clone https://github.com/frangoteam/FUXA.git
 
-# Copy odbcinst.ini to /etc
-RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
-
 # Install build dependencies for node-odbc
 RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev
 
@@ -18,20 +15,25 @@ RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev
 RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odbc_drivers.sh
 
 WORKDIR /usr/src/app/FUXA/odbc
-RUN ls && ./install_odbc_drivers.sh
+RUN ./install_odbc_drivers.sh
+
+# Change working directory
+WORKDIR /usr/src/app
+
+# Copy odbcinst.ini to /etc
+RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
 
 # Clone node-odbc repository
-WORKDIR /usr/src/app
 RUN git clone https://github.com/markdirish/node-odbc.git
 
 # Change working directory to node-odbc
 WORKDIR /usr/src/app/node-odbc
 
 # Install compatible versions of global npm packages
-RUN npm install -g npm@7 && \
-    npm install -g node-gyp@7 && \
-    npm install -g node-addon-api@5 && \
-    npm install -g @mapbox/node-pre-gyp@1
+RUN npm install -g node-gyp && \
+    npm install -g npm@8 && \
+    npm install -g node-addon-api && \
+    npm install -g @mapbox/node-pre-gyp
 
 # Install dependencies and build node-odbc
 RUN npm ci --production && \
@@ -40,7 +42,6 @@ RUN npm ci --production && \
 
 # Build and install node-odbc
 #RUN npm install
-
 
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
