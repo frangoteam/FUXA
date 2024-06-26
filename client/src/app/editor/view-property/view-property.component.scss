@@ -1,0 +1,24 @@
+:host {
+    .container {
+    }
+
+    .item-block {
+        display: block;
+        mat-select, input, span {
+            width:calc(100% - 5px);
+        }    
+    }
+
+    .slider-field span {
+        padding-left: 2px;
+        text-overflow: clip;
+        max-width: 125px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    
+    .slider-field mat-slider {
+        background-color: var(--formSliderBackground);
+        height: 30px;
+    }
+}

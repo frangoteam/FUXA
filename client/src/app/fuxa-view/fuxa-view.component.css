@@ -116,7 +116,7 @@
 
 /* input */
 .dialog-input {
-    z-index: 1; /* Sit on top */
+    z-index: 9999; /* Sit on top */
     box-shadow: 1px 2px 5px -1px #888;
     position: absolute;
     padding: 5px;

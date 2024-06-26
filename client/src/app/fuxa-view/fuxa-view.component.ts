@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -190,19 +190,21 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (view.profile.bkcolor && (this.child || legacyProfile)) {
                 this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
             }
+            if (view.profile.align && !this.child) {
+                FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
+            }
         }
         this.changeDetector.detectChanges();
         this.loadWatch(this.view);
-        // // @ts-ignore
-        // window.dispatchEvent(new window.Event('resize'));
+        this.onResize();
     }
 
 
     @HostListener('window:resize', ['$event'])
-    onResize(event) {
+    onResize(event?) {
         let hmi = this.projectService.getHmi();
         if (hmi && hmi.layout && ZoomModeType[hmi.layout.zoom] === ZoomModeType.autoresize) {
-            Utils.resizeView('.home-body');
+            Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, 'stretch');
         }
     }
 
@@ -249,6 +251,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                                 variables.forEach(variable => {
                                     this.gaugesManager.processValue(gaugeSetting, svgeles[y], variable, gaugeStatus);
                                 });
+                            }
+                        }
+                        // run load events
+                        if (gaugeSetting.property.events) {
+                            const loadEventType = Utils.getEnumKey(GaugeEventType, GaugeEventType.onLoad);
+                            const loadEvents = gaugeSetting.property.events?.filter((ev: GaugeEvent) => ev.type === loadEventType);
+                            if (loadEvents?.length) {
+                                this.runEvents(this, gaugeSetting, null, loadEvents);
                             }
                         }
                     }
@@ -313,7 +323,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param items
      * @protected
      */
-    protected applyVariableMapping(items) {
+    protected applyVariableMapping(items: DictionaryGaugeSettings) {
         // Deep clone
         items = JSON.parse(JSON.stringify(items));
 
@@ -638,13 +648,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    loadPage(event: GaugeEvent, viewref: string, options: any) {
+    loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
             this.loadHmi(view);
+            if (param.scaleMode) {
+                Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
+            }
         }
     }
 
@@ -785,9 +798,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onRunScript(event: GaugeEvent) {
         if (event.actparam) {
-            let torun = this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam);
-            torun.parameters = <ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP];
-            const placeholders = torun.parameters.filter(param => param.value.startsWith(PlaceholderDevice.id)).map(param => param.value);
+            let torun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam));
+            torun.parameters = Utils.clone(<ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP]);
+            const placeholders = torun.parameters.filter(param => param.value?.startsWith(PlaceholderDevice.id)).map(param => param.value);
             if (placeholders?.length) {
                 const placeholdersMap = this.getViewPlaceholderValue(placeholders);
                 torun.parameters.forEach(param => {
@@ -825,8 +838,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSetViewToPanel(event: GaugeEvent) {
         if (event.actparam && event.actoptions) {
-            let panel = <FuxaViewComponent>this.mapControls[event.actoptions['panelId']];
-            panel.loadPage(event, event.actparam, event.actoptions);
+            let panelCtrl = <FuxaViewComponent>this.mapControls[event.actoptions['panelId']];
+            const panelProperty = this.view.items[event.actoptions['panelId']]?.property;
+            panelCtrl.loadPage(panelProperty, event.actparam, event.actoptions);
         }
     }
 
@@ -919,7 +933,27 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.inputDialog.target.id = this.inputDialog.target.dom.id;
                 this.inputDialog.target.value = this.inputDialog.target.dom.value;
                 this.gaugesManager.putEvent({...this.inputDialog.target, value: res.value});
+                this.emulateEnterKey(this.inputDialog.target.dom);
             }
+        }
+    }
+
+    emulateEnterKey(target: HTMLInputElement) {
+        const event = new KeyboardEvent('keydown', {
+          key: 'Enter',
+          keyCode: 13,
+          code: 'Enter',
+          bubbles: true
+        });
+        target.dispatchEvent(event);
+    }
+
+    static setAlignStyle(align: DocAlignType, nativeElement: HTMLElement) {
+        if (align === DocAlignType.middleCenter) {
+            nativeElement.style.position = 'absolute';
+            nativeElement.style.top = '50%';
+            nativeElement.style.left = '50%';
+            nativeElement.style.transform = 'translate(-50%, -50%)';
         }
     }
 }

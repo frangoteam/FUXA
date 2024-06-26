@@ -93,13 +93,17 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixels",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixels",
     "dlg.docproperty-margin": "Margin",
+    "dlg.docproperty-align": "Align",
+    "dlg.docproperty-align-placeholder": "Alignment on the page",
+    "dlg.docproperty-align-topCenter": "Top",
+    "dlg.docproperty-align-middleCenter": "Middle",
 
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",
     "dlg.item-title": "Name",
     "dlg.item-name": "Name",
-    "dlg.item-req-name": "Name (No spaced or numbers allowed)",
+    "dlg.item-req-name": "Function name (No spaced or numbers allowed)",
     "dlg.item-name-error": "Name exist!",
     "dlg.parameter-title": "Parameter",
 
@@ -685,6 +689,7 @@
     "shapes.event-setvalue-remove": "decrease",
     "shapes.event-onmonitor": "Monitor",
     "shapes.event-onViewToPanel": "Set View to Panel",
+    "shapes.event-onLoad": "OnLoad",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
@@ -903,6 +908,7 @@
     "device.tag-scale-mode-undefined-tooltip": "Tag Value",
     "device.tag-scale-mode-linear": "Linear: ΔS * (Value - RL) / ΔR + SL",
     "device.tag-scale-mode-linear-tooltip": "ΔS = (Scaled High - Scaled Low)\nΔR = (Raw High - Raw Low)\nRL = Raw Low\nSL = Scaled Low",
+    "device.tag-scale-mode-script": "Script (Read/Write)",
     "device.tag-raw-low": "Raw Low",
     "device.tag-raw-high": "Raw High",
     "device.tag-scaled-low": "Scaled Low",
@@ -913,6 +919,14 @@
     "device.tag-convert-ticktime": "Milliseconds to Time format (Remaining or Duration)",
     "device.tag-convert-ticktime-tooltip": "Example format: 'HH:mm:ss' for 56:45:10",
     "device.tag-convert-ticktime-format": "Time format (HH:mm:ss)",
+    "device.tag-scale-read-script": "Read Scale Script",
+    "device.tag-scale-read-script-tooltip": "Script to transform value received from client",
+    "device.tag-scale-read-script-params": "Enter Read Script Parameter Values",
+    "device.tag-scale-write-script": "Write Scale Script",
+    "device.tag-scale-write-script-tooltip": "Script to transform value before write to client",
+    "device.tag-scale-write-script-params": "Enter Write Script Parameter Values",
+    "device.tag-scale-script-params-tooltip": "JSON formated array of parameters with values to pass to script",
+    
 
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
@@ -1127,9 +1141,13 @@
     "script.permission-label": "(void = full for everyone)",
     "script.permission-enabled": "Enabled",
 
+    "script.create-title": "Create script",
+
     "script.mode": "Execute mode",
     "script.mode-title": "Execute mode",
-    "script.mode-label": "(Default: Server)",
+    "script.mode-label": "Execute mode",
+    "script.mode-CLIENT": "Client (Execute in browser)",
+    "script.mode-SERVER": "Server (Execute in server)",
 
     "script.property-title": "Script",
     "script.property-systems": "System functions",
@@ -1140,6 +1158,7 @@
     "script.property-test-tag": "Set Tag",
     "script.property-test-run": "Run TEST",
     "script.property-editname": "Edit Script name",
+    "script.property-name": "Name",
     "script.property-addfnc-param": "Add Script parameter",
     "script.param-title": "Script parameter",
     "script.param-name": "Name",
@@ -1171,6 +1190,9 @@
     "script.sys-fnc-enableDevice-text": "$enableDevice (Device name, enable True/False)",
     "script.sys-fnc-enableDevice-tooltip": "System function to enable Device connection: $enableDevice (Device name as string, enable as boolean)",
     "script.sys-fnc-enableDevice-params": "'Device name', true",
+    "script.sys-fnc-getDevice-text": "$getDevice (Device name, interface True/False)",
+    "script.sys-fnc-getDevice-tooltip": "System function to get Device object: $getDevice (Device name as string, get Comm Interface as boolean)",
+    "script.sys-fnc-getDevice-params": "'Device name', true",    
     "script.sys-fnc-getTagId-text": "$getTagId (Tag name, [Device name])",
     "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string, [Optional Device name as string])",
     "script.sys-fnc-getTagId-params": "'Tag name', ",
@@ -1186,6 +1208,12 @@
     "script.sys-fnc-runServerScript-text": "$runServerScript (Script name, [Parameter])",
     "script.sys-fnc-runServerScript-tooltip": "Client function to call Server script function: $runServerScript (Script name as string, [parameter])",
     "script.sys-fnc-runServerScript-params": "'Server script name', ",
+    "script.sys-fnc-getDeviceProperty-text": "$getDeviceProperty(Device name)",
+    "script.sys-fnc-getDeviceProperty-tooltip": "System function to get Device property: $getDeviceProperty(Device name as string)",
+    "script.sys-fnc-getDeviceProperty-params": "'Device name'",
+    "script.sys-fnc-setDeviceProperty-text": "$setDeviceProperty(Device name, property)",
+    "script.sys-fnc-setDeviceProperty-tooltip": "System function to set Device property: $setDeviceProperty(Device name as string, Property as object {address, port, ...} )",
+    "script.sys-fnc-setDeviceProperty-params": "'Device name', 'Property'",
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
@@ -1434,5 +1462,6 @@
     "msg.report-build-forced": "Send to build Report successful",
     "msg.report-build-error": "Send to build Report failed!",
     "msg.device-tags-request-result": "Load {{value}} of {{current}}",
-    "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'"
+    "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'",
+    "msg.script-name-exist": "Script name exist!"
 }

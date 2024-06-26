@@ -8,8 +8,9 @@ var EthernetIp;
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
-function EthernetIPclient(_data, _logger, _events) {
+function EthernetIPclient(_data, _logger, _events, _runtime) {
 
+    var runtime = _runtime;
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;
     var events = _events;               // Events to commit change to runtime
@@ -115,23 +116,22 @@ function EthernetIPclient(_data, _logger, _events) {
         if (_checkWorking(true)) {
             if (conn && connected) {
                 try {
-                    _readValues().then(result => {
-                        _checkWorking(false);
-                        if (result) {
-                            let varsValueChanged = _updateVarsValue(result);
-                            lastTimestampValue = new Date().getTime();
-                            _emitValues(varsValue);
-                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                                this.addDaq(varsValueChanged, data.name, data.id);
-                            }
-                        } else {
-                            // console.error('then error');
+                    const result = await _readValues();
+
+                    _checkWorking(false);
+                    if (result) {
+                        let varsValueChanged = await _updateVarsValue(result);
+                        lastTimestampValue = new Date().getTime();
+                        _emitValues(varsValue);
+                        if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                            this.addDaq(varsValueChanged, data.name, data.id);
                         }
-                    }, reason => {
-                        logger.error(`'${data.name}' _readValues error! ${reason}`);
-                        _checkWorking(false);
-                    });
+                    } else {
+                        // console.error('then error');
+                    }
+
                 } catch (err) {
+                    //logger.error(`'${data.name}' _readValues error! ${reason}`);
                     logger.error(`'${data.name}' polling error: ${err}`);
                     _checkWorking(false);
                 }
@@ -203,9 +203,9 @@ function EthernetIPclient(_data, _logger, _events) {
      * Set the Tag value to device
      * take the address from
      */
-    this.setValue = function (tagId, value) {
+    this.setValue = async function (tagId, value) {
         if (data.tags[tagId]) {
-            let valueToSend = deviceUtils.tagRawCalculator(value, data.tags[tagId]);
+            let valueToSend = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
             conn.writeItems([data.tags[tagId].address], [parseFloat(valueToSend)], (error) => {
                 if (error) {
                     logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
@@ -289,22 +289,22 @@ function EthernetIPclient(_data, _logger, _events) {
      * Update the Tags values read
      * @param {*} vars 
      */
-    var _updateVarsValue = (vars) => {
+    var _updateVarsValue = async (vars) => {
         const timestamp = new Date().getTime();
         var changed = {};
-        Object.keys(itemsMap).forEach(key => {
+        for (const [key, value] of Object.entries(itemsMap)) {
             if (!utils.isNullOrUndefined(vars[key])) {
                 var id = itemsMap[key].id;
                 var valueChanged = itemsMap[key].value !== vars[key];
                 itemsMap[key].rawValue = vars[key];
-                itemsMap[key].value = deviceUtils.tagValueCompose(vars[key], itemsMap[key]);
+                itemsMap[key].value = await deviceUtils.tagValueCompose(vars[key], itemsMap[key]);
                 varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq, changed: valueChanged, timestamp: timestamp };
                 if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
                     changed[id] = varsValue[id];
                 }
                 varsValue[id].changed = false;
             }
-        });
+        };
         return changed;
     }
 
@@ -371,11 +371,11 @@ function EthernetIPclient(_data, _logger, _events) {
 module.exports = {
     init: function (settings) {
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         // To use with plugin
         try { EthernetIp = require('nodepccc'); } catch { }
         if (!EthernetIp && manager) { try { EthernetIp = manager.require('nodepccc'); } catch { } }
         if (!EthernetIp) return null;
-        return new EthernetIPclient(data, logger, events);
+        return new EthernetIPclient(data, logger, events, runtime);
     }
 }

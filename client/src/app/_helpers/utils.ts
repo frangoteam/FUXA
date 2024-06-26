@@ -422,6 +422,39 @@ export class Utils {
         });
     };
 
+    static resizeViewRev = (original: string | HTMLElement, destination: string | HTMLElement, resize?: 'contain' | 'stretch' | 'none') => {
+        function transform(origRect: HTMLElement, destRect: DOMRect, resizeType: 'contain' | 'stretch' | 'none') {
+            const ratioWidth = (destRect?.width / origRect.clientWidth);
+            const ratioHeight = (destRect?.height / origRect.clientHeight);
+            if (resizeType === 'contain') {
+                origRect.style.transform = 'scale(' + Math.min(ratioWidth, ratioHeight) + ')';
+                origRect.parentElement.style.margin = 'unset';
+            } else if (resizeType === 'stretch') {
+                origRect.style.transform = 'scale(' + ratioWidth + ', ' + ratioHeight + ')';
+                origRect.parentElement.style.margin = 'unset';
+            } else if (resizeType === 'none') {
+                origRect.style.transform = 'scale(1)';
+            }
+            origRect.style.top = 'unset';
+            origRect.style.left = 'unset';
+            origRect.style.transformOrigin = 'top left';
+        };
+
+        const parentElement = typeof destination === 'string' ? document.getElementById(destination) as HTMLElement : destination;
+        if (!parentElement) {
+            console.error(`resizeViewExt -> Parent element with ID '${destination}' not found.`);
+            return;
+        }
+        const parentRect: DOMRect = parentElement.getBoundingClientRect();
+        if (typeof original === 'string') {
+            parentElement.querySelectorAll(original).forEach((scaled: any) => {
+                transform(scaled, parentRect, resize ?? 'none');
+            });
+        } else if (!!original) {
+            transform(original, parentRect, resize ?? 'none');
+        }
+    };
+
     /** Merge of array of object, the next overwrite the last */
     static mergeDeep(...objArray) {
         const result = {};

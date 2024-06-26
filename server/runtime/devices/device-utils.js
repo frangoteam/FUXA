@@ -19,22 +19,27 @@ module.exports = {
         return false;
     },
 
-    tagValueCompose: function (value, tag) {
-        var obj = {value: null };
-        if (tag && utils.isNumber(value, obj)) {
+    tagValueCompose: async function (value, tag, runtime = undefined) {
+        var obj = {value: null };     
+        if (tag) {
             try {
-                value = obj.value;
-                if (tag.scale) {
-                    if (tag.scale.mode === 'linear') {
-                        value = (tag.scale.scaledHigh - tag.scale.scaledLow) * (value - tag.scale.rawLow) / (tag.scale.rawHigh - tag.scale.rawLow) + tag.scale.scaledLow;
-                    } else if (tag.scale.mode === 'convertDateTime' && tag.scale.dateTimeFormat) {
-                        value = dayjs(value).format(tag.scale.dateTimeFormat);
-                    } else if (tag.scale.mode === 'convertTickTime' && tag.scale.dateTimeFormat) {
-                        value = durationToTimeFormat(dayjs.duration(value), tag.scale.dateTimeFormat);
-                    }
+                if (tag.scaleReadFunction) {
+                    value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams ? tag.scaleReadParams : undefined, runtime, true, value);
                 }
-                if (tag.format) {
-                    value = +value.toFixed(tag.format);
+                if (utils.isNumber(value, obj)) {
+                    value = obj.value;
+                    if (tag.scale) {
+                        if (tag.scale.mode === 'linear') {
+                            value = (tag.scale.scaledHigh - tag.scale.scaledLow) * (value - tag.scale.rawLow) / (tag.scale.rawHigh - tag.scale.rawLow) + tag.scale.scaledLow;
+                        } else if (tag.scale.mode === 'convertDateTime' && tag.scale.dateTimeFormat) {
+                            value = dayjs(value).format(tag.scale.dateTimeFormat);
+                        } else if (tag.scale.mode === 'convertTickTime' && tag.scale.dateTimeFormat) {
+                            value = durationToTimeFormat(dayjs.duration(value), tag.scale.dateTimeFormat);
+                        }
+                    }
+                    if (tag.format) {
+                        value = +value.toFixed(tag.format);
+                    }
                 }
             } catch (err) { 
                 console.error(err);
@@ -43,15 +48,21 @@ module.exports = {
         return value;
     },
 
-    tagRawCalculator: function (value, tag) {
+    tagRawCalculator: async function (value, tag, runtime = undefined) {
         var obj = {value: null };
-        if (tag && utils.isNumber(value, obj)) {
+        
+        if (tag) {
             try {
-                value = obj.value;
-                if (tag.scale && tag.scale.mode === 'linear') {
-                    value = tag.scale.rawLow + ((tag.scale.rawHigh - tag.scale.rawLow) * (value - tag.scale.scaledLow)) / (tag.scale.scaledHigh - tag.scale.scaledLow);
+                if (utils.isNumber(value, obj)) {
+                    value = obj.value;
+                    if (tag.scale && tag.scale.mode === 'linear') {
+                        value = tag.scale.rawLow + ((tag.scale.rawHigh - tag.scale.rawLow) * (value - tag.scale.scaledLow)) / (tag.scale.scaledHigh - tag.scale.scaledLow);
+                    }
                 }
-            } catch (err) { 
+                if (tag.scaleWriteFunction) {
+                    value = await callScaleScript(tag.scaleWriteFunction, tag.scaleWriteParams ? tag.scaleWriteParams : undefined, runtime, false, value);
+                }
+            } catch (err) {
                 console.error(err);
             }
         }
@@ -92,4 +103,34 @@ const durationToTimeFormat = (duration, format) => {
     result += `${count.toString().padStart(secondPart.length, '0')}`;
   }
   return result;
+}
+
+const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
+    if (scriptId && runtime !== undefined) {
+        let parameters = [
+            { name: 'value', type: 'value', value: value }
+        ];
+        let tagParams = [];
+        if (params) {
+            try {
+                tagParams = JSON.parse(params);
+            } catch (error) {
+                runtime.logger.error(`'${tag.name}' error decoding ${isRead ? 'read' : 'write' } scale script params ${error.toString()}`);
+            }
+            parameters = [...parameters, ...tagParams];
+        }
+        const script = {
+            id: scriptId,
+            name: null,
+            parameters: parameters,
+            notLog: true
+        };
+        try {
+            value = await runtime.scriptsMgr.runScript(script);
+        } catch (error) {
+            runtime.logger.error(`'${tag.name}' ${isRead ? 'read' : 'write'} script error! ${error.toString()}`);
+        }
+        return value;
+    }
+    return value;
 }

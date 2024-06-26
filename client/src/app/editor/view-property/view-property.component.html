@@ -1,0 +1,60 @@
+<form [formGroup]="formGroup" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.docproperty-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content style="width: 300px;">
+        <div *ngIf="data.type === viewType.svg">
+            <div class="block mt10">
+                <div class="my-form-field inbk">
+                    <span>{{'dlg.docproperty-width' | translate}}</span>
+                    <input numberOnly formControlName="width" style="width: 120px" type="number">
+                </div>
+                <div class="my-form-field" style="float: right">
+                    <span>{{'dlg.docproperty-height' | translate}}</span>
+                    <input numberOnly formControlName="height" style="width: 120px" type="number">
+                </div>
+            </div>
+            <div class="my-form-field item-block mt10">
+                <span>{{'dlg.docproperty-size' | translate}}</span>
+                <mat-select placeholder="{{'dlg.docproperty-select' | translate}}" (selectionChange)="onSizeChange($event.value)">
+                    <mat-option *ngFor="let prop of propSizeType" [value]="prop.value">
+                        {{ prop.text }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field item-block mt10">
+                <span>{{'dlg.docproperty-align' | translate}}</span>
+                <mat-select formControlName="align" placeholder="{{'dlg.docproperty-align-placeholder' | translate}}">
+                    <mat-option *ngFor="let align of alignType | enumToArray" [value]="align.key">
+                        {{'dlg.docproperty-align-' + align.value | translate}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        <div *ngIf="data.type === viewType.cards">
+            <div class="my-form-field mt10 slider-field">
+                <span>{{'dlg.docproperty-margin' | translate}}</span>
+                <mat-slider formControlName="margin" style="display:inline-block;width: 100px;" [max]="20" [min]="0" [step]="1" [thumbLabel]="true">
+                </mat-slider>
+            </div>
+        </div>
+        <div class="my-form-field mt10" style="width: 300px;">
+            <span>{{'dlg.docproperty-background' | translate}}</span>
+            <input style="width: 292px; border: 1px solid rgba(0,0,0,0.2); height:15px !important" readonly [(colorPicker)]="data.profile.bkcolor" class="input-color"
+                title="Change stroke color" [style.background]="data.profile.bkcolor" [cpPresetColors]="defaultColor" [cpAlphaChannel]="'always'" [cpPosition]="'bottom'"
+                [value]="data.profile.bkcolor" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButton]="true"
+                [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" />
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button 
+                (click)="onNoClick()">
+            {{'dlg.cancel' | translate}}
+        </button>
+        <button mat-raised-button 
+                [disabled]="formGroup.invalid"
+                color="primary"
+                (click)="onOkClick()">
+            {{'dlg.ok' | translate}}
+        </button>
+    </div>
+</form>

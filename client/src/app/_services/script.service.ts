@@ -85,6 +85,8 @@ export class ScriptService {
         code = code.replace(/\$setTagDaqSettings\(/g, 'await this.$setTagDaqSettings(');
         code = code.replace(/\$setView\(/g, 'this.$setView(');
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
+        code = code.replace(/\$getDeviceProperty\(/g, 'await this.$getDeviceProperty(');
+        code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         return code;
@@ -127,6 +129,15 @@ export class ScriptService {
         this.hmiService.deviceEnable(deviceName, enable);
     }
 
+    public async $getDeviceProperty(deviceName: string) {
+        let daqSettings = await this.projectService.runSysFunctionSync('$getDeviceProperty', [deviceName]);
+        return daqSettings;
+    }
+
+    public async $setDeviceProperty(deviceName: string, property: any) {
+        return await this.projectService.runSysFunctionSync('$setDeviceProperty', [deviceName, property]);
+    }
+
     public $invokeObject(gaugeName: string, fncName: string, ...params: any[]) {
         const gauge = this.hmiService.getGaugeMapped(gaugeName);
         if (gauge[fncName]) {
@@ -136,7 +147,7 @@ export class ScriptService {
     }
 
     public async $runServerScript(scriptName: string, ...params: any[]) {
-        let scriptToRun = this.projectService.getScripts().find(dataScript => dataScript.name == scriptName);
+        let scriptToRun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.name == scriptName));
         scriptToRun.parameters = params;
         return await lastValueFrom(this.runScript(scriptToRun));
     }

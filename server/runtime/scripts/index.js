@@ -6,6 +6,7 @@
 
 const MyScriptModule = require('./msm');
 const nodeSchedule = require('node-schedule');
+const utils = require('../utils');
 
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
@@ -73,8 +74,10 @@ function ScriptsManager(_runtime) {
                 if (script.test) {
                     result = await scriptModule.runTestScript(script);
                 } else {
-                    logger.info(`Run script ${script.name}`);
-                    result = scriptModule.runScript(script);
+                    if (!script.notLog) {
+                        logger.info(`Run script ${script.name}`);
+                    }
+                    result = await scriptModule.runScript(script);
                 }
                 resolve(result || `Script OK: ${script.name}`);
             } catch (err) {
@@ -220,8 +223,11 @@ function ScriptsManager(_runtime) {
         sysFncs['$getTagId'] = runtime.devices.getTagId;
         sysFncs['$setView'] = _setCommandView;
         sysFncs['$enableDevice'] = runtime.devices.enableDevice;
+        sysFncs['$getDevice'] = runtime.devices.getDevice;
         sysFncs['$getTagDaqSettings'] = runtime.devices.getTagDaqSettings;
         sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
+        sysFncs['$getDeviceProperty'] = runtime.devices.getDeviceProperty;
+        sysFncs['$setDeviceProperty'] = runtime.devices.setDeviceProperty;
         return sysFncs;
     }
 
@@ -277,8 +283,8 @@ function ScriptSchedule(script) {
                     result.push(date);
                 } else {
                     const rule = new nodeSchedule.RecurrenceRule();
-                    if (schedule.hour) rule.hour = schedule.hour;
-                    if (schedule.minute) rule.minute = schedule.minute;
+                    if (!utils.isNullOrUndefined(schedule.hour)) rule.hour = schedule.hour;
+                    if (!utils.isNullOrUndefined(schedule.minute)) rule.minute = schedule.minute;
                     if (schedule.days) {
                         rule.dayOfWeek = [];
                         if (schedule.days.includes('sun')) rule.dayOfWeek.push(0);
