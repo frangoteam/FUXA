@@ -496,7 +496,6 @@ export class VariableRange {
 }
 
 export class Alarm extends Tag {
-    id: string;
     group: string;
     device: string;
 }
