@@ -44,7 +44,7 @@ export class GraphBarFunction {
 }
 
 export class GraphBarDateFunction extends GraphBarFunction {
-    type: GraphBarDateFunctionType;
+   declare type: GraphBarDateFunctionType;
 
     constructor(_type?: GraphBarDateFunctionType) {
         super();
