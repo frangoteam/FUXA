@@ -13,7 +13,6 @@ declare var SVG: any;
 })
 export class HtmlButtonComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
 
     static TypeTag = 'svg-ext-html_button';
     static LabelTag = 'HtmlButton';

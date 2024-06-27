@@ -12,7 +12,6 @@ declare var SVG: any;
 })
 export class GaugeSemaphoreComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
 
     static TypeTag = 'svg-ext-gauge_semaphore';
     static LabelTag = 'HtmlSemaphore';
