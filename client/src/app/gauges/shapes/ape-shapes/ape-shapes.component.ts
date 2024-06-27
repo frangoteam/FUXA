@@ -18,11 +18,11 @@ declare var Raphael: any;
 })
 export class ApeShapesComponent extends GaugeBaseComponent {
 
-    static TypeId = 'ape';
-    static TypeTag = 'svg-ext-' + ApeShapesComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
+    // TypeId = 'ape';
+    static TypeTag = 'svg-ext-ape';  // used to identify shapes type, binded with the library svgeditor
+    static EliType = 'svg-ext-ape-eli';
+    static PistonType = 'svg-ext-ape-piston';
     static LabelTag = 'AnimProcEng';
-    static EliType = ApeShapesComponent.TypeTag + '-eli';
-    static PistonType = ApeShapesComponent.TypeTag + '-piston';
 
     static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise,
                         downup: GaugeActionsType.downup, hide: GaugeActionsType.hide, show: GaugeActionsType.show, rotate : GaugeActionsType.rotate,
