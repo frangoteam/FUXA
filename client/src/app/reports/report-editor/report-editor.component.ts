@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,9 +12,11 @@ import { ReportItemAlarmsComponent } from './report-item-alarms/report-item-alar
 import { AlarmPropertyType, AlarmsType } from '../../_models/alarm';
 import { ReportItemChartComponent } from './report-item-chart/report-item-chart.component';
 import { ResourcesService } from '../../_services/resources.service';
-import { forkJoin, Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ProjectService } from '../../_services/project.service';
+import { PluginService } from '../../_services/plugin.service';
+import { PluginGroupType } from '../../_models/plugin';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -22,7 +24,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
     templateUrl: './report-editor.component.html',
     styleUrls: ['./report-editor.component.scss']
 })
-export class ReportEditorComponent implements OnInit, AfterViewInit {
+export class ReportEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     myForm: UntypedFormGroup;
 
@@ -33,6 +35,8 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     fontSize = [6, 8, 10, 12, 14, 16, 18, 20];
     report: Report;
     schedulingType = ReportSchedulingType;
+    chartImageAvailable$: Observable<boolean>;
+    private destroy$ = new Subject<void>();
 
     private imagesList = {};
 
@@ -42,6 +46,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
         private projectService: ProjectService,
         private translateService: TranslateService,
         private resourcesService: ResourcesService,
+        private pluginService: PluginService,
         @Inject(MAT_DIALOG_DATA) public data: ReportEditorData) {
 
         const existingReportNames = this.projectService.getReports()?.filter(report => report.id !== data.report.id)?.map(report => report.name);
@@ -63,6 +68,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
             marginRight: [this.report.docproperty.pageMargins[2]],
             marginBottom: [this.report.docproperty.pageMargins[3]],
         });
+
+        this.chartImageAvailable$ = this.pluginService.getPlugins().pipe(
+            takeUntil(this.destroy$),
+            map(plugins => plugins.some(plugin => plugin.type === PluginGroupType.Chart && plugin.current))
+        );
     }
 
     ngOnInit() {
@@ -74,6 +84,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.onReportChanged();
         this.myForm.markAsPristine();
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     onNoClick(): void {
