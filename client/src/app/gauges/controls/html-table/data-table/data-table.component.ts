@@ -165,11 +165,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     });
                 }
             });
-        } else if (this.type === TableType.history && this.tableOptions.realtime) {
-            if (this.addValueInterval && this.pauseMemoryValue[variableId] && Utils.getTimeDifferenceInSeconds(this.pauseMemoryValue[variableId]) < this.addValueInterval) {
-                return;
+        } else if (this.type === TableType.history) {
+            if (this.tableOptions.realtime) {
+                if (this.addValueInterval && this.pauseMemoryValue[variableId] && Utils.getTimeDifferenceInSeconds(this.pauseMemoryValue[variableId]) < this.addValueInterval) {
+                    return;
+                }
+                this.pauseMemoryValue[variableId] = dt * 1e3;
             }
-            this.pauseMemoryValue[variableId] = dt * 1e3;
             this.addRowDataToTable(dt * 1e3, variableId, variableValue);
         }
     }
