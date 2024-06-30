@@ -1,7 +1,7 @@
 /**
  * Shape extension
  */
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeSettings, GaugeAction, Variable, GaugeStatus, GaugeActionsType, GaugePropertyColor, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
@@ -16,10 +16,8 @@ declare var SVG: any;
 })
 export class ProcEngComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
-
-    static TypeId = 'proceng';
-    static TypeTag = 'svg-ext-' + ProcEngComponent.TypeId;
+    // TypeId = 'proceng';
+    static TypeTag = 'svg-ext-proceng'; // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'Proc-Eng';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,

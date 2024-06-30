@@ -12,8 +12,9 @@ declare var SVG: any;
 })
 export class ShapesComponent extends GaugeBaseComponent {
 
-    static TypeId = 'shapes';                                   // Standard shapes (General, Shapes)
-    static TypeTag = 'svg-ext-' + ShapesComponent.TypeId;       // used to identify shapes type, binded with the library svgeditor
+    // TypeId = 'shapes';                                   // Standard shapes (General, Shapes)
+    static TypeTag = 'svg-ext-shapes'; // used to identify shapes type, binded with the library svgeditor
+
     static LabelTag = 'Shapes';
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
@@ -25,6 +26,7 @@ export class ShapesComponent extends GaugeBaseComponent {
     }
 
     static getSignals(pro: any) {
+
         let res: string[] = [];
         if (pro.variableId) {
             res.push(pro.variableId);

@@ -13,7 +13,6 @@ declare var SVG: any;
 })
 export class HtmlInputComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
 
     static TypeTag = 'svg-ext-html_input';
     static LabelTag = 'HtmlInput';

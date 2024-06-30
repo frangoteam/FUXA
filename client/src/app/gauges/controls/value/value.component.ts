@@ -14,7 +14,6 @@ declare var SVG: any;
 })
 export class ValueComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
 
     static TypeTag = 'svg-ext-value';
     static LabelTag = 'Value';

@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild, AfterContentInit, OnInit } from '@angular/core';
 
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { GaugeProperty } from '../../../../_models/hmi';
 
 import { FlexAuthComponent } from '../../../gauge-property/flex-auth/flex-auth.component';
