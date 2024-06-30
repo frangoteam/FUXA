@@ -16,15 +16,23 @@ var manager;
 /**
  * Plugins supported
  */
+const PluginGroupType = {
+    connectionDevice: 'connection-device',
+    connectionDatabase: 'connection-database',
+    chartReport: 'chart-report',
+}
+
 var plugins = {};
-plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0');
-plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9');
-plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4');
-plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.6');
-plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', true);
-plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8');
+plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0', PluginGroupType.connectionDevice);
+plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice);
+plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice);
+plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.6', PluginGroupType.connectionDevice);
+plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
+plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase);
 // plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
+plugins['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '3.9.1', PluginGroupType.chartReport);
+plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '2.1.0', PluginGroupType.chartReport);
 
 /**
  * Init plugin resource
@@ -244,12 +252,13 @@ module.exports = {
     get manager() { return manager },
 };
 
-function Plugin(name, module, type, version, dinamic) {
+function Plugin(name, module, type, version, group, dinamic) {
     this.name = name;
     this.module = module;
     this.type = type;
     this.version = version;
     this.current = '';
     this.pkg = false;
+    this.group = group;
     this.dinamic = false || dinamic;
 }

@@ -1,0 +1,62 @@
+
+:host {
+    .info {
+        margin-bottom: 20px;;
+    }
+    .list {
+        min-width: 600px;
+        height: 400px; 
+        font-size: 16px !important; 
+        padding-top: 0px !important;
+    }
+
+    .list-header {
+        display: block;
+        height: 20px !important;
+
+        span {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            color: gray;
+            font-size: 12px;
+        }
+    }
+
+    .list-item {
+        display: block;
+        font-size: 14px;
+        height: 40px !important;
+        /* cursor: pointer; */
+        overflow: hidden;
+
+        .list-type {
+            width:160px;
+        }
+        .list-name {
+            width:200px;
+        }
+        .list-version {
+            width:100px;
+        }
+        .list-description {
+            width:260px;
+        }
+        .list-status {
+            width:200px;
+        }
+        .list-tool {
+            display: flex;
+            min-width:120px;
+        }
+        span {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
+    .list-item-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}

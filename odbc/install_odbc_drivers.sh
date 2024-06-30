@@ -28,16 +28,14 @@ apt-get install -y \
     unixodbc \
     unixodbc-dev \
     odbc-postgresql \
+    odbc-mariadb \
     libsqliteodbc \
     freetds-dev \
     freetds-bin \
     tdsodbc \
-    libssl1.1 \
+    libssl3 \
     libssl-dev \
     apt-transport-https
-
-# Add Microsoft GPG key
-curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
 
 # Detect system architecture and Debian version
 architecture=$(get_architecture)
@@ -46,15 +44,19 @@ debian_version=$(get_debian_version)
 # Choose appropriate package URL based on Debian version
 case $debian_version in
     9)
+        curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
         package_url="https://packages.microsoft.com/config/debian/9/prod.list"
         ;;
     10)
+        curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
         package_url="https://packages.microsoft.com/config/debian/10/prod.list"
         ;;
     11)
+        curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
         package_url="https://packages.microsoft.com/config/debian/11/prod.list"
         ;;
     12)
+        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
         package_url="https://packages.microsoft.com/config/debian/12/prod.list"
         ;;
     *)
@@ -118,10 +120,10 @@ fi
 echo "Downloading MySQL ODBC Driver..."
 if [ "$architecture" == "arm64" ]; then
     # Download MySQL ODBC Driver for ARM
-    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.3/mysql-connector-odbc-8.3.0-linux-glibc2.28-aarch64.tar.gz" -O mysql-connector-odbc.tar.gz
+    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.4/mysql-connector-odbc-8.4.0-linux-glibc2.28-aarch64.tar.gz" -O mysql-connector-odbc.tar.gz
 elif [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ]; then
     # Download MySQL ODBC Driver for x64
-    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.3/mysql-connector-odbc-8.3.0-linux-glibc2.28-x86-64bit.tar.gz" -O mysql-connector-odbc.tar.gz
+    wget -q "https://dev.mysql.com/get/Downloads/Connector-ODBC/8.4/mysql-connector-odbc-8.4.0-linux-glibc2.28-x86-64bit.tar.gz" -O mysql-connector-odbc.tar.gz
 else
     echo "MySQL ODBC Driver Unsupported architecture: $architecture"
 fi
@@ -134,26 +136,28 @@ if [ "$architecture" == "x64" ] || [ "$architecture" == "x86" ] || [ "$architect
     # Install the extracted driver
     cd mysql-connector-odbc-*
     cp -r bin/* /usr/local/bin
-    cp -r lib/* /usr/local/lib
+    cp -r lib/* /usr/lib/odbc
+
+    # Copy libmyodbc8*.so to odbc drivers
+    #cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
+    #cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
 
     # Register the driver
     echo "Registering MySQL ODBC Driver..."
-    myodbc-installer -a -d -n "MySQL ODBC 8.3 Unicode Driver" -t "Driver=/usr/local/lib/libmyodbc8w.so"
-    myodbc-installer -a -d -n "MySQL ODBC 8.3 ANSI Driver" -t "Driver=/usr/local/lib/libmyodbc8a.so"
-
-    # Copy libmyodbc8*.so to odbc drivers
-    cp /usr/local/lib/libmyodbc8a.so /usr/lib/odbc/libmyodbc8a.so
-    cp /usr/local/lib/libmyodbc8w.so /usr/lib/odbc/libmyodbc8w.so
+    myodbc-installer -a -d -n "MySQL ODBC Unicode Driver" -t "Driver=/usr/lib/odbc/libmyodbc8w.so"
+    myodbc-installer -a -d -n "MySQL ODBC ANSI Driver" -t "Driver=/usr/lib/odbc/libmyodbc8a.so"  
 fi
 
 # Verify that the driver is installed and registered
 echo "Verifying driver installation..."
-/usr/local/bin/myodbc-installer -d -l
+myodbc-installer -d -l
 
 # Clean up extracted files
+echo "Clean up Install Files"
 rm -rf mysql-connector-odbc-*
 rm -f mysql-connector-odbc.tar.gz
 
 # Clean up apt cache
-apt-get clean && rm -rf /var/lib/apt/lists/*
+rm /etc/apt/sources.list.d/mssql-release.list && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+apt-get clean 
 

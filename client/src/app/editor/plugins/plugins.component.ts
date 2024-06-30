@@ -10,7 +10,7 @@ import { Plugin } from '../../_models/plugin';
 @Component({
     selector: 'app-plugins',
     templateUrl: './plugins.component.html',
-    styleUrls: ['./plugins.component.css']
+    styleUrls: ['./plugins.component.scss']
 })
 export class PluginsComponent implements OnInit {
 
