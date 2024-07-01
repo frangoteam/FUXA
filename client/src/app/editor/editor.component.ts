@@ -109,7 +109,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     svgViewType = Utils.getEnumKey(ViewType, ViewType.svg);
 
     shapesGrps = [];
-    private gaugesRef = [];
+    private gaugesRef = {};
 
     private subscriptionSave: Subscription;
     private subscriptionLoad: Subscription;
@@ -502,7 +502,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
                 // check gauge to init
-                this.gaugesRef = [];
+                this.gaugesRef = {};
                 setTimeout(() => {
                     for (let key in v.items) {
                         let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
@@ -700,7 +700,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             for (let i = 0; i < ele.length; i++) {
                 if (this.currentView.items[ele[i].id]) {
                     delete this.currentView.items[ele[i].id];
-                    if (this.gaugesRef.indexOf(ele[i].id) !== -1) {
+                    if (this.gaugesRef.hasOwnProperty(ele[i].id)) {
                         if (this.gaugesRef[ele[i].id].ref && this.gaugesRef[ele[i].id].ref['ngOnDestroy']) {
                             try {
                                 this.gaugesRef[ele[i].id].ref['ngOnDestroy']();
@@ -893,7 +893,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
         if (gauge) {
             if (gauge !== true) {
-                if (this.gaugesRef.indexOf(ga.id) === -1) {
+                if (!this.gaugesRef.hasOwnProperty(ga.id)) {
                     this.gaugesRef[ga.id] = { type: ga.type, ref: gauge };
                 }
             }
