@@ -10,7 +10,7 @@ import { ScriptService } from '../../_services/script.service';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode } from '../../_models/script';
+import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode, ScriptMode } from '../../_models/script';
 import { DevicesUtils, DeviceType } from '../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { ScriptEditorParamComponent } from './script-editor-param/script-editor-param.component';
@@ -34,10 +34,10 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         // lint: {options: {esversion: 2021}},
         lint: true,
     };
-    systemFunctions = new SystemFunctions();
-    templatesCode = new TemplatesCode();
+    systemFunctions: SystemFunctions;
+    templatesCode: TemplatesCode;
 
-    checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
+    checkSystemFnc: string[] = [];
     parameters: ScriptParam[] = [];
     testParameters: ScriptParam[] = [];
     tagParamType = Utils.getEnumKey(ScriptParamType, ScriptParamType.tagid);
@@ -56,8 +56,11 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         private scriptService: ScriptService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
             this.script = data.script;
-            this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM();}, 0));
-        }
+        this.dialogRef.afterOpened().subscribe(() => setTimeout(() => {this.ready = true; this.setCM();}, 0));
+        this.systemFunctions = new SystemFunctions(this.script.mode);
+        this.templatesCode = new TemplatesCode(this.script.mode);
+        this.checkSystemFnc = this.systemFunctions.functions.map(sf => sf.name);
+    }
 
     ngOnInit() {
         if (!this.script) {
@@ -190,7 +193,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             data: <DeviceTagSelectionData> {
                 variableId: null,
                 multiSelection: false,
-                deviceFilter: [ DeviceType.internal ]
+                deviceFilter: [ this.script.mode === ScriptMode.SERVER ? DeviceType.internal : null ]
             }
         });
 

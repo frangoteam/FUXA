@@ -365,7 +365,7 @@ export class GaugesManager {
     }
 
     getGaugeFromName(gaugeName: string) {
-        const gauge = Object.values(this.mapGauges).find((gauge: any) => gauge.name === gaugeName);
+        const gauge = Object.values(this.mapGauges).find((gauge: any) => gauge?.name === gaugeName);
         return gauge;
     }
 

@@ -8,7 +8,7 @@ import { Script, ScriptMode } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
-import { TagDaq } from '../_models/device';
+import { DeviceType, TagDaq, TagDevice } from '../_models/device';
 
 @Injectable({
     providedIn: 'root'
@@ -93,8 +93,8 @@ export class ScriptService {
     }
 
     public async $getTag(id: string) {
-        let tag = this.projectService.getTagFromId(id);
-        if (!Utils.isNullOrUndefined(tag?.value)) {
+        let tag: TagDevice = this.projectService.getTagFromId(id, true);
+        if (tag?.deviceType === DeviceType.internal) {
             return tag.value;
         }
         let values = await this.projectService.getTagsValues([id]);
