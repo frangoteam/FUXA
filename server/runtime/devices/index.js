@@ -515,6 +515,10 @@ function getRequestResult(property) {
     return Device.getRequestResult(property);
 }
 
+function getHistoricalTag(tagId,fromDate,toDate){
+    console.log("getHistoricalTag worked successfully:",tagId,fromDate,toDate);
+}
+
 var devices = module.exports = {
     init: init,
     start: start,
@@ -545,4 +549,5 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
+    getHistoricalTag: getHistoricalTag,
 }

@@ -203,7 +203,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             console.log(result);
             if (result && result.variableId) {
                 console.log(result.historicalTags);
-                let text = `${sysfnc.name}([${result.historicalTags.map(tag=>tag.id)}],${new Date()},${new Date()});`;
+                let text = `${sysfnc.name}([${result.historicalTags.map(tag=>{let id='\'';id+=tag.id;id+='\'';return id;})}],'${new Date()}','${new Date()}');`;
                 this.insertText(text);
             }
         });
