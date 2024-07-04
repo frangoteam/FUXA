@@ -170,9 +170,13 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     onAddSystemFunction(sysfnc: SystemFunction) {
-        if (sysfnc.params.filter((value) => value).length === 1) {
+        if(sysfnc.name.includes('getHistoricalTag')){
+            this.onAddHistoricalTag(sysfnc);
+        }
+        else if (sysfnc.params.filter((value) => value).length === 1) {
             this.onAddSystemFunctionTag(sysfnc);
-        } else {
+        }
+         else {
             this.insertText(this.getFunctionText(sysfnc));
         }
     }
@@ -181,6 +185,28 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         if (tmpfnc.code) {
             this.insertText(tmpfnc.code);
         }
+    }
+
+    onAddHistoricalTag(sysfnc: SystemFunction){
+        let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <DeviceTagSelectionData> {
+                variableId: null,
+                multiSelection: true,
+                deviceFilter: [ DeviceType.internal ],
+                isHistorical:true
+            }
+        });
+
+        dialogRef.afterClosed().subscribe((result: DeviceTagSelectionData) => {
+            console.log(result);
+            if (result && result.variableId) {
+                console.log(result.historicalTags);
+                let text = `${sysfnc.name}([${result.historicalTags.map(tag=>tag.id)}],${new Date()},${new Date()});`;
+                this.insertText(text);
+            }
+        });
     }
 
     onAddSystemFunctionTag(sysfnc: SystemFunction) {

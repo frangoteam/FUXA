@@ -28,6 +28,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     addressFilter = new UntypedFormControl();
     deviceFilter = new UntypedFormControl();
     tags: TagElement[] = [];
+    historicalTags: Tag[];
     devices: Device[] = [];
     filteredValues = {
         name: '', address: '', device: ''
@@ -111,10 +112,12 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     onOkClick(): void {
         this.data.variableId = null;
         this.data.variablesId = [];
+        this.data.historicalTags=[];
         this.dataSource.data.forEach(e => {
             if (e.checked) {
                 this.data.variableId = e.id;
                 this.data.variablesId.push(e.id);
+                this.data.historicalTags.push(e);
             }
         });
         this.dialogRef.close(this.data);
@@ -169,6 +172,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
 
     private loadDevicesTags(newTag?: Tag, deviceName?: string) {
         this.tags = [];
+        this.historicalTags=[];
         this.devices = Object.values(this.projectService.getDevices());
         if (this.devices) {
             this.devices.forEach((device: Device) => {
@@ -181,12 +185,15 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
                             device: device.name, checked: (t.id === this.data.variableId), error: null
                         });
                     }
-                    );
+                );
+                Object.values(device.tags).filter((tag: Tag)=>tag.daq.changed && tag.daq.enabled).forEach((tag: Tag)=>{
+                    this.historicalTags.push(tag);
+                });
                 }
             }
             );
         }
-        this.dataSource.data = this.tags;
+        this.dataSource.data = this.data.isHistorical ? this.historicalTags : this.tags;
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
@@ -211,4 +218,6 @@ export interface DeviceTagSelectionData {
     deviceFilter?: DeviceType[];
     variablesId?: string[];
     deviceName?: string;
+    isHistorical?: boolean;
+    historicalTags?: Tag[];
 }
