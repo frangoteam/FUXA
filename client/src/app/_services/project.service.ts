@@ -11,7 +11,7 @@ import { Alarm, AlarmQuery } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
 import { Text } from '../_models/text';
-import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer, TagSystemType, TAG_PREFIX, ServerTagType } from '../_models/device';
+import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer, TagSystemType, TAG_PREFIX, ServerTagType, TagDevice } from '../_models/device';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceStorageService } from './rcgi/resource-storage.service';
@@ -947,10 +947,18 @@ export class ProjectService {
         }
     }
 
-    getTagFromId(tagId: string): Tag {
+    getTagFromId(tagId: string, withDeviceRef?: boolean): Tag | TagDevice {
         let devices = <Device[]>Object.values(this.projectData.devices);
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags[tagId]) {
+                const tag = devices[i].tags[tagId];
+                if (withDeviceRef) {
+                    let tagDevice = <TagDevice>Utils.clone(tag);
+                    tagDevice.deviceId = devices[i].id;
+                    tagDevice.deviceName = devices[i].name;
+                    tagDevice.deviceType = devices[i].type;
+                    return tagDevice;
+                }
                 return devices[i].tags[tagId];
             }
         }

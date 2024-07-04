@@ -558,7 +558,7 @@ export interface DictionaryGaugeSettings {
     [x: string]: GaugeSettings;
 }
 
-interface DictionaryVariables {
+export interface DictionaryVariables {
     [id: string]: Variable;
 }
 
