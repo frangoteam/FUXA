@@ -200,9 +200,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         });
 
         dialogRef.afterClosed().subscribe((result: DeviceTagSelectionData) => {
-            console.log(result);
             if (result && result.variableId) {
-                console.log(result.historicalTags);
                 let text = `${sysfnc.name}([${result.historicalTags.map(tag=>{let id='\'';id+=tag.id;id+='\'';return id;})}],'${new Date()}','${new Date()}');`;
                 this.insertText(text);
             }
