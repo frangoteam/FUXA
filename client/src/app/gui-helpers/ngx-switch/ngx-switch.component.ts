@@ -14,6 +14,7 @@ export class NgxSwitchComponent implements AfterViewInit {
     options: SwitchOptions = new SwitchOptions();
     checked = false;
     onUpdate: any;
+    isReadonly = false;
 
     constructor() {
     }
@@ -23,6 +24,9 @@ export class NgxSwitchComponent implements AfterViewInit {
     }
 
     onClick() {
+        if (this.isReadonly) {
+            return;
+        }
         this.onRefresh();
         if (this.onUpdate) {
             this.onUpdate((this.checked) ? this.options.onValue.toString() : this.options.offValue.toString());

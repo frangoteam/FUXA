@@ -15,8 +15,8 @@ export enum PipeActionsType {
 @Injectable()
 export class PipeComponent {
 
-    static TypeId = 'pipe';
-    static TypeTag = 'svg-ext-' + PipeComponent.TypeId;      // used to identify shapes type, binded with the library svgeditor
+    // TypeId = 'pipe';
+    static TypeTag = 'svg-ext-pipe'; // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'Pipe';
     static prefixB = 'PIE_';
 

@@ -1,7 +1,7 @@
 ﻿/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA} from '@angular/material/legacy-dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -1350,6 +1350,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 data: {
                     settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported, withActions: actionsSupported, withBitmask: bitmaskSupported,
+                    views: hmi.views,
+                    view: this.currentView,
+                    scripts: this.projectService.getScripts(),
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
                     names: names
                 }
             });

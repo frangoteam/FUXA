@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { Device, DeviceType, TAG_PREFIX, Tag } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { Subject, takeUntil } from 'rxjs';
