@@ -49,6 +49,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists notifications (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists scripts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists reports (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists historical (tag_id TEXT,tag_name TEXT,tag_value TEXT,timestamp TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.bind failed! ${err}`);
@@ -194,6 +195,26 @@ function clearAll() {
     });
 }
 
+function saveHistoricalData(event){
+    return new Promise((resolve,reject)=>{
+        if(!db_prj) reject("EMPTY DB FILE");
+        var sql = "";
+        Object.values(event.values).forEach(tag=>{
+            if(tag.daq.enabled && tag.daq.changed){
+                sql += "INSERT INTO historical (tag_id,tag_name,tag_value,timestamp) VALUES('"+tag.id+"','"+tag.name+"','"+tag.value+"','"+tag.timestamp+"');"
+            }
+        })
+        db_prj.all(sql+ "VALUES('" + event.id + "','" + Object.values(event.values) +"');",function (err,rows){
+            if(err){
+                reject(err);
+            }else{
+                resolve(rows);
+            }
+        })
+    })
+
+}
+
 /**
  * Database Table
  */
@@ -207,6 +228,7 @@ const TableType = {
     NOTIFICATIONS: 'notifications',
     SCRIPTS: 'scripts',
     REPORTS: 'reports',
+    Historical: 'historical'
 }
 
 module.exports = {
@@ -219,4 +241,5 @@ module.exports = {
     deleteSection: deleteSection,
     setDefault: setDefault,
     TableType: TableType,
+    saveHistoricalData:saveHistoricalData,
 };
