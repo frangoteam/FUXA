@@ -13,7 +13,6 @@ declare var SVG: any;
 })
 export class HtmlSelectComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
 
     static TypeTag = 'svg-ext-html_select';
     static LabelTag = 'HtmlSelect';
@@ -26,6 +25,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
     }
 
     static getSignals(pro: any) {
+        
         let res: string[] = [];
         if (pro.variableId) {
             res.push(pro.variableId);

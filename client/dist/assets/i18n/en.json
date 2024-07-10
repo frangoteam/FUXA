@@ -1331,10 +1331,13 @@
     "dlg.textproperty-group": "Group",
     "dlg.textproperty-value": "Text",
 
-    "dlg.plugins-title": "Plugins",
+    "dlg.plugins-title": "Server Plugins",
+    "dlg.plugins-info": "Not installed plugins can be installed in the server manually: 'npm install [package name]@[version]'",
+    "dlg.plugins-type": "Type",
     "dlg.plugins-name": "Name",
     "dlg.plugins-version": "Version",
     "dlg.plugins-current": "Installed",
+    "dlg.plugins-description": "Description",
     "dlg.plugins-status-installing": "Installing...",
     "dlg.plugins-status-removing": "Removing...",
     "dlg.plugins-status-installed": "Installing...OK!",
@@ -1415,6 +1418,10 @@
     "store.retention-year1": "1 year",
     "store.retention-year3": "3 year",
     "store.retention-year5": "5 year",
+
+    "plugin.group-connection-device": "Connection device",
+    "plugin.group-connection-database": "Connection database",
+    "plugin.group-chart-report": "Chart image for Report",
 
     "msg.alarm-ack-all": "Would you like to ACK all alarms?",
     "msg.alarm-remove": "Would you like to remove Alarm?",

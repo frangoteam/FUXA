@@ -215,7 +215,7 @@ export class GaugeBaseComponent {
     static walkTreeNodeToSetAttribute(node, attributeName: string, attributeValue: string | number) {
         node?.setAttribute(attributeName, attributeValue);
         Utils.walkTree(node, (element) => {
-            if (element.id?.startsWith('SHE')) {
+            if (element.id?.startsWith('SHE') || element.id?.startsWith('svg_')) {
                 element.setAttribute(attributeName, attributeValue);
             }
         });

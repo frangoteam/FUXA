@@ -11,7 +11,6 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 })
 export class GaugeProgressComponent extends GaugeBaseComponent {
 
-    @Input() data: any;
 
     static TypeTag = 'svg-ext-gauge_progress';
     static LabelTag = 'HtmlProgress';

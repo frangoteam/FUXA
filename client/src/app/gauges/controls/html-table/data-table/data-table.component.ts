@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatRow, MatTable, MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatMenuTrigger } from '@angular/material/menu';
+import { MatLegacyRow as MatRow, MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { MatSort } from '@angular/material/sort';
 import { Utils } from '../../../../_helpers/utils';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -165,11 +165,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     });
                 }
             });
-        } else if (this.type === TableType.history && this.tableOptions.realtime) {
-            if (this.addValueInterval && this.pauseMemoryValue[variableId] && Utils.getTimeDifferenceInSeconds(this.pauseMemoryValue[variableId]) < this.addValueInterval) {
-                return;
+        } else if (this.type === TableType.history) {
+            if (this.tableOptions.realtime) {
+                if (this.addValueInterval && this.pauseMemoryValue[variableId] && Utils.getTimeDifferenceInSeconds(this.pauseMemoryValue[variableId]) < this.addValueInterval) {
+                    return;
+                }
+                this.pauseMemoryValue[variableId] = dt * 1e3;
             }
-            this.pauseMemoryValue[variableId] = dt * 1e3;
             this.addRowDataToTable(dt * 1e3, variableId, variableValue);
         }
     }

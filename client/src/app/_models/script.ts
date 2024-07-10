@@ -75,41 +75,47 @@ export enum SchedulerType {
 }
 
 export class SystemFunctions {
-    functions = <SystemFunction[]>[{
-        name: '$setTag', text: 'script.sys-fnc-settag-text', tooltip: 'script.sys-fnc-settag-tooltip', params: [true, false]
+    functions: SystemFunction[] = [];
+
+    constructor(mode?: ScriptMode) {
+        this.functions = this.allFunctions.filter(sf => !sf.mode || !mode || sf.mode === mode);
+    }
+
+    allFunctions = <SystemFunction[]>[{
+        name: '$setTag', mode: null, text: 'script.sys-fnc-settag-text', tooltip: 'script.sys-fnc-settag-tooltip', params: [true, false]
     },
     {
-        name: '$getTag', text: 'script.sys-fnc-gettag-text', tooltip: 'script.sys-fnc-gettag-tooltip', params: [true]
+        name: '$getTag', mode: null, text: 'script.sys-fnc-gettag-text', tooltip: 'script.sys-fnc-gettag-tooltip', params: [true]
     },
     {
-        name: '$getTagId', text: 'script.sys-fnc-getTagId-text', tooltip: 'script.sys-fnc-getTagId-tooltip', params: [false], paramsText: 'script.sys-fnc-getTagId-params'
+        name: '$getTagId', mode: null, text: 'script.sys-fnc-getTagId-text', tooltip: 'script.sys-fnc-getTagId-tooltip', params: [false], paramsText: 'script.sys-fnc-getTagId-params'
     },
     {
-        name: '$getTagDaqSettings', text: 'script.sys-fnc-getTagDaqSettings-text', tooltip: 'script.sys-fnc-getTagDaqSettings-tooltip', params: [true], paramsText: 'script.sys-fnc-getTagDaqSettings-params'
+        name: '$getTagDaqSettings', mode: null, text: 'script.sys-fnc-getTagDaqSettings-text', tooltip: 'script.sys-fnc-getTagDaqSettings-tooltip', params: [true], paramsText: 'script.sys-fnc-getTagDaqSettings-params'
     },
     {
-        name: '$setTagDaqSettings', text: 'script.sys-fnc-setTagDaqSettings-text', tooltip: 'script.sys-fnc-setTagDaqSettings-tooltip', params: [true, false], paramsText: 'script.sys-fnc-setTagDaqSettings-params'
+        name: '$setTagDaqSettings', mode: null, text: 'script.sys-fnc-setTagDaqSettings-text', tooltip: 'script.sys-fnc-setTagDaqSettings-tooltip', params: [true, false], paramsText: 'script.sys-fnc-setTagDaqSettings-params'
     },
     {
-        name: '$setView', text: 'script.sys-fnc-setview-text', tooltip: 'script.sys-fnc-setview-tooltip', params: [false]
+        name: '$setView', mode: null, text: 'script.sys-fnc-setview-text', tooltip: 'script.sys-fnc-setview-tooltip', params: [false]
     },
     {
-        name: '$enableDevice', text: 'script.sys-fnc-enableDevice-text', tooltip: 'script.sys-fnc-enableDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-enableDevice-params'
+        name: '$enableDevice', mode: null, text: 'script.sys-fnc-enableDevice-text', tooltip: 'script.sys-fnc-enableDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-enableDevice-params'
     },
     {
-        name: '$getDeviceProperty', text: 'script.sys-fnc-getDeviceProperty-text', tooltip: 'script.sys-fnc-getDeviceProperty-tooltip', params: [false], paramsText: 'script.sys-fnc-getDeviceProperty-params'
+        name: '$getDeviceProperty', mode: null, text: 'script.sys-fnc-getDeviceProperty-text', tooltip: 'script.sys-fnc-getDeviceProperty-tooltip', params: [false], paramsText: 'script.sys-fnc-getDeviceProperty-params'
     },
     {
-        name: '$setDeviceProperty', text: 'script.sys-fnc-setDeviceProperty-text', tooltip: 'script.sys-fnc-setDeviceProperty-tooltip', params: [false, false], paramsText: 'script.sys-fnc-setDeviceProperty-params'
+        name: '$setDeviceProperty', mode: null, text: 'script.sys-fnc-setDeviceProperty-text', tooltip: 'script.sys-fnc-setDeviceProperty-tooltip', params: [false, false], paramsText: 'script.sys-fnc-setDeviceProperty-params'
     },
     {
-        name: '$getDevice', text: 'script.sys-fnc-getDevice-text', tooltip: 'script.sys-fnc-getDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-getDevice-params'
+        name: '$getDevice', mode: ScriptMode.SERVER, text: 'script.sys-fnc-getDevice-text', tooltip: 'script.sys-fnc-getDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-getDevice-params'
     },
     {
-        name: '$invokeObject', text: 'script.sys-fnc-invokeObject-text', tooltip: 'script.sys-fnc-invokeObject-tooltip', params: [false, false, false], paramsText: 'script.sys-fnc-invokeObject-params'
+        name: '$invokeObject', mode: ScriptMode.CLIENT, text: 'script.sys-fnc-invokeObject-text', tooltip: 'script.sys-fnc-invokeObject-tooltip', params: [false, false, false], paramsText: 'script.sys-fnc-invokeObject-params'
     },
     {
-        name: '$runServerScript', text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
+        name: '$runServerScript', mode: ScriptMode.CLIENT, text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
     },
     {
         name:'$getHistoricalTag' , text:'script.sys-fnc-getHistoricalTag-text', tooltip:'script.sys-fnc-getHistoricalTag-tooltip',params:[false,false,false],paramsText:`'Tag ID','From Date','To Date'`
@@ -118,8 +124,13 @@ export class SystemFunctions {
 }
 
 export class TemplatesCode {
-    functions = <SystemFunction[]>[{
-        name: 'chart-data', text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
+    functions: SystemFunction[] = [];
+
+    constructor(mode?: ScriptMode) {
+        this.functions = this.allFunctions.filter(sf => !sf.mode || !mode || sf.mode === mode);
+    }
+    allFunctions = <SystemFunction[]>[{
+        name: 'chart-data', mode: ScriptMode.CLIENT, text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
         code: `if (paramLines && Array.isArray(paramLines)) {
     const count = 10;
     paramLines.forEach(line => {
@@ -139,7 +150,7 @@ export class TemplatesCode {
 }`
     },
     {
-        name: 'invoke-chart-update-options', text: 'script.template-invoke-chart-update-options-text', tooltip: 'script.template-invoke-chart-update-options-tooltip',
+        name: 'invoke-chart-update-options', mode: ScriptMode.CLIENT, text: 'script.template-invoke-chart-update-options-text', tooltip: 'script.template-invoke-chart-update-options-tooltip',
         code: `let opt = $invokeObject('chart_1', 'getOptions');
 if (opt) {
     opt.scaleY1min = 100;
@@ -156,6 +167,7 @@ export interface SystemFunction {
     params?: [boolean];     // array of function parameter where true is for tag and false for any (value)
     paramsText?: string;    // to add as parameter description in function
     code?: string;          // Code to paste
+    mode?: ScriptMode;
 }
 
 export enum ScriptMode {

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Input, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Observable, Subject, of, takeUntil } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
-import { MatTabGroup } from '@angular/material/tabs';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyTabGroup as MatTabGroup } from '@angular/material/legacy-tabs';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 

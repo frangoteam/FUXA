@@ -1,6 +1,6 @@
 <div class="container">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-html-switch-settings' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'editor.controls-html-switch-settings' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'gauges.property-props' | translate}}">
             <div style="height: 500px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
@@ -97,6 +97,18 @@
                         [style.height]="switchHeight + 'px'"></ngx-switch>
                 </div>
             </div>
+        </mat-tab>
+		<mat-tab label="{{'gauges.property-events' | translate}}" *ngIf="eventsSupported">
+            <div class="mat-tab-container">
+				<div class="toolbox">
+					<button mat-icon-button (click)="onAddEvent()" matTooltip="{{'gauges.property-tooltip-add-event' | translate}}">
+						<mat-icon>add_circle_outline</mat-icon>
+					</button>
+				</div>
+				<div mat-dialog-content style="overflow: visible; width:100%;">
+					<flex-event [property]="property" [views]="data.views" [data]="data" [inputs]="data.inputs" [scripts]="data.scripts" #flexevent class="mb5"></flex-event>
+				</div>
+			</div>
         </mat-tab>
     </mat-tab-group>
     <div mat-dialog-actions class="dialog-action">

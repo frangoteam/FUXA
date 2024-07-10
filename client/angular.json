@@ -26,7 +26,8 @@
             "styles": [
               "src/styles.css",
               "src/theme.scss",
-              "node_modules/uplot/dist/uPlot.min.css"
+              "node_modules/uplot/dist/uPlot.min.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               "node_modules/uplot/dist/uPlot.iife.min.js",
@@ -192,5 +193,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "c2fa2ede-d40c-46d1-ba21-d1fa7d9ff4bf"
   }
 }

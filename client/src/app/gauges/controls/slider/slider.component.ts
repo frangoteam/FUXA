@@ -9,8 +9,8 @@ import { NgxNouisliderComponent } from '../../../gui-helpers/ngx-nouislider/ngx-
 @Injectable()
 export class SliderComponent {
 
-    static TypeId = 'html_slider';
-    static TypeTag = 'svg-ext-' + SliderComponent.TypeId;
+    // TypeId = 'html_slider';
+    static TypeTag = 'svg-ext-html_slider';
     static LabelTag = 'HtmlSlider';
     static prefix = 'D-SLI_';
 
