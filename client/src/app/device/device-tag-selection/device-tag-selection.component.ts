@@ -28,7 +28,6 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     addressFilter = new UntypedFormControl();
     deviceFilter = new UntypedFormControl();
     tags: TagElement[] = [];
-    historicalTags: Tag[];
     devices: Device[] = [];
     filteredValues = {
         name: '', address: '', device: ''
@@ -112,12 +111,10 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     onOkClick(): void {
         this.data.variableId = null;
         this.data.variablesId = [];
-        this.data.historicalTags=[];
         this.dataSource.data.forEach(e => {
             if (e.checked) {
                 this.data.variableId = e.id;
                 this.data.variablesId.push(e.id);
-                this.data.historicalTags.push(e);
             }
         });
         this.dialogRef.close(this.data);
@@ -172,28 +169,32 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
 
     private loadDevicesTags(newTag?: Tag, deviceName?: string) {
         this.tags = [];
-        this.historicalTags=[];
         this.devices = Object.values(this.projectService.getDevices());
         if (this.devices) {
             this.devices.forEach((device: Device) => {
                 if (this.data.deviceFilter && this.data.deviceFilter.indexOf(device.type) !== -1) {
                     // filtered device
                 } else if (device.tags) {
-                    Object.values(device.tags).forEach((t: Tag) => {
-                        this.tags.push(<TagElement>{
-                            id: t.id, name: t.name, address: t.address,
-                            device: device.name, checked: (t.id === this.data.variableId), error: null
+                    if(this.data.isHistorical){
+                        Object.values(device.tags).filter((t: Tag)=>t.daq.changed && t.daq.enabled).forEach((t: Tag)=>{
+                            this.tags.push(<TagElement>{
+                                id: t.id, name: t.name, address: t.address,
+                                device: device.name, checked: (t.id === this.data.variableId), error: null
+                            });
+                        });
+                    }else{
+                        Object.values(device.tags).forEach((t: Tag) => {
+                            this.tags.push(<TagElement>{
+                                id: t.id, name: t.name, address: t.address,
+                                device: device.name, checked: (t.id === this.data.variableId), error: null
+                            });
                         });
                     }
-                );
-                Object.values(device.tags).filter((tag: Tag)=>tag.daq.changed && tag.daq.enabled).forEach((tag: Tag)=>{
-                    this.historicalTags.push(tag);
-                });
                 }
             }
             );
         }
-        this.dataSource.data = this.data.isHistorical ? this.historicalTags : this.tags;
+        this.dataSource.data = this.tags;
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
@@ -219,5 +220,4 @@ export interface DeviceTagSelectionData {
     variablesId?: string[];
     deviceName?: string;
     isHistorical?: boolean;
-    historicalTags?: Tag[];
 }

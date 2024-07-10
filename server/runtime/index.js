@@ -569,12 +569,6 @@ function updateDeviceValues(event) {
             values: Object.values(event.values),
         });
     }
-    project.saveHistoricalData(event)
-      .then((res) => {})
-      .catch((err) => {
-        logger.error(err.toString());
-      });
-      
     tagsSubscription.forEach((key, value) => {
       if (event.values[value]) {
         events.emit("tag-value:changed", event.values[value]);

@@ -46,7 +46,7 @@
                 </button>
                 <mat-menu #devicesMenu [overlapTrigger]="false">
                     <ng-container *ngFor="let device of devices">
-                        <button *ngIf="isDeviceTagEditable(device.type)" mat-menu-item (click)="onAddDeviceTag(device)">{{ device.name }}</button>                        
+                        <button *ngIf="isDeviceTagEditable(device.type)" mat-menu-item (click)="onAddDeviceTag(device)">{{ device.name }}</button>
                     </ng-container>
                 </mat-menu>
             </mat-header-cell>

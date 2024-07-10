@@ -919,18 +919,6 @@ function _mergeDefaultConfig() {
     }
 }
 
-function saveHistoricalData(event){
-    return new Promise((resolve,reject)=>{
-        prjstorage.saveHistoricalData(event)
-        .then(res=>{
-            resolve(res)
-        })
-        .catch(err=>{
-            reject(err)
-        })
-    })
-}
-
 const ProjectDataCmdType = {
     SetDevice: 'set-device',
     DelDevice: 'del-device',
@@ -970,5 +958,4 @@ module.exports = {
     setProject: setProject,
     getProjectDemo: getProjectDemo,
     ProjectDataCmdType, ProjectDataCmdType,
-    saveHistoricalData:saveHistoricalData
 };

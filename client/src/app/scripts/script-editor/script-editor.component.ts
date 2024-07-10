@@ -193,7 +193,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             position: { top: '60px' },
             data: <DeviceTagSelectionData> {
                 variableId: null,
-                multiSelection: true,
+                multiSelection: false,
                 deviceFilter: [ DeviceType.internal ],
                 isHistorical:true
             }
@@ -201,7 +201,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe((result: DeviceTagSelectionData) => {
             if (result && result.variableId) {
-                let text = `${sysfnc.name}([${result.historicalTags.map(tag=>{let id='\'';id+=tag.id;id+='\'';return id;})}],'${new Date()}','${new Date()}');`;
+                let text = `${sysfnc.name}('${result.variableId}','YYYY/MM/DD','YYYY/MM/DD');`;
                 this.insertText(text);
             }
         });

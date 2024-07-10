@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const daqstorage = require('../storage/daqstorage');
 var sqlite3 = require('sqlite3').verbose();
 
 var settings        // Application settings
@@ -195,25 +196,6 @@ function clearAll() {
     });
 }
 
-function saveHistoricalData(event){
-    return new Promise((resolve,reject)=>{
-        if(!db_prj) reject("EMPTY DB FILE");
-        var sql = "";
-        Object.values(event.values).forEach(tag=>{
-            if(tag.daq.enabled && tag.daq.changed){
-                sql += "INSERT INTO historical (tag_id,tag_name,tag_value,timestamp) VALUES('"+tag.id+"','"+tag.name+"','"+tag.value+"','"+tag.timestamp+"');"
-            }
-        })
-        db_prj.all(sql+ "VALUES('" + event.id + "','" + Object.values(event.values) +"');",function (err,rows){
-            if(err){
-                reject(err);
-            }else{
-                resolve(rows);
-            }
-        })
-    })
-
-}
 
 /**
  * Database Table
@@ -241,5 +223,4 @@ module.exports = {
     deleteSection: deleteSection,
     setDefault: setDefault,
     TableType: TableType,
-    saveHistoricalData:saveHistoricalData,
 };

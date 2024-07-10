@@ -4,6 +4,7 @@
 
 'use strict';
 var Device = require('./device');
+var daqstorage=require('../storage/daqstorage');
 
 var sharedDevices = {};             // Shared Devices list
 var activeDevices = {};             // Actives Devices list
@@ -516,7 +517,25 @@ function getRequestResult(property) {
 }
 
 function getHistoricalTag(tagId,fromDate,toDate){
-    console.log("getHistoricalTag worked successfully:",tagId,fromDate,toDate);
+    var [fromYear,fromMonth,fromDay]=fromDate.split('/');
+    var [toYear,toMonth,toDay]=toDate.split('/');
+    var fromTs=new Date(fromYear,fromMonth-1,fromDay);
+    var toTs=new Date(toYear,toMonth-1,toDay);
+    //Check if geting date from script is correct
+    if(isNaN(fromTs)){
+        fromTs=new Date();
+    }
+    if(isNaN(toTs)){
+        toTs=new Date();
+    }
+    //Changing Date to timestamp
+    toTs=toTs.getTime();
+    fromTs=fromTs.getTime();
+    daqstorage.getNodeValues(tagId,fromTs,toTs).then(res=>{
+        console.log(res);
+        return res;
+    }
+    ).catch(err=>reject(err))
 }
 
 var devices = module.exports = {

@@ -595,6 +595,7 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
     }
 
     function _getTagValues(db, id, fromts, tots) {
+        console.log(id,fromts,tots);
         return new Promise(function (resolve, reject) {
             const booleanMapping = { "true": true, "false": false };
             var sql = "SELECT dt, value FROM data WHERE id = ? AND dt BETWEEN ? and ? ORDER BY dt ASC";
