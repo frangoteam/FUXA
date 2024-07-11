@@ -16,7 +16,7 @@
     top: 0px;
     right: 0px;
     height: 22px;
-    width: 100%;
+    width: 22px;
     color: rgba(0, 0, 0, 0.7);
     background-color: transparent;
     font-size: 12px;
@@ -24,6 +24,7 @@
 }
 
 .card-move-area {
+    z-index: 999;
     position: absolute;
     top: 0px;
     left: 0px;
