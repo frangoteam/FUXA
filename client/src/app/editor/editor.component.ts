@@ -88,9 +88,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     gridOn = false;
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
-    panelsState = {
+    panelsState: PanelsStateType = {
         enabled: false,
         panelView: true,
+        panelViewHeight: 200,
         panelGeneral: true,
         panelC: true,
         panelD: true,
@@ -107,7 +108,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     dashboard: Array<GridsterItem>;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
     svgViewType = Utils.getEnumKey(ViewType, ViewType.svg);
-
     shapesGrps = [];
     private gaugesRef = {};
 
@@ -1206,7 +1206,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let ps = localStorage.getItem('@frango.webeditor.panelsState');
         this.panelsState.enabled = true;
         if (ps) {
-            this.panelsState = JSON.parse(ps);
+            this.panelsState = Utils.mergeDeep(this.panelsState, JSON.parse(ps));
         }
     }
 
@@ -1215,6 +1215,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     savePanelState() {
         if (this.panelsState.enabled) {
+            if (this.panelsState.panelViewHeight < 100) {
+                this.panelsState.panelViewHeight = 100;
+            }
             localStorage.setItem('@frango.webeditor.panelsState', JSON.stringify(this.panelsState));
         }
     }
@@ -1598,4 +1601,14 @@ export class DialogLinkProperty {
 export enum EditorModeType {
     SVG,
     CARDS
+}
+
+interface PanelsStateType {
+    enabled?: boolean;
+    panelView?: boolean;
+    panelViewHeight?: number;
+    panelGeneral?: boolean;
+    panelC?: boolean;
+    panelD?: boolean;
+    panelS?: boolean;
 }

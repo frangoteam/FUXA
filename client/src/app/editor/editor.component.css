@@ -299,7 +299,6 @@
 /* left panel */
 /* --------------- */
 .view-panel {
-    max-height: 400px;
     overflow: auto;
 }
 .leftbar-edit-btn {
@@ -317,6 +316,9 @@
     background-color: var(--toolboxPanelBackgroung);
     color: var(--toolboxColor);
     overflow: auto;
+}
+
+.leftbar-panel.h200 {
     max-height: 200px;
 }
 

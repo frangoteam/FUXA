@@ -187,6 +187,7 @@ import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-proper
 import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 import { ViewPropertyComponent } from './editor/view-property/view-property.component';
+import { ResizeDirective } from './_directives/resize.directive';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -338,7 +339,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PanelComponent,
         PanelPropertyComponent,
         WebcamPlayerComponent,
-        WebcamPlayerDialogComponent
+        WebcamPlayerDialogComponent,
+        ResizeDirective
     ],
     imports: [
         BrowserModule,

@@ -53,7 +53,8 @@
                         <input type="file" #viewFileImportInput style="display: none" id="viewFileUpload" (click)="$event.stopPropagation()"
                             (change)="onViewFileChangeListener($event)" accept=".json" />
                     </mat-expansion-panel-header>
-                    <div class="leftbar-panel view-panel">
+                    <div appResize class="leftbar-panel view-panel" [(height)]="panelsState.panelViewHeight" [style.height.px]="panelsState.panelViewHeight"
+                        (changeEnd)="savePanelState()">
                         <div *ngIf="hmi.views && hmi.views.length <= 0">
                             <br>
                         </div>
@@ -88,7 +89,7 @@
                             </mat-panel-title>
                         </mat-expansion-panel-header>
 
-                        <div id="__tools_left" class="leftbar-panel">
+                        <div id="__tools_left" class="leftbar-panel h200">
                             <div class="svg-tool-button" [ngClass]="{'svg-tool-active': isModeActive('select')}" matTooltip="{{'editor.tools-select' | translate}}" (click)="setMode('select')">
                                 <span class="icon-select"></span>
                             </div>
@@ -133,7 +134,7 @@
                                 <span>{{'editor.controls' | translate}}</span>
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <div id="__tools_left" class="leftbar-panel">
+                        <div id="__tools_left" class="leftbar-panel h200">
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-input' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_input')}"
                                 (click)="setMode('html_input')">
                                 <span class="icon-tool icon-editvalue"></span>
@@ -215,7 +216,7 @@
                                 <span>{{shGrp.name | translate}}</span>
                             </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <div id="__tools_left" class="leftbar-panel">
+                        <div id="__tools_left" class="leftbar-panel h200">
                             <div *ngFor="let shape of shGrp.shapes" style="margin-left: 3px;margin-right: 3px;" class="svg-tool-button"
                                 [ngClass]="{'svg-tool-active': isModeActive(shape.name)}" (click)="setMode(shape.name)">
                                 <span class="icon-tool" [style.backgroundImage]="'url(' + shape.ico + ')'"> </span>
