@@ -133,16 +133,16 @@ export class GaugeBaseComponent {
                             element.style.backgroundColor = act.options.fillA;
                             element.style.color = act.options.strokeA;
                         } else {
-                            element.node.setAttribute('fill', act.options.fillA);
-                            element.node.setAttribute('stroke', act.options.strokeA);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(element.node, 'fill', act.options.fillA);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(element.node, 'stroke', act.options.strokeA);
                         }
                     } else {
                         if (dom) {
                             element.style.backgroundColor = act.options.fillB;
                             element.style.color = act.options.strokeB;
                         } else {
-                            element.node.setAttribute('fill', act.options.fillB);
-                            element.node.setAttribute('stroke', act.options.strokeB);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(element.node, 'fill', act.options.fillB);
+                            GaugeBaseComponent.walkTreeNodeToSetAttribute(element.node, 'stroke', act.options.strokeB);
                         }
                     }
                 } catch (err) {
@@ -170,8 +170,8 @@ export class GaugeBaseComponent {
                         element.style.backgroundColor = gaugeStatus.actionRef.spool?.bk;
                         element.style.color = gaugeStatus.actionRef.spool?.clr;
                     } else if (gaugeStatus.actionRef.spool) {
-                        element.node.setAttribute('fill', gaugeStatus.actionRef.spool.bk);
-                        element.node.setAttribute('stroke', gaugeStatus.actionRef.spool.clr);
+                        GaugeBaseComponent.walkTreeNodeToSetAttribute(element.node, 'fill', gaugeStatus.actionRef.spool.bk);
+                        GaugeBaseComponent.walkTreeNodeToSetAttribute(element.node, 'stroke', gaugeStatus.actionRef.spool.clr);
                     }
                 }
             } catch (err) {
