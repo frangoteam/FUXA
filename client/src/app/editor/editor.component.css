@@ -300,6 +300,7 @@
 /* --------------- */
 .view-panel {
     overflow: auto;
+    cursor: s-resize;
 }
 .leftbar-edit-btn {
     margin-top: 2px;
