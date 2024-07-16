@@ -1,7 +1,11 @@
 <form [formGroup]="formGroup" class="container">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.docproperty-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content style="width: 300px;">
+    <div mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>{{'dlg.docproperty-width' | translate}}</span>
+            <input formControlName="name" type="text" readonly>
+        </div>
         <div *ngIf="data.type === viewType.svg">
             <div class="block mt10">
                 <div class="my-form-field inbk">
@@ -31,13 +35,20 @@
             </div>
         </div>
         <div *ngIf="data.type === viewType.cards">
-            <div class="my-form-field mt10 slider-field">
+            <div class="my-form-field inbk mt10" style="width: 160px">
+                <span>{{'dlg.docproperty-gridtype' | translate}}</span>
+                <mat-select formControlName="gridType" placeholder="{{'dlg.docproperty-gridtype-placeholder' | translate}}">
+                    <mat-option *ngFor="let type of gridType | enumToArray" [value]="type.value">
+                        {{'dlg.docproperty-gridtype-' + type.value | translate}}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field inbk mt10 ftr">
                 <span>{{'dlg.docproperty-margin' | translate}}</span>
-                <mat-slider formControlName="margin" style="display:inline-block;width: 100px;" [max]="20" [min]="0" [step]="1" [thumbLabel]="true">
-                </mat-slider>
+                <input numberOnly formControlName="margin" [max]="20" [min]="0" [step]="1" style="width: 100px">
             </div>
         </div>
-        <div class="my-form-field mt10" style="width: 300px;">
+        <div class="my-form-field item-block mt10">
             <span>{{'dlg.docproperty-background' | translate}}</span>
             <input style="width: 292px; border: 1px solid rgba(0,0,0,0.2); height:15px !important" readonly [(colorPicker)]="data.profile.bkcolor" class="input-color"
                 title="Change stroke color" [style.background]="data.profile.bkcolor" [cpPresetColors]="defaultColor" [cpAlphaChannel]="'always'" [cpPosition]="'bottom'"

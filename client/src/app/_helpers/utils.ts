@@ -40,6 +40,21 @@ export class Utils {
         return null;
     }
 
+    static searchTreeTagName(element, tagMatching: string) {
+        if (element.tagName === tagMatching) {
+            return element;
+        }
+        if (element.children != null) {
+            var i;
+            var result = null;
+            for (i = 0; result == null && i < element.children.length; i++) {
+                result = Utils.searchTreeTagName(element.children[i], tagMatching);
+            }
+            return result;
+        }
+        return null;
+    }
+
     static findElementByIdRecursive(root: HTMLElement, id: string): HTMLElement | null {
         if (!root) {
           return null;

@@ -4,6 +4,7 @@ import { DocAlignType, DocProfile, ViewType } from '../../_models/hmi';
 import { TranslateService } from '@ngx-translate/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { GridType } from 'angular-gridster2';
 
 @Component({
     selector: 'app-view-property',
@@ -15,6 +16,7 @@ export class ViewPropertyComponent implements OnInit {
     viewType = ViewType;
     alignType = DocAlignType;
     formGroup: UntypedFormGroup;
+    gridType = GridType;
 
     propSizeType = [{ text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 } }, { text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 } },
     { text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 } }, { text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 } },
@@ -33,10 +35,12 @@ export class ViewPropertyComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
+            name: [this.data.name],
             width: [this.data.profile.width],
             height: [this.data.profile.height],
             margin: [this.data.profile.margin],
             align: [this.data.profile.align],
+            gridType: [this.data.profile.gridType],
         });
         if (this.data.type !== ViewType.cards) {
             this.formGroup.controls.width.setValidators(Validators.required);
@@ -54,6 +58,7 @@ export class ViewPropertyComponent implements OnInit {
         this.data.profile.height = this.formGroup.controls.height.value;
         this.data.profile.margin = this.formGroup.controls.margin.value;
         this.data.profile.align = this.formGroup.controls.align.value;
+        this.data.profile.gridType = this.formGroup.controls.gridType.value;
         this.dialogRef.close(this.data);
     }
 

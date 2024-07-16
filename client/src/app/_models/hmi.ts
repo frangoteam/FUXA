@@ -1,3 +1,4 @@
+import { GridType } from 'angular-gridster2';
 import { Device, DeviceType, Tag } from './device';
 
 export class Hmi {
@@ -168,6 +169,7 @@ export class DocProfile {
     bkcolor = '#ffffffff';
     margin = 10;
     align = DocAlignType.topCenter;
+    gridType: GridType = GridType.Fixed;
 }
 
 export enum DocAlignType {

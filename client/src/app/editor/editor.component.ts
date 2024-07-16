@@ -1115,7 +1115,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * select the view, save current vieww before
      * @param view selected view to load resource
      */
-    onSelectView(view) {
+    onSelectView(view: View, force = true) {
+        if (!force && this.currentView?.id === view?.id) {
+            return;
+        }
         if (this.currentView) {
             this.currentView.svgcontent = this.getContent();
             // this.hmi.views[this.currentView].svgcontent = this.winRef.nativeWindow.svgEditor.getSvgString();

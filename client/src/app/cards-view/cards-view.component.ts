@@ -3,7 +3,7 @@ import { ChangeDetectorRef } from '@angular/core';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { Hmi, View, CardWidget, CardWidgetType } from '../_models/hmi';
-import { GridsterConfig, GridsterItem, GridType, CompactType } from 'angular-gridster2';
+import { GridsterConfig, GridsterItem, GridType, CompactType, GridsterItemComponentInterface } from 'angular-gridster2';
 import { Utils } from '../_helpers/utils';
 
 @Component({
@@ -55,6 +55,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 this.renderer.setStyle(element?.parentElement, 'width', `100vw`);
             }
         }
+        this.gridOptions.gridType = this.view.profile.gridType ?? GridType.Fixed;
         if (this.view.profile.margin >= 0) {
             this.gridOptions.margin = this.view.profile.margin;
             this.gridOptions.api.optionsChanged();
@@ -142,6 +143,15 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
             }
         }
     }
+
+    static itemResizeTrigger(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
+        if (item.card?.type === 'view') {
+            const ratioWidth = itemComponent.el.clientWidth / item.content.profile.width;
+            const ratioHeight = itemComponent.el.clientHeight / item.content.profile.height;
+            const svgEle = Utils.searchTreeTagName(itemComponent.el, 'svg');
+            svgEle?.setAttribute('transform', 'scale(' + ratioWidth + ', ' + ratioHeight + ')');
+        }
+    }
 }
 
 export class NgxNouisliderOptions {
@@ -167,4 +177,5 @@ export class GridOptions {
     disableWarnings = true;
     draggable = { enabled: true };
     resizable = { enabled: true };
+    itemResizeCallback = CardsViewComponent.itemResizeTrigger;
 };
