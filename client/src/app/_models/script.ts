@@ -116,7 +116,11 @@ export class SystemFunctions {
     },
     {
         name: '$runServerScript', mode: ScriptMode.CLIENT, text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
-    }];
+    },
+    {
+        name:'$getHistoricalTag' , text:'script.sys-fnc-getHistoricalTag-text', tooltip:'script.sys-fnc-getHistoricalTag-tooltip',params:[true,true,true],paramsText:`'Tag ID','From Date','To Date'`
+    }
+];
 }
 
 export class TemplatesCode {

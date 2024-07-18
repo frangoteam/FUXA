@@ -926,7 +926,7 @@
     "device.tag-scale-write-script-tooltip": "Script to transform value before write to client",
     "device.tag-scale-write-script-params": "Enter Write Script Parameter Values",
     "device.tag-scale-script-params-tooltip": "JSON formated array of parameters with values to pass to script",
-    
+
 
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
@@ -1192,7 +1192,7 @@
     "script.sys-fnc-enableDevice-params": "'Device name', true",
     "script.sys-fnc-getDevice-text": "$getDevice (Device name, interface True/False)",
     "script.sys-fnc-getDevice-tooltip": "System function to get Device object: $getDevice (Device name as string, get Comm Interface as boolean)",
-    "script.sys-fnc-getDevice-params": "'Device name', true",    
+    "script.sys-fnc-getDevice-params": "'Device name', true",
     "script.sys-fnc-getTagId-text": "$getTagId (Tag name, [Device name])",
     "script.sys-fnc-getTagId-tooltip": "System function to get Tag ID: $getTagId (Tag name as string, [Optional Device name as string])",
     "script.sys-fnc-getTagId-params": "'Tag name', ",
@@ -1214,6 +1214,9 @@
     "script.sys-fnc-setDeviceProperty-text": "$setDeviceProperty(Device name, property)",
     "script.sys-fnc-setDeviceProperty-tooltip": "System function to set Device property: $setDeviceProperty(Device name as string, Property as object {address, port, ...} )",
     "script.sys-fnc-setDeviceProperty-params": "'Device name', 'Property'",
+    "script.sys-fnc-getHistoricalTag-text": "$getHistoricalTag(TagID,fromDate,toDate)",
+    "script.sys-fnc-getHistoricalTag-tooltip":"get historical tags by date",
+    "script.sys-fnc-getHistoricalTag-params":"'Tag ID','From Date','To Date'",
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
