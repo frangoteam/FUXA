@@ -228,6 +228,8 @@ function ScriptsManager(_runtime) {
         sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         sysFncs['$getDeviceProperty'] = runtime.devices.getDeviceProperty;
         sysFncs['$setDeviceProperty'] = runtime.devices.setDeviceProperty;
+        sysFncs['$getHistoricalTag'] = runtime.devices.getHistoricalTag;
+
         return sysFncs;
     }
 

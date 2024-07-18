@@ -77,6 +77,32 @@ module.exports = {
                 }                
             }            
         });
+
+        /**
+         * POST get historical tag and return tag histories
+         */
+        scriptsApp.post("/api/getHistoricalTag", secureFnc, async function (req, res, next) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post getHistoricalTag: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post getHistoricalTag: Unauthorized");
+            } else {
+                try {
+                    if (runtime.scriptsMgr.sysFunctionExist(req.body.params.functionName)) {
+                        var result=await runtime.devices.getHistoricalTag(req.body.params.tagId,req.body.params.fromDate,req.body.params.toDate)
+                        res.json(result);
+                    } else {
+                        res.status(400).json({ error: "not_found", message: 'script not found!'});
+                        runtime.logger.error("api post getHistoricalTag: " + 'script not found!');
+                    }
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    runtime.logger.error("api post getHistoricalTag: " + error);
+                }                
+            }            
+        });
         return scriptsApp;
     }
 }
