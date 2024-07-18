@@ -204,8 +204,8 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe((result: DeviceTagSelectionData) => {
             if (result && result.variableId) {
                 let text = `${sysfnc.name}('${result.variableId}',
-                    'YYYY/MM/DD - 00:00:00' /* this date is required */,
-                    'YYYY/MM/DD - 00:00:00' /* dont change this date for using live time */)
+                    'YYYY/MM/DD - 00:00:00' /* From past datetime - Required */,
+                    'YYYY/MM/DD - 00:00:00' /* To recent date - Optionally use empty string to set as current datetime */)
                     .then((result)=>{
                     })
                     .catch((error)=> {

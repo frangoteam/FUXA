@@ -520,7 +520,7 @@ function getRequestResult(property) {
  * Return result of get node values
  * @param {*} tagId 
  * @param {*} fromDate
- * @param {*} toDate return current time if be 'YYYY/MM/DD , 00:00:00'
+ * @param {*} toDate return current datetime if its not a valid date
  */
 async function getHistoricalTag(tagId, fromDate, toDate) {
     return new Promise((resolve, reject) => {
@@ -550,6 +550,7 @@ async function getHistoricalTag(tagId, fromDate, toDate) {
       //Check if getting date from script is correct
       if (isNaN(fromTs)) {
         runtime.logger.error(`Incorect From Date Format ${fromDate}`);
+        return;
       }
       if (isNaN(toTs)) {
         toTs = new Date();
