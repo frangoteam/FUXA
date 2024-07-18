@@ -91,7 +91,7 @@ module.exports = {
             } else {
                 try {
                     if (runtime.scriptsMgr.sysFunctionExist(req.body.params.functionName)) {
-                        var result=await runtime.devices.getHistoricalTag(req.body.params.tagId,req.body.params.fromDate,req.body.params.toDate)
+                        var result=await runtime.devices.getHistoricalTag(req.body.params.tagIds,req.body.params.fromDate,req.body.params.toDate)
                         res.json(result);
                     } else {
                         res.status(400).json({ error: "not_found", message: 'script not found!'});

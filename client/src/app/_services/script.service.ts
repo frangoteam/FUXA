@@ -156,9 +156,9 @@ export class ScriptService {
         return await lastValueFrom(this.runScript(scriptToRun));
     }
 
-    public $getHistoricalTag(tagId: string,fromDate: string,toDate: string){
+    public $getHistoricalTag(tagIds: string[],fromDate: string,toDate: string){
         return new Promise((resolve,reject)=>{
-            this.reswebService.getHistoricalTag(tagId,fromDate,toDate).subscribe(res=>resolve(res),err=>reject(err));
+            this.reswebService.getHistoricalTag(tagIds,fromDate,toDate).subscribe(res=>resolve(res),err=>reject(err));
         });
     }
 }

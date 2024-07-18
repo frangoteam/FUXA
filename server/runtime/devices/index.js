@@ -522,7 +522,7 @@ function getRequestResult(property) {
  * @param {*} fromDate
  * @param {*} toDate return current datetime if its not a valid date
  */
-async function getHistoricalTag(tagId, fromDate, toDate) {
+async function getHistoricalTag(tagIds, fromDate, toDate) {
     return new Promise((resolve, reject) => {
       //split dates to time and date
       var [fromDt, fromTime] = fromDate?.trim().split("-");
@@ -559,7 +559,7 @@ async function getHistoricalTag(tagId, fromDate, toDate) {
       toTs = toTs.getTime();
       fromTs = fromTs.getTime();
       daqstorage
-        .getNodeValues(tagId, fromTs, toTs)
+        .getNodesValues(tagIds, fromTs, toTs)
         .then((res) => {
           resolve(res);
         })

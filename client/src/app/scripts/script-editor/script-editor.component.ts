@@ -195,7 +195,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             position: { top: '60px' },
             data: <DeviceTagSelectionData> {
                 variableId: null,
-                multiSelection: false,
+                multiSelection: true,
                 deviceFilter: [ DeviceType.internal ],
                 isHistorical:true
             }
@@ -203,7 +203,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
 
         dialogRef.afterClosed().subscribe((result: DeviceTagSelectionData) => {
             if (result && result.variableId) {
-                let text = `${sysfnc.name}('${result.variableId}',
+                let text = `${sysfnc.name}([${result.variablesId.map(tagid=>`'${tagid}'`)}],
                     'YYYY/MM/DD - 00:00:00' /* From past datetime - Required */,
                     'YYYY/MM/DD - 00:00:00' /* To recent date - Optionally use empty string to set as current datetime */)
                     .then((result)=>{
