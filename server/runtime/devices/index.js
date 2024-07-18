@@ -550,7 +550,7 @@ async function getHistoricalTag(tagId, fromDate, toDate) {
       //Check if getting date from script is correct
       if (isNaN(fromTs)) {
         runtime.logger.error(`Incorect From Date Format ${fromDate}`);
-        return;
+        reject(`Incorect From Date Format ${fromDate}`);
       }
       if (isNaN(toTs)) {
         toTs = new Date();
