@@ -522,50 +522,62 @@ function getRequestResult(property) {
  * @param {*} fromDate
  * @param {*} toDate return current datetime if its not a valid date
  */
-async function getHistoricalTag(tagIds, fromDate, toDate) {
+async function getHistoricalTags(tagIds, fromDate, toDate) {
     return new Promise((resolve, reject) => {
-      //split dates to time and date
-      var [fromDt, fromTime] = fromDate?.trim().split("-");
-      var [toDt, toTime] = toDate?.trim().split("-");
-      var [fromYear, fromMonth, fromDay] = fromDt.split("/");
-      var [fromHours, fromMinutes, fromSeconds] = fromTime.split(":");
-      var [toYear, toMonth, toDay] = toDt.split("/");
-      var [toHours, toMinutes, toSeconds] = toTime.split(":");
-      var fromTs = new Date(
-        fromYear,
-        fromMonth - 1,
-        fromDay,
-        fromHours,
-        fromMinutes,
-        fromSeconds
-      );
-      var toTs = new Date(
-        toYear,
-        toMonth - 1,
-        toDay,
-        toHours,
-        toMinutes,
-        toSeconds
-      );
-      //Check if getting date from script is correct
-      if (isNaN(fromTs)) {
-        runtime.logger.error(`Incorect From Date Format ${fromDate}`);
-        reject(`Incorect From Date Format ${fromDate}`);
-      }
-      if (isNaN(toTs)) {
-        toTs = new Date();
-      }
-      //Changing Date to timestamp
-      toTs = toTs.getTime();
-      fromTs = fromTs.getTime();
-      daqstorage
-        .getNodesValues(tagIds, fromTs, toTs)
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((err) => reject(err));
+        let toTs;
+
+        /* Check if toDate is null for current time or not */
+        if(toDate===''){
+            toTs=NaN
+        }else{
+            var [toDt, toTime] = toDate?.trim()?.split("-");
+            var [toYear, toMonth, toDay] = toDt?.split("/");
+            var [toHours, toMinutes, toSeconds] = toTime?.split(":");
+    
+            toTs = new Date(
+              toYear,
+              toMonth - 1,
+              toDay,
+              toHours,
+              toMinutes,
+              toSeconds
+            );
+        }
+
+        /* fromDate is required in format YYYY/MM/DD - 00:00:00 */
+        var [fromDt, fromTime] = fromDate?.trim().split("-");
+        var [fromYear, fromMonth, fromDay] = fromDt.split("/");
+        var [fromHours, fromMinutes, fromSeconds] = fromTime?.split(":");
+        var fromTs = new Date(
+          fromYear,
+          fromMonth - 1,
+          fromDay,
+          fromHours,
+          fromMinutes,
+          fromSeconds
+        );
+
+        /*Check if getting date from script is correct*/
+        if (isNaN(fromTs)) {
+          runtime.logger.error(`Incorect From Date Format ${fromDate}`);
+          reject(`Incorect From Date Format ${fromDate}`);
+        }
+        /* Setting current datetime for empty or wrong format toDate */
+        if (isNaN(toTs)) {
+          toTs = new Date();
+        }
+        //Changing Date to timestamp
+        toTs = toTs.getTime();
+        fromTs = fromTs.getTime();
+        
+        daqstorage
+          .getNodesValues(tagIds, fromTs, toTs)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((err) => reject(err));
     });
-  }
+}
 
 var devices = module.exports = {
     init: init,
@@ -597,5 +609,5 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
-    getHistoricalTag: getHistoricalTag,
+    getHistoricalTags: getHistoricalTags,
 }

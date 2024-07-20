@@ -92,7 +92,7 @@ export class ScriptService {
         code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
-        code = code.replace(/\$getHistoricalTag\(/g, 'this.$getHistoricalTag(');
+        code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
         return code;
     }
 
@@ -156,9 +156,9 @@ export class ScriptService {
         return await lastValueFrom(this.runScript(scriptToRun));
     }
 
-    public $getHistoricalTag(tagIds: string[],fromDate: string,toDate: string){
+    public $getHistoricalTags(tagIds: string[],fromDate: string,toDate: string){
         return new Promise((resolve,reject)=>{
-            this.reswebService.getHistoricalTag(tagIds,fromDate,toDate).subscribe(res=>resolve(res),err=>reject(err));
+            this.reswebService.getHistoricalTags(tagIds,fromDate,toDate).subscribe(res=>resolve(res),err=>reject(err));
         });
     }
 }
