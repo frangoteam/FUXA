@@ -368,10 +368,10 @@ export interface GaugeIframeProperty {
 export interface GaugePanelProperty {
     viewName: string;
     variableId: string;
-    scaleMode: PanelPropertyScaleModeType;
+    scaleMode: PropertyScaleModeType;
 }
 
-export enum PanelPropertyScaleModeType {
+export enum PropertyScaleModeType {
     none = 'none',
     contain = 'contain',
     stretch = 'stretch'
@@ -588,10 +588,10 @@ export class CardWidget {
 }
 
 export enum CardWidgetType {
-    view = 'card.widget-view',
-    alarms = 'card.widget-alarms',
-    iframe = 'card.widget-iframe',
-    table = 'card.widget-table',
+    view = 'view',
+    alarms = 'alarms',
+    iframe = 'iframe',
+    table = 'table',
 }
 
 export enum LinkType {

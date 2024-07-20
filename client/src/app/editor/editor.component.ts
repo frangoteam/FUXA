@@ -33,7 +33,7 @@ import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gaug
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 import { GridsterItem } from 'angular-gridster2';
-import { CardConfigComponent } from './card-config/card-config.component';
+import { CardConfigComponent, CardConfigType } from './card-config/card-config.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
 import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
@@ -549,7 +549,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let views = this.hmi.views.filter((v) => v.type !== cardType && exist.indexOf(v.name) < 0).map((v) => v.name);
         let dialogRef = this.dialog.open(CardConfigComponent, {
             position: { top: '60px' },
-            data: { item: JSON.parse(JSON.stringify(item)), views: views }
+            data: <CardConfigType> {
+                item: JSON.parse(JSON.stringify(item)),
+                views: views
+            }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

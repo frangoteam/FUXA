@@ -22,17 +22,13 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
 
     gridOptions: GridsterConfig;
     dashboard: Array<GridsterItem> = [];
-
-    widgetView = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
-    widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
-    widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
-    widgetTable = Utils.getEnumKey(CardWidgetType, CardWidgetType.table);
+    cardType = CardWidgetType;
 
     constructor(private renderer: Renderer2,
                 private changeDetector: ChangeDetectorRef) {
         this.gridOptions = <GridsterConfig> new GridOptions();
         this.gridOptions.itemChangeCallback = this.itemChange;
-        this.gridOptions.itemResizeCallback = this.itemChange;
+        this.gridOptions.itemResizeCallback = CardsViewComponent.itemResizeTrigger;
     }
 
     ngOnInit() {
@@ -71,7 +67,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 this.addCardsWidget(dashboard[i].x, dashboard[i].y, dashboard[i].cols, dashboard[i].rows, dashboard[i].card);
             }
         } else {
-            this.addCardsWidget(0, 0, 10, 8, <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view) });
+            this.addCardsWidget(0, 0, 10, 8, <CardWidget>{ type: CardWidgetType.view });
         }
     }
 
@@ -84,13 +80,13 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         this.view.svgcontent = JSON.stringify(this.dashboard);
     }
 
-    addCardsWidget(x: number = 0, y: number = 0, cols: number = 10, rows: number = 8, card: CardWidget = <CardWidget>{ type: Utils.getEnumKey(CardWidgetType, CardWidgetType.view), zoom: 1 }) {
+    addCardsWidget(x: number = 0, y: number = 0, cols: number = 10, rows: number = 8, card: CardWidget = <CardWidget>{ type: CardWidgetType.view, zoom: 1 }) {
         let content: any = null;
         let background = '';
         let item: GridsterItem = { x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background };
         item.initCallback = () => {
             if (card) {
-                if (card.type === this.widgetView) {
+                if (card.type === this.cardType.view) {
                     let views = this.hmi.views.filter((v) => v.name === card.data);
                     if (views && views.length) {
                         if (views[0].svgcontent) {
@@ -100,10 +96,10 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                             item.background = views[0].profile.bkcolor;
                         }
                     }
-                } else if (card.type === this.widgetAlarms) {
+                } else if (card.type === this.cardType.alarms) {
                     item.background = '#CCCCCC';
                     item.content = ' ';
-                } else if (card.type === this.widgetIframe) {
+                } else if (card.type === this.cardType.iframe) {
                     item.content = card.data;
                 }
                 this.changeDetector.detectChanges();
@@ -121,8 +117,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     }
 
     getWindgetViewName() {
-        let widgetType = Utils.getEnumKey(CardWidgetType, CardWidgetType.view);
-        let viewsName = this.dashboard.filter((c) => c.card.type === widgetType && c.card.data).map((c) => c.card.data);
+        let viewsName = this.dashboard.filter((c) => c.card.type === CardWidgetType.view && c.card.data).map((c) => c.card.data);
         return viewsName;
     }
 
@@ -136,21 +131,30 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
             if (item.background) {
                 itemComponent.el.style.backgroundColor = item.background;
             }
-            let widgetAlarms = Utils.getEnumKey(CardWidgetType, CardWidgetType.alarms);
-            let widgetIframe = Utils.getEnumKey(CardWidgetType, CardWidgetType.iframe);
-            if (item.card.type === widgetAlarms || item.card.type === widgetIframe) {
+            if (item.card.type === CardWidgetType.alarms || item.card.type === CardWidgetType.iframe) {
                 itemComponent.el.classList.add('card-html');
             }
         }
     }
 
     static itemResizeTrigger(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
-        if (item.card?.type === 'view') {
-            const ratioWidth = itemComponent.el.clientWidth / item.content.profile.width;
-            const ratioHeight = itemComponent.el.clientHeight / item.content.profile.height;
-            const svgEle = Utils.searchTreeTagName(itemComponent.el, 'svg');
-            svgEle?.setAttribute('transform', 'scale(' + ratioWidth + ', ' + ratioHeight + ')');
+        if (item.card?.type === CardWidgetType.view) {
+            let ratioWidth, ratioHeight, eleToResize;
+            ratioWidth = itemComponent.el.clientWidth / item.content.profile?.width;
+            ratioHeight = itemComponent.el.clientHeight / item.content.profile?.height;
+            eleToResize = Utils.searchTreeTagName(itemComponent.el, 'svg');
+            if (item.card?.scaleMode === 'contain') {
+                eleToResize?.setAttribute('transform', 'scale(' + Math.min(ratioWidth, ratioHeight) + ')');
+            } else if (item.card?.scaleMode === 'stretch') {
+                eleToResize?.setAttribute('transform', 'scale(' + ratioWidth + ', ' + ratioHeight + ')');
+            }
+        } else if (item.card.type === CardWidgetType.iframe) {
+            if ((itemComponent.el.firstChild as HTMLElement).style) {
+                (itemComponent.el.firstChild as HTMLElement).style.height = '100%';
+                (itemComponent.el.firstChild as HTMLElement).style.width = '100%';
+            }
         }
+
     }
 }
 
@@ -177,5 +181,4 @@ export class GridOptions {
     disableWarnings = true;
     draggable = { enabled: true };
     resizable = { enabled: true };
-    itemResizeCallback = CardsViewComponent.itemResizeTrigger;
 };

@@ -1,17 +1,17 @@
 <div>
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'card.config-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content  style="width: 700px; height: 500px">
-        <div class="my-form-field" style="margin-bottom: 10px;">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'card.config-title' | translate}}</h1>
+    <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="container">
+        <div class="my-form-field">
             <span>{{'card.config-content-type' | translate}}</span>
             <mat-select [(value)]="card.type" style="width: 320px;">
                 <mat-option *ngFor="let type of cardType | enumToArray" [value]="type.key" [disabled]="type.key === widgetTable">
-                    {{ type.value }}
+                    {{ 'card.widget-' + type.value | translate }}
                 </mat-option>
             </mat-select>
         </div>
-        <div [ngSwitch]="card.type" style="float: right; margin-bottom: 10px;">
-            <div *ngSwitchCase="widgetView">
+        <div [ngSwitch]="card.type" class="ftr">
+            <div *ngSwitchCase="cardType.view">
                 <div class="my-form-field">
                     <span>{{'card.config-content-view' | translate}}</span>
                     <mat-select [(value)]="card.data" style="width: 320px;">
@@ -21,23 +21,23 @@
                     </mat-select>
                 </div>
             </div>
-            <div *ngSwitchCase="widgetAlarms">
+            <div *ngSwitchCase="cardType.alarms">
             </div>
-            <div *ngSwitchCase="widgetIframe">
-                <div class="my-form-field" style="float: right;margin-bottom: 10px;">
+            <div *ngSwitchCase="cardType.iframe">
+                <div class="my-form-field ftr">
                     <span>{{'card.config-content-iframe' | translate}}</span>
                     <input [(ngModel)]="card.data" type="text" style="width:320px">
                 </div>
             </div>
         </div>
 
-        <div [ngSwitch]="card.type" style="display: inline-block">
-            <div *ngSwitchCase="widgetView">
-            </div>
-            <div *ngSwitchCase="widgetAlarms">
-            </div>
-            <div *ngSwitchCase="widgetIframe">
-            </div>
+        <div *ngIf="card.type === cardType.view || card.type === cardType.iframe" class="my-form-field block mt10">
+            <span>{{'panel.property-scalemode' | translate}}</span>
+            <mat-select [(value)]="card.scaleMode" style="width: 320px;">
+                <mat-option *ngFor="let mode of scaleMode | enumToArray" [value]="mode.key">
+                    {{'panel.property-scalemode-' + mode.value | translate }}
+                </mat-option>
+            </mat-select>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

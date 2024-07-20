@@ -3,20 +3,25 @@
         <gridster-item [item]="item" *ngFor="let item of dashboard">
             <div *ngIf="item.content" class="card-content">
                 <div [ngSwitch]="item.card.type"  [style.transform]="'scale(' + item.card.zoom + ')'">
-                    <div *ngSwitchCase="widgetView">
+                    <div *ngSwitchCase="cardType.view">
                         <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
                     </div>
-                    <div *ngSwitchCase="widgetAlarms">
+                    <div *ngSwitchCase="cardType.alarms">
                         <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true"></app-alarm-view>
                     </div>
-                    <div *ngSwitchCase="widgetIframe">
-                        <app-iframe [link]="item.card.data" class="iframe-class"></app-iframe>
+                    <div *ngSwitchCase="cardType.iframe">
+                        <div *ngIf="edit; else iframe" class="card-iframe-edit">
+                            <span><b>iframe</b> {{ item.card.data }}</span>
+                        </div>
+                        <ng-template #iframe>
+                            <app-iframe [link]="item.card.data" class="iframe-class"></app-iframe>
+                        </ng-template>
                     </div>
                 </div>
             </div>
             <div *ngIf="edit" class="card-tool">
                 {{'card.style-zoom' | translate}} 
-                <mat-slider max="2" min="0.1" [step]="0.02" [(ngModel)]="item.card.zoom" (input)="onZoomChanged(item, $event)"
+                <mat-slider max="2" min="0.1" [step]="0.05" [(ngModel)]="item.card.zoom" (input)="onZoomChanged(item, $event)"
                     style="min-width: 80px" thumbLabel="true" (mousedown)="$event.stopPropagation()">
                 </mat-slider>
                 <button mat-icon-button (click)="onEditCard(item)" (mousedown)="$event.stopPropagation()">

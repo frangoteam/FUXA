@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { GaugePanelProperty, PanelPropertyScaleModeType } from '../../../../_models/hmi';
+import { GaugePanelProperty, PropertyScaleModeType } from '../../../../_models/hmi';
 import { FlexDeviceTagValueType } from '../../../gauge-property/flex-device-tag/flex-device-tag.component';
 
 @Component({
@@ -15,7 +15,7 @@ export class PanelPropertyComponent implements OnInit {
         this._reload();
     }
     property: GaugePanelProperty;
-    scaleMode = PanelPropertyScaleModeType;
+    scaleMode = PropertyScaleModeType;
 
     constructor() { }
 
