@@ -1,11 +1,11 @@
 <div>
     <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'card.config-title' | translate}}</h1>
-    <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content class="container">
         <div class="my-form-field">
             <span>{{'card.config-content-type' | translate}}</span>
             <mat-select [(value)]="card.type" style="width: 320px;">
-                <mat-option *ngFor="let type of cardType | enumToArray" [value]="type.key" [disabled]="type.key === widgetTable">
+                <mat-option *ngFor="let type of cardType | enumToArray" [value]="type.key" [disabled]="type.key === cardType.table">
                     {{ 'card.widget-' + type.value | translate }}
                 </mat-option>
             </mat-select>
