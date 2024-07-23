@@ -4,6 +4,7 @@
 
 'use strict';
 var Device = require('./device');
+var daqstorage = require("../storage/daqstorage");
 
 var sharedDevices = {};             // Shared Devices list
 var activeDevices = {};             // Actives Devices list
@@ -515,6 +516,69 @@ function getRequestResult(property) {
     return Device.getRequestResult(property);
 }
 
+/**
+ * Return result of get node values
+ * @param {*} tagId 
+ * @param {*} fromDate
+ * @param {*} toDate return current datetime if its not a valid date
+ */
+async function getHistoricalTags(tagIds, fromDate, toDate) {
+    return new Promise((resolve, reject) => {
+        let toTs;
+
+        /* Check if toDate is null for current time or not */
+        if(toDate===''){
+            toTs=NaN
+        }else{
+            var [toDt, toTime] = toDate?.trim()?.split("-");
+            var [toYear, toMonth, toDay] = toDt?.split("/");
+            var [toHours, toMinutes, toSeconds] = toTime?.split(":");
+    
+            toTs = new Date(
+              toYear,
+              toMonth - 1,
+              toDay,
+              toHours,
+              toMinutes,
+              toSeconds
+            );
+        }
+
+        /* fromDate is required in format YYYY/MM/DD - 00:00:00 */
+        var [fromDt, fromTime] = fromDate?.trim().split("-");
+        var [fromYear, fromMonth, fromDay] = fromDt.split("/");
+        var [fromHours, fromMinutes, fromSeconds] = fromTime?.split(":");
+        var fromTs = new Date(
+          fromYear,
+          fromMonth - 1,
+          fromDay,
+          fromHours,
+          fromMinutes,
+          fromSeconds
+        );
+
+        /*Check if getting date from script is correct*/
+        if (isNaN(fromTs)) {
+          runtime.logger.error(`Incorect From Date Format ${fromDate}`);
+          reject(`Incorrect From Date Format ${fromDate}`);
+        }
+        /* Setting current datetime for empty or wrong format toDate */
+        if (isNaN(toTs)) {
+          toTs = new Date();
+        }
+        //Changing Date to timestamp
+        toTs = toTs.getTime();
+        fromTs = fromTs.getTime();
+        
+        daqstorage
+          .getNodesValues(tagIds, fromTs, toTs)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((err) => reject(err));
+    });
+}
+
 var devices = module.exports = {
     init: init,
     start: start,
@@ -545,4 +609,5 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
+    getHistoricalTags: getHistoricalTags,
 }
