@@ -143,9 +143,4 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
     }
 
-    getHistoricalTags(tagIds: string[],fromDate: string,toDate: string) {
-        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = {functionName:'$getHistoricalTags',tagIds:tagIds,fromDate:fromDate,toDate:toDate};
-        return this.http.post( this.endPointConfig + '/api/getHistoricalTags',{header:header,params:params});
-    }
 }
