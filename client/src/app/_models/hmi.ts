@@ -524,10 +524,10 @@ export class Event {
 }
 
 export class DaqQuery {
-    gid: string;
+    gid?: string;
     from: any;
     to: any;
-    event: string;
+    event?: string;
     sids: string[];
 }
 

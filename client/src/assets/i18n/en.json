@@ -1222,9 +1222,9 @@
     "script.sys-fnc-setDeviceProperty-text": "$setDeviceProperty(Device name, property)",
     "script.sys-fnc-setDeviceProperty-tooltip": "System function to set Device property: $setDeviceProperty(Device name as string, Property as object {address, port, ...} )",
     "script.sys-fnc-setDeviceProperty-params": "'Device name', 'Property'",
-    "script.sys-fnc-getHistoricalTag-text": "$getHistoricalTags(TagIds,fromDate,toDate)",
-    "script.sys-fnc-getHistoricalTag-tooltip":"get historical tags by date",
-    "script.sys-fnc-getHistoricalTag-params":"'Tag Ids','From Date','To Date'",
+    "script.sys-fnc-getHistoricalTag-text": "$getHistoricalTags(TagIds array, from msec., to msec.)",
+    "script.sys-fnc-getHistoricalTag-tooltip":"get historical tags by milliseconds range: $getHistoricalTags([TagIds] as array, from as number, to as number)",
+    "script.sys-fnc-getHistoricalTag-params":"'Tag Ids array', 'From msec.', 'To msec.'",
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",

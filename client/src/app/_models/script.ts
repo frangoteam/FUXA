@@ -118,7 +118,7 @@ export class SystemFunctions {
         name: '$runServerScript', mode: ScriptMode.CLIENT, text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
     },
     {
-        name:'$getHistoricalTags' , text:'script.sys-fnc-getHistoricalTag-text', tooltip:'script.sys-fnc-getHistoricalTag-tooltip',params:[true,true,true],paramsText:`'Tag ID','From Date','To Date'`
+        name: '$getHistoricalTags', mode: null, text: 'script.sys-fnc-getHistoricalTag-text', tooltip:'script.sys-fnc-getHistoricalTag-tooltip', params:['array', false, false], paramsText: 'script.sys-fnc-getHistoricalTag-params'
     }
 ];
 }
@@ -164,7 +164,7 @@ export interface SystemFunction {
     name: string;           // javascript function defined in backend
     text: string;           // button text
     tooltip: string;        // description
-    params?: [boolean];     // array of function parameter where true is for tag and false for any (value)
+    params?: [boolean | string];     // array of function parameter where true is for tag and false for any (value)
     paramsText?: string;    // to add as parameter description in function
     code?: string;          // Code to paste
     mode?: ScriptMode;

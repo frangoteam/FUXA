@@ -9,7 +9,6 @@ import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
 import { DeviceType, TagDaq, TagDevice } from '../_models/device';
-import { ResWebApiService } from './rcgi/reswebapi.service';
 import { DaqQuery } from '../_models/hmi';
 
 @Injectable({
@@ -22,7 +21,6 @@ export class ScriptService {
     constructor(private http: HttpClient,
                 private projectService: ProjectService,
                 private hmiService: HmiService,
-                private reswebService: ResWebApiService
             ) {
 
     }
@@ -157,56 +155,8 @@ export class ScriptService {
         return await lastValueFrom(this.runScript(scriptToRun));
     }
 
-    public $getHistoricalTags(tagIds: string[],fromDate: string,toDate: string){
-        return new Promise((resolve,reject)=>{
-            let toTs;
-            let fromTs;
-
-            /* Check if toDate is null for current time or not */
-            if(toDate===''){
-                toTs=NaN;
-            }else{
-                var [toDt, toTime] = toDate?.trim()?.split('-');
-                var [toYear, toMonth, toDay] = toDt?.split('/');
-                var [toHours, toMinutes, toSeconds] = toTime?.split(':');
-
-                toTs = new Date(
-                  Number.parseInt(toYear),
-                  Number.parseInt(toMonth) - 1,
-                  Number.parseInt(toDay),
-                  Number.parseInt(toHours),
-                  Number.parseInt(toMinutes),
-                  Number.parseInt(toSeconds)
-                );
-            }
-
-            /* fromDate is required in format YYYY/MM/DD - 00:00:00 */
-            var [fromDt, fromTime] = fromDate?.trim().split('-');
-            var [fromYear, fromMonth, fromDay] = fromDt.split('/');
-            var [fromHours, fromMinutes, fromSeconds] = fromTime?.split(':');
-            fromTs = new Date(
-                Number.parseInt(fromYear),
-                Number.parseInt(fromMonth) - 1,
-                Number.parseInt(fromDay),
-                Number.parseInt(fromHours),
-                Number.parseInt(fromMinutes),
-                Number.parseInt(fromSeconds)
-            );
-
-            /*Check if getting date from script is correct*/
-            if (isNaN(fromTs)) {
-              console.error(`Incorrect From Date Format ${fromDate}`);
-              reject(`Incorect From Date Format ${fromDate}`);
-            }
-            /* Setting current datetime for empty or wrong format toDate */
-            if (isNaN(toTs)) {
-              toTs = new Date();
-            }
-            //Changing Date to timestamp
-            toTs = toTs.getTime();
-            fromTs = fromTs.getTime();
-            const query: DaqQuery={gid:'',sids:tagIds,from:fromTs,to:toTs,event:''};
-            this.reswebService.getDaqValues(query).subscribe(res=>resolve(res),err=>reject(err));
-        });
+    public async $getHistoricalTags(tagIds: string[], fromDate: number, toDate: number) {
+        const query: DaqQuery = { sids: tagIds, from: fromDate, to: toDate };
+        return await lastValueFrom(this.hmiService.getDaqValues(query));
     }
 }
