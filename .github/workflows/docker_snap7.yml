@@ -1,4 +1,4 @@
-name: Build and Publish DockerHub image latest
+name: Build and Publish DHI snap7
 
 env:
   app: fuxa
