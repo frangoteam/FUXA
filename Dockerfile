@@ -1,5 +1,7 @@
 FROM node:16-bookworm
 
+ARG NODE_SNAP=false
+
 RUN apt-get update && apt-get install -y dos2unix
 
 # Change working directory
@@ -46,6 +48,11 @@ RUN npm ci --production && \
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
 RUN npm install
+
+# Install options snap7
+RUN if [ "$NODE_SNAP" = "true" ]; then \
+    npm install node-snap7; \
+    fi
 
 # Workaround for sqlite3 https://stackoverflow.com/questions/71894884/sqlite3-err-dlopen-failed-version-glibc-2-29-not-found
 RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
