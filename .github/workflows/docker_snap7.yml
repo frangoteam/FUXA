@@ -9,6 +9,8 @@ env:
   # but the platforms must also be included in the os image chosen -
   # eg the ubuntu image doesn't include linux/arm/v6.
   platforms: linux/amd64,linux/arm64,linux/arm/v7
+  # install node-snap7
+  NODE_SNAP: true
 
 on: workflow_dispatch
   #push:
