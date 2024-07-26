@@ -175,18 +175,26 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
                 if (this.data.deviceFilter && this.data.deviceFilter.indexOf(device.type) !== -1) {
                     // filtered device
                 } else if (device.tags) {
-                    if(this.data.isHistorical){
-                        Object.values(device.tags).filter((t: Tag)=>t.daq.changed && t.daq.enabled).forEach((t: Tag)=>{
-                            this.tags.push(<TagElement>{
-                                id: t.id, name: t.name, address: t.address,
-                                device: device.name, checked: (t.id === this.data.variableId), error: null
+                    if (this.data.isHistorical) {
+                        Object.values(device.tags).filter((t: Tag) => t.daq.enabled).forEach((t: Tag) => {
+                            this.tags.push(<TagElement> {
+                                id: t.id,
+                                name: t.name,
+                                address: t.address,
+                                device: device.name,
+                                checked: (t.id === this.data.variableId),
+                                error: null
                             });
                         });
-                    }else{
+                    } else {
                         Object.values(device.tags).forEach((t: Tag) => {
-                            this.tags.push(<TagElement>{
-                                id: t.id, name: t.name, address: t.address,
-                                device: device.name, checked: (t.id === this.data.variableId), error: null
+                            this.tags.push(<TagElement> {
+                                id: t.id,
+                                name: t.name,
+                                address: t.address,
+                                device: device.name,
+                                checked: (t.id === this.data.variableId),
+                                error: null
                             });
                         });
                     }

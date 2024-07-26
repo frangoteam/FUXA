@@ -10,7 +10,7 @@ import { ScriptService } from '../../_services/script.service';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode, ScriptMode } from '../../_models/script';
+import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode, ScriptMode, ScriptParamFilterType } from '../../_models/script';
 import { DevicesUtils, DeviceType } from '../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { ScriptEditorParamComponent } from './script-editor-param/script-editor-param.component';
@@ -194,7 +194,8 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
             data: <DeviceTagSelectionData> {
                 variableId: null,
                 multiSelection:  withMultTagsParam ? true : false,
-                deviceFilter: [ this.script.mode === ScriptMode.SERVER ? DeviceType.internal : null ]
+                deviceFilter: [ this.script.mode === ScriptMode.SERVER ? DeviceType.internal : null ],
+                isHistorical: sysfnc.paramFilter === ScriptParamFilterType.history
             }
         });
 
