@@ -116,6 +116,12 @@ export class NgxTouchKeyboardComponent {
     }
   }
 
+  detachActiveInput() {
+    if (this._activeInputElement instanceof HTMLInputElement || this._activeInputElement instanceof HTMLTextAreaElement) {
+      this._activeInputElement.blur();
+    }
+  }
+
   /**
    * Set active input
    *
@@ -233,13 +239,13 @@ export class NgxTouchKeyboardComponent {
     if (this.debug) {
       console.log('Key pressed:', button);
     }
-
     if (button === fnButton.SHIFT) {
       this.layoutName =
         this.layoutName === 'alphabetic' ? 'shift' : 'alphabetic';
       return;
     } else if (button === fnButton.DONE) {
       this.closePanel.emit();
+      this.detachActiveInput();
       return;
     }
 
