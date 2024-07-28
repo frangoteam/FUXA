@@ -515,6 +515,26 @@ function getRequestResult(property) {
     return Device.getRequestResult(property);
 }
 
+/**
+ * Return result of get node values
+ * @param {*} tagId 
+ * @param {*} fromDate
+ * @param {*} toDate return current datetime if its not a valid date
+ */
+async function getHistoricalTags(tagIds, fromTs, toTs) {
+    return new Promise((resolve, reject) => {
+        /*Check if getting date from script is correct*/
+        if (isNaN(toTs) || isNaN(fromTs) || toTs < fromTs) {
+            runtime.logger.error(`Incorect Date Format ${fromTs} - ${toTs}`);
+            reject(`Incorect Date Format ${fromTs} - ${toTs}`);
+        }
+        
+        runtime.daqStorage.getNodesValues(tagIds, fromTs, toTs).then((res) => {
+            resolve(res);
+        }).catch((err) => reject(err));
+    });
+}
+
 var devices = module.exports = {
     init: init,
     start: start,
@@ -545,4 +565,5 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
+    getHistoricalTags: getHistoricalTags,
 }

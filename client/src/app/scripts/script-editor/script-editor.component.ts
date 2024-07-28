@@ -10,7 +10,7 @@ import { ScriptService } from '../../_services/script.service';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
-import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode, ScriptMode } from '../../_models/script';
+import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, SystemFunction, ScriptParam, ScriptConsoleMessage, TemplatesCode, ScriptMode, ScriptParamFilterType } from '../../_models/script';
 import { DevicesUtils, DeviceType } from '../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { ScriptEditorParamComponent } from './script-editor-param/script-editor-param.component';
@@ -173,7 +173,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     onAddSystemFunction(sysfnc: SystemFunction) {
-        if (sysfnc.params.filter((value) => value).length === 1) {
+        if (sysfnc.params.filter((value) => value)?.length) {
             this.onAddSystemFunctionTag(sysfnc);
         } else {
             this.insertText(this.getFunctionText(sysfnc));
@@ -187,20 +187,31 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     onAddSystemFunctionTag(sysfnc: SystemFunction) {
+        const withMultTagsParam = sysfnc.params?.find(p => p === 'array');
         let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
             disableClose: true,
             position: { top: '60px' },
             data: <DeviceTagSelectionData> {
                 variableId: null,
-                multiSelection: false,
-                deviceFilter: [ this.script.mode === ScriptMode.SERVER ? DeviceType.internal : null ]
+                multiSelection:  withMultTagsParam ? true : false,
+                deviceFilter: [ this.script.mode === ScriptMode.SERVER ? DeviceType.internal : null ],
+                isHistorical: sysfnc.paramFilter === ScriptParamFilterType.history
             }
         });
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result && result.variableId) {
-                let tag = { id: result.variableId, comment: DevicesUtils.getDeviceTagText(this.data.devices, result.variableId) };
-                let text = this.getTagFunctionText(sysfnc, [tag]);
+            if (result) {
+                let text;
+                if (withMultTagsParam && result.variablesId) {
+                    const tags = result.variablesId.map(varId => <ScriptParamCommentType> {
+                        id: varId,
+                        comment: DevicesUtils.getDeviceTagText(this.data.devices, varId)
+                    });
+                    text = this.getTagFunctionText(sysfnc, tags);
+                } else if (result.variableId) {
+                    const tag = { id: result.variableId, comment: DevicesUtils.getDeviceTagText(this.data.devices, result.variableId) };
+                    text = this.getTagFunctionText(sysfnc, [tag]);
+                }
                 this.insertText(text);
             }
         });
@@ -256,17 +267,22 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         doc.replaceRange(text, cursor);
     }
 
-    private getTagFunctionText(sysfnc: SystemFunction, params: any[]): string {
+    private getTagFunctionText(sysfnc: SystemFunction, params: ScriptParamCommentType[]): string {
         let paramText = '';
         for (let i = 0; i < sysfnc.params.length; i++) {
             if (paramText.length) {     // parameters separator
                 paramText += ', ';
             }
-            if (sysfnc.params[i] && params[i]) {         // tag ID
-                paramText += `'${params[i].id}' /* ${params[i].comment} */`;
+            let toAdd = '';
+            if (sysfnc.params[i] && params) {
+                if (sysfnc.params[i] === 'array') {
+                    toAdd = '[' + params.map(param => `'${param.id}' /* ${param.comment} */`).join(', ') + ']';
+                } else if (params[i]) {         // tag ID
+                    toAdd = `'${params[i].id}' /* ${params[i].comment} */`;
+                }
             } else {
-                paramText += '';
             }
+            paramText += toAdd;
         }
         return `${sysfnc.name}(${paramText});`;
     }
@@ -291,4 +307,9 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         }
         this.testParameters = params;
     }
+}
+
+interface ScriptParamCommentType {
+    id: string;
+    comment: string;
 }

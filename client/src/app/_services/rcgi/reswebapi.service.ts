@@ -142,4 +142,5 @@ export class ResWebApiService implements ResourceStorageService {
         };
         return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
     }
+
 }

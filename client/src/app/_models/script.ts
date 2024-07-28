@@ -82,41 +82,108 @@ export class SystemFunctions {
     }
 
     allFunctions = <SystemFunction[]>[{
-        name: '$setTag', mode: null, text: 'script.sys-fnc-settag-text', tooltip: 'script.sys-fnc-settag-tooltip', params: [true, false]
+        name: '$setTag',
+        mode: null,
+        text: 'script.sys-fnc-settag-text',
+        tooltip: 'script.sys-fnc-settag-tooltip',
+        params: [true, false]
     },
     {
-        name: '$getTag', mode: null, text: 'script.sys-fnc-gettag-text', tooltip: 'script.sys-fnc-gettag-tooltip', params: [true]
+        name: '$getTag',
+        mode: null,
+        text: 'script.sys-fnc-gettag-text',
+        tooltip: 'script.sys-fnc-gettag-tooltip',
+        params: [true]
     },
     {
-        name: '$getTagId', mode: null, text: 'script.sys-fnc-getTagId-text', tooltip: 'script.sys-fnc-getTagId-tooltip', params: [false], paramsText: 'script.sys-fnc-getTagId-params'
+        name: '$getTagId',
+        mode: null,
+        text: 'script.sys-fnc-getTagId-text',
+        tooltip: 'script.sys-fnc-getTagId-tooltip',
+        params: [false],
+        paramsText: 'script.sys-fnc-getTagId-params'
     },
     {
-        name: '$getTagDaqSettings', mode: null, text: 'script.sys-fnc-getTagDaqSettings-text', tooltip: 'script.sys-fnc-getTagDaqSettings-tooltip', params: [true], paramsText: 'script.sys-fnc-getTagDaqSettings-params'
+        name: '$getTagDaqSettings',
+        mode: null,
+        text: 'script.sys-fnc-getTagDaqSettings-text',
+        tooltip: 'script.sys-fnc-getTagDaqSettings-tooltip',
+        params: [true],
+        paramsText: 'script.sys-fnc-getTagDaqSettings-params'
     },
     {
-        name: '$setTagDaqSettings', mode: null, text: 'script.sys-fnc-setTagDaqSettings-text', tooltip: 'script.sys-fnc-setTagDaqSettings-tooltip', params: [true, false], paramsText: 'script.sys-fnc-setTagDaqSettings-params'
+        name: '$setTagDaqSettings',
+        mode: null,
+        text: 'script.sys-fnc-setTagDaqSettings-text',
+        tooltip: 'script.sys-fnc-setTagDaqSettings-tooltip',
+        params: [true, false],
+        paramsText: 'script.sys-fnc-setTagDaqSettings-params'
     },
     {
-        name: '$setView', mode: null, text: 'script.sys-fnc-setview-text', tooltip: 'script.sys-fnc-setview-tooltip', params: [false]
+        name: '$setView',
+        mode: null,
+        text: 'script.sys-fnc-setview-text',
+        tooltip: 'script.sys-fnc-setview-tooltip',
+        params: [false]
     },
     {
-        name: '$enableDevice', mode: null, text: 'script.sys-fnc-enableDevice-text', tooltip: 'script.sys-fnc-enableDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-enableDevice-params'
+        name: '$enableDevice',
+        mode: null,
+        text: 'script.sys-fnc-enableDevice-text',
+        tooltip: 'script.sys-fnc-enableDevice-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-enableDevice-params'
     },
     {
-        name: '$getDeviceProperty', mode: null, text: 'script.sys-fnc-getDeviceProperty-text', tooltip: 'script.sys-fnc-getDeviceProperty-tooltip', params: [false], paramsText: 'script.sys-fnc-getDeviceProperty-params'
+        name: '$getDeviceProperty',
+        mode: null,
+        text: 'script.sys-fnc-getDeviceProperty-text',
+        tooltip: 'script.sys-fnc-getDeviceProperty-tooltip',
+        params: [false],
+        paramsText: 'script.sys-fnc-getDeviceProperty-params'
     },
     {
-        name: '$setDeviceProperty', mode: null, text: 'script.sys-fnc-setDeviceProperty-text', tooltip: 'script.sys-fnc-setDeviceProperty-tooltip', params: [false, false], paramsText: 'script.sys-fnc-setDeviceProperty-params'
+        name: '$setDeviceProperty',
+        mode: null,
+        text: 'script.sys-fnc-setDeviceProperty-text',
+        tooltip: 'script.sys-fnc-setDeviceProperty-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-setDeviceProperty-params'
     },
     {
-        name: '$getDevice', mode: ScriptMode.SERVER, text: 'script.sys-fnc-getDevice-text', tooltip: 'script.sys-fnc-getDevice-tooltip', params: [false, false], paramsText: 'script.sys-fnc-getDevice-params'
+        name: '$getDevice',
+        mode: ScriptMode.SERVER,
+        text: 'script.sys-fnc-getDevice-text',
+        tooltip: 'script.sys-fnc-getDevice-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-getDevice-params'
     },
     {
-        name: '$invokeObject', mode: ScriptMode.CLIENT, text: 'script.sys-fnc-invokeObject-text', tooltip: 'script.sys-fnc-invokeObject-tooltip', params: [false, false, false], paramsText: 'script.sys-fnc-invokeObject-params'
+        name: '$invokeObject',
+        mode: ScriptMode.CLIENT,
+        text: 'script.sys-fnc-invokeObject-text',
+        tooltip: 'script.sys-fnc-invokeObject-tooltip',
+        params: [false, false, false],
+        paramsText: 'script.sys-fnc-invokeObject-params'
     },
     {
-        name: '$runServerScript', mode: ScriptMode.CLIENT, text: 'script.sys-fnc-runServerScript-text', tooltip: 'script.sys-fnc-runServerScript-tooltip', params: [false, false], paramsText: 'script.sys-fnc-runServerScript-params'
-    }];
+        name: '$runServerScript',
+        mode: ScriptMode.CLIENT,
+        text: 'script.sys-fnc-runServerScript-text',
+        tooltip: 'script.sys-fnc-runServerScript-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-runServerScript-params'
+    },
+    {
+        name: '$getHistoricalTags',
+        mode: null,
+        text: 'script.sys-fnc-getHistoricalTag-text',
+        tooltip:'script.sys-fnc-getHistoricalTag-tooltip',
+        params:['array', false, false],
+        paramsText: 'script.sys-fnc-getHistoricalTag-params',
+        paramFilter: ScriptParamFilterType.history
+    }
+];
 }
 
 export class TemplatesCode {
@@ -160,13 +227,18 @@ export interface SystemFunction {
     name: string;           // javascript function defined in backend
     text: string;           // button text
     tooltip: string;        // description
-    params?: [boolean];     // array of function parameter where true is for tag and false for any (value)
+    params?: [boolean | string];     // array of function parameter where true is for tag and false for any (value)
     paramsText?: string;    // to add as parameter description in function
     code?: string;          // Code to paste
     mode?: ScriptMode;
+    paramFilter?: ScriptParamFilterType;
 }
 
 export enum ScriptMode {
     CLIENT = 'CLIENT',
     SERVER = 'SERVER',
+}
+
+export enum ScriptParamFilterType {
+    history = 'history'
 }

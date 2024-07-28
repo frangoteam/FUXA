@@ -9,6 +9,7 @@ import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
 import { DeviceType, TagDaq, TagDevice } from '../_models/device';
+import { DaqQuery } from '../_models/hmi';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,8 @@ export class ScriptService {
 
     constructor(private http: HttpClient,
                 private projectService: ProjectService,
-                private hmiService: HmiService) {
+                private hmiService: HmiService,
+            ) {
 
     }
 
@@ -89,6 +91,7 @@ export class ScriptService {
         code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
+        code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
         return code;
     }
 
@@ -150,5 +153,10 @@ export class ScriptService {
         let scriptToRun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.name == scriptName));
         scriptToRun.parameters = params;
         return await lastValueFrom(this.runScript(scriptToRun));
+    }
+
+    public async $getHistoricalTags(tagIds: string[], fromDate: number, toDate: number) {
+        const query: DaqQuery = { sids: tagIds, from: fromDate, to: toDate };
+        return await lastValueFrom(this.hmiService.getDaqValues(query));
     }
 }
