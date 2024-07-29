@@ -183,7 +183,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                         if (result.length) {
                             let varsValueChanged = await _updateVarsValue(deviceId, result);
                             lastTimestampValue = new Date().getTime();
-                            _emitValues(Object.values(varsValue));
+                            _emitValues(varsValue);
                             if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
                                 this.addDaq(varsValueChanged, data.name, data.id);
                             }
