@@ -25,7 +25,7 @@ import { IframeComponent } from './iframe/iframe.component';
 import { ViewComponent } from './view/view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { EditorComponent, DialogNewDoc, DialogLinkProperty } from './editor/editor.component';
+import { EditorComponent, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
@@ -235,7 +235,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         FuxaViewComponent,
         FuxaViewDialogComponent,
         ViewPropertyComponent,
-        DialogNewDoc,
         DialogLinkProperty,
         EditNameComponent,
         ConfirmDialogComponent,

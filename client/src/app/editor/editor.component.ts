@@ -1473,27 +1473,6 @@ interface CopiedAndPasted {
 }
 
 @Component({
-    selector: 'dialog-new-doc',
-    templateUrl: 'newdoc.dialog.html',
-})
-export class DialogNewDoc {
-    docType = ViewType;
-    constructor(public dialogRef: MatDialogRef<DialogNewDoc>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    isValid(name): boolean {
-        if (!this.data.type) {return false;}
-        if (!this.data.name) {return false;}
-        return (this.data.exist.find((n) => n === name)) ? false : true;
-    }
-}
-
-@Component({
     selector: 'dialog-link-property',
     templateUrl: 'linkproperty.dialog.html',
 })
