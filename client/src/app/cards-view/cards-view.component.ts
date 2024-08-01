@@ -140,8 +140,8 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     static itemResizeTrigger(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
         if (item.card?.type === CardWidgetType.view) {
             let ratioWidth, ratioHeight, eleToResize;
-            ratioWidth = itemComponent.el.clientWidth / item.content.profile?.width;
-            ratioHeight = itemComponent.el.clientHeight / item.content.profile?.height;
+            ratioWidth = itemComponent.el.clientWidth / item.content?.profile?.width;
+            ratioHeight = itemComponent.el.clientHeight / item.content?.profile?.height;
             eleToResize = Utils.searchTreeTagName(itemComponent.el, 'svg');
             if (item.card?.scaleMode === 'contain') {
                 eleToResize?.setAttribute('transform', 'scale(' + Math.min(ratioWidth, ratioHeight) + ')');

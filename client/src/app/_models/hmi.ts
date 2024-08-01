@@ -23,6 +23,12 @@ export class View {
     svgcontent = '';
     /** Type of view SVG/CARDS */
     type: ViewType;
+
+    constructor(id?: string, type?: ViewType, name?: string) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+    }
 }
 
 export enum ViewType {

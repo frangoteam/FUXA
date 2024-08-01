@@ -6,7 +6,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { ProjectService } from '../../_services/project.service';
 import { ViewPropertyComponent, ViewPropertyType } from '../view-property/view-property.component';
 import * as FileSaver from 'file-saver';
-import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
+import { EditNameComponent, EditNameData } from '../../gui-helpers/edit-name/edit-name.component';
 
 @Component({
     selector: 'app-editor-views-list',
@@ -56,8 +56,8 @@ export class EditorViewsListComponent {
         let msg = '';
         this.translateService.get('msg.view-remove', { value: view.name }).subscribe((txt: string) => { msg = txt; });
         let dialogRef = this.dialog.open(ConfirmDialogComponent, {
-            data: <ConfirmDialogData> { msg: this.translateService.instant('msg.view-remove', { value: view.name }) },
-            position: { top: '60px' }
+            position: { top: '60px' },
+            data: <ConfirmDialogData> { msg: this.translateService.instant('msg.view-remove', { value: view.name }) }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -88,7 +88,11 @@ export class EditorViewsListComponent {
         let dialogRef = this.dialog.open(EditNameComponent, {
             disableClose: true,
             position: { top: '60px' },
-            data: { name: view.name, exist: exist }
+            data: <EditNameData> {
+                title: this.translateService.instant('dlg.docname-title'),
+                name: view.name,
+                exist: exist
+            }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name) {

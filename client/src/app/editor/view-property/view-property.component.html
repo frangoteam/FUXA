@@ -3,11 +3,19 @@
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field item-block">
-            <span>{{'dlg.docproperty-width' | translate}}</span>
-            <input formControlName="name" type="text" readonly>
+            <span>{{'dlg.docproperty-name' | translate}}</span>
+            <input formControlName="name" type="text">
         </div>
-        <div *ngIf="data.type === viewType.svg">
-            <div class="block mt10">
+        <div class="my-form-field item-block mt5">
+            <span>{{'dlg.docproperty-type' | translate}}</span>
+            <mat-select formControlName="type" placeholder="{{'dlg.doctype' | translate}}">
+                <mat-option *ngFor="let type of viewType | enumToArray" [value]="type.key">
+                    {{ 'editor.view-' + type.value | translate }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div *ngIf="formGroup.controls.type?.value === viewType.svg">
+            <div class="block mt5">
                 <div class="my-form-field inbk">
                     <span>{{'dlg.docproperty-width' | translate}}</span>
                     <input numberOnly formControlName="width" style="width: 120px" type="number">
@@ -17,7 +25,7 @@
                     <input numberOnly formControlName="height" style="width: 120px" type="number">
                 </div>
             </div>
-            <div class="my-form-field item-block mt10">
+            <div class="my-form-field item-block mt5">
                 <span>{{'dlg.docproperty-size' | translate}}</span>
                 <mat-select placeholder="{{'dlg.docproperty-select' | translate}}" (selectionChange)="onSizeChange($event.value)">
                     <mat-option *ngFor="let prop of propSizeType" [value]="prop.value">
@@ -25,7 +33,7 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field item-block mt10">
+            <div class="my-form-field item-block mt5">
                 <span>{{'dlg.docproperty-align' | translate}}</span>
                 <mat-select formControlName="align" placeholder="{{'dlg.docproperty-align-placeholder' | translate}}">
                     <mat-option *ngFor="let align of alignType | enumToArray" [value]="align.key">
@@ -34,8 +42,8 @@
                 </mat-select>
             </div>
         </div>
-        <div *ngIf="data.type === viewType.cards">
-            <div class="my-form-field inbk mt10" style="width: 160px">
+        <div *ngIf="formGroup.controls.type?.value === viewType.cards">
+            <div class="my-form-field inbk mt5" style="width: 160px">
                 <span>{{'dlg.docproperty-gridtype' | translate}}</span>
                 <mat-select formControlName="gridType" placeholder="{{'dlg.docproperty-gridtype-placeholder' | translate}}">
                     <mat-option *ngFor="let type of gridType | enumToArray" [value]="type.value">
@@ -43,12 +51,12 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field inbk mt10 ftr">
+            <div class="my-form-field inbk mt5 ftr">
                 <span>{{'dlg.docproperty-margin' | translate}}</span>
-                <input numberOnly formControlName="margin" [max]="20" [min]="0" [step]="1" style="width: 100px">
+                <input numberOnly formControlName="margin" [max]="20" [min]="0" [step]="1" style="width: 100px" type="number">
             </div>
         </div>
-        <div class="my-form-field item-block mt10">
+        <div class="my-form-field item-block mt5">
             <span>{{'dlg.docproperty-background' | translate}}</span>
             <input style="width: 292px; border: 1px solid rgba(0,0,0,0.2); height:15px !important" readonly [(colorPicker)]="data.profile.bkcolor" class="input-color"
                 title="Change stroke color" [style.background]="data.profile.bkcolor" [cpPresetColors]="defaultColor" [cpAlphaChannel]="'always'" [cpPosition]="'bottom'"

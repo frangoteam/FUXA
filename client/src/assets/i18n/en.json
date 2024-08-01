@@ -79,6 +79,7 @@
     "dlg.headeritem-icon": "Icon",
 
     "dlg.docproperty-title": "View properties",
+    "dlg.docproperty-name": "Name",
     "dlg.docproperty-width": "Width",
     "dlg.docproperty-height": "Height",
     "dlg.docproperty-background": "Background",
@@ -1481,5 +1482,6 @@
     "msg.report-build-error": "Send to build Report failed!",
     "msg.device-tags-request-result": "Load {{value}} of {{current}}",
     "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'",
-    "msg.script-name-exist": "Script name exist!"
+    "msg.script-name-exist": "Script name exist!",
+    "msg.view-name-exist": "View name exist!"
 }

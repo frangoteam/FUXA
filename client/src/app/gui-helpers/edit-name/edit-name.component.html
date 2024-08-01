@@ -3,7 +3,7 @@
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;margin-top: 10px;">
-            <span>{{data.label}}</span>
+            <span>{{data.label || 'dlg.item-name' | translate }}</span>
             <input [(ngModel)]="data.name" type="text" style="width:300px" (input)="onCheckValue($event)">
         </div>
         <div style="display: block; color: red; height: 22px">

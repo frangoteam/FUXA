@@ -3,7 +3,7 @@ import { Utils } from '../../_helpers/utils';
 import { DocAlignType, DocProfile, ViewType } from '../../_models/hmi';
 import { TranslateService } from '@ngx-translate/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { GridType } from 'angular-gridster2';
 
 @Component({
@@ -35,7 +35,8 @@ export class ViewPropertyComponent implements OnInit {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            name: [this.data.name],
+            name: [{value: this.data.name, disabled: this.data.name}],
+            type: [{value: this.data.type, disabled: this.data.name}],
             width: [this.data.profile.width],
             height: [this.data.profile.height],
             margin: [this.data.profile.margin],
@@ -46,7 +47,19 @@ export class ViewPropertyComponent implements OnInit {
             this.formGroup.controls.width.setValidators(Validators.required);
             this.formGroup.controls.height.setValidators(Validators.required);
         }
+        if (!this.data.name) {
+            this.formGroup.controls.name.setValidators(this.isValidName());
+        }
         this.formGroup.updateValueAndValidity();
+    }
+
+    isValidName(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (this.data.existingNames?.indexOf(control.value) !== -1) {
+                return { name: this.translateService.instant('msg.view-name-exist') };
+            }
+            return null;
+        };
     }
 
     onNoClick(): void {
@@ -54,6 +67,8 @@ export class ViewPropertyComponent implements OnInit {
     }
 
     onOkClick(): void {
+        this.data.name = this.formGroup.controls.name.value;
+        this.data.type = this.formGroup.controls.type.value;
         this.data.profile.width = this.formGroup.controls.width.value;
         this.data.profile.height = this.formGroup.controls.height.value;
         this.data.profile.margin = this.formGroup.controls.margin.value;
@@ -74,4 +89,5 @@ export interface ViewPropertyType {
     name: string;
     type: ViewType;
     profile: DocProfile;
+    existingNames?: string[];
 }

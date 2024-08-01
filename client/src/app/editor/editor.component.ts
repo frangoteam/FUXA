@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService, SaveMode } from '../_services/project.service';
-import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, ISvgElement, GaugeProperty } from '../_models/hmi';
+import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, ISvgElement, GaugeProperty, DocProfile } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
 import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
 
@@ -36,6 +36,7 @@ import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
 import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
 import { UploadFile } from '../_models/project';
+import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
 
 declare var Gauge: any;
 
@@ -944,15 +945,23 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     //#region View Events (Add/Rename/Delete/...)
     onAddDoc() {
-        let exist = this.hmi.views.map((v) => v.name);
-        let dialogRef = this.dialog.open(DialogNewDoc, {
+        let dialogRef = this.dialog.open(ViewPropertyComponent, {
             position: { top: '60px' },
-            data: { name: '', type: ViewType.svg, exist: exist }
+            data: <ViewPropertyType> {
+                name: '',
+                profile: new DocProfile(),
+                type: ViewType.svg,
+                existingNames: this.hmi.views.map((v) => v.name)
+            }
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if (result && result.name && result.type) {
-                this.addView(result.name, result.type);
+            if (result) {
+                let view = new View(Utils.getShortGUID('v_'), result.type, result.name);
+                view.profile = result.profile;
+                this.hmi.views.push(view);
+                this.onSelectView(view);
+                this.saveView(this.currentView);
             }
         });
     }
@@ -975,8 +984,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!found)
                     {break;}
             }
-            let v = new View();
-            v.type = type;
+            let v = new View(Utils.getShortGUID('v_'), type);
             if (name) {
                 v.name = name;
             } else if (this.hmi.views.length <= 0) {
@@ -988,7 +996,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (type === Utils.getEnumKey(ViewType, ViewType.cards)) {
                 v.profile.bkcolor = 'rgba(67, 67, 67, 1)';
             }
-            v.id = 'v_' + Utils.getShortGUID();
             this.hmi.views.push(v);
             this.onSelectView(v);
             this.saveView(this.currentView);
@@ -1034,8 +1041,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onViewPropertyChanged(view) {
+    onViewPropertyChanged(view: View) {
         this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
+        this.onSelectView(view);
     }
 
     /**
