@@ -1,0 +1,35 @@
+:host {
+    .leftbar-item {
+        padding: 3px 0px 1px 0px;
+        display: flow-root;
+    }
+    
+    .leftbar-item-active {
+        background-color: var(--toolboxItemActiveBackgroung);
+        color: var(--toolboxItemActiveColor);
+    }
+    
+    .leftbar-item span {
+        float: left;
+    }
+    
+    .leftbar-item .leftbar-item-type {
+        float: left;
+        padding-left: 4px;
+        font-size: 16px;
+        line-height: 20px;
+        opacity:0.5;
+    }
+    
+    .leftbar-item mat-icon {
+        float: right;
+        font-size: 18px;
+    }
+
+    .view-item-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: calc(100% - 54px);
+    }
+}

@@ -16,11 +16,9 @@ import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-propert
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component';
 import { Utils } from '../_helpers/utils';
-import { ConfirmDialogComponent } from '../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Define } from '../_helpers/define';
 import { LibImagesComponent } from '../resources/lib-images/lib-images.component';
 
-import * as FileSaver from 'file-saver';
 import { BagPropertyComponent } from '../gauges/controls/html-bag/bag-property/bag-property.component';
 import { PipePropertyComponent } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 import { SliderPropertyComponent } from '../gauges/controls/slider/slider-property/slider-property.component';
@@ -38,7 +36,6 @@ import { CardsViewComponent } from '../cards-view/cards-view.component';
 import { IElementPreview } from './svg-selector/svg-selector.component';
 import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
 import { UploadFile } from '../_models/project';
-import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
 
 declare var Gauge: any;
 
@@ -1037,81 +1034,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    /**
-     * Delete the View from hmi.views list
-     * @param view View to delete
-     */
-    onDeleteView(view) {
-        let msg = '';
-        this.translateService.get('msg.view-remove', { value: view.name }).subscribe((txt: string) => { msg = txt; });
-        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
-            data: { msg: msg },
-            position: { top: '60px' }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result && this.hmi.views) {
-                let toselect = null;
-                for (var i = 0; i < this.hmi.views.length; i++) {
-                    if (this.hmi.views[i].id === view.id) {
-                        this.hmi.views.splice(i, 1);
-                        if (i > 0 && i < this.hmi.views.length) {
-                            toselect = this.hmi.views[i];
-                        }
-                        break;
-                    }
-                }
-                this.currentView = null;
-                if (toselect) {
-                    this.onSelectView(toselect);
-                } else if (this.hmi.views.length > 0) {
-                    this.onSelectView(this.hmi.views[0]);
-                }
-                this.removeView(view);
-            }
-        });
-    }
-
-    /**
-     * Rename the View (only name)
-     * @param view View to rename
-     */
-    onRenameView(view) {
-        let exist = this.hmi.views.filter((v) => v.id !== view.id).map((v) => v.name);
-        let dialogRef = this.dialog.open(DialogDocName, {
-            position: { top: '60px' },
-            data: { name: view.name, exist: exist }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result && result.name) {
-                view.name = result.name;
-                this.saveView(view);
-            }
-        });
-    }
-
-    /**
-     * Edit View property
-     * @param view View to change property (height, width, background)
-     */
-    onPropertyView(view) {
-        let dialogRef = this.dialog.open(ViewPropertyComponent, {
-            position: { top: '60px' },
-            disableClose: true,
-            data: <ViewPropertyType> { name: view.name, type: view.type || ViewType.svg, profile: view.profile }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result?.profile) {
-                if (result.profile.height) {view.profile.height = parseInt(result.profile.height);}
-                if (result.profile.width) {view.profile.width = parseInt(result.profile.width);}
-                if (result.profile.margin >= 0) {view.profile.margin = parseInt(result.profile.margin);}
-                view.profile.bkcolor = result.profile.bkcolor;
-                this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
-                this.onSelectView(view);
-            }
-        });
+    onViewPropertyChanged(view) {
+        this.winRef.nativeWindow.svgEditor.setDocProperty(view.name, view.profile.width, view.profile.height, view.profile.bkcolor);
     }
 
     /**
@@ -1147,17 +1071,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     isViewActive(view) {
         return (this.currentView && this.currentView.name === view.name);
-    }
-
-    /**
-     * Export view in a file json format [View name].json
-     * @param view
-     */
-    onExportView(view: View) {
-        let filename = `${view.name}.json`;
-        let content = JSON.stringify(view);
-        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-        FileSaver.saveAs(blob, filename);
     }
 
     /**
@@ -1568,24 +1481,6 @@ export class DialogNewDoc {
     isValid(name): boolean {
         if (!this.data.type) {return false;}
         if (!this.data.name) {return false;}
-        return (this.data.exist.find((n) => n === name)) ? false : true;
-    }
-}
-
-@Component({
-    selector: 'dialog-doc-name',
-    templateUrl: 'docname.dialog.html',
-})
-export class DialogDocName {
-    constructor(
-        public dialogRef: MatDialogRef<DialogDocName>,
-        @Inject(MAT_DIALOG_DATA) public data: any) { }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    isValid(name): boolean {
         return (this.data.exist.find((n) => n === name)) ? false : true;
     }
 }
