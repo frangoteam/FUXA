@@ -12,7 +12,7 @@ import {
     ViewChild,
     ViewContainerRef
 } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, take } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
 import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings } from '../_models/hmi';
@@ -543,7 +543,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                         if (htmlevent.ga?.property?.options?.type !== InputOptionType.datetime && htmlevent.ga?.property?.options?.type !== InputOptionType.date &&
                             htmlevent.ga?.property?.options?.type !== InputOptionType.time) {
-                            self.touchKeyboard.openPanel(eleRef);
+                            self.touchKeyboard.openPanel(eleRef).pipe(
+                                take(1)
+                            ).subscribe(() => {
+                                if (htmlevent.ga?.property?.options?.updated) {
+                                    const gaugeStatus = self.getGaugeStatus(htmlevent.ga);
+                                    const currentInputValue = gaugeStatus?.variablesValue[htmlevent.ga?.property?.variableId];
+                                    if (!Utils.isNullOrUndefined(currentInputValue)) {
+                                        htmlevent.dom.value = currentInputValue;
+                                    }
+                                }
+                            });
                         }
                         // if(htmlevent.ga.property){
                         //     let unit = HtmlInputComponent.getUnit(htmlevent.ga.property, new GaugeStatus());
