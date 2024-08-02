@@ -546,13 +546,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                             self.touchKeyboard.openPanel(eleRef).pipe(
                                 take(1)
                             ).subscribe(() => {
-                                if (htmlevent.ga?.property?.options?.updated) {
-                                    const gaugeStatus = self.getGaugeStatus(htmlevent.ga);
-                                    const currentInputValue = gaugeStatus?.variablesValue[htmlevent.ga?.property?.variableId];
-                                    if (!Utils.isNullOrUndefined(currentInputValue)) {
-                                        htmlevent.dom.value = currentInputValue;
-                                    }
-                                }
+                                htmlevent.dom.blur();
                             });
                         }
                         // if(htmlevent.ga.property){
@@ -570,7 +564,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     // Update variable value in case it has changed while input had focus
                     let variables = self.gaugesManager.getBindSignalsValue(htmlevent.ga);
                     let svgeles = FuxaViewComponent.getSvgElements(htmlevent.ga.id);
-
                     if (variables.length && svgeles.length) {
                         if (htmlevent.ga?.type !== HtmlInputComponent.TypeTag && !HtmlInputComponent.InputDateTimeType.includes(htmlevent.ga?.property.options?.type)) {
                             self.gaugesManager.processValue(htmlevent.ga, svgeles[0], variables[0], new GaugeStatus());
@@ -578,6 +571,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
+                    self.checkRestoreValue(htmlevent);
                 };
 
                 htmlevent.dom.oninput = function(ev){
@@ -596,6 +590,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     self.eventForScript(events, htmlevent.value);
                 }
             };
+        }
+    }
+
+    private checkRestoreValue(htmlevent: Event) {
+        if (htmlevent.ga?.property?.options?.updated) {
+            //ToDo there is definitely a better way
+            setTimeout(() => {
+                const gaugeStatus = this.getGaugeStatus(htmlevent.ga);
+                const currentInputValue = gaugeStatus?.variablesValue[htmlevent.ga?.property?.variableId];
+                if (!Utils.isNullOrUndefined(currentInputValue)) {
+                    htmlevent.dom.value = currentInputValue;
+                }
+            }, 1000);
         }
     }
 
