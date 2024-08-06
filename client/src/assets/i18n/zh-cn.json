@@ -467,7 +467,7 @@
     "editor.transform-y2-title": "改变线条的起始Y坐标",
     "editor.transform-rect-width-title": "改变矩形宽度",
     "editor.transform-width": "宽度",
-    "editor.transform-rect-height-title": "改变矩形高度", 
+    "editor.transform-rect-height-title": "改变矩形高度",
     "editor.transform-height": "高度",
     "editor.transform-rect-radius-title": "改变矩形角半径",
     "editor.transform-radiuscorner": "半径角",
@@ -736,6 +736,7 @@
     "device.webapi-property-gettags": "URL GET标签",
     "device.webapi-property-posttags": "URL POST标签",
     "device.webapi-property-loadtags": "加载标签",
+    "device.property-socket-reuse": "Socket复用",
 
     "device.browsetopics-property-title": "要订阅和发布的经纪人主题",
     "device.browsetopics-property-sub": "订阅",
