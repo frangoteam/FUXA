@@ -439,7 +439,17 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         socket = runtime.socketPool.get(data.property.address)
                     } else {
                         socket = new net.Socket()
-                        runtime.socketPool.put(data.property.address, socket)
+                        runtime.socketPool.set(data.property.address, socket)
+                    }
+                    var openFlag = socket.readyState === "opening" || socket.readyState === "open";
+                    if(!openFlag){
+                        socket.connect({
+                            // Default options
+                            ...{
+                                host: addr,
+                                port: port
+                            },
+                        })
                     }
                 }
                 if (data.property.connectionOption === ModbusOptionType.UdpPort) {
