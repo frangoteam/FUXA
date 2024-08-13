@@ -212,6 +212,7 @@ export interface InputOptionsProperty {
     type?: InputOptionType;
     timeformat?: InputTimeFormatType;
     convertion?: InputConvertionType;
+    updatedEsc?: boolean;
 }
 
 export enum InputOptionType {

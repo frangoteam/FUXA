@@ -599,7 +599,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private checkRestoreValue(htmlevent: Event) {
-        if (htmlevent.ga?.property?.options?.updated) {
+        if (htmlevent.ga?.property?.options?.updated && htmlevent.ga.property.options.updatedEsc) {
             //ToDo there is definitely a better way
             setTimeout(() => {
                 const gaugeStatus = this.getGaugeStatus(htmlevent.ga);

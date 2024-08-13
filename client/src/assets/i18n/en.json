@@ -1015,6 +1015,7 @@
     "gauges.property-input-convertion-string": "String",
 
     "gauges.property-update-enabled": "Enable update",
+    "gauges.property-update-esc": "ESC update",
     "gauges.property-numeric-enabled": "Only number",
     "gauges.property-format-digits": "Format digits",
     "gauges.property-actions": "Actions",
