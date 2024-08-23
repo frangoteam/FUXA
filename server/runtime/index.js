@@ -26,6 +26,7 @@ var notificatorMgr;
 var scriptsMgr;
 var jobsMgr;
 var tagsSubscription = new Map();
+var socketPool = new Map();
 
 function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
@@ -560,4 +561,5 @@ var runtime = module.exports = {
     get jobsMgr() { return jobsMgr },
     events: events,
     scriptSendCommand: scriptSendCommand,
+    get socketPool() { return socketPool },
 }
