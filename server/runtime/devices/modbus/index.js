@@ -7,7 +7,6 @@ var ModbusRTU;
 const datatypes = require('./datatypes');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
-const {call} = require("dayjs");
 const net = require("net");
 const TOKEN_LIMIT = 100;
 
@@ -432,45 +431,45 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     port = parseInt(temp);
                 }
                 //reuse socket
-                if(data.property.socketReuse) {
-                    var socket
+                if (data.property.socketReuse) {
+                    var socket;
                     if (runtime.socketPool.has(data.property.address)) {
-                        socket = runtime.socketPool.get(data.property.address)
+                        socket = runtime.socketPool.get(data.property.address);
                     } else {
-                        socket = new net.Socket()
-                        runtime.socketPool.set(data.property.address, socket)
+                        socket = new net.Socket();
+                        runtime.socketPool.set(data.property.address, socket);
                     }
                     var openFlag = socket.readyState === "opening" || socket.readyState === "open";
-                    if(!openFlag){
+                    if (!openFlag) {
                         socket.connect({
                             // Default options
                             ...{
                                 host: addr,
                                 port: port
                             },
-                        })
+                        });
                     }
                 }
                 if (data.property.connectionOption === ModbusOptionType.UdpPort) {
-                    client.connectUDP(addr, { port: port }, callback)
+                    client.connectUDP(addr, { port: port }, callback);
                 } else if (data.property.connectionOption === ModbusOptionType.TcpRTUBufferedPort) {
-                    if(data.property.socketReuse){
-                        client.linkTcpRTUBuffered(runtime.socketPool.get(data.property.address),callback)
-                    }else {
-                        client.connectTcpRTUBuffered(addr, {port: port}, callback)
+                    if (data.property.socketReuse){
+                        client.linkTcpRTUBuffered(runtime.socketPool.get(data.property.address), callback);
+                    } else {
+                        client.connectTcpRTUBuffered(addr, {port: port}, callback);
                     }
                 } else if (data.property.connectionOption === ModbusOptionType.TelnetPort) {
-                    if(data.property.socketReuse){
-                        client.linkTelnet(runtime.socketPool.get(data.property.address),callback)
-                    }else {
-                        client.connectTelnet(addr, {port: port}, callback)
+                    if (data.property.socketReuse) {
+                        client.linkTelnet(runtime.socketPool.get(data.property.address), callback);
+                    } else {
+                        client.connectTelnet(addr, {port: port}, callback);
                     }
                 } else {
                     //reuse socket
-                    if(data.property.socketReuse){
-                        client.linkTCP(runtime.socketPool.get(data.property.address),callback)
-                    }else{
-                        client.connectTCP(addr, { port: port }, callback)
+                    if (data.property.socketReuse) {
+                        client.linkTCP(runtime.socketPool.get(data.property.address), callback);
+                    } else {
+                        client.connectTCP(addr, { port: port }, callback);
                     }
                 }
             }

@@ -171,7 +171,7 @@ export class DeviceNetProperty {
     connectionOption: string;
     /** Delay used for Modbus RTU/TCP delay between frame*/
     delay: number = 10;
-    /*Modbus TCP socket reuse flag*/
+    /** Modbus TCP socket reuse flag */
     socketReuse: boolean = false;
 
     static descriptor = {

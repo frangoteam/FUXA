@@ -561,5 +561,5 @@ var runtime = module.exports = {
     get jobsMgr() { return jobsMgr },
     events: events,
     scriptSendCommand: scriptSendCommand,
-    get socketPool() {return socketPool},
+    get socketPool() { return socketPool },
 }
