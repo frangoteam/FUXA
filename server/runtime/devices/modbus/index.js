@@ -7,6 +7,7 @@ var ModbusRTU;
 const datatypes = require('./datatypes');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+const net = require("net");
 const TOKEN_LIMIT = 100;
 
 function MODBUSclient(_data, _logger, _events, _runtime) {
@@ -425,18 +426,51 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 var port = 502;
                 var addr = data.property.address;
                 if (data.property.address.indexOf(':') !== -1) {
-                    var addr = data.property.address.substring(0, data.property.address.indexOf(':'));
+                    addr = data.property.address.substring(0, data.property.address.indexOf(':'));
                     var temp = data.property.address.substring(data.property.address.indexOf(':') + 1);
                     port = parseInt(temp);
                 }
+                //reuse socket
+                if (data.property.socketReuse) {
+                    var socket;
+                    if (runtime.socketPool.has(data.property.address)) {
+                        socket = runtime.socketPool.get(data.property.address);
+                    } else {
+                        socket = new net.Socket();
+                        runtime.socketPool.set(data.property.address, socket);
+                    }
+                    var openFlag = socket.readyState === "opening" || socket.readyState === "open";
+                    if (!openFlag) {
+                        socket.connect({
+                            // Default options
+                            ...{
+                                host: addr,
+                                port: port
+                            },
+                        });
+                    }
+                }
                 if (data.property.connectionOption === ModbusOptionType.UdpPort) {
-                    client.connectUDP(addr, { port: port }, callback)
+                    client.connectUDP(addr, { port: port }, callback);
                 } else if (data.property.connectionOption === ModbusOptionType.TcpRTUBufferedPort) {
-                    client.connectTcpRTUBuffered(addr, { port: port }, callback)
+                    if (data.property.socketReuse){
+                        client.linkTcpRTUBuffered(runtime.socketPool.get(data.property.address), callback);
+                    } else {
+                        client.connectTcpRTUBuffered(addr, {port: port}, callback);
+                    }
                 } else if (data.property.connectionOption === ModbusOptionType.TelnetPort) {
-                    client.connectTelnet(addr, { port: port }, callback)
+                    if (data.property.socketReuse) {
+                        client.linkTelnet(runtime.socketPool.get(data.property.address), callback);
+                    } else {
+                        client.connectTelnet(addr, {port: port}, callback);
+                    }
                 } else {
-                    client.connectTCP(addr, { port: port }, callback)
+                    //reuse socket
+                    if (data.property.socketReuse) {
+                        client.linkTCP(runtime.socketPool.get(data.property.address), callback);
+                    } else {
+                        client.connectTCP(addr, { port: port }, callback);
+                    }
                 }
             }
         } catch (err) {

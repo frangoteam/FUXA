@@ -81,13 +81,13 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.BACnet">
-                    <div class="my-form-field" 
+                    <div class="my-form-field"
                          style="display: block;margin-bottom: 10px;">
                         <span>{{'device.property-interface-address' | translate}}</span>
                         <input [(ngModel)]="data.device.property.address"
                                placeholder="{{'device.property-interface-address-ph' | translate}}"
                                class="address"
-                               type="ip" 
+                               type="ip"
                                (click)="onAddressChanged()">
                     </div>
                     <div class="my-form-field block mb10">
@@ -101,7 +101,7 @@
                     <div class="my-form-field"
                          style="display: inline-block;margin-bottom: 10px;">
                         <span>{{'device.property-adpu-timeout' | translate}}</span>
-                        <input numberOnly 
+                        <input numberOnly
                                [(ngModel)]="data.device.property.adpuTimeout"
                                placeholder="{{'device.property-adpu-timeout-ph' | translate}}"
                                class="adpu"
@@ -185,13 +185,19 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
-                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                    <div class="mb10 block">
+                    <div class="my-form-field inbk" style="margin-bottom: 10px;">
                         <span>{{'device.property-connection-options' | translate}}</span>
                         <mat-select [(value)]="data.device.property.connectionOption" style="width: 262px">
                             <mat-option *ngFor="let value of modbusTcpOptionType" [value]="value">
                                 {{ value }}
                             </mat-option>
                         </mat-select>
+                    </div>
+                    <div class="my-form-field inbk" style="margin-bottom: 10px;text-align: center;width: 80px;">
+                        <span>{{'device.property-socket-reuse' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.socketReuse"></mat-slide-toggle>
+                    </div>
                     </div>
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                         <span>{{'device.property-address-port' | translate}}</span>
@@ -210,7 +216,7 @@
                             <span>{{'device.property-delay' | translate}}</span>
                             <input numberOnly [(ngModel)]="data.device.property.delay" style="width: 100px" type="number">
                         </div>
-                    </div>                        
+                    </div>
                 </div>
                 <div *ngSwitchCase="deviceType.WebAPI">
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
@@ -381,7 +387,7 @@
 
                         </mat-expansion-panel>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
