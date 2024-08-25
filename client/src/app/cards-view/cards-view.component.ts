@@ -84,7 +84,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         let content: any = null;
         let background = '';
         let item: GridsterItem = { x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background };
-        item.initCallback = () => {
+        item.initCallback = (item, itemComponent) => {
             if (card) {
                 if (card.type === this.cardType.view) {
                     let views = this.hmi.views.filter((v) => v.name === card.data);
@@ -102,6 +102,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 } else if (card.type === this.cardType.iframe) {
                     item.content = card.data;
                 }
+                this.itemChange(item, itemComponent);
                 this.changeDetector.detectChanges();
             }
         };
@@ -126,7 +127,6 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     }
 
     private itemChange(item, itemComponent) {
-        // console.info('itemResized', item, itemComponent);
         if (itemComponent.el) {
             if (item.background) {
                 itemComponent.el.style.backgroundColor = item.background;
