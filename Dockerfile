@@ -1,4 +1,4 @@
-FROM node:16-bookworm
+FROM node:18-bookworm
 
 ARG NODE_SNAP=false
 
@@ -24,26 +24,6 @@ WORKDIR /usr/src/app
 
 # Copy odbcinst.ini to /etc
 RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
-
-# Clone node-odbc repository
-RUN git clone https://github.com/markdirish/node-odbc.git
-
-# Change working directory to node-odbc
-WORKDIR /usr/src/app/node-odbc
-
-# Install compatible versions of global npm packages
-RUN npm install -g node-gyp && \
-    npm install -g npm@8 && \
-    npm install -g node-addon-api && \
-    npm install -g @mapbox/node-pre-gyp
-
-# Install dependencies and build node-odbc
-RUN npm ci --production && \
-    ./node_modules/.bin/node-pre-gyp rebuild --production && \
-    ./node_modules/.bin/node-pre-gyp package
-
-# Build and install node-odbc
-#RUN npm install
 
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
