@@ -18,7 +18,7 @@ declare var SVG: any;
 export class MetaShapesComponent extends GaugeBaseComponent {
   // TypeId = 'proceng';
   static TypeTag = 'svg-ext-meta'; // used to identify shapes type, binded with the library svgeditor
-  static LabelTag = 'Proc-Eng';
+  static LabelTag = 'meta';
 
   static actionsType = {
     hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
