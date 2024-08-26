@@ -31,18 +31,38 @@ export class MetaShapesComponent extends GaugeBaseComponent {
 
   static getSignals(pro: any) {
     let res: string[] = [];
+    // --------------------------------------------------------------------
+    // modifed by J, allocate the first action tag link as tagPrefix, check if 1st action link start as meta, then use it as tagPrefix; if not, set as null
+    let tagPrefix = '';
+    if (pro.actions?.length) {
+      if (pro.actions[0].variableId?.startsWith('meta')) {
+        tagPrefix = pro.actions[0].variableId;
+      }
+    }
+    // --------------------------------------------------------------------
     if (pro.variableId) {
-      res.push(pro.variableId);
+      res.push(tagPrefix + pro.variableId);   // modifed by J, add tag prefix
     }
     if (pro.alarmId) {
       res.push(pro.alarmId);
     }
     if (pro.actions && pro.actions.length) {
       pro.actions.forEach(act => {
-        res.push(act.variableId);
+        //modified by J, add tag prefix to the variableId, check only actions not starting with variableId = 'meta'
+        if (!act.variableId.startsWith('meta')) {
+          res.push(tagPrefix + act.variableId);
+        }
       });
     }
+    // console.log('pro');
+    // console.log(pro);
+    // console.log('tagPrefix');
+    // console.log(tagPrefix);
+    // console.log('res');
+    // console.log(res);
+
     return res;
+
   }
 
   static getActions(type: string) {
@@ -59,6 +79,21 @@ export class MetaShapesComponent extends GaugeBaseComponent {
 
   static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
     try {
+      // --------------------------------------------------------------------
+      // modifed by J, allocate the first action tag link as tagPrefix, check if 1st action link start as 'meta', then use it as tagPrefix; if not, set as null
+      let tagPrefix = '';
+      if (ga.property.actions?.length) {
+        if (ga.property.actions[0].variableId?.startsWith('meta')) {
+          tagPrefix = ga.property.actions[0].variableId;
+        }
+      }
+      // console.log('ga property');
+      // console.log(ga.property);
+      // console.log('tagPrefix');
+      // console.log(tagPrefix);
+      // console.log('sig value');
+      // console.log(sig);
+      // --------------------------------------------------------------------
       if (svgele.node) {
         let value = parseFloat(sig.value);
         if (Number.isNaN(value)) {
@@ -70,7 +105,8 @@ export class MetaShapesComponent extends GaugeBaseComponent {
         if (ga.property) {
           let propValue = GaugeBaseComponent.checkBitmask((<GaugeProperty>ga.property).bitmask, value);
           let propertyColor = new GaugePropertyColor();
-          if (ga.property.variableId === sig.id && ga.property.ranges) {
+          if (tagPrefix + ga.property.variableId === sig.id && ga.property.ranges) {    //modified by J, add tag prefix to the variableId
+            // check ranges
             for (let idx = 0; idx < ga.property.ranges.length; idx++) {
               if (ga.property.ranges[idx].min <= propValue && ga.property.ranges[idx].max >= propValue) {
                 propertyColor.fill = ga.property.ranges[idx].color;
@@ -87,7 +123,7 @@ export class MetaShapesComponent extends GaugeBaseComponent {
           // check actions
           if (ga.property.actions) {
             ga.property.actions.forEach(act => {
-              if (act.variableId === sig.id) {
+              if (!act.variableId.startsWith('meta') && tagPrefix + act.variableId === sig.id) {    //modified by J, add tag prefix to the variableId, check only actions not starting with variableId = 'meta'
                 ProcEngComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
               }
             });
