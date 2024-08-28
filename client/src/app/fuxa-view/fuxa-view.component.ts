@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription, take } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -720,8 +720,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         card = new CardModel(id);
-        card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
-        card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+
+        if (options.relativeFrom && options.relativeFrom == Utils.getEnumKey(GaugeEventRelativeFromType, GaugeEventRelativeFromType.window)) {
+            card.x = (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
+            card.y = (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+        } else {
+            card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
+            card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+        }
+
         if (this.hmi.layout.hidenavigation) {
             card.y -= 48;
         }

@@ -52,7 +52,7 @@
                 </mat-select>
             </div>
         </ng-template>
-        <div *ngIf="withPosition(item.action)" class="table mt5">
+        <div *ngIf="withPosition(item.action)" class="table mt8">
             <div class="my-form-field lbk">
                 <span>{{'general-x' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.left" type="number" style="width: 60px">
@@ -61,9 +61,17 @@
                 <span>{{'general-y' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.top" type="number" style="width: 60px">
             </div>
-            <div *ngIf="cardDestination === item.action" class="my-form-field lbk ml10 tac" style="max-width: 70px;">
+            <div *ngIf="cardDestination === item.action" class="my-form-field lbk ml10 tac" style="max-width: 70px;margin-top: 5px">
                 <span>{{'gauges.property-event-single-card' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.singleCard"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field lbk" style="width: 240px;margin-top: 5px">
+                <span>{{'gauges.property-event-destination-relative-from' | translate}}</span>
+                <mat-select [(value)]="item.actoptions.relativeFrom">
+                    <mat-option *ngFor="let rf of relativeFromType | enumToArray" [value]="rf.key">
+                        {{ rf.value }}
+                    </mat-option>
+                </mat-select>
             </div>
         </div>
     </div>

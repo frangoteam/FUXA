@@ -338,6 +338,11 @@ export enum GaugeEventActionType {
     onMonitor = 'shapes.event-onmonitor',
 }
 
+export enum GaugeEventRelativeFromType {
+    window = 'shapes.event-relativefrom-window',
+    mouse = 'shapes.event-relativefrom-mouse'
+}
+
 export enum GaugeEventSetValueType {
     set = 'shapes.event-setvalue-set',
     add = 'shapes.event-setvalue-add',
