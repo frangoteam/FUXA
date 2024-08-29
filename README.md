@@ -19,6 +19,13 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
+See the Wiki for more details about installing and getting started
+
+[Wiki](https://github.com/frangoteam/FUXA/wiki)
+
+[Wiki Installing/Building](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
+
+
 ### Running from docker
 ```
 docker pull frangoteam/fuxa:latest
@@ -35,9 +42,9 @@ docker compose up -d
 
 ### Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14 || 16 || 18.
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
 
-**WARNING** In linux with nodejs Version 16 || 18 the installation could be a challenge.
+**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
 If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
 
 ```
@@ -48,9 +55,9 @@ fuxa
 ### Install from source
 [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14 || 16 || 18.
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
 
-**WARNING** In linux with nodejs Version 16 || 18 the installation could be a challenge.
+**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
 If you don't intend communicate with Siemens PLCs via S7 you can remove the node-snap7 library from the server/package.json
 
 ```
