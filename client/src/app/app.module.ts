@@ -189,6 +189,7 @@ import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-pr
 import { ViewPropertyComponent } from './editor/view-property/view-property.component';
 import { ResizeDirective } from './_directives/resize.directive';
 import { EditorViewsListComponent } from './editor/editor-views-list/editor-views-list.component';
+import { MetaShapesComponent } from './gauges/shapes/meta-shapes/meta-shapes.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -340,7 +341,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         WebcamPlayerComponent,
         WebcamPlayerDialogComponent,
         ResizeDirective,
-        EditorViewsListComponent
+        EditorViewsListComponent,
+        MetaShapesComponent
     ],
     imports: [
         BrowserModule,

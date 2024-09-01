@@ -1,39 +1,40 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
-import { HmiService } from '../_services/hmi.service';
+import { EventEmitter, Injectable, Output } from '@angular/core';
 import { ChartRangeType, ChartViewType } from '../_models/chart';
+import { HmiService } from '../_services/hmi.service';
 
-import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableType } from '../_models/hmi';
-import { ValueComponent } from './controls/value/value.component';
-import { GaugeDialogType } from './gauge-property/gauge-property.component';
-import { HtmlInputComponent } from './controls/html-input/html-input.component';
-import { HtmlButtonComponent } from './controls/html-button/html-button.component';
-import { HtmlSelectComponent } from './controls/html-select/html-select.component';
-import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
-import { HtmlGraphComponent } from './controls/html-graph/html-graph.component';
-import { HtmlBagComponent } from './controls/html-bag/html-bag.component';
-import { HtmlSwitchComponent } from './controls/html-switch/html-switch.component';
+import { DaqQuery, Event, GaugeEvent, GaugeEventType, GaugeSettings, GaugeStatus, Size, TableType, Variable } from '../_models/hmi';
 import { GaugeProgressComponent } from './controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './controls/gauge-semaphore/gauge-semaphore.component';
-import { ShapesComponent } from './shapes/shapes.component';
-import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
-import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
+import { HtmlBagComponent } from './controls/html-bag/html-bag.component';
+import { HtmlButtonComponent } from './controls/html-button/html-button.component';
+import { HtmlChartComponent } from './controls/html-chart/html-chart.component';
+import { HtmlGraphComponent } from './controls/html-graph/html-graph.component';
+import { HtmlInputComponent } from './controls/html-input/html-input.component';
+import { HtmlSelectComponent } from './controls/html-select/html-select.component';
+import { HtmlSwitchComponent } from './controls/html-switch/html-switch.component';
 import { PipeComponent } from './controls/pipe/pipe.component';
 import { SliderComponent } from './controls/slider/slider.component';
+import { ValueComponent } from './controls/value/value.component';
+import { GaugeDialogType } from './gauge-property/gauge-property.component';
+import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
+import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
+import { ShapesComponent } from './shapes/shapes.component';
 
-import { WindowRef } from '../_helpers/windowref';
 import { Utils } from '../_helpers/utils';
-import { ChartUplotComponent } from './controls/html-chart/chart-uplot/chart-uplot.component';
+import { WindowRef } from '../_helpers/windowref';
+import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
+import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
+import { ChartUplotComponent } from './controls/html-chart/chart-uplot/chart-uplot.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
-import { HtmlTableComponent } from './controls/html-table/html-table.component';
-import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
-import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { HtmlImageComponent } from './controls/html-image/html-image.component';
+import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
+import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { PanelComponent } from './controls/panel/panel.component';
-import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
+import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
+import { MetaShapesComponent } from './shapes/meta-shapes/meta-shapes.component';
 
 @Injectable()
 export class GaugesManager {
@@ -60,15 +61,15 @@ export class GaugesManager {
     // list of gauges with input
     static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
+    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag, MetaShapesComponent.TypeTag,
         ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag,
         HtmlSwitchComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
+    static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, MetaShapesComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
         ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
-        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
+        HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, MetaShapesComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
         HtmlImageComponent, PanelComponent];
 
