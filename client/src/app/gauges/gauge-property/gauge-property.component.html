@@ -19,7 +19,7 @@
 					<div class="my-form-field" style="padding-left: 56px" *ngIf="isTextToShow()">
 						<span>{{'gauges.property-text' | translate}}</span>
 						<input [(ngModel)]="property.text" style="width: 220px" type="text" placeholder="{{data.settings.name}}">
-					</div>					
+					</div>
 					<div class="my-form-field" style="padding-left: 100px" *ngIf="isReadonlyToShow()">
 						<span>{{'gauges.property-readonly' | translate}}</span>
 						<mat-slide-toggle color="primary" [(ngModel)]="property.readonly"></mat-slide-toggle>
@@ -31,7 +31,10 @@
 					</div>
 				</div>
 				<div mat-dialog-content style="overflow: visible; width:100%;">
-					<flex-head [data]="data" [property]="property" #flexhead [withBitmask]="withBitmask"></flex-head>
+					<flex-widget-property *ngIf="isWidget()"
+										  [property]="property">
+					</flex-widget-property>
+					<flex-head *ngIf="!isWidget()" [data]="data" [property]="property" #flexhead [withBitmask]="withBitmask"></flex-head>
 				</div>
 			</div>
 		</mat-tab>

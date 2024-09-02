@@ -18,7 +18,7 @@
     <div [ngSwitch]="gaugeDialog.type">
         <div *ngSwitchCase="gaugeDialogType.Chart">
             <app-chart-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-chart-property>
-        </div>        
+        </div>
         <div *ngSwitchCase="gaugeDialogType.Graph">
             <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-graph-property>
         </div>
@@ -189,7 +189,7 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-panel' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-panel')}"
                                 (click)="setMode('own_ctrl-panel')">
                                 <span class="material-icon-tool material-icons" style="font-size: 25px;">web_asset</span>
-                            </div>                            
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->
@@ -252,7 +252,7 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelPropertyTransformOpenState = true" 
+                    <mat-expansion-panel class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelPropertyTransformOpenState = true"
                         (closed)="panelPropertyTransformOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
@@ -267,7 +267,7 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x' | translate}}</span>
-                                            <input numberOnly id="selected_x" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x-title' | translate}}" 
+                                            <input numberOnly id="selected_x" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x-title' | translate}}"
                                                     size="4" data-attr="x" />
                                         </div>
                                         <div class="svg-property">
@@ -605,7 +605,7 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel id="interaction_panel" class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelEventOpenState = true" 
+                    <mat-expansion-panel id="interaction_panel" class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelEventOpenState = true"
                         (closed)="panelEventOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
@@ -816,7 +816,7 @@
                     </button>
                 </div>
                 <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
-                    <app-cards-view #cardsview [edit]="true" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager" 
+                    <app-cards-view #cardsview [edit]="true" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"
                                 (editCard)="editCardsWidget($event)" (save)="onSaveProject()"></app-cards-view>
                     <!-- <div class="grid-stack"></div> -->
                     <button mat-fab color="primary" (click)="addCard()" class="fab-add">

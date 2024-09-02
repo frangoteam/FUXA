@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeActionsType, GaugeProperty, GaugePropertyColor, GaugeSettings, GaugeStatus, Variable } from '../../../_models/hmi';
+import { GaugeActionsType, GaugeProperty, GaugePropertyColor, GaugeSettings, GaugeStatus, Variable, WidgetProperty } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { ShapesComponent } from '../../shapes/shapes.component';
+import { EndPointApi } from '../../../_helpers/endpointapi';
+import { SvgUtils } from '../../../_helpers/svg-utils';
 
 @Component({
     selector: 'app-html-image',
@@ -14,10 +16,13 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-own_ctrl-image';
     static LabelTag = 'HtmlImage';
     static prefixD = 'D-OXC_';
+    static endPointConfig: string = EndPointApi.getURL();
 
-    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
-                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate,
-                        move: GaugeActionsType.move };
+    static actionsType = {
+        hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
+        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate: GaugeActionsType.rotate,
+        move: GaugeActionsType.move
+    };
     constructor() {
         super();
     }
@@ -29,15 +34,59 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             ele?.setAttribute('data-name', gaugeSettings.name);
             svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
-                svgImageContainer.innerHTML = '';
-                let image = document.createElement('img');
-                image.style['width'] = '100%';
-                image.style['height'] = '100%';
-                image.style['border'] = 'none';
-                if (gaugeSettings.property && gaugeSettings.property.address) {
-                    image.setAttribute('src', gaugeSettings.property.address);
+                if (SvgUtils.isSVG(gaugeSettings.property.address)) {
+                    if (isview) {
+                        const scripts = svgImageContainer.querySelectorAll('script');
+                        scripts.forEach(script => {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                    } else {
+                        svgImageContainer.innerHTML = '';
+                        svgImageContainer.setAttribute('type', 'widget');
+                        fetch(`${this.endPointConfig}${gaugeSettings.property.address}`)
+                            .then(response => response.text())
+                            .then(svgContent => {
+                                const parser = new DOMParser();
+                                const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
+                                const svgElement = svgDocument.querySelector('svg');
+                                const boxSize = SvgUtils.getSvgSize(svgElement);
+                                if (boxSize) {
+                                    svgImageContainer.parentElement?.setAttribute('width', boxSize.width);
+                                    svgImageContainer.parentElement?.setAttribute('height', boxSize.height);
+                                }
+                                const scripts = svgElement.querySelectorAll('script');
+                                const svgGuid = Utils.getShortGUID('', '_');
+                                const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
+                                let widgetResult;
+                                scripts?.forEach(script => {
+                                    // _pb_ for bool parameter and _pn_ for number parameter and _ps_ for string parameter.
+                                    const newScript = document.createElement('script');
+                                    widgetResult = SvgUtils.processWidget(script.textContent, svgGuid, svgIdsMap);
+                                    newScript.textContent = widgetResult.content;
+                                    document.body.appendChild(newScript);
+                                    script.parentNode?.replaceChild(newScript, script);
+                                });
+                                svgImageContainer.appendChild(svgElement);
+                                gaugeSettings.property = <WidgetProperty>{
+                                    ...gaugeSettings.property,
+                                    type: 'widget',
+                                    varsToBind: widgetResult?.vars
+                                };
+                            });
+                    }
+                } else {
+                    svgImageContainer.innerHTML = '';
+                    let image = document.createElement('img');
+                    image.style['width'] = '100%';
+                    image.style['height'] = '100%';
+                    image.style['border'] = 'none';
+                    if (gaugeSettings.property && gaugeSettings.property.address) {
+                        image.setAttribute('src', gaugeSettings.property.address);
+                    }
+                    svgImageContainer.appendChild(image);
                 }
-                svgImageContainer.appendChild(image);
             }
         }
         return svgImageContainer;
