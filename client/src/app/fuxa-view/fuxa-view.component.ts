@@ -702,7 +702,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
-        if (options.singleCard) {
+        if (options?.singleCard) {
             this.cards = [];
         }
         let view: View = this.getView(viewref);
@@ -720,16 +720,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         card = new CardModel(id);
-        card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
-        card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+        card.x = (Utils.isNumeric(event?.clientX) ? parseInt(event?.clientX) : 0) + 
+            (Utils.isNumeric(options?.left) ? parseInt(options.left) : 0);
+        card.y = (Utils.isNumeric(event?.clientY) ? parseInt(event?.clientY) : 0) + 
+            (Utils.isNumeric(options?.top) ? parseInt(options.top) : 0);
+        
         if (this.hmi.layout.hidenavigation) {
             card.y -= 48;
         }
         card.width = view.profile.width;
         card.height = view.profile.height;
         card.view = view;
-        card.variablesMapping = options.variablesMapping;
-        card.disableDefaultClose = options.hideClose;
+        card.variablesMapping = options?.variablesMapping;
+        card.disableDefaultClose = options?.hideClose;
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
