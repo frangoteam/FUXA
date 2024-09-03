@@ -339,8 +339,8 @@ export enum GaugeEventActionType {
 }
 
 export enum GaugeEventRelativeFromType {
-    window = 'shapes.event-relativefrom-window',
-    mouse = 'shapes.event-relativefrom-mouse'
+    window = 'window',
+    mouse = 'mouse'
 }
 
 export enum GaugeEventSetValueType {
