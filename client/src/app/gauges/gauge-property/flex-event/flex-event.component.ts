@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
     GaugeEvent,
     GaugeEventActionType,
+    GaugeEventRelativeFromType,
     GaugeEventSetValueType,
     GaugeEventType,
     GaugeProperty,
@@ -37,6 +38,7 @@ export class FlexEventComponent implements OnInit {
     eventType = {};
     setValueType = GaugeEventSetValueType;
     enterActionType = {};
+    relativeFromType = GaugeEventRelativeFromType;
     actionType = GaugeEventActionType;
     eventActionOnCard = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
     eventWithPosition = [Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard),
@@ -61,6 +63,11 @@ export class FlexEventComponent implements OnInit {
         }
         this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === 'svg-ext-own_ctrl-panel');//#issue on build  PanelComponent.TypeTag);
         this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
+
+        Object.keys(this.relativeFromType).forEach(key => {
+            console.log(this.relativeFromType[key]);
+            this.translateService.get(this.relativeFromType[key]).subscribe((txt: string) => { this.relativeFromType[key] = txt; });
+        });
 
         Object.keys(this.actionType).forEach(key => {
             this.translateService.get(this.actionType[key]).subscribe((txt: string) => { this.actionType[key] = txt; });

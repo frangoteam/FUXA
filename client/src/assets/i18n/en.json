@@ -699,6 +699,8 @@
     "shapes.event-onmonitor": "Monitor",
     "shapes.event-onViewToPanel": "Set View to Panel",
     "shapes.event-onLoad": "OnLoad",
+    "shapes.event-relativefrom-window": "Window",
+    "shapes.event-relativefrom-mouse": "Mouse",
 
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
@@ -970,6 +972,7 @@
     "gauges.property-event-type": "Type",
     "gauges.property-event-action": "Action",
     "gauges.property-event-destination": "Destination",
+    "gauges.property-event-destination-relative-from": "Relative from",
     "gauges.property-event-destination-panel": "Panel",
     "gauges.property-event-destination-hide-close": "Hide Close",
     "gauges.property-event-single-card": "Single Card",

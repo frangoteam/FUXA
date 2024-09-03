@@ -340,7 +340,9 @@
     "shapes.action-clockwise": "Mudar sentido do Relógio",
     "shapes.action-anticlockwise": "Mudar Contra-relógio",
     "shapes.action-downup": "Cima e abaixo",
-
+    "shapes.event-relativefrom-window": "Janela",
+    "shapes.event-relativefrom-mouse": "Cursor",
+    
     "pipe.property-props": "Propriedade",
     "pipe.property-border-width": "Largura da fronteira",
     "pipe.property-border-color": "Cor da fronteira",
@@ -508,6 +510,7 @@
     "gauges.property-head-remove-mapvariable": "Remover a ligação",
     "gauges.property-tooltip-add-event": "Adicionar evento",
     "gauges.property-interval-msec": "Intervalo (msec.)",
+
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisões",
