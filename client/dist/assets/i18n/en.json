@@ -681,6 +681,8 @@
     "shapes.event-click": "Click",
     "shapes.event-mouseup": "MouseUp",
     "shapes.event-mousedown": "MouseDown",
+    "shapes.event-mouseover": "MouseOver",
+    "shapes.event-mouseout": "MouseOut",
     "shapes.event-enter": "Enter",
     "shapes.event-select": "Select",
     "shapes.event-onpage": "Open Page",
