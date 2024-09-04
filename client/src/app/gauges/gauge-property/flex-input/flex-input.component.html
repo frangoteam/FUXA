@@ -101,15 +101,8 @@
         </div>
     </div>
     <div *ngIf="isInputCtrl()" class="mt15">
-        <div class="my-form-field ml10">
-            <span>{{'gauges.property-update-enabled' | translate}}</span>
-            <mat-slide-toggle color="primary" [(ngModel)]="property.options.updated" class="ml20"></mat-slide-toggle>
-        </div>
-        <div class="my-form-field ml20">
-            <span>{{'gauges.property-update-esc' | translate}}</span>
-            <mat-slide-toggle color="primary" [(ngModel)]="property.options.updatedEsc" [disabled]="!property.options.updated" class="ml20"></mat-slide-toggle>
-        </div>
-        <div class="my-form-field ml30" style="width: 140px;">
+        <div class="mt15">
+            <div class="my-form-field" style="width: 140px;">
             <span>{{'gauges.property-input-type' | translate}}</span>
             <mat-select [(ngModel)]="property.options.type" (selectionChange)="onTypeChange($event)">
                 <mat-option *ngFor="let ev of inputOptionType | enumToArray" [value]="ev.key">
@@ -146,6 +139,20 @@
                     </mat-option>
                 </mat-select>
             </div>
-        </ng-container>        
+        </ng-container>
+        <div class="mt15">
+            <div class="my-form-field">
+                <span>{{'gauges.property-update-enabled' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="property.options.updated" class="ml20"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field ml20">
+                <span>{{'gauges.property-update-esc' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="property.options.updatedEsc" [disabled]="!property.options.updated" class="ml20"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field ml20">
+                <span>{{'gauges.property-select-content-on-click' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="property.options.selectOnClick" class="ml20"></mat-slide-toggle>
+            </div>
+        </div>
     </div>
 </div>

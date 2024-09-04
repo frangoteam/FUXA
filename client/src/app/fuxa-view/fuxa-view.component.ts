@@ -231,6 +231,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         },
                         (gaToBindHtmlEvent) => {
                             this.onBindHtmlEvent(gaToBindHtmlEvent);
+                            if (items[key]?.property?.options?.selectOnClick) {
+                                let existingOnClick = gaToBindHtmlEvent.dom.onclick;
+                        
+                                gaToBindHtmlEvent.dom.onclick = function(ev) {
+                                    if (existingOnClick) existingOnClick.call(this, ev);
+                                    gaToBindHtmlEvent.dom.select();
+                                    gaToBindHtmlEvent.dom.focus();
+                                }
+                            }
                         });
                     if (items[key].property) {
                         let gaugeSetting = items[key];
