@@ -431,6 +431,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     self.runEvents(self, ga, ev, mouseUpEvents);
                 });
             }
+            let mouseOverEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseover);
+            if (mouseOverEvents && mouseOverEvents.length > 0) {
+                svgele.mouseover(function(ev) {
+                    self.runEvents(self, ga, ev, mouseOverEvents);
+                });
+            }
+            let mouseOutEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseout);
+            if (mouseOutEvents && mouseOutEvents.length > 0) {
+                svgele.mouseout(function(ev) {
+                    self.runEvents(self, ga, ev, mouseOutEvents);
+                });
+            }
         }
     }
 
