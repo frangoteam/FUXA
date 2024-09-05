@@ -47,3 +47,27 @@
 .svg-selector-active {
     background-color: rgba(48,89,175,1);
 }
+
+.search-input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      line-height: 1.5;
+    }
+  
+    .search-icon {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #757575;
+    }
+  }
+  
+  
