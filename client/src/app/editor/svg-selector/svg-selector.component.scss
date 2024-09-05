@@ -1,49 +1,73 @@
-.svg-selector-list {
-    position: absolute;
-    top: 35px;
-    bottom: 0px;
-    overflow: auto;
-    margin-top: 10px;
-    right: 0px;
-    left: 5px;
-}
-
-.svg-selector-item {
-    font-size: 12px;
-    line-height: 24px;
-    cursor: pointer;
-    padding-left: 5px;
-    display: block;
-    .name {
-        display: inline-block;
-        width: 170px;
-        font-size: 13px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        vertical-align: bottom; 
+:host {
+    .svg-selector-list {
+        position: absolute;
+        top: 35px;
+        bottom: 0px;
+        overflow: auto;
+        margin-top: 10px;
+        right: 0px;
+        left: 5px;
     }
 
-    .id {
-        display: inline-block;
-        margin-left: 10px;
-        color:darkgray;
-        width: 150px;
-    }
-    .edit {
-        width: 22px;
-        height: 22px;
-        line-height: 22px;
-        mat-icon {
-            font-size: 16px;
+    .svg-selector-item {
+        font-size: 12px;
+        line-height: 24px;
+        cursor: pointer;
+        padding-left: 5px;
+        display: block;
+
+        .name {
+            display: inline-block;
+            width: 170px;
+            font-size: 13px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            vertical-align: bottom;
+        }
+
+        .id {
+            display: inline-block;
+            margin-left: 10px;
+            color: darkgray;
+            width: 150px;
+        }
+
+        .edit {
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+
+            mat-icon {
+                font-size: 16px;
+            }
         }
     }
-}
 
-.svg-selector-item:hover {
-    background-color: #9c9c9c36;
-}
+    .svg-selector-item:hover {
+        background-color: #9c9c9c36;
+    }
 
-.svg-selector-active {
-    background-color: rgba(48,89,175,1);
+    .svg-selector-active {
+        background-color: rgba(48, 89, 175, 1);
+    }
+
+    .search-input-container {
+        position: relative;
+        width: 100%;
+        margin-bottom: 10px;
+        margin-top: 3px;
+
+        input {
+            width: calc(100% - 10px);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #757575;
+        }
+    }
 }

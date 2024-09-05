@@ -3,7 +3,11 @@
         {{'svg.selector.property-title' | translate}}
     </div>
     <div class="svg-selector-list">
-        <div *ngFor="let svgElement of svgElements" class="svg-selector-item" [ngClass]="{'svg-selector-active': isSelected(svgElement)}"
+        <div class="my-form-field search-input-container">
+            <input type="text" matInput [(ngModel)]="filterText" (input)="filterElements()">
+            <mat-icon class="search-icon">search</mat-icon>
+        </div>
+        <div *ngFor="let svgElement of filteredSvgElements" class="svg-selector-item" [ngClass]="{'svg-selector-active': isSelected(svgElement)}"
             (click)="$event.stopPropagation();onSelected(svgElement)" (mouseout)="onSvgElementPreview(svgElement, false)" (mouseover)="onSvgElementPreview(svgElement, true)">
             <div class="name">{{ svgElement.name }}</div>
             <div class="id">{{ svgElement.id }}</div>

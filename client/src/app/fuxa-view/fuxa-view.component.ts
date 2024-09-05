@@ -231,6 +231,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         },
                         (gaToBindHtmlEvent) => {
                             this.onBindHtmlEvent(gaToBindHtmlEvent);
+                            if (items[key]?.property?.options?.selectOnClick) {
+                                const existingOnClick = gaToBindHtmlEvent.dom.onclick;
+                                gaToBindHtmlEvent.dom.onclick = function(ev) {
+                                    if (existingOnClick) {
+                                        existingOnClick.call(this, ev);
+                                    }
+                                    gaToBindHtmlEvent.dom.select();
+                                    gaToBindHtmlEvent.dom.focus();
+                                };
+                            }
                         });
                     if (items[key].property) {
                         let gaugeSetting = items[key];
@@ -714,7 +724,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
-        if (options.singleCard) {
+        if (options?.singleCard) {
             this.cards = [];
         }
         let view: View = this.getView(viewref);
@@ -747,8 +757,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.width = view.profile.width;
         card.height = view.profile.height;
         card.view = view;
-        card.variablesMapping = options.variablesMapping;
-        card.disableDefaultClose = options.hideClose;
+        card.variablesMapping = options?.variablesMapping;
+        card.disableDefaultClose = options?.hideClose;
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
