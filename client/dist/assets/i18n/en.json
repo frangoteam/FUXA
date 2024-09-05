@@ -539,6 +539,8 @@
     "editor.cmenu-layer-delete": "Delete Layer",
     "editor.cmenu-layer-marge-down": "Merge Down",
     "editor.cmenu-layer-marge-all": "Merge All",
+    "editor.cmenu-unlock": "Unlock",
+    "editor.cmenu-lock": "Lock",
 
     "editor.transform": "Transform",
     "editor.transform-x": "x",
@@ -1022,6 +1024,7 @@
 
     "gauges.property-update-enabled": "Enable update",
     "gauges.property-update-esc": "ESC update",
+    "gauges.property-select-content-on-click": "Select content on click",
     "gauges.property-numeric-enabled": "Only number",
     "gauges.property-format-digits": "Format digits",
     "gauges.property-actions": "Actions",
@@ -1203,6 +1206,8 @@
     "script.delay": "Delay (seconds)",
     "script.sys-fnc-setview-text": "$setView (View name)",
     "script.sys-fnc-setview-tooltip": "System function to set View on client: $setView (View name as string)",
+    "script.sys-fnc-opencard-text": "$openCard (View name)",
+    "script.sys-fnc-opencard-tooltip": "System function to open Card on client: $openCard (View name as string, Options as dict {left, top})",
     "script.sys-fnc-enableDevice-text": "$enableDevice (Device name, enable True/False)",
     "script.sys-fnc-enableDevice-tooltip": "System function to enable Device connection: $enableDevice (Device name as string, enable as boolean)",
     "script.sys-fnc-enableDevice-params": "'Device name', true",
