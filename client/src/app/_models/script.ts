@@ -127,6 +127,13 @@ export class SystemFunctions {
         params: [false]
     },
     {
+        name: '$openCard',
+        mode: null,
+        text: 'script.sys-fnc-opencard-text',
+        tooltip: 'script.sys-fnc-opencard-tooltip',
+        params: [false]
+    },
+    {
         name: '$enableDevice',
         mode: null,
         text: 'script.sys-fnc-enableDevice-text',
