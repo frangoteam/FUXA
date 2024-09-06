@@ -48,36 +48,58 @@ function TDengine(_settings, _log, _currentStorage) {
                 )`;
 
                 try {
-                    const result = (await cursor.query(checkQuery)).getData();          
+                    const result = (await cursor.query(checkQuery)).getData();
                     // check the result if it is an array and its length is greater than 0
                     if (Array.isArray(result) && result.length > 0) {
-                        console.log(`Item with alm_online=${item.ontime} and alm_name=${item.name} already exists. Skipping insertion.`);
+                        console.log(`Item with alm_ontime=${item.ontime} and alm_name=${item.name} already exists. Skipping insertion.`);
                         continue;  // skip insertion if the data already exists
                     }
 
                     //insert data into the database if it does not exist
                     await cursor.query(queryAlm);
-                    console.log(`Inserted item ${i + 1} successfully.`);
+                    console.log(`Inserted item ${item.ontime} - ${item.name} successfully.`);
                 } catch (err) {
-                    console.error(`Error checking/inserting item ${i + 1}. Error:`, err);
+                    console.error(`Error checking/inserting item ${item.ontime} - ${item.name}. Error:`, err);
                 }
             }
             console.log('All items processed.');
         }
 
-        // Define the dataArray variable to store data retrieved from the API
-        let dataArrayAlm = [];
+        // // Define the dataArray variable to store data retrieved from the API
+        // let dataArrayAlm = [];
 
-        // axios to get hisotry alarm data from Alarm API
-        axios.get('http://docker002:1881/api/alarmshistory')
-            .then(response => {
-                dataArrayAlm = response.data;
-                // console.log('Data retrieved:', dataArrayAlm);
-                insertAlarms(dataArrayAlm);
-            })
-            .catch(error => {
-                console.error('Error retrieving data:', error);
-            });
+        // // axios to get hisotry alarm data from Alarm API
+        // axios.get('http://docker002:1881/api/alarmshistory')
+        //     .then(response => {
+        //         dataArrayAlm = response.data;
+        //         // console.log('Data retrieved:', dataArrayAlm);
+        //         insertAlarms(dataArrayAlm);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error retrieving data:', error);
+        //     });
+
+        let lastData = []; // saving data of last session
+
+        function checkAndInsertData() {
+            axios.get('http://docker002:1881/api/alarmshistory')
+                .then(response => {
+                    const currentData = response.data;
+                    if (!lastData || JSON.stringify(currentData) !== JSON.stringify(lastData)) {
+                        // insert data if data changed
+                        insertAlarms(currentData);
+                        lastData = currentData;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error retrieving data:', error);
+                });
+        }
+
+        // start polling
+
+        setInterval(checkAndInsertData, 60000); // check and insert data
+
 
         //----------------------------------------------------------------------------------------------------
 
