@@ -20,7 +20,7 @@
     "header.edit-users": "Users settings",
     "header.edit-alarms": "Alarms settings",
     "header.edit-texts": "Texts settings",
-    "header.help": "FUXA Help",
+    "header.help": "BMS LIIS Help",
     "header.help-tutorial": "Tutorial",
     "header.help-info": "About",
     "header.change-thema": "Switch Theme (beta)",
@@ -29,11 +29,11 @@
 
     "project.name": "Project name",
 
-    "sidenav.title": "FUXA",
+    "sidenav.title": "BMS LIIS",
 
-    "tutorial.title": "FUXA Tutorial",
+    "tutorial.title": "BMS LIIS Tutorial",
 
-    "dlg.info-title": "FUXA",
+    "dlg.info-title": "BMS LIIS",
 
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
@@ -799,7 +799,7 @@
     "devices.export-csv": "CSV",
     "devices.import": "Import devices",
     "device.property-client": "Device Property",
-    "device.property-server": "FUXA Server Property",
+    "device.property-server": "BMS LIIS Server Property",
     "device.property-name": "Name",
     "device.property-type": "Type",
     "device.property-polling": "Polling",
