@@ -35,116 +35,31 @@ function TDengine(_settings, _log, _currentStorage) {
         }
 
         //add by J, to save alarm data from Sqlite to tdEngine-------------------------------------------------------------------------------
-
-        // const dataArrayAlm = [
-        //     {
-        //         "ontime": 1725462862675,
-        //         "offtime": 1725462865659,
-        //         "acktime": 1725462871434,
-        //         "name": "serverTag AlarmNum",
-        //         "type": "highhigh",
-        //         "status": "NF",
-        //         "text": "this is HH-alarm of serverTag1 number",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#FF4848",
-        //         "color": "#FFF"
-        //     },
-        //     {
-        //         "ontime": 1725460256618,
-        //         "offtime": 0,
-        //         "acktime": 0,
-        //         "name": "serverTag AlarmBit",
-        //         "type": "high",
-        //         "status": "N",
-        //         "text": "this is H-alarm of serverTag1 bit",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#F9CF59",
-        //         "color": "#000"
-        //     },
-        //     {
-        //         "ontime": 1725459152258,
-        //         "offtime": 1725460244613,
-        //         "acktime": 1725460252091,
-        //         "name": "serverTag AlarmBit",
-        //         "type": "high",
-        //         "status": "NF",
-        //         "text": "this is H-alarm of serverTag1 bit",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#F9CF59",
-        //         "color": "#000"
-        //     },
-        //     {
-        //         "ontime": 1725458298760,
-        //         "offtime": 1725458302762,
-        //         "acktime": 1725458305126,
-        //         "name": "serverTag AlarmBit",
-        //         "type": "high",
-        //         "status": "NF",
-        //         "text": "this is H-alarm of serverTag1 bit",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#F9CF59",
-        //         "color": "#000"
-        //     },
-        //     {
-        //         "ontime": 1725458286754,
-        //         "offtime": 1725458292756,
-        //         "acktime": 1725458296969,
-        //         "name": "serverTag AlarmBit",
-        //         "type": "high",
-        //         "status": "NF",
-        //         "text": "this is H-alarm of serverTag1 bit",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#F9CF59",
-        //         "color": "#000"
-        //     },
-        //     {
-        //         "ontime": 1725458272747,
-        //         "offtime": 1725458283752,
-        //         "acktime": 1725458284890,
-        //         "name": "serverTag AlarmNum",
-        //         "type": "highhigh",
-        //         "status": "NF",
-        //         "text": "this is HH-alarm of serverTag1 number",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#FF4848",
-        //         "color": "#FFF"
-        //     },
-        //     {
-        //         "ontime": 1725458249739,
-        //         "offtime": 1725458258739,
-        //         "acktime": 1725458262808,
-        //         "name": "serverTag AlarmNum",
-        //         "type": "highhigh",
-        //         "status": "NF",
-        //         "text": "this is HH-alarm of serverTag1 number",
-        //         "userack": "",
-        //         "group": "Server",
-        //         "bkcolor": "#FF4848",
-        //         "color": "#FFF"
-        //     }
-        // ];
-
-
-        // Function to insert data into the tdEngine database
         async function insertAlarms(dataArray) {
             for (let i = 0; i < dataArray.length; i++) {
                 const item = dataArray[i];
+
+                // SQL query to check if the data already exists
+                const checkQuery = `SELECT alm_ontime, alm_name FROM ${database}.alarms WHERE alm_ontime = ${item.ontime} AND alm_name = '${item.name}'`;
+                // SQL query to insert the data into the database
                 const queryAlm = `INSERT INTO ${database}.alarms (alm_ts, alm_ontime, alm_offtime, alm_acktime, alm_name, alm_type, alm_status, alm_text, alm_userack, alm_group, alm_bkcolor, alm_color)
                 VALUES (
                     NOW(), ${item.ontime}, ${item.offtime}, ${item.acktime}, '${item.name}', '${item.type}', '${item.status}', '${item.text}', '${item.userack}', '${item.group}', '${item.bkcolor}', '${item.color}'
                 )`;
 
                 try {
+                    const result = (await cursor.query(checkQuery)).getData();          
+                    // check the result if it is an array and its length is greater than 0
+                    if (Array.isArray(result) && result.length > 0) {
+                        console.log(`Item with alm_online=${item.ontime} and alm_name=${item.name} already exists. Skipping insertion.`);
+                        continue;  // skip insertion if the data already exists
+                    }
+
+                    //insert data into the database if it does not exist
                     await cursor.query(queryAlm);
                     console.log(`Inserted item ${i + 1} successfully.`);
                 } catch (err) {
-                    console.error(`Failed to insert item ${i + 1}. Error:`, err);
+                    console.error(`Error checking/inserting item ${i + 1}. Error:`, err);
                 }
             }
             console.log('All items processed.');
