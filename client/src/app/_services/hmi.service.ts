@@ -28,6 +28,7 @@ export class HmiService {
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
+    @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -301,7 +302,7 @@ export class HmiService {
      */
     public askDeviceValues() {
         if (this.socket) {
-            this.socket.emit(IoEventTypes.DEVICE_VALUES, 'get');
+            this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'get' });
         } else if (this.bridge) {
             this.bridge.getDeviceValues(null);
         }
@@ -569,12 +570,14 @@ export class HmiService {
     //#endregion
 
     public onScriptCommand(message: ScriptCommandMessage) {
-        switch (message.command) {
-            case ScriptCommandEnum.SETVIEW:
-                if (message.params && message.params.length) {
+        if (message.params && message.params.length) {
+            switch (message.command) {
+                case ScriptCommandEnum.SETVIEW:
                     this.onGoTo.emit(<ScriptSetView>{ viewName: message.params[0], force: message.params[1] });
-                }
+                case ScriptCommandEnum.OPENCARD:
+                    this.onOpen.emit(<ScriptOpenCard>{ viewName: message.params[0], options: message.params[1] });
                 break;
+            }
         }
     }
 }
@@ -646,6 +649,7 @@ export enum IoEventTypes {
 
 export const ScriptCommandEnum = {
     SETVIEW: 'SETVIEW',
+    OPENCARD: 'OPENCARD',
 };
 
 export interface ScriptCommandMessage {
@@ -656,6 +660,11 @@ export interface ScriptCommandMessage {
 export interface ScriptSetView {
     viewName: string;
     force: boolean;
+}
+
+export interface ScriptOpenCard {
+    viewName: string;
+    options: {};
 }
 
 export interface EndPointSettings {

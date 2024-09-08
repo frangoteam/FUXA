@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription, take } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -231,6 +231,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         },
                         (gaToBindHtmlEvent) => {
                             this.onBindHtmlEvent(gaToBindHtmlEvent);
+                            if (items[key]?.property?.options?.selectOnClick) {
+                                const existingOnClick = gaToBindHtmlEvent.dom.onclick;
+                                gaToBindHtmlEvent.dom.onclick = function(ev) {
+                                    if (existingOnClick) {
+                                        existingOnClick.call(this, ev);
+                                    }
+                                    gaToBindHtmlEvent.dom.select();
+                                    gaToBindHtmlEvent.dom.focus();
+                                };
+                            }
                         });
                     if (items[key].property) {
                         let gaugeSetting = items[key];
@@ -429,6 +439,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchend(function(ev) {
                     self.runEvents(self, ga, ev, mouseUpEvents);
+                });
+            }
+            let mouseOverEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseover);
+            if (mouseOverEvents && mouseOverEvents.length > 0) {
+                svgele.mouseover(function(ev) {
+                    self.runEvents(self, ga, ev, mouseOverEvents);
+                });
+            }
+            let mouseOutEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseout);
+            if (mouseOutEvents && mouseOutEvents.length > 0) {
+                svgele.mouseout(function(ev) {
+                    self.runEvents(self, ga, ev, mouseOutEvents);
                 });
             }
         }
@@ -702,7 +724,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onOpenCard(id: string, event, viewref: string, options: any = {}) {
-        if (options.singleCard) {
+        if (options?.singleCard) {
             this.cards = [];
         }
         let view: View = this.getView(viewref);
@@ -720,16 +742,23 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         card = new CardModel(id);
-        card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
-        card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+
+        if (options.relativeFrom && options.relativeFrom == GaugeEventRelativeFromType.window) {
+            card.x = Utils.isNumeric(options.left) ? parseInt(options.left) : 0;
+            card.y = Utils.isNumeric(options.top) ? parseInt(options.top) : 0;
+        } else {
+            card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
+            card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+        }
+
         if (this.hmi.layout.hidenavigation) {
             card.y -= 48;
         }
         card.width = view.profile.width;
         card.height = view.profile.height;
         card.view = view;
-        card.variablesMapping = options.variablesMapping;
-        card.disableDefaultClose = options.hideClose;
+        card.variablesMapping = options?.variablesMapping;
+        card.disableDefaultClose = options?.hideClose;
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {

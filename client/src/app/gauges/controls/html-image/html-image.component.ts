@@ -72,7 +72,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                                 gaugeSettings.property = <WidgetProperty>{
                                     ...gaugeSettings.property,
                                     type: 'widget',
-                                    varsToBind: widgetResult?.vars
+                                    varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
                                 };
                             });
                     }
