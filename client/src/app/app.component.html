@@ -1,7 +1,7 @@
 <div id="main-container" class="container">
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
-    <app-header class="header" [hidden]="isHidden()"></app-header>
+    <app-header class="header" *ngIf="isHidden()"></app-header>
     <div [ngClass]="getClass()">
         <router-outlet></router-outlet>
         <ngx-fab-button *ngIf="showDevNavigation()" #fabmenu icon="menu" iconOpen="menu" class="fab-button" color="rgba(68,138,255, 1)">
