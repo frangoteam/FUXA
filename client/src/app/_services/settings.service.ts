@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 
-import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
-import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
+import { environment } from '../../environments/environment';
+import { EndPointApi } from '../_helpers/endpointapi';
 import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
 
 @Injectable({

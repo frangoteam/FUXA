@@ -13,6 +13,10 @@ function TDengine(_settings, _log, _currentStorage) {
     this.setCall = function (_fncGetProp) {
         fncGetTagProp = _fncGetProp;
         return this.addDaqValues;
+        // return {
+        //     addDaqValues: this.addDaqValues(),
+        //     alarmArchiveToTD: this.alarmArchiveToTD()
+        // }
     }
     var fncGetTagProp = null;
 
@@ -21,6 +25,7 @@ function TDengine(_settings, _log, _currentStorage) {
         let connOpt = Object.assign({}, options, settings.daqstore)
         connOpt.user = settings.daqstore.credentials.username;
         connOpt.passwd = settings.daqstore.credentials.password;
+
         conn = connect(connOpt);
         //create database
         const cursor = conn.cursor();
@@ -28,13 +33,30 @@ function TDengine(_settings, _log, _currentStorage) {
             //TODO add retention
             let res = await cursor.query(`CREATE DATABASE IF NOT EXISTS ${database} `);
             res = await cursor.query(`CREATE STABLE IF NOT EXISTS ${database}.meters (dt TIMESTAMP,tag_id VARCHAR(200), tag_value BINARY(20)) TAGS (device_id VARCHAR(200),device_name BINARY(256) )`);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
+    //add by J, to store archived alarm data from Sqlite to Dengine-------------------------------------------------------------------------------
+    this.alarmArchiveToTD = async function () {
+
+        let connOpt = Object.assign({}, options, settings.daqstore)
+        connOpt.user = settings.daqstore.credentials.username;
+        connOpt.passwd = settings.daqstore.credentials.password;
+
+        conn = connect(connOpt);
+        //create database
+        const cursor = conn.cursor();
+        try {
+            //TODO add retention
+            let res = await cursor.query(`CREATE DATABASE IF NOT EXISTS ${database} `);
             //add by J, create alarm stable
             res = await cursor.query(`CREATE TABLE IF NOT EXISTS ${database}.alarms (alm_ts TIMESTAMP, alm_ontime BIGINT, alm_offtime BIGINT, alm_acktime BIGINT, alm_name NCHAR(255), alm_type NCHAR(255), alm_status NCHAR(255), alm_text NCHAR(255), alm_userack NCHAR(255),alm_group NCHAR(255),alm_bkcolor NCHAR(255), alm_color NCHAR(255))`);
         } catch (error) {
             console.error(error);
         }
-
-        //add by J, to save alarm data from Sqlite to tdEngine-------------------------------------------------------------------------------
         async function insertAlarms(dataArray) {
             for (let i = 0; i < dataArray.length; i++) {
                 const item = dataArray[i];
@@ -49,40 +71,38 @@ function TDengine(_settings, _log, _currentStorage) {
 
                 try {
                     const result = (await cursor.query(checkQuery)).getData();
-                    // check the result if it is an array and its length is greater than 0
-                    if (Array.isArray(result) && result.length > 0) {
-                        console.log(`Item with alm_ontime=${item.ontime} and alm_name=${item.name} already exists. Skipping insertion.`);
+                    // check 
+                    // if the alarm is duplicated with TD, the result if it is an array and its length is greater than 0, 
+                    // or if the alarm has been acked
+                    // or if the alarm is gone off
+                    if ((Array.isArray(result) && result.length > 0) || item.acktime === 0 || item.offtime === 0) {
+                        // console.log(`Item with alm_ontime=${item.ontime} and alm_name=${item.name} already exists. Skipping insertion.`);
                         continue;  // skip insertion if the data already exists
                     }
 
                     //insert data into the database if it does not exist
                     await cursor.query(queryAlm);
-                    console.log(`Inserted item ${item.ontime} - ${item.name} successfully.`);
+                    //convert the ontime to a Date object and get a localized date and time string
+                    const ontimeInMilliseconds = item.ontime; 
+                    const ontimeInSeconds = ontimeInMilliseconds / 1000; // Convert milliseconds to seconds
+                    const date = new Date(ontimeInSeconds * 1000); // Convert seconds to milliseconds and create a Date object
+                    const formattedTime = date.toLocaleString(); // Get a localized date and time string
+                    console.log(`Inserted new alarm item to TD ('${item.name}'-'on time ${formattedTime}') successfully.`);
+                    logger.info(`Inserted new alarm item to TD ('${item.name}'-'on time ${formattedTime}') successfully.`);
                 } catch (err) {
-                    console.error(`Error checking/inserting item ${item.ontime} - ${item.name}. Error:`, err);
+                    // console.error(`Error checking/inserting item ${item.ontime} - ${item.name}. Error:`, err);
+                    logger.error(`Error checking/inserting item ${item.ontime} - ${item.name}. Error:`, err);
                 }
             }
-            console.log('All items processed.');
+            // console.log('All items processed.');
         }
 
-        // // Define the dataArray variable to store data retrieved from the API
-        // let dataArrayAlm = [];
-
-        // // axios to get hisotry alarm data from Alarm API
-        // axios.get('http://docker002:1881/api/alarmshistory')
-        //     .then(response => {
-        //         dataArrayAlm = response.data;
-        //         // console.log('Data retrieved:', dataArrayAlm);
-        //         insertAlarms(dataArrayAlm);
-        //     })
-        //     .catch(error => {
-        //         console.error('Error retrieving data:', error);
-        //     });
-
+        // Define the dataArray variable to store data retrieved from the API
         let lastData = []; // saving data of last session
 
         function checkAndInsertData() {
-            axios.get('http://docker002:1881/api/alarmshistory')
+            let uiPort = settings.uiPort || 1881;   // default ui port
+            axios.get('http://localhost:' + uiPort + '/api/alarmshistory')
                 .then(response => {
                     const currentData = response.data;
                     if (!lastData || JSON.stringify(currentData) !== JSON.stringify(lastData)) {
@@ -96,14 +116,9 @@ function TDengine(_settings, _log, _currentStorage) {
                 });
         }
 
-        // start polling
-
-        setInterval(checkAndInsertData, 60000); // check and insert data
-
-
-        //----------------------------------------------------------------------------------------------------
-
+        checkAndInsertData();
     }
+    //End of Code by J-------------------------------------------------------------------------------------------------------
 
 
     this.addDaqValues = function (tagsValues, deviceName, deviceId) {

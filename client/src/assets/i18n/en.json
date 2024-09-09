@@ -1421,6 +1421,7 @@
     "dlg.app-settings-daqstore-database": "Database name",
     "dlg.app-settings-daqstore-username": "Username",
     "dlg.app-settings-daqstore-password": "Password",
+    "dlg.app-settings-daqstore-alarmArchiveToTD": "Alarm Archive to TDengine (> 10 seconds)",
     "store.retention-none": "Disabled",
     "store.retention-day1": "1 day",
     "store.retention-days2": "2 days",
