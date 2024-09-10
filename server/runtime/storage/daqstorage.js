@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const SqliteDB = require("./sqlite");
 const InfluxDB = require("./influxdb");
-const TDengine  =require("./tdengine");
+const TDengine = require("./tdengine");
 const CurrentStorage = require("./sqlite/currentstorage");
 // var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
@@ -43,11 +43,30 @@ function addDaqNode(_id, fncgetprop) {
     if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18 || dbType === DaqStoreTypeEnum.TDengine) {
         id = dbType;
     }
+    // add by J, start the alarm archive to TDengine, only when tdEnginer selected-----------------------------------------
+    const alarmArchiveToTD = TDengine.create(settings, logger, currentStorateDB).alarmArchiveToTD;
+    // clear interval previous interval
+    if (addDaqNode.interval) {
+        clearInterval(addDaqNode.interval);
+    }
+
+    // start when only tdEngine selected
+    if (id === DaqStoreTypeEnum.TDengine) {
+        addDaqNode.interval = setInterval(function () {
+            alarmArchiveToTD();
+        }, settings.daqstore.alarmArchive * 1000);
+    } else {
+        clearInterval(addDaqNode.interval);
+    }
+    //end of code by J----------------------------------------------------------------------------------------------------
+
     if (!daqDB[id]) {
         if (id === DaqStoreTypeEnum.influxDB || id === DaqStoreTypeEnum.influxDB18) {
             daqDB[id] = InfluxDB.create(settings, logger, currentStorateDB);
-        } else if(id === DaqStoreTypeEnum.TDengine){
+        } else if (id === DaqStoreTypeEnum.TDengine) {
             daqDB[id] = TDengine.create(settings, logger, currentStorateDB);
+        } else if (id === DaqStoreTypeEnum.SQlite) {
+            daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
         } else {
             daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
         }
@@ -89,7 +108,7 @@ function getNodesValues(tagsid, fromts, tots, options) {
                     resolve(['', ...tagsid.map(col => '')]);
                 } else if (options) {
                     let calcValues = [];
-                    for (let idx = 0 ; idx < values.length; idx++) {
+                    for (let idx = 0; idx < values.length; idx++) {
                         if (options.functions[idx]) {
                             calcValues.push(calculator.getFunctionValues(values[idx], fromts, tots, options.functions[idx], options.interval, options.formats[idx]));
                         } else {
@@ -108,9 +127,9 @@ function getNodesValues(tagsid, fromts, tots, options) {
                 } else {
                     var result = {};
                     for (let i = 0; i < tagsid.length; i++) {
-                        result[tagsid[i]] = values[i].map(v => { return { x: new Date(v.dt), y: v.value} });
-                        result[tagsid[i]].push({ x: new Date(tots), y: null});
-                        result[tagsid[i]].unshift({ x: new Date(fromts), y: null});
+                        result[tagsid[i]] = values[i].map(v => { return { x: new Date(v.dt), y: v.value } });
+                        result[tagsid[i]].push({ x: new Date(tots), y: null });
+                        result[tagsid[i]].unshift({ x: new Date(fromts), y: null });
                     }
                     resolve(result);
                 }
@@ -127,13 +146,13 @@ function checkRetention() {
     return new Promise(async function (resolve, reject) {
         if (settings.daqstore && _getDbType() === DaqStoreTypeEnum.SQlite && settings.daqstore.retention !== 'none') {
             try {
-                SqliteDB.checkRetention(utils.getRetentionLimit(settings.daqstore.retention), settings.dbDir, 
-                (fileDeleted) => {
-                    logger.info(`daqstorage.checkRetention file ${fileDeleted} removed`);
-                },
-                (err) => {
-                    logger.error(`daqstorage.checkRetention remove file failed! ${err}`);
-                });
+                SqliteDB.checkRetention(utils.getRetentionLimit(settings.daqstore.retention), settings.dbDir,
+                    (fileDeleted) => {
+                        logger.info(`daqstorage.checkRetention file ${fileDeleted} removed`);
+                    },
+                    (err) => {
+                        logger.error(`daqstorage.checkRetention remove file failed! ${err}`);
+                    });
             } catch (err) {
                 logger.error(err);
             }

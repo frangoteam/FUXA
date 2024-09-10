@@ -53,6 +53,7 @@ export class DaqStore {
     bucket?: string;
     database?: string;
     retention = DaqStoreRetentionType.year1;
+    alarmArchive?: number; // add by J, to define the alarm archive period
 
     constructor(daqstore: DaqStore = null) {
         if (daqstore) {
@@ -63,13 +64,16 @@ export class DaqStore {
             this.bucket = daqstore.bucket;
             this.database = daqstore.database;
             this.retention = daqstore.retention || DaqStoreRetentionType.year1;
+            this.alarmArchive = daqstore.alarmArchive || 60;   // add by J, to define the alarm archive period
         }
     }
 
     isEquals(store: DaqStore) {
         if (this.type === store.type && this.bucket === store.bucket && this.url === store.url &&
             this.organization === store.organization && this.database === store.database &&
-            (this.credentials && StoreCredentials.isEquals(this.credentials, store.credentials)) && this.retention === store.retention) {
+            (this.credentials && StoreCredentials.isEquals(this.credentials, store.credentials)) && this.retention === store.retention
+            && this.alarmArchive === store.alarmArchive     // add by J, to define the alarm archive period
+        ) {
             return true;
         }
         return false;

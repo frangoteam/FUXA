@@ -89,3 +89,8 @@ test/
 server/_appdata
 #server/package-lock.json
 #client/package-lock.json
+
+# add by J
+docker-compose.yml
+fuxa git project workflow-2024-09-02-0003.excalidraw
+Dockerfile
