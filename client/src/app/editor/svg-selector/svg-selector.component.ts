@@ -16,10 +16,13 @@ export class SvgSelectorComponent {
     }
     @Input('elements') set elements(values: ISvgElement[]) {
         this.svgElements = values;
+        this.filteredSvgElements = values;
     }
 
     svgElements: ISvgElement[] = [];
+    filteredSvgElements: ISvgElement[] = [];
     svgElementSelected: ISvgElement;
+    filterText: string;
 
     constructor() { }
 
@@ -41,6 +44,19 @@ export class SvgSelectorComponent {
     isSelected(element: ISvgElement) {
         return element?.id === this.svgElementSelected?.id;
     }
+    
+    filterElements(): void {
+        if (!this.filterText) {
+          this.filteredSvgElements = this.svgElements;
+        } else {
+          try {
+            const regex = new RegExp(this.filterText, 'i');
+            this.filteredSvgElements = this.svgElements.filter(el => regex.test(el.name));
+          } catch (error) {
+            this.filteredSvgElements = [];
+          }
+        }
+    }  
 }
 
 export interface IElementPreview {

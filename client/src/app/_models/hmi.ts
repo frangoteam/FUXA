@@ -213,6 +213,7 @@ export interface InputOptionsProperty {
     timeformat?: InputTimeFormatType;
     convertion?: InputConvertionType;
     updatedEsc?: boolean;
+    selectOnClick?: boolean;
 }
 
 export enum InputOptionType {
@@ -318,6 +319,8 @@ export enum GaugeEventType {
     click = 'shapes.event-click',
     mousedown = 'shapes.event-mousedown',
     mouseup = 'shapes.event-mouseup',
+    mouseover = 'shapes.event-mouseover',
+    mouseout = 'shapes.event-mouseout',
     enter = 'shapes.event-enter',
     select = 'shapes.event-select',
     onLoad = 'shapes.event-onLoad',
@@ -336,6 +339,11 @@ export enum GaugeEventActionType {
     onRunScript = 'shapes.event-onrunscript',
     onViewToPanel = 'shapes.event-onViewToPanel',
     onMonitor = 'shapes.event-onmonitor',
+}
+
+export enum GaugeEventRelativeFromType {
+    window = 'window',
+    mouse = 'mouse'
 }
 
 export enum GaugeEventSetValueType {
