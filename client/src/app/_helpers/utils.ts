@@ -494,18 +494,18 @@ export class Utils {
 
     static mergeArray(arrArray: any[][], key: string): any[] {
         const mergedMap = new Map<string, any>();
+        if (arrArray) {
+            for (const arr of arrArray) {
+                if (arr) {
+                    for (const obj of arr) {
+                        const keyValue = obj[key];
 
-        // Scorri ogni array contenuto in arrArray
-        for (const arr of arrArray) {
-            if (arr) {
-                for (const obj of arr) {
-                    const keyValue = obj[key];
-
-                    if (keyValue) {
-                        // Se la chiave esiste già, sovrascrivi l'oggetto esistente
-                        mergedMap.set(keyValue, { ...mergedMap.get(keyValue), ...obj });
-                    } else {
-                        console.warn(`L'oggetto ${JSON.stringify(obj)} non ha la chiave ${key}`);
+                        if (keyValue) {
+                            // Se la chiave esiste già, sovrascrivi l'oggetto esistente
+                            mergedMap.set(keyValue, { ...mergedMap.get(keyValue), ...obj });
+                        } else {
+                            console.warn(`L'oggetto ${JSON.stringify(obj)} non ha la chiave ${key}`);
+                        }
                     }
                 }
             }

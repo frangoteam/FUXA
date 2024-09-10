@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Utils } from './utils';
 
 @Injectable()
 export class SvgUtils {
@@ -25,16 +26,20 @@ export class SvgUtils {
         }
     }
 
-    static processWidget(scriptContent: string, uniqueId: string, idMap: { [oldId: string]: string }): { content: string, vars: WidgetPropertyVariable[] } {
+    static processWidget(scriptContent: string, uniqueId: string,
+                         idMap: { [oldId: string]: string },
+                         variableDefined?: WidgetPropertyVariable[]): { content: string, vars: WidgetPropertyVariable[] } {
 
-        let modifiedContent = SvgUtils.renameGlobalVariables(scriptContent, uniqueId);
+        let modifiedContent = SvgUtils.renameGlobalVariables(scriptContent, uniqueId, variableDefined);
         let modifiedScriptContent = SvgUtils.renameFunctionNames(modifiedContent.content, uniqueId);
         modifiedScriptContent = SvgUtils.replaceIdsInScript(modifiedScriptContent, idMap);
 
         return { content: modifiedScriptContent, vars: modifiedContent.vars };
     }
 
-    static renameGlobalVariables(scriptContent: string, uniqueId: string): { content: string, vars: WidgetPropertyVariable[] } {
+    static renameGlobalVariables(scriptContent: string,
+                                 uniqueId: string,
+                                 variableDefined?: WidgetPropertyVariable[]): { content: string, vars: WidgetPropertyVariable[]} {
         // marker `//!g-start` e `//!g-end` for global variable
         const globalSectionRegex = /\/\/!g-start([\s\S]*?)\/\/!g-end/g;
         const match = globalSectionRegex.exec(scriptContent);
@@ -47,7 +52,8 @@ export class SvgUtils {
 
             while ((varMatch = globalVarRegex.exec(globalSection)) !== null) {
                 const varName = varMatch[1];
-                const newVarName = `${varName}_${uniqueId}`;
+                const varExist = variableDefined?.find(varDef => varDef.originalName === varName);
+                const newVarName = varExist ? varExist.name : `${varName}_${uniqueId}`;
                 renamedVariables[varName] = newVarName;
 
                 const varNameRegex = new RegExp(`\\b${varName}\\b`, 'g');
@@ -68,16 +74,15 @@ export class SvgUtils {
     }
 
     static renameFunctionNames(scriptContent: string, uniqueId: string): string {
-        // Regex per identificare le dichiarazioni di funzione
+        // Regex to identify functions declaration
         const functionDeclRegex = /function\s+(\w+)\s*\(/g;
-        // Regex per identificare le espressioni di funzione (arrow functions e function expressions)
+        // Regex to identify functions (arrow functions and function expressions)
         const functionExprRegex = /(\w+)\s*=\s*(?:function|=>)\s*\(/g;
 
-        // Oggetto per tenere traccia delle funzioni rinominate
         const renamedFunctions: { [key: string]: string } = {};
         let match;
 
-        // Trova e rinomina tutte le dichiarazioni di funzione
+        // search and rename the funtions declarations
         while ((match = functionDeclRegex.exec(scriptContent)) !== null) {
             const oldName = match[1];
             const newName = `${oldName}_${uniqueId}`;
@@ -85,7 +90,7 @@ export class SvgUtils {
             scriptContent = scriptContent.replace(new RegExp(`\\b${oldName}\\b(?=\\s*\\()`, 'g'), newName);
         }
 
-        // Trova e rinomina tutte le espressioni di funzione
+        // search and rename the expression funtions
         while ((match = functionExprRegex.exec(scriptContent)) !== null) {
             const oldName = match[1];
             const newName = `${oldName}_${uniqueId}`;
@@ -93,7 +98,7 @@ export class SvgUtils {
             scriptContent = scriptContent.replace(new RegExp(`\\b${oldName}\\b`, 'g'), newName);
         }
 
-        // Sostituisce tutte le chiamate alle funzioni rinominate
+        // rename functions call
         Object.entries(renamedFunctions).forEach(([oldName, newName]) => {
             const callRegex = new RegExp(`\\b${oldName}\\b`, 'g');
             scriptContent = scriptContent.replace(callRegex, newName);
@@ -138,6 +143,31 @@ export class SvgUtils {
             };
         }
         return null;
+    }
+
+    static initWidget(scriptContent: string, variableDefined: WidgetPropertyVariable[]): string {
+        if (!variableDefined) {
+            return scriptContent;
+        }
+        // search global variable section //!g-start and //!g-end
+        const regexSection = /\/\/!g-start([\s\S]*?)\/\/!g-end/;
+        const match = regexSection.exec(scriptContent);
+
+        if (!match) {
+            return scriptContent;
+        }
+
+        let gSection = match[1];
+
+        // replace global variable with init value
+        variableDefined.forEach(variable => {
+            if (!Utils.isNullOrUndefined(variable.variableValue)) {
+                const varRegex = new RegExp(`(let|var|const)\\s+${variable.name}\\s*=\\s*[^;]+;`);
+                gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${variable.variableValue};`);
+            }
+        });
+        // replace global variable section
+        return scriptContent.replace(match[1], gSection);
     }
 }
 
