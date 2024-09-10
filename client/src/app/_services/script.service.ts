@@ -86,6 +86,7 @@ export class ScriptService {
         code = code.replace(/\$getTagDaqSettings\(/g, 'await this.$getTagDaqSettings(');
         code = code.replace(/\$setTagDaqSettings\(/g, 'await this.$setTagDaqSettings(');
         code = code.replace(/\$setView\(/g, 'this.$setView(');
+        code = code.replace(/\$openCard\(/g, 'this.$openCard(');
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
         code = code.replace(/\$getDeviceProperty\(/g, 'await this.$getDeviceProperty(');
         code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
@@ -125,6 +126,13 @@ export class ScriptService {
         this.hmiService.onScriptCommand(<ScriptCommandMessage>{
             command: ScriptCommandEnum.SETVIEW,
             params: [viewName, force]
+        });
+    }
+
+    public $openCard(viewName: string, options?: {}) {
+        this.hmiService.onScriptCommand(<ScriptCommandMessage>{
+            command: ScriptCommandEnum.OPENCARD,
+            params: [viewName, options]
         });
     }
 

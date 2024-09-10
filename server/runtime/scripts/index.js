@@ -10,7 +10,7 @@ const utils = require('../utils');
 
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
-function ScriptsManager(_runtime) {    
+function ScriptsManager(_runtime) {
     var runtime = _runtime;
     var events = runtime.events;        // Events to commit change to runtime
     var settings = runtime.settings;    // Settings
@@ -62,24 +62,24 @@ function ScriptsManager(_runtime) {
     this.removeScript = function (script) {
         this.reset();
     }
-    
+
     /**
      * Run script, <script> {id, name, parameters: <ScriptParam> {name, type: <ScriptParamType>[tagid, value], value: any} }
-     * @returns 
+     * @returns
      */
     this.runScript = function (script) {
         return new Promise(async function (resolve, reject) {
             try {
-                var result;
                 if (script.test) {
-                    result = await scriptModule.runTestScript(script);
+                    const result = await scriptModule.runTestScript(script);
+                    resolve(result !== null ? result : `Script OK: ${script.name}`);
                 } else {
                     if (!script.notLog) {
                         logger.info(`Run script ${script.name}`);
                     }
-                    result = await scriptModule.runScript(script);
+                    const result = await scriptModule.runScript(script);
+                    resolve(result);
                 }
-                resolve(result || `Script OK: ${script.name}`);
             } catch (err) {
                 reject(err);
             }

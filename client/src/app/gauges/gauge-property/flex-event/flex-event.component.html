@@ -42,7 +42,7 @@
                 <mat-select [(value)]="item.actparam">
                     <mat-option *ngFor="let v of views; index as i" [value]="v.id">{{v.name}}</mat-option>
                 </mat-select>
-            </div>    
+            </div>
         </ng-container>
         <ng-template #destination>
             <div class="my-form-field lbk" style="width: 200px;">
@@ -52,7 +52,7 @@
                 </mat-select>
             </div>
         </ng-template>
-        <div *ngIf="withPosition(item.action)" class="table mt5">
+        <div *ngIf="withPosition(item.action)" class="table mt8">
             <div class="my-form-field lbk">
                 <span>{{'general-x' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.left" type="number" style="width: 60px">
@@ -61,9 +61,17 @@
                 <span>{{'general-y' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.top" type="number" style="width: 60px">
             </div>
-            <div *ngIf="cardDestination === item.action" class="my-form-field lbk ml10 tac" style="max-width: 70px;">
+            <div *ngIf="cardDestination === item.action" class="my-form-field lbk ml10 mt5 tac" style="max-width: 70px">
                 <span>{{'gauges.property-event-single-card' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.singleCard"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field lbk mt5" style="width: 240px">
+                <span>{{'gauges.property-event-destination-relative-from' | translate}}</span>
+                <mat-select [(value)]="item.actoptions.relativeFrom">
+                    <mat-option *ngFor="let rf of relativeFromType | enumToArray" [value]="rf.key">
+                        {{ 'shapes.event-relativefrom-' + rf.value | translate }}
+                    </mat-option>
+                </mat-select>
             </div>
         </div>
     </div>
@@ -150,9 +158,9 @@
                             <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
                         </ng-container>
                         <ng-template #enterParamValue>
-                            <input [(ngModel)]="scriptParam.value" 
-                                placeholder="{{'gauges.property-event-script-param-input-value' | translate}}" 
-                                type="text" 
+                            <input [(ngModel)]="scriptParam.value"
+                                placeholder="{{'gauges.property-event-script-param-input-value' | translate}}"
+                                type="text"
                                 style="width: 260px">
                         </ng-template>
                     </div>

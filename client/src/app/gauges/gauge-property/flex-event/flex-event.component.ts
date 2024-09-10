@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
     GaugeEvent,
     GaugeEventActionType,
+    GaugeEventRelativeFromType,
     GaugeEventSetValueType,
     GaugeEventType,
     GaugeProperty,
@@ -37,6 +38,7 @@ export class FlexEventComponent implements OnInit {
     eventType = {};
     setValueType = GaugeEventSetValueType;
     enterActionType = {};
+    relativeFromType = GaugeEventRelativeFromType;
     actionType = GaugeEventActionType;
     eventActionOnCard = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
     eventWithPosition = [Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard),
@@ -58,6 +60,8 @@ export class FlexEventComponent implements OnInit {
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.click)] = this.translateService.instant(GaugeEventType.click);
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
             this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseover)] = this.translateService.instant(GaugeEventType.mouseover);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseout)] = this.translateService.instant(GaugeEventType.mouseout);
         }
         this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === 'svg-ext-own_ctrl-panel');//#issue on build  PanelComponent.TypeTag);
         this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
