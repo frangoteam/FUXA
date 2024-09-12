@@ -581,15 +581,15 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
                 reject();
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {        // Holding Registers (Read/Write  400001-465535)
-                if (data.property.options) {
-                    client.writeRegister(start, value).then(res => {        // FC6 "Preset Single Register"
+                if (value.length > 1){
+                    client.writeRegisters(start, value).then(res => {
                         resolve();
                     }, reason => {
                         console.error(reason);
                         reject(reason);
                     });
-                } else {                                                       // FC16 "Preset Multiple Registers"
-                    client.writeRegisters(start, value).then(res => {
+                    } else {
+                    client.writeRegister(start, value).then(res => {
                         resolve();
                     }, reason => {
                         console.error(reason);
