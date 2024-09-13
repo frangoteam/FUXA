@@ -35,85 +35,46 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
                 if (SvgUtils.isSVG(gaugeSettings.property.address)) {
+                    svgImageContainer.innerHTML = '';
+                    svgImageContainer.setAttribute('type', 'widget');
+                    let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
+                    const parser = new DOMParser();
+                    const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
+                    const svgElement = svgDocument.querySelector('svg');
+                    const boxSize = SvgUtils.getSvgSize(svgElement);
+                    if (boxSize) {
+                        svgImageContainer.parentElement?.setAttribute('width', boxSize.width);
+                        svgImageContainer.parentElement?.setAttribute('height', boxSize.height);
+                    }
+
                     if (isview) {
-                        const scripts = svgImageContainer.querySelectorAll('script');
-                        scripts.forEach(script => {
+                        svgImageContainer.appendChild(svgElement);
+                        if (gaugeSettings.property.scriptContent) {
+                            const scripts = svgImageContainer.querySelectorAll('script');
                             const newScript = document.createElement('script');
-                            newScript.textContent = script.textContent;
+                            newScript.textContent = gaugeSettings.property.scriptContent;
+                            // svgElement.appendChild(newScript);
                             document.body.appendChild(newScript);
+                        }
+                    } else if (!gaugeSettings.property.svgContent) {
+                        const scripts = svgElement.querySelectorAll('script');
+                        const svgGuid = Utils.getShortGUID('', '_');
+                        const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
+                        let widgetResult;
+                        scripts?.forEach(script => {
+                                widgetResult = SvgUtils.processWidget(script.textContent, svgGuid, svgIdsMap, gaugeSettings.property?.varsToBind);
+                                script.parentNode.removeChild(script);
                         });
+                        svgImageContainer.appendChild(svgElement);
+                        gaugeSettings.property = <WidgetProperty>{
+                            ...gaugeSettings.property,
+                            type: 'widget',
+                            svgContent: svgImageContainer.innerHTML,
+                            scriptContent: widgetResult.content,
+                            varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
+                        };
                     } else {
-                            svgImageContainer.innerHTML = '';
-                            svgImageContainer.setAttribute('type', 'widget');
-                            let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
-                            const parser = new DOMParser();
-                            const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
-                            const svgElement = svgDocument.querySelector('svg');
-                            const boxSize = SvgUtils.getSvgSize(svgElement);
-                            if (boxSize) {
-                                svgImageContainer.parentElement?.setAttribute('width', boxSize.width);
-                                svgImageContainer.parentElement?.setAttribute('height', boxSize.height);
-                            }
-                            const scripts = svgElement.querySelectorAll('script');
-                            const svgGuid = Utils.getShortGUID('', '_');
-                            const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
-                            let widgetResult;
-                            scripts?.forEach(script => {
-                                    widgetResult = SvgUtils.processWidget(script.textContent, svgGuid, svgIdsMap, gaugeSettings.property?.varsToBind);
-                                    script.parentNode.removeChild(script);
-                            });
-                            svgImageContainer.appendChild(svgElement);
-                            gaugeSettings.property = <WidgetProperty>{
-                                ...gaugeSettings.property,
-                                type: 'widget',
-                                svgContent: svgImageContainer.innerHTML,
-                                script: widgetResult.content,
-                                varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
-                            };
-                            console.log('add', svgImageContainer.innerHTML);
-                        // } else {
-                        //     const gElement = svgImageContainer.querySelector('g');
-                        //     if (gElement) {
-                        //         const svgElement = gElement.querySelector('svg');
-                        //         if (svgElement) {
-                        //             gElement.parentNode.removeChild(gElement);
-                        //             svgImageContainer.appendChild(svgElement);
-                        //         }
-                        //     }
-                        //     console.log('found', svgImageContainer.innerHTML);
-                        // }
-                        // svgImageContainer.innerHTML = '';
-                        // svgImageContainer.setAttribute('type', 'widget');
-                        // fetch(`${this.endPointConfig}${gaugeSettings.property.address}`)
-                        //     .then(response => response.text())
-                        //     .then(svgContent => {
-                        //         const parser = new DOMParser();
-                        //         const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
-                        //         const svgElement = svgDocument.querySelector('svg');
-                        //         const boxSize = SvgUtils.getSvgSize(svgElement);
-                        //         if (boxSize) {
-                        //             svgImageContainer.parentElement?.setAttribute('width', boxSize.width);
-                        //             svgImageContainer.parentElement?.setAttribute('height', boxSize.height);
-                        //         }
-                        //         const scripts = svgElement.querySelectorAll('script');
-                        //         const svgGuid = Utils.getShortGUID('', '_');
-                        //         const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
-                        //         let widgetResult;
-                        //         scripts?.forEach(script => {
-                        //             // _pb_ for bool parameter and _pn_ for number parameter and _ps_ for string parameter.
-                        //             const newScript = document.createElement('script');
-                        //             widgetResult = SvgUtils.processWidget(script.textContent, svgGuid, svgIdsMap);
-                        //             newScript.textContent = widgetResult.content;
-                        //             document.body.appendChild(newScript);
-                        //             script.parentNode?.replaceChild(newScript, script);
-                        //         });
-                        //         svgImageContainer.appendChild(svgElement);
-                        //         gaugeSettings.property = <WidgetProperty>{
-                        //             ...gaugeSettings.property,
-                        //             type: 'widget',
-                        //             varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
-                        //         };
-                        //     });
+                        svgImageContainer.appendChild(svgElement);
                     }
                 } else {
                     svgImageContainer.innerHTML = '';
