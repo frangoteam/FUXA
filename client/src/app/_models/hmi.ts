@@ -207,6 +207,8 @@ export class GaugeProperty {
 
 export class WidgetProperty extends GaugeProperty {
     type: string;
+    script?: string;
+    svgContent?: string;
     varsToBind?: { [key: string]: WidgetPropertyVariable } = {};
 }
 
