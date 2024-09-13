@@ -255,6 +255,24 @@ export enum ModbusTagType {
     // String = 'String'
 }
 
+export enum OpcUaTagType {
+    Boolean = 'Boolean',
+    SByte = 'SByte',
+    Byte = 'Byte',
+    Int16 = 'Int16',
+    UInt16 = 'UInt16',
+    Int32 = 'Int32',
+    UInt32 = 'UInt32',
+    Int64 = 'Int64',
+    UInt64 = 'UInt64',
+    Float = 'Float',
+    Double = 'Double',
+    String = 'String',
+    DateTime = 'DateTime',
+    Guid = 'Guid',
+    ByteString = 'ByteString'
+}
+
 export enum ModbusOptionType {
     SerialPort = 'SerialPort',
     RTUBufferedPort = 'RTUBufferedPort',
