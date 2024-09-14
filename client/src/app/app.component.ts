@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private settingsService: SettingsService,
 		private translateService: TranslateService,
 		private heartbeatService: HeartbeatService,
+		private cdr: ChangeDetectorRef,
 		location: Location
 	) {
 		this.location = location;
@@ -81,6 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			// show loading manager
 			this.subscriptionShowLoading = this.appService.onShowLoading.subscribe(show => {
 				this.isLoading = show;
+				this.cdr.detectChanges();
 			}, error => {
 				this.isLoading = false;
 				console.error('Error to show loading');
