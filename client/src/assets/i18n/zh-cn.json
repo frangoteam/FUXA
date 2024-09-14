@@ -215,6 +215,9 @@
     "chart.property-axis-y3": "Y3标签",
     "chart.property-axis-y4": "Y4标签",
 
+    "chart.rangetype-last1h": "最后1小时",
+    "chart.rangetype-last2h": "最后2小时",
+    "chart.rangetype-last4h": "最后4小时",
     "chart.rangetype-last8h": "最后8小时",
     "chart.rangetype-last1d": "最后一天",
     "chart.rangetype-last3d": "最后3天",

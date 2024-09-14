@@ -127,6 +127,9 @@
     "chart.property-color.legend": "Колір легенди",
     "chart.property-legend.mode": "Легенда",
 
+    "chart.rangetype-last1h": "Останні 1 годин",
+    "chart.rangetype-last2h": "Останні 2 годин",
+    "chart.rangetype-last4h": "Останні 4 годин",
     "chart.rangetype-last8h": "Останні 8 годин",
     "chart.rangetype-last1d": "Останній день",
     "chart.rangetype-last3d": "Останні 3 дні",

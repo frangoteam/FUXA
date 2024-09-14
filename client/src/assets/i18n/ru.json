@@ -210,6 +210,9 @@
     "chart.property-axis-y3": "Метка Y3",
     "chart.property-axis-y4": "Метка Y4",
 
+    "chart.rangetype-last1h": "Последние 1 часов",
+    "chart.rangetype-last2h": "Последние 2 часов",
+    "chart.rangetype-last4h": "Последние 4 часов",
     "chart.rangetype-last8h": "Последние 8 часов",
     "chart.rangetype-last1d": "Последний день",
     "chart.rangetype-last3d": "Последние 3 дня",

@@ -240,6 +240,9 @@
     "chart.property-axis-y4-min": "Y4 Min",
     "chart.property-axis-y4-max": "Y4 Max",
 
+    "chart.rangetype-last1h": "Letzte 1 Stunden",
+    "chart.rangetype-last2h": "Letzte 2 Stunden",
+    "chart.rangetype-last4h": "Letzte 4 Stunden",
     "chart.rangetype-last8h": "Letzte 8 Stunden",
     "chart.rangetype-last1d": "Letzter Tag",
     "chart.rangetype-last3d": "Letzte 3 Tage",

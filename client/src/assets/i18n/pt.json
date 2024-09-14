@@ -150,6 +150,9 @@
     "chart.property-date.format": "Formato Data",
     "chart.property-time.format": "Formato Hora",
 
+    "chart.rangetype-last1h": "Últimas 1 horas",
+    "chart.rangetype-last2h": "Últimas 2 horas",
+    "chart.rangetype-last4h": "Últimas 4 horas",
     "chart.rangetype-last8h": "Últimas 8 horas",
     "chart.rangetype-last1d": "Dia anterior",
     "chart.rangetype-last3d": "Últimos 3 Dias",
