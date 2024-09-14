@@ -1,6 +1,7 @@
 <div>
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.app-settings-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" class="dialog-close-btn" >clear</mat-icon>
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'dlg.app-settings-title' |
+        translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <mat-tab-group class="tabs-container">
             <mat-tab label="{{'dlg.app-settings-system' | translate}}">
@@ -15,12 +16,14 @@
                     </div>
                     <div class="my-form-field block mt15 system-input">
                         <span>{{'dlg.app-settings-server-port' | translate}}</span>
-                        <input numberOnly [(ngModel)]="settings.uiPort" style="width: 320px" type="text" disabled="true">
+                        <input numberOnly [(ngModel)]="settings.uiPort" style="width: 320px" type="text"
+                            disabled="true">
                     </div>
                     <div class="my-form-field block mt15">
                         <div class="my-form-field system-input">
                             <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
-                            <mat-icon class="my-form-field-info" style="height: 16px" matTooltip="{{authenticationTooltip}}">error_outline</mat-icon>
+                            <mat-icon class="my-form-field-info" style="height: 16px"
+                                matTooltip="{{authenticationTooltip}}">error_outline</mat-icon>
                             <mat-select [(value)]="authentication" style="display: block;">
                                 <mat-option *ngFor="let auth of authType" [value]="auth.value">
                                     {{ auth.text }}
@@ -29,7 +32,8 @@
                         </div>
                         <div class="my-form-field ml20">
                             <span>{{'dlg.app-settings-auth-only-editor' | translate}}</span>
-                            <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor" [disabled]="authentication === ''"></mat-slide-toggle>
+                            <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor"
+                                [disabled]="authentication === ''"></mat-slide-toggle>
                         </div>
                     </div>
                     <div class="my-form-field block mt15 system-input">
@@ -53,7 +57,8 @@
                     <div class="block">
                         <div class="my-form-field">
                             <span>{{'dlg.app-settings-smtp-host' | translate}}</span>
-                            <input [(ngModel)]="settings.smtp.host" placeholder="smtp.example.com" style="width: 320px" type="text">
+                            <input [(ngModel)]="settings.smtp.host" placeholder="smtp.example.com" style="width: 320px"
+                                type="text">
                         </div>
                         <div class="my-form-field lbk ml10">
                             <span>{{'dlg.app-settings-smtp-port' | translate}}</span>
@@ -62,16 +67,21 @@
                     </div>
                     <div class="my-form-field block mt15 w100">
                         <span>{{'dlg.app-settings-smtp-mailsender' | translate}}</span>
-                        <input [(ngModel)]="settings.smtp.mailsender" placeholder="fuxa@example.com" class="input-row" type="text">
+                        <input [(ngModel)]="settings.smtp.mailsender" placeholder="fuxa@example.com" class="input-row"
+                            type="text">
                     </div>
                     <div class="my-form-field block mt15 w100">
                         <span>{{'dlg.app-settings-smtp-user' | translate}}</span>
-                        <input [(ngModel)]="settings.smtp.username" placeholder="fuxa@example.com" class="input-row" type="text">
+                        <input [(ngModel)]="settings.smtp.username" placeholder="fuxa@example.com" class="input-row"
+                            type="text">
                     </div>
                     <div class="my-form-field block mt15 w100">
                         <span>{{'dlg.app-settings-smtp-password' | translate}}</span>
-                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="settings.smtp.password" class="input-row">
-                        <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)"
+                            [type]="showPassword ? 'text' : 'password'" [(ngModel)]="settings.smtp.password"
+                            class="input-row">
+                        <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword
+                            ? 'visibility' : 'visibility_off'}}</mat-icon>
                     </div>
                     <div class="block mt15 w100">
                         <div class="my-form-field lbk">
@@ -79,7 +89,8 @@
                             <input [(ngModel)]="smtpTestAddress" style="width: 320px" type="text">
                         </div>
                         <div class="my-form-field lbk ml10">
-                            <button mat-raised-button color="basic" (click)="onSmtpTest()" [disabled]="!isSmtpTestReady()">{{'dlg.app-settings-smtp-test' | translate}}</button>
+                            <button mat-raised-button color="basic" (click)="onSmtpTest()"
+                                [disabled]="!isSmtpTestReady()">{{'dlg.app-settings-smtp-test' | translate}}</button>
                         </div>
                     </div>
                 </div>
@@ -99,7 +110,8 @@
                             <div *ngSwitchCase="daqstoreType.SQlite" class="my-form-field block mt15">
                                 <span>{{'dlg.app-settings-daqstore-retention' | translate}}</span>
                                 <mat-select [(value)]="settings.daqstore.retention" style="width: 200px">
-                                    <mat-option *ngFor="let retation of retationType | enumToArray" [value]="retation.key">
+                                    <mat-option *ngFor="let retation of retationType | enumToArray"
+                                        [value]="retation.key">
                                         {{'store.retention-' + retation.value | translate}}
                                     </mat-option>
                                 </mat-select>
@@ -107,55 +119,73 @@
                             <div *ngSwitchCase="daqstoreType.influxDB">
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-url' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.url" placeholder="https://us-west-2-1.aws.cloud2.influxdata.com" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.url"
+                                        placeholder="https://us-west-2-1.aws.cloud2.influxdata.com" class="input-row"
+                                        type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-token' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.credentials.token" placeholder="" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.credentials.token" placeholder=""
+                                        class="input-row" type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-bucket' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.bucket" placeholder="" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.bucket" placeholder="" class="input-row"
+                                        type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-organization' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.organization" placeholder="" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.organization" placeholder="" class="input-row"
+                                        type="text">
                                 </div>
                             </div>
                             <div *ngSwitchCase="influxDB18">
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-url' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.url" placeholder="http://localhost:8086" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.url" placeholder="http://localhost:8086"
+                                        class="input-row" type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-database' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.database" placeholder="" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.database" placeholder="" class="input-row"
+                                        type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-username' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder=""
+                                        class="input-row" type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder=""
+                                        class="input-row" type="text">
                                 </div>
                             </div>
                             <div *ngSwitchCase="daqstoreType.TDengine">
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-url' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.url" placeholder="http://localhost:6041/rest/sql" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.url"
+                                        placeholder="http://localhost:6041/rest/sql" class="input-row" type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-database' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.database" placeholder="fuxa" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.database" placeholder="fuxa" class="input-row"
+                                        type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-username' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="root" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="root"
+                                        class="input-row" type="text">
                                 </div>
                                 <div class="my-form-field block mt15 w100">
                                     <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
-                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="taosdata" class="input-row" type="text">
+                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="taosdata"
+                                        class="input-row" type="password">
+                                </div>
+                                <!-- add by J -->
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-alarmArchiveToTD' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.alarmArchive" placeholder=60 class="input-row" type="number" [min]="10">
                                 </div>
                             </div>
                         </div>
@@ -167,13 +197,15 @@
                     <div class="my-form-field block">
                         <span>{{'dlg.app-settings-daqstore-retention' | translate}}</span>
                         <mat-select [(value)]="settings.alarms.retention" style="width: 200px">
-                            <mat-option *ngFor="let retation of alarmsRetationType | enumToArray" [value]="retation.key">
+                            <mat-option *ngFor="let retation of alarmsRetationType | enumToArray"
+                                [value]="retation.key">
                                 {{'store.retention-' + retation.value | translate}}
                             </mat-option>
                         </mat-select>
                     </div>
                     <div class="block mt20 mb20">
-                        <button mat-raised-button color="basic" (click)="onAlarmsClear()">{{'dlg.app-settings-alarms-clear' | translate}}</button>
+                        <button mat-raised-button color="basic"
+                            (click)="onAlarmsClear()">{{'dlg.app-settings-alarms-clear' | translate}}</button>
                     </div>
                 </div>
             </mat-tab>
@@ -181,6 +213,7 @@
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' |
+            translate}}</button>
     </div>
 </div>

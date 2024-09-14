@@ -19,7 +19,7 @@
     "@types/socket.io": "2.1.2",
     "app-root-path": "2.2.1",
     "async": "3.2.3",
-    "axios": "0.28.0",
+    "axios": "^0.28.0",
     "bcryptjs": "2.4.3",
     "bluebird": "3.7.2",
     "body-parser": "1.20.0",
