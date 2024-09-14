@@ -70,9 +70,11 @@ function TDengine(_settings, _log, _currentStorage) {
         return new Promise(function (resolve, reject) {
             const cursor = conn.cursor()
             let data =[]
+            //add by J, the tagid is missed in the sql, should be one of the filter condition
             cursor.query(`SELECT CAST(dt as BIGINT) as dt, tag_value
                           FROM ${database}.meters
-                          WHERE dt >= ${fromts}
+                          WHERE tag_id = '${tagid}' 
+                            and dt >= ${fromts}
                             and dt < ${tots} `).then((result) => {
                 // logger.debug(result)
                 result.getData().forEach((row) =>{
