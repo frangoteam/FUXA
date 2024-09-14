@@ -287,6 +287,9 @@
     "chart.property-axis-y4-max": "Y4 Max",
     "chart.property-script": "Script data source",
 
+    "chart.rangetype-last1h": "Last 1 hours",
+    "chart.rangetype-last2h": "Last 2 hours",
+    "chart.rangetype-last4h": "Last 4 hours",
     "chart.rangetype-last8h": "Last 8 hours",
     "chart.rangetype-last1d": "Last day",
     "chart.rangetype-last3d": "Last 3 days",

@@ -149,6 +149,9 @@
 	"chart.property-date.format": "Tarih biçimi",
 	"chart.property-time.format": "Saat biçimi",
 	
+	"chart.rangetype-last1h": "Son 1 Saat",
+    "chart.rangetype-last2h": "Son 2 Saat",
+    "chart.rangetype-last4h": "Son 4 Saat",
 	"chart.rangetype-last8h": "Son 8 Saat",
 	"chart.rangetype-last1d": "Son 1 Gün",
 	"chart.rangetype-last3d": "Son 3 Gün",

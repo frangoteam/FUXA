@@ -173,6 +173,9 @@
     "chart.property-date.format": "날짜 형식",
     "chart.property-time.format": "시간 형식",
 
+    "chart.rangetype-last1h": "지난 1시간",
+    "chart.rangetype-last2h": "지난 2시간",
+    "chart.rangetype-last4h": "지난 4시간",
     "chart.rangetype-last8h": "지난 8시간",
     "chart.rangetype-last1d": "지난날",
     "chart.rangetype-last3d": "3일 전",
