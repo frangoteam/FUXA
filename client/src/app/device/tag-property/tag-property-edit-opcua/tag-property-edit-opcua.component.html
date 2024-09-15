@@ -1,10 +1,43 @@
 <div>
-    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device.browsetag-property-title' | translate}}</h1>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>
+        <ng-container *ngIf="data.tag; else mode">
+            {{'device.tag-property-title' | translate}}
+        </ng-container>
+        <ng-template #mode>
+            {{'device.browsetag-property-title' | translate}}
+        </ng-template>
+    </h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content style="display: contents;">
-        <div style="overflow: auto;">
-            <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
-        </div>
+        <ng-container *ngIf="data.tag; else addTag">
+            <div [formGroup]="formGroup" class="container">
+                <div class="my-form-field item-block">
+                    <span>{{'device.tag-property-device' | translate}}</span>
+                    <input formControlName="deviceName" type="text" readonly>
+                </div>
+                <div class="my-form-field item-block mt10">
+                    <span>{{'device.tag-property-name' | translate}}</span>
+                    <input formControlName="tagName" type="text" readonly>
+                </div>
+                <div class="my-form-field item-block mt10">
+                    <span>{{'device.tag-property-type' | translate}}</span>
+                    <mat-select formControlName="tagType">
+                        <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                            {{ type.value }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field item-block mt10">
+                    <span>{{'device.tag-property-description' | translate}}</span>
+                    <input formControlName="tagDescription" type="text">
+                </div>
+            </div>
+        </ng-container>
+        <ng-template #addTag>
+            <div style="overflow: auto;">
+                <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
+            </div>
+        </ng-template>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
