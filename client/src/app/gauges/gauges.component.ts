@@ -475,6 +475,11 @@ export class GaugesManager {
             HtmlSwitchComponent.bindEvents(ga, this.mapGauges[ga.id], (event) => {
                 self.putEvent(event);
             });
+        } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
+            let self = this;
+            HtmlImageComponent.bindEvents(ga, (event) => {
+                self.putEvent(event);
+            });
         }
     }
 
@@ -579,7 +584,11 @@ export class GaugesManager {
      * @param event
      */
     putEvent(event: Event) {
-        if (event.ga.property && event.ga.property.variableId) {
+        if (event.type === HtmlImageComponent.propertyWidgetType) {
+            const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.variableId]?.value);
+            this.hmiService.putSignalValue(event.variableId, String(value));
+            event.dbg = 'put ' + event.variableId + ' ' + event.value;
+        } else if (event.ga.property && event.ga.property.variableId) {
             const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.ga.property.variableId]?.value);
             this.hmiService.putSignalValue(event.ga.property.variableId, String(value));
             event.dbg = 'put ' + event.ga.property.variableId + ' ' + event.value;

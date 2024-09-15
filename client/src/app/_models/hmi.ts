@@ -1,5 +1,6 @@
 import { GridType } from 'angular-gridster2';
 import { Device, DeviceType, Tag } from './device';
+import { WidgetPropertyVariable } from '../_helpers/svg-utils';
 
 export class Hmi {
     /** Layout for navigation menu, header bar, ...  */
@@ -202,6 +203,13 @@ export class GaugeProperty {
     options: any;
     readonly: boolean;
     text: string;               // Text property (used by button)
+}
+
+export class WidgetProperty extends GaugeProperty {
+    type: string;
+    scriptContent?: { moduleId: string, content: string };
+    svgContent?: string;
+    varsToBind?: { [key: string]: WidgetPropertyVariable } = {};
 }
 
 export interface InputOptionsProperty {
@@ -534,8 +542,9 @@ export class Event {
     dom: any;
     value: any = null;
     dbg = '';
-    type: string;
+    type?: string;
     ga: GaugeSettings;
+    variableId: string;
 }
 
 export class DaqQuery {

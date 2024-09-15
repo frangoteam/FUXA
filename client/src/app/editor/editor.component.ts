@@ -818,14 +818,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             let reader = new FileReader();
             this.ctrlInitParams = null;
             reader.onload = () => {
-                try {
-                    fileToUpload.data = reader.result;
-                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
-                        this.ctrlInitParams = result.location;
-                        this.setMode('own_ctrl-image');
-                    });
-                } catch (err) {
-                    console.error(err);
+                if (fileToUpload.type === 'svg') {
+                    localStorage.setItem(fileToUpload.name, reader.result.toString());
+                    this.ctrlInitParams = fileToUpload.name;
+                    this.setMode('own_ctrl-image');
+                } else {
+                    try {
+                        fileToUpload.data = reader.result;
+                        this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
+                            this.ctrlInitParams = result.location;
+                            this.setMode('own_ctrl-image');
+                        });
+                    } catch (err) {
+                        console.error(err);
+                    }
                 }
             };
             if (fileToUpload.type === 'svg') {
