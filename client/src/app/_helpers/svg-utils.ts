@@ -4,6 +4,9 @@ import { Utils } from './utils';
 @Injectable()
 export class SvgUtils {
 
+    static exportStart = '//!export-start';
+    static exportEnd = '//!export-end';
+
     static isSVG(filePath: string): boolean {
         const extension = filePath.split('.').pop()?.toLowerCase();
         return extension === 'svg';
@@ -26,22 +29,22 @@ export class SvgUtils {
         }
     }
 
-    static processWidget(scriptContent: string, uniqueId: string,
+    static processWidget(scriptContent: string,
+                         moduleId: string,
                          idMap: { [oldId: string]: string },
                          variableDefined?: WidgetPropertyVariable[]): { content: string, vars: WidgetPropertyVariable[] } {
-
-        let modifiedContent = SvgUtils.renameGlobalVariables(scriptContent, uniqueId, variableDefined);
-        let modifiedScriptContent = SvgUtils.renameFunctionNames(modifiedContent.content, uniqueId);
+        let modifiedContent = SvgUtils.exportGlobalVariables(scriptContent, moduleId, variableDefined);
+        let modifiedScriptContent = SvgUtils.exportFunctionNames(modifiedContent.content, moduleId);
         modifiedScriptContent = SvgUtils.replaceIdsInScript(modifiedScriptContent, idMap);
+        modifiedScriptContent = SvgUtils.addModuleDeclaration(modifiedScriptContent, moduleId);
 
         return { content: modifiedScriptContent, vars: modifiedContent.vars };
     }
 
-    static renameGlobalVariables(scriptContent: string,
-                                 uniqueId: string,
+    static exportGlobalVariables(scriptContent: string,
+                                 moduleId: string,
                                  variableDefined?: WidgetPropertyVariable[]): { content: string, vars: WidgetPropertyVariable[]} {
-        // marker `//!g-start` e `//!g-end` for global variable
-        const globalSectionRegex = /\/\/!g-start([\s\S]*?)\/\/!g-end/g;
+        const globalSectionRegex = new RegExp(`${SvgUtils.exportStart}([\\s\\S]*?)${SvgUtils.exportEnd}`, 'g');
         const match = globalSectionRegex.exec(scriptContent);
         const renamedVariables: { [key: string]: string } = {};
         if (match) {
@@ -53,13 +56,14 @@ export class SvgUtils {
             while ((varMatch = globalVarRegex.exec(globalSection)) !== null) {
                 const varName = varMatch[1];
                 const varExist = variableDefined?.find(varDef => varDef.originalName === varName);
-                const newVarName = varExist ? varExist.name : `${varName}_${uniqueId}`;
+                const newVarName = varExist ? varExist.name : varName;
                 renamedVariables[varName] = newVarName;
 
                 const varNameRegex = new RegExp(`\\b${varName}\\b`, 'g');
                 globalSection = globalSection.replace(varNameRegex, newVarName);
+                globalSection += `\n${moduleId}.${newVarName} = ${newVarName};`;
             }
-            scriptContent = scriptContent.replace(match[0], `//!g-start${globalSection}//!g-end`);
+            scriptContent = scriptContent.replace(match[0], `${SvgUtils.exportStart}${globalSection}${SvgUtils.exportEnd}`);
         }
         let vars: WidgetPropertyVariable[] = [];
         Object.entries(renamedVariables).forEach(([originalVar, newVar]) => {
@@ -73,37 +77,25 @@ export class SvgUtils {
         return { content: scriptContent, vars: vars };
     }
 
-    static renameFunctionNames(scriptContent: string, uniqueId: string): string {
+    static exportFunctionNames(scriptContent: string, moduleId: string): string {
         // Regex to identify functions declaration
         const functionDeclRegex = /function\s+(\w+)\s*\(/g;
         // Regex to identify functions (arrow functions and function expressions)
         const functionExprRegex = /(\w+)\s*=\s*(?:function|=>)\s*\(/g;
-
-        const renamedFunctions: { [key: string]: string } = {};
         let match;
-
-        // search and rename the funtions declarations
         while ((match = functionDeclRegex.exec(scriptContent)) !== null) {
-            const oldName = match[1];
-            const newName = `${oldName}_${uniqueId}`;
-            renamedFunctions[oldName] = newName;
-            scriptContent = scriptContent.replace(new RegExp(`\\b${oldName}\\b(?=\\s*\\()`, 'g'), newName);
+            scriptContent += `\n${moduleId}.${match[1]} = ${match[1]};`;
         }
-
-        // search and rename the expression funtions
         while ((match = functionExprRegex.exec(scriptContent)) !== null) {
-            const oldName = match[1];
-            const newName = `${oldName}_${uniqueId}`;
-            renamedFunctions[oldName] = newName;
-            scriptContent = scriptContent.replace(new RegExp(`\\b${oldName}\\b`, 'g'), newName);
+            scriptContent += `\n${moduleId}.${match[1]} = ${match[1]};`;
         }
 
-        // rename functions call
-        Object.entries(renamedFunctions).forEach(([oldName, newName]) => {
-            const callRegex = new RegExp(`\\b${oldName}\\b`, 'g');
-            scriptContent = scriptContent.replace(callRegex, newName);
-        });
-
+        // Regex to search calls of postValue function
+        const oldFuncName = 'postValue';
+        const newFuncName = `${moduleId}.${oldFuncName}`;
+        const functionCallRegex = new RegExp(`(?<!function\\s+)\\b${oldFuncName}\\b(?=\\s*\\()`, 'g');
+        // const functionCallRegex = new RegExp(`\\b${oldFuncName}\\s*\\(`, 'g');
+        scriptContent = scriptContent.replace(functionCallRegex, `${newFuncName}`);
         return scriptContent;
     }
 
@@ -133,6 +125,10 @@ export class SvgUtils {
         return updatedScriptContent;
     }
 
+    static addModuleDeclaration(scriptContent: string, moduleId: string): string {
+        return `var ${moduleId} = window.${moduleId} || {};\n(function() {${scriptContent}\n})();\nwindow.${moduleId}=${moduleId}`;
+    }
+
     static toWidgetPropertyVariable(originalVar: string, varName: string): WidgetPropertyVariable {
         const prefix = Object.entries(WidgetPropertyVariableTypePrefix).find(([_, value]) => varName.startsWith(value));
         if (prefix) {
@@ -149,8 +145,8 @@ export class SvgUtils {
         if (!variableDefined) {
             return scriptContent;
         }
-        // search global variable section //!g-start and //!g-end
-        const regexSection = /\/\/!g-start([\s\S]*?)\/\/!g-end/;
+        // search global variable section //!export-start and //!export-end
+        const regexSection = new RegExp(`${SvgUtils.exportStart}([\\s\\S]*?)${SvgUtils.exportEnd}`, 'g');
         const match = regexSection.exec(scriptContent);
 
         if (!match) {

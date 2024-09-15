@@ -207,7 +207,7 @@ export class GaugeProperty {
 
 export class WidgetProperty extends GaugeProperty {
     type: string;
-    scriptContent?: string;
+    scriptContent?: { moduleId: string, content: string };
     svgContent?: string;
     varsToBind?: { [key: string]: WidgetPropertyVariable } = {};
 }
@@ -542,8 +542,9 @@ export class Event {
     dom: any;
     value: any = null;
     dbg = '';
-    type: string;
+    type?: string;
     ga: GaugeSettings;
+    variableId: string;
 }
 
 export class DaqQuery {

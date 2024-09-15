@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeActionsType, GaugeProperty, GaugePropertyColor, GaugeSettings, GaugeStatus, Variable, WidgetProperty } from '../../../_models/hmi';
+import { GaugeActionsType, GaugeProperty, GaugePropertyColor, GaugeSettings, GaugeStatus, Variable, WidgetProperty, Event } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { ShapesComponent } from '../../shapes/shapes.component';
 import { EndPointApi } from '../../../_helpers/endpointapi';
-import { SvgUtils } from '../../../_helpers/svg-utils';
+import { SvgUtils, WidgetPropertyVariable } from '../../../_helpers/svg-utils';
 
 @Component({
     selector: 'app-html-image',
@@ -17,6 +17,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static LabelTag = 'HtmlImage';
     static prefixD = 'D-OXC_';
     static endPointConfig: string = EndPointApi.getURL();
+    static propertyWidgetType = 'widget';
 
     static actionsType = {
         hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
@@ -50,27 +51,26 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     if (isview) {
                         svgImageContainer.appendChild(svgElement);
                         if (gaugeSettings.property.scriptContent) {
-                            const scripts = svgImageContainer.querySelectorAll('script');
                             const newScript = document.createElement('script');
-                            newScript.textContent = gaugeSettings.property.scriptContent;
-                            // svgElement.appendChild(newScript);
+                            newScript.textContent = SvgUtils.initWidget(gaugeSettings.property.scriptContent.content, gaugeSettings.property.varsToBind);
                             document.body.appendChild(newScript);
                         }
                     } else if (!gaugeSettings.property.svgContent) {
                         const scripts = svgElement.querySelectorAll('script');
                         const svgGuid = Utils.getShortGUID('', '_');
                         const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
+                        const moduleId = `wModule_${svgGuid}`;
                         let widgetResult;
                         scripts?.forEach(script => {
-                                widgetResult = SvgUtils.processWidget(script.textContent, svgGuid, svgIdsMap, gaugeSettings.property?.varsToBind);
-                                script.parentNode.removeChild(script);
+                            widgetResult = SvgUtils.processWidget(script.textContent, moduleId, svgIdsMap, gaugeSettings.property?.varsToBind);
+                            script.parentNode.removeChild(script);
                         });
                         svgImageContainer.appendChild(svgElement);
                         gaugeSettings.property = <WidgetProperty>{
                             ...gaugeSettings.property,
-                            type: 'widget',
+                            type: HtmlImageComponent.propertyWidgetType,
                             svgContent: svgImageContainer.innerHTML,
-                            scriptContent: widgetResult.content,
+                            scriptContent: { moduleId: moduleId, content: widgetResult?.content },
                             varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
                         };
                     } else {
@@ -92,7 +92,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         return svgImageContainer;
     }
 
-    static getSignals(pro: any) {
+    static getSignals(pro: any | WidgetProperty) {
         let res: string[] = [];
         if (pro.variableId) {
             res.push(pro.variableId);
@@ -105,6 +105,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                 res.push(act.variableId);
             });
         }
+        pro.varsToBind?.forEach((varToBind: WidgetPropertyVariable) => {
+            if (varToBind.variableId) {
+                res.push(varToBind.variableId);
+            }
+        });
         return res;
     }
 
@@ -153,10 +158,44 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                             }
                         });
                     }
+                    // check widget
+                    if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
+                        const scriptContent = ga.property.scriptContent;
+                        if (window[scriptContent.moduleId]['putValue']) {
+                            const widgetVar = <WidgetPropertyVariable> ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id);
+                            if (widgetVar) {
+                                window[scriptContent.moduleId]['putValue'](widgetVar.name, sig.value);
+                            }
+                        }
+                    }
                 }
             }
         } catch (err) {
             console.error(err);
         }
+    }
+
+    static bindEvents(ga: GaugeSettings, callback?: any): Event {
+        if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
+            const scriptContent = ga.property.scriptContent;
+            if (window[scriptContent.moduleId]['postValue']) {
+                window[scriptContent.moduleId]['postValue'] = (varName, value) => {
+                    const widgetVar = <WidgetPropertyVariable> ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.name === varName);
+                    if (widgetVar) {
+                        let event = new Event();
+                        event.type = HtmlImageComponent.propertyWidgetType;
+                        event.ga = ga;
+                        event.value = value;
+                        event.variableId = widgetVar.variableId;
+                        callback(event);
+                    } else {
+                        console.error(`Variable name (${varName}) not found!`);
+                    }
+                };
+            } else {
+                console.error(`Module (${scriptContent.moduleId}) or postValue function not found!`);
+            }
+        }
+        return null;
     }
 }
