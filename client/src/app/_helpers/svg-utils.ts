@@ -165,6 +165,15 @@ export class SvgUtils {
         // replace global variable section
         return scriptContent.replace(match[1], gSection);
     }
+
+    static resizeSvgNodes(svgElement: SVGSVGElement, boxSize: { width: number, height: number }) {
+        if (boxSize && svgElement) {
+            for (let i = 0; i < svgElement.children?.length; i++) {
+                svgElement.children[i].setAttribute('height', boxSize.height.toString());
+                svgElement.children[i].setAttribute('width', boxSize.width.toString());
+            }
+        }
+    }
 }
 
 export interface WidgetPropertyVariable {

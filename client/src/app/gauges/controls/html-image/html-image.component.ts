@@ -42,21 +42,10 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     const parser = new DOMParser();
                     const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
                     const svgElement = svgDocument.querySelector('svg');
-                    const boxSize = SvgUtils.getSvgSize(svgElement);
-                    if (boxSize) {
-                        svgImageContainer.parentElement?.setAttribute('width', boxSize.width);
-                        svgImageContainer.parentElement?.setAttribute('height', boxSize.height);
-                    }
-                    svgElement.setAttribute('width', '100%');
-                    svgElement.setAttribute('height', '100%');
-                    if (isview) {
-                        svgImageContainer.appendChild(svgElement);
-                        if (gaugeSettings.property.scriptContent) {
-                            const newScript = document.createElement('script');
-                            newScript.textContent = SvgUtils.initWidget(gaugeSettings.property.scriptContent.content, gaugeSettings.property.varsToBind);
-                            document.body.appendChild(newScript);
-                        }
-                    } else if (!gaugeSettings.property.svgContent) {
+                    const boxSize = SvgUtils.getSvgSize(svgImageContainer.parentElement);
+                    svgElement.setAttribute('width', boxSize.width.toString());
+                    svgElement.setAttribute('height', boxSize.height.toString());
+                    if (!gaugeSettings.property.svgContent) {
                         const scripts = svgElement.querySelectorAll('script');
                         const svgGuid = Utils.getShortGUID('', '_');
                         const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
@@ -77,6 +66,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     } else {
                         svgImageContainer.appendChild(svgElement);
                     }
+                    if (gaugeSettings.property.scriptContent) {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = SvgUtils.initWidget(gaugeSettings.property.scriptContent.content, gaugeSettings.property.varsToBind);
+                        document.body.appendChild(newScript);
+                    }
                 } else {
                     svgImageContainer.innerHTML = '';
                     let image = document.createElement('img');
@@ -91,6 +85,19 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             }
         }
         return svgImageContainer;
+    }
+
+    static resize(gaugeSettings: GaugeSettings) {
+        const ele = document.getElementById(gaugeSettings.id);
+        if (ele) {
+            const svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
+            const svgElement = svgImageContainer.querySelector('svg');
+            if (svgElement && svgImageContainer.getAttribute('type') === 'widget') {
+                const boxSize = SvgUtils.getSvgSize(svgImageContainer.parentElement);
+                svgElement.setAttribute('width', boxSize.width.toString());
+                svgElement.setAttribute('height', boxSize.height.toString());
+            }
+        }
     }
 
     static getSignals(pro: any | WidgetProperty) {
