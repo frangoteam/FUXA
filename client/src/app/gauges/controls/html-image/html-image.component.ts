@@ -35,10 +35,10 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             ele?.setAttribute('data-name', gaugeSettings.name);
             svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
-                if (SvgUtils.isSVG(gaugeSettings.property.address)) {
+                let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
+                if (SvgUtils.isSVG(gaugeSettings.property.address) && svgContent) {
                     svgImageContainer.innerHTML = '';
                     svgImageContainer.setAttribute('type', 'widget');
-                    let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
                     const parser = new DOMParser();
                     const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
                     const svgElement = svgDocument.querySelector('svg');

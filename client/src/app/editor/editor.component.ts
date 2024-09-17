@@ -784,15 +784,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onSetImage(event) {
         if (event.target.files) {
+            let filename = event.target.files[0].name;
             this.imagefile = 'assets/images/' + event.target.files[0].name;
+            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
             let self = this;
-            if (this.imagefile.split('.').pop().toLowerCase() === 'svg') {
+            if (fileToUpload.type === 'svg') {
                 let reader = new FileReader();
                 reader.onloadend = function(e: any) {
-                    if (self.winRef.nativeWindow.svgEditor.setSvgImageToAdd) {
-                        self.winRef.nativeWindow.svgEditor.setSvgImageToAdd(e.target.result);
-                    }
-                    self.setMode('svg-image');
+                    localStorage.setItem(fileToUpload.name, reader.result.toString());
+                    self.ctrlInitParams = fileToUpload.name;
+                    self.setMode('own_ctrl-image');
                 };
                 reader.readAsText(event.target.files[0]);
             } else {
@@ -818,20 +819,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             let reader = new FileReader();
             this.ctrlInitParams = null;
             reader.onload = () => {
-                if (fileToUpload.type === 'svg') {
-                    localStorage.setItem(fileToUpload.name, reader.result.toString());
-                    this.ctrlInitParams = fileToUpload.name;
-                    this.setMode('own_ctrl-image');
-                } else {
-                    try {
-                        fileToUpload.data = reader.result;
-                        this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
-                            this.ctrlInitParams = result.location;
-                            this.setMode('own_ctrl-image');
-                        });
-                    } catch (err) {
-                        console.error(err);
-                    }
+                try {
+                    fileToUpload.data = reader.result;
+                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
+                        this.ctrlInitParams = result.location;
+                        this.setMode('own_ctrl-image');
+                    });
+                } catch (err) {
+                    console.error(err);
                 }
             };
             if (fileToUpload.type === 'svg') {
