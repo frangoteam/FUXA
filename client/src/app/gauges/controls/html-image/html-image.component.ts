@@ -47,7 +47,8 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                         svgImageContainer.parentElement?.setAttribute('width', boxSize.width);
                         svgImageContainer.parentElement?.setAttribute('height', boxSize.height);
                     }
-
+                    svgElement.setAttribute('width', '100%');
+                    svgElement.setAttribute('height', '100%');
                     if (isview) {
                         svgImageContainer.appendChild(svgElement);
                         if (gaugeSettings.property.scriptContent) {
