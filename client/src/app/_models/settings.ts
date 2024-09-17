@@ -10,7 +10,7 @@ export class AppSettings {
     /** authentication are valid only for edit mode */
     secureOnlyEditor = false;
     /** Broadcast all tags, without check the frontend views */
-    broadcastAll = true;
+    broadcastAll = false;
     /** Smtp to send mails */
     smtp = new SmtpSettings();
     /** Daq store database */
