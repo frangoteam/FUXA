@@ -65,6 +65,7 @@
     "dlg.layout-lbl-margin-left": "Margin left",
     "dlg.layout-lbl-margin-right": "Margin right",
     "dlg.layout-lbl-login-info": "Login info",
+    "dlg.layout-lbl-custom-styles": "Custom styles",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
