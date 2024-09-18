@@ -38,13 +38,14 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                 let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
                 if (SvgUtils.isSVG(gaugeSettings.property.address) && svgContent) {
                     svgImageContainer.innerHTML = '';
-                    svgImageContainer.setAttribute('type', 'widget');
+                    svgImageContainer.setAttribute('type', HtmlImageComponent.propertyWidgetType);
                     const parser = new DOMParser();
                     const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
                     const svgElement = svgDocument.querySelector('svg');
-                    const boxSize = SvgUtils.getSvgSize(svgImageContainer.parentElement);
-                    svgElement.setAttribute('width', boxSize.width.toString());
-                    svgElement.setAttribute('height', boxSize.height.toString());
+                    const originSize = SvgUtils.getSvgSize(svgElement);
+                    SvgUtils.resizeSvgNodes(svgImageContainer.parentElement.parentElement, originSize);
+                    svgElement.setAttribute('width', originSize.width.toString());
+                    svgElement.setAttribute('height', originSize.height.toString());
                     if (!gaugeSettings.property.svgContent) {
                         const scripts = svgElement.querySelectorAll('script');
                         const svgGuid = Utils.getShortGUID('', '_');
@@ -59,6 +60,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                         gaugeSettings.property = <WidgetProperty>{
                             ...gaugeSettings.property,
                             type: HtmlImageComponent.propertyWidgetType,
+                            svgGuid: svgGuid,
                             svgContent: svgImageContainer.innerHTML,
                             scriptContent: { moduleId: moduleId, content: widgetResult?.content },
                             varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
@@ -92,10 +94,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         if (ele) {
             const svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             const svgElement = svgImageContainer.querySelector('svg');
-            if (svgElement && svgImageContainer.getAttribute('type') === 'widget') {
+            if (svgElement && svgImageContainer.getAttribute('type') === HtmlImageComponent.propertyWidgetType) {
                 const boxSize = SvgUtils.getSvgSize(svgImageContainer.parentElement);
                 svgElement.setAttribute('width', boxSize.width.toString());
                 svgElement.setAttribute('height', boxSize.height.toString());
+                gaugeSettings.property.svgContent = svgImageContainer.innerHTML;
             }
         }
     }

@@ -37,6 +37,7 @@ import { IElementPreview } from './svg-selector/svg-selector.component';
 import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config/tags-ids-config.component';
 import { UploadFile } from '../_models/project';
 import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
+import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.component';
 
 declare var Gauge: any;
 
@@ -390,7 +391,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * search gauge settings on all views items, if not exist create void settings from GaugesManager
      * @param ele gauge element
      */
-    private searchGaugeSettings(ele) {
+    private searchGaugeSettings(ele): GaugeSettings {
         if (ele) {
             if (this.currentView) {
                 if (this.currentView.items[ele.id]) {
@@ -684,7 +685,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         }
                     } else {
-                        console.error('Between copied and pasted there are inconsistent elements!');
+                        let copyGaugeSettings = this.searchGaugeSettings(copiedIdsAndTypes[i]);
+                        if (copyGaugeSettings.property?.type === HtmlImageComponent.propertyWidgetType) {
+                            let gaugeSettingsDest: GaugeSettings = this.gaugesManager.createSettings(pastedIdsAndTypes[i].id, pastedIdsAndTypes[i].type);
+                            gaugeSettingsDest.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(pastedIdsAndTypes[i].type), names);
+                            const svgGuid = Utils.getShortGUID('', '_');
+                            gaugeSettingsDest.property = Utils.replaceStringInObject(copyGaugeSettings.property,
+                                                                                     copyGaugeSettings.property.svgGuid,
+                                                                                     svgGuid);
+                            this.setGaugeSettings(gaugeSettingsDest);
+                            this.checkGaugeAdded(gaugeSettingsDest);
+                        } else {
+                            console.error('Between copied and pasted there are inconsistent elements!');
+                        }
                     }
                 }
                 this.checkSvgElementsMap(true);

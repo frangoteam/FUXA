@@ -110,6 +110,16 @@ export class Utils {
         change(jsonData);
     }
 
+    static replaceStringInObject<T>(obj: T,
+                                 searchKey: string,
+                                 replaceKey: string): T {
+        let jsonString = JSON.stringify(obj);
+        const regex = new RegExp(searchKey, 'g');
+        jsonString = jsonString.replace(regex, replaceKey);
+        const modifiedObject = JSON.parse(jsonString);
+        return modifiedObject;
+    }
+
     static getInTreeIdAndType(element: Element): any[] {
         let type = element.getAttribute('type');
         if (!type && Utils.svgTagToType.includes(element.tagName.toLowerCase())) {
