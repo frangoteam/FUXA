@@ -421,6 +421,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
+                    ev.preventDefault();
                 });
             }
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
@@ -430,6 +431,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, mouseDownEvents);
+                    ev.preventDefault();
                 });
             }
             let mouseUpEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
@@ -439,6 +441,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchend(function(ev) {
                     self.runEvents(self, ga, ev, mouseUpEvents);
+                    ev.preventDefault();
                 });
             }
             let mouseOverEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseover);
