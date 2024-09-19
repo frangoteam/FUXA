@@ -914,6 +914,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         });
+        this.variablesMapping?.forEach(mappedVariable => {
+            if (placeholder.indexOf(mappedVariable?.from?.variableId) !== -1 && mappedVariable?.to?.variableId) {
+                result[mappedVariable.from.variableId] = mappedVariable.to.variableId;
+            }
+        });
         return result;
     }
 
