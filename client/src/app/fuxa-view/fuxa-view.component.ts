@@ -701,7 +701,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
-            this.loadHmi(view);
+            this.loadHmi(view, true);
             if (param.scaleMode) {
                 Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
             }
