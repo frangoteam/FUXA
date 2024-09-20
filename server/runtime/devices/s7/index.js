@@ -359,7 +359,7 @@ function S7client(_data, _logger, _events, _runtime) {
             var result = {};
             for (var id in tempTags) {
                 if (!utils.isNullOrUndefined(tempTags[id].rawValue)) {
-                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref, runtime);
+                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, varsValue[id] ? varsValue[id].value : null, tempTags[id].tagref, runtime);
                     tempTags[id].timestamp = timestamp;
                     if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
                         result[id] = tempTags[id];

@@ -19,8 +19,8 @@ module.exports = {
         return false;
     },
 
-    tagValueCompose: async function (value, tag, runtime = undefined) {
-        var obj = {value: null };     
+    tagValueCompose: async function (value, oldValue, tag, runtime = undefined) {
+        var obj = {value: null };
         if (tag) {
             try {
                 if (tag.scaleReadFunction) {
@@ -28,6 +28,11 @@ module.exports = {
                 }
                 if (utils.isNumber(value, obj)) {
                     value = obj.value;
+                    if (tag.deadband && tag.deadband.value && !utils.isNullOrUndefined(oldValue)) {
+                        if (Math.abs(value - oldValue) <= tag.deadband.value) {
+                            value = oldValue;
+                        }
+                    }
                     if (tag.scale) {
                         if (tag.scale.mode === 'linear') {
                             value = (tag.scale.scaledHigh - tag.scale.scaledLow) * (value - tag.scale.rawLow) / (tag.scale.rawHigh - tag.scale.rawLow) + tag.scale.scaledLow;
@@ -41,7 +46,7 @@ module.exports = {
                         value = +value.toFixed(tag.format);
                     }
                 }
-            } catch (err) { 
+            } catch (err) {
                 console.error(err);
             }
         }
@@ -50,7 +55,7 @@ module.exports = {
 
     tagRawCalculator: async function (value, tag, runtime = undefined) {
         var obj = {value: null };
-        
+
         if (tag) {
             try {
                 if (utils.isNumber(value, obj)) {
