@@ -1,5 +1,5 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { Location } from '@angular/common';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, Inject } from '@angular/core';
+import { DOCUMENT, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, fromEvent, interval, merge, switchMap, tap } from 'rxjs';
@@ -25,10 +25,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	isLoading = false;
 
 	@ViewChild('fabmenu', {static: false}) fabmenu: any;
+
 	private subscriptionLoad: Subscription;
 	private subscriptionShowLoading: Subscription;
 
-	constructor(private router: Router,
+	constructor(@Inject(DOCUMENT) private document: Document,
+		private router: Router,
 		private appService: AppService,
 		private projectService: ProjectService,
 		private settingsService: SettingsService,
@@ -67,6 +69,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 			this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
 				this.checkSettings();
+				this.applyCustomCss();
 			}, error => {
 				console.error('Error loadHMI');
 			});
@@ -102,6 +105,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.subscriptionShowLoading.unsubscribe();
 			}
 		} catch (e) {
+		}
+	}
+
+	applyCustomCss() {
+		let hmi = this.projectService.getHmi();
+		if (hmi?.layout?.customStyles) {
+			const style = this.document.createElement('style');
+			style.textContent = hmi.layout.customStyles;
+			this.document.head.appendChild(style);
 		}
 	}
 
