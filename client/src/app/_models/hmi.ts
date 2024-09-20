@@ -62,6 +62,8 @@ export class LayoutSettings {
     loginoverlaycolor?: LoginOverlayColorType = LoginOverlayColorType.none;
     /** Show connection error toast */
     show_connection_error? = true;
+    /** Customs Css Styles */
+    customStyles = '';
 }
 
 export class NavigationSettings {

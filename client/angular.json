@@ -45,6 +45,7 @@
               "chartjs-plugin-datalabels",
               "codemirror/addon/lint/lint",
               "codemirror/mode/javascript/javascript",
+              "codemirror/mode/css/css",
               "codemirror/mode/markdown/markdown",
               "file-saver",
               "moment",

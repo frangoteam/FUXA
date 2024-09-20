@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -16,6 +16,9 @@ import { ResourcesService } from '../../_services/resources.service';
 import { interval, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { GaugeDialogType, GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
 import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-button.component';
+import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import 'codemirror/mode/css/css';
 
 @Component({
     selector: 'app-layout-property',
@@ -45,11 +48,21 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     headerMode = HeaderBarModeType;
     logo = null;
     loginOverlayColor = LoginOverlayColorType;
+    ready = false;
+    @ViewChild(CodemirrorComponent, {static: false}) CodeMirror: CodemirrorComponent;
+    codeMirrorContent: string;
+    codeMirrorOptions = {
+        lineNumbers: true,
+        theme: 'material',
+        mode: 'css',
+        lint: true,
+    };
 
     constructor(@Inject(MAT_DIALOG_DATA) public data: ILayoutPropertyData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
         private projectService: ProjectService,
+        private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
         private resourcesService: ResourcesService) {
 
@@ -99,6 +112,14 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.unsubscribeTimer$.next();
         this.unsubscribeTimer$.complete();
+    }
+
+
+    onTabChanged(event: MatTabChangeEvent): void {
+        if (event.index == 3) {
+            this.changeDetector.detectChanges();
+            this.CodeMirror?.codeMirror?.refresh();    
+        }
     }
 
     checkTimer(): void {
