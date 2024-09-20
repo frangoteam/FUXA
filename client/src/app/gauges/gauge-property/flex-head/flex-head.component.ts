@@ -3,7 +3,7 @@ import { UntypedFormControl } from '@angular/forms';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { FlexInputComponent } from '../flex-input/flex-input.component';
-import { GaugeProperty, IPropertyVariable } from '../../../_models/hmi';
+import { GaugeProperty, IPropertyVariable, WidgetProperty } from '../../../_models/hmi';
 import { Device, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 
@@ -21,7 +21,7 @@ interface Variable {
 export class FlexHeadComponent implements OnInit, OnDestroy {
 
     @Input() data: any;
-    @Input() property: GaugeProperty;
+    @Input() property: GaugeProperty | WidgetProperty;
     @Input() withStaticValue = true;
     @Input() withBitmask = false;
     @ViewChild('flexinput', {static: false}) flexInput: FlexInputComponent;

@@ -189,7 +189,8 @@ import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-pr
 import { ViewPropertyComponent } from './editor/view-property/view-property.component';
 import { ResizeDirective } from './_directives/resize.directive';
 import { EditorViewsListComponent } from './editor/editor-views-list/editor-views-list.component';
-import { MetaShapesComponent } from './gauges/shapes/meta-shapes/meta-shapes.component';
+import { SvgUtils } from './_helpers/svg-utils';
+import { FlexWidgetPropertyComponent } from './gauges/gauge-property/flex-widget-property/flex-widget-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -274,6 +275,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         FlexVariableComponent,
         FlexVariablesMappingComponent,
         FlexVariableMapComponent,
+        FlexWidgetPropertyComponent,
         ValueComponent,
         DialogDraggableDirective,
         EnumToArrayPipe,
@@ -397,6 +399,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GaugesManager,
         WindowRef,
         Utils,
+        SvgUtils,
         Calc,
         HtmlSwitchComponent,
         PipeComponent,

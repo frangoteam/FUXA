@@ -25,6 +25,10 @@
             <span>{{'device.tag-format' | translate}}</span>
             <input numberOnly formControlName="format" min="0" max="10" type="number">
         </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-deadband' | translate}}</span>
+            <input numberOnly formControlName="deadband" type="number">
+        </div>
         <div *ngIf="!isFuxaServerTag()">
             <div class="my-form-field item-block mt10">
                 <span>{{'device.tag-scale' | translate}}</span>

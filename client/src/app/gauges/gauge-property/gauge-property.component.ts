@@ -7,7 +7,7 @@ import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.c
 import { FlexHeadComponent } from './flex-head/flex-head.component';
 import { FlexEventComponent } from './flex-event/flex-event.component';
 import { FlexActionComponent } from './flex-action/flex-action.component';
-import { GaugeProperty, GaugeSettings, View } from '../../_models/hmi';
+import { GaugeProperty, GaugeSettings, View, WidgetProperty } from '../../_models/hmi';
 import { Script } from '../../_models/script';
 import { UserGroups } from '../../_models/user';
 import { PropertyType } from './flex-input/flex-input.component';
@@ -28,7 +28,7 @@ export class GaugePropertyComponent implements AfterViewInit {
     slideView = true;
     slideActionView = true;
     withBitmask = false;
-    property: GaugeProperty;
+    property: GaugeProperty | WidgetProperty;
     dialogType: GaugeDialogType = GaugeDialogType.RangeWithAlarm;
     eventsSupported: boolean;
     actionsSupported: any;
@@ -54,7 +54,7 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.defaultValue = this.data.default;
-        if (this.data.withProperty !== false) { // else undefined
+        if (!this.isWidget() && this.data.withProperty !== false) { // else undefined
             if (this.dialogType === GaugeDialogType.Input) {
                 this.flexHead.withProperty = PropertyType.input;
             } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
@@ -81,8 +81,11 @@ export class GaugePropertyComponent implements AfterViewInit {
     }
 
     onOkClick(): void {
-        // this.data.settings.property = this.flexHead.property;
-        this.data.settings.property = this.flexHead.getProperty();
+        if (this.isWidget()) {
+            this.data.settings.property = this.property;
+        } else {
+            this.data.settings.property = this.flexHead?.getProperty();
+        }
         if (this.flexEvent) {
             this.data.settings.property.events = this.flexEvent.getEvents();
         }
@@ -164,6 +167,10 @@ export class GaugePropertyComponent implements AfterViewInit {
                 this.property.permission = result.permission;
             }
         });
+    }
+
+    isWidget() {
+        return (this.property as WidgetProperty).type;
     }
 }
 

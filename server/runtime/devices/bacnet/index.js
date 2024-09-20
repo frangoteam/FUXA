@@ -306,7 +306,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the timestamp of last read tag operation on polling
-     * @returns 
+     * @returns
      */
      this.lastReadTimestamp = () => {
         return lastTimestampValue;
@@ -314,7 +314,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the Daq settings of Tag
-     * @returns 
+     * @returns
      */
     this.getTagDaqSettings = (tagId) => {
         return data.tags[tagId] ? data.tags[tagId].daq : null;
@@ -322,7 +322,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Set Daq settings of Tag
-     * @returns 
+     * @returns
      */
     this.setTagDaqSettings = (tagId, settings) => {
         if (data.tags[tagId]) {
@@ -333,7 +333,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
     /**
      * Connect the client to device
      * Listening after broadcast query
-     * @param {*} callback 
+     * @param {*} callback
      */
     var _connect = function() {
         return new Promise(function (resolve, reject) {
@@ -342,7 +342,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 ipInterface = data.property.address.substring(0, data.property.address.indexOf(':'));
                 var port = data.property.address.substring(data.property.address.indexOf(':') + 1);
             }
-            var settings = { 
+            var settings = {
                 interface: ipInterface,
                 port: parseInt(port) || 47808,
                 adpuTimeout: parseInt(data.property.adpuTimeout) || 6000
@@ -400,8 +400,8 @@ function BACNETclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Ask all devices name 
-     * @param {*} devices 
+     * Ask all devices name
+     * @param {*} devices
      */
     var _askName = function (devices) {
         return new Promise(async function (resolve, reject) {
@@ -428,7 +428,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                             }
                         }
                     }
-                    resolve();          
+                    resolve();
                 }, reason => {
                     if (reason) {
                         if (reason.stack) {
@@ -449,7 +449,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Read Objects list of device, in Device Object
-     * @param {*} instance 
+     * @param {*} instance
      */
     var _readObjectList = function(instance) {
         return new Promise(function (resolve, reject) {
@@ -484,7 +484,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                                 }
                             }
                         }
-                        resolve(objects);          
+                        resolve(objects);
                     }, reason => {
                         if (reason) {
                             if (reason.stack) {
@@ -504,8 +504,8 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Read Object property, Object are defined with type and instance
-     * @param {*} bacobj 
-     * @param {*} property 
+     * @param {*} bacobj
+     * @param {*} property
      */
     var _readProperty = function(address, bacobj, property) {
         return new Promise(function (resolve, reject) {
@@ -526,13 +526,13 @@ function BACNETclient(_data, _logger, _events, _runtime) {
             var tvalue = {type: bacnet.enum.ApplicationTag.NULL, value: value};
             bacobj.type = parseInt(bacobj.type);
             bacobj.instance = parseInt(bacobj.instance);
-            if (bacobj.type === bacnet.enum.ObjectType.ANALOG_INPUT || 
-                bacobj.type === bacnet.enum.ObjectType.ANALOG_OUTPUT || 
+            if (bacobj.type === bacnet.enum.ObjectType.ANALOG_INPUT ||
+                bacobj.type === bacnet.enum.ObjectType.ANALOG_OUTPUT ||
                 bacobj.type === bacnet.enum.ObjectType.ANALOG_VALUE) {
                 tvalue.type = bacnet.enum.ApplicationTag.REAL;
                 tvalue.value = parseFloat(value);
-            } else if (bacobj.type === bacnet.enum.ObjectType.BINARY_INPUT || 
-                bacobj.type === bacnet.enum.ObjectType.BINARY_OUTPUT || 
+            } else if (bacobj.type === bacnet.enum.ObjectType.BINARY_INPUT ||
+                bacobj.type === bacnet.enum.ObjectType.BINARY_OUTPUT ||
                 bacobj.type === bacnet.enum.ObjectType.BINARY_VALUE) {
                 tvalue.type = bacnet.enum.ApplicationTag.ENUMERATED;
                 tvalue.value = parseInt(value);
@@ -551,7 +551,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the Device
-     * @param {*} deviceId 
+     * @param {*} deviceId
      */
     var _getDevice = function (deviceId) {
         for (var id in devices) {
@@ -564,9 +564,9 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Search and return the object
-     * @param {*} objs 
-     * @param {*} type 
-     * @param {*} instance 
+     * @param {*} objs
+     * @param {*} type
+     * @param {*} instance
      */
     var _getObject = function (objs, type, instance) {
         for (var index in objs) {
@@ -579,7 +579,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the object class text
-     * @param {*} type 
+     * @param {*} type
      */
     var _getObjectClass = function (type) {
         if (type === bacnet.enum.ObjectType.DEVICE) {
@@ -603,7 +603,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return if is a object to shoe and config (only Analog and Digital)
-     * @param {*} type 
+     * @param {*} type
      */
     var _isObjectToShow = function (type) {
         if (type === bacnet.enum.ObjectType.DEVICE) {
@@ -627,7 +627,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Update the Tags values read
-     * @param {*} vars 
+     * @param {*} vars
      */
     var _updateVarsValue = async (deviceId, vars) => {
         const timestamp = new Date().getTime();
@@ -639,12 +639,12 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 var tag = requestItemsMap[deviceId][address];
                 if (!varsValue[tag.id] || varsValue[tag.id].value !== vars[index].value) {
                     changed[tag.id] = { id: tag.id, value: vars[index].value, type: vars[index].type, daq: tag.daq };
-                    varsValue[tag.id] = changed[tag.id];    
-                } 
+                    varsValue[tag.id] = changed[tag.id];
+                }
                 varsValue[tag.id].changed = varsValue[tag.id].rawValue !== vars[index].rawValue;
                 if (!utils.isNullOrUndefined(vars[index].rawValue)) {
                     varsValue[tag.id].rawValue = vars[index].rawValue;
-                    varsValue[tag.id].value = await deviceUtils.tagValueCompose(vars[index].rawValue, tag, runtime);
+                    varsValue[tag.id].value = await deviceUtils.tagValueCompose(vars[index].rawValue, varsValue[tag.id] ? varsValue[tag.id].value : null, tag, runtime);
                     vars[index].value = varsValue[tag.id].value;
                     if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[tag.id], timestamp)) {
                         changed[tag.id] = { id: tag.id, value: varsValue[tag.id].value, type: vars[index].type, daq: tag.daq, timestamp: timestamp };
@@ -673,9 +673,9 @@ function BACNETclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Return formatted object id 
-     * @param {*} type 
-     * @param {*} instance 
+     * Return formatted object id
+     * @param {*} type
+     * @param {*} instance
      */
     var _formatId = function (type, instance) {
         return type + '-' + instance;
@@ -683,7 +683,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return id and type from formatted id
-     * @param {*} id 
+     * @param {*} id
      */
     var _extractId = function (id) {
         let tks = id.split('-');
@@ -692,7 +692,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * To manage a overloading connection
-     * @param {*} check 
+     * @param {*} check
      */
     var _checkWorking = function (check) {
         if (check && working) {
@@ -710,7 +710,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Emit Objects (Tags) in application
-     * @param {*} values 
+     * @param {*} values
      */
     var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.name, values: values });
@@ -718,7 +718,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
 
     /**
      * Emit status in application
-     * @param {*} status 
+     * @param {*} status
      */
     var _emitStatus = function (status) {
         lastStatus = status;

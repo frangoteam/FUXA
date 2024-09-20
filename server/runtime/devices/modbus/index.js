@@ -304,20 +304,25 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     parameters = [...parameters, ...extraParamsWithValues];
 
                 }
-                const script = { id: data.tags[sigid].scaleWriteFunction,
+                const script = {
+                    id: data.tags[sigid].scaleWriteFunction,
                     name: null,
-                    parameters};
+                    parameters
+                };
                 try {
-
                     const bufVal = await runtime.scriptsMgr.runScript(script);
-                    if ((bufVal.length % 2) !== 0 ) {
-                        logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
-                        return false;
-                    }
-                    val = [];
-                    for (let i = 0; i < bufVal.length;) {
-                        val.push(bufVal.readUInt16BE(i));
-                        i = i + 2;
+                    if (Array.isArray(bufVal)) {
+                        if ((bufVal.length % 2) !== 0 ) {
+                            logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
+                            return false;
+                        }
+                        val = [];
+                        for (let i = 0; i < bufVal.length;) {
+                            val.push(bufVal.readUInt16BE(i));
+                            i = i + 2;
+                        }
+                    } else {
+                        val = bufVal;
                     }
                 } catch (error) {
                     logger.error(`'${data.tags[sigid].name}' setValue script error! ${error.toString()}`);
@@ -660,7 +665,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             var result = {};
             for (var id in tempTags) {
                 if (!utils.isNullOrUndefined(tempTags[id].rawValue)) {
-                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, tempTags[id].tagref, runtime);
+                    tempTags[id].value = await deviceUtils.tagValueCompose(tempTags[id].rawValue, varsValue[id] ? varsValue[id].value : null, tempTags[id].tagref, runtime);
                     tempTags[id].timestamp = timestamp;
                     if (this.addDaq && deviceUtils.tagDaqToSave(tempTags[id], timestamp)) {
                         result[id] = tempTags[id];
