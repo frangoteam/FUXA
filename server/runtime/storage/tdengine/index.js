@@ -1,6 +1,6 @@
 'use strict'
 
-let {options, connect} = require("@tdengine/rest");
+let { options, connect } = require("@tdengine/rest");
 let utils = require('../../utils');
 
 function TDengine(_settings, _log, _currentStorage) {
@@ -41,7 +41,7 @@ function TDengine(_settings, _log, _currentStorage) {
             let tag = tagsValues[tagid];
             if (!tag.daq || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value)) {
                 if (tag.daq.restored) {
-                    dataToRestore.push({id: tag.id, deviceId: deviceId, value: tag.value});
+                    dataToRestore.push({ id: tag.id, deviceId: deviceId, value: tag.value });
                 }
                 if (!tag.daq.enabled) {
                     continue;
@@ -69,14 +69,16 @@ function TDengine(_settings, _log, _currentStorage) {
     this.getDaqValue = function (tagid, fromts, tots) {
         return new Promise(function (resolve, reject) {
             const cursor = conn.cursor()
-            let data =[]
+            let data = []
+            //add by J, the tagid is missed in the sql, should be one of the filter condition
             cursor.query(`SELECT CAST(dt as BIGINT) as dt, tag_value
                           FROM ${database}.meters
-                          WHERE dt >= ${fromts}
+                            WHERE tag_id = '${tagid}' 
+                            and dt >= ${fromts}
                             and dt < ${tots} `).then((result) => {
                 // logger.debug(result)
-                result.getData().forEach((row) =>{
-                    data.push({dt: row[0],value: row[1]})
+                result.getData().forEach((row) => {
+                    data.push({ dt: row[0], value: row[1] })
                 })
                 resolve(data)
             }).catch((error) => {
