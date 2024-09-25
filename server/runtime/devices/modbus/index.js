@@ -9,6 +9,7 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const net = require("net");
 const TOKEN_LIMIT = 100;
+const Mutex = require("async-mutex").Mutex;
 
 function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
@@ -137,6 +138,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
             }
             // _checkWorking(false);
+            let  socketRelease;
+            //
+            if(data.property.socketReuse && data.property.socketSerial && runtime.socketMutex.has(data.property.address)) {
+                socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
+            }
             try{
                 const result = await Promise.all(readVarsfnc);
 
@@ -165,7 +171,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     logger.error(`'${data.name}' _readVars error! ${reason}`);
                 }
                 _checkWorking(false);
-            };
+            }finally {
+                if(socketRelease != null){
+                    socketRelease()
+                }
+            }
         } else {
             _emitStatus('connect-busy');
         }
@@ -337,7 +347,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
                 _checkWorking(true);
             }
+            let  socketRelease;
             try {
+                if( type === ModbusTypes.TCP && data.property.socketReuse
+                    && data.property.socketSerial
+                    && runtime.socketMutex.has(data.property.address)){
+                    socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
+                }
                 await _writeMemory(parseInt(memaddr), offset, val).then(result => {
                     logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
                 }, reason => {
@@ -352,6 +368,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
             } catch (err) {
                 console.log(err);
+            } finally {
+                if (socketRelease != null){
+                    socketRelease();
+                }
             }
             return true;
         } else {
@@ -438,6 +458,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     } else {
                         socket = new net.Socket();
                         runtime.socketPool.set(data.property.address, socket);
+                        //init read mutex
+                        if(data.property.socketSerial){
+                            runtime.socketMutex.set(data.property.address, new Mutex())
+                        }
                     }
                     var openFlag = socket.readyState === "opening" || socket.readyState === "open";
                     if (!openFlag) {

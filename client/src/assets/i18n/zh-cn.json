@@ -737,6 +737,7 @@
     "device.webapi-property-posttags": "URL POST标签",
     "device.webapi-property-loadtags": "加载标签",
     "device.property-socket-reuse": "Socket复用",
+    "device.property-socket-serial": "Socket串行",
 
     "device.browsetopics-property-title": "要订阅和发布的经纪人主题",
     "device.browsetopics-property-sub": "订阅",

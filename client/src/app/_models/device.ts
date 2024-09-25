@@ -173,6 +173,8 @@ export class DeviceNetProperty {
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
     socketReuse: boolean = false;
+    /** Modbus TCP socket read serial */
+    socketSerial: boolean = false;
 
     static descriptor = {
         address: 'Device address (IP)',
