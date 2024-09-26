@@ -41,9 +41,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     this.connect = function () {
         return new Promise(function (resolve, reject) {
             if (data.property && data.property.address && (type === ModbusTypes.TCP ||
-                    (type === ModbusTypes.RTU && data.property.baudrate && data.property.databits && data.property.stopbits && data.property.parity))) {
+                (type === ModbusTypes.RTU && data.property.baudrate && data.property.databits && data.property.stopbits && data.property.parity))) {
                 try {
-                    if (!client.isOpen  && _checkWorking(true)) {
+                    if (!client.isOpen && _checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         _connect(function (err) {
                             if (err) {
@@ -115,67 +115,73 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
-        if (_checkWorking(true)) {
-            var readVarsfnc = [];
-            if (!data.property.options) {
-                for (var memaddr in memory) {
-                    var tokenizedAddress = parseAddress(memaddr);
-                    try {
-                        readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
-                        readVarsfnc.push(await delay(data.property.delay || 10));
-                    } catch (err) {
-                        logger.error(`'${data.name}' _readMemory error! ${err}`);
-                    }
-                }
-            } else {
-                for (var memaddr in mixItemsMap) {
-                    try {
-                        readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
-                        readVarsfnc.push(await delay(data.property.delay || 10));
-                    } catch (err) {
-                        logger.error(`'${data.name}' _readMemory error! ${err}`);
-                    }
-                }
-            }
-            // _checkWorking(false);
-            let  socketRelease;
-            //
-            if(data.property.socketReuse && data.property.socketSerial && runtime.socketMutex.has(data.property.address)) {
+        let socketRelease;
+        try {
+            if (data.property.socketReuse && data.property.socketSerial && runtime.socketMutex.has(data.property.address)) {
                 socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
             }
-            try{
-                const result = await Promise.all(readVarsfnc);
-
-                _checkWorking(false);
-                if (result.length) {
-                    let varsValueChanged = await _updateVarsValue(result);
-                    lastTimestampValue = new Date().getTime();
-                    _emitValues(varsValue);
-                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                        this.addDaq(varsValueChanged, data.name, data.id);
-                    }
-                } else {
-                    // console.error('then error');
-                }
-                if (lastStatus !== 'connect-ok') {
-                    _emitStatus('connect-ok');
-                }
-            } catch (reason) {
-                if (reason) {
-                    if (reason.stack) {
-                        logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
-                    } else if (reason.message) {
-                        logger.error(`'${data.name}' _readVars error! ${reason.message}`);
-                    }
-                } else {
-                    logger.error(`'${data.name}' _readVars error! ${reason}`);
-                }
-                _checkWorking(false);
-            }finally {
-                if(socketRelease != null){
-                    socketRelease()
-                }
+            await this._polling()
+        } catch (err) {
+            logger.error(`'${data.name}' _readMemory error! ${err}`);
+        } finally {
+            if (socketRelease != null) {
+                socketRelease()
             }
+        }
+    }
+     this._polling = async function () {
+        if (_checkWorking(true)) {
+            var readVarsfnc = [];
+                if (!data.property.options) {
+                    for (var memaddr in memory) {
+                        var tokenizedAddress = parseAddress(memaddr);
+                        try {
+                            readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
+                            readVarsfnc.push(await delay(data.property.delay || 10));
+                        } catch (err) {
+                            logger.error(`'${data.name}' _readMemory error! ${err}`);
+                        }
+                    }
+                } else {
+                    for (var memaddr in mixItemsMap) {
+                        try {
+                            readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
+                            readVarsfnc.push(await delay(data.property.delay || 10));
+                        } catch (err) {
+                            logger.error(`'${data.name}' _readMemory error! ${err}`);
+                        }
+                    }
+                }
+                // _checkWorking(false);
+                try {
+                    const result = await Promise.all(readVarsfnc);
+
+                    _checkWorking(false);
+                    if (result.length) {
+                        let varsValueChanged = await _updateVarsValue(result);
+                        lastTimestampValue = new Date().getTime();
+                        _emitValues(varsValue);
+                        if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                            this.addDaq(varsValueChanged, data.name, data.id);
+                        }
+                    } else {
+                        // console.error('then error');
+                    }
+                    if (lastStatus !== 'connect-ok') {
+                        _emitStatus('connect-ok');
+                    }
+                } catch (reason) {
+                    if (reason) {
+                        if (reason.stack) {
+                            logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
+                        } else if (reason.message) {
+                            logger.error(`'${data.name}' _readVars error! ${reason.message}`);
+                        }
+                    } else {
+                        logger.error(`'${data.name}' _readVars error! ${reason}`);
+                    }
+                    _checkWorking(false);
+                }
         } else {
             _emitStatus('connect-busy');
         }
@@ -221,7 +227,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
                 memItemsMap[id] = memory[memaddr].Items[offset];
                 memItemsMap[id].format = data.tags[id].format;
-                stepsMap[parseInt(data.tags[id].memaddress) + offset] =  { size: datatypes[data.tags[id].type].WordLen, offset: offset };
+                stepsMap[parseInt(data.tags[id].memaddress) + offset] = {
+                    size: datatypes[data.tags[id].type].WordLen,
+                    offset: offset
+                };
             } catch (err) {
                 logger.error(`'${data.name}' load error! ${err}`);
             }
@@ -230,7 +239,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         let lastStart = -1;             // last start address
         let lastMemAdr = -1;
         let nextAdr = -1;
-        Object.keys(stepsMap).sort((a, b) => {return a - b; }).forEach(function(key) {
+        Object.keys(stepsMap).sort((a, b) => {
+            return a - b;
+        }).forEach(function (key) {
             try {
                 var adr = parseInt(key);        // tag address
                 let lastAdrSize = adr + stepsMap[key].size;
@@ -270,7 +281,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      */
     this.getValue = function (id) {
         if (varsValue[id]) {
-            return {id: id, value: varsValue[id].value, ts: lastTimestampValue };
+            return {id: id, value: varsValue[id].value, ts: lastTimestampValue};
         }
         return null;
     }
@@ -287,7 +298,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      */
     this.getTagProperty = function (id) {
         if (memItemsMap[id]) {
-            return { id: id, name: id, type: memItemsMap[id].type, format: memItemsMap[id].format };
+            return {id: id, name: id, type: memItemsMap[id].type, format: memItemsMap[id].format};
         } else {
             return null;
         }
@@ -307,20 +318,22 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             var val;
             if (data.tags[sigid].scaleWriteFunction) {
                 let parameters = [
-                    { name: 'value', type: 'value', value: divVal }
+                    {name: 'value', type: 'value', value: divVal}
                 ];
                 if (data.tags[sigid].scaleWriteParams) {
                     const extraParamsWithValues = JSON.parse(data.tags[sigid].scaleWriteParams);
                     parameters = [...parameters, ...extraParamsWithValues];
 
                 }
-                const script = { id: data.tags[sigid].scaleWriteFunction,
+                const script = {
+                    id: data.tags[sigid].scaleWriteFunction,
                     name: null,
-                    parameters};
+                    parameters
+                };
                 try {
 
                     const bufVal = await runtime.scriptsMgr.runScript(script);
-                    if ((bufVal.length % 2) !== 0 ) {
+                    if ((bufVal.length % 2) !== 0) {
                         logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
                         return false;
                     }
@@ -347,11 +360,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
                 _checkWorking(true);
             }
-            let  socketRelease;
+            let socketRelease;
             try {
-                if( type === ModbusTypes.TCP && data.property.socketReuse
+                if (type === ModbusTypes.TCP && data.property.socketReuse
                     && data.property.socketSerial
-                    && runtime.socketMutex.has(data.property.address)){
+                    && runtime.socketMutex.has(data.property.address)) {
                     socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
                 }
                 await _writeMemory(parseInt(memaddr), offset, val).then(result => {
@@ -369,7 +382,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             } catch (err) {
                 console.log(err);
             } finally {
-                if (socketRelease != null){
+                if (socketRelease != null) {
                     socketRelease();
                 }
             }
@@ -401,7 +414,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Return the timestamp of last read tag operation on polling
      * @returns
      */
-     this.lastReadTimestamp = () => {
+    this.lastReadTimestamp = () => {
         return lastTimestampValue;
     }
 
@@ -426,7 +439,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     /**
      * Connect with RTU or TCP
      */
-    var _connect = function(callback) {
+    var _connect = function (callback) {
         try {
             if (type === ModbusTypes.RTU) {
                 const rtuOptions = {
@@ -459,7 +472,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         socket = new net.Socket();
                         runtime.socketPool.set(data.property.address, socket);
                         //init read mutex
-                        if(data.property.socketSerial){
+                        if (data.property.socketSerial) {
                             runtime.socketMutex.set(data.property.address, new Mutex())
                         }
                     }
@@ -475,9 +488,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     }
                 }
                 if (data.property.connectionOption === ModbusOptionType.UdpPort) {
-                    client.connectUDP(addr, { port: port }, callback);
+                    client.connectUDP(addr, {port: port}, callback);
                 } else if (data.property.connectionOption === ModbusOptionType.TcpRTUBufferedPort) {
-                    if (data.property.socketReuse){
+                    if (data.property.socketReuse) {
                         client.linkTcpRTUBuffered(runtime.socketPool.get(data.property.address), callback);
                     } else {
                         client.connectTcpRTUBuffered(addr, {port: port}, callback);
@@ -493,7 +506,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     if (data.property.socketReuse) {
                         client.linkTCP(runtime.socketPool.get(data.property.address), callback);
                     } else {
-                        client.connectTCP(addr, { port: port }, callback);
+                        client.connectTCP(addr, {port: port}, callback);
                     }
                 }
             }
@@ -515,7 +528,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             if (vars.length === 0) return resolve([]);
             // define read function
             if (memoryAddress === ModbusMemoryAddress.CoilStatus) {                      // Coil Status (Read/Write 000001-065536)
-                client.readCoils(start, size).then( res => {
+                client.readCoils(start, size).then(res => {
                     if (res.data) {
                         vars.map(v => {
                             let bitoffset = Math.trunc((v.offset - start) / 8);
@@ -530,7 +543,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.DigitalInputs) {          // Digital Inputs (Read 100001-165536)
-                client.readDiscreteInputs(start, size).then( res => {
+                client.readDiscreteInputs(start, size).then(res => {
                     if (res.data) {
                         vars.map(v => {
                             let bitoffset = Math.trunc((v.offset - start) / 8);
@@ -545,7 +558,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
-                client.readInputRegisters(start, size).then( res => {
+                client.readInputRegisters(start, size).then(res => {
                     if (res.data) {
                         vars.map(v => {
                             try {
@@ -564,7 +577,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {          // Holding Registers (Read/Write  400001-465535)
-                client.readHoldingRegisters(start, size).then( res => {
+                client.readHoldingRegisters(start, size).then(res => {
                     if (res.data) {
                         vars.map(v => {
                             let byteoffset = (v.offset - start) * 2;
@@ -605,7 +618,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
                 reject();
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {        // Holding Registers (Read/Write  400001-465535)
-                if (value.length > 2){
+                if (value.length > 2) {
                     client.writeRegisters(start, value).then(res => {
                         resolve();
                     }, reason => {
@@ -703,7 +716,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * @param {*} values
      */
     var _emitValues = function (values) {
-        events.emit('device-value:changed', { id: data.id, values: values });
+        events.emit('device-value:changed', {id: data.id, values: values});
     }
 
     /**
@@ -712,7 +725,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      */
     var _emitStatus = function (status) {
         lastStatus = status;
-        events.emit('device-status:changed', { id: data.id, status: status });
+        events.emit('device-status:changed', {id: data.id, status: status});
     }
 
     /**
@@ -737,9 +750,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         return true;
     }
 
-    const formatAddress = function(address, token) { return token + '-' + address; }
-    const parseAddress = function(address) { return { token:  address.split('-')[0], address: address.split('-')[1] }; }
-    const getMemoryAddress = function(address, askey, token) {
+    const formatAddress = function (address, token) {
+        return token + '-' + address;
+    }
+    const parseAddress = function (address) {
+        return {token: address.split('-')[0], address: address.split('-')[1]};
+    }
+    const getMemoryAddress = function (address, askey, token) {
         if (address < ModbusMemoryAddress.DigitalInputs) {
             if (askey) {
                 return formatAddress('000000', token);
@@ -784,7 +801,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * @param {*} size
      * @returns
      */
-    const getMemoryItems = function(items, start, size) {
+    const getMemoryItems = function (items, start, size) {
         let result = {};
         for (var itemidx in items) {
             if (items[itemidx].offset >= start && items[itemidx].offset < start + size) {
@@ -793,11 +810,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         }
         return result;
     }
-    const delay = ms => { return new Promise(resolve => setTimeout(resolve, ms)) };
+    const delay = ms => {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    };
 }
 
-const ModbusTypes = { RTU: 0, TCP: 1 };
-const ModbusMemoryAddress = { CoilStatus: 0, DigitalInputs: 100000, InputRegisters: 300000, HoldingRegisters: 400000 };
+const ModbusTypes = {RTU: 0, TCP: 1};
+const ModbusMemoryAddress = {CoilStatus: 0, DigitalInputs: 100000, InputRegisters: 300000, HoldingRegisters: 400000};
 const ModbusOptionType = {
     SerialPort: 'SerialPort',
     RTUBufferedPort: 'RTUBufferedPort',
@@ -813,8 +832,16 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        try { ModbusRTU = require('modbus-serial'); } catch { }
-        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
+        try {
+            ModbusRTU = require('modbus-serial');
+        } catch {
+        }
+        if (!ModbusRTU && manager) {
+            try {
+                ModbusRTU = manager.require('modbus-serial');
+            } catch {
+            }
+        }
         if (!ModbusRTU) return null;
         return new MODBUSclient(data, logger, events, runtime);
     },
