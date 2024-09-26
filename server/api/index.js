@@ -30,7 +30,7 @@ function init(_server, _runtime) {
     return new Promise(function (resolve, reject) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
-            
+
             var maxApiRequestSize = runtime.settings.apiMaxLength || '35mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize,extended:true}));
@@ -60,7 +60,7 @@ function init(_server, _runtime) {
                 windowMs: 5 * 60 * 1000, // 5 minutes
                 max: 100 // limit each IP to 100 requests per windowMs
             });
-              
+
             //  apply to all requests
             apiApp.use(limiter);
 
@@ -75,7 +75,7 @@ function init(_server, _runtime) {
                         delete tosend.smtp.password;
                     }
                     // res.header("Access-Control-Allow-Origin", "*");
-                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");                    
+                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
                 } else {
                     res.status(404).end();
@@ -121,9 +121,9 @@ function init(_server, _runtime) {
                 } else if (req.body.params) {
                     const token = authJwt.getNewToken(req.headers)
                     if (token) {
-                        res.status(200).json({ 
+                        res.status(200).json({
                             message: 'tokenRefresh',
-                            token: token 
+                            token: token
                         });
                     } else {
                         res.end();

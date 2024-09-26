@@ -129,7 +129,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     onAddDeviceTag(device: Device) {
         let newTag = new Tag(Utils.getGUID(TAG_PREFIX));
         if (device.type === DeviceType.OPCUA) {
-            this.tagPropertyService.editTagPropertyOpcUa(device).subscribe(result => {
+            this.tagPropertyService.addTagsOpcUa(device).subscribe(result => {
                 this.loadDevicesTags();
             });
         } else if (device.type === DeviceType.BACnet) {

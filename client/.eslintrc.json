@@ -22,6 +22,7 @@
                 "max-len": "off",
                 "@angular-eslint/no-output-on-prefix": "off",
                 "@typescript-eslint/member-ordering": "off",
+                "@typescript-eslint/member-delimiter-style": "off",
                 "@angular-eslint/no-input-rename": "off",
                 "@angular-eslint/no-output-rename": "off",
                 "@typescript-eslint/naming-convention": "off",

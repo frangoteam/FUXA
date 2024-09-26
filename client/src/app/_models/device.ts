@@ -95,6 +95,8 @@ export class Tag {
     sysType: TagSystemType;
     /** Description */
     description?: string;
+    /** Deadband to set changed value */
+    deadband?: TagDeadband;
 
     constructor(_id: string) {
         this.id = _id;
@@ -140,6 +142,15 @@ export class TagDaq {
         this.interval = _interval;
         this.restored = _restored;
     }
+}
+
+export interface TagDeadband {
+    value: number;
+    mode: TagDeadbandModeType;
+}
+
+export enum TagDeadbandModeType {
+    absolute = 'absolute'
 }
 
 export class DeviceNetProperty {
@@ -253,6 +264,24 @@ export enum ModbusTagType {
     Int32MLE = 'Int32MLE',
     UInt32MLE = 'UInt32MLE'
     // String = 'String'
+}
+
+export enum OpcUaTagType {
+    Boolean = 'Boolean',
+    SByte = 'SByte',
+    Byte = 'Byte',
+    Int16 = 'Int16',
+    UInt16 = 'UInt16',
+    Int32 = 'Int32',
+    UInt32 = 'UInt32',
+    Int64 = 'Int64',
+    UInt64 = 'UInt64',
+    Float = 'Float',
+    Double = 'Double',
+    String = 'String',
+    DateTime = 'DateTime',
+    Guid = 'Guid',
+    ByteString = 'ByteString'
 }
 
 export enum ModbusOptionType {

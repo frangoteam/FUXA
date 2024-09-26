@@ -168,6 +168,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onClose() {
+        this.onShowAlarms();
         this.currentShowMode = 'collapse';
         this.showMode.emit('close');
         this.stopAskAlarmsValues();

@@ -65,6 +65,7 @@
     "dlg.layout-lbl-margin-left": "Margin left",
     "dlg.layout-lbl-margin-right": "Margin right",
     "dlg.layout-lbl-login-info": "Login info",
+    "dlg.layout-lbl-custom-styles": "Custom styles",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -919,6 +920,7 @@
     "device.tag-daq-restored": "To restore",
 
     "device.tag-format": "Format digits (2 = #.##)",
+    "device.tag-deadband": "Deadband",
     "device.tag-scale": "Scale Mode / Convertion",
     "device.tag-scale-mode-undefined": "No Scaling",
     "device.tag-scale-mode-undefined-tooltip": "Tag Value",

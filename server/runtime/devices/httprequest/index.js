@@ -75,7 +75,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Read values in polling mode 
+     * Read values in polling mode
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
@@ -96,7 +96,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                         this.addDaq(varsValueChanged, data.name, data.id);
                     }
                     if (lastStatus !== 'connect-ok') {
-                        _emitStatus('connect-ok');                    
+                        _emitStatus('connect-ok');
                     }
                 }
                 _checkWorking(false);
@@ -127,7 +127,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the timestamp of last read tag operation on polling
-     * @returns 
+     * @returns
      */
      this.lastReadTimestamp = () => {
         return lastTimestampValue;
@@ -147,13 +147,13 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                 if (!requestItemsMap[address]) {
                     requestItemsMap[address] = [data.tags[id]];
                 } else {
-                    requestItemsMap[address].push(data.tags[id]);   
+                    requestItemsMap[address].push(data.tags[id]);
                 }
             }
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
             logger.error(`'${data.name}' load error! ${err}`);
-        }            
+        }
     }
 
     /**
@@ -230,7 +230,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the Daq settings of Tag
-     * @returns 
+     * @returns
      */
     this.getTagDaqSettings = (tagId) => {
         return data.tags[tagId] ? data.tags[tagId].daq : null;
@@ -238,7 +238,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 
     /**
      * Set Daq settings of Tag
-     * @returns 
+     * @returns
      */
     this.setTagDaqSettings = (tagId, settings) => {
         if (data.tags[tagId]) {
@@ -286,7 +286,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     /**
      * Update the Tags values read
      * For WebAPI NotOwn: first convert the request data to a flat struct
-     * @param {*} reqdata 
+     * @param {*} reqdata
      */
     var _updateVarsValue = async (reqdata) => {
         const timestamp = new Date().getTime();
@@ -304,7 +304,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                     requestItemsMap[id] = [reqdata[i]];
                     reqdata[i].changed = varsValue[id] && reqdata[i].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(reqdata[i].value)) {
-                        reqdata[i].value = await deviceUtils.tagValueCompose(reqdata[i].value, data.tags[id]);
+                        reqdata[i].value = await deviceUtils.tagValueCompose(reqdata[i].value, varsValue[id] ? varsValue[id].value : null, data.tags[id]);
                         reqdata[i].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
                             changed[id] = reqdata[i];
@@ -341,12 +341,12 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                 for (var id in result) {
                     result[id].changed = varsValue[id] && result[id].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(result[id].value)) {
-                        result[id].value = await deviceUtils.tagValueCompose(result[id].value, result[id].tagref, runtime);
+                        result[id].value = await deviceUtils.tagValueCompose(result[id].value, varsValue[id] ? varsValue[id].value : null, result[id].tagref, runtime);
                         result[id].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(result[id], timestamp)) {
                             changed[id] = result[id];
                         }
-                    }               
+                    }
                     result[id].changed = false;
                     varsValue[id] = result[id];
                 }
@@ -358,7 +358,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 
     /**
      * Emit the webapi connection status
-     * @param {*} status 
+     * @param {*} status
      */
     var _emitStatus = function (status) {
         lastStatus = status;
@@ -367,7 +367,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 
     /**
      * Emit the webapi Tags values array { id: <name>, value: <value>, type: <type> }
-     * @param {*} values 
+     * @param {*} values
      */
     var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.id, values: values });
@@ -375,7 +375,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 
     /**
      * Used to manage the async connection and polling automation (that not overloading)
-     * @param {*} check 
+     * @param {*} check
      */
     var _checkWorking = function (check) {
         if (check && working) {
@@ -402,7 +402,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
      */
     var _parseValue = function (type, value) {
         if (type === 'number') {
-            return parseFloat(value); 
+            return parseFloat(value);
         } else if (type === 'boolean') {
             return Boolean(value);
         } else if (type === 'string') {
@@ -437,18 +437,18 @@ function dataToFlat(data, property) {
             for(var key in nodes) {
                 let tres = parseTree(nodes[key], '[' + idx++ + ']', nodeId);
                 Object.keys(tres).forEach( key => {
-                    result[key] = tres[key]; 
+                    result[key] = tres[key];
                 });
             }
         } else if (nodes && typeof nodes === 'object') {
             for(var key in nodes) {
                 let tres = parseTree(nodes[key], key, nodeId);
                 Object.keys(tres).forEach( key => {
-                    result[key] = tres[key]; 
+                    result[key] = tres[key];
                 });
             }
         } else {
-            result[nodeId] = nodes; 
+            result[nodeId] = nodes;
         }
         return result;
     }

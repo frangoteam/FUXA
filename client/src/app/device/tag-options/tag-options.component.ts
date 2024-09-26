@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { FuxaServer, TagDaq, TagScale, TagScaleModeType } from '../../_models/device';
+import { FuxaServer, TagDaq, TagDeadband, TagDeadbandModeType, TagScale, TagScaleModeType } from '../../_models/device';
 import { Utils} from '../../_helpers/utils';
 import { ProjectService } from '../../_services/project.service';
 import { Subscription } from 'rxjs';
@@ -44,6 +44,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             enabled: [false],
             restored: [false],
             format: [null, [Validators.min(0)]],
+            deadband: null,
             scaleMode: 'undefined',
             rawLow: null,
             rawHigh: null,
@@ -72,6 +73,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             let interval = { value: null, valid: true };
             let restored = { value: null, valid: true };
             let format = { value: null, valid: true };
+            let deadband = { value: null, valid: true };
             let scaleMode = { value: null, valid: true };
             let rawLow = { value: null, valid: true };
             let rawHigh = { value: null, valid: true };
@@ -111,6 +113,11 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     format.value = this.data.tags[i].format;
                 } else if (format.value !== this.data.tags[i].format) {
                     format.valid = false;
+                }
+                if (!deadband.value) {
+                    deadband.value = this.data.tags[i].deadband?.value;
+                } else if (deadband.value !== this.data.tags[i].deadband?.value) {
+                    deadband.valid = false;
                 }
                 if (!scaleMode.value) {
                     scaleMode.value = this.data.tags[i].scale?.mode;
@@ -156,6 +163,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             }
             if (format.valid && format.value) {
                 values = {...values, format: format.value};
+            }
+            if (deadband.valid && deadband.value) {
+                values = {...values, deadband: deadband.value };
             }
             if (scaleMode.valid && scaleMode.value) {
                 values = {...values,
@@ -242,6 +252,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 this.formGroup.value.restored,
             ),
             format: this.formGroup.value.format,
+            deadband: this.formGroup.value.deadband ? { value: this.formGroup.value.deadband, mode: TagDeadbandModeType.absolute } : undefined,
             scale: (this.formGroup.value.scaleMode !== 'undefined') ? {
                 mode: this.formGroup.value.scaleMode,
                 rawLow: this.formGroup.value.rawLow,
@@ -253,7 +264,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             scaleReadFunction: this.formGroup.value.scaleReadFunction,
             scaleReadParams: readParamsStr,
             scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
-            scaleWriteParams: writeParamsStr,
+            scaleWriteParams: writeParamsStr
         });
     }
 
@@ -358,6 +369,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
 export interface TagOptionType {
     daq: TagDaq;
     format: number;
+    deadband: TagDeadband;
     scale: TagScale;
     scaleReadFunction?: string;
     scaleReadParams?: string;

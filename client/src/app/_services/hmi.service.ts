@@ -302,7 +302,7 @@ export class HmiService {
      */
     public askDeviceValues() {
         if (this.socket) {
-            this.socket.emit(IoEventTypes.DEVICE_VALUES, 'get');
+            this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'get' });
         } else if (this.bridge) {
             this.bridge.getDeviceValues(null);
         }

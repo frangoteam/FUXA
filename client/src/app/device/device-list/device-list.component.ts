@@ -202,7 +202,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     addOpcTags() {
         if (this.deviceSelected.type === DeviceType.OPCUA) {
-            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, this.tagsMap).subscribe(result => {
+            this.tagPropertyService.addTagsOpcUa(this.deviceSelected, this.tagsMap).subscribe(result => {
                 this.bindToTable(this.deviceSelected.tags);
             });
             return;
@@ -253,7 +253,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
-            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
+            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
+            type === DeviceType.OPCUA) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -299,6 +300,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.OPCUA) {
+            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
     }
 
     editTagOptions(tags: Tag[]) {
@@ -312,6 +320,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 for (let i = 0; i < tags.length; i++) {
                     tags[i].daq = tagOption.daq;
                     tags[i].format = tagOption.format;
+                    tags[i].deadband = tagOption.deadband;
                     tags[i].scale = tagOption.scale;
                     tags[i].scaleReadFunction = tagOption.scaleReadFunction;
                     tags[i].scaleReadParams = tagOption.scaleReadParams;

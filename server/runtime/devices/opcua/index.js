@@ -59,16 +59,16 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                                             opts['securityPolicy'] = property.mode.securityPolicy;
                                         }
                                     }
-                                    client = opcua.OPCUAClient.create(opts);  
+                                    client = opcua.OPCUAClient.create(opts);
                                 }
                                 callback();
                             }).catch(function (err) {
                                 callback(err);
-                            });  
+                            });
                         } else {
                             callback();
                         }
-                    },                    
+                    },
                     // step 2 connect
                     function (callback) {
                         const endpoint = data.property.address;
@@ -87,7 +87,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                         });
                         client.on("backoff", (retry, delay) => {
                             logger.error(`'${data.name}' retry to connect! ${retry}`);
-                        });                        
+                        });
                     },
                     // step 3 create session
                     function (callback) {
@@ -168,30 +168,6 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
         return new Promise(function (resolve, reject) {
             // "RootFolder"
             if (the_session) {
-                const b = [{
-                    nodeId: nodeId,
-                    referenceTypeId: 'Organizes',
-                    includeSubtypes: true,
-                    browseDirection: opcua.BrowseDirection.Forward,
-                    resultMask: 0x3f
-
-                },
-                {
-                    nodeId: nodeId,
-                    referenceTypeId: 'Aggregates',
-                    includeSubtypes: true,
-                    browseDirection: opcua.BrowseDirection.Forward,
-                    resultMask: 0x3f
-
-                },
-                {
-                    nodeId: nodeId,
-                    referenceTypeId: 'HasSubtype',
-                    includeSubtypes: true,
-                    browseDirection: opcua.BrowseDirection.Forward,
-                    resultMask: 0x3f
-                }];
-
                 the_session.browse(nodeId, function (err, browseResult) {
                     if (!err) {
                         let opcNodes = [];
@@ -227,7 +203,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Browser the next children nodes after contipoint position
-     * @param {*} contipoint 
+     * @param {*} contipoint
      */
     var _browseNext = function (contipoint) {
         var opcNodes = [];
@@ -267,7 +243,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             });
         });
     }
-                 
+
     /**
      * Read node attribute
      */
@@ -434,11 +410,11 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
         this.addDaq = fnc;                          // Add the DAQ value to db history
     }
     this.addDaq = null;                             // Callback to add the DAQ value to db history
-    
+
 
     /**
      * Return the timestamp of last read tag operation on polling
-     * @returns 
+     * @returns
      */
      this.lastReadTimestamp = () => {
         return lastTimestampValue;
@@ -453,7 +429,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return the Daq settings of Tag
-     * @returns 
+     * @returns
      */
     this.getTagDaqSettings = (tagId) => {
         return data.tags[tagId] ? data.tags[tagId].daq : null;
@@ -461,7 +437,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Set Daq settings of Tag
-     * @returns 
+     * @returns
      */
     this.setTagDaqSettings = (tagId, settings) => {
         if (data.tags[tagId]) {
@@ -471,7 +447,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Disconnect the OPC UA client and close session if used
-     * @param {*} callback 
+     * @param {*} callback
      */
     var _disconnect = function (callback) {
         if (!the_session) {
@@ -516,7 +492,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     /**
      * Start the monitor by subsribe the Tags to check if value change
      * samplingInterval = 1000 msec.
-     * @param {*} callback 
+     * @param {*} callback
      */
     var _startMonitor = function () {
         return new Promise(async function (resolve, reject) {
@@ -548,7 +524,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     /**
      * Callback from monitor of changed Tag value
      * And set the changed value to local Tags
-     * @param {*} _nodeId 
+     * @param {*} _nodeId
      */
     var _monitorcallback = function (_nodeId) {
         var nodeId = _nodeId;
@@ -583,7 +559,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
-            data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id], runtime);
+            data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, varsValue[id] ? varsValue[id].value : null, data.tags[id], runtime);
             if (this.addDaq && !utils.isNullOrUndefined(data.tags[id].value) && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                 result[id] = data.tags[id];
             }
@@ -595,7 +571,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * To manage a overloading connection
-     * @param {*} check 
+     * @param {*} check
      */
     var _checkWorking = function (check) {
         if (check && working) {
@@ -610,7 +586,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Emit Tags in application
-     * @param {*} values 
+     * @param {*} values
      */
     var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.id, values: values });
@@ -618,7 +594,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Emit status in application
-     * @param {*} status 
+     * @param {*} status
      */
     var _emitStatus = function (status) {
         lastStatus = status;
@@ -627,8 +603,8 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Return formatted Tag attribute
-     * @param {*} attribute 
-     * @param {*} dataValue 
+     * @param {*} attribute
+     * @param {*} dataValue
      */
     var _attrToObject = function (attribute, dataValue) {
 
@@ -686,7 +662,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Convert OPCUA data type from string
-     * @param {*} type 
+     * @param {*} type
      */
     var _toDataType = function (type) {
         if (type === 'Boolean') {
@@ -724,8 +700,8 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 
     /**
      * Convert value from string depending of type
-     * @param {*} type 
-     * @param {*} value 
+     * @param {*} type
+     * @param {*} value
      */
     var _toValue = function (type, value) {
         switch (type) {
@@ -757,18 +733,18 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
  */
 function getEndPoints(endpointUrl) {
     return new Promise(function (resolve, reject) {
-        if (loadOpcUALib()) { 
+        if (loadOpcUALib()) {
             let opts = { connectionStrategy: { maxRetry: 1 } };
-            let client = opcua.OPCUAClient.create(opts);  
+            let client = opcua.OPCUAClient.create(opts);
             try {
                 client.connect(endpointUrl, function (err) {
                     if (err) {
                         reject('getendpoints-connect-error: ' + err.message);
                     } else {
                         const endpoints = client.getEndpoints().then(endpoints => {
-                            const reducedEndpoints = endpoints.map(endpoint => ({ 
-                                endpointUrl: endpoint.endpointUrl, 
-                                securityMode: endpoint.securityMode.toString(), 
+                            const reducedEndpoints = endpoints.map(endpoint => ({
+                                endpointUrl: endpoint.endpointUrl,
+                                securityMode: endpoint.securityMode.toString(),
                                 securityPolicy: endpoint.securityPolicyUri.toString(),
                             }));
                             resolve( reducedEndpoints);
