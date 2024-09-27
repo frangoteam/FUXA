@@ -1,8 +1,8 @@
-![fuxa logo](/client/src/favicon.ico) 
+![fuxa logo](/client/src/favicon.ico)
 # FUXA
 FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.
 
-![fuxa editor](/screenshot/fuxa-editor.png) 
+![fuxa editor](/screenshot/fuxa-editor.png)
 
 ![fuxa ani](/screenshot/fuxa-ani.gif)
 
@@ -120,6 +120,8 @@ ng build --configuration=production
 Any contributions you make are greatly appreciated.
 If you identify any errors, or have an idea for an improvement, please open an [issue](/../../issues).
 But before filing a new issue, please look through already existing issues. Search open and closed issues first.
+
+Non-code contributions are also highly appreciated, such as improving the documentation or promoting FUXA on social media.
 
 ### Pull-Requests
 If you want to raise a pull-request with a new feature, or a refactoring of existing code please first open an issue explaining the problem.

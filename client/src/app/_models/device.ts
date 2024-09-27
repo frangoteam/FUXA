@@ -95,6 +95,8 @@ export class Tag {
     sysType: TagSystemType;
     /** Description */
     description?: string;
+    /** Deadband to set changed value */
+    deadband?: TagDeadband;
 
     constructor(_id: string) {
         this.id = _id;
@@ -140,6 +142,15 @@ export class TagDaq {
         this.interval = _interval;
         this.restored = _restored;
     }
+}
+
+export interface TagDeadband {
+    value: number;
+    mode: TagDeadbandModeType;
+}
+
+export enum TagDeadbandModeType {
+    absolute = 'absolute'
 }
 
 export class DeviceNetProperty {

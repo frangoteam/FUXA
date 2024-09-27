@@ -2,7 +2,7 @@
 module.exports = {
     // Version to manage update
     version: 1.1,
-    
+
     // Standard language (editor)
     language: 'en',
 
@@ -14,16 +14,21 @@ module.exports = {
     logDir: '_logs',
 
     // Used to storage Database like DAQ, User
-    // Default: '_db'    
+    // Default: '_db'
     dbDir: '_db',
 
     // DAQ Enabled
-    // Default: true    
+    // Default: true
     daqEnabled: true,
 
     // DAQ DB to Tokenizer the file and save in archive
     // Default: 24 Hours (1 Day), 0 is disabled only 1 DB file
     daqTokenizer: 24,
+
+    // Tags value to be broadcast,
+    // if false will be send to frontend only the tags bind to current visualized views
+    // if true all configured tags will be send to frontend
+    broadcastAll: false,
 
     // By default, server accepts connections on all IPv4 interfaces.
     // To listen on all IPv6 addresses, set uiHost to "::",
@@ -62,5 +67,5 @@ module.exports = {
 
     // Enable GPIO in Raspberry
     // To enable only by Raspberry Host
-    
+
 }

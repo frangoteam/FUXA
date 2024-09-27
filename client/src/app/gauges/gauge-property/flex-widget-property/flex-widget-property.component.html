@@ -1,0 +1,18 @@
+<div class="container">
+    <div *ngFor="let varRef of property.varsToBind" class="var-ref">
+        <div class="my-form-field">
+            <input type="text"
+                   [value]="varRef.originalName"
+                   [readonly]="true">
+        </div>
+        <span> - </span>
+        <div class="inbk">
+            <flex-variable
+                    [data]="dataDevices"
+                    [value]="varRef"
+                    [withStaticValue]="true"
+                    [withBitmask]="false">
+            </flex-variable>
+        </div>
+    </div>
+</div>

@@ -320,6 +320,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 for (let i = 0; i < tags.length; i++) {
                     tags[i].daq = tagOption.daq;
                     tags[i].format = tagOption.format;
+                    tags[i].deadband = tagOption.deadband;
                     tags[i].scale = tagOption.scale;
                     tags[i].scaleReadFunction = tagOption.scaleReadFunction;
                     tags[i].scaleReadParams = tagOption.scaleReadParams;

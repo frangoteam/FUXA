@@ -2,7 +2,7 @@
     <h1 mat-dialog-title style="display:inline-block; cursor:move" mat-dialog-draggable>{{'dlg.layout-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <div class="dialog-mdsd-content content">
-        <mat-tab-group>
+        <mat-tab-group (selectedTabChange)="onTabChanged($event)">
             <mat-tab label="{{'dlg.layout-general' | translate}}">
                 <div class="container-split-ver mt25">
                     <div>
@@ -361,6 +361,11 @@
                         </div>
                     </div>
                 </div>
+            </mat-tab>
+            <mat-tab label="{{'dlg.layout-lbl-custom-styles' | translate}}">
+                <div class="tab-container">
+                    <ngx-codemirror #CodeMirror [(ngModel)]="data.layout.customStyles" [options]="codeMirrorOptions" ></ngx-codemirror>
+                </div>                    
             </mat-tab>
         </mat-tab-group>
     </div>

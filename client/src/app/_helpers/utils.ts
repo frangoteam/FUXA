@@ -57,17 +57,17 @@ export class Utils {
 
     static findElementByIdRecursive(root: HTMLElement, id: string): HTMLElement | null {
         if (!root) {
-          return null;
+            return null;
         }
         if (root.id === id) {
-          return root;
+            return root;
         }
         for (let i = 0; i < root.children.length; i++) {
-          const child = root.children[i] as HTMLElement;
-          const foundElement = this.findElementByIdRecursive(child, id);
-          if (foundElement) {
-            return foundElement;
-          }
+            const child = root.children[i] as HTMLElement;
+            const foundElement = this.findElementByIdRecursive(child, id);
+            if (foundElement) {
+                return foundElement;
+            }
         }
         return null;
     }
@@ -77,16 +77,16 @@ export class Utils {
         function search(jsonData: any): void {
             if (Array.isArray(jsonData)) {
                 for (const item of jsonData) {
-                  search(item);
+                    search(item);
                 }
             } else if (typeof jsonData === 'object' && jsonData !== null) {
                 if (jsonData.hasOwnProperty(attributeName)) {
                     result.push(jsonData[attributeName]);
                 }
                 for (const key in jsonData) {
-                  search(jsonData[key]);
+                    search(jsonData[key]);
                 }
-              }
+            }
         }
         search(jsonData);
         return result;
@@ -105,9 +105,19 @@ export class Utils {
                 for (const key in jsonData) {
                     change(jsonData[key]);
                 }
-              }
+            }
         }
         change(jsonData);
+    }
+
+    static replaceStringInObject<T>(obj: T,
+                                 searchKey: string,
+                                 replaceKey: string): T {
+        let jsonString = JSON.stringify(obj);
+        const regex = new RegExp(searchKey, 'g');
+        jsonString = jsonString.replace(regex, replaceKey);
+        const modifiedObject = JSON.parse(jsonString);
+        return modifiedObject;
     }
 
     static getInTreeIdAndType(element: Element): any[] {
@@ -155,12 +165,12 @@ export class Utils {
         return prefix + uuid;
     };
 
-    static getShortGUID(prefix: string = ''): string {
+    static getShortGUID(prefix: string = '', splitter: string = '-'): string {
         var uuid = '', i, random;
         for (i = 0; i < 12; i++) {
             random = Math.random() * 16 | 0;
             if (i == 8) {
-                uuid += '-';
+                uuid += splitter;
             }
             uuid += (i == 4 ? 4 : (i == 6 ? (random & 3 | 8) : random)).toString(12);
         }
@@ -491,6 +501,29 @@ export class Utils {
         });
         return result;
     };
+
+    static mergeArray(arrArray: any[][], key: string): any[] {
+        const mergedMap = new Map<string, any>();
+        if (arrArray) {
+            for (const arr of arrArray) {
+                if (arr) {
+                    for (const obj of arr) {
+                        const keyValue = obj[key];
+
+                        if (keyValue) {
+                            // Se la chiave esiste già, sovrascrivi l'oggetto esistente
+                            mergedMap.set(keyValue, { ...mergedMap.get(keyValue), ...obj });
+                        } else {
+                            console.warn(`L'oggetto ${JSON.stringify(obj)} non ha la chiave ${key}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Converte la mappa in un array
+        return Array.from(mergedMap.values());
+    }
 
     static copyToClipboard(text) {
         // Create a temporary textarea element

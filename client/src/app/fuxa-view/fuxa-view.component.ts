@@ -421,6 +421,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
+                    ev.preventDefault();
                 });
             }
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
@@ -430,6 +431,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, mouseDownEvents);
+                    ev.preventDefault();
                 });
             }
             let mouseUpEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
@@ -439,6 +441,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
                 svgele.touchend(function(ev) {
                     self.runEvents(self, ga, ev, mouseUpEvents);
+                    ev.preventDefault();
                 });
             }
             let mouseOverEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseover);
@@ -698,7 +701,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
-            this.loadHmi(view);
+            this.loadHmi(view, true);
             if (param.scaleMode) {
                 Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
             }
@@ -909,6 +912,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         result[item.property?.variableId] = ctrl.getValue();
                     }
                 }
+            }
+        });
+        this.variablesMapping?.forEach(mappedVariable => {
+            if (placeholder.indexOf(mappedVariable?.from?.variableId) !== -1 && mappedVariable?.to?.variableId) {
+                result[mappedVariable.from.variableId] = mappedVariable.to.variableId;
             }
         });
         return result;
