@@ -35,35 +35,49 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
     }
 
     static getDialogType(): GaugeDialogType {
-        return GaugeDialogType.MinMax;
+        return GaugeDialogType.Range;
     }
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
-            if (svgele.node && svgele.node.children && svgele.node.children.length === 3 && ga.property && ga.property.ranges.length > 0) {
-                let gap: GaugeRangeProperty = ga.property.ranges[0];
-                let g = svgele.node.children[0];
-                let val = parseFloat(sig.value);
+            if (svgele.node?.children?.length === 3) {
+                let value = parseFloat(sig.value);
+                const min = ga.property?.ranges?.reduce((lastMin, item) => item.min < lastMin.min ? item : lastMin,
+                    ga.property?.ranges?.length ? ga.property.ranges[0] : undefined)?.min ?? 0;
+                const max = ga.property?.ranges?.reduce((lastMax, item) => item.max > lastMax.max ? item : lastMax,
+                    ga.property?.ranges?.length ? ga.property.ranges[0] : undefined)?.max ?? 100;
+                const gap = <GaugeRangeProperty>ga.property?.ranges?.find(item => value >= item.min && value <= item.max);
                 let rectBase = Utils.searchTreeStartWith(svgele.node, this.prefixA);
                 let heightBase = parseFloat(rectBase.getAttribute('height'));
                 let yBase = parseFloat(rectBase.getAttribute('y'));
                 let rect = Utils.searchTreeStartWith(svgele.node, this.prefixB);
                 if (rectBase && rect) {
-                    if (val > gap.max) {val = gap.max;}
-                    if (val < gap.min) {val = gap.min;}
-                    let k = (heightBase - 0) / (gap.max - gap.min);
-                    let vtoy = k * (val - gap.min);
+                    if (value > max) { value = max; }
+                    if (value < min) { value = min; }
+                    let k = (heightBase - 0) / (max - min);
+                    let vtoy = gap ? k * (value - min) : 0;
                     if (!Number.isNaN(vtoy)) {
                         rect.setAttribute('y', yBase + heightBase - vtoy);
                         rect.setAttribute('height', vtoy);
-                        if (gap.style[1]) {
+                        if (gap?.color) {
+                            rect.setAttribute('fill', gap.color);
+                        }
+                        if (gap?.stroke) {
+                            rect.setAttribute('stroke', gap.stroke);
+                        }
+                        if (gap?.text) {
                             let htmlValue = Utils.searchTreeStartWith(svgele.node, this.prefixValue);
                             if (htmlValue) {
-                                htmlValue.innerHTML = val;
+                                htmlValue.innerHTML = value;
                                 if (gap.text) {
                                     htmlValue.innerHTML += ' ' + gap.text;
                                 }
                                 htmlValue.style.top = (heightBase - vtoy - 7).toString() + 'px';
+                            }
+                        } else {
+                            let htmlValue = Utils.searchTreeStartWith(svgele.node, this.prefixValue);
+                            if (htmlValue) {
+                                htmlValue.innerHTML += 'ER';
                             }
                         }
                     }
@@ -88,7 +102,7 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
                 ip.color = '#3F4964';
                 ga.property.ranges = [ip];
             }
-            if (ga.property.ranges.length > 0) {
+            if (ga.property.ranges?.length > 0) {
                 let gap: GaugeRangeProperty = ga.property.ranges[0];
                 // label min
                 let htmlLabel = Utils.searchTreeStartWith(ele, this.prefixMin);
@@ -151,5 +165,9 @@ export class GaugeProgressComponent extends GaugeBaseComponent {
 
     static getDefaultValue() {
         return { color: this.barColor };
+    }
+
+    static getMinByAttribute(arr, attr) {
+        return arr?.reduce((min, obj) => obj[attr] < min[attr] ? obj : min);
     }
 }
