@@ -131,8 +131,8 @@ module.exports = {
                 } catch (error) {
                     res.status(400).json({ error: "error", message: error});
                     runtime.logger.error("api get getTagValue: " + error);
-                }                
-            }            
+                }
+            }
         });
 
         /**
@@ -151,21 +151,21 @@ module.exports = {
                         var errors = '';
                         for (const tag of req.body.tags) {
                             try {
-                                if (!runtime.devices.setTagValue(tag.id, tag.value)) {
-                                    errors += `${tag.id}; `
+                                if (!await runtime.devices.setTagValue(tag.id, tag.value)) {
+                                    errors += `${tag.id} not found; `
                                 }
                             } catch (err) {
                                 errors += `${tag.id}: ${err}`;
                             }
                         }
                         if (errors) {
-                            res.status(400).json({ error: "not_found", message: 'tag id not found: ' + errors});
-                            runtime.logger.error("api post setTagValue: " + 'id not found!' + errors);
+                            res.status(400).json({ error: "not_found", message: 'setTagValue Failed: ' + errors});
+                            runtime.logger.error("api post setTagValue Failed:" + errors);
                         } else {
                             res.end();
                         }
                     } else {
-                        res.status(400).json({ error: "not_found", message: 'tag id not found!'});
+                        res.status(400).json({ error: "not_found", message: 'no tags to set!'});
                         runtime.logger.error("api post setTagValue: " + 'id not found!');
                     }
                 } catch (error) {
