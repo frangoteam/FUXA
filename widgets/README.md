@@ -16,7 +16,7 @@
     7. Click Contribute 
     8. Open a Pull Request
 ```
-Please Include a description in the How to Use section of the SVG file how your SVG control/indicator/dynamicSVG works and how to use it in Fuxa
+Please Include a description in the How to Use section of the SVG file, how your SVG control/indicator/dynamicSVG works and how to use it in Fuxa
 
 For more details on building SVG widgets and using them please see the Wiki
 
