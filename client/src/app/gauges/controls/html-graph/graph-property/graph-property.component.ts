@@ -49,9 +49,6 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.checkInitProperty();
         if (this.data.settings.type.endsWith('bar')) {
-            Object.keys(this.lastRangeType).forEach(key => {
-                this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
-            });
             Object.keys(this.dateGroupType).forEach(key => {
                 this.translateService.get(this.dateGroupType[key]).subscribe((txt: string) => { this.dateGroupType[key] = txt; });
             });
@@ -112,8 +109,8 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
                     this.options.dateGroup = null;
                 } else {
                     this.options.offline = true;
-                    this.options.lastRange = <GraphRangeType>Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d);
-                    this.options.dateGroup = <GraphDateGroupType>Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
+                    this.options.lastRange = this.options.lastRange ?? GraphRangeType.last1d;
+                    this.options.dateGroup = this.options.dateGroup ?? GraphDateGroupType.hours;
                 }
             }
         }
