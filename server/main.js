@@ -98,6 +98,7 @@ try {
     settings.environment = process.env.NODE_ENV || 'prod';
     settings.uploadFileDir = '_upload_files';
     settings.imagesFileDir = path.resolve(rootDir, '_images');
+    settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
 
     // check new settings from default and merge if not defined
@@ -202,6 +203,10 @@ if (!fs.existsSync(settings.uploadFileDir)) {
 if (!fs.existsSync(settings.imagesFileDir)) {
     fs.mkdirSync(settings.imagesFileDir);
 }
+// Check widgets resources folder
+if (!fs.existsSync(settings.widgetsFileDir)) {
+    fs.mkdirSync(settings.widgetsFileDir);
+}
 
 // Server settings
 if (settings.https) {
@@ -278,6 +283,7 @@ app.use('/users', express.static(settings.httpStatic));
 app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
+app.use('/_widgets', express.static(settings.widgetsFileDir));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', {

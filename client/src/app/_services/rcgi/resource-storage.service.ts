@@ -46,6 +46,8 @@ export abstract class ResourceStorageService {
 
     public abstract downloadFile(fileName: string, type: CommanType): Observable<Blob>;
 
+    public abstract endPointConfig: string;
+
     public abstract getTagsValues(query: string[]): Observable<any>;
 
     public abstract runSysFunction(functionName: string, params?: any): Observable<any>;

@@ -192,6 +192,7 @@ import { EditorViewsListComponent } from './editor/editor-views-list/editor-view
 import { SvgUtils } from './_helpers/svg-utils';
 import { FlexWidgetPropertyComponent } from './gauges/gauge-property/flex-widget-property/flex-widget-property.component';
 import { GraphSourceEditComponent } from './editor/graph-config/graph-source-edit/graph-source-edit.component';
+import { LibWidgetsComponent } from './resources/lib-widgets/lib-widgets.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -335,6 +336,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DataTableComponent,
         RangeNumberComponent,
         LibImagesComponent,
+        LibWidgetsComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
         ReportItemAlarmsComponent,

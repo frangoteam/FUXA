@@ -4,7 +4,8 @@ export class Resources {
 }
 
 export enum ResourceType {
-    images = 'images'
+    images = 'images',
+    widgets = 'widgets'
 }
 
 export class ResourceGroup {
