@@ -1,4 +1,6 @@
 **How to use**
+
+The widgets will be displayed in the editor panel and can be used from there directly, or download the SVG from here make your edits and follow the steps:
 ```
     1. Select desired SVG image
     2. Click download Icon
