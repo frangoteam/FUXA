@@ -157,7 +157,7 @@ export class SvgUtils {
 
         // replace global variable with init value
         variableDefined.forEach(variable => {
-            if (!Utils.isNullOrUndefined(variable.variableValue)) {
+            if (!Utils.isNullOrUndefined(variable.variableValue) && SvgUtils.validateVariable(variable)) {
                 const varRegex = new RegExp(`(let|var|const)\\s+${variable.name}\\s*=\\s*[^;]+;`);
                 gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${variable.variableValue};`);
             }
@@ -173,6 +173,13 @@ export class SvgUtils {
                 svgElement.children[i].setAttribute('width', boxSize.width.toString());
             }
         }
+    }
+
+    static validateVariable(variable: WidgetPropertyVariable): boolean {
+        if (variable.type === 'number' && !Utils.isNumeric(variable.variableValue)) {
+            return false;
+        }
+        return true;
     }
 }
 
