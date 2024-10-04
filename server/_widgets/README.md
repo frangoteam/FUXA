@@ -1,4 +1,6 @@
 **How to use**
+
+The widgets will be displayed in the editor panel and can be used from there directly, or download the SVG from here make your edits and follow the steps:
 ```
     1. Select desired SVG image
     2. Click download Icon
@@ -8,7 +10,7 @@
 **How to contribute**
 ```
     1. Fork the Project
-    2. In your Fork enter FUXA/widgets/(what type your SVG is)
+    2. In your Fork enter FUXA/server/_widgets/(what type your SVG is, control, indicator, dynamicSVG)
     3. Add File Arrow, Upload file
     4. Select your SVG and name the commit
     5. Commit the changes
