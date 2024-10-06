@@ -860,6 +860,7 @@
     "device.property-odbc-result": "Result of tables found",
     "device.not-odbc-result": "Database tables result",
     "device.property-socket-reuse": "Socket Reuse",
+    "device.property-socket-serial": "Socket Serial",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",

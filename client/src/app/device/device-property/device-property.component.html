@@ -188,15 +188,19 @@
                     <div class="mb10 block">
                     <div class="my-form-field inbk" style="margin-bottom: 10px;">
                         <span>{{'device.property-connection-options' | translate}}</span>
-                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 262px">
+                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 200px">
                             <mat-option *ngFor="let value of modbusTcpOptionType" [value]="value">
                                 {{ value }}
                             </mat-option>
                         </mat-select>
                     </div>
-                    <div class="my-form-field inbk" style="margin-bottom: 10px;text-align: center;width: 80px;">
+                    <div  class="my-form-field inbk" style="margin-bottom: 10px;text-align: center;width: 80px;">
                         <span>{{'device.property-socket-reuse' | translate}}</span>
                         <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.socketReuse"></mat-slide-toggle>
+                    </div>
+                    <div class="my-form-field inbk" style="margin-bottom: 10px;text-align: center;width: 80px;">
+                        <span>{{'device.property-socket-serial' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.socketSerial"></mat-slide-toggle>
                     </div>
                     </div>
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
