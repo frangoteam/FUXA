@@ -12,6 +12,7 @@ import { CommanType } from '../command.service';
 @Injectable()
 export class ResDemoService implements ResourceStorageService {
 
+    public endPointConfig = '';
     public onRefreshProject: () => boolean;
 
     constructor(private http: HttpClient) {

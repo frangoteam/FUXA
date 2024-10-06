@@ -29,7 +29,7 @@ module.exports = {
         });
 
         /**
-         * GET Server logs folder content
+         * GET Server images folder content
          */
         resourcesApp.get('/api/resources/images', secureFnc, function (req, res) {
             var groups = checkGroupsFnc(req);
@@ -96,6 +96,43 @@ module.exports = {
                         res.status(400).json({ error: "unexpected_error", message: err.toString() });
                     }
                     runtime.logger.error("api get resources/generateImage: " + err.message);
+                }
+            }
+        });
+
+        /**
+         * GET Server widgets folder content
+         */
+        resourcesApp.get('/api/resources/widgets', secureFnc, function (req, res) {
+            var groups = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get resources/widgets: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api get resources/widgets: Unauthorized!");
+            } else {
+                try {
+                    var result = {...req.query, ...{ groups: [] }};
+                    var resourcesDirs = getDirectories(runtime.settings.widgetsFileDir);
+                    for (var i = 0; i < resourcesDirs.length; i++) {
+                        var group = { name: resourcesDirs[i], items: [] };
+                        var dirPath = path.resolve(runtime.settings.widgetsFileDir, resourcesDirs[i]);
+                        var wwwSubDir =  path.join('_widgets', resourcesDirs[i]);
+                        var files =  getFiles(dirPath, ['.svg']);
+                        for (var x = 0; x < files.length; x++) {
+                            var filename = files[x].replace(/\.[^\/.]+$/, '');
+                            group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
+                        }
+                        result.groups.push(group);
+                    }
+                    res.json(result);
+                } catch (err) {
+                    if (err.code) {
+                        res.status(400).json({ error: err.code, message: err.message });
+                    } else {
+                        res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                    }
+                    runtime.logger.error("api get resources/widgets: " + err.message);
                 }
             }
         });

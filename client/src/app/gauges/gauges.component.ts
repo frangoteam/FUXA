@@ -201,6 +201,8 @@ export class GaugesManager {
             let gauge = HtmlTableComponent.detectChange(ga, res, ref);
             this.setTablePropety(gauge, ga.property);
             this.mapGauges[ga.id] = gauge;
+        } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
+            HtmlImageComponent.detectChange(ga, true);
         }
         return false;
     }

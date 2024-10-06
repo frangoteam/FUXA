@@ -9,6 +9,7 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const net = require("net");
 const TOKEN_LIMIT = 100;
+const Mutex = require("async-mutex").Mutex;
 
 function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
@@ -114,6 +115,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
+        let socketRelease;
+        try {
+            if (data.property.socketReuse && runtime.socketMutex.has(data.property.address)) {
+                socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
+            }
+            await this._polling()
+        } catch (err) {
+            logger.error(`'${data.name}' polling! ${err}`);
+        } finally {
+            if (!utils.isNullOrUndefined(socketRelease)) {
+                socketRelease()
+            }
+        }
+    }
+     this._polling = async function () {
         if (_checkWorking(true)) {
             var readVarsfnc = [];
             if (!data.property.options) {
@@ -304,11 +320,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     parameters = [...parameters, ...extraParamsWithValues];
 
                 }
-                const script = {
-                    id: data.tags[sigid].scaleWriteFunction,
+                const script = { id: data.tags[sigid].scaleWriteFunction,
                     name: null,
-                    parameters
-                };
+                    parameters};
                 try {
                     const bufVal = await runtime.scriptsMgr.runScript(script);
                     if (Array.isArray(bufVal)) {
@@ -342,7 +356,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
                 _checkWorking(true);
             }
+            let socketRelease;
             try {
+                if (type === ModbusTypes.TCP && data.property.socketReuse && runtime.socketMutex.has(data.property.address)) {
+                    socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
+                }
                 await _writeMemory(parseInt(memaddr), offset, val).then(result => {
                     logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
                 }, reason => {
@@ -356,7 +374,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     _checkWorking(false);
                 }
             } catch (err) {
-                console.log(err);
+                logger.error(`'${data.name}' setValue error! ${err}`);
+            } finally {
+                if (!utils.isNullOrUndefined(socketRelease)) {
+                    socketRelease();
+                }
             }
             return true;
         } else {
@@ -443,6 +465,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     } else {
                         socket = new net.Socket();
                         runtime.socketPool.set(data.property.address, socket);
+                        //init read mutex
+                        if (data.property.socketReuse === ModbusReuseModeType.ReuseSerial) {
+                            runtime.socketMutex.set(data.property.address, new Mutex())
+                        }
                     }
                     var openFlag = socket.readyState === "opening" || socket.readyState === "open";
                     if (!openFlag) {
@@ -787,6 +813,10 @@ const ModbusOptionType = {
     UdpPort: 'UdpPort',
     TcpRTUBufferedPort: 'TcpRTUBufferedPort',
     TelnetPort: 'TelnetPort'
+}
+const ModbusReuseModeType = {
+    Reuse: 'Reuse',
+    ReuseSerial: 'ReuseSerial',
 }
 
 module.exports = {

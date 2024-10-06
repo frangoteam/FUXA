@@ -186,18 +186,23 @@
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
                     <div class="mb10 block">
-                    <div class="my-form-field inbk" style="margin-bottom: 10px;">
-                        <span>{{'device.property-connection-options' | translate}}</span>
-                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 262px">
-                            <mat-option *ngFor="let value of modbusTcpOptionType" [value]="value">
-                                {{ value }}
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <div class="my-form-field inbk" style="margin-bottom: 10px;text-align: center;width: 80px;">
-                        <span>{{'device.property-socket-reuse' | translate}}</span>
-                        <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.socketReuse"></mat-slide-toggle>
-                    </div>
+                        <div class="my-form-field inbk">
+                            <span>{{'device.property-connection-options' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.connectionOption" style="width: 200px">
+                                <mat-option *ngFor="let value of modbusTcpOptionType" [value]="value">
+                                    {{ value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk ml10 ftr">
+                            <span>{{'device.property-socket-reuse' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.socketReuse" style="width: 130px">
+                                <mat-option [value]=""></mat-option>
+                                <mat-option *ngFor="let mode of modbusReuseModeType | enumToArray" [value]="mode.key">
+                                    {{ mode.value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
                     </div>
                     <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                         <span>{{'device.property-address-port' | translate}}</span>

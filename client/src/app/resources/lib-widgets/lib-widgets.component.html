@@ -1,0 +1,22 @@
+<mat-accordion multi="true">
+    <mat-expansion-panel *ngFor="let grpWidgets of resourceWidgets$ | async" class="resource-widgets-panel"
+    togglePosition="before">
+        <mat-expansion-panel-header class="resource-widgets-header">
+            <mat-panel-title>
+                {{grpWidgets.name}}
+            </mat-panel-title>
+            <mat-panel-description>
+
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+            <div *ngFor="let widget of grpWidgets.items"
+                    (click)="onSelect(widget.path)"
+                    class="lib-widget-item"
+                    [class.selected]="selectedWidgetPath === widget.path"
+                    matTooltip="{{widget.name}}">
+                <img src="{{rootPath}}/{{widget.path}}" id="{{widget.path}}">
+            </div>
+        </ng-template>
+    </mat-expansion-panel>
+</mat-accordion>

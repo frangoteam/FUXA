@@ -21,7 +21,7 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
 @Component({
     selector: 'app-device-list',
     templateUrl: './device-list.component.html',
-    styleUrls: ['./device-list.component.css'],
+    styleUrls: ['./device-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeviceListComponent implements OnInit, AfterViewInit {

@@ -33,12 +33,18 @@ export class SvgUtils {
                          moduleId: string,
                          idMap: { [oldId: string]: string },
                          variableDefined?: WidgetPropertyVariable[]): { content: string, vars: WidgetPropertyVariable[] } {
-        let modifiedContent = SvgUtils.exportGlobalVariables(scriptContent, moduleId, variableDefined);
+        let cleanContent = SvgUtils.removeComments(scriptContent);
+        let modifiedContent = SvgUtils.exportGlobalVariables(cleanContent, moduleId, variableDefined);
         let modifiedScriptContent = SvgUtils.exportFunctionNames(modifiedContent.content, moduleId);
         modifiedScriptContent = SvgUtils.replaceIdsInScript(modifiedScriptContent, idMap);
         modifiedScriptContent = SvgUtils.addModuleDeclaration(modifiedScriptContent, moduleId);
 
         return { content: modifiedScriptContent, vars: modifiedContent.vars };
+    }
+
+    static removeComments(scriptContent: string): string {
+        // Remove multi-linea comment (/* ... */)
+        return scriptContent.replace(/\/\*[\s\S]*?\*\//g, '');
     }
 
     static exportGlobalVariables(scriptContent: string,
@@ -157,9 +163,13 @@ export class SvgUtils {
 
         // replace global variable with init value
         variableDefined.forEach(variable => {
-            if (!Utils.isNullOrUndefined(variable.variableValue)) {
+            if (!Utils.isNullOrUndefined(variable.variableValue) && SvgUtils.validateVariable(variable)) {
                 const varRegex = new RegExp(`(let|var|const)\\s+${variable.name}\\s*=\\s*[^;]+;`);
-                gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${variable.variableValue};`);
+                if (variable.type === 'string' || variable.type === 'color') {
+                    gSection = gSection.replace(varRegex, `$1 ${variable.name} = \`${variable.variableValue}\`;`);
+                } else {
+                    gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${variable.variableValue};`);
+                }
             }
         });
         // replace global variable section
@@ -173,6 +183,13 @@ export class SvgUtils {
                 svgElement.children[i].setAttribute('width', boxSize.width.toString());
             }
         }
+    }
+
+    static validateVariable(variable: WidgetPropertyVariable): boolean {
+        if (variable.type === 'number' && !Utils.isNumeric(variable.variableValue)) {
+            return false;
+        }
+        return true;
     }
 }
 

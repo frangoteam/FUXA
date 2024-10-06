@@ -31,7 +31,7 @@ import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent, DialogChartLine } from './editor/chart-config/chart-config.component';
-import { GraphConfigComponent, DialogGraphSource } from './editor/graph-config/graph-config.component';
+import { GraphConfigComponent } from './editor/graph-config/graph-config.component';
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
@@ -191,15 +191,17 @@ import { ResizeDirective } from './_directives/resize.directive';
 import { EditorViewsListComponent } from './editor/editor-views-list/editor-views-list.component';
 import { SvgUtils } from './_helpers/svg-utils';
 import { FlexWidgetPropertyComponent } from './gauges/gauge-property/flex-widget-property/flex-widget-property.component';
+import { GraphSourceEditComponent } from './editor/graph-config/graph-source-edit/graph-source-edit.component';
+import { LibWidgetsComponent } from './resources/lib-widgets/lib-widgets.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
-    showDelay: 1750,
-    hideDelay: 1000,
-    touchendHideDelay: 1000,
+    showDelay: 2000,
+    hideDelay: 500,
+    touchendHideDelay: 500,
 };
 
 @NgModule({
@@ -313,7 +315,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         NgxNouisliderComponent,
         NgxSchedulerComponent,
         DialogChartLine,
-        DialogGraphSource,
+        GraphSourceEditComponent,
         UsersComponent,
         UserEditComponent,
         LoginComponent,
@@ -334,6 +336,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DataTableComponent,
         RangeNumberComponent,
         LibImagesComponent,
+        LibWidgetsComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
         ReportItemAlarmsComponent,

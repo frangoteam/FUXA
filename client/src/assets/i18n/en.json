@@ -380,6 +380,7 @@
     "graph.rangetype-last1d": "Last day",
     "graph.rangetype-last3d": "Last 3 days",
     "graph.rangetype-last1w": "Last week",
+    "graph.rangetype-last1m": "Last month",
 
     "graph.grouptype-hours": "Hours",
     "graph.grouptype-days": "Days",
@@ -1335,6 +1336,7 @@
     "card.style-zoom": "Zoom",
 
     "resources.lib-images": "Images",
+    "resources.lib-widgets": "Widgets",
 
     "texts.list-title": "Texts settings",
     "texts.list-filter": "Filter",
