@@ -105,7 +105,7 @@
     "dlg.linkproperty-title": "Hyperlink erstellen",
     "dlg.linkproperty-url": "Hyperlink-URL",
 
-    "dlg.login-title": "ANmelden...",
+    "dlg.login-title": "Anmelden...",
     "dlg.logout-btn": "Abmelden",
 
     "dlg.ok": "OK",
@@ -126,7 +126,7 @@
     "general.search": "Suchen...",
     "general.search-notfound": "Keine Optionen gefunden",
     "general.username": "Benutzername",
-	"general.fullname": "Vollname",
+	"general.fullname": "Vollständiger Name",
     "general.password": "Kennwort",
     "general.clientId": "Kunden-ID",
     "general.authority": "Berechtigung",

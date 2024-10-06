@@ -48,8 +48,8 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     fncSumHourIntegral = Utils.getEnumKey(GraphBarDateFunctionType, GraphBarDateFunctionType.sumHourIntegral);
     fncValueIntegral = Utils.getEnumKey(GraphBarDateFunctionType, GraphBarDateFunctionType.sumValueIntegral);
 
-    hoursDateGroup = Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.hours);
-    daysDateGroup = Utils.getEnumKey(GraphDateGroupType, GraphDateGroupType.days);
+    hoursDateGroup = GraphDateGroupType.hours;
+    daysDateGroup = GraphDateGroupType.days;
     dateGroupTemplate;
 
     currentQuery: DaqQuery;
@@ -66,7 +66,7 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
         }
 
         if (this.isEditor && !GraphBarComponent.demoValues.length) {
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 300; i++) {
                 GraphBarComponent.demoValues[i] = Utils.rand(10, 100);
             }
         }
@@ -219,7 +219,9 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
     }
 
     private setDemo() {
-        if (!this.isEditor) {return false;}
+        if (!this.isEditor) {
+            return false;
+        }
         this.barChartData = [];
         for (let key in this.sourceMap) {
             let dataset = this.sourceMap[key];
@@ -227,7 +229,9 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
                 dataset.data = [Utils.rand(10, 100)];
             } else if (this.dateGroupTemplate && this.property.xtype === this.xTypeDate) {
                 let datacount = Object.keys(this.dateGroupTemplate).length;
-                if (datacount === dataset.data.length) {return false;}
+                if (datacount === dataset.data.length) {
+                    return false;
+                }
                 dataset.data = GraphBarComponent.demoValues.slice(0, datacount);
                 this.fullDataSetAttribute(dataset);
             }
@@ -276,17 +280,20 @@ export class GraphBarComponent extends GraphBaseComponent implements OnInit, Aft
             query.from = query.to;
         } else if (this.property.xtype === this.xTypeDate) {
             query.to = Date.now();
-            if (this.barChartOptions.lastRange === Utils.getEnumKey(GraphRangeType, GraphRangeType.last1h)) {
+            if (this.barChartOptions.lastRange === GraphRangeType.last1h) {
                 query.from = new Date(query.to);// - (1 *  60 * 60 * 1000));
                 query.from = new Date(query.from.getFullYear(), query.from.getMonth(), query.from.getDate(), query.from.getHours(), 0, 0).getTime();
-            } else if (this.barChartOptions.lastRange === Utils.getEnumKey(GraphRangeType, GraphRangeType.last1d)) {
+            } else if (this.barChartOptions.lastRange === GraphRangeType.last1d) {
                 query.from = new Date(query.to);// - (24 * 60 * 60 * 1000));
                 query.from = new Date(query.from.getFullYear(), query.from.getMonth(), query.from.getDate(), 0, 0, 0).getTime();
-            } else if (this.barChartOptions.lastRange === Utils.getEnumKey(GraphRangeType, GraphRangeType.last3d)) {
+            } else if (this.barChartOptions.lastRange === GraphRangeType.last3d) {
                 query.from = new Date(query.to - (3 * 24 * 60 * 60 * 1000));
                 query.from = new Date(query.from.getFullYear(), query.from.getMonth(), query.from.getDate(), 0, 0, 0).getTime();
-            } else if (this.barChartOptions.lastRange === Utils.getEnumKey(GraphRangeType, GraphRangeType.last1w)) {
+            } else if (this.barChartOptions.lastRange === GraphRangeType.last1w) {
                 query.from = new Date(query.to - (7 * 24 * 60 * 60 * 1000));
+                query.from = new Date(query.from.getFullYear(), query.from.getMonth(), query.from.getDate(), 0, 0, 0).getTime();
+            } else if (this.barChartOptions.lastRange === GraphRangeType.last1m) {
+                query.from = new Date(query.to - (30 * 24 * 60 * 60 * 1000));
                 query.from = new Date(query.from.getFullYear(), query.from.getMonth(), query.from.getDate(), 0, 0, 0).getTime();
             }
         }

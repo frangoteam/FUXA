@@ -12,6 +12,7 @@ import { CommanType } from '../command.service';
 @Injectable()
 export class ResClientService implements ResourceStorageService {
 
+    endPointConfig = '';
     bridge: any = null;
     id: string = null;
     get isReady() { return (this.bridge) ? true : false; }

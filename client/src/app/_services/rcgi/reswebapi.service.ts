@@ -13,7 +13,7 @@ import { CommanType } from '../command.service';
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
 
-    private endPointConfig: string = EndPointApi.getURL();
+    public endPointConfig = EndPointApi.getURL();
     public onRefreshProject: () => boolean;
 
     constructor(private http: HttpClient) {

@@ -209,6 +209,22 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
+                    <!-- WIDGETS -->
+                    <mat-expansion-panel class="svg-workarea-leftbar-p" (opened)="panelsState.panelWidgets=true;savePanelState()" (closed)="panelsState.panelWidgets=false;savePanelState()"
+                        hideToggle="true" [expanded]="panelsState.panelWidgets">
+                        <mat-expansion-panel-header class="svg-workarea-leftbar-h">
+                            <mat-panel-title>
+                                <mat-icon aria-label="Select" *ngIf="panelsState.panelWidgets">expand_less</mat-icon>
+                                <mat-icon aria-label="Select" *ngIf="!panelsState.panelWidgets">expand_more</mat-icon>
+                                <span>{{ 'resources.lib-widgets' | translate }}</span>
+                            </mat-panel-title>
+                            <mat-icon class="leftbar-edit-btn">widgets</mat-icon>
+                        </mat-expansion-panel-header>
+                        <ng-template matExpansionPanelContent>
+                            <app-lib-widgets>
+                            </app-lib-widgets>
+                        </ng-template>
+                    </mat-expansion-panel>
                     <!-- RESOURCES -->
                     <mat-expansion-panel class="svg-workarea-leftbar-p" hideToggle="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h" style="max-height: 32px;height: 32px">

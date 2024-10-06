@@ -16,15 +16,16 @@ export class Graph {
 }
 
 export enum GraphRangeType {
-    last1h = 'graph.rangetype-last1h',
-    last1d = 'graph.rangetype-last1d',
-    last3d = 'graph.rangetype-last3d',
-    last1w = 'graph.rangetype-last1w'
+    last1h = 'last1h',
+    last1d = 'last1d',
+    last3d = 'last3d',
+    last1w = 'last1w',
+    last1m = 'last1m'
 }
 
 export enum GraphDateGroupType {
-    hours = 'graph.grouptype-hours',
-    days = 'graph.grouptype-days',
+    hours = 'hours',
+    days = 'days',
 }
 
 export class GraphBarProperty {

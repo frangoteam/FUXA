@@ -1,6 +1,6 @@
 {
   "name": "fuxa-server",
-  "version": "1.2.0-1909",
+  "version": "1.2.0-1943",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
@@ -24,6 +24,7 @@
     "bcryptjs": "2.4.3",
     "bluebird": "3.7.2",
     "body-parser": "1.20.0",
+    "csv-parser": "3.0.0",
     "dayjs": "1.11.9",
     "express": "4.19.2",
     "express-rate-limit": "5.5.1",
@@ -36,7 +37,7 @@
     "morgan": "1.10.0",
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
-    "node-opcua": "2.123.0",
+    "node-opcua": "2.130.0",
     "node-schedule": "2.1.1",
     "nodemailer": "6.9.9",
     "nopt": "5.0.0",

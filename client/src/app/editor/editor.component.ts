@@ -5,7 +5,7 @@ import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_L
 import { MatDrawer } from '@angular/material/sidenav';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService, SaveMode } from '../_services/project.service';
@@ -38,6 +38,7 @@ import { TagIdRef, TagsIdsConfigComponent, TagsIdsData } from './tags-ids-config
 import { UploadFile } from '../_models/project';
 import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
 import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.component';
+import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service';
 
 declare var Gauge: any;
 
@@ -94,7 +95,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         panelGeneral: true,
         panelC: true,
         panelD: true,
-        panelS: true
+        panelS: true,
+        panelWidgets: true,
     };
     panelPropertyIdOpenState: boolean;
     panelPropertyTransformOpenState: boolean;
@@ -112,6 +114,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptionSave: Subscription;
     private subscriptionLoad: Subscription;
+    private destroy$ = new Subject<void>();
 
     constructor(private projectService: ProjectService,
         private winRef: WindowRef,
@@ -121,6 +124,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         public gaugesManager: GaugesManager,
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
+        private libWidgetsService: LibWidgetsService,
         private mdIconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
         mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
         mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
@@ -146,6 +150,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (err) {
             console.error(err);
         }
+
+        this.libWidgetsService.svgWidgetSelected$.pipe(
+            switchMap(widgetPath =>
+                fetch(widgetPath).then(response =>
+                    response.text().then(content => ({ content, widgetPath }))
+                )
+            ),
+            takeUntil(this.destroy$)
+        ).subscribe(({ content, widgetPath }) => {
+            localStorage.setItem(widgetPath, content);
+            this.ctrlInitParams = widgetPath;
+            this.setMode('own_ctrl-image');
+        });
     }
 
     /**
@@ -178,6 +195,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             console.error(e);
         }
         this.onSaveProject();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
     //#endregion
 
@@ -1513,4 +1532,5 @@ interface PanelsStateType {
     panelC?: boolean;
     panelD?: boolean;
     panelS?: boolean;
+    panelWidgets?: boolean;
 }

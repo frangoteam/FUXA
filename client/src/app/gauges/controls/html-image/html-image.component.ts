@@ -44,6 +44,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     const svgElement = svgDocument.querySelector('svg');
                     const originSize = SvgUtils.getSvgSize(svgElement);
                     SvgUtils.resizeSvgNodes(svgImageContainer.parentElement.parentElement, originSize);
+                    svgImageContainer.parentElement?.parentElement?.removeAttribute('stroke');
                     svgElement.setAttribute('width', originSize.width.toString());
                     svgElement.setAttribute('height', originSize.height.toString());
                     if (!gaugeSettings.property.svgContent) {
