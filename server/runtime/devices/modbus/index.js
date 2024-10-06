@@ -117,14 +117,14 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     this.polling = async function () {
         let socketRelease;
         try {
-            if (data.property.socketReuse && data.property.socketSerial && runtime.socketMutex.has(data.property.address)) {
+            if (data.property.socketReuse && runtime.socketMutex.has(data.property.address)) {
                 socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
             }
             await this._polling()
         } catch (err) {
-            logger.error(`'${data.name}' _readMemory error! ${err}`);
+            logger.error(`'${data.name}' polling! ${err}`);
         } finally {
-            if (socketRelease != null) {
+            if (!utils.isNullOrUndefined(socketRelease)) {
                 socketRelease()
             }
         }
@@ -324,18 +324,17 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     name: null,
                     parameters};
                 try {
-
                     const bufVal = await runtime.scriptsMgr.runScript(script);
                     if (Array.isArray(bufVal)) {
-                    if ((bufVal.length % 2) !== 0 ) {
-                        logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
-                        return false;
-                    }
-                    val = [];
-                    for (let i = 0; i < bufVal.length;) {
-                        val.push(bufVal.readUInt16BE(i));
-                        i = i + 2;
-                    }
+                        if ((bufVal.length % 2) !== 0 ) {
+                            logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
+                            return false;
+                        }
+                        val = [];
+                        for (let i = 0; i < bufVal.length;) {
+                            val.push(bufVal.readUInt16BE(i));
+                            i = i + 2;
+                        }
                     } else {
                         val = bufVal;
                     }
@@ -359,9 +358,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             }
             let socketRelease;
             try {
-                if (type === ModbusTypes.TCP && data.property.socketReuse
-                    && data.property.socketSerial
-                    && runtime.socketMutex.has(data.property.address)) {
+                if (type === ModbusTypes.TCP && data.property.socketReuse && runtime.socketMutex.has(data.property.address)) {
                     socketRelease = await runtime.socketMutex.get(data.property.address).acquire();
                 }
                 await _writeMemory(parseInt(memaddr), offset, val).then(result => {
@@ -377,9 +374,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     _checkWorking(false);
                 }
             } catch (err) {
-                console.log(err);
+                logger.error(`'${data.name}' setValue error! ${err}`);
             } finally {
-                if (socketRelease != null) {
+                if (!utils.isNullOrUndefined(socketRelease)) {
                     socketRelease();
                 }
             }
@@ -469,7 +466,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         socket = new net.Socket();
                         runtime.socketPool.set(data.property.address, socket);
                         //init read mutex
-                        if (data.property.socketSerial) {
+                        if (data.property.socketReuse === ModbusReuseModeType.ReuseSerial) {
                             runtime.socketMutex.set(data.property.address, new Mutex())
                         }
                     }
@@ -816,6 +813,10 @@ const ModbusOptionType = {
     UdpPort: 'UdpPort',
     TcpRTUBufferedPort: 'TcpRTUBufferedPort',
     TelnetPort: 'TelnetPort'
+}
+const ModbusReuseModeType = {
+    Reuse: 'Reuse',
+    ReuseSerial: 'ReuseSerial',
 }
 
 module.exports = {

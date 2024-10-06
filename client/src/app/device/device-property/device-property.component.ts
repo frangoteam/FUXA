@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType } from './../../_models/device';
 
 @Component({
 	selector: 'app-device-property',
@@ -29,7 +29,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	showPassword: boolean;
 
 	pollingPlcType = [{text: '200 ms', value: 200},
-					  {text: '350 ms', value: 350},					  
+					  {text: '350 ms', value: 350},
 					  {text: '500 ms', value: 500},
 					  {text: '700 ms', value: 700},
 					  {text: '1 sec', value: 1000},
@@ -74,6 +74,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	hostInterfaces = [];
 	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
+	modbusReuseModeType = ModbusReuseModeType;
+
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;

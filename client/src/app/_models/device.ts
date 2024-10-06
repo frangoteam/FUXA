@@ -183,9 +183,7 @@ export class DeviceNetProperty {
     /** Delay used for Modbus RTU/TCP delay between frame*/
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
-    socketReuse: boolean = false;
-    /** Modbus TCP socket read serial */
-    socketSerial: boolean = false;
+    socketReuse?: string;
 
     static descriptor = {
         address: 'Device address (IP)',
@@ -294,6 +292,11 @@ export enum ModbusOptionType {
     UdpPort = 'UdpPort',
     TcpRTUBufferedPort = 'TcpRTUBufferedPort',
     TelnetPort = 'TelnetPort'
+}
+
+export enum ModbusReuseModeType {
+    Reuse = 'Reuse',
+    ReuseSerial = 'ReuseSerial',
 }
 
 export enum MessageSecurityMode {
