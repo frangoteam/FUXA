@@ -199,9 +199,9 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
-    showDelay: 1750,
-    hideDelay: 1000,
-    touchendHideDelay: 1000,
+    showDelay: 2000,
+    hideDelay: 500,
+    touchendHideDelay: 500,
 };
 
 @NgModule({
