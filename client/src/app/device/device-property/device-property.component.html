@@ -197,7 +197,7 @@
                         <div class="my-form-field inbk ml10 ftr">
                             <span>{{'device.property-socket-reuse' | translate}}</span>
                             <mat-select [(value)]="data.device.property.socketReuse" style="width: 130px">
-                                <mat-option [value]="">{{ value }}</mat-option>
+                                <mat-option [value]=""></mat-option>
                                 <mat-option *ngFor="let mode of modbusReuseModeType | enumToArray" [value]="mode.key">
                                     {{ mode.value }}
                                 </mat-option>
