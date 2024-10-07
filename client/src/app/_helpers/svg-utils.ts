@@ -167,6 +167,8 @@ export class SvgUtils {
                 const varRegex = new RegExp(`(let|var|const)\\s+${variable.name}\\s*=\\s*[^;]+;`);
                 if (variable.type === 'string' || variable.type === 'color') {
                     gSection = gSection.replace(varRegex, `$1 ${variable.name} = \`${variable.variableValue}\`;`);
+                } else if (variable.type === 'boolean') {
+                    gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${!!variable.variableValue};`);
                 } else {
                     gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${variable.variableValue};`);
                 }
@@ -188,6 +190,10 @@ export class SvgUtils {
     static validateVariable(variable: WidgetPropertyVariable): boolean {
         if (variable.type === 'number' && !Utils.isNumeric(variable.variableValue)) {
             return false;
+        } else if (variable.type === 'string' && !variable.variableValue) {
+            return false;
+        } else if (variable.type === 'color' && !variable.variableValue) {
+            return false;
         }
         return true;
     }
@@ -203,7 +209,7 @@ export interface WidgetPropertyVariable {
 }
 
 export enum WidgetPropertyVariableTypePrefix {
-    bool = '_pb_',
+    boolean = '_pb_',
     number = '_pn_',
     string = '_ps_',
     color = '_pc_',
