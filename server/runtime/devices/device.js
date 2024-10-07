@@ -10,6 +10,7 @@ var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
+var CipEthernetIPclient = require('./cip-ethernet-ip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
@@ -38,10 +39,10 @@ function Device(data, runtime) {
     var sharedDevices = data.sharedDevices;
     var tryToConnect = 0;
     var comm;                                               // Interface to OPCUA/S7/.. Device
-                                                            // required: connect, disconnect, isConnected, polling, init, load, getValue, 
-                                                            // getValues, getStatus, setValue, bindAddDaq, getTagProperty, 
+                                                            // required: connect, disconnect, isConnected, polling, init, load, getValue,
+                                                            // getValues, getStatus, setValue, bindAddDaq, getTagProperty,
     fncGetDeviceProperty = runtime.project.getDeviceProperty;
-    
+
     if (data.type === DeviceEnum.S7) {
         if (!S7client) {
             return null;
@@ -56,44 +57,49 @@ function Device(data, runtime) {
         if (!MODBUSclient) {
             return null;
         }
-        comm = MODBUSclient.create(data, logger, events, manager, runtime);        
+        comm = MODBUSclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.BACnet) {
         if (!BACNETclient) {
             return null;
         }
-        comm = BACNETclient.create(data, logger, events, manager, runtime);        
+        comm = BACNETclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.WebAPI) {
         if (!HTTPclient) {
             return null;
         }
-        comm = HTTPclient.create(data, logger, events, manager, runtime);        
+        comm = HTTPclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.MQTTclient) {
         if (!MQTTclient) {
             return null;
         }
         data.certificatesDir = path.resolve(runtime.settings.appDir, '_certificates');
-        comm = MQTTclient.create(data, logger, events, runtime);        
+        comm = MQTTclient.create(data, logger, events, runtime);
     } else if (data.type === DeviceEnum.EthernetIP) {
         if (!EthernetIPclient) {
             return null;
         }
-        comm = EthernetIPclient.create(data, logger, events, manager, runtime);     
+        comm = EthernetIPclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.FuxaServer) {
         if (!FuxaServer) {
             return null;
         }
-        comm = FuxaServer.create(data, logger, events, manager);     
+        comm = FuxaServer.create(data, logger, events, manager);
     } else if (data.type === DeviceEnum.ODBC) {
         if (!ODBCclient) {
             return null;
         }
-        comm = ODBCclient.create(data, logger, events, manager);        
+        comm = ODBCclient.create(data, logger, events, manager);
+    } else if (data.type === DeviceEnum.CipEthernetIP) {
+        if (!CipEthernetIPclient) {
+            return null;
+        }
+        comm = CipEthernetIPclient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
     //         return null;
     //     }
-    //     comm = TEMPLATEclient.create(data, logger, events, manager);        
+    //     comm = TEMPLATEclient.create(data, logger, events, manager);
     // }
     if (!comm) {
         return null;
@@ -202,7 +208,7 @@ function Device(data, runtime) {
     }
 
     /**
-     * Call Device to disconnect 
+     * Call Device to disconnect
      */
     this.disconnect = function () {
         return comm.disconnect();
@@ -280,7 +286,7 @@ function Device(data, runtime) {
             }
         });
     }
-    
+
     /**
      * Call Device to return Tag/Node attribute (only OPCUA)
      */
@@ -356,8 +362,8 @@ function Device(data, runtime) {
     /**
      * Set connection status of device in FuxaServer
      * used only from FuxaServer device
-     * @param {*} deviceId 
-     * @param {*} status 
+     * @param {*} deviceId
+     * @param {*} status
      */
     this.setDeviceConnectionStatus = function (deviceId, status) {
         comm.setConnectionStatus(deviceId, status);
@@ -376,7 +382,7 @@ function Device(data, runtime) {
                 return parseFloat(current) + parseFloat(fnc[1]);
             } else if (fnc[0] === 'remove') {
                 return parseFloat(current) - parseFloat(fnc[1]);
-            }     
+            }
         } catch (err) {
             logger.error(err);
         }
@@ -425,8 +431,8 @@ function Device(data, runtime) {
 
 /**
  * Return the property (security mode) supported from device
- * @param {*} endpoint 
- * @param {*} type 
+ * @param {*} endpoint
+ * @param {*} type
  */
 function getSupportedProperty(endpoint, type, packagerManager) {
     var self = this;
@@ -451,7 +457,7 @@ function getSupportedProperty(endpoint, type, packagerManager) {
 
 /**
  * Return the result of request
- * @param {*} property 
+ * @param {*} property
  */
 function getRequestResult(property) {
     return new Promise(function (resolve, reject) {
@@ -469,7 +475,7 @@ function getRequestResult(property) {
 
 /**
  * Load the plugin library
- * @param {*} type 
+ * @param {*} type
  */
 function loadPlugin(type, module) {
     if (type === DeviceEnum.S7) {
@@ -490,6 +496,8 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
+    } else if (type === DeviceEnum.CipEthernetIP) {
+        CipEthernetIPclient = require(module);
     }
 }
 
@@ -524,6 +532,7 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
+    CipEthernetIP: 'CipEthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
     // Template: 'template'

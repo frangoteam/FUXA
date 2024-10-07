@@ -15,7 +15,8 @@ export enum PluginType {
     Modbus = 'Modbus',
     Raspberry = 'Raspberry',
     SiemensS7 = 'SiemensS7',
-    EthernetIP = 'EthernetIP'
+    EthernetIP = 'EthernetIP',
+    CipEthernetIP = 'CipEthernetIP'
 }
 
 export enum PluginGroupType {

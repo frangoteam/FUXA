@@ -254,7 +254,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
-            type === DeviceType.OPCUA) {
+            type === DeviceType.OPCUA || type === DeviceType.CipEthernetIP) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -293,7 +293,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
-        if (this.deviceSelected.type === DeviceType.EthernetIP) {
+        if (this.deviceSelected.type === DeviceType.EthernetIP || this.deviceSelected.type === DeviceType.CipEthernetIP) {
             this.tagPropertyService.editTagPropertyEthernetIp(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
