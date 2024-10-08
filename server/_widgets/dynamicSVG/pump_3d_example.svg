@@ -56,6 +56,7 @@
 
     Variables with the following prefix:
 
+    _pb_ = bool   parameter ( true or false )
     _pn_ = number parameter ( Int, Float, Real etc )
     _ps_ = string parameter ( must be in '' )
     _pc_ = colour parameter in hex colour code ( The Hex code must be in '' )
