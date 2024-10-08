@@ -238,13 +238,33 @@
     
       let isColor1 = true; 
       blinkInterval = setInterval(function() {
+        const checkDestroy = document.getElementById('Layer_1'); // Important must be name of the SVG!
+        if (!checkDestroy) {
+          clearBlinking(); 
+          return;
+        }
         if (isColor1) {
           setBaseColor(color1); 
         } else {
           setBaseColor(color2); 
         }
         isColor1 = !isColor1; 
-      }, interval); 
+      }, interval);
+
+      // Set up the MutationObserver to watch for removal of the SVG element
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          mutation.removedNodes.forEach((node) => {
+            if (node.id === 'Layer_1') { // Important must be name of the SVG!
+              clearBlinking(); 
+              observer.disconnect(); 
+            }
+          });
+        });
+      });
+
+      // Start observing the body or a parent element of the SVG
+      observer.observe(document.body, { childList: true, subtree: true }); 
     }
 
     // Function to clear the blinking interval
