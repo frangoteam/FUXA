@@ -425,6 +425,8 @@
     "table.property-gridline": "Show grid",
     "table.property-type-data": "Data table",
     "table.property-type-history": "History table",
+    "table.property-type-alarms": "Alarms table",
+    "table.property-type-alarms-history": "Alarms History table",
     "table.property-grid-color": "Grid color",
     "table.property-cols": "Columns",
     "table.property-rows": "Rows",

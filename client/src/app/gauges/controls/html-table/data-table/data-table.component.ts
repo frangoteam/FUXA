@@ -515,6 +515,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 fontBold: true,
             },
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
+            alarmsColumns: [],
             rows: [],
         };
         return options;

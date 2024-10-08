@@ -412,6 +412,8 @@ export interface GaugeTableProperty {
 export enum TableType {
     data = 'data',
     history = 'history',
+    alarms = 'alarms',
+    alarmsHistory = 'alarmsHistory',
 }
 
 export interface TableOptions {
@@ -445,8 +447,9 @@ export interface TableOptions {
         color?: string;
         background?: string;
     };
-    columns: TableColumn[];
-    rows: TableRow[];
+    columns?: TableColumn[];
+    alarmsColumns?: TableColumn[];
+    rows?: TableRow[];
 }
 
 export enum TableCellType {
