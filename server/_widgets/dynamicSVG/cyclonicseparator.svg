@@ -1,49 +1,51 @@
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" xml:space="preserve"> 
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" xml:space="preserve"><desc>Copyright Opto 22</desc> 
 <g>
-
 <g id="shape">
-	<circle fill="#999" cx="50.042" cy="50" r="35.208"></circle>
-	<rect x="50" y="14.833" fill="#999" width="50" height="16"></rect>
-	<path fill="#999" d="M50,57.667H0v-16h50c4.418,0,8,3.582,8,8S54.418,57.667,50,57.667z"></path>
-	<path fill="#999" d="M8,60.667H0v-22h8"></path>
-	<rect x="92" y="11.833" fill="#999" width="8" height="22"></rect>
-</g>
-<g id="dark">
-	<path fill="#808080" d="M50.042,15.875c-15.971,0-29.376,10.974-33.096,25.792H50c4.418,0,8,3.582,8,8s-3.582,8-8,8H16.792
-		c3.48,15.153,17.04,26.458,33.25,26.458c18.847,0,34.125-15.278,34.125-34.125C84.167,31.153,68.888,15.875,50.042,15.875z"></path>
-	<path fill="#808080" d="M50,56.667c3.866,0,7-3.134,7-7s-3.134-7-7-7H0v14C0,56.667,50,56.667,50,56.667z"></path>
-	<path fill="#808080" d="M50,15.833v0.043c0.014,0,0.028-0.001,0.042-0.001c11.301,0,21.314,5.497,27.524,13.958H100v-14H50z"></path>
+	<path fill="#4D4D4D" d="M75.384,21.591v2.332h-3.877v2.681h-9.96c-0.011,0-0.021,0.005-0.032,0.006V20.34
+		c0-1.032-4.343-1.898-10.212-2.144V6.052h2.269V1.891h2.332V0H39.893v1.891h2.332v4.161h2.269v12.145
+		c-5.87,0.246-10.212,1.111-10.212,2.144v20.616l8.747,33.146h-0.804v4.161h-2.332v1.891h5.013v5.642h-7.994v-1.702h-3.026v1.702
+		v5.855h-2.977c-0.229-0.836-0.663-1.408-1.167-1.408h-0.887V88.18l-0.75-1.654h-1.769l-0.75,1.654v2.062h-1.103
+		c-0.741,0-1.342,1.223-1.342,2.732c0,1.509,0.601,2.732,1.342,2.732h5.259c0.504,0,0.938-0.572,1.167-1.408h2.977v3.223v1.702
+		h3.026V97.52h22.316v1.702h3.026V97.52V85.795v-1.702h-3.026v1.702h-8.336v-5.642h5.013v-1.891h-2.332v-4.161h-0.804l8.747-33.146
+		v-8.372c0.011,0,0.021,0.006,0.032,0.006h9.96v2.681h3.877v2.332h1.891V21.591H75.384z"></path>
 </g>
 <g id="light">
-	<path fill="#b2b2b2" d="M61.443,17.833c5.692,2.018,10.685,5.502,14.533,10H100v-10H61.443z"></path>
-	<path fill="#b2b2b2" d="M50,44.667H0v10c0,0,50,0,50,0c2.761,0,5-2.239,5-5C55,46.905,52.761,44.667,50,44.667z"></path>
+	<path fill="#B3B3B3" d="M44.906,80.153v6.635c0,0.576,0.535,1.083,1.344,1.379v-8.014H44.906z"></path>
+	<path fill="#B3B3B3" d="M43.724,74.101l-7.553-33.146V19.213c-1.2,0.33-1.888,0.715-1.888,1.127v20.616l8.747,33.146H43.724z"></path>
+	<path fill="#B3B3B3" d="M44.495,6.052v12.145c0.326-0.014,0.665-0.022,1-0.032V6.052H44.495z"></path>
+	<rect x="42.226" y="1.891" fill="#B3B3B3" width="1" height="4.161"></rect>
+	<rect x="71.507" y="24.423" fill="#B3B3B3" width="0.5" height="2.597"></rect>
+	<rect x="39.893" fill="#B3B3B3" width="0.5" height="1.891"></rect>
 </g>
 <g id="shadow">
-	<path fill="#666" d="M50.042,21.292c-12.932,0-23.891,8.597-27.47,20.375h1.045c3.546-11.219,14.05-19.375,26.425-19.375
-		C65.32,22.292,77.75,34.722,77.75,50S65.32,77.708,50.042,77.708c-12.619,0-23.286-8.482-26.621-20.041h-1.04
-		c3.363,12.118,14.486,21.041,27.66,21.041C65.871,78.708,78.75,65.83,78.75,50S65.871,21.292,50.042,21.292z"></path>
-	<path fill="#666" d="M50.042,35.792c-4.72,0-8.898,2.323-11.483,5.875h1.247c2.424-2.972,6.111-4.875,10.236-4.875
-		c7.283,0,13.208,5.925,13.208,13.208s-5.926,13.208-13.208,13.208c-4.423,0-8.336-2.193-10.734-5.541h-1.209
-		c2.53,3.928,6.933,6.541,11.943,6.541c7.834,0,14.208-6.374,14.208-14.208C64.25,42.166,57.876,35.792,50.042,35.792z"></path>
-	<polygon fill="#666" points="51.463,16.488 52.426,18.155 51.463,19.823 49.537,19.823 48.574,18.155 49.537,16.488 	"></polygon>
-	<polygon fill="#666" points="51.463,37.488 52.426,39.155 51.463,40.823 49.537,40.823 48.574,39.155 49.537,37.488 	"></polygon>
-	<polygon fill="#666" points="51.463,58.988 52.426,60.655 51.463,62.323 49.537,62.323 48.574,60.655 49.537,58.988 	"></polygon>
-	<polygon fill="#666" points="58.847,53.613 60.773,53.613 61.735,55.28 60.773,56.948 58.847,56.948 57.884,55.28 	"></polygon>
-	<polygon fill="#666" points="57.884,44.53 58.847,42.863 60.773,42.863 61.735,44.53 60.773,46.198 58.847,46.198 	"></polygon>
-	<polygon fill="#666" points="51.463,80.238 52.426,81.905 51.463,83.573 49.537,83.573 48.574,81.905 49.537,80.238 	"></polygon>
-	<polygon fill="#666" points="34.563,20.5 36.23,21.463 36.23,23.389 34.563,24.351 32.895,23.389 32.895,21.463 	"></polygon>
-	<polygon fill="#666" points="66.438,75.709 68.105,76.672 68.105,78.598 66.438,79.56 64.77,78.598 64.77,76.672 	"></polygon>
-	<polygon fill="#666" points="21.933,32.425 23.858,32.425 24.821,34.093 23.858,35.76 21.933,35.76 20.97,34.093 	"></polygon>
-	<polygon fill="#666" points="77.142,64.3 79.067,64.3 80.03,65.968 79.067,67.635 77.142,67.635 76.179,65.968 	"></polygon>
-	<polygon fill="#666" points="80.707,49.067 82.375,48.105 84.043,49.067 84.043,50.993 82.375,51.956 80.707,50.993 	"></polygon>
-	<polygon fill="#666" points="20.97,65.968 21.933,64.3 23.858,64.3 24.821,65.968 23.858,67.635 21.933,67.635 	"></polygon>
-	<polygon fill="#666" points="76.179,34.093 77.142,32.425 79.067,32.425 80.03,34.093 79.067,35.76 77.142,35.76 	"></polygon>
-	<polygon fill="#666" points="32.895,78.598 32.895,76.672 34.563,75.709 36.23,76.672 36.23,78.598 34.563,79.56 	"></polygon>
-	<polygon fill="#666" points="64.77,23.389 64.77,21.463 66.438,20.5 68.105,21.463 68.105,23.389 66.438,24.351 	"></polygon>
+	<path fill="#1A1A1A" d="M50.892,80.153v6.635c0,0.576-0.535,1.083-1.344,1.379v-8.014H50.892z"></path>
+	<path fill="#1A1A1A" d="M61.515,26.61c0-2.654,0-6.269,0-6.269c0-0.411-0.688-0.797-1.888-1.127v21.743l-7.553,33.146h0.695
+		l8.747-33.146c0,0,0-4.334,0-8.372c-0.899-0.031-1.623-1.354-1.623-2.987C59.893,27.963,60.617,26.641,61.515,26.61z"></path>
+	<path fill="#1A1A1A" d="M60.321,31.589c0.303,0.609,0.738,1,1.226,1h9.96v-1H60.321z"></path>
+	<rect x="36.912" y="96.52" fill="#1A1A1A" width="22.316" height="1"></rect>
+	<path fill="#1A1A1A" d="M51.303,6.052h-1v12.112c0.335,0.01,0.674,0.018,1,0.032V6.052z"></path>
+	<rect x="36.912" y="92.333" fill="#1A1A1A" width="1" height="4.187"></rect>
+	<path fill="#1A1A1A" d="M29.742,90.242h-5.259c-0.287,0-0.552,0.187-0.77,0.5h6.799C30.294,90.429,30.029,90.242,29.742,90.242z"></path>
+	<path fill="#1A1A1A" d="M23.453,94.705c0.246,0.606,0.614,1,1.03,1h5.259c0.416,0,0.784-0.394,1.03-1H23.453z"></path>
+	<path fill="#1A1A1A" d="M33.886,93.797h-2.871c-0.027,0.175-0.063,0.342-0.106,0.5h2.977V93.797z"></path>
+	<rect x="52.573" y="74.601" fill="#1A1A1A" width="1" height="3.661"></rect>
+	<rect x="44.495" y="6.052" fill="#1A1A1A" width="6.808" height="0.5"></rect>
+	<rect x="52.573" y="1.891" fill="#1A1A1A" width="1" height="4.161"></rect>
+	<rect x="49.726" y="1.891" fill="#1A1A1A" width="3.847" height="0.5"></rect>
+	<rect x="71.507" y="34.27" fill="#1A1A1A" width="3.877" height="1"></rect>
 </g>
 <g id="hlight">
-	<path fill="#ccc" d="M50,53.167H0v-7h50c1.933,0,3.5,1.567,3.5,3.5C53.5,51.6,51.933,53.167,50,53.167z"></path>
-	<path fill="#ccc" d="M67.332,19.333c3.289,1.858,6.254,4.223,8.777,7H100v-7H67.332z"></path>
+	<path fill="#E6E6E6" d="M47.899,18.123c-7.52,0-13.616,0.992-13.616,2.217c0,0,0,0.908,0,1c0-1.224,6.096-2.717,13.616-2.717
+		V18.123z"></path>
+	<path fill="#E6E6E6" d="M71.507,26.604h-9.96c-0.489,0-0.923,0.391-1.226,1h11.187V26.604z"></path>
+	<polygon fill="#E6E6E6" points="36.912,85.795 36.912,86.795 44.908,86.795 44.906,86.788 44.906,85.795 	"></polygon>
+	<path fill="#E6E6E6" d="M32.667,87"></path>
+	<polygon fill="#E6E6E6" points="59.228,85.795 50.892,85.795 50.892,86.788 50.891,86.795 59.228,86.795 	"></polygon>
+	<polygon fill="#E6E6E6" points="62.254,85.093 62.254,84.093 59.228,84.093 59.228,88.222 59.728,88.222 59.728,85.093 	"></polygon>
+	<polygon fill="#E6E6E6" points="36.912,85.093 36.912,84.093 33.886,84.093 33.886,88.222 34.386,88.222 34.386,85.093 	"></polygon>
+	<polygon fill="#E6E6E6" points="43.226,74.601 45.073,74.601 45.073,74.101 42.226,74.101 42.226,78.262 43.226,78.262 	"></polygon>
+	<polygon fill="#E6E6E6" points="40.893,78.762 45.655,78.762 45.655,78.262 39.893,78.262 39.893,80.153 40.893,80.153 	"></polygon>
+	<rect x="71.507" y="23.923" fill="#E6E6E6" width="3.877" height="0.5"></rect>
 </g>
 </g>
 
@@ -115,7 +117,7 @@
 	  // Global Parameters and Variables
     //!export-start
     let _pn_setState     = 0;
-	  let _pn_setInterval  = 1000;
+	let _pn_setInterval  = 1000;
     let _pc_state0Colour = '#b4b4b4';
     let _pc_state1Colour = '#00ff00';
     let _pc_state2Colour = '#ff9500';
@@ -123,7 +125,7 @@
     let _pc_state4Colour = '#3c3c3c';
     let _pc_state5Colour = '#dcdcdc';
     //!export-end
-	  let stateNumber = 0;
+	let stateNumber = 0;
     let blinkInterval;
 
     // Function to update the color based on the set state
@@ -132,30 +134,30 @@
       switch (stateNumber) {
         case 0: // off
           setBaseColor( _pc_state0Colour);
-		      clearBlinking();
+		  clearBlinking();
           break; 
         case 1: // run
           setBaseColor( _pc_state1Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         case 2: // warning
           setBaseColor( _pc_state2Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         case 3: // fault
-		      startBlinking( _pc_state0Colour, _pc_state3Colour, _pn_setInterval );
+		  startBlinking( _pc_state0Colour, _pc_state3Colour, _pn_setInterval );
           break;
         case 4: // invalid 
           setBaseColor( _pc_state4Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         case 5: // spare
           setBaseColor( _pc_state5Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         default:
           console.log('Undefined State');
-		      clearBlinking();
+		  clearBlinking();
       }
     }
 
@@ -170,7 +172,7 @@
         stateNumber = value;
         logic(); // Re-run logic to update state
       }
-	    if (id === '_pn_setInterval' ) _pn_setInterval  = value;
+	  if (id === '_pn_setInterval' ) _pn_setInterval  = value;
       if (id === '_pc_state0Colour') _pc_state0Colour = value;
       if (id === '_pc_state1Colour') _pc_state1Colour = value;
       if (id === '_pc_state2Colour') _pc_state2Colour = value;
@@ -187,7 +189,7 @@
     // Initialize the SVG
     init();
 
-	  // Function to update the color for the base shape group
+	// Function to update the color for the base shape group
     function setBaseColor(baseColor) {
       // Define color manipulations based on base color
       const darkColor   = percentColor(baseColor, 15);
@@ -195,22 +197,22 @@
       const lightColor  = percentColor(baseColor,  50);
       const hlightColor = percentColor(baseColor,  90);
 
-	    document.getElementById('shape').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', baseColor);
+	  document.getElementById('shape').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', baseColor);
       });
-      document.getElementById('dark').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', darkColor);
+      //document.getElementById('dark').querySelectorAll('*').forEach(function(elem) {
+      //elem.setAttribute('fill', darkColor);
+      //});
+      document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', shadowColor);
       });
-	    document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', shadowColor);
+      document.getElementById('light').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', lightColor);
       });
-	    document.getElementById('light').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', lightColor);
+	  document.getElementById('hlight').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', hlightColor);
       });
-	    document.getElementById('hlight').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', hlightColor);
-      });
-	  }
+	}
 
     // Function to manipulate color brightness/darkness (-100% = Black) (0 = unchanged) (100% = White)
     function percentColor(color, percent) {
@@ -244,7 +246,7 @@
       return "#" + RR + GG + BB;
     }
 
-	  // Function to start blinking between two colors
+	// Function to start blinking between two colors
     function startBlinking(color1, color2, interval) {
       clearBlinking(); // Clear any existing blinking interval
     
@@ -289,4 +291,5 @@
 
     ]]>
   </script>
+
 </svg>
