@@ -10,7 +10,7 @@ import { TableCustomizerCellEditComponent, TableCustomizerCellRowType, TableCust
 @Component({
     selector: 'app-table-customizer',
     templateUrl: './table-customizer.component.html',
-    styleUrls: ['./table-customizer.component.css']
+    styleUrls: ['./table-customizer.component.scss']
 })
 export class TableCustomizerComponent implements OnInit {
 

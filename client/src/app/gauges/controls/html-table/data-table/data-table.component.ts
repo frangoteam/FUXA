@@ -405,7 +405,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // columns
         let columnIds = [];
         this.columnsStyle = {};
-        this.tableOptions.columns.forEach(cn => {
+        const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.tableOptions.columns;
+        columns.forEach(cn => {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
             if (this.type === TableType.history) {
@@ -481,6 +482,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tagsColumnMap[cell.variableId].push(cell);
     }
 
+    private isAlarmsType(): boolean {
+        return this.type === TableType.alarms || this.type === TableType.alarmsHistory;
+    }
+
     public static DefaultOptions() {
         let options = <TableOptions> {
             paginator: {
@@ -516,6 +521,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
             alarmsColumns: [],
+            alarmFilter: { filterA: [], filterB: [], filterC: [] },
             rows: [],
         };
         return options;

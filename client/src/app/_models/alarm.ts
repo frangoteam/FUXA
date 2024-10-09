@@ -98,6 +98,30 @@ export class AlarmQuery {
     end: Date;
 }
 
+export enum AlarmColumnsType {
+    ontime = 'ontime',
+    text = 'text',
+    type =  'type',
+    group = 'group',
+    status = 'status',
+    ack = 'ack',
+    history = 'history'
+}
+export const AlarmColumns: string[] = Object.values(AlarmColumnsType);
+
+export enum AlarmHistoryColumnsType {
+    ontime = 'ontime',
+    text = 'text',
+    type = 'type',
+    group = 'group',
+    status = 'status',
+    offtime = 'offtime',
+    acktime = 'acktime',
+    userack = 'userack',
+    history = 'history'
+}
+export const AlarmHistoryColumns: string[] = Object.values(AlarmHistoryColumnsType);
+
 export interface IAlarmHistory {
     type: string;
     name: string;

@@ -465,6 +465,13 @@
     "table.rangetype-last1d": "Last day",
     "table.rangetype-last3d": "Last 3 days",
 
+    "table.alarms-title": "Table Alarms",
+    "table.alarms-history-title": "Table Alarms History",
+    "table.alarm-column": "Alarms Column",
+    "table.alarm-filter": "Alarms Filter",
+    "table.alarm-priority": "Priority",
+    "table.alarm-tags": "Tags",
+
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.views": "Views",
@@ -1119,6 +1126,7 @@
     "alarms.view-offtime": "OFF Date/Time",
     "alarms.view-acktime": "ACK Date/Time",
     "alarms.view-userack": "ACK User",
+    "alarms.view-ack": "ACK",
     "alarms.view-ack-all-alarms": "ACK All Alarms",
     "alarm.status-active": "Active",
     "alarm.status-passive": "Passive",

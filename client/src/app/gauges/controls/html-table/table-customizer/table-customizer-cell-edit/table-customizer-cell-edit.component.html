@@ -1,6 +1,6 @@
 <div>
-    <h1 *ngIf="data.type === cellType.column" mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.column-dialog-title' | translate}}</h1>
-    <h1 *ngIf="data.type === cellType.row" mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.row-dialog-title' | translate}}</h1>
+    <h1 *ngIf="data.type === cellType.column" mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.column-dialog-title' | translate}}</h1>
+    <h1 *ngIf="data.type === cellType.row" mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.row-dialog-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block;">

@@ -194,6 +194,7 @@ import { FlexWidgetPropertyComponent } from './gauges/gauge-property/flex-widget
 import { GraphSourceEditComponent } from './editor/graph-config/graph-source-edit/graph-source-edit.component';
 import { LibWidgetsComponent } from './resources/lib-widgets/lib-widgets.component';
 import { TableCustomizerCellEditComponent } from './gauges/controls/html-table/table-customizer/table-customizer-cell-edit/table-customizer-cell-edit.component';
+import { TableAlarmsComponent } from './gauges/controls/html-table/table-alarms/table-alarms.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -334,6 +335,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TablePropertyComponent,
         TableCustomizerComponent,
         TableCustomizerCellEditComponent,
+        TableAlarmsComponent,
         DataTableComponent,
         RangeNumberComponent,
         LibImagesComponent,

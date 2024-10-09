@@ -1,5 +1,5 @@
 <div style="position: relative;">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block;">
@@ -45,7 +45,7 @@
             <button mat-icon-button (click)="onAddRow()" matTooltip="{{'table.customize-row-add' | translate}}">
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
-        </div>        
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()" cdkFocusInitial>{{'dlg.cancel' | translate}}</button>

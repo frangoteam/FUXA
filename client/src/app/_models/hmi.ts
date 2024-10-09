@@ -449,7 +449,14 @@ export interface TableOptions {
     };
     columns?: TableColumn[];
     alarmsColumns?: TableColumn[];
+    alarmFilter: TableFilter;
     rows?: TableRow[];
+}
+
+export interface TableFilter {
+    filterA: string[];
+    filterB: string[];
+    filterC: string[];
 }
 
 export enum TableCellType {
