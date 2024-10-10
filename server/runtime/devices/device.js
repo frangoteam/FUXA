@@ -10,7 +10,7 @@ var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
-var CipEthernetIPclient = require('./cip-ethernet-ip');
+var StEthernetIPclient = require('./st-ethernet-ip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
@@ -89,11 +89,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = ODBCclient.create(data, logger, events, manager);
-    } else if (data.type === DeviceEnum.CipEthernetIP) {
-        if (!CipEthernetIPclient) {
+    } else if (data.type === DeviceEnum.StEthernetIP) {
+        if (!StEthernetIPclient) {
             return null;
         }
-        comm = CipEthernetIPclient.create(data, logger, events, manager, runtime);
+        comm = StEthernetIPclient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -496,8 +496,8 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
-    } else if (type === DeviceEnum.CipEthernetIP) {
-        CipEthernetIPclient = require(module);
+    } else if (type === DeviceEnum.StEthernetIP) {
+        StEthernetIPclient = require(module);
     }
 }
 
@@ -532,7 +532,7 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
-    CipEthernetIP: 'CipEthernetIP',
+    StEthernetIP: 'StEthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
     // Template: 'template'

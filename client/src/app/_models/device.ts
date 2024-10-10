@@ -230,7 +230,7 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
-    CipEthernetIP = 'CipEthernetIP',
+    StEthernetIP = 'StEthernetIP',
     ODBC = 'ODBC'
     // Template: 'template'
 }

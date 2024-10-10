@@ -1,13 +1,13 @@
 /**
- * node-red-contrib-cip-ethernet-ip
+ * st-ethernet-ip
  */
 
 'use strict';
-var CipEthernetIp;
+var StEthernetIp;
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
-function CipEthernetIPclient(_data, _logger, _events) {
+function StEthernetIPclient(_data, _logger, _events) {
 
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;
@@ -135,9 +135,9 @@ module.exports = {
     },
     create: function (data, logger, events, manager) {
         // To use with plugin
-        try { CipEthernetIp = require('node-red-contrib-cip-ethernet-ip'); } catch { }
-        if (!CipEthernetIp && manager) { try { CipEthernetIp = manager.require('node-red-contrib-cip-ethernet-ip'); } catch { } }
-        if (!CipEthernetIp) return null;
-        return new CipEthernetIPclient(data, logger, events, runtime);
+        try { StEthernetIp = require('st-ethernet-ip'); } catch { }
+        if (!StEthernetIp && manager) { try { StEthernetIp = manager.require('st-ethernet-ip'); } catch { } }
+        if (!StEthernetIp) return null;
+        return new StEthernetIPclient(data, logger, events, runtime);
     }
 }

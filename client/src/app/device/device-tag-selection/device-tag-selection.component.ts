@@ -160,7 +160,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             this.tagPropertyService.editTagPropertyEthernetIp(device, newTag, true).subscribe(result => {
                 this.loadDevicesTags(newTag, device.name);
             });
-        } else if (device.type === DeviceType.CipEthernetIP) {
+        } else if (device.type === DeviceType.StEthernetIP) {
             this.tagPropertyService.editTagPropertyEthernetIp(device, newTag, true).subscribe(result => {
                 this.loadDevicesTags(newTag, device.name);
             });
