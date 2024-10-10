@@ -1,21 +1,35 @@
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" xml:space="preserve" width="100%" height="100%" preserveAspectRatio="none">
-<desc>Copyright Opto 22</desc>
-<g>
-<g id="frame">
-	<rect fill="none" width="100" height="100"></rect>
-</g>
-<g id="shape">
-	<path fill="#006837" d="M0,74.582v-34.52c27.614-19.526,72.386-19.526,100,0v34.52H0z"></path>
-</g>
-<g id="dark">
-	<path fill="#009245" d="M0.5,40.216V74.08h99V40.216C72.014,21.154,27.986,21.154,0.5,40.216z"></path>
-</g>
-<g id="light">
-	<path fill="#96D48D" d="M1.5,40.538v32.541h97V40.539C71.292,22.382,28.708,22.382,1.5,40.538z"></path>
-</g>
-<g id="hlight">
-	<path fill="#FFFFFF" d="M2,40.711v31.866h96V40.711C70.939,22.993,29.061,22.993,2,40.711z"></path>
-</g>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" xml:space="preserve"><desc>Copyright Opto 22</desc> 
+<g style="transform-origin: 0px 0px" transform="translate(100,0) rotate(0) scale(-1,1)">
+	<g id="shape">
+		<path fill="#B3B3B3" d="M94.738,27.257c-2.894,0-5.262,0-5.262,0v1.858h-3.097v-8.358H73.997v8.358H45.113v-8.358H32.731v8.358
+			h-3.655v-1.858c0,0-2.368,0-5.262,0s-5.262,3.273-5.262,7.274v5.417c-0.867,0-2.016,0-3.284,0c-2.518,0-2.983,2.918-3.027,6.612H0
+			v7.187h12.241c0.043,3.703,0.504,6.632,3.027,6.632c1.268,0,2.417,0,3.284,0v5.413c0,4.001,2.368,7.274,5.262,7.274
+			s5.262,0,5.262,0v-1.854h3.655v8.667h12.382v-8.667h28.884v8.667h12.382v-8.667h3.097v1.854c0,0,2.368,0,5.262,0
+			S100,69.792,100,65.791v-31.26C100,30.53,97.632,27.257,94.738,27.257z"></path>
+	</g>
+	<g id="linear"></g>
+	<g id="dark">
+		<path fill="#999999" d="M94.738,69.428c-1.446,0-2.76,0-3.714,0v-3.943H26.018v3.943c-0.673,0-1.415,0-2.204,0
+			c-2.894,0-5.262-2.454-5.262-5.456v1.819c0,4.001,2.368,7.274,5.262,7.274s5.262,0,5.262,0v-1.854h60.4v1.854c0,0,2.368,0,5.262,0
+			S100,69.792,100,65.791v-1.819C100,66.974,97.632,69.428,94.738,69.428z"></path>
+		<path fill="#999999" d="M18.552,60.378c-0.867,0,0,0-3.284,0c-2.523,0-2.985-2.929-3.027-6.632c0,0,2.725,4.34,6.311,4.34V60.378z
+			"></path>
+	</g>
+	<g id="light">
+		<rect x="0" y="46.541" fill="#CCCCCC" width="12.388" height="3.056"></rect>
+		<path fill="#CCCCCC" d="M94.738,27.257c-2.894,0-5.262,0-5.262,0v1.858h-60.4v-1.858c0,0-2.368,0-5.262,0
+			s-5.262,3.273-5.262,7.274v8.638c0-2.5,2.368-4.546,5.262-4.546c0.789,0,1.531,0,2.204,0v2.582h65.007v-2.582
+			c0.954,0,2.268,0,3.714,0c2.894,0,5.262,2.046,5.262,4.546v-8.638C100,30.53,97.632,27.257,94.738,27.257z"></path>
+	</g>
+	<g id="shadow">
+		<rect x="73.997" y="71.211" fill="#808080" width="12.382" height="8.667"></rect>
+		<rect x="32.731" y="71.211" fill="#808080" width="12.382" height="8.667"></rect>
+	</g>
+	<g id="hlight">
+		<path fill="#E6E6E6" d="M94.738,28.623c-2.894,0-5.262,0-5.262,0v3.515h-60.4v-3.515c0,0-2.368,0-5.262,0
+			s-5.262,2.659-5.262,5.909v5.683c0-3.25,2.368-5.909,5.262-5.909c0.789,0,1.531,0,2.204,0v3.877h65.007v-3.877
+			c0.954,0,2.268,0,3.714,0c2.894,0,5.262,2.659,5.262,5.909v-5.683C100,31.281,97.632,28.623,94.738,28.623z"></path>
+	</g>
 </g>
 
   <script type="text/javascript">
@@ -172,9 +186,9 @@
       document.getElementById('dark').querySelectorAll('*').forEach(function(elem) {
       elem.setAttribute('fill', darkColor);
       });
-      //document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
-      //elem.setAttribute('fill', shadowColor);
-      //});
+      document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', shadowColor);
+      });
       document.getElementById('light').querySelectorAll('*').forEach(function(elem) {
       elem.setAttribute('fill', lightColor);
       });

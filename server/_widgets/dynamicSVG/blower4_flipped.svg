@@ -1,20 +1,38 @@
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" xml:space="preserve" width="100%" height="100%" preserveAspectRatio="none">
-<desc>Copyright Opto 22</desc>
-<g>
-<g id="frame">
-	<rect fill="none" width="100" height="100"></rect>
-</g>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" xml:space="preserve"><desc>Copyright Opto 22</desc> 
+<g style="transform-origin: 0px 0px" transform="translate(100,0) rotate(0) scale(-1,1)">
 <g id="shape">
-	<path fill="#006837" d="M0,74.582v-34.52c27.614-19.526,72.386-19.526,100,0v34.52H0z"></path>
-</g>
-<g id="dark">
-	<path fill="#009245" d="M0.5,40.216V74.08h99V40.216C72.014,21.154,27.986,21.154,0.5,40.216z"></path>
+	<path fill="#808080" d="M43.433,93.433C19.484,93.433,0,73.949,0,50S19.484,6.567,43.433,6.567H100v33.051H85.606
+		c0.837,3.4,1.26,6.884,1.26,10.381C86.866,73.949,67.382,93.433,43.433,93.433z"></path>
 </g>
 <g id="light">
-	<path fill="#96D48D" d="M1.5,40.538v32.541h97V40.539C71.292,22.382,28.708,22.382,1.5,40.538z"></path>
+	<g>
+		<path fill="#CCCCCC" d="M59.161,9.48C71.3,14.208,80.807,24.232,84.823,36.706h12.265V9.48H59.161z"></path>
+		<path fill="#CCCCCC" d="M81.761,36.706h-0.106C76.142,20.9,61.096,9.523,43.433,9.523V9.48C21.09,9.48,2.913,27.657,2.913,50
+			c0,22.343,18.177,40.52,40.521,40.52c22.343,0,40.52-18.177,40.52-40.52c0-3.862-0.554-7.707-1.645-11.428L81.761,36.706z
+			 M43.433,67.729c-9.775,0-17.728-7.953-17.728-17.729s7.953-17.728,17.728-17.728c9.775,0,17.728,7.953,17.728,17.728
+			S53.208,67.729,43.433,67.729z"></path>
+	</g>
 </g>
-<g id="hlight">
-	<path fill="#FFFFFF" d="M2,40.711v31.866h96V40.711C70.939,22.993,29.061,22.993,2,40.711z"></path>
+<g id="shadow">
+	<path fill="#333333" d="M43.433,32.272c-9.775,0-17.728,7.953-17.728,17.728s7.953,17.729,17.728,17.729
+		c9.775,0,17.728-7.953,17.728-17.729S53.208,32.272,43.433,32.272z"></path>
+</g>
+<g id="dark">
+	<path fill="#808080" d="M43.433,69.729c-10.878,0-19.728-8.851-19.728-19.729s8.85-19.728,19.728-19.728
+		c10.878,0,19.728,8.85,19.728,19.728S54.312,69.729,43.433,69.729z M43.433,32.272c-9.775,0-17.728,7.953-17.728,17.728
+		s7.953,17.729,17.728,17.729c9.775,0,17.728-7.953,17.728-17.729S53.208,32.272,43.433,32.272z"></path>
+	<rect x="25.705" y="49" fill="#808080" width="6.128" height="2"></rect>
+	<rect x="55.033" y="49" fill="#808080" width="6.128" height="2"></rect>
+	<rect x="42.433" y="61.6" fill="#808080" width="2" height="6.129"></rect>
+	<rect x="42.433" y="32.272" fill="#808080" width="2" height="6.128"></rect>
+	
+		<rect x="32.064" y="57.305" transform="matrix(0.7071 0.7071 -0.7071 0.7071 52.3714 -5.6984)" fill="#808080" width="2" height="6.128"></rect>
+	
+		<rect x="52.802" y="36.567" transform="matrix(0.7071 0.7071 -0.7071 0.7071 43.7817 -26.4363)" fill="#808080" width="2" height="6.128"></rect>
+	
+		<rect x="50.738" y="59.369" transform="matrix(0.7071 0.7071 -0.7071 0.7071 58.4454 -20.3624)" fill="#808080" width="6.128" height="2"></rect>
+	
+		<rect x="30" y="38.631" transform="matrix(0.7071 0.7071 -0.7071 0.7071 37.7077 -11.7722)" fill="#808080" width="6.128" height="2"></rect>
 </g>
 </g>
 
@@ -172,15 +190,15 @@
       document.getElementById('dark').querySelectorAll('*').forEach(function(elem) {
       elem.setAttribute('fill', darkColor);
       });
-      //document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
-      //elem.setAttribute('fill', shadowColor);
-      //});
+      document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', shadowColor);
+      });
       document.getElementById('light').querySelectorAll('*').forEach(function(elem) {
       elem.setAttribute('fill', lightColor);
       });
-	  document.getElementById('hlight').querySelectorAll('*').forEach(function(elem) {
-      elem.setAttribute('fill', hlightColor);
-      });
+	  //document.getElementById('hlight').querySelectorAll('*').forEach(function(elem) {
+      //elem.setAttribute('fill', hlightColor);
+      //});
 	}
 
     // Function to manipulate color brightness/darkness (-100% = Black) (0 = unchanged) (100% = White)
