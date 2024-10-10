@@ -6,7 +6,7 @@ import { map, Observable, of, switchMap } from 'rxjs';
 import { EndPointApi } from '../../_helpers/endpointapi';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
-import { AlarmQuery, IAlarmHistory } from '../../_models/alarm';
+import { AlarmQuery, AlarmBaseType } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 
@@ -63,11 +63,11 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.post<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
     }
 
-    getAlarmsValues(): Observable<any> {
+    getAlarmsValues(): Observable<AlarmBaseType[]> {
         return this.http.get<any>(this.endPointConfig + '/api/alarms', {});
     }
 
-    getAlarmsHistory(query: AlarmQuery): Observable<IAlarmHistory[]> {
+    getAlarmsHistory(query: AlarmQuery): Observable<AlarmBaseType[]> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         const requestOptions: Object = {
             /* other options here */
@@ -78,14 +78,14 @@ export class ResWebApiService implements ResourceStorageService {
             },
             observe: 'response'
         };
-        return this.http.get<IAlarmHistory[]>(this.endPointConfig + '/api/alarmsHistory', requestOptions).pipe(
+        return this.http.get<AlarmBaseType[]>(this.endPointConfig + '/api/alarmsHistory', requestOptions).pipe(
             switchMap((response: any) => {
                 if (response.body === null || response.body === undefined) {
                   return of([]);
                 }
                 return of(response.body);
             }),
-            map((body: IAlarmHistory[]) => body)
+            map((body: AlarmBaseType[]) => body)
         );
         // // let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         // let params = { query: JSON.stringify(query) };

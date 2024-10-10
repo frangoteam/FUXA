@@ -122,7 +122,7 @@ export enum AlarmHistoryColumnsType {
 }
 export const AlarmHistoryColumns: string[] = Object.values(AlarmHistoryColumnsType);
 
-export interface IAlarmHistory {
+export interface AlarmBaseType {
     type: string;
     name: string;
     status: string;
@@ -131,9 +131,10 @@ export interface IAlarmHistory {
     offtime: number;
     acktime: number;
     userack: number;
-    group: number;
+    group: string;
     bkcolor: string;
     color: string;
+    toack: boolean;
 }
 
 export enum AlarmActionsType {
