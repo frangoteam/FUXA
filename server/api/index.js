@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 var express = require('express');
+var morgan = require('morgan');
 var bodyParser = require('body-parser');
 const authJwt = require('./jwt-helper');
 const rateLimit = require("express-rate-limit");
@@ -30,6 +31,8 @@ function init(_server, _runtime) {
     return new Promise(function (resolve, reject) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
+            apiApp.use(morgan(['combined', 'common', 'dev', 'short', 'tiny'].
+                includes(runtime.settings.logApiLevel) ? runtime.settings.logApiLevel : 'combined'));
 
             var maxApiRequestSize = runtime.settings.apiMaxLength || '35mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
