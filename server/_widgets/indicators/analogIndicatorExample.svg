@@ -82,9 +82,10 @@
 
     Variables with the following prefix:
 
+    _pb_ = bool   parameter ( true or false )
     _pn_ = number parameter ( Int, Float, Real etc )
-    _ps_ = string parameter ( must be in '' )
-    _pc_ = colour parameter in hex colour code ( The Hex code must be in '' )
+    _ps_ = string parameter ( string can be entered directly )
+    _pc_ = color parameter in hex color code ( #00ff00ff )
 
     Indicate variable type to be used in Fuxa Properties and binding of Tags, Important! they have to be place within:
 

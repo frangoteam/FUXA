@@ -1,50 +1,45 @@
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" xml:space="preserve"> 
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" xml:space="preserve"><desc>Copyright Opto 22</desc> 
 <g>
-
-<g id="shape">
-	<circle fill="#999" cx="50.042" cy="50" r="35.208"></circle>
-	<rect x="50" y="14.833" fill="#999" width="50" height="16"></rect>
-	<path fill="#999" d="M50,57.667H0v-16h50c4.418,0,8,3.582,8,8S54.418,57.667,50,57.667z"></path>
-	<path fill="#999" d="M8,60.667H0v-22h8"></path>
-	<rect x="92" y="11.833" fill="#999" width="8" height="22"></rect>
-</g>
-<g id="dark">
-	<path fill="#808080" d="M50.042,15.875c-15.971,0-29.376,10.974-33.096,25.792H50c4.418,0,8,3.582,8,8s-3.582,8-8,8H16.792
-		c3.48,15.153,17.04,26.458,33.25,26.458c18.847,0,34.125-15.278,34.125-34.125C84.167,31.153,68.888,15.875,50.042,15.875z"></path>
-	<path fill="#808080" d="M50,56.667c3.866,0,7-3.134,7-7s-3.134-7-7-7H0v14C0,56.667,50,56.667,50,56.667z"></path>
-	<path fill="#808080" d="M50,15.833v0.043c0.014,0,0.028-0.001,0.042-0.001c11.301,0,21.314,5.497,27.524,13.958H100v-14H50z"></path>
-</g>
-<g id="light">
-	<path fill="#b2b2b2" d="M61.443,17.833c5.692,2.018,10.685,5.502,14.533,10H100v-10H61.443z"></path>
-	<path fill="#b2b2b2" d="M50,44.667H0v10c0,0,50,0,50,0c2.761,0,5-2.239,5-5C55,46.905,52.761,44.667,50,44.667z"></path>
-</g>
-<g id="shadow">
-	<path fill="#666" d="M50.042,21.292c-12.932,0-23.891,8.597-27.47,20.375h1.045c3.546-11.219,14.05-19.375,26.425-19.375
-		C65.32,22.292,77.75,34.722,77.75,50S65.32,77.708,50.042,77.708c-12.619,0-23.286-8.482-26.621-20.041h-1.04
-		c3.363,12.118,14.486,21.041,27.66,21.041C65.871,78.708,78.75,65.83,78.75,50S65.871,21.292,50.042,21.292z"></path>
-	<path fill="#666" d="M50.042,35.792c-4.72,0-8.898,2.323-11.483,5.875h1.247c2.424-2.972,6.111-4.875,10.236-4.875
-		c7.283,0,13.208,5.925,13.208,13.208s-5.926,13.208-13.208,13.208c-4.423,0-8.336-2.193-10.734-5.541h-1.209
-		c2.53,3.928,6.933,6.541,11.943,6.541c7.834,0,14.208-6.374,14.208-14.208C64.25,42.166,57.876,35.792,50.042,35.792z"></path>
-	<polygon fill="#666" points="51.463,16.488 52.426,18.155 51.463,19.823 49.537,19.823 48.574,18.155 49.537,16.488 	"></polygon>
-	<polygon fill="#666" points="51.463,37.488 52.426,39.155 51.463,40.823 49.537,40.823 48.574,39.155 49.537,37.488 	"></polygon>
-	<polygon fill="#666" points="51.463,58.988 52.426,60.655 51.463,62.323 49.537,62.323 48.574,60.655 49.537,58.988 	"></polygon>
-	<polygon fill="#666" points="58.847,53.613 60.773,53.613 61.735,55.28 60.773,56.948 58.847,56.948 57.884,55.28 	"></polygon>
-	<polygon fill="#666" points="57.884,44.53 58.847,42.863 60.773,42.863 61.735,44.53 60.773,46.198 58.847,46.198 	"></polygon>
-	<polygon fill="#666" points="51.463,80.238 52.426,81.905 51.463,83.573 49.537,83.573 48.574,81.905 49.537,80.238 	"></polygon>
-	<polygon fill="#666" points="34.563,20.5 36.23,21.463 36.23,23.389 34.563,24.351 32.895,23.389 32.895,21.463 	"></polygon>
-	<polygon fill="#666" points="66.438,75.709 68.105,76.672 68.105,78.598 66.438,79.56 64.77,78.598 64.77,76.672 	"></polygon>
-	<polygon fill="#666" points="21.933,32.425 23.858,32.425 24.821,34.093 23.858,35.76 21.933,35.76 20.97,34.093 	"></polygon>
-	<polygon fill="#666" points="77.142,64.3 79.067,64.3 80.03,65.968 79.067,67.635 77.142,67.635 76.179,65.968 	"></polygon>
-	<polygon fill="#666" points="80.707,49.067 82.375,48.105 84.043,49.067 84.043,50.993 82.375,51.956 80.707,50.993 	"></polygon>
-	<polygon fill="#666" points="20.97,65.968 21.933,64.3 23.858,64.3 24.821,65.968 23.858,67.635 21.933,67.635 	"></polygon>
-	<polygon fill="#666" points="76.179,34.093 77.142,32.425 79.067,32.425 80.03,34.093 79.067,35.76 77.142,35.76 	"></polygon>
-	<polygon fill="#666" points="32.895,78.598 32.895,76.672 34.563,75.709 36.23,76.672 36.23,78.598 34.563,79.56 	"></polygon>
-	<polygon fill="#666" points="64.77,23.389 64.77,21.463 66.438,20.5 68.105,21.463 68.105,23.389 66.438,24.351 	"></polygon>
-</g>
-<g id="hlight">
-	<path fill="#ccc" d="M50,53.167H0v-7h50c1.933,0,3.5,1.567,3.5,3.5C53.5,51.6,51.933,53.167,50,53.167z"></path>
-	<path fill="#ccc" d="M67.332,19.333c3.289,1.858,6.254,4.223,8.777,7H100v-7H67.332z"></path>
-</g>
+	<g id="shape">
+		<path fill="#999999" d="M95.795,32.509c-2.312,0-4.205,0-4.205,0v1.449h-2.475v-6.52h-9.894v6.52h-23.08v-6.52h-9.894
+			v6.52h-2.921v-1.449c0,0-1.892,0-4.205,0c-2.312,0-4.205,2.553-4.205,5.675v4.226c-0.692,0-1.611,0-2.624,0
+			c-1.227,0-1.842,0.849-2.145,2.162c-0.405-1.314-1.141-2.162-2.367-2.162c-0.537,0-1.048,0-1.514,0V27.648
+			c0-4.682-3.215-8.513-7.144-8.513c-3.929,0-7.144,3.831-7.144,8.513v17.416H5.684v-3.863H0.737v18.353h4.947v-3.863h6.295v17.416
+			c0,4.682,3.215,8.513,7.144,8.513c3.929,0,7.144-3.831,7.144-8.513V58.346c0.466,0,0.978,0,1.514,0
+			c1.227,0,1.962-0.848,2.367-2.161c0.303,1.314,0.918,2.164,2.145,2.164c1.013,0,1.932,0,2.624,0v4.223
+			c0,3.122,1.892,5.675,4.205,5.675c2.312,0,4.205,0,4.205,0V66.8h2.921v6.761h9.894V66.8h23.08v6.761h9.894V66.8h2.475v1.446
+			c0,0,1.892,0,4.205,0c2.312,0,4.205-2.553,4.205-5.675V38.184C100,35.062,98.108,32.509,95.795,32.509z"></path>
+	</g>
+	<g id="gradient"></g>
+	<g id="dark">
+		<path fill="#808080" d="M26.267,69.56c0,2.34-3.215,4.256-7.144,4.256c-3.929,0-7.144-1.916-7.144-4.256v3.547
+			c0,4.682,3.215,8.513,7.144,8.513c3.929,0,7.144-3.831,7.144-8.513V69.56z"></path>
+		<rect x="0.737" y="54.68" fill="#808080" width="4.947" height="4.874"></rect>
+		<path fill="#808080" d="M95.795,65.409c-1.155,0-2.205,0-2.967,0v-3.076H40.883v3.076c-0.538,0-1.131,0-1.761,0
+			c-2.312,0-4.205-1.915-4.205-4.256v1.419c0,3.122,1.892,5.675,4.205,5.675c2.312,0,4.205,0,4.205,0V66.8H91.59v1.446
+			c0,0,1.892,0,4.205,0c2.312,0,4.205-2.553,4.205-5.675v-1.419C100,63.494,98.108,65.409,95.795,65.409z"></path>
+	</g>
+	<g id="light">
+		<path fill="#B5B5B5" d="M26.267,34.742c0-2.34-3.215-4.256-7.144-4.256c-3.929,0-7.144,1.916-7.144,4.256v-7.094
+			c0-4.682,3.215-8.513,7.144-8.513c3.929,0,7.144,3.831,7.144,8.513V34.742z"></path>
+		<polygon fill="#B5B5B5" points="5.684,45.037 5.684,41.201 0.737,41.201 0.737,48.913 4.694,48.913 4.694,49.556 11.156,49.556 
+			11.156,45.037 		"></polygon>
+		<path fill="#B5B5B5" d="M95.795,32.509c-2.312,0-4.205,0-4.205,0v1.449H43.327v-1.449c0,0-1.892,0-4.205,0
+			c-2.312,0-4.205,2.553-4.205,5.675v6.739c0-1.951,1.892-3.547,4.205-3.547c0.63,0,1.223,0,1.761,0v2.014h51.945v-2.014
+			c0.762,0,1.812,0,2.967,0c2.312,0,4.205,1.596,4.205,3.547v-6.739C100,35.062,98.108,32.509,95.795,32.509z"></path>
+	</g>
+	<g id="shadow">
+		<rect x="79.222" y="66.8" fill="#666666" width="9.894" height="6.761"></rect>
+		<rect x="46.248" y="66.8" fill="#666666" width="9.894" height="6.761"></rect>
+	</g>
+	<g id="hlight">
+		<rect x="0.737" y="42.257" fill="#CCCCCC" width="4.947" height="4.536"></rect>
+		<path fill="#CCCCCC" d="M17.124,26.191c0,2.501,1.717,4.546,3.815,4.546c2.098,0,3.815-2.045,3.815-4.546v-1.52
+			c0-2.501-1.717-4.546-3.815-4.546c-2.098,0-3.815,2.045-3.815,4.546V26.191z"></path>
+		<path fill="#CCCCCC" d="M95.795,33.574c-2.312,0-4.205,0-4.205,0v2.742H43.327v-2.742c0,0-1.892,0-4.205,0
+			c-2.312,0-4.205,2.074-4.205,4.61v4.434c0-2.535,1.892-4.61,4.205-4.61c0.63,0,1.223,0,1.761,0v3.025h51.945v-3.025
+			c0.762,0,1.812,0,2.967,0c2.312,0,4.205,2.074,4.205,4.61v-4.434C100,35.648,98.108,33.574,95.795,33.574z"></path>
+	</g>
 </g>
 
   <script type="text/javascript">
@@ -115,7 +110,7 @@
 	  // Global Parameters and Variables
     //!export-start
     let _pn_setState     = 0;
-	  let _pn_setInterval  = 1000;
+	let _pn_setInterval  = 1000;
     let _pc_state0Colour = '#b4b4b4';
     let _pc_state1Colour = '#00ff00';
     let _pc_state2Colour = '#ff9500';
@@ -123,7 +118,7 @@
     let _pc_state4Colour = '#3c3c3c';
     let _pc_state5Colour = '#dcdcdc';
     //!export-end
-	  let stateNumber = 0;
+	let stateNumber = 0;
     let blinkInterval;
 
     // Function to update the color based on the set state
@@ -132,30 +127,30 @@
       switch (stateNumber) {
         case 0: // off
           setBaseColor( _pc_state0Colour);
-		      clearBlinking();
+		  clearBlinking();
           break; 
         case 1: // run
           setBaseColor( _pc_state1Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         case 2: // warning
           setBaseColor( _pc_state2Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         case 3: // fault
-		      startBlinking( _pc_state0Colour, _pc_state3Colour, _pn_setInterval );
+		  startBlinking( _pc_state0Colour, _pc_state3Colour, _pn_setInterval );
           break;
         case 4: // invalid 
           setBaseColor( _pc_state4Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         case 5: // spare
           setBaseColor( _pc_state5Colour);
-		      clearBlinking();
+		  clearBlinking();
           break;
         default:
           console.log('Undefined State');
-		      clearBlinking();
+		  clearBlinking();
       }
     }
 
@@ -170,7 +165,7 @@
         stateNumber = value;
         logic(); // Re-run logic to update state
       }
-	    if (id === '_pn_setInterval' ) _pn_setInterval  = value;
+	  if (id === '_pn_setInterval' ) _pn_setInterval  = value;
       if (id === '_pc_state0Colour') _pc_state0Colour = value;
       if (id === '_pc_state1Colour') _pc_state1Colour = value;
       if (id === '_pc_state2Colour') _pc_state2Colour = value;
@@ -187,7 +182,7 @@
     // Initialize the SVG
     init();
 
-	  // Function to update the color for the base shape group
+	// Function to update the color for the base shape group
     function setBaseColor(baseColor) {
       // Define color manipulations based on base color
       const darkColor   = percentColor(baseColor, 15);
@@ -195,22 +190,22 @@
       const lightColor  = percentColor(baseColor,  50);
       const hlightColor = percentColor(baseColor,  90);
 
-	    document.getElementById('shape').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', baseColor);
+	  document.getElementById('shape').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', baseColor);
       });
       document.getElementById('dark').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', darkColor);
+      elem.setAttribute('fill', darkColor);
       });
-	    document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', shadowColor);
+      document.getElementById('shadow').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', shadowColor);
       });
-	    document.getElementById('light').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', lightColor);
+      document.getElementById('light').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', lightColor);
       });
-	    document.getElementById('hlight').querySelectorAll('*').forEach(function(elem) {
-        elem.setAttribute('fill', hlightColor);
+	  document.getElementById('hlight').querySelectorAll('*').forEach(function(elem) {
+      elem.setAttribute('fill', hlightColor);
       });
-	  }
+	}
 
     // Function to manipulate color brightness/darkness (-100% = Black) (0 = unchanged) (100% = White)
     function percentColor(color, percent) {
@@ -244,7 +239,7 @@
       return "#" + RR + GG + BB;
     }
 
-	  // Function to start blinking between two colors
+	// Function to start blinking between two colors
     function startBlinking(color1, color2, interval) {
       clearBlinking(); // Clear any existing blinking interval
     
@@ -289,4 +284,5 @@
 
     ]]>
   </script>
+
 </svg>
