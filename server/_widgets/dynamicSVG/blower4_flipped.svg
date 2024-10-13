@@ -80,11 +80,15 @@
     4 = Invalid
     5 = Spare
 
-    You can also set the color for each state in Fuxa using HEX color code '#b4b4b4'
-    The Default Blink Interval is 1sec but can also be changed in Fuxa in MS
+    You can also use the bool field and this will change the state between 0 = off and 1 = run 
+
+    You can also set the color for each state in Fuxa using HEX color code #b4b4b4
+    The Default Blink Interval is 500ms but can also be changed in Fuxa in MS resolution
 
 
     This SVG is a bit complex as we have different shades of color, we calculate the offset colors
+    The Shade Values are from -100 to 100, where 0 is not changed and -100 is black and 100 is white
+
     These style of SVGs can be found here:
 
     https://www.opto22.com/support/resources-tools/demos/svg-image-library
@@ -103,16 +107,21 @@
 
 	  // Global Parameters and Variables
     //!export-start
-    let _pn_setState     = 0;
-	let _pn_setInterval  = 1000;
-    let _pc_state0Colour = '#b4b4b4';
-    let _pc_state1Colour = '#00ff00';
-    let _pc_state2Colour = '#ff9500';
-    let _pc_state3Colour = '#ff0000';
-    let _pc_state4Colour = '#3c3c3c';
-    let _pc_state5Colour = '#dcdcdc';
+    let _pn_setState         = 0;
+    let _pb_boolState        = false;
+	  let _pn_setInterval      = 500;
+    let _pc_state0Colour     = '#b4b4b4';
+    let _pc_state1Colour     = '#00ff00';
+    let _pc_state2Colour     = '#ff9500';
+    let _pc_state3Colour     = '#ff0000';
+    let _pc_state4Colour     = '#3c3c3c';
+    let _pc_state5Colour     = '#dcdcdc';
+    let _pn_lightShade       = 50;
+    let _pn_highLightShade   = 90;
+    let _pn_darkShade        = 15;
+    let _pn_shadowShade      = -15;
     //!export-end
-	let stateNumber = 0;
+	  let stateNumber = 0;
     let blinkInterval;
 
     // Function to update the color based on the set state
@@ -121,30 +130,30 @@
       switch (stateNumber) {
         case 0: // off
           setBaseColor( _pc_state0Colour);
-		  clearBlinking();
+		      clearBlinking();
           break; 
         case 1: // run
           setBaseColor( _pc_state1Colour);
-		  clearBlinking();
+		      clearBlinking();
           break;
         case 2: // warning
           setBaseColor( _pc_state2Colour);
-		  clearBlinking();
+		      clearBlinking();
           break;
         case 3: // fault
-		  startBlinking( _pc_state0Colour, _pc_state3Colour, _pn_setInterval );
+		      startBlinking( _pc_state0Colour, _pc_state3Colour, _pn_setInterval );
           break;
         case 4: // invalid 
           setBaseColor( _pc_state4Colour);
-		  clearBlinking();
+		      clearBlinking();
           break;
         case 5: // spare
           setBaseColor( _pc_state5Colour);
-		  clearBlinking();
+		      clearBlinking();
           break;
         default:
           console.log('Undefined State');
-		  clearBlinking();
+		      clearBlinking();
       }
     }
 
@@ -157,15 +166,28 @@
     function putValue(id, value) {
       if (id === '_pn_setState') {
         stateNumber = value;
-        logic(); // Re-run logic to update state
+        logic(); 
       }
-	  if (id === '_pn_setInterval' ) _pn_setInterval  = value;
-      if (id === '_pc_state0Colour') _pc_state0Colour = value;
-      if (id === '_pc_state1Colour') _pc_state1Colour = value;
-      if (id === '_pc_state2Colour') _pc_state2Colour = value;
-      if (id === '_pc_state3Colour') _pc_state3Colour = value;
-      if (id === '_pc_state4Colour') _pc_state4Colour = value;
-      if (id === '_pc_state5Colour') _pc_state5Colour = value;
+      if (id === '_pb_boolState') {
+        _pb_boolState = value;
+        if (_pb_boolState === true) {
+          stateNumber = 1;
+        } else if (_pb_boolState === false) {
+          stateNumber = 0;
+        }
+        logic(); 
+      }
+	    if (id === '_pn_setInterval'   ) _pn_setInterval    = value;
+      if (id === '_pc_state0Colour'  ) _pc_state0Colour   = value;
+      if (id === '_pc_state1Colour'  ) _pc_state1Colour   = value;
+      if (id === '_pc_state2Colour'  ) _pc_state2Colour   = value;
+      if (id === '_pc_state3Colour'  ) _pc_state3Colour   = value;
+      if (id === '_pc_state4Colour'  ) _pc_state4Colour   = value;
+      if (id === '_pc_state5Colour'  ) _pc_state5Colour   = value;
+      if (id === '_pn_lightShade'    ) _pn_lightShade     = value;
+      if (id === '_pn_highLightShade') _pn_highLightShade = value;
+      if (id === '_pn_darkShade'     ) _pn_darkShade      = value;
+      if (id === '_pn_shadowShade'   ) _pn_shadowShade    = value;
     }
 
     // Function to send values back to Fuxa (placeholder)
@@ -179,10 +201,10 @@
 	// Function to update the color for the base shape group
     function setBaseColor(baseColor) {
       // Define color manipulations based on base color
-      const darkColor   = percentColor(baseColor, 15);
-      const shadowColor = percentColor(baseColor, -15);
-      const lightColor  = percentColor(baseColor,  50);
-      const hlightColor = percentColor(baseColor,  90);
+      const darkColor   = percentColor(baseColor, _pn_darkShade);
+      const shadowColor = percentColor(baseColor, _pn_shadowShade);
+      const lightColor  = percentColor(baseColor, _pn_lightShade);
+      const hlightColor = percentColor(baseColor, _pn_highLightShade);
 
 	  document.getElementById('shape').querySelectorAll('*').forEach(function(elem) {
       elem.setAttribute('fill', baseColor);
