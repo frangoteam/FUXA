@@ -1,0 +1,164 @@
+<svg id="timePicker" width="188.09" height="52.191" version="1.1" viewBox="0 0 188.09 52.191" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Rectangle for Time Display -->
+  <rect id="timeBox" x=".7795" y=".7795" width="186.53" height="50.632" fill="#f0f0f0" stroke="#000000" stroke-width="2"/>
+  <!-- Time Display (h:m:s:ms) -->
+  <g id="timeDisplay" transform="translate(-1.4305e-6 -35.774)" fill="#000000" font-family="Arial" font-size="24px" font-weight="bold" text-anchor="middle">
+    <text id="hoursDisplay" x="21.215105" y="71.825523">00</text>
+    <text id="text1" x="42.98912" y="69.677528">:</text>
+    <text id="minutesDisplay" x="64.950638" y="71.825523">00</text>
+    <text id="text2" x="86.724655" y="69.677528">:</text>
+    <text id="secondsDisplay" x="108.68617" y="71.825523">00</text>
+    <text id="text3" x="130.46019" y="69.677528">:</text>
+    <text id="millisecondsDisplay" x="159.09554" y="71.825523">000</text>
+  </g>
+
+  <!-- JavaScript for Time Adjustment -->
+  <script type="text/ecmascript">
+    <![CDATA[
+
+      /*
+      #####################################
+      #           How to Use              #
+      #####################################
+
+      Variables with the following prefix:
+
+      _pb_ = bool   parameter ( true or false )
+      _pn_ = number parameter ( Int, Float, Real etc )
+      _ps_ = string parameter ( string can be entered directly )
+      _pc_ = color parameter in hex color code ( #00ff00ff )
+
+      Indicate variable type to be used in Fuxa Properties and binding of Tags, Important! they have to be place within:
+
+      //!export-start
+      let _pn_setState = 0;
+      //!export-end
+
+
+      There are 2x Functions to handle sending and receiving data between Fuxa and the SVG
+
+      // Recieve Variables From Fuxa
+      function putValue(id, value) { } 
+      
+      // Send Variables To Fuxa
+      function postValue(id, value) {
+        console.error('Not defined!');
+      }
+
+      The ID is the name of the variable _pn_setState for example and value is the value to be sent or received from Fuxa
+
+      
+      This Time Widget uses the IEC 61131 TIME Datatype Format in MS (milliseconds) and an Number for more details see:
+
+      https://content.helpme-codesys.com/en/CODESYS%20Development%20System/_cds_datatype_time.html
+
+      Currently there is a small bug in Fuxa using the TIME data type via OPC-UA is comes through as an 64bit and an array with 2x sections
+      You can use the scale script to fix this see https://github.com/frangoteam/FUXA/wiki/HowTo-Devices-and-Tags at the bottom on how to use
+
+      All you have todo is use the timeMS with a number tag and it will convert the time selection into MS to pass to the PLC TIME Datatype
+
+      Using timeMsET will just display the timer elapsed Time counting up, if you would like to have the time counting down you will need to enter 
+      the timeMsPT and set countDown to true from Fuxa
+
+      <svg>
+        SVG Content Here
+        <script>
+          JS Script Content Here
+        </script>
+      </svg>
+
+      */
+
+      //!export-start
+      let _pn_timeMsET          = 0;
+      let _pn_timeMsPT          = 0;
+      let _pb_countDown         = false; 
+      let _pc_baseColor         = '#f0f0f0'; 
+      let _pc_strokeColor       = '#595959';
+      let _pc_textColor         = '#595959';
+      //!export-end
+  
+      const hoursDisplay            = document.getElementById("hoursDisplay");
+      const minutesDisplay          = document.getElementById("minutesDisplay");
+      const secondsDisplay          = document.getElementById("secondsDisplay");
+      const millisecondsDisplay     = document.getElementById("millisecondsDisplay");
+      const timeDisplay             = document.getElementById("timeDisplay");
+      const svgElement              = document.getElementById("timePicker");
+      const timeBox                 = document.getElementById("timeBox");
+
+      // Init
+      function init() {
+        updateTimeDisplay();
+        updateColors();
+      }
+  
+      // Convert time in milliseconds to HH:mm:ss:sss format
+      function formatTime(ms) {
+        const hours   = Math.floor(ms / (1000 * 60 * 60));
+        const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+        const milliseconds = ms % 1000;
+        return {
+          hours:        hours.toString().padStart(2, '0'),
+          minutes:      minutes.toString().padStart(2, '0'),
+          seconds:      seconds.toString().padStart(2, '0'),
+          milliseconds: milliseconds.toString().padStart(3, '0')
+        };
+      }
+
+      // Convert time in HH:mm:ss:sss to milliseconds format 
+      function parseTime(hours, minutes, seconds, milliseconds) {
+       const ms = (hours * 3600 * 1000) + (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
+       return ms;
+      }
+  
+      // Update the displayed time
+      function updateTimeDisplay() {
+        let remainingTime = 0;
+        if (_pn_timeMsPT > 0 && _pb_countDown) {
+          if (_pn_timeMsPT === _pn_timeMsET){
+            remainingTime = _pn_timeMsPT;
+          } else {
+            remainingTime = _pn_timeMsPT - _pn_timeMsET;
+          }          
+        } else {
+          remainingTime = _pn_timeMsET;
+        }
+        const time = formatTime(remainingTime);
+        hoursDisplay.textContent        = time.hours;
+        minutesDisplay.textContent      = time.minutes;
+        secondsDisplay.textContent      = time.seconds;
+        millisecondsDisplay.textContent = time.milliseconds;
+      }
+
+      // Update the displayed time
+      function updateColors() {
+        timeBox.setAttribute('fill',        _pc_baseColor);
+        timeBox.setAttribute('stroke',      _pc_strokeColor);
+        timeDisplay.setAttribute('fill',    _pc_textColor);
+      }
+
+      // Variables received from Fuxa
+      function putValue(id, value) {
+        if (id === '_pn_timeMsET'         ) _pn_timeMsET          = value;
+        if (id === '_pn_timeMsPT'         ) _pn_timeMsPT          = value;
+        if (id === '_pb_countDown'        ) _pn_countDown         = value;
+        if (id === '_pc_baseColor'        ) _pc_baseColor         = value;
+        if (id === '_pc_strokeColor'      ) _pc_strokeColor       = value;
+        if (id === '_pc_textColor'        ) _pc_textColor         = value;
+
+        updateTimeDisplay();
+        updateColors();
+      }    
+
+      // Send Variables to Fuxa
+      function postValue(id, value) {
+        console.error('Not defined!');
+      }
+
+      init(); // Start initialization
+  
+    ]]>
+  </script>
+
+</svg>

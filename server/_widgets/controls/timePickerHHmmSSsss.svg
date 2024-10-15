@@ -1,0 +1,428 @@
+<svg id="timePicker" width="233.13" height="123.8" version="1.1" viewBox="0 0 233.13 123.8" xmlns="http://www.w3.org/2000/svg" >
+  <!-- Add style to prevent text selection -->
+  <style>
+    svg text {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      pointer-events: none;
+    }
+
+  </style>
+  <!-- Background Rectangle for Time Display -->
+  <rect id="timeBox" x=".8667" y="36.641" width="231.39" height="50.458" cursor="pointer" fill="#f0f0f0" stroke="#000000" stroke-width="2"/>
+  <!-- Time Display (h:m:s:ms) -->
+  <g id="timeDisplay" fill="#000000" font-family="Arial" font-size="24px" font-weight="bold" text-anchor="middle">
+    <text id="hoursDisplay" x="21.215105" y="71.825523">00</text>
+    <text id="text1" x="42.98912" y="69.677528">:</text>
+    <text id="minutesDisplay" x="64.950638" y="71.825523">00</text>
+    <text id="text2" x="86.724655" y="69.677528">:</text>
+    <text id="secondsDisplay" x="108.68617" y="71.825523">00</text>
+    <text id="text3" x="130.46019" y="69.677528">:</text>
+    <text id="millisecondsDisplay" x="159.09554" y="71.825523">000</text>
+  </g>
+  <!-- Adjustment Arrows -->
+  <g id="arrows" transform="translate(16.887 -11.82)" style="display:none;stroke:#333333">
+    <!-- Hour Arrows -->
+    <g id="hourArrows" class="arrow-group" transform="translate(-8)" >
+      <g id="hourUpArrow" class="arrow" transform="translate(.32843 44)" stroke="#000000" stroke-width="2">
+        <path id="hourUpArrowPath" transform="rotate(-90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <g id="hourDownArrow" class="arrow" transform="translate(24.328 102.81)" stroke="#000000" stroke-width="2">
+        <path id="hourDownArrowPath" transform="rotate(90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <!-- Transparent rectangles for clickable area -->
+      <rect id="hourUpTransparent" x="-7.6716" y="11.82" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:.0025674;fill:#000000;stroke-width:1.2491"/>
+      <rect id="hourDownTransparent" x="-7.6716" y="100.43" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:.0025674;fill:#000000;stroke-width:1.2491"/>
+    </g>
+    <!-- Minute Arrows -->
+    <g id="minuteArrows" class="arrow-group" transform="translate(-28)" >
+      <g id="minuteUpArrow" class="arrow" transform="translate(63.837 44)" cursor="pointer" stroke="#000000" stroke-width="2">
+        <path id="minuteUpArrowPath" transform="rotate(-90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <g id="minuteDownArrow" class="arrow" transform="translate(87.837 102.78)" cursor="pointer" stroke="#000000" stroke-width="2">
+        <path id="minuteDownArrowPath" transform="rotate(90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <!-- Transparent rectangles for clickable area -->
+      <rect id="minuteUpTransparent" x="55.837" y="12.385" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:0;stroke-width:1.2491"/>
+      <rect id="minuteDownTransparent" x="55.837" y="100.52" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:0;stroke-width:1.2491"/>
+    </g>
+    <!-- Second Arrows -->
+    <g id="secondArrows" class="arrow-group" transform="translate(-46)" >
+      <g id="secondUpArrow" class="arrow" transform="translate(124.97 44)" cursor="pointer" stroke="#000000" stroke-width="2">
+        <path id="secondUpArrowPath" transform="rotate(-90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <g id="secondDownArrow" class="arrow" transform="translate(148.97 102.81)" cursor="pointer" stroke="#000000" stroke-width="2">
+        <path id="secondDownArrowPath" transform="rotate(90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <!-- Transparent rectangles for clickable area -->
+      <rect id="secondUpTransparent" x="116.97" y="12.385" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:0;stroke-width:1.2491"/>
+      <rect id="secondDownTransparent" x="116.97" y="100.43" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:0;stroke-width:1.2491"/>
+    </g>
+    <!-- Millisecond Arrows -->
+    <g id="millisecondArrows" class="arrow-group" transform="translate(-64)" >
+      <g id="millisecondUpArrow" class="arrow" transform="translate(194.21 44)" cursor="pointer" stroke="#000000" stroke-width="2">
+        <path id="millisecondUpArrowPath" transform="rotate(-90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <g id="millisecondDownArrow" class="arrow" transform="translate(218.21 102.81)" cursor="pointer" stroke="#000000" stroke-width="2">
+        <path id="millisecondDownArrowPath" transform="rotate(90)" width="24" height="24" d="M 8.122,24 4,20 12,12 4,4 8.122,0 20,12 Z"/>
+      </g>
+      <!-- Transparent rectangles for clickable area -->
+      <rect id="millisecondUpTransparent" x="185.79" y="12.385" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:0;stroke-width:1.2491"/>
+      <rect id="millisecondDownTransparent" x="185.98" y="100.62" width="40" height="35" cursor="pointer" fill="#00000000" stroke="none" style="fill-opacity:0;stroke-width:1.2491"/>
+    </g>
+  </g>
+  <!-- Time Symbol (Clock) -->
+  <g id="timeSymbol" transform="matrix(1.3908 0 0 1.3908 190.11 45.426)" fill="none" stroke="#000000" stroke-width="2">
+    <g id="g1" stroke-linecap="round" stroke-linejoin="round" >
+      <circle id="circle1" cx="12" cy="12" r="10" />
+      <path id="path1" d="m12 6v6l4 4" />
+    </g>
+  </g>
+  <!-- Transparent clickable area over time symbol -->
+  <rect id="timeBoxTransparent" x="1" y="36.774" width="230.4" height="50.191" cursor="pointer" fill="#00000000" style="fill-opacity:0;stroke-width:.86257"/>
+
+  <!-- JavaScript for Time Adjustment -->
+  <script type="text/ecmascript">
+    <![CDATA[
+
+      /*
+      #####################################
+      #           How to Use              #
+      #####################################
+
+      Variables with the following prefix:
+
+      _pb_ = bool   parameter ( true or false )
+      _pn_ = number parameter ( Int, Float, Real etc )
+      _ps_ = string parameter ( string can be entered directly )
+      _pc_ = color parameter in hex color code ( #00ff00ff )
+
+      Indicate variable type to be used in Fuxa Properties and binding of Tags, Important! they have to be place within:
+
+      //!export-start
+      let _pn_setState = 0;
+      //!export-end
+
+
+      There are 2x Functions to handle sending and receiving data between Fuxa and the SVG
+
+      // Recieve Variables From Fuxa
+      function putValue(id, value) { } 
+      
+      // Send Variables To Fuxa
+      function postValue(id, value) {
+        console.error('Not defined!');
+      }
+
+      The ID is the name of the variable _pn_setState for example and value is the value to be sent or received from Fuxa
+
+      
+      This Time Widget uses the IEC 61131 TIME Datatype Format in MS (milliseconds) and an Number for more details see:
+
+      https://content.helpme-codesys.com/en/CODESYS%20Development%20System/_cds_datatype_time.html
+
+      Currently there is a small bug in Fuxa using the TIME data type via OPC-UA is comes through as an 64bit and an array with 2x sections
+      You can use the scale script to fix this see https://github.com/frangoteam/FUXA/wiki/HowTo-Devices-and-Tags at the bottom on how to use
+
+      All you have todo is use the timeMS with a number tag and it will convert the time selection into MS to pass to the PLC TIME Datatype
+
+      <svg>
+        SVG Content Here
+        <script>
+          JS Script Content Here
+        </script>
+      </svg>
+
+      */
+
+      //!export-start
+      let _pn_timeMS                    = 0; 
+      let _pc_baseColor                 = '#f0f0f0'; 
+      let _pc_baseStrokeColor           = '#595959';
+      let _pc_timeSymbolStrokeColor     = '#595959';
+      let _pc_arrowColor                = '#f0f0f0';
+      let _pc_arrowStrokeColor          = '#595959';
+      let _pc_arrowClickColor           = '#595959';
+      let _pc_textColor                 = '#595959';
+      //!export-end
+
+      let currentTime       = 0; 
+      let adjustInterval    = null; 
+      let holdTimer         = null;
+      let delayTimer        = null;
+      let postTimer         = null;
+      let step              = 1; 
+      let adjustingUnit     = ''; 
+  
+      const hoursDisplay            = document.getElementById("hoursDisplay");
+      const minutesDisplay          = document.getElementById("minutesDisplay");
+      const secondsDisplay          = document.getElementById("secondsDisplay");
+      const millisecondsDisplay     = document.getElementById("millisecondsDisplay");
+      const timeDisplay             = document.getElementById("timeDisplay");
+      const arrows                  = document.getElementById("arrows");
+      const svgElement              = document.getElementById("timePicker");
+      const timeBox                 = document.getElementById("timeBox");
+      const timeSymbol              = document.getElementById("timeSymbol");
+  
+      // Arrow Elements
+      const hourUpArrow             = document.getElementById("hourUpArrow");
+      const hourDownArrow           = document.getElementById("hourDownArrow");
+      const minuteUpArrow           = document.getElementById("minuteUpArrow");
+      const minuteDownArrow         = document.getElementById("minuteDownArrow");
+      const secondUpArrow           = document.getElementById("secondUpArrow");
+      const secondDownArrow         = document.getElementById("secondDownArrow");
+      const millisecondUpArrow      = document.getElementById("millisecondUpArrow");
+      const millisecondDownArrow    = document.getElementById("millisecondDownArrow");
+
+      // Arrow Transparent Overlay
+      const hourUpTransparent           = document.getElementById("hourUpTransparent");
+      const hourDownTransparent         = document.getElementById("hourDownTransparent");
+      const minuteUpTransparent         = document.getElementById("minuteUpTransparent");
+      const minuteDownTransparent       = document.getElementById("minuteDownTransparent");
+      const secondUpTransparent         = document.getElementById("secondUpTransparent");
+      const secondDownTransparent       = document.getElementById("secondDownTransparent");
+      const millisecondUpTransparent    = document.getElementById("millisecondUpTransparent");
+      const millisecondDownTransparent  = document.getElementById("millisecondDownTransparent");
+
+      // Init
+      function init() {
+        updateTimeDisplay();
+        updateColors();
+      }
+  
+      // Convert time in milliseconds to HH:mm:ss:sss format
+      function formatTime(ms) {
+        const hours   = Math.floor(ms / (1000 * 60 * 60));
+        const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+        const milliseconds = ms % 1000;
+        return {
+          hours:        hours.toString().padStart(2, '0'),
+          minutes:      minutes.toString().padStart(2, '0'),
+          seconds:      seconds.toString().padStart(2, '0'),
+          milliseconds: milliseconds.toString().padStart(3, '0')
+        };
+      }
+
+      // Convert time in HH:mm:ss:sss to milliseconds format 
+      function parseTime(hours, minutes, seconds, milliseconds) {
+       const ms = (hours * 3600 * 1000) + (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
+       return ms;
+      }
+  
+      // Update the displayed time
+      function updateTimeDisplay() {
+        const time = formatTime(_pn_timeMS);
+        hoursDisplay.textContent        = time.hours;
+        minutesDisplay.textContent      = time.minutes;
+        secondsDisplay.textContent      = time.seconds;
+        millisecondsDisplay.textContent = time.milliseconds;
+      }
+
+      // Update the displayed time
+      function updateColors() {
+
+        timeBox.setAttribute('fill',        _pc_baseColor);
+        timeBox.setAttribute('stroke',      _pc_baseStrokeColor);
+        timeSymbol.setAttribute('stroke',   _pc_timeSymbolStrokeColor);
+        timeDisplay.setAttribute('fill',    _pc_textColor);
+
+        document.querySelectorAll(".arrow").forEach(function (arrow) {
+          arrow.setAttribute("fill",   _pc_arrowColor);
+          arrow.setAttribute("stroke", _pc_arrowStrokeColor);
+        });
+      }
+  
+      // Show or hide the arrows when the time rectangle is clicked
+      const timeBoxTransparent = document.getElementById("timeBoxTransparent");
+      timeBoxTransparent.addEventListener("click", function (event) {
+        if (arrows.style.display === "none") {
+          arrows.style.display = "block"; 
+        } else {
+          arrows.style.display = "none"; 
+        }
+      });
+  
+      // Hide arrows when clicking outside the time box
+      document.addEventListener("click", function (event) {
+        if (!timeBoxTransparent.contains(event.target) && !arrows.contains(event.target)) {
+          arrows.style.display = "none"; 
+        }
+      });
+  
+      // Wrap hours between 0-23
+      function wrapHours(hours) {
+        return (hours + 24) % 24;
+      }
+  
+      // Wrap minutes between 0-59
+      function wrapMinutes(minutes) {
+        return (minutes + 60) % 60;
+      }
+  
+      // Wrap seconds between 0-59
+      function wrapSeconds(seconds) {
+        return (seconds + 60) % 60;
+      }
+  
+      // Wrap milliseconds between 0-999
+      function wrapMilliseconds(ms) {
+        return (ms + 1000) % 1000;
+      }
+  
+      function startAdjusting(amount, unit, arrow, stepSize) {
+        clearTimeout(postTimer);
+        adjustingUnit = unit;
+        step = 1; 
+        delayTimer = setTimeout(() => {
+          adjustTime(amount, unit);
+        }, 20);
+      
+        // Set a timeout to initiate the adjustment every 200ms after 500ms
+        holdTimer = setTimeout(() => {
+          adjustInterval = setInterval(function () {
+            step = Math.min(step + 1, stepSize); 
+            adjustTime(amount * step, unit);
+          }, 200); 
+        }, 500);
+      
+        // Reset color for all arrows before applying color to the clicked one
+        resetArrowColors();
+        arrow.setAttribute("fill", _pc_arrowClickColor); 
+      }
+  
+      // Reset all arrows' color to black
+      function resetArrowColors() {
+        document.querySelectorAll(".arrow").forEach(function (arrow) {
+          arrow.setAttribute("fill", _pc_arrowColor);
+        });
+      }
+  
+      // Stop adjusting time and reset color when mouse is released
+      function stopAdjusting() {
+        clearTimeout(delayTimer);
+        clearTimeout(holdTimer); 
+        clearInterval(adjustInterval);
+        resetArrowColors(); 
+        adjustingUnit = ''; 
+        postTimer = setTimeout(() => {
+          // Send Value to Fuxa when adjusting done
+          postValue('_pn_timeMS', _pn_timeMS);
+        }, 2000);
+      }
+  
+      // Adjust time based on the selected unit
+      function adjustTime(amount, unit) {
+        const timeParts     = formatTime(_pn_timeMS);
+        let hours           = parseInt(timeParts.hours, 10);
+        let minutes         = parseInt(timeParts.minutes, 10);
+        let seconds         = parseInt(timeParts.seconds, 10);
+        let milliseconds    = parseInt(timeParts.milliseconds, 10);
+  
+        switch (unit) {
+          case "hour":
+            hours = wrapHours(hours + amount);
+            _pn_timeMS = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
+            break;
+          case "minute":
+            minutes = wrapMinutes(minutes + amount);
+            _pn_timeMS = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
+            break;
+          case "second":
+            seconds = wrapSeconds(seconds + amount);
+            _pn_timeMS = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
+            break;
+          case "millisecond":
+            milliseconds = wrapMilliseconds(milliseconds + amount);
+            _pn_timeMS = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000) + milliseconds;
+            break;
+        }
+        updateTimeDisplay();
+      }
+  
+      // Add event listeners for arrows
+      hourUpTransparent.addEventListener("mousedown", function () {
+        startAdjusting(1, "hour", hourUpArrow, 1);
+      });
+      hourDownTransparent.addEventListener("mousedown", function () {
+        startAdjusting(-1, "hour", hourDownArrow, 1);
+      });
+      minuteUpTransparent.addEventListener("mousedown", function () {
+        startAdjusting(1, "minute", minuteUpArrow, 5);
+      });
+      minuteDownTransparent.addEventListener("mousedown", function () {
+        startAdjusting(-1, "minute", minuteDownArrow, 5);
+      });
+      secondUpTransparent.addEventListener("mousedown", function () {
+        startAdjusting(1, "second", secondUpArrow, 5);
+      });
+      secondDownTransparent.addEventListener("mousedown", function () {
+        startAdjusting(-1, "second", secondDownArrow, 5);
+      });
+      millisecondUpTransparent.addEventListener("mousedown", function () {
+        startAdjusting(1, "millisecond", millisecondUpArrow, 10);
+      });
+      millisecondDownTransparent.addEventListener("mousedown", function () {
+        startAdjusting(-1, "millisecond", millisecondDownArrow, 10);
+      });
+  
+      // Stop adjusting when mouse is released
+      svgElement.addEventListener("mouseup", stopAdjusting);
+  
+      // Add touch event listeners for mobile devices
+      hourUpTransparent.addEventListener("touchstart", function () {
+        startAdjusting(1, "hour", hourUpArrow, 1);
+      });
+      hourDownTransparent.addEventListener("touchstart", function () {
+        startAdjusting(-1, "hour", hourDownArrow, 1);
+      });
+      minuteUpTransparent.addEventListener("touchstart", function () {
+        startAdjusting(1, "minute", minuteUpArrow, 5);
+      });
+      minuteDownTransparent.addEventListener("touchstart", function () {
+        startAdjusting(-1, "minute", minuteDownArrow, 5);
+      });
+      secondUpTransparent.addEventListener("touchstart", function () {
+        startAdjusting(1, "second", secondUpArrow, 5);
+      });
+      secondDownTransparent.addEventListener("touchstart", function () {
+        startAdjusting(-1, "second", secondDownArrow, 5);
+      });
+      millisecondUpTransparent.addEventListener("touchstart", function () {
+        startAdjusting(1, "millisecond", millisecondUpArrow, 10);
+      });
+      millisecondDownTransparent.addEventListener("touchstart", function () {
+        startAdjusting(-1, "millisecond", millisecondDownArrow, 10);
+      });
+  
+      // Stop adjusting when touch is released
+      svgElement.addEventListener("touchend", stopAdjusting);
+
+      // Variables received from Fuxa
+      function putValue(id, value) {
+        if (id === '_pn_timeMS'                     ) _pn_timeMS                    = value;
+        if (id === '_pc_baseColor'                  ) _pc_baseColor                 = value;
+        if (id === '_pc_baseStrokeColor'            ) _pc_baseStrokeColor           = value;
+        if (id === '_pc_timeSymbolStrokeColor'      ) _pc_timeSymbolStrokeColor     = value;
+        if (id === '_pc_arrowColor'                 ) _pc_arrowColor                = value;
+        if (id === '_pc_arrowStrokeColor'           ) _pc_arrowStrokeColor          = value;
+        if (id === '_pc_arrowClickColor'            ) _pc_arrowClickColor           = value;
+        if (id === '_pc_textColor'                  ) _pc_textColor                 = value;
+
+        updateTimeDisplay();
+        updateColors();
+      }    
+
+      // Send Variables to Fuxa
+      function postValue(id, value) {
+        console.error('Not defined!');
+      }
+
+      init(); // Start initialization
+  
+    ]]>
+  </script>
+</svg>
