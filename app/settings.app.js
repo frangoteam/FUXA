@@ -13,6 +13,22 @@ module.exports = {
     // Default: '_logs'
     // logDir: '_logs',
 
+    logApiLevel: 'tiny',
+    // logApiLevel Configuration for Morgan Logging
+    //
+    // This configuration determines the format of logging by Morgan, indirectly acting as a 'level' of logging detail.
+    // The setting influences which predefined format or custom function Morgan uses to log HTTP requests.
+    //
+    // Possible values for logApiLevel:
+    // - 'dev': Colorful and concise output for development environments, showing the method, URL, status, response length, and response time.
+    // - 'combined': Apache combined log format. Very detailed, suitable for production environments.
+    // - 'common': Less detailed than 'combined', omitting the referrer and user-agent.
+    // - 'short': Shorter format that includes the remote address and request details.
+    // - 'tiny': Minimalist format, showing just the method, URL, status, response length, and response time.
+    //
+    // Default Value:
+    // - 'combined': By default, logApiLevel is set to 'combined', providing detailed logs suitable for thorough tracking and analysis.
+
     // Used to storage Database like DAQ, User
     // Default: '_db'
     // dbDir: '_db',
