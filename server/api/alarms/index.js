@@ -34,7 +34,8 @@ module.exports = {
                 runtime.logger.error("api get alarms: Tocken Expired");
             } else {	
                 try {
-                    var result = runtime.alarmsMgr.getAlarmsValues(req.query, groups);
+                    var filter = req.query.filter ? JSON.parse(req.query.filter) : null;
+                    var result = runtime.alarmsMgr.getAlarmsValues(filter, groups);
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     if (result) {

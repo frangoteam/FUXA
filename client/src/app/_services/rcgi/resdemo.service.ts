@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
-import { AlarmBaseType, AlarmQuery } from '../../_models/alarm';
+import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 
@@ -73,7 +73,7 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
 
-    getAlarmsValues(): Observable<AlarmBaseType[]> {
+    getAlarmsValues(alarmFilter?: AlarmsFilter): Observable<AlarmBaseType[]> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });

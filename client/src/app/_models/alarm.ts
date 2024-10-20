@@ -167,3 +167,10 @@ export enum AlarmPriorityType {
     low = 'alarm.property-low',
     info = 'alarm.property-info'
 }
+
+export interface AlarmsFilter {
+    priority: string[],
+    text: string;
+    group: string;
+    tagIds: string[];
+}

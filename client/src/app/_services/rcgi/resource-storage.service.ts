@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { Device } from '../../_models/device';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
-import { AlarmBaseType, AlarmQuery } from '../../_models/alarm';
+import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 
@@ -30,7 +30,7 @@ export abstract class ResourceStorageService {
 
     public abstract setDeviceSecurity(id: string, value: string): Observable<any>;
 
-    public abstract getAlarmsValues(): Observable<AlarmBaseType[]>;
+    public abstract getAlarmsValues(alarmFilter?: AlarmsFilter): Observable<AlarmBaseType[]>;
 
     public abstract getAlarmsHistory(query: AlarmQuery): Observable<AlarmBaseType[]>;
 

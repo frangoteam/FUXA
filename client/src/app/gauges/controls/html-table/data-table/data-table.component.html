@@ -58,6 +58,9 @@
             </ng-container>
             <ng-template #stringValue>
                 {{element[column]?.stringValue}}
+                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0" class="remove">
+                    <mat-icon>check_circle_outline</mat-icon>
+                </button>
             </ng-template>
         </td>
     </ng-container>

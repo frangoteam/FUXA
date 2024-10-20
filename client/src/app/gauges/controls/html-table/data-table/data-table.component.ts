@@ -9,7 +9,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType } from '../../../../_models/hmi';
+import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, TableFilter } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
@@ -18,7 +18,7 @@ import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { SCRIPT_PARAMS_MAP, ScriptParam } from '../../../../_models/script';
 import { HmiService } from '../../../../_services/hmi.service';
-import { AlarmBaseType, AlarmPriorityType, AlarmStatusType } from '../../../../_models/alarm';
+import { AlarmBaseType, AlarmColumnsType, AlarmPriorityType, AlarmsFilter, AlarmStatusType } from '../../../../_models/alarm';
 
 declare const numeral: any;
 @Component({
@@ -37,7 +37,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     rxjsPollingTimer = timer(0, 2500);
     statusText = AlarmStatusType;
     priorityText = AlarmPriorityType;
-
+    alarmColumnType = AlarmColumnsType;
     loading = false;
     id: string;
     type: TableType;
@@ -64,7 +64,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedRow = null;
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
-
+    dataFilter: TableFilter | AlarmsFilter;
     constructor(
         private dataService: DataConverterService,
         private projectService: ProjectService,
@@ -116,7 +116,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private startPollingAlarms() {
         this.rxjsPollingTimer.pipe(
             takeUntil(this.destroy$),
-            switchMap(() => this.hmiService.getAlarmsValues())
+            switchMap(() => this.hmiService.getAlarmsValues(<AlarmsFilter>this.dataFilter))
         ).subscribe(result => {
             this.updateAlarmsTable(result);
         });
@@ -539,6 +539,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     isAlarmsType(): boolean {
         return this.type === TableType.alarms || this.type === TableType.alarmsHistory;
+    }
+
+    onAckAlarm(alarm: any) {
+        if (!this.isEditor) {
+            this.hmiService.setAlarmAck(alarm.name?.stringValue).subscribe(result => {
+            }, error => {
+                console.error('Error setAlarmAck', error);
+            });
+        }
     }
 
     public static DefaultOptions() {

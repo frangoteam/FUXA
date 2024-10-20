@@ -93,7 +93,7 @@ function AlarmsManager(_runtime) {
     /**
      * Return the current active alarms values
      */
-    this.getAlarmsValues = function (query, groups) {
+    this.getAlarmsValues = function (filter, groups) {
         var result = [];
         Object.keys(alarms).forEach(alrkey => {
             alarms[alrkey].forEach(alr => {
@@ -109,7 +109,7 @@ function AlarmsManager(_runtime) {
                         mask = (alr.tagproperty.permission & 255);
                         canack = (mask) ? mask & groups : 1;
                     }
-                    if (toshow) {
+                    if (toshow && (!filter || _filterAlarm(alr.type, alr.subproperty.text, alr.subproperty.group, alr.tagproperty.variableId, filter))) {
                         if (!canack) {
                             alritem.toack = 0;
                         }
@@ -493,6 +493,20 @@ function AlarmsManager(_runtime) {
 
     var _emitAlarmsChanged = function () {
         events.emit('alarms-status:changed');
+    }
+
+    var _filterAlarm = function (alarmType, alarmText, alarmGroup, alarmTagId, filter) {
+        var available = true;
+        if (filter.priority.length && filter.priority.indexOf(alarmType) === -1) {
+            available = false;
+        } else if (filter.text && (!alarmText || alarmText.toLowerCase().indexOf(filter.text.toLowerCase()) === -1)) {
+            available = false;
+        } else if (filter.group && (!alarmGroup || alarmGroup.toLowerCase().indexOf(filter.group.toLowerCase()) === -1)) {
+            available = false;
+        } else if (filter.tagIds.length && alarmTagId && filter.tagIds.indexOf(alarmTagId) === -1) {
+            available = false;
+        }
+        return available;
     }
 
     var _formatDateTime = function (dt) {
