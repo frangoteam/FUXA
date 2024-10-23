@@ -7,7 +7,7 @@ import { takeUntil, switchMap, catchError, delay } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/alarm';
+import { AlarmColumns, AlarmHistoryColumns, AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/alarm';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import * as moment from 'moment';
@@ -21,9 +21,9 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 })
 export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    alarmsColumns = ['ontime', 'text', 'type', 'group', 'status', 'ack', 'history'];
-    historyColumns = ['ontime', 'text', 'type', 'group', 'status', 'offtime', 'acktime', 'userack', 'history'];
-    displayColumns = this.alarmsColumns;
+    alarmsColumns = AlarmColumns;
+    historyColumns = AlarmHistoryColumns;
+    displayColumns: string[] = AlarmColumns;
 
     showheader = false;
     currentShowMode = 'collapse';

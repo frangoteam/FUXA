@@ -7,7 +7,7 @@ import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project'
 import { View, LayoutSettings, DaqQuery } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
-import { Alarm, AlarmQuery } from '../_models/alarm';
+import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
 import { Text } from '../_models/text';
@@ -534,8 +534,8 @@ export class ProjectService {
         });
     }
 
-    getAlarmsValues(): Observable<any> {
-        return this.storage.getAlarmsValues();
+    getAlarmsValues(alarmFilter?: AlarmsFilter): Observable<AlarmBaseType[]> {
+        return this.storage.getAlarmsValues(alarmFilter);
     }
 
     getAlarmsHistory(query: AlarmQuery): Observable<any> {

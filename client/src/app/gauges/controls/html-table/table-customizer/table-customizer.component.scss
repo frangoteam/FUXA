@@ -1,0 +1,61 @@
+:host {
+    /* ::ng-deep .customer-table .mat-table {
+        background-color: transparent !important;
+        overflow: auto;
+        display: block;
+    } */
+
+    .toolbox-column {
+        z-index: 1000;
+        position: absolute;
+        right: 10px;
+        top: 40px;
+    }
+
+    .toolbox-column button {
+        /* margin-right: 8px; */
+        margin-left: 10px;
+    }
+
+    .toolbox-row {
+        z-index: 1000;
+        position: absolute;
+        left: 0px;
+        bottom: -50px;
+    }
+
+    .toolbox-row button {
+        /* margin-right: 8px; */
+        margin-left: 10px;
+    }
+
+    .data-table-header {
+        min-height: 0px;
+        /* background-color: darkgray; */
+    }
+
+    .column-options {
+        margin-left: 10px;
+    }
+
+    .data-table-remove-row {
+        max-width: 40px;
+        min-width: 40px;
+        width: 40px;
+        height: 40px;
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: -24px;
+    }
+
+    .data-table-cell {
+        white-space: nowrap;
+        max-width: 60px;
+        overflow: hidden;
+    }
+
+    .variable-input {
+        display: block;
+        margin-top: 10px;
+    }
+}

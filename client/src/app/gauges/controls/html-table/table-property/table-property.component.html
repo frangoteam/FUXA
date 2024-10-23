@@ -18,6 +18,8 @@
                         <mat-select [formControl]="tableTypeCtrl" (selectionChange)="onTableChanged()">
                             <mat-option [value]="tableType.data">{{'table.property-type-data' | translate}}</mat-option>
                             <mat-option [value]="tableType.history">{{'table.property-type-history' | translate}}</mat-option>
+                            <mat-option [value]="tableType.alarms">{{'table.property-type-alarms' | translate}}</mat-option>
+                            <!-- <mat-option [value]="tableType.alarmsHistory">{{'table.property-type-alarms-history' | translate}}</mat-option> -->
                         </mat-select>
                     </div>
                     <div class="section-inline-margin2"></div>
@@ -129,7 +131,7 @@
                         <span>{{'table.property-header' | translate}}</span>
                         <mat-slide-toggle color="primary" [(ngModel)]="options.header.show" (change)="onTableChanged()"></mat-slide-toggle>
                     </div>
-                    <div *ngIf="tableTypeCtrl.value === tableType.history" style="display: inline-block;">
+                    <div *ngIf="tableTypeCtrl.value === tableType.history || tableTypeCtrl.value === tableType.alarmsHistory" style="display: inline-block;">
                         <div class="section-inline-margin2"></div>
                         <div class="my-form-field section-inline-toggle slider-field">
                             <span>{{'table.property-filter' | translate}}</span>
@@ -152,7 +154,7 @@
                     <mat-tab-group class="tab-columns-rows" #grptabs>
                         <mat-tab label="{{'table.property-cols' | translate}}">
                             <div class="section-newline">&nbsp;</div>
-                            <div *ngFor="let column of options.columns; index as x" class="cell-item column-item">
+                            <div *ngFor="let column of (isAlarmsType() ? options.alarmsColumns : options.columns); index as x" class="cell-item column-item">
                                 <div class="my-form-field section-inline">
                                     <span>{{'table.property-column-name' | translate}}</span>
                                     <input [(ngModel)]="column.label" type="text" [disabled]="true">
@@ -184,9 +186,9 @@
                                 <div class="my-form-field section-inline-name">
                                     <span>{{'table.property-row-name' | translate}}</span>
                                     <input [(ngModel)]="row.name" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="text" >
-                                </div>    
+                                </div>
                                 <div class="section-inline-margin"></div>
-                                <div class="my-form-field section-inline-type">                            
+                                <div class="my-form-field section-inline-type">
                                     <span>{{'table.property-row-type' | translate}}</span>
                                     <mat-select [(value)]="column.type" (selectionChange)="onTableChanged()">
                                         <mat-option [value]="columnType.label">{{'table.property-column-label' | translate}}</mat-option>
@@ -248,7 +250,7 @@
                                     <div class="my-form-field inbk event-script-param">
                                         <span>{{'gauges.property-event-script-param-name' | translate}}</span>
                                         <input [(ngModel)]="scriptParam.name"
-                                                (change)="onTableChanged()" 
+                                                (change)="onTableChanged()"
                                                 type="text"
                                                 readonly
                                                 matTooltip="{{scriptParam.name}}"
@@ -257,7 +259,7 @@
                                     <div class="my-form-field inbk event-script-value" *ngIf="scriptParam.type === 'value'">
                                         <span>{{'gauges.property-event-script-param-value' | translate}}</span>
                                         <input [(ngModel)]="scriptParam.value"
-                                                (change)="onTableChanged()" 
+                                                (change)="onTableChanged()"
                                                 type="text">
                                     </div>
                                     <div class="my-form-field inbk event-script-tag" *ngIf="scriptParam.type === 'tagid'">

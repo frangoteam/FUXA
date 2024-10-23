@@ -4,13 +4,13 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { TableType, TableColumn, TableRow, TableCell, TableCellType } from '../../../../_models/hmi';
 
-import { ProjectService } from '../../../../_services/project.service';
 import { Utils } from '../../../../_helpers/utils';
+import { TableCustomizerCellEditComponent, TableCustomizerCellRowType, TableCustomizerCellType } from './table-customizer-cell-edit/table-customizer-cell-edit.component';
 
 @Component({
     selector: 'app-table-customizer',
     templateUrl: './table-customizer.component.html',
-    styleUrls: ['./table-customizer.component.css']
+    styleUrls: ['./table-customizer.component.scss']
 })
 export class TableCustomizerComponent implements OnInit {
 
@@ -21,7 +21,7 @@ export class TableCustomizerComponent implements OnInit {
     constructor(
         private dialog: MatDialog,
         public dialogRef: MatDialogRef<TableCustomizerComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: ITableCustom) {
+        @Inject(MAT_DIALOG_DATA) public data: TableCustomizerType) {
 
     }
 
@@ -65,16 +65,16 @@ export class TableCustomizerComponent implements OnInit {
         if (colIndex >= 0) {
             cell = this.data.columns[colIndex];
         }
-        let dialogRef = this.dialog.open(DialogTableCell, {
-            data: <ITableCell> {
+        let dialogRef = this.dialog.open(TableCustomizerCellEditComponent, {
+            data: <TableCustomizerCellType> {
                 table: this.data.type,
-                type: CellType.column,
+                type: TableCustomizerCellRowType.column,
                 cell: JSON.parse(JSON.stringify(cell))
             },
             position: { top: '60px' }
         });
 
-        dialogRef.afterClosed().subscribe((result: ITableCell) => {
+        dialogRef.afterClosed().subscribe((result: TableCustomizerCellType) => {
             if (result) {
                 let colIndex = this.data.columns.findIndex(c => c.id === (<TableColumn>result.cell).id);
                 if (colIndex >= 0) {
@@ -94,16 +94,16 @@ export class TableCustomizerComponent implements OnInit {
         if (!cell) {
             cell = new TableCell(columnId, TableCellType.label);
         }
-        let dialogRef = this.dialog.open(DialogTableCell, {
-            data: <ITableCell> {
+        let dialogRef = this.dialog.open(TableCustomizerCellEditComponent, {
+            data: <TableCustomizerCellType> {
                 table: this.data.type,
-                type: CellType.row,
+                type: TableCustomizerCellRowType.row,
                 cell: JSON.parse(JSON.stringify(cell))
             },
             position: { top: '60px' }
         });
 
-        dialogRef.afterClosed().subscribe((result: ITableCell) => {
+        dialogRef.afterClosed().subscribe((result: TableCustomizerCellType) => {
             if (result) {
                 this.data.rows[rowIndex].cells[colIndex] = <TableCell>result.cell;
                 this.loadData();
@@ -175,68 +175,8 @@ export class TableCustomizerComponent implements OnInit {
     }
 }
 
-@Component({
-    selector: 'table-cell-dialog',
-    templateUrl: 'table-cell.dialog.html',
-    styleUrls: ['./table-customizer.component.css']
-})
-export class DialogTableCell {
-    tableType = TableType;
-    cellType = CellType;
-    columnType = TableCellType;
-    devicesValues = { devices: null };
-    constructor(
-        private projectService: ProjectService,
-        public dialogRef: MatDialogRef<DialogTableCell>,
-        @Inject(MAT_DIALOG_DATA) public data: ITableCell) {
-            this.devicesValues.devices = Object.values(this.projectService.getDevices());
-        }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-
-        this.dialogRef.close(this.data);
-    }
-
-    onSetVariable(event) {
-        this.data.cell.variableId = event.variableId;
-        if (this.data.table === TableType.data) {
-            if (event.variableRaw) {
-                this.data.cell.label = event.variableRaw.name;
-                if (this.data.cell.type === TableCellType.device) {
-                    let device = this.projectService.getDeviceFromTagId(event.variableId);
-                    this.data.cell.label = device ? device.name : '';
-                }
-            } else {
-                this.data.cell.label = null;
-            }
-        } else if (this.data.table === TableType.history) {
-            if (event.variableRaw) {
-                if (this.data.cell.type === TableCellType.device) {
-                    let device = this.projectService.getDeviceFromTagId(event.variableId);
-                    this.data.cell['exname'] = device ? device.name : '';
-                }
-            }
-        }
-    }
-}
-
-export interface ITableCustom {
+export interface TableCustomizerType {
     columns: TableColumn[];
     rows: TableRow[];
     type: TableType;
-}
-
-export interface ITableCell {
-    type: CellType;
-    cell: TableCell;
-    table: TableType;
-}
-
-export enum CellType {
-    column,
-    row,
 }

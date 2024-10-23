@@ -1,0 +1,77 @@
+:host {
+
+    .container {
+        min-width: 680px;
+        min-height: 400px;
+
+        .alarm-column {
+            mat-checkbox {
+                font-size: 14px;
+                margin: 7px 30px 7px 10px;
+            }
+        }
+        .alarm-priority {
+            mat-checkbox {
+                font-size: 14px;
+                margin: 7px 30px 7px 10px;
+            }
+        }
+
+        .alarm-filter {
+            font-size: 16px;
+        }
+
+        .alarm-tags {
+            span {
+                display: inline-block;
+            }
+            .add-tags {
+                float: right;
+            }
+
+            .list-panel {
+                height: 200px;
+                overflow-x: hidden;
+            }
+
+            .list-item {
+                display: block;
+                font-size: 14px;
+                height: 26px !important;
+                overflow: hidden;
+                padding-left: 10px;
+            }
+
+            .list-item mat-icon {
+                font-size: 20px;
+            }
+
+            .list-item span {
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            .list-item-text {
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            .list-item-remove {
+                width: 20px;
+                max-width: 20px;
+                cursor: pointer;
+            }
+
+            .list-item-name {
+                width: 50%;
+                max-width: 50%;
+            }
+
+            .list-item-label {
+                width: 50%;
+                max-width: 50%;
+            }
+        }
+    }
+}

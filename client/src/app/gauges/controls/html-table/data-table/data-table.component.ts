@@ -9,14 +9,16 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType } from '../../../../_models/hmi';
+import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, TableFilter } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { BehaviorSubject, Subject, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { SCRIPT_PARAMS_MAP, ScriptParam } from '../../../../_models/script';
+import { HmiService } from '../../../../_services/hmi.service';
+import { AlarmBaseType, AlarmColumnsType, AlarmPriorityType, AlarmsFilter, AlarmStatusType } from '../../../../_models/alarm';
 
 declare const numeral: any;
 @Component({
@@ -32,6 +34,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
 
+    rxjsPollingTimer = timer(0, 2500);
+    statusText = AlarmStatusType;
+    priorityText = AlarmPriorityType;
+    alarmColumnType = AlarmColumnsType;
     loading = false;
     id: string;
     type: TableType;
@@ -58,10 +64,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedRow = null;
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
-
+    dataFilter: TableFilter | AlarmsFilter;
     constructor(
         private dataService: DataConverterService,
         private projectService: ProjectService,
+        private hmiService: HmiService,
         private scriptService: ScriptService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
@@ -79,8 +86,19 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             return false;
         };
-    }
 
+        if (this.isAlarmsType()) {
+            Object.keys(this.statusText).forEach(key => {
+                this.statusText[key] = this.translateService.instant(this.statusText[key]);
+            });
+            Object.keys(this.priorityText).forEach(key => {
+                this.priorityText[key] = this.translateService.instant(this.priorityText[key]);
+            });
+            if (this.type === TableType.alarms) {
+                this.startPollingAlarms();
+            }
+        }
+    }
     ngAfterViewInit() {
         this.sort.disabled = this.type === TableType.data;
         this.bindTableControls();
@@ -93,6 +111,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (e) {
             console.error(e);
         }
+    }
+
+    private startPollingAlarms() {
+        this.rxjsPollingTimer.pipe(
+            takeUntil(this.destroy$),
+            switchMap(() => this.hmiService.getAlarmsValues(<AlarmsFilter>this.dataFilter))
+        ).subscribe(result => {
+            this.updateAlarmsTable(result);
+        });
     }
 
     onRangeChanged(ev) {
@@ -247,6 +274,34 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setLoading(false);
         }, 500);
         this.reloadActive = false;
+    }
+
+    updateAlarmsTable(alr: AlarmBaseType[]) {
+        let alarms = [];
+        alr.forEach(alr => {
+            let alarm = {
+                type: { stringValue: this.priorityText[alr.type] },
+                name: { stringValue: alr.name },
+                status: { stringValue: this.statusText[alr.status] },
+                text: { stringValue: alr.text },
+                group: { stringValue: alr.group },
+                ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.dd HH:mm:ss') },
+                color: alr.color,
+                bkcolor: alr.bkcolor,
+                toack: alr.toack
+            };
+            if (alr.offtime) {
+                alarm['offtime'] = { stringValue: format(new Date(alr.offtime), 'YYYY.MM.dd HH:mm:ss') };
+            }
+            if (alr.acktime) {
+                alarm['acktime'] = { stringValue: format(new Date(alr.acktime), 'YYYY.MM.dd HH:mm:ss') };
+            }
+            if (alr.userack) {
+                alarm['userack'] = { stringValue: format(new Date(alr.userack), 'YYYY.MM.dd HH:mm:ss') };
+            }
+            alarms.push(alarm);
+        });
+        this.dataSource.data = alarms;
     }
 
     isSelectable(): boolean {
@@ -405,7 +460,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // columns
         let columnIds = [];
         this.columnsStyle = {};
-        this.tableOptions.columns.forEach(cn => {
+        const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.tableOptions.columns;
+        columns.forEach(cn => {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
             if (this.type === TableType.history) {
@@ -449,7 +505,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         } else if (cell.type === TableCellType.timestamp) {
             if (this.isEditor) {
-                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');;
+                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
             }
             this.addTimestampToMap(cell);
         } else if (cell.type === TableCellType.label) {
@@ -479,6 +535,19 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.tagsColumnMap[cell.variableId] = [];
         }
         this.tagsColumnMap[cell.variableId].push(cell);
+    }
+
+    isAlarmsType(): boolean {
+        return this.type === TableType.alarms || this.type === TableType.alarmsHistory;
+    }
+
+    onAckAlarm(alarm: any) {
+        if (!this.isEditor) {
+            this.hmiService.setAlarmAck(alarm.name?.stringValue).subscribe(result => {
+            }, error => {
+                console.error('Error setAlarmAck', error);
+            });
+        }
     }
 
     public static DefaultOptions() {
@@ -515,6 +584,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 fontBold: true,
             },
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
+            alarmsColumns: [],
+            alarmFilter: { filterA: [], filterB: [], filterC: [] },
             rows: [],
         };
         return options;

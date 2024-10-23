@@ -4,7 +4,7 @@ import * as io from 'socket.io-client';
 import { environment } from '../../environments/environment';
 import { Tag, DeviceType } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult, GaugeEventSetValueType } from '../_models/hmi';
-import { AlarmQuery } from '../_models/alarm';
+import { AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
@@ -543,8 +543,8 @@ export class HmiService {
     //#endregion
 
     //#region Current Alarms functions
-    getAlarmsValues() {
-        return this.projectService.getAlarmsValues();
+    getAlarmsValues(alarmFilter?: AlarmsFilter) {
+        return this.projectService.getAlarmsValues(alarmFilter);
     }
 
     getAlarmsHistory(query: AlarmQuery) {

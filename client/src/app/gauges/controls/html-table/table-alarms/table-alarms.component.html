@@ -1,0 +1,57 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.alarms-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="container">
+        <div>
+            <div class="my-form-field alarm-column mt10">
+                <span>{{'table.alarm-column' | translate}}</span>
+                <mat-checkbox *ngFor="let item of (data.type === tableType.alarms ? alarmsColumns : historyColumns)" (change)="onAlarmColumChanged(item, $event.checked)"
+                    [checked]="data.columns?.indexOf(item) !== -1">
+                    {{'alarms.view-' + item | translate}}
+                </mat-checkbox>
+            </div>
+            <div class="block alarm-filter mt20">
+                <span>{{'table.alarm-filter' | translate}}</span>
+                <div class="my-form-field alarm-priority block mt10">
+                    <span>{{'table.alarm-priority' | translate}}</span>
+                    <mat-checkbox *ngFor="let item of alarmPriorityType" (change)="onAlarmTypeChanged(item, $event.checked)" [checked]="alarmsFilter.priority.indexOf(item) !== -1">
+                        {{'alarm.property-' + item | translate}}
+                    </mat-checkbox>
+                </div>
+                <div class="block mt10">
+                    <div class="my-form-field inbk">
+                        <span>{{'alarm.property-text' | translate}}</span>
+                        <input [(ngModel)]="alarmsFilter.text" style="width: 400px" type="text">
+                    </div>
+                    <div class="my-form-field inbk ml10">
+                        <span>{{'alarm.property-group' | translate}}</span>
+                        <input [(ngModel)]="alarmsFilter.group" style="width: 250px" type="text">
+                    </div>
+                </div>
+                <div class="my-form-field alarm-tags block mt10">
+                    <span>{{'table.alarm-tags' | translate}}</span>
+                    <button mat-icon-button (click)="onAddTags()" class="add-tags">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <mat-list class="list">
+                        <div class="list-panel">
+                            <mat-list-item *ngFor="let tagId of alarmsFilter.tagIds" class="list-item">
+                                <mat-icon (click)="$event.stopPropagation();removeFilterTag(tagId)" class="list-item-remove" style="color:gray;font-size: 20px">delete</mat-icon>
+                                <div class="list-item-text list-item-name">
+                                    <span>{{getDeviceTagName(tagId)}}</span>
+                                </div>
+                                <div class="list-item-text list-item-label">
+                                    <span>{{getDeviceName(tagId)}}</span>
+                                </div>
+                            </mat-list-item>
+                        </div>
+                    </mat-list>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

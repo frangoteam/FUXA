@@ -17,7 +17,7 @@
                 (click)="onDateRange()">
                 <mat-icon aria-label="time range">access_time</mat-icon>
             </button>
-            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background" 
+            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background"
                 (click)="onExportData()">
                 <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
             </button>
@@ -58,6 +58,9 @@
             </ng-container>
             <ng-template #stringValue>
                 {{element[column]?.stringValue}}
+                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0" class="remove">
+                    <mat-icon>check_circle_outline</mat-icon>
+                </button>
             </ng-template>
         </td>
     </ng-container>
@@ -65,20 +68,33 @@
     <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
         [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
     </mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-             (click)="selectRow(i)"
-             class="data-table-row"
-             [ngStyle]="{
+    <ng-container *ngIf="isAlarmsType(); else dataCustom">
+        <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                 class="data-table-row"
+                 [ngStyle]="{
+                    'cursor': isSelectable() ? 'pointer': 'unset',
+                    'height.px': tableOptions.row.height,
+                    'background-color': row.bkcolor,
+                    'border-bottom-color': tableOptions.gridColor,
+                    'color': row.color}">
+        </mat-row>
+    </ng-container>
+    <ng-template #dataCustom>
+        <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                (click)="selectRow(i)"
+                class="data-table-row"
+                [ngStyle]="{
                 'cursor': isSelectable() ? 'pointer': 'unset',
                 'height.px': tableOptions.row.height,
                 'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
                 'border-bottom-color': tableOptions.gridColor,
                 'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
-    </mat-row>
+        </mat-row>
+    </ng-template>
 </mat-table>
 <div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
-    <button mat-icon-button 
-            (click)="onRefresh()" 
+    <button mat-icon-button
+            (click)="onRefresh()"
             class="small-icon-button default-color"
             [style.color]="tableOptions.header.color"
             [style.top.px]="withToolbar ? 45 : 0">
