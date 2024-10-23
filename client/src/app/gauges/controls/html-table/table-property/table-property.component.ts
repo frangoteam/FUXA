@@ -94,11 +94,16 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
 
             dialogRef.afterClosed().subscribe((result: TableAlarmsType) => {
                 if (result) {
+                    let columns = [];
                     result.columns.forEach(clnId => {
-                        if (!this.options.alarmsColumns.find(cln => cln.id === clnId)) {
-                            this.options.alarmsColumns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('alarms.view-' + clnId)));
+                        const column = this.options.alarmsColumns.find(cln => cln.id === clnId);
+                        if (!column) {
+                            columns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('alarms.view-' + clnId)));
+                        } else {
+                            columns.push(column);
                         }
                     });
+                    this.options.alarmsColumns = columns;
                     if (this.property.type === TableType.alarms)
                     {
                         this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmColumns.indexOf(a.id) - AlarmColumns.indexOf(b.id));
