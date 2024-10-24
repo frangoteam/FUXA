@@ -5,7 +5,7 @@
         {{'msg.alarm-remove' | translate}} '{{data.alarm.name}}' ?
     </div>
     <div mat-dialog-content *ngIf="data.editmode >= 0">
-        <div style="display: block;width: 660px; padding-bottom: 20px;">
+        <div style="display: block;width: 680px; padding-bottom: 20px;">
             <div style="display: block;">
                 <flex-auth [name]="data.alarm.name" [permission]="property.permission" #flexauth></flex-auth>
             </div>
@@ -19,7 +19,7 @@
         <mat-autocomplete #groupAuto="matAutocomplete">
             <mat-option *ngFor="let option of existgroups" [value]="option">{{option}}</mat-option>
         </mat-autocomplete>
-        <mat-tab-group style="width: 100%;min-height: 300px;">
+        <mat-tab-group style="width: 100%;min-height: 320px;">
             <mat-tab label="{{'alarm.property-highhigh' | translate}}">
                 <div style="overflow: hidden; padding-top: 25px;">
                     <div style="display: block;">
@@ -56,7 +56,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.highhigh.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.highhigh.group" [matAutocomplete]="groupAuto" style="width: 253px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.highhigh.bkcolor" [style.color]="data.alarm.highhigh.color">
@@ -92,7 +92,7 @@
                         </div>
                         <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                             <range-number [range]="data.alarm.high"></range-number>
-                        </div>                        
+                        </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-timedelay' | translate}}</span>
                             <input numberOnly [(ngModel)]="data.alarm.high.timedelay" style="width: 158px" type="number">
@@ -105,7 +105,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.high.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.high.group" [matAutocomplete]="groupAuto" style="width: 253px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.high.bkcolor" [style.color]="data.alarm.high.color">
@@ -141,7 +141,7 @@
                         </div>
                         <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                             <range-number [range]="data.alarm.low"></range-number>
-                        </div>                                  
+                        </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-timedelay' | translate}}</span>
                             <input numberOnly [(ngModel)]="data.alarm.low.timedelay" style="width: 158px" type="number">
@@ -154,7 +154,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.low.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.low.group" [matAutocomplete]="groupAuto" style="width: 253px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.low.bkcolor" [style.color]="data.alarm.low.color">
@@ -203,7 +203,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-group' | translate}}</span>
-                            <input [(ngModel)]="data.alarm.info.group" [matAutocomplete]="groupAuto" style="width: 233px" type="text">
+                            <input [(ngModel)]="data.alarm.info.group" [matAutocomplete]="groupAuto" style="width: 253px" type="text">
                         </div>
                     </div>
                     <div style="display: block; height: 35px;margin-top: 15px;" [style.background]="data.alarm.info.bkcolor" [style.color]="data.alarm.info.color">
@@ -229,7 +229,7 @@
                             </button>
                         </div>
                     </div>
-                    <div style="max-height: 150px; overflow: auto; width:100%">
+                    <div style="max-height: 210px; overflow: auto; width:100%">
                         <div *ngFor="let item of data.alarm.actions.values; index as i" class="action-item">
                             <div style="display: inline-table;;margin-bottom: 10px;">
                                 <div class="my-form-field" style="display: inline-block;padding-right: 13px;">
@@ -238,53 +238,79 @@
                                 </div>
                                 <div style="display: inline-block; margin-left: 45px; margin-right: 50px;">
                                     <range-number [range]="item"></range-number>
-                                </div>                                
+                                </div>
                                 <div class="my-form-field" style="display: inline-block;">
                                     <span>{{'alarm.property-timedelay' | translate}}</span>
                                     <input numberOnly [(ngModel)]="item.timedelay" style="width: 145px" type="number">
                                 </div>
                             </div>
-                                <div style="display: block; padding-bottom: 5px;">
-                                    <div class="my-form-field" style="width: 300px;">
-                                        <span>{{'alarm.property-action-type' | translate}}</span>
-                                        <mat-select [(value)]="item.type">
-                                            <mat-option *ngFor="let ev of actionsType | enumToArray" [value]="ev.key">
-                                                {{ ev.value }}
-                                            </mat-option>
+                            <div class="block mb5">
+                                <div class="my-form-field" style="width: 150px;">
+                                    <span>{{'alarm.property-action-type' | translate}}</span>
+                                    <mat-select [(value)]="item.type">
+                                        <mat-option *ngFor="let ev of actionsType | enumToArray" [value]="ev.key">
+                                            {{ ev.value }}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="inbk" *ngIf="item.type === actionSetValue">
+                                    <div class="my-form-field ml20">
+                                        <span>{{'alarm.property-action-value' | translate}}</span>
+                                        <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
+                                    </div>
+                                </div>
+                                <div class="inbk" *ngIf="item.type === actionPopup || item.type === actionSetView">
+                                    <div class="my-form-field ml20" style="width: 260px;">
+                                        <span>{{'alarm.property-action-destination' | translate}}</span>
+                                        <mat-select [(value)]="item.actparam">
+                                            <mat-option *ngFor="let v of data.views; index as i" [value]="v.id">{{v.name}}</mat-option>
                                         </mat-select>
                                     </div>
-                                    <div style="display: inline-block" *ngIf="item.type === actionSetValue">
-                                        <div class="my-form-field" style="padding-left: 20px;">
-                                            <span>{{'alarm.property-action-value' | translate}}</span>
-                                            <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
-                                        </div>
-                                    </div>
-                                    <div style="display: inline-block" *ngIf="item.type === actionPopup || item.type === actionSetView">
-                                        <div class="my-form-field" style="padding-left: 20px; width: 260px;">
-                                            <span>{{'alarm.property-action-destination' | translate}}</span>
-                                            <mat-select [(value)]="item.actparam">
-                                                <mat-option *ngFor="let v of data.views; index as i" [value]="v.id">{{v.name}}</mat-option>
-                                            </mat-select>
-                                        </div>
-                                    </div>
-                                    <div style="float:right">
-                                        <button mat-icon-button (click)="onAlarmAction(i)">
-                                            <mat-icon>clear</mat-icon>
-                                        </button>
+                                </div>
+                                <div class="inbk" *ngIf="item.type === actionRunScript">
+                                    <div class="my-form-field ml20" style="width: 260px;">
+                                        <span>{{'gauges.property-event-script' | translate}}</span>
+                                        <mat-select [(value)]="item.actparam" (selectionChange)="onScriptChanged($event.value, item)">
+                                            <mat-option *ngFor="let script of scripts" [value]="script.id">{{script.name}}</mat-option>
+                                        </mat-select>
                                     </div>
                                 </div>
-                                <div style="display: block" *ngIf="item.type === actionSetValue">
-                                    <div style="display: block;padding-left: 25px;">
-                                        <flex-variable style="display: block" [data]="data" (onchange)="setActionVariable(item, $event)" [variableId]="item.variableId"
-                                            [withStaticValue]="false"></flex-variable>
+                                <div style="float:right">
+                                    <button mat-icon-button (click)="onAlarmAction(i)">
+                                        <mat-icon>clear</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="block mt5" *ngIf="item.type === actionSetValue">
+                                <div style="display: block;padding-left: 25px;">
+                                    <flex-variable style="display: block" [data]="data" (onchange)="setActionVariable(item, $event)" [variableId]="item.variableId"
+                                        [withStaticValue]="false"></flex-variable>
+                                </div>
+                            </div>
+                            <div class="block mt5" *ngIf="item.type === actionRunScript">
+                                <div *ngFor="let scriptParam of item.actoptions['params']; index as i" class="ml10 mt5">
+                                    <div class="my-form-field">
+                                        <span>{{'gauges.property-event-script-param-name' | translate}}</span>
+                                        <input [(ngModel)]="scriptParam.name" type="text" style="width: 160px" readonly [disabled]="true">
+                                    </div>
+                                    <div style="margin-left: 10px; display: inline-block;">
+                                        <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
+                                            <span>{{'gauges.property-event-script-param-value' | translate}}</span>
+                                            <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                                        </div>
+                                        <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
+                                            <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value"
+                                                [withStaticValue]="false"></flex-variable>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </mat-tab>
         </mat-tab-group>
-        <div style="height: 20px; margin-bottom: 20px;">
+        <div class="mb10" style="height: 20px;">
             <div class="message-error" *ngIf="errorExist">
                 <span>{{'msg.alarmproperty-error-exist' | translate}}</span>
             </div>

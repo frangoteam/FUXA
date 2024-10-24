@@ -74,6 +74,7 @@ export class AlarmAction extends AlarmSubRange {
     type: AlarmActionsType;
     actparam: any;
     variableId: any;
+    actoptions = {};
 }
 
 export enum AlarmAckMode {
@@ -141,6 +142,7 @@ export enum AlarmActionsType {
     popup = 'alarm.action-popup',
     setView = 'alarm.action-onsetview',
     setValue = 'alarm.action-onsetvalue',
+    runScript = 'alarm.action-onRunScript',
     // sendMsg = 'alarm.action-onsendmsg',
 }
 

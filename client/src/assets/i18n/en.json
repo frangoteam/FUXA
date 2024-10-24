@@ -1136,6 +1136,7 @@
     "alarm.action-popup": "Show Popup",
     "alarm.action-onsetview": "Set View",
     "alarm.action-onsetvalue": "Set Value",
+    "alarm.action-onRunScript": "Run Script",
     "alarm.action-sendMsg": "Send Message",
     "alarm.property-action-type": "Action type",
     "alarm.property-action-value": "Value to set",
