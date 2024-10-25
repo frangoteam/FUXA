@@ -68,6 +68,8 @@ npm start
 
 Open up a browser (better Chrome) and navigate to http://localhost:1881
 
+**Note** If you intend to use nodejs version 14, please remove odbc from the package.json dependencies. nodejs 14 may have compatibility issues with certain versions of odbc, which could lead to installation errors.
+
 ### Creating the Electron Application
 Electron is a framework for building cross-platform desktop applications using web technologies. An Electron application is standalone, meaning it can be run independently on your desktop without needing a web browser.
 
