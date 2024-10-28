@@ -15,7 +15,7 @@ import { PropertyType } from './flex-input/flex-input.component';
 @Component({
     selector: 'gauge-property',
     templateUrl: './gauge-property.component.html',
-    styleUrls: ['./gauge-property.component.css'],
+    styleUrls: ['./gauge-property.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GaugePropertyComponent implements AfterViewInit {
