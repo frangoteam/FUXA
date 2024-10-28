@@ -1,28 +1,34 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 
 import { FlexHeadComponent } from '../../gauges/gauge-property/flex-head/flex-head.component';
 import { FlexAuthComponent } from '../../gauges/gauge-property/flex-auth/flex-auth.component';
 import { TranslateService } from '@ngx-translate/core';
 import { AlarmProperty, AlarmAckMode, AlarmSubProperty, AlarmSubActions, AlarmAction, AlarmActionsType } from '../../_models/alarm';
+import { Utils } from '../../_helpers/utils';
+import { SCRIPT_PARAMS_MAP, Script, ScriptMode, ScriptParam } from '../../_models/script';
+import { ProjectService } from '../../_services/project.service';
 
 @Component({
     selector: 'app-alarm-property',
     templateUrl: './alarm-property.component.html',
-    styleUrls: ['./alarm-property.component.css']
+    styleUrls: ['./alarm-property.component.scss']
 })
-export class AlarmPropertyComponent {
+export class AlarmPropertyComponent implements OnInit {
 
 	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
     @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
 
+    scripts: Script[];
+
     property: AlarmProperty;
     ackMode = AlarmAckMode;
     actionsType = AlarmActionsType;
-    actionPopup = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.popup);
-    actionSetView = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.setView);
-    actionSetValue = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.setValue);
-    // actionSendMsg = Object.keys(AlarmActionsType).find(key => AlarmActionsType[key] === AlarmActionsType.sendMsg);
+    actionPopup = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.popup);
+    actionSetView = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView);
+    actionSetValue = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setValue);
+    actionRunScript = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.runScript);
+    // actionSendMsg = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.sendMsg);
 
     errorExist = false;
     errorMissingValue = false;
@@ -32,6 +38,7 @@ export class AlarmPropertyComponent {
 
     constructor(
         public dialogRef: MatDialogRef<AlarmPropertyComponent>,
+        private projectService: ProjectService,
         private translateService: TranslateService,
         @Inject(MAT_DIALOG_DATA) public data: any) {
         if (this.data.alarm.property) {
@@ -95,6 +102,10 @@ export class AlarmPropertyComponent {
         }
     }
 
+    ngOnInit() {
+        this.scripts = this.projectService.getScripts()?.filter(script => script.mode === ScriptMode.SERVER);
+    }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
@@ -128,4 +139,17 @@ export class AlarmPropertyComponent {
     setActionVariable(action: AlarmAction, event) {
         action.variableId = event.variableId;
     }
+
+    onScriptChanged(scriptId: string, item: AlarmAction) {
+        let script = this.scripts.find(s => s.id === scriptId);
+        item.actoptions[SCRIPT_PARAMS_MAP] = [];
+        if (script && script.parameters) {
+            item.actoptions[SCRIPT_PARAMS_MAP] = JSON.parse(JSON.stringify(script.parameters));
+        }
+    }
+
+    setScriptParam(scriptParam: ScriptParam, event) {
+        scriptParam.value = event.variableId;
+    }
 }
+
