@@ -1,15 +1,15 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {Router} from '@angular/router';
 
-import { DeviceListComponent } from './device-list/device-list.component';
-import { DeviceMapComponent } from './device-map/device-map.component';
-import { Device, DeviceViewModeType, DevicesUtils } from './../_models/device';
-import { ProjectService } from '../_services/project.service';
-import { HmiService } from '../_services/hmi.service';
-import { DEVICE_READONLY } from '../_models/hmi';
-import { Utils } from '../_helpers/utils';
+import {DeviceListComponent} from './device-list/device-list.component';
+import {DeviceMapComponent} from './device-map/device-map.component';
+import {Device, DEVICE_PREFIX, DevicesUtils, DeviceType, DeviceViewModeType, TAG_PREFIX} from './../_models/device';
+import {ProjectService} from '../_services/project.service';
+import {HmiService} from '../_services/hmi.service';
+import {DEVICE_READONLY} from '../_models/hmi';
+import {Utils} from '../_helpers/utils';
 
 @Component({
     selector: 'app-device',
@@ -21,6 +21,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
     @ViewChild('devicelist', {static: false}) deviceList: DeviceListComponent;
     @ViewChild('devicemap', {static: false}) deviceMap: DeviceMapComponent;
     @ViewChild('fileImportInput', {static: false}) fileImportInput: any;
+    @ViewChild('tplFileImportInput',{static: false}) tplFileImportInput: any;
 
     private subscriptionLoad: Subscription;
     private subscriptionDeviceChange: Subscription;
@@ -146,6 +147,11 @@ export class DeviceComponent implements OnInit, OnDestroy {
         ele.click();
     }
 
+    onImportTpl() {
+        let ele = document.getElementById('devicesConfigTplUpload') as HTMLElement;
+        ele.click();
+    }
+
     /**
      * open Project event file loaded
      * @param event file resource
@@ -173,5 +179,44 @@ export class DeviceComponent implements OnInit, OnDestroy {
         };
         reader.readAsText(input.files[0]);
         this.fileImportInput.nativeElement.value = null;
+    }
+
+    onDevTplChangeListener(event){
+        let input = event.target;
+        let reader = new FileReader();
+        reader.onload = (data) => {
+            let devices;
+            if (Utils.isJson(reader.result)) {
+                // JSON
+                devices = JSON.parse(reader.result.toString());
+            } else {
+                // CSV
+                devices = DevicesUtils.csvToDevices(reader.result.toString());
+            }
+            //generate new id and filte fuxa
+            let importDev = [];
+            devices.forEach((device: Device) => {
+                if (device.type != DeviceType.FuxaServer) {
+                    device.id = Utils.getGUID(DEVICE_PREFIX);
+                    device.name = Utils.getShortGUID(device.name + '_', '');
+                    if (device.tags) {
+                        Object.keys(device.tags).forEach((key) => {
+                            device.tags[key].id = Utils.getGUID(TAG_PREFIX);
+                        });
+                    }
+                    importDev.push(device);
+                }
+            });
+            this.projectService.importDevices(importDev);
+            setTimeout(() => { this.projectService.onRefreshProject(); }, 2000);
+        };
+
+        reader.onerror = function() {
+            let msg = 'Unable to read ' + input.files[0];
+            // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
+            alert(msg);
+        };
+        reader.readAsText(input.files[0]);
+        this.tplFileImportInput.nativeElement.value = null;
     }
 }
