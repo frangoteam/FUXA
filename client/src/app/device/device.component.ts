@@ -158,15 +158,15 @@ export class DeviceComponent implements OnInit, OnDestroy {
      * @param event file resource
      */
     onFileChangeListener(event) {
-        return this.onDevTplChangeListener(event,false);
+        return this.onDevTplChangeListener(event, false);
     }
 
     /**
      * open Project event file loaded
      * @param event file resource
-     * @param isTemplate use template for import, if true,generate new device id and tag id
+     * @param isTemplate use template for import, if true, generate new device id and tag id
      */
-    onDevTplChangeListener(event,isTemplate: boolean){
+    onDevTplChangeListener(event, isTemplate: boolean){
         let input = event.target;
         let reader = new FileReader();
         reader.onload = (data) => {
@@ -180,7 +180,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
             }
             //generate new id and filte fuxa
             let importDev = [];
-            if(isTemplate){
+            if(isTemplate) {
                 devices.forEach((device: Device) => {
                     if (device.type != DeviceType.FuxaServer) {
                         device.id = Utils.getGUID(DEVICE_PREFIX);
@@ -194,7 +194,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
                     }
                 });
             }
-            this.projectService.importDevices(isTemplate? importDev: devices);
+            this.projectService.importDevices(isTemplate ? importDev : devices);
             setTimeout(() => { this.projectService.onRefreshProject(); }, 2000);
         };
 
