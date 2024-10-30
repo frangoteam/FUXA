@@ -83,55 +83,97 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
 
     onCustomize() {
         if (this.isAlarmsType()) {
-            let dialogRef = this.dialog.open(TableAlarmsComponent, {
-                data: <TableAlarmsType> {
-                    columns: this.options.alarmsColumns.map(cln => cln.id),
-                    filter: JSON.parse(JSON.stringify(this.options.alarmFilter)),
-                    type: <TableType>this.property.type
-                },
-                position: { top: '60px' }
-            });
-
-            dialogRef.afterClosed().subscribe((result: TableAlarmsType) => {
-                if (result) {
-                    let columns = [];
-                    result.columns.forEach(clnId => {
-                        const column = this.options.alarmsColumns.find(cln => cln.id === clnId);
-                        if (!column) {
-                            columns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('alarms.view-' + clnId)));
-                        } else {
-                            columns.push(column);
-                        }
-                    });
-                    this.options.alarmsColumns = columns;
-                    if (this.property.type === TableType.alarms)
-                    {
-                        this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmColumns.indexOf(a.id) - AlarmColumns.indexOf(b.id));
-                    } else if (this.property.type === TableType.alarmsHistory) {
-                        this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmHistoryColumns.indexOf(a.id) - AlarmHistoryColumns.indexOf(b.id));
-                    }
-                    this.options.alarmFilter = result.filter;
-                    this.onTableChanged();
-                }
-            });
+            this.customizeAlarmsTable();
+        } else if (this.isReportsType()) {
+            this.customizeReportsTable();
         } else {
-            let dialogRef = this.dialog.open(TableCustomizerComponent, {
-                data: <TableCustomizerType> {
-                    columns: JSON.parse(JSON.stringify(this.options.columns)),
-                    rows: JSON.parse(JSON.stringify(this.options.rows)),
-                    type: <TableType>this.property.type
-                },
-                position: { top: '60px' }
-            });
-
-            dialogRef.afterClosed().subscribe((result: TableCustomizerType) => {
-                if (result) {
-                    this.options.columns = result.columns;
-                    this.options.rows = result.rows;
-                    this.onTableChanged();
-                }
-            });
+            this.customizeTable();
         }
+        this.onTableChanged();
+    }
+
+    customizeTable() {
+        let dialogRef = this.dialog.open(TableCustomizerComponent, {
+            data: <TableCustomizerType> {
+                columns: JSON.parse(JSON.stringify(this.options.columns)),
+                rows: JSON.parse(JSON.stringify(this.options.rows)),
+                type: <TableType>this.property.type
+            },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe((result: TableCustomizerType) => {
+            if (result) {
+                this.options.columns = result.columns;
+                this.options.rows = result.rows;
+            }
+        });
+    }
+
+    customizeAlarmsTable() {
+        let dialogRef = this.dialog.open(TableAlarmsComponent, {
+            data: <TableAlarmsType> {
+                columns: this.options.alarmsColumns.map(cln => cln.id),
+                filter: JSON.parse(JSON.stringify(this.options.alarmFilter)),
+                type: <TableType>this.property.type
+            },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe((result: TableAlarmsType) => {
+            if (result) {
+                let columns = [];
+                result.columns.forEach(clnId => {
+                    const column = this.options.alarmsColumns.find(cln => cln.id === clnId);
+                    if (!column) {
+                        columns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('alarms.view-' + clnId)));
+                    } else {
+                        columns.push(column);
+                    }
+                });
+                this.options.alarmsColumns = columns;
+                if (this.property.type === TableType.alarms)
+                {
+                    this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmColumns.indexOf(a.id) - AlarmColumns.indexOf(b.id));
+                } else if (this.property.type === TableType.alarmsHistory) {
+                    this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmHistoryColumns.indexOf(a.id) - AlarmHistoryColumns.indexOf(b.id));
+                }
+                this.options.alarmFilter = result.filter;
+            }
+        });
+    }
+
+    customizeReportsTable() {
+        let dialogRef = this.dialog.open(TableAlarmsComponent, {
+            data: <TableAlarmsType> {
+                columns: this.options.alarmsColumns.map(cln => cln.id),
+                filter: JSON.parse(JSON.stringify(this.options.alarmFilter)),
+                type: <TableType>this.property.type
+            },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe((result: TableAlarmsType) => {
+            if (result) {
+                let columns = [];
+                result.columns.forEach(clnId => {
+                    const column = this.options.alarmsColumns.find(cln => cln.id === clnId);
+                    if (!column) {
+                        columns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('alarms.view-' + clnId)));
+                    } else {
+                        columns.push(column);
+                    }
+                });
+                this.options.alarmsColumns = columns;
+                if (this.property.type === TableType.alarms)
+                {
+                    this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmColumns.indexOf(a.id) - AlarmColumns.indexOf(b.id));
+                } else if (this.property.type === TableType.alarmsHistory) {
+                    this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmHistoryColumns.indexOf(a.id) - AlarmHistoryColumns.indexOf(b.id));
+                }
+                this.options.alarmFilter = result.filter;
+            }
+        });
     }
 
     onAddEvent() {
@@ -146,8 +188,21 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         this.property.events.push(gaugeEvent);
     }
 
+    getColumns() {
+        if (this.isAlarmsType()) {
+            return this.options.alarmsColumns;
+        } else if (this.isReportsType()) {
+            return this.options.reportsColumns;
+        } else {
+            return this.options.columns;
+        }
+    }
     isAlarmsType() {
         return this.property.type === TableType.alarms || this.property.type === TableType.alarmsHistory;
+    }
+
+    isReportsType() {
+        return this.property.type === TableType.reports;
     }
 
     onRemoveEvent(index: number) {

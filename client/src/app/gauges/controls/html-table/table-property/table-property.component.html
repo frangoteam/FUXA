@@ -19,6 +19,7 @@
                             <mat-option [value]="tableType.data">{{'table.property-type-data' | translate}}</mat-option>
                             <mat-option [value]="tableType.history">{{'table.property-type-history' | translate}}</mat-option>
                             <mat-option [value]="tableType.alarms">{{'table.property-type-alarms' | translate}}</mat-option>
+                            <mat-option [value]="tableType.reports">{{'table.property-type-reports' | translate}}</mat-option>
                             <!-- <mat-option [value]="tableType.alarmsHistory">{{'table.property-type-alarms-history' | translate}}</mat-option> -->
                         </mat-select>
                     </div>
@@ -154,7 +155,7 @@
                     <mat-tab-group class="tab-columns-rows" #grptabs>
                         <mat-tab label="{{'table.property-cols' | translate}}">
                             <div class="section-newline">&nbsp;</div>
-                            <div *ngFor="let column of (isAlarmsType() ? options.alarmsColumns : options.columns); index as x" class="cell-item column-item">
+                            <div *ngFor="let column of getColumns(); index as x" class="cell-item column-item">
                                 <div class="my-form-field section-inline">
                                     <span>{{'table.property-column-name' | translate}}</span>
                                     <input [(ngModel)]="column.label" type="text" [disabled]="true">
