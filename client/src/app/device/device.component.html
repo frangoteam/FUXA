@@ -10,7 +10,8 @@
 <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="fab-reload" style="right: 50px !important">
     <mat-icon>more_vert</mat-icon>
 </button>
-<input type="file" #fileImportInput style="display: none" id="devicesConfigFileUpload" (change)="onFileChangeListener($event)" accept=".json,.csv" />
+<input type="file" #fileImportInput style="display: none" id="devicesConfigFileUpload" (change)="onDevTplChangeListener($event,false)" accept=".json,.csv" />
+<input type="file" #tplFileImportInput style="display: none" id="devicesConfigTplUpload" (change)="onDevTplChangeListener($event,true)" accept=".json,.csv" />
 <mat-menu #optionsgMenu [overlapTrigger]="false">
     <button mat-menu-item [matMenuTriggerFor]="export" style="font-size: 14px;">{{'devices.export' | translate}}</button>
     <mat-menu #export="matMenu" xPosition="before">
@@ -19,6 +20,7 @@
       </mat-menu>
     <mat-divider class="menu-separator"></mat-divider>
     <button mat-menu-item (click)="onImport()" style="font-size: 14px;">{{'devices.import' | translate}}</button>
+    <button mat-menu-item (click)="onImportTpl()" style="font-size: 14px;">{{'devices.import-template' | translate}}</button>
 </mat-menu>
 <button mat-icon-button (click)="onReload()" class="fab-reload" [ngClass]="{'fab-reload-active': reloadActive}">
     <mat-icon>autorenew</mat-icon>
