@@ -153,35 +153,20 @@ export class DeviceComponent implements OnInit, OnDestroy {
     }
 
     /**
+     * @deprecated use onDevTplChangeListener
      * open Project event file loaded
      * @param event file resource
      */
     onFileChangeListener(event) {
-        let input = event.target;
-        let reader = new FileReader();
-        reader.onload = (data) => {
-            let devices;
-            if (Utils.isJson(reader.result)) {
-                // JSON
-                devices = JSON.parse(reader.result.toString());
-            } else {
-                // CSV
-                devices = DevicesUtils.csvToDevices(reader.result.toString());
-            }
-            this.projectService.importDevices(devices);
-            setTimeout(() => { this.projectService.onRefreshProject(); }, 2000);
-        };
-
-        reader.onerror = function() {
-            let msg = 'Unable to read ' + input.files[0];
-            // this.translateService.get('msg.project-load-error', {value: input.files[0]}).subscribe((txt: string) => { msg = txt });
-            alert(msg);
-        };
-        reader.readAsText(input.files[0]);
-        this.fileImportInput.nativeElement.value = null;
+        return this.onDevTplChangeListener(event,false);
     }
 
-    onDevTplChangeListener(event){
+    /**
+     * open Project event file loaded
+     * @param event file resource
+     * @param isTemplate use template for import, if true,generate new device id and tag id
+     */
+    onDevTplChangeListener(event,isTemplate: boolean){
         let input = event.target;
         let reader = new FileReader();
         reader.onload = (data) => {
@@ -195,19 +180,21 @@ export class DeviceComponent implements OnInit, OnDestroy {
             }
             //generate new id and filte fuxa
             let importDev = [];
-            devices.forEach((device: Device) => {
-                if (device.type != DeviceType.FuxaServer) {
-                    device.id = Utils.getGUID(DEVICE_PREFIX);
-                    device.name = Utils.getShortGUID(device.name + '_', '');
-                    if (device.tags) {
-                        Object.keys(device.tags).forEach((key) => {
-                            device.tags[key].id = Utils.getGUID(TAG_PREFIX);
-                        });
+            if(isTemplate){
+                devices.forEach((device: Device) => {
+                    if (device.type != DeviceType.FuxaServer) {
+                        device.id = Utils.getGUID(DEVICE_PREFIX);
+                        device.name = Utils.getShortGUID(device.name + '_', '');
+                        if (device.tags) {
+                            Object.keys(device.tags).forEach((key) => {
+                                device.tags[key].id = Utils.getGUID(TAG_PREFIX);
+                            });
+                        }
+                        importDev.push(device);
                     }
-                    importDev.push(device);
-                }
-            });
-            this.projectService.importDevices(importDev);
+                });
+            }
+            this.projectService.importDevices(isTemplate? importDev: devices);
             setTimeout(() => { this.projectService.onRefreshProject(); }, 2000);
         };
 
