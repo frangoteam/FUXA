@@ -692,6 +692,7 @@
     "devices.export-json": "JSON",
     "devices.export-csv": "CSV",
     "devices.import": "导入设备",
+    "devices.import-template": "导入设备模板",
     "device.property-client": "设备属性",
     "device.property-server": "FUXA服务器属性",
     "device.property-name": "名称",
