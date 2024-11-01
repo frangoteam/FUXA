@@ -14,6 +14,8 @@ import { SCRIPT_PARAMS_MAP, Script } from '../../../../_models/script';
 import { ProjectService } from '../../../../_services/project.service';
 import { TableAlarmsComponent, TableAlarmsType } from '../table-alarms/table-alarms.component';
 import { AlarmColumns, AlarmHistoryColumns } from '../../../../_models/alarm';
+import { TableReportsComponent, TableReportsType } from '../table-reports/table-reports.component';
+import { ReportColumns } from '../../../../_models/report';
 
 @Component({
     selector: 'app-table-property',
@@ -89,7 +91,6 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         } else {
             this.customizeTable();
         }
-        this.onTableChanged();
     }
 
     customizeTable() {
@@ -106,6 +107,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
             if (result) {
                 this.options.columns = result.columns;
                 this.options.rows = result.rows;
+                this.onTableChanged();
             }
         });
     }
@@ -132,46 +134,41 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
                     }
                 });
                 this.options.alarmsColumns = columns;
-                if (this.property.type === TableType.alarms)
-                {
+                if (this.property.type === TableType.alarms) {
                     this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmColumns.indexOf(a.id) - AlarmColumns.indexOf(b.id));
                 } else if (this.property.type === TableType.alarmsHistory) {
                     this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmHistoryColumns.indexOf(a.id) - AlarmHistoryColumns.indexOf(b.id));
                 }
                 this.options.alarmFilter = result.filter;
+                this.onTableChanged();
             }
         });
     }
 
     customizeReportsTable() {
-        let dialogRef = this.dialog.open(TableAlarmsComponent, {
-            data: <TableAlarmsType> {
-                columns: this.options.alarmsColumns.map(cln => cln.id),
-                filter: JSON.parse(JSON.stringify(this.options.alarmFilter)),
+        let dialogRef = this.dialog.open(TableReportsComponent, {
+            data: <TableReportsType> {
+                columns: this.options.reportsColumns.map(cln => cln.id),
+                filter: JSON.parse(JSON.stringify(this.options.reportFilter)),
                 type: <TableType>this.property.type
             },
             position: { top: '60px' }
         });
 
-        dialogRef.afterClosed().subscribe((result: TableAlarmsType) => {
+        dialogRef.afterClosed().subscribe((result: TableReportsType) => {
             if (result) {
                 let columns = [];
                 result.columns.forEach(clnId => {
-                    const column = this.options.alarmsColumns.find(cln => cln.id === clnId);
+                    const column = this.options.reportsColumns.find(cln => cln.id === clnId);
                     if (!column) {
-                        columns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('alarms.view-' + clnId)));
+                        columns.push(new TableColumn(clnId, TableCellType.label, this.translateService.instant('table.report-view-' + clnId)));
                     } else {
                         columns.push(column);
                     }
                 });
-                this.options.alarmsColumns = columns;
-                if (this.property.type === TableType.alarms)
-                {
-                    this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmColumns.indexOf(a.id) - AlarmColumns.indexOf(b.id));
-                } else if (this.property.type === TableType.alarmsHistory) {
-                    this.options.alarmsColumns = this.options.alarmsColumns.sort((a, b) => AlarmHistoryColumns.indexOf(a.id) - AlarmHistoryColumns.indexOf(b.id));
-                }
-                this.options.alarmFilter = result.filter;
+                this.options.reportsColumns = columns.sort((a, b) => ReportColumns.indexOf(a.id) - ReportColumns.indexOf(b.id));
+                this.options.reportFilter = result.filter;
+                this.onTableChanged();
             }
         });
     }

@@ -4,7 +4,7 @@
     <div mat-dialog-content class="container">
         <div>
             <div class="my-form-field alarm-column mt10">
-                <span>{{'table.alarm-column' | translate}}</span>
+                <span>{{'table.alarm-columns' | translate}}</span>
                 <mat-checkbox *ngFor="let item of (data.type === tableType.alarms ? alarmsColumns : historyColumns)" (change)="onAlarmColumChanged(item, $event.checked)"
                     [checked]="data.columns?.indexOf(item) !== -1">
                     {{'alarms.view-' + item | translate}}

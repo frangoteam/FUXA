@@ -458,8 +458,8 @@ export interface TableOptions {
 
 export interface TableFilter {
     filterA: string[];
-    filterB: string[];
-    filterC: string[];
+    filterB?: string[];
+    filterC?: string[];
 }
 
 export enum TableCellType {

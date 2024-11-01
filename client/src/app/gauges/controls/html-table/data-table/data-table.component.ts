@@ -49,6 +49,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     timestampMap = {};
     tagsColumnMap = {};
     range = { from: Date.now(), to: Date.now() };
+    tableType = TableType;
     tableHistoryType = TableType.history;
     lastRangeType = TableRangeType;
     tableOptions = DataTableComponent.DefaultOptions();
@@ -97,6 +98,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.type === TableType.alarms) {
                 this.startPollingAlarms();
             }
+        } else if (this.isReportsType()) {
+            this.startPollingReports();
         }
     }
     ngAfterViewInit() {
@@ -119,6 +122,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             switchMap(() => this.hmiService.getAlarmsValues(<AlarmsFilter>this.dataFilter))
         ).subscribe(result => {
             this.updateAlarmsTable(result);
+        });
+    }
+
+    private startPollingReports() {
+        this.rxjsPollingTimer.pipe(
+            takeUntil(this.destroy$),
+            // switchMap(() => this.diagnoseService.getReportsDir(null))
+        ).subscribe(result => {
+            // this.updateReportsTable(result);
         });
     }
 
@@ -304,6 +316,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.data = alarms;
     }
 
+    updateReportsTable(reports: string[]) {
+        console.log(reports);
+    }
+
     isSelectable(): boolean {
         return this.events?.some(event => event.type === this.eventSelectionType);
     }
@@ -460,7 +476,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // columns
         let columnIds = [];
         this.columnsStyle = {};
-        const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.tableOptions.columns;
+        const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.isReportsType() ? this.tableOptions.reportsColumns : this.tableOptions.columns;
         columns.forEach(cn => {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
@@ -541,6 +557,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.type === TableType.alarms || this.type === TableType.alarmsHistory;
     }
 
+    isReportsType(): boolean {
+        return this.type === TableType.reports;
+    }
+
     onAckAlarm(alarm: any) {
         if (!this.isEditor) {
             this.hmiService.setAlarmAck(alarm.name?.stringValue).subscribe(result => {
@@ -586,6 +606,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
             alarmsColumns: [],
             alarmFilter: { filterA: [], filterB: [], filterC: [] },
+            reportsColumns: [],
+            reportFilter: { filterA: [] },
             rows: [],
         };
         return options;
