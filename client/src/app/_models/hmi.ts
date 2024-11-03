@@ -565,6 +565,7 @@ export class DaqQuery {
     to: any;
     event?: string;
     sids: string[];
+    chunked?: boolean;
 }
 
 export interface DaqValue {
@@ -576,6 +577,12 @@ export interface DaqValue {
 export class DaqResult {
     gid: string;
     result: any;
+    chunk?: DaqChunkType;
+}
+
+export interface DaqChunkType {
+    index: number;
+    of: number;
 }
 
 export class HelpData {

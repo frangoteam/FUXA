@@ -270,6 +270,13 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         this.uplot.setData(this.data);
     }
 
+    addData(data = [[]]) {
+        for (var index = 0; index < data.length; index++) {
+            this.data[index] = this.data[index].concat(data[index]);
+        }
+        this.uplot.setData(this.data);
+    }
+
     setXScala(min: number, max: number) {
         this.uplot.setScale('x', { min: min, max: max });
     }

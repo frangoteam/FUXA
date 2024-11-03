@@ -9,7 +9,7 @@ var utils = module.exports = {
     domStringSplitter: function (src, tagsplitter, first) {
         var result = { before: '', tagcontent: '', after: '' };
         var tagStart = '<' + tagsplitter.toLowerCase();
-        var tagEnd = '</' + tagsplitter.toLowerCase(); 
+        var tagEnd = '</' + tagsplitter.toLowerCase();
         var text = src.toLowerCase();
         var start = text.indexOf(tagStart, first);
         var end = text.indexOf(tagEnd, start);
@@ -110,7 +110,7 @@ var utils = module.exports = {
         try {
             if (value) {
                 return JSON.parse(value);
-            }    
+            }
         } catch { }
     },
 
@@ -121,7 +121,7 @@ var utils = module.exports = {
                     obj1[key] = obj2[key];
                 }
             }
-        }    
+        }
         return obj1;
     },
 
@@ -230,10 +230,24 @@ var utils = module.exports = {
         return chunks;
     },
 
+    chunkTimeRange: (start, end, chunkSize) => {
+        const chunks = [];
+        let currentStart = start;
+        if (chunkSize < 1) {
+            return [{ start: start, end: end }];
+        }
+        while (currentStart < end) {
+            const currentEnd = Math.min(currentStart + chunkSize, end);
+            chunks.push({ start: currentStart, end: currentEnd });
+            currentStart = currentEnd;
+        }
+        return chunks;
+    },
+
     extractArray: function (object) {
         let index = 0;
         const array = [];
-        
+
         while (object[index] !== undefined) {
             array.push(object[index]);
             index++;
