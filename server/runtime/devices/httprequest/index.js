@@ -329,7 +329,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                             result[tag.id] = {
                                 id: tag.id,
                                 value: (tag.memaddress) ? items[tag.memaddress] : items[key],
-                                type: items[key].type,
+                                type: items[key]?.type,
                                 daq: tag.daq,
                                 tagref: tag
                             };
