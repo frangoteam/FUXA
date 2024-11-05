@@ -58,7 +58,6 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent {
                     val = Number(sig.value);
                 }
                 let procValue = GaugeBaseComponent.checkBitmask((<GaugeProperty>ga.property).bitmask, val);
-                console.log(procValue);
                 if (ga.property && ga.property.ranges) {
                     for (let idx = 0; idx < ga.property.ranges.length; idx++) {
                         if (ga.property.ranges[idx].min <= procValue && ga.property.ranges[idx].max >= procValue) {
