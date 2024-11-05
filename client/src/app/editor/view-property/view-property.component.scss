@@ -1,6 +1,6 @@
 :host {
     .container {
-        width: 300px;
+        width: 700px;
     }
 
     .item-block {
@@ -22,4 +22,36 @@
         background-color: var(--formSliderBackground);
         height: 30px;
     }
+
+    .toolbox {
+        float: right;
+        line-height: 44px;
+    }
+    
+    .toolbox button {
+        /* margin-right: 8px; */
+        margin-left: 10px;
+    }    
+
+    
+}
+
+::ng-deep .mat-dialog-container {
+    display: inline-table !important;
+}
+
+::ng-deep .mat-tab-label {
+  height: 34px !important;
+}
+
+.mat-tab-container {
+  min-height:300px;
+  height:60vmin;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 15px;
+}
+
+.mat-tab-container > div {
+  display: block;
 }

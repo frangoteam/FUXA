@@ -698,6 +698,7 @@
     "shapes.event-ontogglevalue": "Toggle Value",
     "shapes.event-onsetinput": "Set from Input",
     "shapes.event-onclose": "Close",
+    "shapes.event-onopen": "Open",
     "shapes.event-onrunscript": "Run Script",
     "shapes.event-setvalue-set": "set",
     "shapes.event-setvalue-add": "increase",
