@@ -107,7 +107,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy() {
         try {
             this.destroy$.next();
-            this.destroy$.unsubscribe();
+            this.destroy$.complete();
         } catch (e) {
             console.error(e);
         }
@@ -161,6 +161,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (daqQuery) {
             this.lastDaqQuery = <DaqQuery>Utils.mergeDeep(this.lastDaqQuery, daqQuery);
         }
+        // this.lastDaqQuery.chunked = true;
         this.onTimeRange$.next(this.lastDaqQuery);
         if (this.type === TableType.history) {
             this.setLoading(true);

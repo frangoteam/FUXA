@@ -87,7 +87,7 @@ export class GaugesManager {
             try {
                 if (this.mapChart[message.gid]) {
                     let gauge: ChartUplotComponent = this.mapChart[message.gid];
-                    gauge.setValues(message.result);
+                    gauge.setValues(message.result, message.chunk);
                 } else if (this.mapTable[message.gid]) {
                     let gauge: DataTableComponent = this.mapTable[message.gid];
                     gauge.setValues(message.result);
