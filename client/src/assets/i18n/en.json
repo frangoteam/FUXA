@@ -820,6 +820,7 @@
     "devices.export-json": "JSON",
     "devices.export-csv": "CSV",
     "devices.import": "Import devices",
+    "devices.import-template": "Import devices with template",
     "device.property-client": "Device Property",
     "device.property-server": "FUXA Server Property",
     "device.property-name": "Name",

@@ -193,20 +193,33 @@ function init(_io, _api, _settings, _log, eventsMain) {
         socket.on(Events.IoEventTypes.DAQ_QUERY, (msg) => {
             try {
                 if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
-                    var dbfncs = [];
-                    for (let i = 0; i < msg.sids.length; i++) {
-                        dbfncs.push(daqstorage.getNodeValues(msg.sids[i], msg.from, msg.to));
-                    }
-                    Promise.all(dbfncs).then(values => {
-                        io.emit(Events.IoEventTypes.DAQ_RESULT, { gid: msg.gid, result: values });
-                    }, reason => {
-                        if (reason && reason.stack) {
-                            logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${reason.stack}`);
-                        } else {
-                            logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${reason}`);
+                    const TIME_CHUNK_SIZE = 60 * 60 * 1000 * 6; // Dimensione del chunk in millisecondi (ad esempio, 1 ora)
+                    const timeChunks = utils.chunkTimeRange(msg.from, msg.to, msg.chunked ? TIME_CHUNK_SIZE : 0);
+                    const processChunks = async () => {
+                        var counter = 1;
+                        for (const chunk of timeChunks) {
+                            try {
+                                var dbfncs = [];
+                                for (let i = 0; i < msg.sids.length; i++) {
+                                    dbfncs.push(daqstorage.getNodeValues(msg.sids[i], chunk.start, chunk.end));
+                                }
+                                const values = await Promise.all(dbfncs);
+                                io.emit(Events.IoEventTypes.DAQ_RESULT, {
+                                    gid: msg.gid,
+                                    result: values,
+                                    chunk: {
+                                        index: counter++,
+                                        of: timeChunks.length
+                                    }
+                                });
+                            } catch (error) {
+                                logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${error.stack || error}`);
+                                io.emit(Events.IoEventTypes.DAQ_ERROR, { gid, error });
+                                return;
+                            }
                         }
-                        io.emit(Events.IoEventTypes.DAQ_ERROR, { gid: msg.gid, error: reason });
-                    });
+                    }
+                    processChunks();
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${err}`);

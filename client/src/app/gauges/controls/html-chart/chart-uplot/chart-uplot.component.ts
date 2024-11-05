@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, 
 
 import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty } from '../../../../_models/hmi';
+import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -146,6 +146,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (daqQuery) {
             this.lastDaqQuery = <DaqQuery>Utils.mergeDeep(this.lastDaqQuery, daqQuery);
         }
+        this.lastDaqQuery.chunked = true;
         this.onTimeRange.emit(this.lastDaqQuery);
         if (this.withToolbar) {
             this.setLoading(true);
@@ -328,7 +329,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
      * the have to be transform in uplot format. a matrix with array of datetime and arrays of values [datetime[dt], lineN[value]]
      * @param values
      */
-    public setValues(values) {
+    public setValues(values, chunk: DaqChunkType) {
         let result = [];
         result.push([]);    // timestamp, index 0
         let xmap = {};
@@ -354,11 +355,17 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        this.nguplot.setData(result);
+        if (!chunk || chunk.index === 1) {
+            this.nguplot.setData(result);
+        } else {
+            this.nguplot.addData(result);
+        }
         this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
-        setTimeout(() => {
-            this.setLoading(false);
-        }, 500);
+        if (!chunk || chunk.index === chunk.of) {
+            setTimeout(() => {
+                this.setLoading(false);
+            }, 500);
+        }
     }
 
     public redraw() {
