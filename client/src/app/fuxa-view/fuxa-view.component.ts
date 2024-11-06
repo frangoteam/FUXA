@@ -704,16 +704,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             // Execute onClose script for last view
-            let lastView = this.getView(this.view.id); 
+            let lastView = this.getView(this.view.id);
             if (lastView) {
                 lastView.property?.events?.forEach(event => {
                     if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
                         this.onRunScript(event);
                     }
-                });    
+                });
             }
             this.loadHmi(view, true);
-            
+
             // Execute onOpen script for new current view
             view.property?.events?.forEach(event => {
                 if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {

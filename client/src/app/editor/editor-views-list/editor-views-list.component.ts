@@ -106,7 +106,9 @@ export class EditorViewsListComponent {
         let dialogRef = this.dialog.open(ViewPropertyComponent, {
             position: { top: '60px' },
             disableClose: true,
-            data: <ViewPropertyType> { name: view.name, type: view.type || ViewType.svg, 
+            data: <ViewPropertyType> {
+                name: view.name,
+                type: view.type || ViewType.svg,
                 profile: view.profile,
                 property: view.property}
         });
@@ -120,7 +122,7 @@ export class EditorViewsListComponent {
                 if (result.property?.events) {
                     view.property ??= { events: [], actions: [] };
                     view.property.events = result.property.events;
-                }             
+                }
                 this.viewPropertyChanged.emit(view);
                 this.onSelectView(view);
             }

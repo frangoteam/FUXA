@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Utils } from '../../_helpers/utils';
 import { Script } from '../../_models/script';
-import { DocAlignType, DocProfile, ViewEvent, ViewProperty, ViewType } from '../../_models/hmi';
+import { DocAlignType, DocProfile, ViewProperty, ViewType } from '../../_models/hmi';
 import { TranslateService } from '@ngx-translate/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -53,7 +53,7 @@ export class ViewPropertyComponent implements OnInit {
         });
         if (this.data.type !== ViewType.cards) {
             this.formGroup.controls.width.setValidators(Validators.required);
-            this.formGroup.controls.height.setValidators(Validators.required); 
+            this.formGroup.controls.height.setValidators(Validators.required);
         }
         if (!this.data.name) {
             this.formGroup.controls.name.setValidators(this.isValidName());

@@ -12,7 +12,8 @@ import {
     GaugeSettings,
     View,
     ViewEventActionType,
-    ViewEventType
+    ViewEventType,
+    ViewType
 } from '../../../_models/hmi';
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script';
 
@@ -56,23 +57,20 @@ export class FlexEventComponent implements OnInit {
     ngOnInit() {
 
         // Events for view
-        if (this.data?.type == 'svg') {
+        if (this.data?.type === ViewType.svg) {
             this.actionType = ViewEventActionType;
             this.eventType[Utils.getEnumKey(ViewEventType, ViewEventType.onopen)] = this.translateService.instant(ViewEventType.onopen);
             this.eventType[Utils.getEnumKey(ViewEventType, ViewEventType.onclose)] = this.translateService.instant(ViewEventType.onclose);
-        } else if (this.data.settings) {
-            // Events for another gauges
-            if (this.data.settings.type === HtmlInputComponent.TypeTag) {
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.enter)] = this.translateService.instant(GaugeEventType.enter);
-            } else if (this.data.settings.type === HtmlSelectComponent.TypeTag) {
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.select)] = this.translateService.instant(GaugeEventType.select);
-            } else {
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.click)] = this.translateService.instant(GaugeEventType.click);
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseover)] = this.translateService.instant(GaugeEventType.mouseover);
-                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseout)] = this.translateService.instant(GaugeEventType.mouseout);
-            }    
+        } else if (this.data.settings?.type === HtmlInputComponent.TypeTag) {
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.enter)] = this.translateService.instant(GaugeEventType.enter);
+        } else if (this.data.settings?.type === HtmlSelectComponent.TypeTag) {
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.select)] = this.translateService.instant(GaugeEventType.select);
+        } else {
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.click)] = this.translateService.instant(GaugeEventType.click);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseover)] = this.translateService.instant(GaugeEventType.mouseover);
+            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseout)] = this.translateService.instant(GaugeEventType.mouseout);
         }
         this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === 'svg-ext-own_ctrl-panel');//#issue on build  PanelComponent.TypeTag);
         this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
@@ -188,7 +186,7 @@ export class FlexEventComponent implements OnInit {
 
     getView(viewId: any) {
         return this.views.find(function(item) {
-            return item.id == viewId;
+            return item.id === viewId;
         });
     }
 
