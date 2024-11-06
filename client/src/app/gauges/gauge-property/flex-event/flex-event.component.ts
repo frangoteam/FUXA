@@ -10,7 +10,9 @@ import {
     GaugeEventType,
     GaugeProperty,
     GaugeSettings,
-    View
+    View,
+    ViewEventActionType,
+    ViewEventType
 } from '../../../_models/hmi';
 import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script';
 
@@ -38,8 +40,8 @@ export class FlexEventComponent implements OnInit {
     eventType = {};
     setValueType = GaugeEventSetValueType;
     enterActionType = {};
+    actionType: typeof GaugeEventActionType | typeof ViewEventActionType = GaugeEventActionType;
     relativeFromType = GaugeEventRelativeFromType;
-    actionType = GaugeEventActionType;
     eventActionOnCard = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
     eventWithPosition = [Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard),
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow),
@@ -52,16 +54,25 @@ export class FlexEventComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.data.settings.type === HtmlInputComponent.TypeTag) {
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.enter)] = this.translateService.instant(GaugeEventType.enter);
-        } else if (this.data.settings.type === HtmlSelectComponent.TypeTag) {
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.select)] = this.translateService.instant(GaugeEventType.select);
-        } else {
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.click)] = this.translateService.instant(GaugeEventType.click);
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseover)] = this.translateService.instant(GaugeEventType.mouseover);
-            this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseout)] = this.translateService.instant(GaugeEventType.mouseout);
+
+        // Events for view
+        if (this.data?.type == 'svg') {
+            this.actionType = ViewEventActionType;
+            this.eventType[Utils.getEnumKey(ViewEventType, ViewEventType.onopen)] = this.translateService.instant(ViewEventType.onopen);
+            this.eventType[Utils.getEnumKey(ViewEventType, ViewEventType.onclose)] = this.translateService.instant(ViewEventType.onclose);
+        } else if (this.data.settings) {
+            // Events for another gauges
+            if (this.data.settings.type === HtmlInputComponent.TypeTag) {
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.enter)] = this.translateService.instant(GaugeEventType.enter);
+            } else if (this.data.settings.type === HtmlSelectComponent.TypeTag) {
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.select)] = this.translateService.instant(GaugeEventType.select);
+            } else {
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.click)] = this.translateService.instant(GaugeEventType.click);
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mousedown)] = this.translateService.instant(GaugeEventType.mousedown);
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseup)] = this.translateService.instant(GaugeEventType.mouseup);
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseover)] = this.translateService.instant(GaugeEventType.mouseover);
+                this.eventType[Utils.getEnumKey(GaugeEventType, GaugeEventType.mouseout)] = this.translateService.instant(GaugeEventType.mouseout);
+            }    
         }
         this.viewPanels = <PanelData[]>Object.values(this.data.view?.items ?? [])?.filter((item: any) => item.type === 'svg-ext-own_ctrl-panel');//#issue on build  PanelComponent.TypeTag);
         this.enterActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
@@ -133,7 +144,7 @@ export class FlexEventComponent implements OnInit {
         let c = Object.values(this.actionType).indexOf(GaugeEventActionType.onwindow);
         let d = Object.values(this.actionType).indexOf(GaugeEventActionType.ondialog);
         let e = Object.values(this.actionType).indexOf(GaugeEventActionType.onViewToPanel);
-        return a === b || a === c || a === d || a === e;
+        return a > -1 && (a === b || a === c || a === d || a === e);
     }
 
     withPosition(eventAction: GaugeEventActionType) {
@@ -143,32 +154,32 @@ export class FlexEventComponent implements OnInit {
     withSetValue(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetValue);
-        return a === b;
+        return a > -1 && (a === b);
     }
 
     withToggleValue(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onToggleValue);
-        return a === b;
+        return a > -1 && (a === b);
     }
 
     withSetInput(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetInput);
-        return a === b;
+        return a > -1 && (a === b);
     }
 
     withAddress(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
         let c = Object.values(this.actionType).indexOf(GaugeEventActionType.oncard);
-        return a === b || a === c;
+        return a > -1 && (a === b || a === c);
     }
 
     withScale(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
-        return a === b;
+        return a > -1 && (a === b);
     }
 
     withRunScript(action) {
