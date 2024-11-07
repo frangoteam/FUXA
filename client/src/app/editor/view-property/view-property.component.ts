@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Utils } from '../../_helpers/utils';
 import { Script } from '../../_models/script';
 import { DocAlignType, DocProfile, ViewProperty, ViewType } from '../../_models/hmi';
@@ -8,21 +8,25 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { GridType } from 'angular-gridster2';
 import { FlexEventComponent } from '../../gauges/gauge-property/flex-event/flex-event.component';
 import { ProjectService } from '../../_services/project.service';
+import { Subject, startWith, takeUntil } from 'rxjs';
+import { MatLegacyTab as MatTab } from '@angular/material/legacy-tabs';
 
 @Component({
     selector: 'app-view-property',
     templateUrl: './view-property.component.html',
     styleUrls: ['./view-property.component.scss']
 })
-export class ViewPropertyComponent implements OnInit {
+export class ViewPropertyComponent implements OnInit, OnDestroy {
     defaultColor = Utils.defaultColor;
     viewType = ViewType;
     alignType = DocAlignType;
     formGroup: UntypedFormGroup;
     gridType = GridType;
     scripts: Script[];
+    private destroy$ = new Subject<void>();
 
     @ViewChild('flexevent', {static: false}) flexEvent: FlexEventComponent;
+    @ViewChild('tabEvents', {static: true}) tabEvents: MatTab;
 
     propSizeType = [{ text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 } }, { text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 } },
     { text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 } }, { text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 } },
@@ -59,6 +63,18 @@ export class ViewPropertyComponent implements OnInit {
             this.formGroup.controls.name.setValidators(this.isValidName());
         }
         this.formGroup.updateValueAndValidity();
+
+        this.formGroup.controls.type.valueChanges.pipe(
+            takeUntil(this.destroy$),
+            startWith(this.formGroup.controls.type.value)
+        ).subscribe(type => {
+            this.tabEvents.disabled = type === ViewType.cards;
+        });
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     isValidName(): ValidatorFn {

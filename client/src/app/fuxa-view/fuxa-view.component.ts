@@ -73,6 +73,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     protected staticValues: any = {};
     protected plainVariableMapping: VariableMappingDictionary = {};
     private destroy$ = new Subject<void>();
+    private loadOk = false;
 
     constructor(
         private translateService: TranslateService,
@@ -165,6 +166,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view
      */
     public loadHmi(view: View, legacyProfile?: boolean) {
+        if (this.loadOk) {
+            return;
+        }
+        // Execute onClose script for last view
+        let lastView = this.getView(this.view.id);
+        if (lastView) {
+            lastView.property?.events?.forEach(event => {
+                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+                    this.onRunScript(event);
+                }
+            });
+        }
         if (!this.hmi) {
             this.hmi = this.projectService.getHmi();
         }
@@ -178,7 +191,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 console.error(err);
             }
         }
-        if (view) {
+        if (view?.id) {
             this.id = view.id;
             this.view = view;
             if (view.type === this.cardViewType) {
@@ -197,6 +210,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.changeDetector.detectChanges();
         this.loadWatch(this.view);
         this.onResize();
+
+        // Execute onOpen script for new current view
+        view.property?.events?.forEach(event => {
+            if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
+                this.onRunScript(event);
+            }
+        });
     }
 
 
@@ -702,25 +722,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
-
-            // Execute onClose script for last view
-            let lastView = this.getView(this.view.id);
-            if (lastView) {
-                lastView.property?.events?.forEach(event => {
-                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
-                        this.onRunScript(event);
-                    }
-                });
-            }
             this.loadHmi(view, true);
-
-            // Execute onOpen script for new current view
-            view.property?.events?.forEach(event => {
-                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
-                    this.onRunScript(event);
-                }
-            });
-
             if (param.scaleMode) {
                 Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
             }
