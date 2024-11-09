@@ -2,8 +2,8 @@
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.reports-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content class="container">
-        <div class="block reports-column mt20">
-            <div class="my-form-field report-column mt10">
+        <div class="block reports-column mt10">
+            <div class="my-form-field report-column">
                 <span>{{'table.report-columns' | translate}}</span>
                 <mat-checkbox *ngFor="let item of reportsColumns" (change)="onReportColumChanged(item, $event.checked)"
                     [checked]="data.columns?.indexOf(item) !== -1">

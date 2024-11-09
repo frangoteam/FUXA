@@ -19,11 +19,12 @@ var scriptsApi = require('./scripts');
 var resourcesApi = require('./resources');
 var daqApi = require('./daq');
 var commandApi = require('./command');
+const reports = require('../dist/reports.service');
+const reportsApi = new reports.ReportsApiService();
 
 var apiApp;
 var server;
 var runtime;
-var editor;
 
 function init(_server, _runtime) {
     server = _server;
@@ -58,6 +59,8 @@ function init(_server, _runtime) {
             apiApp.use(resourcesApi.app());
             commandApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(commandApi.app());
+            reportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(reportsApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes
