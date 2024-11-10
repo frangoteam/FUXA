@@ -145,13 +145,23 @@
                 <span>{{'gauges.property-update-enabled' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="property.options.updated" class="ml20"></mat-slide-toggle>
             </div>
-            <div class="my-form-field ml20">
+            <!-- integrated in actionOnEsc -->
+            <!-- <div class="my-form-field ml20">
                 <span>{{'gauges.property-update-esc' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="property.options.updatedEsc" [disabled]="!property.options.updated" class="ml20"></mat-slide-toggle>
-            </div>
+            </div> -->
             <div class="my-form-field ml20">
                 <span>{{'gauges.property-select-content-on-click' | translate}}</span>
                 <mat-slide-toggle color="primary" [(ngModel)]="property.options.selectOnClick" class="ml20"></mat-slide-toggle>
+            </div>
+            <div class="my-form-field ml20" style="width: 140px;">
+                <span>{{'gauges.property-input-esc-action' | translate}}</span>
+                <mat-select [(ngModel)]="property.options.actionOnEsc">
+                    <mat-option [value]="null"></mat-option>
+                    <mat-option *ngFor="let ev of inputActionEscType | enumToArray" [value]="ev.key">
+                        {{ 'gauges.property-action-esc-' + ev.value | translate }}
+                    </mat-option>
+                </mat-select>
             </div>
         </div>
     </div>

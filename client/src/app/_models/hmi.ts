@@ -229,6 +229,7 @@ export interface InputOptionsProperty {
     convertion?: InputConvertionType;
     updatedEsc?: boolean;
     selectOnClick?: boolean;
+    actionOnEsc?: InputActionEscType;
 }
 
 export enum InputOptionType {
@@ -248,6 +249,11 @@ export enum InputTimeFormatType {
 export enum InputConvertionType {
     milliseconds = 'milliseconds',
     string = 'string',
+}
+
+export enum InputActionEscType {
+    update = 'update',
+    enter = 'enter'
 }
 
 export interface IPropertyVariable {

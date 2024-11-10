@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { GaugeProperty, GaugeRangeProperty, InputConvertionType, InputOptionType, InputOptionsProperty, InputTimeFormatType } from '../../../_models/hmi';
+import { GaugeProperty, GaugeRangeProperty, InputActionEscType, InputConvertionType, InputOptionType, InputOptionsProperty, InputTimeFormatType } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
@@ -30,6 +30,7 @@ export class FlexInputComponent implements OnInit {
     inputOptionType = InputOptionType;
     inputTimeFormatType = InputTimeFormatType;
     inputConvertionType = InputConvertionType;
+    inputActionEscType = InputActionEscType;
 
     constructor() {
     }
@@ -63,6 +64,11 @@ export class FlexInputComponent implements OnInit {
         if (this.isInputCtrl()) {
             this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
             this.property.options.type = this.property.options.type ? this.property.options.type : this.property.options.numeric ? this.inputOptionType.number : this.inputOptionType.text;
+            if (!this.property.options.actionOnEsc && this.property.options.updatedEsc) {   // compatibility 1.2.1
+                this.property.options.actionOnEsc = InputActionEscType.update;
+            } else if (this.property.options.actionOnEsc) {
+                this.property.options.updatedEsc = null;
+            }
         }
         this.ranges.forEach(range => {
             if (!range.color) {
