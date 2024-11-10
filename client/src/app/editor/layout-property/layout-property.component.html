@@ -198,6 +198,7 @@
                                             [style.fontSize]="data.layout.header.fontSize + 'px !important'"
                                             [style.marginLeft.px]="item.marginLeft"
                                             [style.marginRight.px]="item.marginRight">
+                                            <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                                         {{ item.property?.text ?? item.type }}
                                     </button>
                                 </ng-container>
