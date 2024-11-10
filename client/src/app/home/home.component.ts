@@ -188,7 +188,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private initScheduledScripts() {
         this.intervalsScript.clearIntervals();
         this.projectService.getScripts()?.forEach((script: Script) => {
-            if (script.mode == ScriptMode.CLIENT && script.scheduling?.interval > 0) {
+            if (script.mode === ScriptMode.CLIENT && script.scheduling?.interval > 0) {
                 this.intervalsScript.addInterval(
                     script.scheduling.interval * 1000,
                     this.scriptService.evalScript,
