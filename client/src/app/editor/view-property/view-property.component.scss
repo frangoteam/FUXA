@@ -1,13 +1,17 @@
 :host {
     .container {
+        width: 700px;
+    }
+
+    .property-container {
         width: 300px;
     }
 
     .item-block {
         display: block;
         mat-select, input, span {
-            width:calc(100% - 5px);
-        }    
+            width: calc(100% - 7px);
+        }
     }
 
     .slider-field span {
@@ -17,9 +21,31 @@
         white-space: nowrap;
         overflow: hidden;
     }
-    
+
     .slider-field mat-slider {
         background-color: var(--formSliderBackground);
         height: 30px;
+    }
+
+    .toolbox {
+        float: right;
+        line-height: 44px;
+    }
+
+    .toolbox button {
+        /* margin-right: 8px; */
+        margin-left: 10px;
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+    }
+
+    .mat-tab-container {
+        min-height:300px;
+        height: 60vmin;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 15px;
     }
 }

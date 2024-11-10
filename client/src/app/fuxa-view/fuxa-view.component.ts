@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription, take } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType, ViewEventType } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -73,6 +73,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     protected staticValues: any = {};
     protected plainVariableMapping: VariableMappingDictionary = {};
     private destroy$ = new Subject<void>();
+    private loadOk = false;
 
     constructor(
         private translateService: TranslateService,
@@ -165,6 +166,18 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view
      */
     public loadHmi(view: View, legacyProfile?: boolean) {
+        if (this.loadOk) {
+            return;
+        }
+        // Execute onClose script for last view
+        let lastView = this.getView(this.view.id);
+        if (lastView) {
+            lastView.property?.events?.forEach(event => {
+                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+                    this.onRunScript(event);
+                }
+            });
+        }
         if (!this.hmi) {
             this.hmi = this.projectService.getHmi();
         }
@@ -178,7 +191,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 console.error(err);
             }
         }
-        if (view) {
+        if (view?.id) {
             this.id = view.id;
             this.view = view;
             if (view.type === this.cardViewType) {
@@ -197,6 +210,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.changeDetector.detectChanges();
         this.loadWatch(this.view);
         this.onResize();
+
+        // Execute onOpen script for new current view
+        view.property?.events?.forEach(event => {
+            if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
+                this.onRunScript(event);
+            }
+        });
     }
 
 
@@ -697,6 +717,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
+
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);

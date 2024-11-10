@@ -23,6 +23,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     gridOptions: GridsterConfig;
     dashboard: Array<GridsterItem> = [];
     cardType = CardWidgetType;
+    private loadOk = false;
 
     constructor(private renderer: Renderer2,
                 private changeDetector: ChangeDetectorRef) {
@@ -42,6 +43,9 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     }
 
     reload() {
+        if (this.loadOk) {
+            return;
+        }
         let element: HTMLElement = document.querySelector('gridster');
         if (element) {
             if (this.view.profile.bkcolor) {

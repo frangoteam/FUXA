@@ -1,22 +1,32 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Utils } from '../../_helpers/utils';
-import { DocAlignType, DocProfile, ViewType } from '../../_models/hmi';
+import { Script } from '../../_models/script';
+import { DocAlignType, DocProfile, ViewProperty, ViewType } from '../../_models/hmi';
 import { TranslateService } from '@ngx-translate/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { GridType } from 'angular-gridster2';
+import { FlexEventComponent } from '../../gauges/gauge-property/flex-event/flex-event.component';
+import { ProjectService } from '../../_services/project.service';
+import { Subject, startWith, takeUntil } from 'rxjs';
+import { MatLegacyTab as MatTab } from '@angular/material/legacy-tabs';
 
 @Component({
     selector: 'app-view-property',
     templateUrl: './view-property.component.html',
     styleUrls: ['./view-property.component.scss']
 })
-export class ViewPropertyComponent implements OnInit {
+export class ViewPropertyComponent implements OnInit, OnDestroy {
     defaultColor = Utils.defaultColor;
     viewType = ViewType;
     alignType = DocAlignType;
     formGroup: UntypedFormGroup;
     gridType = GridType;
+    scripts: Script[];
+    private destroy$ = new Subject<void>();
+
+    @ViewChild('flexevent', {static: false}) flexEvent: FlexEventComponent;
+    @ViewChild('tabEvents', {static: true}) tabEvents: MatTab;
 
     propSizeType = [{ text: 'dlg.docproperty-size-320-240', value: { width: 320, height: 240 } }, { text: 'dlg.docproperty-size-460-360', value: { width: 460, height: 360 } },
     { text: 'dlg.docproperty-size-640-480', value: { width: 640, height: 480 } }, { text: 'dlg.docproperty-size-800-600', value: { width: 800, height: 600 } },
@@ -25,9 +35,11 @@ export class ViewPropertyComponent implements OnInit {
 
     constructor(private fb: UntypedFormBuilder,
                 private translateService: TranslateService,
+                private projectService: ProjectService,
                 public dialogRef: MatDialogRef<ViewPropertyComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: ViewPropertyType) {
 
+        this.scripts = this.projectService.getScripts();
         for (let i = 0; i < this.propSizeType.length; i++) {
             this.translateService.get(this.propSizeType[i].text).subscribe((txt: string) => { this.propSizeType[i].text = txt; });
         }
@@ -51,6 +63,18 @@ export class ViewPropertyComponent implements OnInit {
             this.formGroup.controls.name.setValidators(this.isValidName());
         }
         this.formGroup.updateValueAndValidity();
+
+        this.formGroup.controls.type.valueChanges.pipe(
+            takeUntil(this.destroy$),
+            startWith(this.formGroup.controls.type.value)
+        ).subscribe(type => {
+            this.tabEvents.disabled = type === ViewType.cards;
+        });
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     isValidName(): ValidatorFn {
@@ -74,6 +98,10 @@ export class ViewPropertyComponent implements OnInit {
         this.data.profile.margin = this.formGroup.controls.margin.value;
         this.data.profile.align = this.formGroup.controls.align.value;
         this.data.profile.gridType = this.formGroup.controls.gridType.value;
+        if (!this.data.property) {
+			this.data.property = new ViewProperty();
+        }
+        this.data.property.events = this.flexEvent.getEvents();
         this.dialogRef.close(this.data);
     }
 
@@ -83,11 +111,16 @@ export class ViewPropertyComponent implements OnInit {
             this.formGroup.controls.width.setValue(size.width);
         }
     }
+
+    onAddEvent() {
+        this.flexEvent.onAddEvent();
+    }
 }
 
 export interface ViewPropertyType {
     name: string;
     type: ViewType;
     profile: DocProfile;
+    property: ViewProperty;
     existingNames?: string[];
 }

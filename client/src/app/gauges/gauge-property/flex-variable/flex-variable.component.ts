@@ -137,7 +137,7 @@ export class FlexVariableComponent implements OnInit {
     }
 
     getDeviceName() {
-        let device = DevicesUtils.getDeviceFromTagId(this.data.devices, this.variableId);
+        let device = DevicesUtils.getDeviceFromTagId(this.data.devices || {}, this.variableId);
         if (device) {
             return device.name;
         }
@@ -145,7 +145,7 @@ export class FlexVariableComponent implements OnInit {
     }
 
     getVariableName() {
-        let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);
+        let tag = DevicesUtils.getTagFromTagId(this.data.devices || {}, this.variableId);
         if (tag) {
             let result = tag.label || tag.name;
             if (result && tag.address && result !== tag.address) {
@@ -174,7 +174,7 @@ export class FlexVariableComponent implements OnInit {
             this.value.variableId = this.tagFilter.value.id;
             this.value.variableRaw = null;
         } else {
-            let tag = DevicesUtils.getTagFromTagId(this.data.devices, this.variableId);
+            let tag = DevicesUtils.getTagFromTagId(this.data.devices || {}, this.variableId);
             if (tag) {
                 this.value.variableId = tag.id;
                 this.value.variableRaw = tag;
@@ -237,7 +237,7 @@ export class FlexVariableComponent implements OnInit {
 
     private loadDevicesTags(deviceName?: string) {
         const deviceUpdated = <Device>Object.values(this.projectService.getDevices()).find((device: Device) => device.name === deviceName);
-        Object.values(this.data.devices).forEach((device: Device) => {
+        Object.values(this.data.devices || {}).forEach((device: Device) => {
             let deviceGroup = <DeviceGroup> {
                 name: device.name,
                 tags: [],

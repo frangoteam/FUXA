@@ -106,7 +106,11 @@ export class EditorViewsListComponent {
         let dialogRef = this.dialog.open(ViewPropertyComponent, {
             position: { top: '60px' },
             disableClose: true,
-            data: <ViewPropertyType> { name: view.name, type: view.type || ViewType.svg, profile: view.profile }
+            data: <ViewPropertyType> {
+                name: view.name,
+                type: view.type || ViewType.svg,
+                profile: view.profile,
+                property: view.property}
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -115,6 +119,10 @@ export class EditorViewsListComponent {
                 if (result.profile.width) {view.profile.width = parseInt(result.profile.width);}
                 if (result.profile.margin >= 0) {view.profile.margin = parseInt(result.profile.margin);}
                 view.profile.bkcolor = result.profile.bkcolor;
+                if (result.property?.events) {
+                    view.property ??= { events: [], actions: [] };
+                    view.property.events = result.property.events;
+                }
                 this.viewPropertyChanged.emit(view);
                 this.onSelectView(view);
             }
