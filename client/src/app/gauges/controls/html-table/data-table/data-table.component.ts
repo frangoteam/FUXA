@@ -325,9 +325,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.events?.some(event => event.type === this.eventSelectionType);
     }
 
-    selectRow(index: number) {
+    selectRow(row: MatRow) {
         if (this.isSelectable()) {
-            this.selectedRow = this.dataSource.data[index];
+            this.selectedRow = row;
             this.events.forEach(event => {
                 this.runScript(event, this.selectedRow);
             });

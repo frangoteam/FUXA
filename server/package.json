@@ -1,6 +1,6 @@
 {
   "name": "fuxa-server",
-  "version": "1.2.1-2007",
+  "version": "1.2.1-2028",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
@@ -46,7 +46,8 @@
     "pdfmake": "0.2.5",
     "socket.io": "2.5.0",
     "sqlite3": "5.1.5",
-    "winston": "3.7.2"
+    "winston": "3.7.2",
+    "ws": "8.18.0"
   },
   "devDependencies": {
     "@mapbox/node-pre-gyp": "^1.0.0",

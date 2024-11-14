@@ -93,7 +93,7 @@
         </ng-container>
         <ng-container *ngSwitchCase="tableType.data">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    (click)="selectRow(i)"
+                    (click)="selectRow(row)"
                     class="data-table-row"
                     [ngStyle]="{
                     'cursor': isSelectable() ? 'pointer': 'unset',
@@ -105,12 +105,11 @@
         </ng-container>
     </ng-container>
 </mat-table>
-<div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn">
+<div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn" [style.top.px]="withToolbar ? 45 : 0">
     <button mat-icon-button
             (click)="onRefresh()"
             class="small-icon-button default-color"
-            [style.color]="tableOptions.header.color"
-            [style.top.px]="withToolbar ? 45 : 0">
+            [style.color]="tableOptions.header.color">
         <mat-icon [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
     </button>
 </div>

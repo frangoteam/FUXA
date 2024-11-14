@@ -56,7 +56,7 @@ function MyScriptsModule(_events, _logger) {
     }
 
     this.runScript = function (_script) {
-        if (scriptsModule) {            
+        if (scriptsModule) {
             var paramsValue = _script.parameters.map(p => utils.isNullOrUndefined(p.value) ? p : p.value);
             if (!_script.name) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
@@ -105,7 +105,7 @@ function MyScriptsModule(_events, _logger) {
                             if (params.length) params += ',';
                             params += `${script.parameters[i].name}`;
                         }
-                        functions += `async function ${script.name} (${params}) { try { ${script.code} } catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
+                        functions += `async function ${script.name} (${params}) { try { ${script.code} \n} catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {
