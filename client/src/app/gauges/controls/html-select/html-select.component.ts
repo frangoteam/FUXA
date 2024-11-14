@@ -103,7 +103,7 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
             select = Utils.searchTreeStartWith(ele, this.prefix);
             if (select) {
                 if (ga.property) {
-                    if (ga.property.readonly) {
+                    if (ga.property.readonly && isview) {
                         select.disabled = true;
                         select.style['appearance'] = 'none';
                         select.style['border-width'] = '0px';
