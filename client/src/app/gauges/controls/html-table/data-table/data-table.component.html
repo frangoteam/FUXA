@@ -58,8 +58,14 @@
             </ng-container>
             <ng-template #stringValue>
                 {{element[column]?.stringValue}}
-                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0" class="remove">
+                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0">
                     <mat-icon>check_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="column === reportColumnType.download" (click)="onDownloadReport(element)">
+                    <mat-icon>vertical_align_bottom</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="column === reportColumnType.delete" (click)="onDeleteReport(element)">
+                    <mat-icon>delete</mat-icon>
                 </button>
             </ng-template>
         </td>

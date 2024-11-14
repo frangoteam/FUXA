@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { ReportColumns, ReportsFilterType } from '../../../../_models/report';
+import { ReportColumns, ReportsFilter } from '../../../../_models/report';
 import { TableFilter, TableType } from '../../../../_models/hmi';
 import { ProjectService } from '../../../../_services/project.service';
 
@@ -12,7 +12,7 @@ import { ProjectService } from '../../../../_services/project.service';
 export class TableReportsComponent {
 
     reportsColumns = ReportColumns;
-    reportsFilter: ReportsFilterType = {
+    reportsFilter: ReportsFilter = {
         name: '',
         count: ''
     };

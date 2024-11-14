@@ -1,5 +1,7 @@
 
 const authJwt = require('../api/jwt-helper');
+const fs = require('fs');
+const path = require('path');
 import express, { Request, Response } from 'express';
 
 export class ReportsApiService {
@@ -25,8 +27,7 @@ export class ReportsApiService {
         });
 
         /**
-         * GET current Alarms
-         * Take from alarms storage and reply
+         * GET reports with filter and check authorization
          */
         reportsApp.get('/api/reportsQuery', this.secureFnc, (req: Request, res: Response) => {
             var groups = this.checkGroupsFnc(req);
@@ -34,98 +35,79 @@ export class ReportsApiService {
                 this.runtime.logger.error('api get alarms: Tocken Expired');
             } else {
                 try {
-                    var myFilter = req.query?.filter as ReportsFilterType;
-                    // var filter = myFilter ?? JSON.parse(myFilter);
-
+                    var myFilter = req.query as ReportsFilterType;
+                    var filter = myFilter ?? JSON.parse(myFilter);
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-                    // const fileName = req.query.name.replace(new RegExp('../', 'g'), '');
-                    // var reportPath = path.join(runtime.settings.reportsDir, fileName);
-                    // if (!fs.existsSync(reportPath)) {
-                    //     reportPath = path.join(process.cwd(), runtime.settings.reportsDir, fileName);
-                    // }
-                    // if (fs.existsSync(reportPath)) {
-                    //     res.sendFile(reportPath, (err) => {
-                    //         if (err) {
-                    //             runtime.logger.error("api get download: " + err);
-                    //         }
-                    //     });
-                    // } else {
-                    //     res.status(400).json({ error: "not_found", message: 'report not found!'});
-                    //     runtime.logger.error("api get download: " + 'report not found!');
-                    // }
-                    // if (result) {
-                    //     res.json(result);
-                    // } else {
-                    //     res.end();
-                    // }
+                    var reportPath = this.runtime.settings.reportsDir;
+                    if (!fs.existsSync(reportPath)) {
+                        reportPath = path.join(process.cwd(), this.runtime.settings.reportsDir);
+                    }
+                    var reportFiles = fs.readdirSync(reportPath);
+                    // reportFiles = reportFiles.filter(file => file.startsWith(req.query.name + '_'));
+                    var result: ReportFile[] = [];
+                    reportFiles?.forEach((file: string) => {
+                        try {
+                            const fileName = file.replace(/\.[^/.]+$/, "");
+                            const reportName = fileName.replace(/_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/, '');
+                            const created = <Date>this.getDate(fileName);
+                            result.push({
+                                fileName,
+                                reportName,
+                                created
+                            });
+                        } catch (err) {
+                            console.log(`Parsing ${file} Error ${err}`);
+                        }
+                    });
+                    res.json(result);
                 } catch (err) {
                     if (err instanceof Error) {
                         res.status(400).json({error: err.stack, message: err.message});
                     } else {
                         res.status(400).json({error:'unexpected_error', message: err});
                     }
-                    this.runtime.logger.error('api get alarms: ' + err);
+                    this.runtime.logger.error('api get reportsQuery: ' + err);
                 }
 			}
         });
 
-        /**
-         * POST Plugin
-         * Install the plugin
-         */
-        // pluginsApp.post("/api/plugins", secureFnc, function (req, res, next) {
-        //     var groups = checkGroupsFnc(req);
-        //     if (res.statusCode === 403) {
-        //         runtime.logger.error("api post plugins: Tocken Expired");
-        //     } else if (authJwt.adminGroups.indexOf(groups) === -1) {
-        //         res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-        //         runtime.logger.error("api post plugins: Unauthorized");
-        //     } else {
-        //         runtime.plugins.addPlugin(req.body.params, true).then(function (data) {
-        //             runtime.devices.update();
-        //             res.end();
-        //         }).catch(function (err) {
-        //             if (err.code) {
-        //                 res.status(400).json({ error: err.code, message: err.message });
-        //             } else {
-        //                 res.status(400).json({ error: "unexpected_error", message: err.toString() });
-        //             }
-        //             runtime.logger.error("api install plugins: " + err.message);
-        //         });
-        //     }
-        // });
-
-        /**
-         * DELETE Plugin
-         * Unistall the plugin
-         */
-        // pluginsApp.delete("/api/plugins", secureFnc, function (req, res, next) {
-        //     var groups = checkGroupsFnc(req);
-        //     if (res.statusCode === 403) {
-        //         runtime.logger.error("api delete plugins: Tocken Expired");
-        //     } else if (authJwt.adminGroups.indexOf(groups) === -1) {
-        //         res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-        //         runtime.logger.error("api delete plugins: Unauthorized");
-        //     } else {
-        //         runtime.plugins.removePlugin(req.query.param).then(function (data) {
-        //             res.end();
-        //         }).catch(function (err) {
-        //             if (err.code) {
-        //                 res.status(400).json({ error: err.code, message: err.message });
-        //             } else {
-        //                 res.status(400).json({ error: "unexpected_error", message: err.toString() });
-        //             }
-        //             runtime.logger.error("api delete plugins: " + err.message);
-        //         });
-        //     }
-        // });
         return reportsApp;
+    }
+
+    getDate(input: Date | string) {
+        if (input instanceof Date) {
+            const yyyy = input.getFullYear();
+            const mm = String(input.getMonth() + 1).padStart(2, '0');
+            const dd = String(input.getDate()).padStart(2, '0');
+            const HH = String(input.getHours()).padStart(2, '0');
+            const MM = String(input.getMinutes()).padStart(2, '0');
+            const SS = String(input.getSeconds()).padStart(2, '0');
+
+            return `${yyyy}-${mm}-${dd}_${HH}-${MM}-${SS}`;
+        }
+        if (typeof input === 'string') {
+            const datePattern = /_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})$/;
+            const match = input.match(datePattern);
+
+            if (match) {
+                const [_, yyyy, mm, dd, HH, MM, SS] = match.map(Number);
+                return new Date(yyyy, mm - 1, dd, HH, MM, SS);
+            } else {
+                throw new Error("Format not valid!: 'YYYY-MM-DD_HH-MM-SS'");
+            }
+        }
+        throw new Error("Input not valid!");
     }
 }
 
 export interface ReportsFilterType {
     name?: string;
     count?: string;
+}
+
+export interface ReportFile {
+    fileName: string;
+    reportName: string;
+    created: Date;
 }

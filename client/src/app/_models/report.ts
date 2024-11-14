@@ -136,7 +136,17 @@ export enum ReportColumnsType {
 }
 export const ReportColumns: string[] = Object.values(ReportColumnsType);
 
-export interface ReportsFilterType {
+export interface ReportsFilter {
     name?: string;
     count?: string;
+}
+
+export interface ReportsQuery extends ReportsFilter {
+}
+
+export interface ReportFile {
+    fileName: string;
+    reportName: string;
+    created: Date;
+    deletable?: boolean;
 }

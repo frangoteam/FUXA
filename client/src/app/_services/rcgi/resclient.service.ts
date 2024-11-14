@@ -8,6 +8,7 @@ import { ResourceStorageService } from './resource-storage.service';
 import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
+import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -182,6 +183,18 @@ export class ResClientService implements ResourceStorageService {
     }
 
     downloadFile(fileName: string, type: CommanType): Observable<Blob> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getReportsDir(report: Report): Observable<string[]> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getReportsQuery(query: ReportsQuery): Observable<ReportFile[]> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });

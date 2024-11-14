@@ -196,6 +196,7 @@ import { LibWidgetsComponent } from './resources/lib-widgets/lib-widgets.compone
 import { TableCustomizerCellEditComponent } from './gauges/controls/html-table/table-customizer/table-customizer-cell-edit/table-customizer-cell-edit.component';
 import { TableAlarmsComponent } from './gauges/controls/html-table/table-alarms/table-alarms.component';
 import { TableReportsComponent } from './gauges/controls/html-table/table-reports/table-reports.component';
+import { ReportsService } from './_services/reports.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -418,6 +419,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         AuthGuard,
         ToastNotifierService,
         MyFileService,
+        ReportsService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]

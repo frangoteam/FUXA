@@ -12,6 +12,7 @@ import { DiagnoseService } from '../../_services/diagnose.service';
 import { ProjectService } from '../../_services/project.service';
 import { ReportEditorComponent, ReportEditorData } from '../report-editor/report-editor.component';
 import * as FileSaver from 'file-saver';
+import { ReportsService } from '../../_services/reports.service';
 
 @Component({
     selector: 'app-report-list',
@@ -42,6 +43,7 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
         private translateService: TranslateService,
         private projectService: ProjectService,
         private commandService: CommandService,
+        private reportsService: ReportsService,
         private diagnoseService: DiagnoseService) { }
 
     ngOnInit() {
@@ -127,7 +129,7 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     loadDetails(element: Report) {
         this.currentDetails = [];
         if (element) {
-            this.diagnoseService.getReportsDir(element).subscribe(result => {
+            this.reportsService.getReportsDir(element).subscribe(result => {
                 this.currentDetails = result;
             }, err => {
                 console.error('loadDetails err: ' + err);

@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, TableFilter } from '../../../../_models/hmi';
 import { format } from 'fecha';
-import { BehaviorSubject, Subject, timer } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, timer } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
 import { ScriptService } from '../../../../_services/script.service';
@@ -19,6 +19,8 @@ import { ProjectService } from '../../../../_services/project.service';
 import { SCRIPT_PARAMS_MAP, ScriptParam } from '../../../../_models/script';
 import { HmiService } from '../../../../_services/hmi.service';
 import { AlarmBaseType, AlarmColumnsType, AlarmPriorityType, AlarmsFilter, AlarmStatusType } from '../../../../_models/alarm';
+import { ReportsService } from '../../../../_services/reports.service';
+import { ReportColumnsType, ReportFile, ReportsFilter } from '../../../../_models/report';
 
 declare const numeral: any;
 @Component({
@@ -34,10 +36,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
 
-    rxjsPollingTimer = timer(0, 2500);
+    rxjsPollingTimer: Observable<number>;
     statusText = AlarmStatusType;
     priorityText = AlarmPriorityType;
     alarmColumnType = AlarmColumnsType;
+    reportColumnType = ReportColumnsType;
     loading = false;
     id: string;
     type: TableType;
@@ -65,12 +68,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedRow = null;
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
-    dataFilter: TableFilter | AlarmsFilter;
+    dataFilter: TableFilter | AlarmsFilter | ReportsFilter;
     constructor(
         private dataService: DataConverterService,
         private projectService: ProjectService,
         private hmiService: HmiService,
         private scriptService: ScriptService,
+        private reportsService: ReportsService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
 
@@ -117,6 +121,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private startPollingAlarms() {
+        this.rxjsPollingTimer = timer(0, 2500);
         this.rxjsPollingTimer.pipe(
             takeUntil(this.destroy$),
             switchMap(() => this.hmiService.getAlarmsValues(<AlarmsFilter>this.dataFilter))
@@ -126,11 +131,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private startPollingReports() {
+        this.rxjsPollingTimer = timer(0, 6000);
         this.rxjsPollingTimer.pipe(
             takeUntil(this.destroy$),
-            // switchMap(() => this.diagnoseService.getReportsDir(null))
+            switchMap(() => this.reportsService.getReportsQuery(<ReportsFilter>this.dataFilter))
         ).subscribe(result => {
-            // this.updateReportsTable(result);
+            this.updateReportsTable(result);
         });
     }
 
@@ -289,9 +295,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.reloadActive = false;
     }
 
-    updateAlarmsTable(alr: AlarmBaseType[]) {
-        let alarms = [];
-        alr.forEach(alr => {
+    updateAlarmsTable(alrs: AlarmBaseType[]) {
+        let rows = [];
+        alrs.forEach(alr => {
             let alarm = {
                 type: { stringValue: this.priorityText[alr.type] },
                 name: { stringValue: alr.name },
@@ -312,13 +318,23 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (alr.userack) {
                 alarm['userack'] = { stringValue: format(new Date(alr.userack), 'YYYY.MM.dd HH:mm:ss') };
             }
-            alarms.push(alarm);
+            rows.push(alarm);
         });
-        this.dataSource.data = alarms;
+        this.dataSource.data = rows;
     }
 
-    updateReportsTable(reports: string[]) {
+    updateReportsTable(reports: ReportFile[]) {
         console.log(reports);
+        let rows = [];
+        reports.forEach(item => {
+            let report = {
+                name: { stringValue: item.fileName },
+                ontime: { stringValue: format(new Date(item.created), 'YYYY.MM.dd HH:mm:ss') },
+                deletable: item.deletable
+            };
+            rows.push(report);
+        });
+        this.dataSource.data = rows;
     }
 
     isSelectable(): boolean {
@@ -569,6 +585,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 console.error('Error setAlarmAck', error);
             });
         }
+    }
+
+    onDownloadReport(report: ReportFile) {
+
+    }
+
+    onDeleteReport(report: ReportFile) {
+
     }
 
     public static DefaultOptions() {

@@ -9,6 +9,7 @@ import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery, AlarmBaseType, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
+import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -143,6 +144,21 @@ export class ResWebApiService implements ResourceStorageService {
             name: fileName,
         };
         return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
+    }
+
+    getReportsDir(report: Report): Observable<string[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = {
+            id: report.id,
+            name: report.name,
+        };
+        return this.http.get<string[]>(this.endPointConfig + '/api/reportsdir', { headers: header, params: params });
+    }
+
+    getReportsQuery(query: ReportsQuery): Observable<ReportFile[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: JSON.stringify(query) };
+        return this.http.get<ReportFile[]>(this.endPointConfig + '/api/reportsQuery', { headers: header, params: params });
     }
 
 }

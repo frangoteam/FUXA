@@ -5,6 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportsApiService = void 0;
 const authJwt = require('../api/jwt-helper');
+const fs = require('fs');
+const path = require('path');
 const express_1 = __importDefault(require("express"));
 class ReportsApiService {
     init(_runtime, _secureFnc, _checkGroupsFnc) {
@@ -14,92 +16,87 @@ class ReportsApiService {
     }
     app() {
         var reportsApp = (0, express_1.default)();
-        // pluginsApp.use(function (req, res, next) {
-        //     if (!runtime.project) {
-        //         res.status(404).end();
-        //     } else {
-        //         next();
-        //     }
-        // });
+        reportsApp.use((req, res, next) => {
+            if (!this.runtime.project) {
+                res.status(404).end();
+            }
+            else {
+                next();
+            }
+        });
         /**
-         * GET supported Plugin and status (installed)
+         * GET reports with filter and check authorization
          */
-        // pluginsApp.get("/api/plugins", secureFnc, function (req, res) {
-        //     var groups = checkGroupsFnc(req);
-        //     if (res.statusCode === 403) {
-        //         runtime.logger.error("api get plugins: Tocken Expired");
-        //     } else if (authJwt.adminGroups.indexOf(groups) === -1) {
-        //         res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-        //         runtime.logger.error("api get plugins: Unauthorized!");
-        //     } else {
-        //         runtime.plugins.getPlugins().then(result => {
-        //             // res.header("Access-Control-Allow-Origin", "*");
-        //             // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        //             if (result) {
-        //                 res.json(result);
-        //             } else {
-        //                 res.end();
-        //             }
-        //         }).catch(function (err) {
-        //             if (err.code) {
-        //                 res.status(400).json({ error: err.code, message: err.message });
-        //             } else {
-        //                 res.status(400).json({ error: "unexpected_error", message: err.toString() });
-        //             }
-        //             runtime.logger.error("api get plugins: " + err.message);
-        //         });
-        //     }
-        // });
-        /**
-         * POST Plugin
-         * Install the plugin
-         */
-        // pluginsApp.post("/api/plugins", secureFnc, function (req, res, next) {
-        //     var groups = checkGroupsFnc(req);
-        //     if (res.statusCode === 403) {
-        //         runtime.logger.error("api post plugins: Tocken Expired");
-        //     } else if (authJwt.adminGroups.indexOf(groups) === -1) {
-        //         res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-        //         runtime.logger.error("api post plugins: Unauthorized");
-        //     } else {
-        //         runtime.plugins.addPlugin(req.body.params, true).then(function (data) {
-        //             runtime.devices.update();
-        //             res.end();
-        //         }).catch(function (err) {
-        //             if (err.code) {
-        //                 res.status(400).json({ error: err.code, message: err.message });
-        //             } else {
-        //                 res.status(400).json({ error: "unexpected_error", message: err.toString() });
-        //             }
-        //             runtime.logger.error("api install plugins: " + err.message);
-        //         });
-        //     }
-        // });
-        /**
-         * DELETE Plugin
-         * Unistall the plugin
-         */
-        // pluginsApp.delete("/api/plugins", secureFnc, function (req, res, next) {
-        //     var groups = checkGroupsFnc(req);
-        //     if (res.statusCode === 403) {
-        //         runtime.logger.error("api delete plugins: Tocken Expired");
-        //     } else if (authJwt.adminGroups.indexOf(groups) === -1) {
-        //         res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-        //         runtime.logger.error("api delete plugins: Unauthorized");
-        //     } else {
-        //         runtime.plugins.removePlugin(req.query.param).then(function (data) {
-        //             res.end();
-        //         }).catch(function (err) {
-        //             if (err.code) {
-        //                 res.status(400).json({ error: err.code, message: err.message });
-        //             } else {
-        //                 res.status(400).json({ error: "unexpected_error", message: err.toString() });
-        //             }
-        //             runtime.logger.error("api delete plugins: " + err.message);
-        //         });
-        //     }
-        // });
+        reportsApp.get('/api/reportsQuery', this.secureFnc, (req, res) => {
+            var groups = this.checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                this.runtime.logger.error('api get alarms: Tocken Expired');
+            }
+            else {
+                try {
+                    var myFilter = req.query;
+                    var filter = myFilter ?? JSON.parse(myFilter);
+                    // res.header("Access-Control-Allow-Origin", "*");
+                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    var reportPath = this.runtime.settings.reportsDir;
+                    if (!fs.existsSync(reportPath)) {
+                        reportPath = path.join(process.cwd(), this.runtime.settings.reportsDir);
+                    }
+                    var reportFiles = fs.readdirSync(reportPath);
+                    // reportFiles = reportFiles.filter(file => file.startsWith(req.query.name + '_'));
+                    var result = [];
+                    reportFiles?.forEach((file) => {
+                        try {
+                            const fileName = file.replace(/\.[^/.]+$/, "");
+                            const reportName = fileName.replace(/_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/, '');
+                            const created = this.getDate(fileName);
+                            result.push({
+                                fileName,
+                                reportName,
+                                created
+                            });
+                        }
+                        catch (err) {
+                            console.log(`Parsing ${file} Error ${err}`);
+                        }
+                    });
+                    res.json(result);
+                }
+                catch (err) {
+                    if (err instanceof Error) {
+                        res.status(400).json({ error: err.stack, message: err.message });
+                    }
+                    else {
+                        res.status(400).json({ error: 'unexpected_error', message: err });
+                    }
+                    this.runtime.logger.error('api get reportsQuery: ' + err);
+                }
+            }
+        });
         return reportsApp;
+    }
+    getDate(input) {
+        if (input instanceof Date) {
+            const yyyy = input.getFullYear();
+            const mm = String(input.getMonth() + 1).padStart(2, '0');
+            const dd = String(input.getDate()).padStart(2, '0');
+            const HH = String(input.getHours()).padStart(2, '0');
+            const MM = String(input.getMinutes()).padStart(2, '0');
+            const SS = String(input.getSeconds()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}_${HH}-${MM}-${SS}`;
+        }
+        if (typeof input === 'string') {
+            const datePattern = /_(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})$/;
+            const match = input.match(datePattern);
+            if (match) {
+                const [_, yyyy, mm, dd, HH, MM, SS] = match.map(Number);
+                return new Date(yyyy, mm - 1, dd, HH, MM, SS);
+            }
+            else {
+                throw new Error("Format not valid!: 'YYYY-MM-DD_HH-MM-SS'");
+            }
+        }
+        throw new Error("Input not valid!");
     }
 }
 exports.ReportsApiService = ReportsApiService;
