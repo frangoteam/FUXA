@@ -47,7 +47,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.formGroup = this.fb.group({
-            name: [{value: this.data.name, disabled: this.data.name}],
+            name: [{value: this.data.name, disabled: this.data.name}, Validators.required],
             type: [{value: this.data.type, disabled: this.data.name}],
             width: [this.data.profile.width],
             height: [this.data.profile.height],
@@ -60,7 +60,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
             this.formGroup.controls.height.setValidators(Validators.required);
         }
         if (!this.data.name) {
-            this.formGroup.controls.name.setValidators(this.isValidName());
+            this.formGroup.controls.name.addValidators(this.isValidName());
         }
         this.formGroup.updateValueAndValidity();
 
