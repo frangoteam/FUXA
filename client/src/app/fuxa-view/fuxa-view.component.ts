@@ -735,7 +735,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     openDialog(event, viewref: string, options: any = {}) {
         let dialogData = <FuxaViewDialogData>{
             view: this.getView(viewref),
-            bkColor: 'trasparent',
+            bkColor: 'transparent',
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
             gaugesManager: this.gaugesManager
