@@ -11,8 +11,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, TableFilter } from '../../../../_models/hmi';
 import { format } from 'fecha';
-import { BehaviorSubject, Observable, Subject, timer } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, of, timer } from 'rxjs';
+import { catchError, concatMap, switchMap, takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
@@ -21,6 +21,8 @@ import { HmiService } from '../../../../_services/hmi.service';
 import { AlarmBaseType, AlarmColumnsType, AlarmPriorityType, AlarmsFilter, AlarmStatusType } from '../../../../_models/alarm';
 import { ReportsService } from '../../../../_services/reports.service';
 import { ReportColumnsType, ReportFile, ReportsFilter } from '../../../../_models/report';
+import * as FileSaver from 'file-saver';
+import { CommandService } from '../../../../_services/command.service';
 
 declare const numeral: any;
 @Component({
@@ -69,12 +71,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
     dataFilter: TableFilter | AlarmsFilter | ReportsFilter;
+
     constructor(
         private dataService: DataConverterService,
         private projectService: ProjectService,
         private hmiService: HmiService,
         private scriptService: ScriptService,
         private reportsService: ReportsService,
+        private commandService: CommandService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
 
@@ -131,7 +135,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private startPollingReports() {
-        this.rxjsPollingTimer = timer(0, 6000);
+        this.rxjsPollingTimer = timer(0, 60000 * 5);
         this.rxjsPollingTimer.pipe(
             takeUntil(this.destroy$),
             switchMap(() => this.reportsService.getReportsQuery(<ReportsFilter>this.dataFilter))
@@ -330,7 +334,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             let report = {
                 name: { stringValue: item.fileName },
                 ontime: { stringValue: format(new Date(item.created), 'YYYY.MM.dd HH:mm:ss') },
-                deletable: item.deletable
+                deletable: item.deletable,
+                fileName: item.fileName
             };
             rows.push(report);
         });
@@ -588,11 +593,27 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onDownloadReport(report: ReportFile) {
-
+        this.commandService.getReportFile(report.fileName).subscribe(content => {
+            let blob = new Blob([content], { type: 'application/pdf' });
+            FileSaver.saveAs(blob, report.fileName);
+        }, err => {
+            console.error('Download Report File err:', err);
+        });
     }
 
-    onDeleteReport(report: ReportFile) {
-
+    onRemoveReportFile(report: ReportFile) {
+        const userConfirmed = window.confirm(this.translateService.instant('msg.file-remove', { value: report.fileName }));
+        if (userConfirmed) {
+            this.reportsService.removeReportFile(report.fileName).pipe(
+                concatMap(() => timer(2000)),
+                catchError((err) => {
+                    console.error(`Remove Report File ${report.fileName} err:`, err);
+                    return of(null);
+                })
+            ).subscribe(() => {
+                // this.loadDetails(report);
+            });
+        }
     }
 
     public static DefaultOptions() {

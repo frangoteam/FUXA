@@ -4,15 +4,15 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subscription, concatMap, timer } from 'rxjs';
 import { Utils } from '../../_helpers/utils';
 import { Report, ReportSchedulingType, REPORT_PREFIX } from '../../_models/report';
 import { CommandService } from '../../_services/command.service';
-import { DiagnoseService } from '../../_services/diagnose.service';
 import { ProjectService } from '../../_services/project.service';
 import { ReportEditorComponent, ReportEditorData } from '../report-editor/report-editor.component';
 import * as FileSaver from 'file-saver';
 import { ReportsService } from '../../_services/reports.service';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-report-list',
@@ -43,8 +43,7 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
         private translateService: TranslateService,
         private projectService: ProjectService,
         private commandService: CommandService,
-        private reportsService: ReportsService,
-        private diagnoseService: DiagnoseService) { }
+        private reportsService: ReportsService) { }
 
     ngOnInit() {
         this.loadReports();
@@ -83,7 +82,10 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onStartReport(report: Report) {
-        this.commandService.buildReport(report).subscribe(() => {
+        this.reportsService.buildReport(report).pipe(
+            concatMap(() => timer(5000))
+        ).subscribe(() => {
+            this.loadDetails(report);
         });
     }
 
@@ -143,6 +145,23 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
             FileSaver.saveAs(blob, file);
         }, err => {
             console.error('Download Report File err:', err);
+        });
+    }
+
+    onRemoveFile(file: string, report: Report) {
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            position: { top: '60px' },
+            data: <ConfirmDialogData> { msg: this.translateService.instant('msg.file-remove', { value: file }) }
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.reportsService.removeReportFile(file).pipe(
+                    concatMap(() => timer(2000))
+                ).subscribe(() => {
+                    this.loadDetails(report);
+                });
+            }
         });
     }
 }

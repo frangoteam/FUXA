@@ -52,7 +52,7 @@ export class ReportsApiService {
                             const reportName = fileName.replace(/_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/, '');
                             const created = <Date>this.getDate(fileName);
                             result.push({
-                                fileName,
+                                fileName: file,
                                 reportName,
                                 created
                             });
@@ -70,6 +70,59 @@ export class ReportsApiService {
                     this.runtime.logger.error('api get reportsQuery: ' + err);
                 }
 			}
+        });
+
+
+        /**
+         * POST build report
+         */
+        reportsApp.post("/api/reportBuild", this.secureFnc, (req, res, next) => {
+            var groups = this.checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                this.runtime.logger.error("api post reportBuild: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                this.runtime.logger.error("api post reportBuild: Unauthorized");
+            } else {
+                try {
+                    if (this.runtime.jobsMgr.forceReport(req.body.params)) {
+                        res.end();
+                    } else {
+                        res.status(400).json({ error: "not_found", message: 'report not found!'});
+                        this.runtime.logger.error("api post reportBuild: " + 'report not found!');
+                    }
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    this.runtime.logger.error("api post reportBuild: " + error);
+                }
+            }
+        });
+
+        /**
+         * POST remove report file
+         */
+        reportsApp.post("/api/reportRemoveFile", this.secureFnc, (req, res, next) => {
+            var groups = this.checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                this.runtime.logger.error("api post reportRemoveFile: Tocken Expired");
+            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                this.runtime.logger.error("api post reportRemoveFile: Unauthorized");
+            } else {
+                try {
+                    var reportPath = this.runtime.settings.reportsDir;
+                    if (!fs.existsSync(reportPath)) {
+                        reportPath = path.join(process.cwd(), this.runtime.settings.reportsDir, req.params);
+                    }
+                    const filePath = path.join(reportPath, req.body.params?.fileName);
+                    fs.unlinkSync(filePath);
+                    this.runtime.logger.info(`Report file '${filePath}' deleted!`, true);
+                    res.end();
+                } catch (error) {
+                    res.status(400).json({ error: "error", message: error});
+                    this.runtime.logger.error("api post reportRemoveFile: " + error);
+                }
+            }
         });
 
         return reportsApp;

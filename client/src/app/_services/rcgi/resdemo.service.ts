@@ -143,4 +143,16 @@ export class ResDemoService implements ResourceStorageService {
             observer.error('Not supported!');
         });
     }
+
+    buildReport(report: Report): Observable<void> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    removeReportFile(fileName: string): Observable<void> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
 }

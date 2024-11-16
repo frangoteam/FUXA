@@ -57,6 +57,10 @@ export abstract class ResourceStorageService {
 
     public abstract getReportsQuery(query: ReportsQuery): Observable<ReportFile[]>;
 
+    public abstract removeReportFile(fileName: string): Observable<void>;
+
+    public abstract buildReport(report: Report): Observable<void>;
+
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) {return source;}
         let destination = JSON.parse(JSON.stringify(source));

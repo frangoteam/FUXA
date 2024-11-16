@@ -55,7 +55,7 @@
                                     <button mat-raised-button (click)="onAddTemplateCode(code)" matTooltip="{{code.tooltip}}">{{code.text}}</button>
                                 </div>
                             </div>
-                        </mat-tab>                        
+                        </mat-tab>
                         <mat-tab label="{{'script.property-test' | translate}}">
                             <div style="width: 100%">
                                 <div class="test-panel">
@@ -79,7 +79,7 @@
                                     <div>
                                         <span class="header">{{'script.property-test-console' | translate}}</span>
                                         <button mat-icon-button (click)="onConsoleClear()" class="small-icon-button" style="float: right">
-                                            <mat-icon>delete</mat-icon>
+                                            <mat-icon>delete_forever</mat-icon>
                                         </button>
                                         <div *ngFor="let text of console; index as i" class="console-text">
                                             <span>>{{text}}</span>

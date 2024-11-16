@@ -26,4 +26,12 @@ export class ReportsService {
     getReportsQuery(query: ReportsQuery): Observable<ReportFile[]> {
         return  this.server.getReportsQuery(query);
     }
+
+    buildReport(report: Report): Observable<void> {
+        return  this.server.buildReport(report);
+    }
+
+    removeReportFile(fileName: string): Observable<void> {
+        return  this.server.removeReportFile(fileName);
+    }
 }

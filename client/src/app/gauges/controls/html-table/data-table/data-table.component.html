@@ -41,7 +41,7 @@
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th *matHeaderCellDef
             mat-sort-header
-            [style.minWidth.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
+            [style.width.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
             [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
             [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
             [style.fontSize.px]="tableOptions.header.fontSize">
@@ -50,7 +50,7 @@
         <td *matCellDef="let element; index as i"
             class="data-table-row-cell"
             [ngStyle]="{
-                'min-width.px': columnsStyle[column].width,
+                'width.px': columnsStyle[column].width,
                 'text-align': columnsStyle[column].align,
                 'font-size.px': tableOptions.row.fontSize}">
             <ng-container *ngIf="setOfSourceTableData; else stringValue">
@@ -64,8 +64,8 @@
                 <button mat-icon-button *ngIf="column === reportColumnType.download" (click)="onDownloadReport(element)">
                     <mat-icon>vertical_align_bottom</mat-icon>
                 </button>
-                <button mat-icon-button *ngIf="column === reportColumnType.delete" (click)="onDeleteReport(element)">
-                    <mat-icon>delete</mat-icon>
+                <button mat-icon-button *ngIf="column === reportColumnType.delete" (click)="onRemoveReportFile(element)" [disabled]="!element.deletable" class="custom-disabled-button">
+                    <mat-icon>delete_forever</mat-icon>
                 </button>
             </ng-template>
         </td>
