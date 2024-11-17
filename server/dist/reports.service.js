@@ -34,8 +34,7 @@ class ReportsApiService {
             }
             else {
                 try {
-                    var myFilter = req.query;
-                    var filter = myFilter ?? JSON.parse(myFilter);
+                    var filter = JSON.parse(req.query.query);
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     var reportPath = this.runtime.settings.reportsDir;
@@ -43,11 +42,14 @@ class ReportsApiService {
                         reportPath = path.join(process.cwd(), this.runtime.settings.reportsDir);
                     }
                     var reportFiles = fs.readdirSync(reportPath);
-                    // reportFiles = reportFiles.filter(file => file.startsWith(req.query.name + '_'));
                     var result = [];
-                    reportFiles?.forEach((file) => {
+                    for (var i = 0; i < reportFiles?.length; i++) {
+                        const file = reportFiles[i];
                         try {
                             const fileName = file.replace(/\.[^/.]+$/, "");
+                            if (filter.name && fileName.indexOf(filter.name) === -1) {
+                                continue;
+                            }
                             const reportName = fileName.replace(/_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/, '');
                             const created = this.getDate(fileName);
                             result.push({
@@ -59,7 +61,12 @@ class ReportsApiService {
                         catch (err) {
                             console.log(`Parsing ${file} Error ${err}`);
                         }
-                    });
+                    }
+                    if (filter.count) {
+                        result = result.filter(item => item.created !== null)
+                            .sort((a, b) => b.created.getTime() - a.created.getTime())
+                            .slice(0, filter.count);
+                    }
                     res.json(result);
                 }
                 catch (err) {

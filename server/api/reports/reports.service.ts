@@ -35,8 +35,7 @@ export class ReportsApiService {
                 this.runtime.logger.error('api get alarms: Tocken Expired');
             } else {
                 try {
-                    var myFilter = req.query as ReportsFilterType;
-                    var filter = myFilter ?? JSON.parse(myFilter);
+                    var filter = JSON.parse(req.query.query as string) as ReportsFilterType;
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     var reportPath = this.runtime.settings.reportsDir;
@@ -44,11 +43,14 @@ export class ReportsApiService {
                         reportPath = path.join(process.cwd(), this.runtime.settings.reportsDir);
                     }
                     var reportFiles = fs.readdirSync(reportPath);
-                    // reportFiles = reportFiles.filter(file => file.startsWith(req.query.name + '_'));
                     var result: ReportFile[] = [];
-                    reportFiles?.forEach((file: string) => {
+                    for (var i = 0; i < reportFiles?.length; i++) {
+                        const file = reportFiles[i];
                         try {
                             const fileName = file.replace(/\.[^/.]+$/, "");
+                            if (filter.name && fileName.indexOf(filter.name) === -1) {
+                                continue;
+                            }
                             const reportName = fileName.replace(/_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$/, '');
                             const created = <Date>this.getDate(fileName);
                             result.push({
@@ -59,7 +61,12 @@ export class ReportsApiService {
                         } catch (err) {
                             console.log(`Parsing ${file} Error ${err}`);
                         }
-                    });
+                    }
+                    if (filter.count) {
+                        result = result.filter(item => item.created !== null)
+                                       .sort((a, b) => b.created!.getTime() - a.created!.getTime())
+                                       .slice(0, filter.count);
+                    }
                     res.json(result);
                 } catch (err) {
                     if (err instanceof Error) {
@@ -156,7 +163,7 @@ export class ReportsApiService {
 
 export interface ReportsFilterType {
     name?: string;
-    count?: string;
+    count?: number;
 }
 
 export interface ReportFile {

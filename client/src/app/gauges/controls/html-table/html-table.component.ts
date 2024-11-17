@@ -86,7 +86,7 @@ export class HtmlTableComponent {
                 } else if (gab.property.type === TableType.reports && gab.property.options?.reportFilter) {
                     const dataFilter = <ReportsFilter> {
                         name: gab.property.options?.reportFilter?.filterA[0],
-                        cout: gab.property.options?.reportFilter?.filterA[1],
+                        count: gab.property.options?.reportFilter?.filterA[1],
                     };
                     (<DataTableComponent>componentRef.instance).dataFilter = dataFilter;
                 }
