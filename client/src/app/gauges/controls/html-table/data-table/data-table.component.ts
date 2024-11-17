@@ -308,19 +308,19 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 status: { stringValue: this.statusText[alr.status] },
                 text: { stringValue: alr.text },
                 group: { stringValue: alr.group },
-                ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.dd HH:mm:ss') },
+                ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.DD HH:mm:ss') },
                 color: alr.color,
                 bkcolor: alr.bkcolor,
                 toack: alr.toack
             };
             if (alr.offtime) {
-                alarm['offtime'] = { stringValue: format(new Date(alr.offtime), 'YYYY.MM.dd HH:mm:ss') };
+                alarm['offtime'] = { stringValue: format(new Date(alr.offtime), 'YYYY.MM.DD HH:mm:ss') };
             }
             if (alr.acktime) {
-                alarm['acktime'] = { stringValue: format(new Date(alr.acktime), 'YYYY.MM.dd HH:mm:ss') };
+                alarm['acktime'] = { stringValue: format(new Date(alr.acktime), 'YYYY.MM.DD HH:mm:ss') };
             }
             if (alr.userack) {
-                alarm['userack'] = { stringValue: format(new Date(alr.userack), 'YYYY.MM.dd HH:mm:ss') };
+                alarm['userack'] = { stringValue: format(new Date(alr.userack), 'YYYY.MM.DD HH:mm:ss') };
             }
             rows.push(alarm);
         });
@@ -328,12 +328,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     updateReportsTable(reports: ReportFile[]) {
-        console.log(reports);
         let rows = [];
         reports.forEach(item => {
             let report = {
                 name: { stringValue: item.fileName },
-                ontime: { stringValue: format(new Date(item.created), 'YYYY.MM.dd HH:mm:ss') },
+                ontime: { stringValue: format(new Date(item.created), 'YYYY.MM.DD HH:mm:ss') },
                 deletable: item.deletable,
                 fileName: item.fileName
             };
