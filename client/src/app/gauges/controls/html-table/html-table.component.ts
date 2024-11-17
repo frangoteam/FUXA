@@ -5,6 +5,7 @@ import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { DataTableComponent } from './data-table/data-table.component';
 import { AlarmsFilter } from '../../../_models/alarm';
+import { ReportsFilter } from '../../../_models/report';
 
 @Injectable()
 export class HtmlTableComponent {
@@ -73,13 +74,19 @@ export class HtmlTableComponent {
                 (<DataTableComponent>componentRef.instance).id = gab.id;
                 (<DataTableComponent>componentRef.instance).type = gab.property.type;
                 (<DataTableComponent>componentRef.instance).events = gab.property.events;
-                (<DataTableComponent>componentRef.instance).dataFilter = gab.property.options?.alarmFilter;
+                (<DataTableComponent>componentRef.instance).dataFilter = null;
                 if (gab.property.type === TableType.alarms && gab.property.options?.alarmFilter) {
                     const dataFilter = <AlarmsFilter> {
                         priority: gab.property.options?.alarmFilter?.filterA,
                         text: gab.property.options?.alarmFilter?.filterB[0],
                         group: gab.property.options?.alarmFilter?.filterB[1],
                         tagIds: gab.property.options?.alarmFilter?.filterC
+                    };
+                    (<DataTableComponent>componentRef.instance).dataFilter = dataFilter;
+                } else if (gab.property.type === TableType.reports && gab.property.options?.reportFilter) {
+                    const dataFilter = <ReportsFilter> {
+                        name: gab.property.options?.reportFilter?.filterA[0],
+                        count: gab.property.options?.reportFilter?.filterA[1],
                     };
                     (<DataTableComponent>componentRef.instance).dataFilter = dataFilter;
                 }

@@ -9,6 +9,9 @@ import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery, AlarmBaseType, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
+import { Report, ReportFile, ReportsQuery } from '../../_models/report';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -16,7 +19,10 @@ export class ResWebApiService implements ResourceStorageService {
     public endPointConfig = EndPointApi.getURL();
     public onRefreshProject: () => boolean;
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private translateService: TranslateService,
+        private toastr: ToastrService) {
     }
 
     init(): boolean {
@@ -145,4 +151,51 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
     }
 
+    getReportsDir(report: Report): Observable<string[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = {
+            id: report.id,
+            name: report.name,
+        };
+        return this.http.get<string[]>(this.endPointConfig + '/api/reportsdir', { headers: header, params: params });
+    }
+
+    getReportsQuery(query: ReportsQuery): Observable<ReportFile[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: JSON.stringify(query) };
+        return this.http.get<ReportFile[]>(this.endPointConfig + '/api/reportsQuery', { headers: header, params: params });
+    }
+
+    buildReport(report: Report): Observable<void> {
+        return new Observable((observer) => {
+                let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+                let params = report;
+                this.http.post<void>(this.endPointConfig + '/api/reportBuild', { headers: header, params: params }).subscribe(result => {
+                    observer.next();
+                    var msg = '';
+                    this.translateService.get('msg.report-build-forced').subscribe((txt: string) => { msg = txt; });
+                    this.toastr.success(msg);
+                }, err => {
+                    console.error(err);
+                    observer.error(err);
+                    this.notifyError(err);
+                });
+        });
+    }
+
+    removeReportFile(fileName: string): Observable<void> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { fileName };
+        return this.http.post<any>(this.endPointConfig + '/api/reportRemoveFile', { headers: header, params: params });
+    }
+
+    private notifyError(err: any) {
+        var msg = '';
+        this.translateService.get('msg.report-build-error').subscribe((txt: string) => { msg = txt; });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
+    }
 }

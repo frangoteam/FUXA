@@ -441,6 +441,7 @@ export enum TableType {
     history = 'history',
     alarms = 'alarms',
     alarmsHistory = 'alarmsHistory',
+    reports = 'reports',
 }
 
 export interface TableOptions {
@@ -477,13 +478,15 @@ export interface TableOptions {
     columns?: TableColumn[];
     alarmsColumns?: TableColumn[];
     alarmFilter: TableFilter;
+    reportsColumns?: TableColumn[];
+    reportFilter: TableFilter;
     rows?: TableRow[];
 }
 
 export interface TableFilter {
     filterA: string[];
-    filterB: string[];
-    filterC: string[];
+    filterB?: string[];
+    filterC?: string[];
 }
 
 export enum TableCellType {

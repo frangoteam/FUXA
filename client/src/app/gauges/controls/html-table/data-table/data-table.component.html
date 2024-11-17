@@ -41,7 +41,7 @@
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th *matHeaderCellDef
             mat-sort-header
-            [style.minWidth.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
+            [style.width.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
             [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
             [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
             [style.fontSize.px]="tableOptions.header.fontSize">
@@ -50,7 +50,7 @@
         <td *matCellDef="let element; index as i"
             class="data-table-row-cell"
             [ngStyle]="{
-                'min-width.px': columnsStyle[column].width,
+                'width.px': columnsStyle[column].width,
                 'text-align': columnsStyle[column].align,
                 'font-size.px': tableOptions.row.fontSize}">
             <ng-container *ngIf="setOfSourceTableData; else stringValue">
@@ -58,8 +58,14 @@
             </ng-container>
             <ng-template #stringValue>
                 {{element[column]?.stringValue}}
-                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0" class="remove">
+                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0">
                     <mat-icon>check_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="column === reportColumnType.download" (click)="onDownloadReport(element)">
+                    <mat-icon>vertical_align_bottom</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="column === reportColumnType.delete" (click)="onRemoveReportFile(element)" [disabled]="!element.deletable" class="custom-disabled-button">
+                    <mat-icon>delete_forever</mat-icon>
                 </button>
             </ng-template>
         </td>
@@ -68,29 +74,42 @@
     <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
         [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
     </mat-header-row>
-    <ng-container *ngIf="isAlarmsType(); else dataCustom">
-        <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                 class="data-table-row"
-                 [ngStyle]="{
+    <ng-container [ngSwitch]="this.type">
+        <ng-container *ngSwitchCase="tableType.reports">
+            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                    class="data-table-row"
+                    [ngStyle]="{
+                        'cursor': isSelectable() ? 'pointer': 'unset',
+                        'height.px': tableOptions.row.height,
+                        'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
+                        'border-bottom-color': tableOptions.gridColor,
+                        'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+            </mat-row>
+        </ng-container>
+        <ng-container *ngSwitchCase="tableType.alarms">
+            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                    class="data-table-row"
+                    [ngStyle]="{
+                        'cursor': isSelectable() ? 'pointer': 'unset',
+                        'height.px': tableOptions.row.height,
+                        'background-color': row.bkcolor,
+                        'border-bottom-color': tableOptions.gridColor,
+                        'color': row.color}">
+            </mat-row>
+        </ng-container>
+        <ng-container *ngSwitchCase="tableType.data">
+            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                    (click)="selectRow(row)"
+                    class="data-table-row"
+                    [ngStyle]="{
                     'cursor': isSelectable() ? 'pointer': 'unset',
                     'height.px': tableOptions.row.height,
-                    'background-color': row.bkcolor,
+                    'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
                     'border-bottom-color': tableOptions.gridColor,
-                    'color': row.color}">
-        </mat-row>
+                    'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+            </mat-row>
+        </ng-container>
     </ng-container>
-    <ng-template #dataCustom>
-        <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                (click)="selectRow(row)"
-                class="data-table-row"
-                [ngStyle]="{
-                'cursor': isSelectable() ? 'pointer': 'unset',
-                'height.px': tableOptions.row.height,
-                'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                'border-bottom-color': tableOptions.gridColor,
-                'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
-        </mat-row>
-    </ng-template>
 </mat-table>
 <div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn" [style.top.px]="withToolbar ? 45 : 0">
     <button mat-icon-button

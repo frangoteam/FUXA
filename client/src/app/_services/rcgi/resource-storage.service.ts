@@ -6,6 +6,7 @@ import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/proje
 import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
+import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -51,6 +52,14 @@ export abstract class ResourceStorageService {
     public abstract getTagsValues(query: string[]): Observable<any>;
 
     public abstract runSysFunction(functionName: string, params?: any): Observable<any>;
+
+    public abstract getReportsDir(report: Report): Observable<string[]>;
+
+    public abstract getReportsQuery(query: ReportsQuery): Observable<ReportFile[]>;
+
+    public abstract removeReportFile(fileName: string): Observable<void>;
+
+    public abstract buildReport(report: Report): Observable<void>;
 
     public static defileProject(source: ProjectData): ProjectData {
         if (!source) {return source;}

@@ -427,6 +427,7 @@
     "table.property-type-history": "History table",
     "table.property-type-alarms": "Alarms table",
     "table.property-type-alarms-history": "Alarms History table",
+    "table.property-type-reports": "Reports table",
     "table.property-grid-color": "Grid color",
     "table.property-cols": "Columns",
     "table.property-rows": "Rows",
@@ -467,10 +468,20 @@
 
     "table.alarms-title": "Table Alarms",
     "table.alarms-history-title": "Table Alarms History",
-    "table.alarm-column": "Alarms Column",
+    "table.alarm-columns": "Alarms Columns",
     "table.alarm-filter": "Alarms Filter",
     "table.alarm-priority": "Priority",
     "table.alarm-tags": "Tags",
+
+    "table.reports-title": "Table Reports",
+    "table.report-columns": "Reports Columns",
+    "table.report-view-name": "Name",
+    "table.report-view-ontime": "Created",
+    "table.report-view-download": "Download",
+    "table.report-view-delete": "Delete",
+    "table.report-filter": "Reports Filter",
+    "table.report-filter-name": "Name",
+    "table.report-filter-count": "Max.",
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
@@ -1515,5 +1526,6 @@
     "msg.device-tags-request-result": "Load {{value}} of {{current}}",
     "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'",
     "msg.script-name-exist": "Script name exist!",
-    "msg.view-name-exist": "View name exist!"
+    "msg.view-name-exist": "View name exist!",
+    "msg.file-remove": "Would you like to remove '{{value}}'?"
 }

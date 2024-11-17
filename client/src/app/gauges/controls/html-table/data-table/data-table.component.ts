@@ -11,14 +11,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, TableFilter } from '../../../../_models/hmi';
 import { format } from 'fecha';
-import { BehaviorSubject, Subject, timer } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, of, timer } from 'rxjs';
+import { catchError, concatMap, switchMap, takeUntil } from 'rxjs/operators';
 import { DataConverterService, DataTableColumn, DataTableContent } from '../../../../_services/data-converter.service';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { SCRIPT_PARAMS_MAP, ScriptParam } from '../../../../_models/script';
 import { HmiService } from '../../../../_services/hmi.service';
 import { AlarmBaseType, AlarmColumnsType, AlarmPriorityType, AlarmsFilter, AlarmStatusType } from '../../../../_models/alarm';
+import { ReportsService } from '../../../../_services/reports.service';
+import { ReportColumnsType, ReportFile, ReportsFilter } from '../../../../_models/report';
+import * as FileSaver from 'file-saver';
+import { CommandService } from '../../../../_services/command.service';
 
 declare const numeral: any;
 @Component({
@@ -34,10 +38,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
     onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
 
-    rxjsPollingTimer = timer(0, 2500);
+    rxjsPollingTimer: Observable<number>;
     statusText = AlarmStatusType;
     priorityText = AlarmPriorityType;
     alarmColumnType = AlarmColumnsType;
+    reportColumnType = ReportColumnsType;
     loading = false;
     id: string;
     type: TableType;
@@ -49,6 +54,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     timestampMap = {};
     tagsColumnMap = {};
     range = { from: Date.now(), to: Date.now() };
+    tableType = TableType;
     tableHistoryType = TableType.history;
     lastRangeType = TableRangeType;
     tableOptions = DataTableComponent.DefaultOptions();
@@ -64,12 +70,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedRow = null;
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
-    dataFilter: TableFilter | AlarmsFilter;
+    dataFilter: TableFilter | AlarmsFilter | ReportsFilter;
+
     constructor(
         private dataService: DataConverterService,
         private projectService: ProjectService,
         private hmiService: HmiService,
         private scriptService: ScriptService,
+        private reportsService: ReportsService,
+        private commandService: CommandService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
 
@@ -97,6 +106,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.type === TableType.alarms) {
                 this.startPollingAlarms();
             }
+        } else if (this.isReportsType()) {
+            this.startPollingReports();
         }
     }
     ngAfterViewInit() {
@@ -114,11 +125,22 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private startPollingAlarms() {
+        this.rxjsPollingTimer = timer(0, 2500);
         this.rxjsPollingTimer.pipe(
             takeUntil(this.destroy$),
             switchMap(() => this.hmiService.getAlarmsValues(<AlarmsFilter>this.dataFilter))
         ).subscribe(result => {
             this.updateAlarmsTable(result);
+        });
+    }
+
+    private startPollingReports() {
+        this.rxjsPollingTimer = timer(0, 60000 * 5);
+        this.rxjsPollingTimer.pipe(
+            takeUntil(this.destroy$),
+            switchMap(() => this.reportsService.getReportsQuery(<ReportsFilter>this.dataFilter))
+        ).subscribe(result => {
+            this.updateReportsTable(result);
         });
     }
 
@@ -277,32 +299,46 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.reloadActive = false;
     }
 
-    updateAlarmsTable(alr: AlarmBaseType[]) {
-        let alarms = [];
-        alr.forEach(alr => {
+    updateAlarmsTable(alrs: AlarmBaseType[]) {
+        let rows = [];
+        alrs.forEach(alr => {
             let alarm = {
                 type: { stringValue: this.priorityText[alr.type] },
                 name: { stringValue: alr.name },
                 status: { stringValue: this.statusText[alr.status] },
                 text: { stringValue: alr.text },
                 group: { stringValue: alr.group },
-                ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.dd HH:mm:ss') },
+                ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.DD HH:mm:ss') },
                 color: alr.color,
                 bkcolor: alr.bkcolor,
                 toack: alr.toack
             };
             if (alr.offtime) {
-                alarm['offtime'] = { stringValue: format(new Date(alr.offtime), 'YYYY.MM.dd HH:mm:ss') };
+                alarm['offtime'] = { stringValue: format(new Date(alr.offtime), 'YYYY.MM.DD HH:mm:ss') };
             }
             if (alr.acktime) {
-                alarm['acktime'] = { stringValue: format(new Date(alr.acktime), 'YYYY.MM.dd HH:mm:ss') };
+                alarm['acktime'] = { stringValue: format(new Date(alr.acktime), 'YYYY.MM.DD HH:mm:ss') };
             }
             if (alr.userack) {
-                alarm['userack'] = { stringValue: format(new Date(alr.userack), 'YYYY.MM.dd HH:mm:ss') };
+                alarm['userack'] = { stringValue: format(new Date(alr.userack), 'YYYY.MM.DD HH:mm:ss') };
             }
-            alarms.push(alarm);
+            rows.push(alarm);
         });
-        this.dataSource.data = alarms;
+        this.dataSource.data = rows;
+    }
+
+    updateReportsTable(reports: ReportFile[]) {
+        let rows = [];
+        reports.forEach(item => {
+            let report = {
+                name: { stringValue: item.fileName },
+                ontime: { stringValue: format(new Date(item.created), 'YYYY.MM.DD HH:mm:ss') },
+                deletable: item.deletable,
+                fileName: item.fileName
+            };
+            rows.push(report);
+        });
+        this.dataSource.data = rows;
     }
 
     isSelectable(): boolean {
@@ -461,7 +497,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // columns
         let columnIds = [];
         this.columnsStyle = {};
-        const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.tableOptions.columns;
+        const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.isReportsType() ? this.tableOptions.reportsColumns : this.tableOptions.columns;
         columns.forEach(cn => {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
@@ -542,11 +578,39 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.type === TableType.alarms || this.type === TableType.alarmsHistory;
     }
 
+    isReportsType(): boolean {
+        return this.type === TableType.reports;
+    }
+
     onAckAlarm(alarm: any) {
         if (!this.isEditor) {
             this.hmiService.setAlarmAck(alarm.name?.stringValue).subscribe(result => {
             }, error => {
                 console.error('Error setAlarmAck', error);
+            });
+        }
+    }
+
+    onDownloadReport(report: ReportFile) {
+        this.commandService.getReportFile(report.fileName).subscribe(content => {
+            let blob = new Blob([content], { type: 'application/pdf' });
+            FileSaver.saveAs(blob, report.fileName);
+        }, err => {
+            console.error('Download Report File err:', err);
+        });
+    }
+
+    onRemoveReportFile(report: ReportFile) {
+        const userConfirmed = window.confirm(this.translateService.instant('msg.file-remove', { value: report.fileName }));
+        if (userConfirmed) {
+            this.reportsService.removeReportFile(report.fileName).pipe(
+                concatMap(() => timer(2000)),
+                catchError((err) => {
+                    console.error(`Remove Report File ${report.fileName} err:`, err);
+                    return of(null);
+                })
+            ).subscribe(() => {
+                // this.loadDetails(report);
             });
         }
     }
@@ -587,6 +651,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],
             alarmsColumns: [],
             alarmFilter: { filterA: [], filterB: [], filterC: [] },
+            reportsColumns: [],
+            reportFilter: { filterA: [] },
             rows: [],
         };
         return options;
