@@ -229,6 +229,7 @@ function ScriptsManager(_runtime) {
         sysFncs['$getDeviceProperty'] = runtime.devices.getDeviceProperty;
         sysFncs['$setDeviceProperty'] = runtime.devices.setDeviceProperty;
         sysFncs['$getHistoricalTags'] = runtime.devices.getHistoricalTags;
+        sysFncs['$sendMessage'] = _sendMessage;
 
         return sysFncs;
     }
@@ -236,6 +237,11 @@ function ScriptsManager(_runtime) {
     var _setCommandView = function (view, force) {
         let command = { command: ScriptCommandEnum.SETVIEW, params: [view, force] };
         runtime.scriptSendCommand(command);
+    }
+
+    var _sendMessage = async function (address, subject, message) {
+        var temp = await runtime.notificatorMgr.sendMailMessage(null, address, subject, message, null, null);
+        return temp;
     }
 }
 

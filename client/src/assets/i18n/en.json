@@ -1268,6 +1268,9 @@
     "script.sys-fnc-getHistoricalTag-text": "$getHistoricalTags(TagIds array, from msec., to msec.)",
     "script.sys-fnc-getHistoricalTag-tooltip":"get historical tags by milliseconds range: $getHistoricalTags([TagIds] as array, from as number, to as number)",
     "script.sys-fnc-getHistoricalTag-params":"'Tag Ids array', 'From msec.', 'To msec.'",
+    "script.sys-fnc-sendMessage-text": "$sendMessage(address, subject, message)",
+    "script.sys-fnc-sendMessage-tooltip": "System function to send Message (Mail): $sendMessage(address as string, subject as string, message as string)",
+    "script.sys-fnc-sendMessage-params": "'address', 'subject', 'message'",
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",

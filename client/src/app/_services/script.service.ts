@@ -93,6 +93,7 @@ export class ScriptService {
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
+        code = code.replace(/\$sendMessage\(/g, 'this.$sendMessage(');
         return code;
     }
 
@@ -166,5 +167,9 @@ export class ScriptService {
     public async $getHistoricalTags(tagIds: string[], fromDate: number, toDate: number) {
         const query: DaqQuery = { sids: tagIds, from: fromDate, to: toDate };
         return await lastValueFrom(this.hmiService.getDaqValues(query));
+    }
+
+    public async $sendMessage(to: string, subject: string, message: string) {
+        return await this.projectService.runSysFunctionSync('$sendMessage', [to, subject, message]);
     }
 }

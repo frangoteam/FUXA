@@ -189,6 +189,14 @@ export class SystemFunctions {
         params:['array', false, false],
         paramsText: 'script.sys-fnc-getHistoricalTag-params',
         paramFilter: ScriptParamFilterType.history
+    },
+    {
+        name: '$sendMessage',
+        mode: null,
+        text: 'script.sys-fnc-sendMessage-text',
+        tooltip: 'script.sys-fnc-sendMessage-tooltip',
+        params: [false, false, false],
+        paramsText: 'script.sys-fnc-sendMessage-params'
     }
 ];
 }
