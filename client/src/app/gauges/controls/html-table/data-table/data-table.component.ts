@@ -374,7 +374,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private addRowDataToTable(dt: number, tagId: string, value: any) {
+    addRowDataToTable(dt: number, tagId: string, value: any) {
         let row = {};
         let timestapColumnId = null;
         let valueColumnId = null;
@@ -438,18 +438,22 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setTableAndData(tableData: TableData) {
         this.setOfSourceTableData = true;
-        this.displayedColumns = tableData.columns.map(cln => cln.id);
-        this.columnsStyle = tableData.columns;
-        tableData.columns.forEach(clnData => {
-            let column = clnData;
-            column.fontSize = tableData.header?.fontSize;
-            column.color = column.color || tableData.header?.color;
-            column.background = column.background || tableData.header?.background;
-            column.width = column.width || 100;
-            column.align = column.align || TableCellAlignType.left;
-            this.columnsStyle[column.id] = column;
-        });
-        this.dataSource = new MatTableDataSource(tableData.rows);
+        if (tableData.columns) {
+            this.displayedColumns = tableData.columns.map(cln => cln.id);
+            this.columnsStyle = tableData.columns;
+            tableData.columns.forEach(clnData => {
+                let column = clnData;
+                column.fontSize = tableData.header?.fontSize;
+                column.color = column.color || tableData.header?.color;
+                column.background = column.background || tableData.header?.background;
+                column.width = column.width || 100;
+                column.align = column.align || TableCellAlignType.left;
+                this.columnsStyle[column.id] = column;
+            });
+        }
+        if (tableData.rows) {
+            this.dataSource = new MatTableDataSource(tableData.rows);
+        }
         this.bindTableControls();
     }
 
@@ -698,8 +702,8 @@ interface TableData {
     gridColor?: string;
     header?: TableDataHeaderStyle;
     rowStyle?: TableDataRowStyle;
-    columns: TableDataColumnData[];
-    rows: TableDataRow[];
+    columns?: TableDataColumnData[];
+    rows?: TableDataRow[];
 }
 
 interface TableDataPaginatorOptions {
