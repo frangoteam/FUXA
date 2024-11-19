@@ -528,6 +528,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     this.winRef.nativeWindow.svgEditor.refreshCanvas();
                     this.checkSvgElementsMap(true);
+                    this.winRef.nativeWindow.svgEditor.resetUndoStack();
                 }, 500);
             } else if (this.cardsview) {
                 this.cardsview.view = view;
