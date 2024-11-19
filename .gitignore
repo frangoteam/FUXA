@@ -83,8 +83,6 @@ _reports/
 
 _certificates/
 
-test/
-
 # appdata
 server/_appdata
 #server/package-lock.json

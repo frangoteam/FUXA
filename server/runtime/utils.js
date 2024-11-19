@@ -28,7 +28,11 @@ var utils = module.exports = {
             var temp  = '';
             while((pos = text.indexOf(tagStart, pos)) !== -1) {
                 pos += tagStart.length + 1;
-                temp += src.slice(0, pos) + attribute + ' ' + src.slice(pos);
+                if (text.indexOf('>') === tagStart.length) {
+                    temp += src.slice(0, pos - 1) + ' ' + attribute + ' >' + src.slice(pos);
+                } else {
+                    temp += src.slice(0, pos) + attribute + ' ' + src.slice(pos);
+                }
             }
             if (temp.length) {
                 result = temp;
@@ -70,7 +74,7 @@ var utils = module.exports = {
     },
 
     isEmptyObject: function (value) {
-        return value && Object.keys(value).length === 0 && value.constructor === Object;
+        return !value || (Object.keys(value).length === 0 && value.constructor === Object);
     },
 
     isObject(value) {
