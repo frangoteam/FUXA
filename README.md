@@ -44,7 +44,6 @@ docker compose up -d
 
 You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
 
-**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
 If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
 
 ```
