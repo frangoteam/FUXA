@@ -562,13 +562,16 @@ export class GaugesManager {
         }
     }
 
-    toggleSignalValue(sigid: string) {
+    toggleSignalValue(sigid: string, bitmask?: number) {
         if (this.hmiService.variables.hasOwnProperty(sigid)) {
             let currentValue = this.hmiService.variables[sigid].value;
             if (currentValue === null || currentValue === undefined){
                 return;
             } else {
-                if (currentValue === 0 || currentValue === '0') {
+                if (!Utils.isNullOrUndefined(bitmask)) {
+                    const value = GaugeBaseComponent.toggleBitmask(currentValue, bitmask);
+                    this.putSignalValue(sigid, value.toString());
+                } else if (currentValue === 0 || currentValue === '0') {
                     this.putSignalValue(sigid, '1');
                 } else if (currentValue === 1 || currentValue === '1') {
                     this.putSignalValue(sigid, '0');

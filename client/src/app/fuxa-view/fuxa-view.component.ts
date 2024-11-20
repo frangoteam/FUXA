@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription, take } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType, ViewEventType, InputActionEscType } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType, ViewEventType, InputActionEscType, IPropertyVariable } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -512,8 +512,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onToggleValue(ga: GaugeSettings, event: GaugeEvent) {
-        if (event.actoptions && event.actoptions['variable'] && event.actoptions['variable']['variableId']) {
-            this.gaugesManager.toggleSignalValue(event.actoptions['variable']['variableId']);
+        const actionOptions = event.actoptions as ActionOptionsVariable;
+        if (actionOptions?.variable?.variableId) {
+            this.gaugesManager.toggleSignalValue(actionOptions.variable.variableId, actionOptions.variable.bitmask);
         } else if (ga.property && ga.property.variableId) {
             this.gaugesManager.toggleSignalValue(ga.property.variableId);
         }
@@ -1049,6 +1050,10 @@ interface VariableMappingType {
 
 interface VariableMappingDictionary {
     [key: string]: VariableMappingType;
+}
+
+interface ActionOptionsVariable {
+    variable: IPropertyVariable;
 }
 
 export class CardModel {

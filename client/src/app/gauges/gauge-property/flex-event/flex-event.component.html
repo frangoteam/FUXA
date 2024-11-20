@@ -105,8 +105,18 @@
         </div>
     </div>
     <div style="display: block; padding-top: 5px;padding-left: 25px;"
-        *ngIf="withToggleValue(item.action) || withSetValue(item.action) || withSetInput(item.action)">
+        *ngIf="withSetValue(item.action) || withSetInput(item.action)">
         <flex-variable style="display: block" [data]="data" [(value)]="item.actoptions.variable" [withStaticValue]="false"></flex-variable>
+    </div>
+    <div style="display: block; padding-top: 5px;padding-left: 25px;"
+        *ngIf="withToggleValue(item.action)">
+        <flex-variable style="display: block"
+                       [data]="data"
+                       [(value)]="item.actoptions.variable"
+                       [withBitmask]="true"
+                       [bitmask]="item.actoptions.variable?.bitmask"
+                       [withStaticValue]="false">
+        </flex-variable>
     </div>
     <div style="display: inline-block" *ngIf="withAddress(item.action)">
         <div class="my-form-field" style="padding-left: 20px;">
