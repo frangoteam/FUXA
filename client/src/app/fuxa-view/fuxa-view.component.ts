@@ -433,17 +433,32 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private onBindMouseEvents(ga: GaugeSettings) {
         let self = this.parent || this;
         let svgele = FuxaViewComponent.getSvgElement(ga.id);
+        let clickTimeout;
+
         if (svgele) {
             let clickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
             if (clickEvents && clickEvents.length > 0) {
                 svgele.click(function(ev) {
-                    self.runEvents(self, ga, ev, clickEvents);
+                    clearTimeout(clickTimeout);
+                    clickTimeout = setTimeout(function() {
+                        self.runEvents(self, ga, ev, clickEvents);
+                    }, 200);
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                     ev.preventDefault();
                 });
             }
+
+            let dblclickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.dblclick);
+            if (dblclickEvents && dblclickEvents.length > 0) {
+                svgele.dblclick(function(ev) {
+                    clearTimeout(clickTimeout);
+                    self.runEvents(self, ga, ev, dblclickEvents);
+                    ev.preventDefault();
+                })
+            }
+
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
             if (mouseDownEvents && mouseDownEvents.length > 0) {
                 svgele.mousedown(function(ev) {

@@ -703,6 +703,7 @@
     "shapes.action-rotate": "Rotate",
     "shapes.action-move": "Move",
     "shapes.event-click": "Click",
+    "shapes.event-dblclick": "DoubleClick",
     "shapes.event-mouseup": "MouseUp",
     "shapes.event-mousedown": "MouseDown",
     "shapes.event-mouseover": "MouseOver",
