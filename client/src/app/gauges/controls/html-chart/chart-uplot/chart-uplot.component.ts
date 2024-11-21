@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subject, interval, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { delay, takeUntil } from 'rxjs/operators';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { ScriptParam, ScriptParamType } from '../../../../_models/script';
@@ -493,8 +493,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             let scriptToRun = Utils.clone(script);
             let chart = this.hmiService.getChart(this.property.id);
             this.reloadActive = true;
-            scriptToRun.parameters = [<ScriptParam>{ type: ScriptParamType.chart, value: chart?.lines }];
-            this.scriptService.runScript(scriptToRun).subscribe(customData => {
+            scriptToRun.parameters = [<ScriptParam>{
+                type: ScriptParamType.chart,
+                value: chart?.lines,
+                name: script.parameters[0]?.name
+            }];
+            this.scriptService.runScript(scriptToRun).pipe(
+                delay(100)
+            ).subscribe(customData => {
                 this.setCustomValues(customData);
             }, err => {
                 console.error(err);

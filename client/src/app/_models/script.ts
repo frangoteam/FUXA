@@ -209,7 +209,8 @@ export class TemplatesCode {
     }
     allFunctions = <SystemFunction[]>[{
         name: 'chart-data', mode: ScriptMode.CLIENT, text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
-        code: `if (paramLines && Array.isArray(paramLines)) {
+        code: `// Add script parameter 'paramLines' as Chart lines (array)
+if (paramLines && Array.isArray(paramLines)) {
     const count = 10;
     paramLines.forEach(line => {
         var y = [];

@@ -61,8 +61,9 @@ export class ScriptService {
                 } catch (err) {
                     console.error(err);
                     observer.error(err);
+                } finally {
+                    observer.complete();
                 }
-                observer.complete();
             }
         });
     }
