@@ -182,6 +182,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     init(options?: ChartOptions, rawData?: boolean) {
         this.data = [[]];
         this.rawData = rawData;
+        if (!Utils.isNullOrUndefined(options?.rawData)) {
+            this.rawData = options.rawData;
+        }
         if (options) {
             this.options = options;
             if (!options.id) {
@@ -462,6 +465,7 @@ export interface ChartOptions extends NgxOptions {
     loadOldValues?: boolean;
 
     scriptId?: string;
+    rawData?: boolean;
 }
 
 export interface NgxSeries extends Series {

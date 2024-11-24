@@ -17,6 +17,7 @@
                         <span>{{'chart.property-chart' | translate}}</span>
                         <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
                             <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
+                            <mat-option [value]=""></mat-option>
                             <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
                             <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
                                 {{ chart.name }}
@@ -274,7 +275,7 @@
                                     <div class="my-form-field inbk event-script-param">
                                         <span>{{'gauges.property-event-script-param-name' | translate}}</span>
                                         <input [(ngModel)]="scriptParam.name"
-                                                (change)="onChartChanged()" 
+                                                (change)="onChartChanged()"
                                                 type="text"
                                                 readonly
                                                 matTooltip="{{scriptParam.name}}"
@@ -283,7 +284,7 @@
                                     <div class="my-form-field inbk event-script-value" *ngIf="scriptParam.type === 'value'">
                                         <span>{{'gauges.property-event-script-param-value' | translate}}</span>
                                         <input [(ngModel)]="scriptParam.value"
-                                                (change)="onChartChanged()" 
+                                                (change)="onChartChanged()"
                                                 type="text">
                                     </div>
                                     <div class="my-form-field inbk event-script-tag" *ngIf="scriptParam.type === 'tagid'">
@@ -297,7 +298,7 @@
                         </div>
                     </div>
                 </div>
-            </mat-tab>            
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>
