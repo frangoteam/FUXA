@@ -499,7 +499,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 name: script.parameters[0]?.name
             }];
             this.scriptService.runScript(scriptToRun).pipe(
-                delay(100)
+                delay(200)
             ).subscribe(customData => {
                 this.setCustomValues(customData);
             }, err => {

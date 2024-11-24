@@ -105,7 +105,8 @@ function MyScriptsModule(_events, _logger) {
                             if (params.length) params += ',';
                             params += `${script.parameters[i].name}`;
                         }
-                        functions += `async function ${script.name} (${params}) { try { ${script.code} \n} catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
+                        const asyncText = script.sync ? '' : 'async';
+                        functions += `${asyncText} function ${script.name} (${params}) { try { ${script.code} \n} catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {

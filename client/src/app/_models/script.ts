@@ -3,6 +3,7 @@ export class Script {
     id: string;
     name: string;
     code: string;
+    sync?: boolean = false;
     parameters: ScriptParam[] = [];
     scheduling: ScriptScheduling;
     permission: number;

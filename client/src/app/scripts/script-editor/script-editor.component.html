@@ -1,5 +1,5 @@
 <div class="container">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;width: calc(100% - 40px)" mat-dialog-draggable>{{'script.property-title' | translate}}</h1>
+    <h1 mat-dialog-title class="dialog-title"  mat-dialog-draggable>{{'script.property-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div *ngIf="data.editmode < 0">
         {{msgRemoveScript}}
@@ -7,7 +7,9 @@
     <div *ngIf="data.editmode >= 0">
         <div class="panel-header">
             <div class="panel-function">
-                <span class="function-text">async function</span>
+                <span *ngIf="!script.sync" 
+                      class="function-text">async </span>
+                <span class="function-text">function</span>
                 <span class="function-name"> {{script.name}}</span> (
                 <div *ngFor="let param of parameters; let i = index" style="display: inline-block;">
                     <div class="mychips">
@@ -26,6 +28,10 @@
                     <button mat-menu-item (click)="onEditScriptName()" style="font-size: 14px;">{{'script.property-editname' | translate}}</button>
                     <button mat-menu-item (click)="onAddFunctionParam()" style="font-size: 14px;">{{'script.property-addfnc-param' | translate}}</button>
                     <!-- <button mat-menu-item   (click)="onAddFunctionTag()" style="font-size: 14px;">{{'script.property-addfnc-tag'| translate}}</button> -->
+                    <button mat-menu-item (click)="toggleSync()" style="font-size: 14px;" class="code-menu-sync-select">
+                        <span>{{'script.property-async-function' | translate}}</span>
+                        <mat-icon *ngIf="!script.sync">done</mat-icon>
+                    </button>
                 </mat-menu>
                 <button mat-icon-button (click)="sidePanel.toggle()" matTooltip="{{'script.property-systems' | translate}}">
                     <mat-icon class="side-toggle" [ngClass]="sidePanel.opened ? 'side-toggle-collapse' : 'side-toggle-expand'">keyboard_arrow_left</mat-icon>

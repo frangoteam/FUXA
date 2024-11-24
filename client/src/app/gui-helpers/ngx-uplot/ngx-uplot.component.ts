@@ -122,7 +122,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             spanGaps: false,
             // // in-legend display
             label: 'Serie',
-            value: (self, rawValue) => rawValue.toFixed(this.options.decimalsPrecision),
+            value: (self, rawValue) => rawValue?.toFixed(this.options.decimalsPrecision),
             // // series style
             stroke: 'red',
             width: 1,

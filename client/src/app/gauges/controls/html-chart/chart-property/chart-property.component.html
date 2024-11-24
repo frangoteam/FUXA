@@ -48,6 +48,7 @@
                             <div class="my-form-field inbk" style="width: 180px">
                                 <span>{{'chart.property-script' | translate}}</span>
                                 <mat-select [(value)]="options.scriptId" (selectionChange)="onChartChanged()">
+                                    <mat-option [value]=""></mat-option>
                                     <mat-option *ngFor="let script of scripts$ | async; index as i" [value]="script.id">{{script.name}}</mat-option>
                                 </mat-select>
                             </div>

@@ -18,7 +18,7 @@ import { ScriptEditorParamComponent } from './script-editor-param/script-editor-
 @Component({
     selector: 'app-script-editor',
     templateUrl: './script-editor.component.html',
-    styleUrls: ['./script-editor.component.css']
+    styleUrls: ['./script-editor.component.scss']
 })
 export class ScriptEditorComponent implements OnInit, OnDestroy {
     @ViewChild(CodemirrorComponent, {static: false}) CodeMirror: CodemirrorComponent;
@@ -250,6 +250,10 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
                 this.console.push((err.error.message) ? err.error.message : err.error);
             }
         });
+    }
+
+    toggleSync() {
+        this.script.sync = !this.script.sync;
     }
 
     onConsoleClear() {

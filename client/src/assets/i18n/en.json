@@ -1209,6 +1209,7 @@
     "script.property-editname": "Edit Script name",
     "script.property-name": "Name",
     "script.property-addfnc-param": "Add Script parameter",
+    "script.property-async-function": "Async function",
     "script.param-title": "Script parameter",
     "script.param-name": "Name",
     "script.param-type": "Type",

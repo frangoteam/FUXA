@@ -55,7 +55,8 @@ export class ScriptService {
                 });
                 try {
                     const code = `${parameterToAdd}${script.code}`;
-                    const asyncScript = `(async () => { ${this.addSysFunctions(code)} \n})();`;
+                    const asyncText = script.sync ? '' : 'async';
+                    const asyncScript = `(${asyncText} () => { ${this.addSysFunctions(code)} \n})();`;
                     const result = eval(asyncScript);
                     observer.next(result);
                 } catch (err) {
@@ -73,7 +74,8 @@ export class ScriptService {
             console.warn('TODO: Script with mode CLIENT not work with parameters.');
         }
         try {
-            const asyncScript = `(async () => { ${this.addSysFunctions(script.code)} \n})();`;
+            const asyncText = script.sync ? '' : 'async';
+            const asyncScript = `(${asyncText} () => { ${this.addSysFunctions(script.code)} \n})();`;
             eval(asyncScript);
         } catch (err) {
             console.error(err);
