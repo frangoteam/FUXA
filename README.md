@@ -58,7 +58,7 @@ fuxa
 You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
 
 **WARNING** In linux with nodejs Version 18 the installation could be a challenge.
-If you don't intend communicate with Siemens PLCs via S7 you can remove the node-snap7 library from the server/package.json
+If you don't intend to communicate with Siemens PLCs via S7, you can remove the ```node-snap7``` library from the ```server/package.json```. Similarly, if you don't intend to use ODBC to communicate with an external database, you can remove the ```odbc``` library from the ```server/package.json```.
 
 ```
 cd ./server
