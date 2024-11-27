@@ -15,7 +15,7 @@
 	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
 		<div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
 			<div *ngIf="showSidenav && showSidenav !== 'side'" class="sidenav-toogle">
-				<button mat-icon-button 
+				<button mat-icon-button
 					(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()">
 					<mat-icon aria-label="Menu">menu</mat-icon>
 				</button>
@@ -25,7 +25,7 @@
 					<ng-container *ngSwitchCase="'button'">
 						<button mat-raised-button
 								[id]="item.id"
-								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
 								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
 								[style.fontFamily]="layoutHeader.fontFamily"
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
@@ -38,7 +38,7 @@
 					<ng-container *ngSwitchCase="'label'">
 						<button mat-button
 								[id]="item.id"
-								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
 								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
 								[style.fontFamily]="layoutHeader.fontFamily"
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
@@ -50,7 +50,7 @@
 					<ng-container *ngSwitchCase="'image'">
 						<button mat-icon-button
 								[id]="item.id"
-								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor" 
+								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
 								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
@@ -74,7 +74,7 @@
 				</div>
 				<div class="header-date-time" *ngIf="layoutHeader.dateTimeDisplay">
                     {{ currentDateTime | date: layoutHeader.dateTimeDisplay }}
-				</div>				
+				</div>
 				<div *ngIf="securityEnabled" class="header-login">
 					<button mat-icon-button (click)="onLogin()">
 						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
@@ -97,12 +97,14 @@
 			</div>
 		</div>
 		<div id="container"  [ngClass]="showNavigation?'home-container-nav':'home-container'" #container (click)="checkToCloseSideNav()">
-			<app-cards-view *ngIf="!showHomeLink && homeView && homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions"
-				[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
-			</app-cards-view>
-			<app-fuxa-view *ngIf="!showHomeLink && homeView && homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView"
-				[hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)">
-			</app-fuxa-view>
+			<ng-container *ngIf="!showHomeLink && homeView">
+				<app-cards-view *ngIf="homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions"
+					[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
+				</app-cards-view>
+				<app-fuxa-view *ngIf="homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView"
+					[hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)">
+				</app-fuxa-view>
+			</ng-container>
 			<ng-container *ngFor="let iframe of iframes">
 				<app-iframe [link]="iframe.link" class="home-body" [style.display]="iframe.hide ? 'none' : 'block'" style="width:100%; height:100%"></app-iframe>
 			</ng-container>

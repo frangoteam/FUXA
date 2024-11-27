@@ -440,7 +440,7 @@ export class GaugesManager {
      * return all events binded to the gauge with mouse event
      * @param ga
      */
-     getBindMouseEvent(ga: GaugeSettings, evType: GaugeEventType) {
+     getBindMouseEvent(ga: GaugeSettings, evType: GaugeEventType): GaugeEvent[] {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (typeof GaugesManager.Gauges[i]['getEvents'] === 'function') {

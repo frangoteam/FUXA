@@ -16,6 +16,7 @@ const DeviceType = require('../devices/device').DeviceType;
 const version = '1.02';
 var settings;                   // Application settings
 var logger;                     // Application logger
+var runtime;
 
 var data = {};                  // Project data
 
@@ -24,9 +25,10 @@ var data = {};                  // Project data
  * @param {*} _settings
  * @param {*} log
  */
-function init(_settings, log) {
+function init(_settings, log, _runtime) {
     settings = _settings;
     logger = log;
+    runtime = _runtime;
 
     // Init Project database
     return new Promise(function (resolve, reject) {
@@ -532,9 +534,9 @@ function removeNotification(notification) {
 /**
  * Get the project data in accordance with autorization
  */
-function getProject(userId, userGroups) {
+function getProject(userId, userPermission) {
     return new Promise(function (resolve, reject) {
-        const pdata = _filterProjectGroups(userGroups);
+        const pdata = _filterProjectPermission(userPermission);
         resolve(pdata);
     });
 }
@@ -816,49 +818,54 @@ function getProjectDemo() {
     return JSON.parse(fs.readFileSync(demoProject, 'utf8'));;
 }
 
-function _filterProjectGroups(groups) {
+function _filterProjectPermission(userPermission) {
     var result = JSON.parse(JSON.stringify(data));// = { devices: {}, hmi: { views: [] } };
-    var admin = (groups === -1 || groups === 255) ? true : false;
-    if (!admin) {
+    const projectPermission = runtime.checkPermission(userPermission, false);
+    if (!projectPermission.show || !projectPermission.enabled) {   // is admin or secure disabled
         // from device remove the not used (no permission)
         // delete result.devices;
         delete result.server;
         // check navigation permission
         if (result.hmi.layout && result.hmi.layout.navigation.items) {
             for (var i = result.hmi.layout.navigation.items.length - 1; i >= 0; i--) {
-                var permission = result.hmi.layout.navigation.items[i].permission;
-                if (permission && !(permission & groups)) {
+                const itemPermission = runtime.checkPermission(userPermission, result.hmi.layout.navigation.items[i]);
+                if (!itemPermission.enabled) {
                     result.hmi.layout.navigation.items.splice(i, 1);
+                }
+            }
+        }
+        // check header permission
+        if (result.hmi.layout && result.hmi.layout.header.items) {
+            for (var i = result.hmi.layout.header.items.length - 1; i >= 0; i--) {
+                const itemPermission = runtime.checkPermission(userPermission, result.hmi.layout.header.items[i].property);
+                if (!itemPermission.enabled || !itemPermission.show) {
+                    result.hmi.layout.header.items.splice(i, 1);
                 }
             }
         }
         // check view item permission show / enabled
         for (var i = 0; i < result.hmi.views.length; i++) {
+            var view = result.hmi.views[i];
             if (result.hmi.views[i].items) {
                 Object.values(result.hmi.views[i].items).forEach((item) => {
-                    if (item.property && item.property.permission) {
-                        var view = result.hmi.views[i];
-                        var mask = (item.property.permission >> 8);
-                        var show = (mask) ? mask & groups : 1;
-                        mask = (item.property.permission & 255);
-                        var enabled = (mask) ? mask & groups : 1;
-                        if (!show) {
+                    if (item.property) {
+                        const itemPermission = runtime.checkPermission(userPermission, item.property);
+                        if (!itemPermission.show) {
                             var position = view.svgcontent.indexOf(item.id);
                             if (position >= 0) {
                                 position += item.id.length + 1;
                                 var hidetext = ' visibility="hidden" ';
                                 view.svgcontent = view.svgcontent.slice(0, position) + hidetext + view.svgcontent.slice(position);
                             }
-                        } else if (!enabled) {
+                        } else if (!itemPermission.enabled) {
                             item.property.events = [];
                             // disable the html controls (select, input, button)
                             const indexInContent = view.svgcontent.indexOf(item.id);
                             if (indexInContent >= 0) {
                                 var splitted = utils.domStringSplitter(view.svgcontent, 'foreignobject', indexInContent);
                                 if (splitted.tagcontent && splitted.tagcontent.length) {
-                                    console.log('view = ', view.svgcontent);
-                                    console.log('content = ', splitted.tagcontent);
                                     var disabled = utils.domStringSetAttribute(splitted.tagcontent, ['select', 'input', 'button'], 'disabled');
+                                    // disabled = utils.domStringSetOverlay(disabled, ['ngx-switch']);
                                     view.svgcontent = splitted.before + disabled + splitted.after;
                                 }
                             }

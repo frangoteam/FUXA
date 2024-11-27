@@ -41,6 +41,17 @@ var utils = module.exports = {
         return result;
     },
 
+    domStringSetOverlay: function (htmlString, tagNames) {
+        tagNames.forEach(tagName => {
+            const lowerTagName = tagName.toLowerCase();
+            const regex = new RegExp(`(<${lowerTagName}[^>]*?>.*?</${lowerTagName}>)`, "gis");
+            const style = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; pointer-events: all; display: none;";
+            htmlString = htmlString.replace(regex, `<div style="${style}">$1</div>`);
+        });
+
+        return htmlString;
+    },
+
     /**
     * Return available interface to use
     */
