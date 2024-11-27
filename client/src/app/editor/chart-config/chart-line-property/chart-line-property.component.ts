@@ -4,24 +4,28 @@ import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALO
 import { ChartLine } from '../../../_models/chart';
 
 @Component({
-  selector: 'app-chart-line-property',
-  templateUrl: './chart-line-property.component.html',
-  styleUrls: ['./chart-line-property.component.css']
+    selector: 'app-chart-line-property',
+    templateUrl: './chart-line-property.component.html',
+    styleUrls: ['./chart-line-property.component.css']
 })
 export class ChartLinePropertyComponent {
-  defaultColor = Utils.defaultColor;
-  chartAxesType = [1, 2, 3, 4];
+    defaultColor = Utils.defaultColor;
+    chartAxesType = [1, 2, 3, 4];
 
-  constructor(
-      public dialogRef: MatDialogRef<ChartLinePropertyComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: ChartLine) {
-  }
+    constructor(
+        public dialogRef: MatDialogRef<ChartLinePropertyComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: ChartLineAndInterpolationsType) {
+    }
 
-  onNoClick(): void {
-      this.dialogRef.close();
-  }
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
 
-  onOkClick(): void {
-      this.dialogRef.close(this.data);
-  }
+    onOkClick(): void {
+        this.dialogRef.close(this.data);
+    }
 }
+
+export type ChartLineAndInterpolationsType = ChartLine & {
+    lineInterpolationType: { text: string; value: any }[];
+  };

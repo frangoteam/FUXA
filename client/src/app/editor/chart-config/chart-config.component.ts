@@ -12,7 +12,7 @@ import { Chart, ChartLine } from '../../_models/chart';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
-import { ChartLinePropertyComponent } from './chart-line-property/chart-line-property.component';
+import { ChartLineAndInterpolationsType, ChartLinePropertyComponent } from './chart-line-property/chart-line-property.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -42,7 +42,7 @@ export class ChartConfigComponent implements OnInit {
 
     ngOnInit() {
         for (let i = 0; i < this.lineInterpolationType.length; i++) {
-            this.translateService.get(this.lineInterpolationType[i].text).subscribe((txt: string) => { this.lineInterpolationType[i].text = txt; });
+            this.lineInterpolationType[i].text = this.translateService.instant(this.lineInterpolationType[i].text);
         }
     }
 
@@ -153,7 +153,7 @@ export class ChartConfigComponent implements OnInit {
     editChartLine(line: ChartLine) {
         let dialogRef = this.dialog.open(ChartLinePropertyComponent, {
             position: { top: '60px' },
-            data: <ChartLine>{
+            data: <ChartLineAndInterpolationsType>{
                 id: line.id,
                 device: line.device,
                 name: line.name,
