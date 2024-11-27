@@ -582,13 +582,14 @@ function checkPermissionEnabled(userPermission, contextPermission, type) {
 /**
  * for Role show/enabled or 16 bitmask (0-7 enabled / 8-15 show)
  * @param {*} userPermission
- * @param {*} contextPermission alarms permission could be permission or permissionRoles
+ * @param {*} contextPermission permission could be permission or permissionRoles
+ * @param {*} forceUndefined return true if params are undefined/null/0
  * @returns { show: true/false, enabled: true/false }
  */
-function checkPermission(userPermission, context) {
+function checkPermission(userPermission, context, forceUndefined = false) {
     if (!userPermission && !context) {
         // No user and No context
-        return { show: !settings.secureEnabled, enabled: !settings.secureEnabled };
+        return { show: forceUndefined || !settings.secureEnabled, enabled: forceUndefined || !settings.secureEnabled };
     }
     if (userPermission === -1 || userPermission === 255 || utils.isNullOrUndefined(context)) {
         // admin

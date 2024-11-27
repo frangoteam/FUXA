@@ -837,7 +837,7 @@ function _filterProjectPermission(userPermission) {
         // check header permission
         if (result.hmi.layout && result.hmi.layout.header.items) {
             for (var i = result.hmi.layout.header.items.length - 1; i >= 0; i--) {
-                const itemPermission = runtime.checkPermission(userPermission, result.hmi.layout.header.items[i].property);
+                const itemPermission = runtime.checkPermission(userPermission, result.hmi.layout.header.items[i].property, true);
                 if (!itemPermission.enabled || !itemPermission.show) {
                     result.hmi.layout.header.items.splice(i, 1);
                 }
