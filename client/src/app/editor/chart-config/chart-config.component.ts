@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { Chart, ChartLine } from '../../_models/chart';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
+import { ChartLinePropertyComponent } from './chart-line-property/chart-line-property.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -150,10 +151,19 @@ export class ChartConfigComponent implements OnInit {
     }
 
     editChartLine(line: ChartLine) {
-        let dialogRef = this.dialog.open(DialogChartLine, {
+        let dialogRef = this.dialog.open(ChartLinePropertyComponent, {
             position: { top: '60px' },
-            data: <ChartLine>{ id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis,
-                lineInterpolation: line.lineInterpolation, fill: line.fill, lineInterpolationType: this.lineInterpolationType }
+            data: <ChartLine>{
+                id: line.id,
+                device: line.device,
+                name: line.name,
+                label: line.label,
+                color: line.color,
+                yaxis: line.yaxis,
+                lineInterpolation: line.lineInterpolation,
+                fill: line.fill,
+                lineInterpolationType: this.lineInterpolationType
+            }
         });
         dialogRef.afterClosed().subscribe((result: ChartLine) => {
             if (result) {
@@ -221,30 +231,6 @@ export class ChartConfigComponent implements OnInit {
         return '';
     }
 }
-
-@Component({
-    selector: 'dialog-chart-line',
-    templateUrl: './chart-line.dialog.html',
-    styleUrls: ['./chart-config.component.css']
-})
-export class DialogChartLine {
-    defaultColor = Utils.defaultColor;
-    chartAxesType = [1, 2, 3, 4];
-
-    constructor(
-        public dialogRef: MatDialogRef<DialogChartLine>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.dialogRef.close(this.data);
-    }
-}
-
 
 interface IDataChartConfig {
     charts: Chart[];

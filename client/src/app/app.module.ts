@@ -30,7 +30,7 @@ import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './edi
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
-import { ChartConfigComponent, DialogChartLine } from './editor/chart-config/chart-config.component';
+import { ChartConfigComponent } from './editor/chart-config/chart-config.component';
 import { GraphConfigComponent } from './editor/graph-config/graph-config.component';
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
@@ -197,6 +197,7 @@ import { TableCustomizerCellEditComponent } from './gauges/controls/html-table/t
 import { TableAlarmsComponent } from './gauges/controls/html-table/table-alarms/table-alarms.component';
 import { TableReportsComponent } from './gauges/controls/html-table/table-reports/table-reports.component';
 import { ReportsService } from './_services/reports.service';
+import { ChartLinePropertyComponent } from './editor/chart-config/chart-line-property/chart-line-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -318,7 +319,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         NgxGaugeComponent,
         NgxNouisliderComponent,
         NgxSchedulerComponent,
-        DialogChartLine,
+        ChartLinePropertyComponent,
         GraphSourceEditComponent,
         UsersComponent,
         UserEditComponent,
