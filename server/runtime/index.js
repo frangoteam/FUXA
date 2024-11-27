@@ -62,7 +62,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.error('runtime.failed-to-init users');
     });
 
-    project.init(settings, logger).then(result => {
+    project.init(settings, logger, runtime).then(result => {
         logger.info('runtime init project successful!', true);
         events.emit('init-project-ok');
     }).catch(function (err) {
@@ -561,6 +561,82 @@ function scriptConsoleOutput(output) {
     }
 }
 
+/**
+ *
+ * @param {*} userPermission
+ * @param {*} contextPermission script permission could be permission or permissionRoles
+ * @param {*} type only for Role enabled and first 8 bitmask
+ * @returns true/false
+ */
+function checkPermissionEnabled(userPermission, contextPermission, type) {
+    var admin = (userPermission === -1 || userPermission === 255) ? true : false;
+    if (userPermission.info && userPermission.info.roles) {
+        if (contextPermission[type]) {
+            return userPermission.info.roles.some(role => contextPermission[type].includes(role));
+        }
+    } else if (admin || (st && (!contextPermission || contextPermission & userPermission))) {
+        return true;
+    }
+}
+
+/**
+ * for Role show/enabled or 16 bitmask (0-7 enabled / 8-15 show)
+ * @param {*} userPermission
+ * @param {*} contextPermission alarms permission could be permission or permissionRoles
+ * @returns { show: true/false, enabled: true/false }
+ */
+function checkPermission(userPermission, context) {
+    if (!userPermission && !context) {
+        // No user and No context
+        return { show: !settings.secureEnabled, enabled: !settings.secureEnabled };
+    }
+    if (userPermission === -1 || userPermission === 255) {
+        // admin
+        return { show: true, enabled: true };
+    }
+    const contextPermission = settings.userRole ? context.permissionRoles : context.permission;
+    if (settings.userRole) {
+        if (userPermission && !contextPermission) {
+            return { show: true, enabled: false };
+        }
+    } else {
+        if (userPermission && !context && !contextPermission) {
+            return { show: true, enabled: false };
+        }
+    }
+    var result = { show: false, enabled : false };
+    if (settings.userRole) {
+        if (userPermission && userPermission.info && userPermission.info.roles) {
+            let voidRole = { show: true, enabled: true };
+            if (contextPermission.show && contextPermission.show.length) {
+                result.show = userPermission.info.roles.some(role => contextPermission.show.includes(role));
+                voidRole.show = false;
+            }
+            if (contextPermission.enabled && contextPermission.enabled.length) {
+                result.enabled = userPermission.info.roles.some(role => contextPermission.enabled.includes(role));
+                voidRole.enabled = false;
+            }
+            if (voidRole.show && voidRole.enabled) {
+                return voidRole;
+            }
+        } else {
+            result.show = contextPermission && contextPermission.show && contextPermission.show.length ? false : true;
+            result.enabled = contextPermission && contextPermission.enabled && contextPermission.enabled.length ? false : true;
+        }
+    } else {
+        if (userPermission) {
+            var mask = (contextPermission >> 8);
+            result.show = (mask) ? mask & userPermission : 1;
+            mask = (contextPermission & 255);
+            result.enabled = (mask) ? mask & userPermission : 1;
+        } else {
+            result.show = contextPermission ? false : true;
+            result.enabled = contextPermission ? false : true;
+        }
+    }
+    return result;
+}
+
 var runtime = module.exports = {
     init: init,
     project: project,
@@ -582,6 +658,8 @@ var runtime = module.exports = {
     get jobsMgr() { return jobsMgr },
     events: events,
     scriptSendCommand: scriptSendCommand,
+    checkPermissionEnabled: checkPermissionEnabled,
+    checkPermission: checkPermission,
     get socketPool() { return socketPool },
     get socketMutex() {return socketMutex }
 }
