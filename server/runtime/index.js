@@ -590,7 +590,7 @@ function checkPermission(userPermission, context) {
         // No user and No context
         return { show: !settings.secureEnabled, enabled: !settings.secureEnabled };
     }
-    if (userPermission === -1 || userPermission === 255) {
+    if (userPermission === -1 || userPermission === 255 || utils.isNullOrUndefined(context)) {
         // admin
         return { show: true, enabled: true };
     }

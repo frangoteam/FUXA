@@ -1,6 +1,6 @@
 <div>
-    <h1 mat-dialog-title style="display:inline-block;cursor: move;" mat-dialog-draggable>{{'dlg.menuitem-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.menuitem-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.menuitem-icon' | translate}}</span>
@@ -35,11 +35,11 @@
         <div *ngIf="data.item.view === '[link]'" class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.menuitem-address' | translate}}</span>
             <input [(ngModel)]="data.item.link" type="text" style="width: 300px">
-        </div>    
+        </div>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.useraccess-groups' | translate}}</span>
             <sel-options #seloptions [selected]="selectedGroups" [options]="groups"></sel-options>
-        </div>   
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

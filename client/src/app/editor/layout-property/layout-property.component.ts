@@ -3,22 +3,21 @@ import { Component, OnInit, Inject, ViewChild, OnDestroy, ChangeDetectorRef } fr
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
-import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, View, HeaderItem, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
-import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
-import { UploadFile } from '../../_models/project';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
-import { interval, map, Observable, of, Subject, takeUntil } from 'rxjs';
+import { interval, Subject, takeUntil } from 'rxjs';
 import { GaugeDialogType, GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
 import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-button.component';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import 'codemirror/mode/css/css';
+import { LayoutMenuItemPropertyComponent } from './layout-menu-item-property/layout-menu-item-property.component';
+import { LayoutHeaderItemPropertyComponent } from './layout-header-item-property/layout-header-item-property.component';
 
 @Component({
     selector: 'app-layout-property',
@@ -118,7 +117,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     onTabChanged(event: MatTabChangeEvent): void {
         if (event.index == 3) {
             this.changeDetector.detectChanges();
-            this.CodeMirror?.codeMirror?.refresh();    
+            this.CodeMirror?.codeMirror?.refresh();
         }
     }
 
@@ -144,7 +143,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         }
         let views = JSON.parse(JSON.stringify(this.data.views));
         views.unshift({id: '', name: ''});
-        let dialogRef = this.dialog.open(DialogMenuItem, {
+        let dialogRef = this.dialog.open(LayoutMenuItemPropertyComponent, {
             position: { top: '60px' },
             data: { item: eitem, views: views, permission: eitem.permission }
         });
@@ -204,7 +203,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
             marginLeft: 5,
             marginRight: 5
         };
-        let dialogRef = this.dialog.open(DialogHeaderItem, {
+        let dialogRef = this.dialog.open(LayoutHeaderItemPropertyComponent, {
             position: { top: '60px' },
             data: eitem
         });
@@ -265,101 +264,6 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
 
     onNoClick(): void {
         this.dialogRef.close();
-    }
-}
-
-@Component({
-    selector: 'dialog-menuitem',
-    templateUrl: './menuitem.dialog.html',
-})
-export class DialogMenuItem {
-	selectedGroups = [];
-    groups = UserGroups.Groups;
-    icons$: Observable<string[]>;
-    linkAddress = LinkType.address;
-    linkAlarms = LinkType.alarms;
-
-    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
-
-    constructor(public projectService: ProjectService,
-                public dialogRef: MatDialogRef<DialogMenuItem>,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
-
-        this.icons$ = of(Define.MaterialIconsRegular).pipe(
-          map((data: string) => data.split('\n')),
-          map(lines => lines.map(line => line.split(' ')[0])),
-          map(names => names.filter(name => !!name))
-        );
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-		this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
-        this.dialogRef.close(this.data);
-    }
-
-    /**
-     * add image to view
-     * @param event selected file
-     */
-    onSetImage(event) {
-        if (event.target.files) {
-            let filename = event.target.files[0].name;
-            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
-            let reader = new FileReader();
-            reader.onload = () => {
-                try {
-                    fileToUpload.data = reader.result;
-                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
-                        this.data.item.image = result.location;
-                        this.data.item.icon = null;
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
-            };
-            if (fileToUpload.type === 'svg') {
-                reader.readAsText(event.target.files[0]);
-            } else {
-                reader.readAsDataURL(event.target.files[0]);
-            }
-        }
-    }
-}
-
-@Component({
-    selector: 'dialog-headeritem',
-    templateUrl: './dialog-header-item.html',
-    styleUrls: ['./layout-property.component.scss']
-})
-export class DialogHeaderItem {
-    item: HeaderItem;
-    icons$: Observable<string[]>;
-    headerType = <HeaderItemType[]>['button', 'label', 'image'];
-    defaultColor = Utils.defaultColor;
-
-    constructor(
-        public projectService: ProjectService,
-        public dialogRef: MatDialogRef<DialogHeaderItem>,
-        @Inject(MAT_DIALOG_DATA) public data: HeaderItem) {
-        this.item = data;
-        this.icons$ = of(Define.MaterialIconsRegular).pipe(
-            map((data: string) => data.split('\n')),
-            map(lines => lines.map(line => line.split(' ')[0])),
-            map(names => names.filter(name => !!name))
-          );
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.dialogRef.close(this.item);
     }
 }
 

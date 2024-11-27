@@ -26,7 +26,7 @@ import { ViewComponent } from './view/view.component';
 import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogLinkProperty } from './editor/editor.component';
-import { LayoutPropertyComponent, DialogMenuItem, DialogHeaderItem } from './editor/layout-property/layout-property.component';
+import { LayoutPropertyComponent } from './editor/layout-property/layout-property.component';
 import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
@@ -198,6 +198,8 @@ import { TableAlarmsComponent } from './gauges/controls/html-table/table-alarms/
 import { TableReportsComponent } from './gauges/controls/html-table/table-reports/table-reports.component';
 import { ReportsService } from './_services/reports.service';
 import { ChartLinePropertyComponent } from './editor/chart-config/chart-line-property/chart-line-property.component';
+import { LayoutMenuItemPropertyComponent } from './editor/layout-property/layout-menu-item-property/layout-menu-item-property.component';
+import { LayoutHeaderItemPropertyComponent } from './editor/layout-property/layout-header-item-property/layout-header-item-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -237,8 +239,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PluginsComponent,
         AppSettingsComponent,
         SetupComponent,
-        DialogMenuItem,
-        DialogHeaderItem,
+        LayoutMenuItemPropertyComponent,
+        LayoutHeaderItemPropertyComponent,
         DeviceListComponent,
         DeviceMapComponent,
         FuxaViewComponent,
