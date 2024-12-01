@@ -230,6 +230,8 @@ function ScriptsManager(_runtime) {
         sysFncs['$setDeviceProperty'] = runtime.devices.setDeviceProperty;
         sysFncs['$getHistoricalTags'] = runtime.devices.getHistoricalTags;
         sysFncs['$sendMessage'] = _sendMessage;
+        sysFncs['$getAlarms'] = _getAlarms;
+        sysFncs['$ackAlarm'] = _ackAlarm;
 
         return sysFncs;
     }
@@ -242,6 +244,24 @@ function ScriptsManager(_runtime) {
     var _sendMessage = async function (address, subject, message) {
         var temp = await runtime.notificatorMgr.sendMailMessage(null, address, subject, message, null, null);
         return temp;
+    }
+
+    var _getAlarms = async function () {
+        return await runtime.alarmsMgr.getAlarmsValues(null, -1);
+    }
+
+    var _ackAlarm = async function (alarmName, types) {
+        const separator = runtime.alarmsMgr.getIdSeparator();
+        if (alarmName.indexOf(separator) === -1 && !utils.isNullOrUndefined(types)) {
+            var result = [];
+            for(var i = 0; i < types.length; i++) {
+                const alarmId = `${alarmName}${separator}${types[i]}`;
+                result.push(await runtime.alarmsMgr.setAlarmAck(alarmId, null, -1));
+            }
+            return result;
+        } else {
+            return await runtime.alarmsMgr.setAlarmAck(alarmName, null, -1);
+        }
     }
 }
 
