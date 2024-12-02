@@ -986,6 +986,7 @@ export class ProjectService {
         let devices = Object.values(this.projectData.devices).filter((device: Device) => device.id !== FuxaServer.id);
         let fuxaServer = <Device>this.projectData.devices[FuxaServer.id];
         if (fuxaServer) {
+            let changed = false;
             devices.forEach((device: Device) => {
                 if (!Object.values(fuxaServer.tags).find((tag: Tag) => tag.sysType === TagSystemType.deviceConnectionStatus && tag.memaddress === device.id)) {
                     let tag = new Tag(Utils.getGUID(TAG_PREFIX));
@@ -996,9 +997,12 @@ export class ProjectService {
                     tag.sysType = TagSystemType.deviceConnectionStatus;
                     tag.init = tag.value = '';
                     fuxaServer.tags[tag.id] = tag;
+                    changed = true;
                 }
             });
-            this.setDeviceTags(fuxaServer);
+            if (changed) {
+                this.setDeviceTags(fuxaServer);
+            }
         }
         return this.getDevices();
     }
