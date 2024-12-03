@@ -1,5 +1,35 @@
-<div style="width:700px;position: relative;margin-bottom: 40px">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-pipe-settings' | translate}}</h1>
+<div class="element-property">
+    <div class="element-property-title">
+        {{'pipe.property-title' | translate}}
+    </div>
+    <div class="pipe-selection">
+        <mat-tab-group style="height: 100%;">
+            <mat-tab label="{{'editor.settings-general' | translate}}">
+                <div class="element-property-header">
+                    <span>{{'pipe.property-data' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field">
+                        <span>{{'pipe.property-name' | translate}}</span>
+                        <input [(ngModel)]="data.settings.name" (change)="onPipeChanged()" (keyup.enter)="onPipeChanged()" type="text">
+                    </div>
+
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'editor.settings-events' | translate}}">
+                <div class="section-newline">&nbsp;</div>
+                <div class="events-toolbox">
+                    <button mat-icon-button (click)="onAddEvent()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>
+
+<!-- <div style="width:700px;position: relative;margin-bottom: 40px">
+    <h1 mat-dialog-title style="display:inline-block;cursor:move;">{{'editor.controls-pipe-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
     <mat-tab-group style="width: 100%;height: 560px;">
         <mat-tab label="{{'pipe.property-props' | translate}}">
@@ -9,12 +39,11 @@
                 </div>
                 <div mat-dialog-content style="overflow: hidden; width:100%;padding-top: 20px;">
                     <div id="pipe" style="width: 200px; height: 240px;margin-left: 60px;"></div>
-                    <!-- <flex-head [data]="data" [property]="property" #flexhead></flex-head> -->
                     <div class="toolbox-right">
                         <div class="field-row">
                             <div class="my-form-field slider-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-border-width' | translate}}</span>
-                                <input numberOnly [(ngModel)]="options.borderWidth" (change)="onChangeValue('borderWidth', options.borderWidth)" max="100" min="0" step="1" 
+                                <input numberOnly [(ngModel)]="options.borderWidth" (change)="onChangeValue('borderWidth', options.borderWidth)" max="100" min="0" step="1"
                                     style="width: 100px;text-align: left;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 12px">
@@ -28,7 +57,7 @@
                         <div class="field-row">
                             <div class="my-form-field slider-field" style="padding-left: 12px">
                                 <span>{{'pipe.property-pipe-width' | translate}}</span>
-                                <input numberOnly [(ngModel)]="options.pipeWidth" (change)="onChangeValue('pipeWidth', options.pipeWidth)" max="100" min="0" step="1" 
+                                <input numberOnly [(ngModel)]="options.pipeWidth" (change)="onChangeValue('pipeWidth', options.pipeWidth)" max="100" min="0" step="1"
                                     style="width: 100px;text-align: left;display:inline-block;" type="number">
                             </div>
                             <div class="my-form-field slider-field color-field" style="padding-left: 12px">
@@ -93,19 +122,8 @@
             </div>
         </mat-tab>
     </mat-tab-group>
-    <!-- 
-    <div style="display: block; width: 660px;padding-top: 30px">
-        <div style="display: block;">
-            <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
-        </div>
-        <div mat-dialog-content style="overflow: hidden; width:100%">
-            <flex-head [data]="data" [property]="property" #flexhead></flex-head>
-        </div>
-    </div> -->
-    <!-- <div style="width: 760px; height: 620px; position: relative"> -->
-    <!-- </div> -->
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
-</div>
+</div> -->

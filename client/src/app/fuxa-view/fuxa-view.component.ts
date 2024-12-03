@@ -166,7 +166,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view
      */
     public loadHmi(view: View, legacyProfile?: boolean) {
-        if (this.loadOk) {
+        if (this.loadOk || !view) {
             return;
         }
         // Execute onClose script for last view
@@ -688,7 +688,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private getView(viewref: string): View {
         let view: View;
-        for (let i = 0; i < this.hmi.views.length; i++) {
+        for (let i = 0; i < this.hmi?.views?.length; i++) {
             if (this.hmi.views[i] && this.hmi.views[i].id === viewref) {
                 view = this.hmi.views[i];
                 break;

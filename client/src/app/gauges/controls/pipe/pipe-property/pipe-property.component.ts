@@ -1,6 +1,5 @@
-import { Component, AfterViewInit, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { GaugeProperty, View } from '../../../../_models/hmi';
 import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
 import { FlexAuthComponent } from '../../../gauge-property/flex-auth/flex-auth.component';
@@ -12,11 +11,16 @@ import { PipeOptions } from '../pipe.component';
 declare var SVG: any;
 
 @Component({
-    selector: 'pipe-property',
+    selector: 'app-pipe-property',
     templateUrl: './pipe-property.component.html',
-    styleUrls: ['./pipe-property.component.css']
+    styleUrls: ['./pipe-property.component.scss']
 })
 export class PipePropertyComponent implements OnInit, AfterViewInit {
+    @Input() data: any;
+    @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
+    @Input('reload') set reload(b: any) {
+        this._reload();
+    }
 
 	@ViewChild('flexauth', {static: false}) flexAuth: FlexAuthComponent;
     @ViewChild('flexhead', {static: false}) flexHead: FlexHeadComponent;
@@ -31,8 +35,7 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
     defaultColor = Utils.defaultColor;
     pipepath = { bk: null, fg: null, hp: null };
 
-    constructor(public dialogRef: MatDialogRef<PipePropertyComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
+    constructor() {
     }
 
     ngOnInit() {
@@ -58,15 +61,16 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        var draw = SVG().addTo('#pipe').size('100%', '100%');
-        this.pipepath.bk = draw.path('m 1,120 200,0');
-        this.pipepath.fg = draw.path('m 1,120 200,0');
-        this.pipepath.hp = draw.path('m 1,120 200,0');
-        this.redrawPipe();
+        // var draw = SVG().addTo('#pipe').size('100%', '100%');
+        // this.pipepath.bk = draw.path('m 1,120 200,0');
+        // this.pipepath.fg = draw.path('m 1,120 200,0');
+        // this.pipepath.hp = draw.path('m 1,120 200,0');
+        // this.redrawPipe();
     }
 
-    onNoClick(): void {
-        this.dialogRef.close();
+    onPipeChanged() {
+        this.property.options = JSON.parse(JSON.stringify(this.options));
+        this.onPropChanged.emit(this.data.settings);
     }
 
     onOkClick(): void {
@@ -117,4 +121,14 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
 	onAddAction() {
 		this.flexAction.onAddAction();
 	}
+
+    private _reload() {
+        this.property = this.data.settings.property;
+        if (this.property) {
+            // this.tableTypeCtrl.setValue(this.property.type);
+            // this.options = Object.assign(this.options, DataTableComponent.DefaultOptions(), this.property.options);
+        } else {
+            this.ngOnInit();
+        }
+    }
 }

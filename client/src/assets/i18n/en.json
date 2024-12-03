@@ -729,6 +729,7 @@
     "shapes.event-relativefrom-window": "Window",
     "shapes.event-relativefrom-mouse": "Mouse",
 
+    "pipe.property-title": "Pipe settings",
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
     "pipe.property-border-color": "Border color",
