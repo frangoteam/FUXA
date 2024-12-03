@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
@@ -284,6 +284,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (line.fill) {
                 serie.fill = line.fill;
             }
+            if (line.zones) {
+                const zones = this.generateZones(line.zones, line.color);
+                if (zones) {
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                }
+            }
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
@@ -295,6 +301,24 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isEditor) {
             this.nguplot.setSample();
         }
+    }
+
+    private generateZones(ranges: ChartLineZone[], baseColor: string): Zone[] {
+        const result: Zone[] = [];
+        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
+        result.push([-Infinity, baseColor]);
+        sortedRanges.forEach((range, index) => {
+            result.push([range.min, range.color]);
+            if (index < sortedRanges.length - 1) {
+                const nextMin = sortedRanges[index + 1].min;
+                if (range.max < nextMin) {
+                    result.push([range.max, baseColor]);
+                }
+            } else {
+                result.push([range.max, baseColor]);
+            }
+        });
+        return result;
     }
 
     /**
@@ -579,3 +603,5 @@ interface ValueType {
 interface ValueDictionary {
     [key: string]: ValueType[];
 }
+
+type Zone = [number, string];
