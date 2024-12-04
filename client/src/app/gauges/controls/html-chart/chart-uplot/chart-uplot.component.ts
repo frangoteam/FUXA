@@ -282,7 +282,21 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 serie.scale = '1';
             }
             if (line.fill) {
-                serie.fill = line.fill;
+                if (line.fillzones) {
+                    const zones = this.generateZones(line.fillzones, line.fill);
+                    if (zones) {
+                        serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                    }
+                }
+                else {
+                    serie.fill = line.fill;
+                }
+            }
+            if (line.strokezones) {
+                const zones = this.generateZones(line.strokezones, line.color);
+                if (zones) {
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                }
             }
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
@@ -295,6 +309,24 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isEditor) {
             this.nguplot.setSample();
         }
+    }
+
+    private generateZones(ranges: ChartLineZone[], baseColor: string): Zone[] {
+        const result: Zone[] = [];
+        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
+        result.push([-Infinity, baseColor]);
+        sortedRanges.forEach((range, index) => {
+            result.push([range.min, range.color]);
+            if (index < sortedRanges.length - 1) {
+                const nextMin = sortedRanges[index + 1].min;
+                if (range.max < nextMin) {
+                    result.push([range.max, baseColor]);
+                }
+            } else {
+                result.push([range.max, baseColor]);
+            }
+        });
+        return result;
     }
 
     /**
