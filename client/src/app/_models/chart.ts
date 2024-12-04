@@ -14,7 +14,8 @@ export class ChartLine {
     fill?: string;
     yaxis: number;
     lineInterpolation?: number;
-    zones?: ChartLineZone[];
+    strokezones?: ChartLineZone[];
+    fillzones?: ChartLineZone[];
 }
 
 export interface ChartLineZone {
