@@ -86,11 +86,15 @@ function ScriptsManager(_runtime) {
         });
     }
 
-    this.isAuthorised = function (_script, groups) {
+    this.isAuthorised = function (_script, permission) {
         try {
             const st = scriptModule.getScript(_script);
-            var admin = (groups === -1 || groups === 255) ? true : false;
-            if (admin || (st && (!st.permission || st.permission & groups))) {
+            var admin = (permission === -1 || permission === 255) ? true : false;
+            if (permission.info && permission.info.roles) {
+                if (st.permissionRoles.enabled) {
+                    return permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
+                }
+            } else if (admin || (st && (!st.permission || st.permission & permission))) {
                 return true;
             }
         } catch (err) {

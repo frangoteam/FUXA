@@ -19,6 +19,8 @@ export class AppSettings {
     alarms = new AlarmsSettings();
     /** Log Full enabled to log all setValue */
     logFull = false;
+    /** User role enabled (default group) */
+    userRole = false;
 }
 
 export class SmtpSettings {

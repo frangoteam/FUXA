@@ -116,6 +116,7 @@ export class AlarmPropertyComponent implements OnInit {
         } else if (this.checkValid()) {
             this.data.alarm.property = this.property;
             this.data.alarm.property.permission = this.flexAuth.permission;
+            this.data.alarm.property.permissionRoles = this.flexAuth.permissionRoles;
             this.data.alarm.name = this.flexAuth.name;
             this.dialogRef.close(this.data.alarm);
         }

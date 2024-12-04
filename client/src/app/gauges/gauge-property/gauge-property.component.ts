@@ -1,16 +1,13 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Inject, Input, AfterViewInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Inject, Input, AfterViewInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-
-import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
-
 import { FlexHeadComponent } from './flex-head/flex-head.component';
 import { FlexEventComponent } from './flex-event/flex-event.component';
 import { FlexActionComponent } from './flex-action/flex-action.component';
 import { GaugeProperty, GaugeSettings, View, WidgetProperty } from '../../_models/hmi';
 import { Script } from '../../_models/script';
-import { UserGroups } from '../../_models/user';
 import { PropertyType } from './flex-input/flex-input.component';
+import { PermissionData, PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
 
 @Component({
     selector: 'gauge-property',
@@ -39,6 +36,7 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     constructor(public dialog: MatDialog,
                 public dialogRef: MatDialogRef<GaugePropertyComponent>,
+                private cdr: ChangeDetectorRef,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.dialogType = this.data.dlgType;
         this.eventsSupported = this.data.withEvents;
@@ -154,18 +152,18 @@ export class GaugePropertyComponent implements AfterViewInit {
         }
         return false;
     }
-
     onEditPermission() {
-        let permission = this.property.permission;
-        let dialogRef = this.dialog.open(DialogGaugePermission, {
+        let dialogRef = this.dialog.open(PermissionDialogComponent, {
             position: { top: '60px' },
-            data: { permission: permission }
+            data: <PermissionData>{ permission: this.property.permission, permissionRoles: this.property.permissionRoles }
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: PermissionData) => {
             if (result) {
                 this.property.permission = result.permission;
+                this.property.permissionRoles = result.permissionRoles;
             }
+            this.cdr.detectChanges();
         });
     }
 
@@ -193,50 +191,3 @@ export enum GaugeDialogType {
     Input,
     Panel
 }
-
-@Component({
-    selector: 'dialog-gaugepermission',
-    templateUrl: './gauge-permission.dialog.html',
-})
-export class DialogGaugePermission {
-    selectedGroups = [];
-    extensionGroups = [];
-    groups = UserGroups.Groups;
-
-    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
-
-    constructor(
-        public dialogRef: MatDialogRef<DialogGaugePermission>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
-        this.extensionGroups = UserGroups.ValueToGroups(this.data.permission, true);
-
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
-        this.data.permission += UserGroups.GroupsToValue(this.seloptions.extSelected, true);
-        this.dialogRef.close(this.data);
-    }
-}
-
-// export interface GaugePropertyData {
-//     settings: any;
-//     //devices: Device[];
-//     title: string;
-//     //views: View[];
-//     view: View;
-//     dlgType: GaugeDialogType;
-//     withEvents: boolean;
-//     withActions: boolean;
-//     default: any;
-//     withBitmask: boolean;
-
-//     //inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
-//     // let names = Object.values(this.currentView.items).map(gs => gs.name);
-//     // scripts: this.projectService.getScripts(),
-// }

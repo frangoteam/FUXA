@@ -7,6 +7,9 @@ export class Script {
     parameters: ScriptParam[] = [];
     scheduling: ScriptScheduling;
     permission: number;
+    permissionRoles: {
+        enabled: string[];
+    };
     mode: ScriptMode = ScriptMode.SERVER;
     constructor(_id: string) {
         this.id = _id;
