@@ -210,6 +210,14 @@ export class SystemFunctions {
         paramsText: 'script.sys-fnc-getAlarms-params'
     },
     {
+        name: '$getAlarmsHistory',
+        mode: null,
+        text: 'script.sys-fnc-getAlarmsHistory-text',
+        tooltip: 'script.sys-fnc-getAlarmsHistory-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-getAlarmsHistory-params'
+    },
+    {
         name: '$ackAlarm',
         mode: null,
         text: 'script.sys-fnc-ackAlarms-text',

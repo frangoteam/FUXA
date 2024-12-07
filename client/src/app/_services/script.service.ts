@@ -99,6 +99,7 @@ export class ScriptService {
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
         code = code.replace(/\$sendMessage\(/g, 'this.$sendMessage(');
         code = code.replace(/\$getAlarms\(/g, 'await this.$getAlarms(');
+        code = code.replace(/\$getAlarmsHistory\(/g, 'await this.$getAlarmsHistory(');
         code = code.replace(/\$ackAlarm\(/g, 'await this.$ackAlarm(');
         return code;
     }
@@ -181,6 +182,10 @@ export class ScriptService {
 
     public async $getAlarms() {
         return await this.projectService.runSysFunctionSync('$getAlarms', null);
+    }
+
+    public async $getAlarmsHistory(from: Date, to: Date) {
+        return await this.projectService.runSysFunctionSync('$getAlarmsHistory', [from, to]);
     }
 
     public async $ackAlarm(alarmName: string, types?: AlarmsType[]) {
