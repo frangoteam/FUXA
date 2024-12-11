@@ -16,3 +16,5 @@ export class SelOptionsComponent {
     constructor() { }
 
 }
+
+export type SelOptionType = any & { id: any; selected: boolean; label: string };

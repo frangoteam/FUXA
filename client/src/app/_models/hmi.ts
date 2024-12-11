@@ -114,6 +114,7 @@ export class NaviItem {
     icon: string;
     image: string;
     permission: number;
+    permissionRoles: PermissionRoles;
 }
 
 export class HeaderSettings {
@@ -204,12 +205,18 @@ export class GaugeProperty {
     variableValue: string;
     bitmask: number;
     permission: number;
+    permissionRoles: PermissionRoles;
     ranges: GaugeRangeProperty[];
     events: GaugeEvent[] = [];
     actions: GaugeAction[] = [];
     options: any;
     readonly: boolean;
     text: string;               // Text property (used by button)
+}
+
+export interface PermissionRoles {
+    show: string[];
+    enabled: string[];
 }
 
 export class WidgetProperty extends GaugeProperty {

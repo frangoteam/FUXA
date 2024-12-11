@@ -157,6 +157,9 @@ try {
         if (!utils.isNullOrUndefined(mysettings.logFull)) {
             settings.logFull = mysettings.logFull;
         }
+        if (!utils.isNullOrUndefined(mysettings.userRole)) {
+            settings.userRole = mysettings.userRole;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)

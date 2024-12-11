@@ -8,7 +8,7 @@
             <span style="display:inline-block; width: 45px; text-align: center;">{{'dlg.gauge-permission-show' | translate}}</span>
             <span style="display:inline-block; width: 70px;">{{'dlg.gauge-permission-enabled' | translate}}</span>
             <span style="display:inline-block">{{'dlg.gauge-permission-label' | translate}}</span>
-            <sel-options style="display:block" #seloptions [selected]="selectedGroups" [options]="groups" [extSelected]="extensionGroups"></sel-options>
+            <sel-options style="display:block" #seloptions [selected]="selected" [options]="options" [extSelected]="extension"></sel-options>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

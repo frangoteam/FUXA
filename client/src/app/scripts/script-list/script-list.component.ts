@@ -10,7 +10,7 @@ import { ScriptEditorComponent } from '../script-editor/script-editor.component'
 import { ScriptSchedulingComponent, SchedulingData } from '../script-scheduling/script-scheduling.component';
 import { Script, SCRIPT_PREFIX, ScriptMode, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
 import { Utils } from '../../_helpers/utils';
-import { ScriptPermissionComponent } from '../script-permission/script-permission.component';
+import { ScriptPermissionComponent, ScriptPermissionData } from '../script-permission/script-permission.component';
 import { ScriptModeComponent, ScriptModeType } from '../script-mode/script-mode.component';
 
 @Component({
@@ -160,12 +160,16 @@ export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
         let dialogRef = this.dialog.open(ScriptPermissionComponent, {
             disableClose: true,
             position: { top: '60px' },
-            data: { permission: permission }
+            data: <ScriptPermissionData>{
+                permission: permission,
+                permissionRoles: script.permissionRoles
+            }
         });
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 script.permission = result.permission;
+                script.permissionRoles = result.permissionRoles;
                 this.projectService.setScript(script, null).subscribe(() => {
                     this.loadScripts();
                 });

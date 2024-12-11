@@ -91,6 +91,16 @@ function getNewToken(headers) {
     return null;
 }
 
+function haveAdminPermission(permission) {
+    if (permission === null || permission === undefined) {
+        return false;
+    }
+    if (adminGroups.indexOf(permission) !== -1) {
+        return true;
+    }
+    return false;
+}
+
 function getTokenExpiresIn() {
     return tokenExpiresIn;
 }
@@ -102,5 +112,6 @@ module.exports = {
     getNewToken: getNewToken,
     get secretCode() { return secretCode },
     get tokenExpiresIn() { return tokenExpiresIn },
+    haveAdminPermission: haveAdminPermission,
     adminGroups: adminGroups
 };
