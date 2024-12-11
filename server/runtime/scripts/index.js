@@ -235,6 +235,7 @@ function ScriptsManager(_runtime) {
         sysFncs['$getHistoricalTags'] = runtime.devices.getHistoricalTags;
         sysFncs['$sendMessage'] = _sendMessage;
         sysFncs['$getAlarms'] = _getAlarms;
+        sysFncs['$getAlarmsHistory'] = _getAlarmsHistory;
         sysFncs['$ackAlarm'] = _ackAlarm;
 
         return sysFncs;
@@ -252,6 +253,11 @@ function ScriptsManager(_runtime) {
 
     var _getAlarms = async function () {
         return await runtime.alarmsMgr.getAlarmsValues(null, -1);
+    }
+
+    var _getAlarmsHistory = async function (start, end) {
+        const query = { start: start, end: end };
+        return await runtime.alarmsMgr.getAlarmsHistory(query, -1);
     }
 
     var _ackAlarm = async function (alarmName, types) {
