@@ -292,9 +292,11 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     private getFunctionText(sysfnc: SystemFunction): string {
-        let paramText = '\'MainView\'';
+        let paramText = '\'params\'';
         const fx = this.systemFunctions.functions.find(sf => sf.name === sysfnc.name);
-        if (fx && fx.paramsText) {
+        if (!fx?.params?.length) {
+            paramText = '';
+        } else if (fx?.paramsText) {
             paramText = this.translateService.instant(fx.paramsText) || paramText;
         }
         return `${sysfnc.name}(${paramText});`;

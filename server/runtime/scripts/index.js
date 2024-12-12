@@ -86,11 +86,15 @@ function ScriptsManager(_runtime) {
         });
     }
 
-    this.isAuthorised = function (_script, groups) {
+    this.isAuthorised = function (_script, permission) {
         try {
             const st = scriptModule.getScript(_script);
-            var admin = (groups === -1 || groups === 255) ? true : false;
-            if (admin || (st && (!st.permission || st.permission & groups))) {
+            var admin = (permission === -1 || permission === 255) ? true : false;
+            if (permission.info && permission.info.roles) {
+                if (st.permissionRoles.enabled) {
+                    return permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
+                }
+            } else if (admin || (st && (!st.permission || st.permission & permission))) {
                 return true;
             }
         } catch (err) {
@@ -230,6 +234,9 @@ function ScriptsManager(_runtime) {
         sysFncs['$setDeviceProperty'] = runtime.devices.setDeviceProperty;
         sysFncs['$getHistoricalTags'] = runtime.devices.getHistoricalTags;
         sysFncs['$sendMessage'] = _sendMessage;
+        sysFncs['$getAlarms'] = _getAlarms;
+        sysFncs['$getAlarmsHistory'] = _getAlarmsHistory;
+        sysFncs['$ackAlarm'] = _ackAlarm;
 
         return sysFncs;
     }
@@ -242,6 +249,29 @@ function ScriptsManager(_runtime) {
     var _sendMessage = async function (address, subject, message) {
         var temp = await runtime.notificatorMgr.sendMailMessage(null, address, subject, message, null, null);
         return temp;
+    }
+
+    var _getAlarms = async function () {
+        return await runtime.alarmsMgr.getAlarmsValues(null, -1);
+    }
+
+    var _getAlarmsHistory = async function (start, end) {
+        const query = { start: start, end: end };
+        return await runtime.alarmsMgr.getAlarmsHistory(query, -1);
+    }
+
+    var _ackAlarm = async function (alarmName, types) {
+        const separator = runtime.alarmsMgr.getIdSeparator();
+        if (alarmName.indexOf(separator) === -1 && !utils.isNullOrUndefined(types)) {
+            var result = [];
+            for(var i = 0; i < types.length; i++) {
+                const alarmId = `${alarmName}${separator}${types[i]}`;
+                result.push(await runtime.alarmsMgr.setAlarmAck(alarmId, null, -1));
+            }
+            return result;
+        } else {
+            return await runtime.alarmsMgr.setAlarmAck(alarmName, null, -1);
+        }
     }
 }
 

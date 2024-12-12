@@ -1,37 +1,68 @@
-import { Component, Inject, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { SelOptionsComponent } from '../../../gui-helpers/sel-options/sel-options.component';
-import { Observable, map, of } from 'rxjs';
+import { SelOptionType, SelOptionsComponent } from '../../../gui-helpers/sel-options/sel-options.component';
+import { Observable, Subject, map, of, takeUntil } from 'rxjs';
 import { Define } from '../../../_helpers/define';
-import { UserGroups } from '../../../_models/user';
+import { Role, UserGroups } from '../../../_models/user';
 import { LinkType } from '../../../_models/hmi';
 import { ProjectService } from '../../../_services/project.service';
 import { UploadFile } from '../../../_models/project';
+import { UserService } from '../../../_services/user.service';
+import { SettingsService } from '../../../_services/settings.service';
 
 @Component({
     selector: 'app-layout-menu-item-property',
     templateUrl: './layout-menu-item-property.component.html',
     styleUrls: ['./layout-menu-item-property.component.css']
 })
-export class LayoutMenuItemPropertyComponent {
-    selectedGroups = [];
-    groups = UserGroups.Groups;
+export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy {
+	selected = [];
+    options = [];
     icons$: Observable<string[]>;
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
+    private destroy$ = new Subject<void>();
 
-    @ViewChild(SelOptionsComponent, { static: false }) seloptions: SelOptionsComponent;
+    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
 
     constructor(public projectService: ProjectService,
-        public dialogRef: MatDialogRef<LayoutMenuItemPropertyComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
-
+                private userService: UserService,
+                private cdr: ChangeDetectorRef,
+                private settingsService: SettingsService,
+                public dialogRef: MatDialogRef<LayoutMenuItemPropertyComponent>,
+                @Inject(MAT_DIALOG_DATA) public data: any) {
         this.icons$ = of(Define.MaterialIconsRegular).pipe(
-            map((data: string) => data.split('\n')),
-            map(lines => lines.map(line => line.split(' ')[0])),
-            map(names => names.filter(name => !!name))
+          map((data: string) => data.split('\n')),
+          map(lines => lines.map(line => line.split(' ')[0])),
+          map(names => names.filter(name => !!name))
         );
+    }
+
+    ngAfterViewInit() {
+        if (this.isRolePermission()) {
+            this.userService.getRoles().pipe(
+                map(roles => roles.sort((a, b) => a.index - b.index)),
+                takeUntil(this.destroy$)
+            ).subscribe((roles: Role[]) => {
+                this.options = roles?.map(role => <SelOptionType>{ id: role.id, label: role.name });
+                this.selected = this.options.filter(role => this.data.permissionRoles?.enabled?.includes(role.id));
+            }, err => {
+                console.error('get Roles err: ' + err);
+            });
+        } else {
+            this.selected = UserGroups.ValueToGroups(this.data.permission);
+            this.options = UserGroups.Groups;
+        }
+        this.cdr.detectChanges();
+    }
+
+    ngOnDestroy() {
+		this.destroy$.next();
+        this.destroy$.complete();
+	}
+
+    isRolePermission() {
+        return this.settingsService.getSettings()?.userRole;
     }
 
     onNoClick(): void {
@@ -39,7 +70,15 @@ export class LayoutMenuItemPropertyComponent {
     }
 
     onOkClick(): void {
-        this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
+        if (this.isRolePermission()) {
+            if (!this.data.permissionRoles) {
+                this.data.permissionRoles = { enabled: null };
+            }
+            this.data.permissionRoles.enabled = this.seloptions.selected?.map(role => role.id);
+
+        } else {
+            this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
+        }
         this.dialogRef.close(this.data);
     }
 

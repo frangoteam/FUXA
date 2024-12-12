@@ -6,6 +6,13 @@ export class User {
     info: string;
 }
 
+export class Role {
+    id: string;     // GUID
+    name: string;
+	index: number;
+    description: string;
+}
+
 export class UserGroups {
     static ADMINMASK = [-1, 255];
     static EXTENSION = 8;
@@ -41,15 +48,12 @@ export class UserGroups {
     }
 
     static GroupToLabel(value: number): string {
-        let result = '';
+        let result = [];
         for (let i = 0; i < this.Groups.length; i++) {
             if (value & this.Groups[i].id) {
-                if (result) {
-                    result += ',';
-                }
-                result += this.Groups[i].label;
+                result.push(this.Groups[i].label);
             }
         }
-        return result;
+        return result.join(', ');
     }
 }

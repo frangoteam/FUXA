@@ -1,4 +1,5 @@
-<div class="fuxa-view-dialog">
+<div class="fuxa-view-dialog"
+    [style.background]="data?.view?.profile?.bkcolor">
     <a class="dialog-modal-close"
        *ngIf="!data.disableDefaultClose">
         <i (click)="onCloseDialog()"

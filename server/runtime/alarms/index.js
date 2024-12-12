@@ -9,6 +9,7 @@ var utils = require('./../utils');
 
 var ALARMS_CHECK_STATUS_INTERVAL = 1000;
 var TimeMultiplier	= 1000;		//1000 = rates are in seconds - alpaslanske
+const SEPARATOR = '^~^';
 
 function AlarmsManager(_runtime) {
     var runtime = _runtime;
@@ -24,6 +25,7 @@ function AlarmsManager(_runtime) {
     var status = AlarmsStatusEnum.INIT; // Current status (StateMachine)
     var clearAlarms = false;            // Flag to clear current alarms from DB
     var actionsProperty = {};           // Actions property list, key = alarm name + ^~^ + type
+
 
     /**
      * Start TimerInterval to check Alarms
@@ -240,6 +242,10 @@ function AlarmsManager(_runtime) {
                 resolve();
             }
         });
+    }
+
+    this.getIdSeparator = () => {
+        return SEPARATOR;
     }
 
     /**
@@ -505,14 +511,16 @@ function AlarmsManager(_runtime) {
 
     var _filterAlarm = function (alarmType, alarmText, alarmGroup, alarmTagId, filter) {
         var available = true;
-        if (filter.priority.length && filter.priority.indexOf(alarmType) === -1) {
-            available = false;
-        } else if (filter.text && (!alarmText || alarmText.toLowerCase().indexOf(filter.text.toLowerCase()) === -1)) {
-            available = false;
-        } else if (filter.group && (!alarmGroup || alarmGroup.toLowerCase().indexOf(filter.group.toLowerCase()) === -1)) {
-            available = false;
-        } else if (filter.tagIds.length && alarmTagId && filter.tagIds.indexOf(alarmTagId) === -1) {
-            available = false;
+        if (filter) {
+            if (filter.priority && filter.priority.length && filter.priority.indexOf(alarmType) === -1) {
+                available = false;
+            } else if (filter.text && (!alarmText || alarmText.toLowerCase().indexOf(filter.text.toLowerCase()) === -1)) {
+                available = false;
+            } else if (filter.group && (!alarmGroup || alarmGroup.toLowerCase().indexOf(filter.group.toLowerCase()) === -1)) {
+                available = false;
+            } else if (filter.tagIds && filter.tagIds.length && alarmTagId && filter.tagIds.indexOf(alarmTagId) === -1) {
+                available = false;
+            }
         }
         return available;
     }

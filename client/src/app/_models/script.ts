@@ -7,6 +7,9 @@ export class Script {
     parameters: ScriptParam[] = [];
     scheduling: ScriptScheduling;
     permission: number;
+    permissionRoles: {
+        enabled: string[];
+    };
     mode: ScriptMode = ScriptMode.SERVER;
     constructor(_id: string) {
         this.id = _id;
@@ -125,14 +128,16 @@ export class SystemFunctions {
         mode: null,
         text: 'script.sys-fnc-setview-text',
         tooltip: 'script.sys-fnc-setview-tooltip',
-        params: [false]
+        params: [false],
+        paramsText: 'script.sys-fnc-setview-params'
     },
     {
         name: '$openCard',
         mode: null,
         text: 'script.sys-fnc-opencard-text',
         tooltip: 'script.sys-fnc-opencard-tooltip',
-        params: [false]
+        params: [false],
+        paramsText: 'script.sys-fnc-opencard-params'
     },
     {
         name: '$enableDevice',
@@ -198,6 +203,30 @@ export class SystemFunctions {
         tooltip: 'script.sys-fnc-sendMessage-tooltip',
         params: [false, false, false],
         paramsText: 'script.sys-fnc-sendMessage-params'
+    },
+    {
+        name: '$getAlarms',
+        mode: null,
+        text: 'script.sys-fnc-getAlarms-text',
+        tooltip: 'script.sys-fnc-getAlarms-tooltip',
+        params: [],
+        paramsText: 'script.sys-fnc-getAlarms-params'
+    },
+    {
+        name: '$getAlarmsHistory',
+        mode: null,
+        text: 'script.sys-fnc-getAlarmsHistory-text',
+        tooltip: 'script.sys-fnc-getAlarmsHistory-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-getAlarmsHistory-params'
+    },
+    {
+        name: '$ackAlarm',
+        mode: null,
+        text: 'script.sys-fnc-ackAlarms-text',
+        tooltip: 'script.sys-fnc-ackAlarms-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-ackAlarms-params'
     }
 ];
 }

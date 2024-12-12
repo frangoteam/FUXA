@@ -169,14 +169,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.loadOk) {
             return;
         }
-        // Execute onClose script for last view
-        let lastView = this.getView(this.view.id);
-        if (lastView) {
-            lastView.property?.events?.forEach(event => {
-                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
-                    this.onRunScript(event);
-                }
-            });
+        if (this.view) {
+            // Execute onClose script for last view
+            let lastView = this.getView(this.view.id);
+            if (lastView) {
+                lastView.property?.events?.forEach(event => {
+                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+                        this.onRunScript(event);
+                    }
+                });
+            }
         }
         if (!this.hmi) {
             this.hmi = this.projectService.getHmi();
@@ -211,12 +213,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadWatch(this.view);
         this.onResize();
 
-        // Execute onOpen script for new current view
-        view.property?.events?.forEach(event => {
-            if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
-                this.onRunScript(event);
-            }
-        });
+        if (view) {
+            // Execute onOpen script for new current view
+            view.property?.events?.forEach(event => {
+                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
+                    this.onRunScript(event);
+                }
+            });
+        }
     }
 
 

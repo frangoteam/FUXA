@@ -16,6 +16,7 @@ import { ScriptListComponent } from './scripts/script-list/script-list.component
 import { TextListComponent } from './text-list/text-list.component';
 import { DEVICE_READONLY } from './_models/hmi';
 import { ReportListComponent } from './reports/report-list/report-list.component';
+import { UsersRolesComponent } from './users/users-roles/users-roles.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -26,6 +27,7 @@ const appRoutes: Routes = [
     { path: 'device', component: DeviceComponent, canActivate: [AuthGuard] },
     { path: DEVICE_READONLY, component: DeviceComponent, canActivate: [AuthGuard] },
     { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
+    { path: 'userRoles', component: UsersRolesComponent, canActivate: [AuthGuard] },
     { path: 'alarms', component: AlarmViewComponent, canActivate: [AuthGuard] },
     { path: 'messages', component: AlarmListComponent, canActivate: [AuthGuard] },
     { path: 'notifications', component: NotificationListComponent, canActivate: [AuthGuard] },

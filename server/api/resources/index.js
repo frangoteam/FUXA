@@ -32,10 +32,10 @@ module.exports = {
          * GET Server images folder content
          */
         resourcesApp.get('/api/resources/images', secureFnc, function (req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get resources/images: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api get resources/images: Unauthorized!");
             } else {
@@ -69,10 +69,10 @@ module.exports = {
          * GET svg/canvas rendered and converted to image
          */
         resourcesApp.get('/api/resources/generateImage', secureFnc, function (req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get resources/generateImage: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api get resources/generateImage: Unauthorized!");
             } else {
@@ -104,10 +104,10 @@ module.exports = {
          * GET Server widgets folder content
          */
         resourcesApp.get('/api/resources/widgets', secureFnc, function (req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get resources/widgets: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api get resources/widgets: Unauthorized!");
             } else {

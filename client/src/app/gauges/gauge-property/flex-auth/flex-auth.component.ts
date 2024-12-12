@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
-import { DialogGaugePermission } from '../../gauge-property/gauge-property.component';
+import { PermissionData, PermissionDialogComponent } from '../permission-dialog/permission-dialog.component';
+import { PermissionRoles } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-auth',
@@ -12,21 +13,27 @@ export class FlexAuthComponent {
 
     @Input() name: string;
     @Input() permission: number;
+    @Input() permissionRoles: PermissionRoles;
 
 
-    constructor(public dialog: MatDialog) { }
+    constructor(public dialog: MatDialog,
+                private cdr: ChangeDetectorRef) {
+
+    }
 
     onEditPermission() {
         let permission = this.permission;
-        let dialogRef = this.dialog.open(DialogGaugePermission, {
+        let dialogRef = this.dialog.open(PermissionDialogComponent, {
             position: { top: '60px' },
-            data: { permission: permission }
+            data: <PermissionData>{ permission: permission, permissionRoles: this.permissionRoles }
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: PermissionData) => {
             if (result) {
                 this.permission = result.permission;
+                this.permissionRoles = result.permissionRoles;
             }
+            this.cdr.detectChanges();
         });
     }
 
