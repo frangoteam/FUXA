@@ -28,10 +28,10 @@ module.exports = {
          * GET supported Plugin and status (installed) 
          */
         pluginsApp.get("/api/plugins", secureFnc, function (req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get plugins: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api get plugins: Unauthorized!");
             } else {
@@ -59,10 +59,10 @@ module.exports = {
          * Install the plugin
          */
         pluginsApp.post("/api/plugins", secureFnc, function (req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post plugins: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post plugins: Unauthorized");
             } else {
@@ -85,10 +85,10 @@ module.exports = {
          * Unistall the plugin
          */
         pluginsApp.delete("/api/plugins", secureFnc, function (req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api delete plugins: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api delete plugins: Unauthorized");
             } else {

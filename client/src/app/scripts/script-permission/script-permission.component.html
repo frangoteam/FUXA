@@ -7,7 +7,7 @@
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span style="display:inline-block; width: 70px;">{{'script.permission-enabled' | translate}}</span>
             <span style="display:inline-block">{{'script.permission-label' | translate}}</span>
-            <sel-options style="display:block" #seloptions [selected]="selectedGroups" [options]="groups"></sel-options>
+            <sel-options style="display:block" #seloptions [selected]="selected" [options]="options"></sel-options>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

@@ -9,6 +9,7 @@ const fs = require('fs');
 const path = require('path');
 var sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
+const { forEach } = require('async');
 
 var settings        // Application settings
 var logger;         // Application logger
@@ -42,6 +43,7 @@ function _bind() {
         });
         // prepare query
         var sql = "CREATE TABLE if not exists users (username TEXT PRIMARY KEY, fullname TEXT, password TEXT, groups INTEGER, info TEXT);";
+        sql += "CREATE TABLE if not exists roles (name TEXT PRIMARY KEY, value TEXT);";
         db_usr.exec(sql, function (err) {
             if (err) {
                 logger.error(`usrstorage.bind failed! ${err}`);
@@ -183,6 +185,61 @@ function removeUser(usr) {
 }
 
 /**
+ * Return the Roles list
+ */
+function getRoles() {
+    return new Promise(function (resolve, reject) {
+        var sql = "SELECT value FROM roles";
+        db_usr.all(sql, function (err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+/**
+ * Set roles value in database
+ */
+function setRoles(roles) {
+    return new Promise(async function (resolve, reject) {
+        for (var i = 0; i < roles.length; i++) {
+            const role = roles[i];
+            var value = JSON.stringify(role).replace(/\'/g,"''");
+            var sql = "INSERT OR REPLACE INTO roles (name, value) VALUES('" + role.id + "','"+ value + "');";
+            await db_usr.exec(sql, function (err) {
+                if (err) {
+                    logger.error(`usrstorage.set role failed! ${err}`);
+                    reject();
+                }
+            }); 
+        }
+        resolve();
+    });
+}
+
+/**
+ * Remove roles from database
+ */
+function removeRoles(roles) {
+    return new Promise(async function (resolve, reject) {
+        for (var i = 0; i < roles.length; i++) {
+            const role = roles[i];
+            var sql = "DELETE FROM roles WHERE name = '" + role.id + "'";
+            await db_usr.exec(sql, function (err) {
+                if (err) {
+                    logger.error(`usrstorage.remove role failed! ${err}`);
+                    reject();
+                }
+            });
+        }
+        resolve();
+    });
+}
+
+/**
  * Close the database
  */
 function close() {
@@ -197,5 +254,8 @@ module.exports = {
     setDefault: setDefault,
     getUsers: getUsers,
     setUser: setUser,
-    removeUser: removeUser
+    removeUser: removeUser,
+    getRoles: getRoles,
+    setRoles: setRoles,
+    removeRoles: removeRoles
 };

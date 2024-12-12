@@ -7,6 +7,9 @@ export class Script {
     parameters: ScriptParam[] = [];
     scheduling: ScriptScheduling;
     permission: number;
+    permissionRoles: {
+        enabled: string[];
+    };
     mode: ScriptMode = ScriptMode.SERVER;
     constructor(_id: string) {
         this.id = _id;
@@ -208,6 +211,14 @@ export class SystemFunctions {
         tooltip: 'script.sys-fnc-getAlarms-tooltip',
         params: [],
         paramsText: 'script.sys-fnc-getAlarms-params'
+    },
+    {
+        name: '$getAlarmsHistory',
+        mode: null,
+        text: 'script.sys-fnc-getAlarmsHistory-text',
+        tooltip: 'script.sys-fnc-getAlarmsHistory-tooltip',
+        params: [false, false],
+        paramsText: 'script.sys-fnc-getAlarmsHistory-params'
     },
     {
         name: '$ackAlarm',

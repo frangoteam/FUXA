@@ -9,6 +9,7 @@ import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
+import { Role } from '../../_models/user';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -195,6 +196,24 @@ export class ResClientService implements ResourceStorageService {
     }
 
     getReportsQuery(query: ReportsQuery): Observable<ReportFile[]> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getRoles(): Observable<Role[]> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setRoles(roles: Role[]): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    removeRoles(roles: Role[]): Observable<any> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });
