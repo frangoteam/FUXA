@@ -8,6 +8,7 @@ import { GaugeProperty, GaugeSettings, View, WidgetProperty } from '../../_model
 import { Script } from '../../_models/script';
 import { PropertyType } from './flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
+import { SettingsService } from '../../_services/settings.service';
 
 @Component({
     selector: 'gauge-property',
@@ -36,6 +37,7 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     constructor(public dialog: MatDialog,
                 public dialogRef: MatDialogRef<GaugePropertyComponent>,
+                private settingsService: SettingsService,
                 private cdr: ChangeDetectorRef,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
         this.dialogType = this.data.dlgType;
@@ -169,6 +171,18 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     isWidget() {
         return (this.property as WidgetProperty).type;
+    }
+
+    isRolePermission() {
+        return this.settingsService.getSettings()?.userRole;
+    }
+
+    havePermission() {
+        if (this.isRolePermission()) {
+            return this.property.permissionRoles?.show?.length || this.property.permissionRoles?.enabled?.length;
+        } else {
+            return this.property.permission;
+        }
     }
 }
 

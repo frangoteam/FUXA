@@ -109,7 +109,7 @@ export class GaugeBaseComponent {
         gaugeStatus.actionRef.type = act.type;
         if (toEnable) {
             if (gaugeStatus.actionRef.timer &&
-                (GaugeBaseComponent.getBlinkActionId(act) == gaugeStatus.actionRef.spool.actId)) {
+                (GaugeBaseComponent.getBlinkActionId(act) === gaugeStatus.actionRef.spool?.actId)) {
                 return;
             }
             GaugeBaseComponent.clearAnimationTimer(gaugeStatus.actionRef);

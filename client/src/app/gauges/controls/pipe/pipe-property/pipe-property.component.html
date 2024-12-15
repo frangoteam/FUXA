@@ -1,111 +1,133 @@
-<div style="width:700px;position: relative;margin-bottom: 40px">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-pipe-settings' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <mat-tab-group style="width: 100%;height: 560px;">
-        <mat-tab label="{{'pipe.property-props' | translate}}">
-            <div style="max-height: 495px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
-                <div style="display: block;">
-                    <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
+<div class="element-property">
+    <div class="element-property-title">
+        {{'pipe.property-title' | translate}}
+    </div>
+    <div class="pipe-selection">
+        <mat-tab-group style="height: 100%;">
+            <mat-tab label="{{'editor.settings-general' | translate}}">
+                <div class="element-property-header">
+                    <span>{{'pipe.property-data' | translate}}</span>
                 </div>
-                <div mat-dialog-content style="overflow: hidden; width:100%;padding-top: 20px;">
-                    <div id="pipe" style="width: 200px; height: 240px;margin-left: 60px;"></div>
-                    <!-- <flex-head [data]="data" [property]="property" #flexhead></flex-head> -->
-                    <div class="toolbox-right">
-                        <div class="field-row">
-                            <div class="my-form-field slider-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-border-width' | translate}}</span>
-                                <input numberOnly [(ngModel)]="options.borderWidth" (change)="onChangeValue('borderWidth', options.borderWidth)" max="100" min="0" step="1" 
-                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
-                            </div>
-                            <div class="my-form-field slider-field color-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-border-color' | translate}}</span>
-                                <input [(colorPicker)]="options.border" [style.background]="options.border" [cpAlphaChannel]="'always'" class="input-color"
-                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 126px"
-                                    [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('border', $event)" />
-                            </div>
+                <div class="block mt5">
+                    <flex-auth [name]="name"
+                               [permission]="property.permission"
+                               (onChanged)="onFlexAuthChanged($event)"
+                               [permissionMode]="'onlyShow'"
+                               #flexauth>
+                    </flex-auth>
+                </div>
+                <div class="element-property-header">
+                    <span>{{'pipe.property-style' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field inbk">
+                        <span>{{'pipe.property-border-width' | translate}}</span>
+                        <input numberOnly
+                               [(ngModel)]="options.borderWidth"
+                               (change)="onChangeValue('borderWidth', options.borderWidth)"
+                               max="100"
+                               min="0"
+                               step="1"
+                               type="number"
+                               class="style-size">
+                    </div>
+                    <div class="my-form-field ml10">
+                        <span>{{'pipe.property-border-color' | translate}}</span>
+                        <input [(colorPicker)]="options.border" [style.background]="options.border" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 80px"
+                            [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('border', $event)" />
+                    </div>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field inbk">
+                        <span>{{'pipe.property-pipe-width' | translate}}</span>
+                        <input numberOnly
+                               [(ngModel)]="options.pipeWidth"
+                               (change)="onChangeValue('pipeWidth', options.pipeWidth)"
+                               max="100"
+                               min="0"
+                               step="1"
+                               type="number"
+                               class="style-size">
+                    </div>
+                    <div class="my-form-field ml10">
+                        <span>{{'pipe.property-pipe-color' | translate}}</span>
+                        <input [(colorPicker)]="options.pipe" [style.background]="options.pipe" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 80px"
+                            [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('pipe', $event)" />
+                    </div>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field inbk">
+                        <span>{{'pipe.property-content-width' | translate}}</span>
+                        <input numberOnly
+                               [(ngModel)]="options.contentWidth"
+                               (change)="onChangeValue('contentWidth', options.contentWidth)"
+                               max="100"
+                               min="0"
+                               step="1"
+                               type="number"
+                               class="style-size">
+                    </div>
+                    <div class="my-form-field ml10">
+                        <span>{{'pipe.property-content-color' | translate}}</span>
+                        <input [(colorPicker)]="options.content" [style.background]="options.content" [cpAlphaChannel]="'always'" class="input-color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 80px"
+                            [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('content', $event)" />
+                    </div>
+                <!-- </div>
+                <div class="block mt5"> -->
+                    <div class="my-form-field ml10">
+                        <span>{{'pipe.property-content-space' | translate}}</span>
+                        <input numberOnly
+                               [(ngModel)]="options.contentSpace"
+                               (change)="onChangeValue('contentSpace', options.contentSpace)"
+                               min="0"
+                               step="1"
+                               type="number"
+                               class="style-size">
+                    </div>
+                </div>
+            </mat-tab>
+            <!-- <mat-tab label="{{'editor.settings-events' | translate}}">
+                <div class="events-toolbox">
+                    <button mat-icon-button (click)="onAddEvent()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+            </mat-tab> -->
+            <mat-tab label="{{'editor.settings-actions' | translate}}">
+                <div class="toolbox">
+                    <button mat-icon-button (click)="onEditActions()" matTooltip="{{'table.property-edit-actions-tooltip' | translate}}">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
+                <div class="mt30">
+                    <div *ngFor="let action of property?.actions; index as i" class="action-readonly-item">
+                        <div class="my-form-field tag">
+                            <span>{{'action-settings-readonly-tag' | translate}}</span>
+                            <input [value]="getActionTag(action)" type="text" readonly [disabled]="true">
                         </div>
-                        <div class="field-row">
-                            <div class="my-form-field slider-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-pipe-width' | translate}}</span>
-                                <input numberOnly [(ngModel)]="options.pipeWidth" (change)="onChangeValue('pipeWidth', options.pipeWidth)" max="100" min="0" step="1" 
-                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
+                        <div class="flex value mt5">
+                            <div class="my-form-field number inbk">
+                                <span>{{'gui.range-number-min' | translate}}</span>
+                                <input [value]="action?.range?.min" type="text" readonly [disabled]="true">
                             </div>
-                            <div class="my-form-field slider-field color-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-pipe-color' | translate}}</span>
-                                <input [(colorPicker)]="options.pipe" [style.background]="options.pipe" [cpAlphaChannel]="'always'" class="input-color"
-                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 126px"
-                                    [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('pipe', $event)" />
+                            <div class="my-form-field number inbk ml5">
+                                <span>{{'gui.range-number-max' | translate}}</span>
+                                <input [value]="action?.range?.max" type="text" readonly [disabled]="true">
                             </div>
-                        </div>
-                        <div class="field-row">
-                            <div class="my-form-field slider-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-content-width' | translate}}</span>
-                                <input numberOnly [(ngModel)]="options.contentWidth" (change)="onChangeValue('contentWidth', options.contentWidth)" max="100" min="0" step="1"
-                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
-                            </div>
-                            <div class="my-form-field slider-field color-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-content-color' | translate}}</span>
-                                <input [(colorPicker)]="options.content" [style.background]="options.content" [cpAlphaChannel]="'always'" class="input-color"
-                                    [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                    [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 126px"
-                                    [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('content', $event)" />
-                            </div>
-                        </div>
-                        <div class="field-row">
-                            <div class="my-form-field slider-field" style="padding-left: 12px">
-                                <span>{{'pipe.property-content-space' | translate}}</span>
-                                <input numberOnly [(ngModel)]="options.contentSpace" (change)="onChangeValue('contentSpace', options.contentSpace)" max="100" min="0" step="1"
-                                    style="width: 100px;text-align: left;display:inline-block;" type="number">
+                            <div class="my-form-field type inbk ml5">
+                                <span>{{'gauges.property-action-type' | translate}}</span>
+                                <input [value]="getActionType(action)" type="text" readonly [disabled]="true">
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </mat-tab>
-        <mat-tab label="{{'gauges.property-events' | translate}}" *ngIf="eventsSupported">
-            <div style="max-height: 495px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
-                <div style="display: block;">
-                    <div class="toolbox">
-                        <button mat-icon-button (click)="onAddEvent()">
-                            <mat-icon>add_circle_outline</mat-icon>
-                        </button>
-                    </div>
-                </div>
-                <div mat-dialog-content style="overflow: hidden; width:100%">
-                    <flex-event [property]="property" [views]="views" #flexevent *ngIf="eventsSupported" style="padding-bottom: 5px"></flex-event>
-                </div>
-            </div>
-        </mat-tab>
-        <mat-tab label="{{'gauges.property-actions' | translate}}" *ngIf="actionsSupported">
-            <div style="max-height: 495px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
-                <div style="display: block;">
-                    <div class="toolbox">
-                        <button mat-icon-button (click)="onAddAction()">
-                            <mat-icon>add_circle_outline</mat-icon>
-                        </button>
-                    </div>
-                </div>
-                <div mat-dialog-content style="overflow: hidden; width:100%">
-                    <flex-action [data]="data" [property]="property" [withBitmask]="true" #flexaction *ngIf="actionsSupported" style="padding-bottom: 5px"></flex-action>
-                </div>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
-    <!-- 
-    <div style="display: block; width: 660px;padding-top: 30px">
-        <div style="display: block;">
-            <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
-        </div>
-        <div mat-dialog-content style="overflow: hidden; width:100%">
-            <flex-head [data]="data" [property]="property" #flexhead></flex-head>
-        </div>
-    </div> -->
-    <!-- <div style="width: 760px; height: 620px; position: relative"> -->
-    <!-- </div> -->
-    <div mat-dialog-actions class="dialog-action">
-        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 </div>

@@ -9,7 +9,7 @@ import { Subject, map, takeUntil } from 'rxjs';
 @Component({
     selector: 'app-permission-dialog',
     templateUrl: './permission-dialog.component.html',
-    styleUrls: ['./permission-dialog.component.css']
+    styleUrls: ['./permission-dialog.component.scss']
 })
 export class PermissionDialogComponent implements AfterViewInit, OnDestroy {
     selected = [];
@@ -35,13 +35,13 @@ export class PermissionDialogComponent implements AfterViewInit, OnDestroy {
             ).subscribe((roles: Role[]) => {
                 this.options = roles?.map(role => <SelOptionType>{ id: role.id, label: role.name });
                 this.selected = this.options.filter(role => this.data.permissionRoles?.enabled?.includes(role.id));
-                this.extension = this.options.filter(role => this.data.permissionRoles?.show?.includes(role.id));
+                this.extension = this.data.mode ? null : this.options.filter(role => this.data.permissionRoles?.show?.includes(role.id));
             }, err => {
                 console.error('get Roles err: ' + err);
             });
         } else {
             this.selected = UserGroups.ValueToGroups(this.data.permission);
-            this.extension = UserGroups.ValueToGroups(this.data.permission, true);
+            this.extension = this.data.mode ? null : UserGroups.ValueToGroups(this.data.permission, true);
             this.options = UserGroups.Groups;
         }
         this.cdr.detectChanges();
@@ -66,11 +66,19 @@ export class PermissionDialogComponent implements AfterViewInit, OnDestroy {
                 this.data.permissionRoles = { show: null, enabled: null };
             }
             this.data.permissionRoles.enabled = this.seloptions.selected?.map(role => role.id);
-            this.data.permissionRoles.show = this.seloptions.extSelected?.map(role => role.id);
+            if (this.data.mode === 'onlyShow') {
+                this.data.permissionRoles.show = this.seloptions.selected?.map(role => role.id);
+            } else {
+                this.data.permissionRoles.show = this.seloptions.extSelected?.map(role => role.id);
+            }
 
         } else {
             this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
-            this.data.permission += UserGroups.GroupsToValue(this.seloptions.extSelected, true);
+            if (this.data.mode === 'onlyShow') {
+                this.data.permission += UserGroups.GroupsToValue(this.seloptions.selected, true);
+            } else {
+                this.data.permission += UserGroups.GroupsToValue(this.seloptions.extSelected, true);
+            }
         }
         this.dialogRef.close(this.data);
     }
@@ -82,4 +90,7 @@ export interface PermissionData {
         show: string[];
         enabled: string[];
     };
+    mode?: PermissionMode;
 }
+
+export type PermissionMode = 'onlyShow' | 'onlyEnable';

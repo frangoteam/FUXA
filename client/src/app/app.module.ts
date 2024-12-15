@@ -203,6 +203,8 @@ import { LayoutHeaderItemPropertyComponent } from './editor/layout-property/layo
 import { PermissionDialogComponent } from './gauges/gauge-property/permission-dialog/permission-dialog.component';
 import { UsersRoleEditComponent } from './users/users-role-edit/users-role-edit.component';
 import { UsersRolesComponent } from './users/users-roles/users-roles.component';
+import { ActionPropertiesDialogComponent } from './gauges/gauge-property/action-properties-dialog/action-properties-dialog.component';
+import { ActionPropertyService } from './gauges/gauge-property/action-properties-dialog/action-property.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -267,6 +269,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GaugeSemaphoreComponent,
         GaugePropertyComponent,
         PermissionDialogComponent,
+        ActionPropertiesDialogComponent,
         SvgSelectorComponent,
         ChartPropertyComponent,
         BagPropertyComponent,
@@ -428,6 +431,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ToastNotifierService,
         MyFileService,
         ReportsService,
+        ActionPropertyService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]
