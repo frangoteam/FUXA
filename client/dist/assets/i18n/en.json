@@ -693,6 +693,7 @@
 
     "editor.settings-general": "General",
     "editor.settings-events": "Events",
+    "editor.settings-actions": "Actions",
 
     "tags.ids-config-title": "Tags-Ids reference",
 
@@ -739,6 +740,9 @@
     "shapes.event-relativefrom-window": "Window",
     "shapes.event-relativefrom-mouse": "Mouse",
 
+    "pipe.property-title": "Pipe settings",
+    "pipe.property-data": "Data",
+    "pipe.property-style": "Style",
     "pipe.property-props": "Property",
     "pipe.property-border-width": "Border width",
     "pipe.property-border-color": "Border color",
@@ -1543,6 +1547,10 @@
     "plugin.group-connection-database": "Connection database",
     "plugin.group-chart-report": "Chart image for Report",
 
+    "action-settings-title": "Actions Settings",
+    "action-settings-readonly-tag": "Tag",
+    "action-settings-readonly-values": "Values",
+
     "msg.alarm-ack-all": "Would you like to ACK all alarms?",
     "msg.alarm-remove": "Would you like to remove Alarm?",
     "msg.text-remove": "Would you like to remove Text?",
@@ -1578,6 +1586,7 @@
     "msg.project-save-success": "Project save successful!",
     "msg.project-save-error": "Project save failed!",
     "msg.project-format-error": "Project wrong format!",
+    "msg.view-format-error": "View wrong format!",
     "msg.project-save-unauthorized": "Project save failed! Unauthorized!",
     "msg.project-save-ask": "Do you want to leave the project?",
     "msg.login-username-required": "Enter a username",
