@@ -1134,7 +1134,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let reader = new FileReader();
         reader.onload = (data) => {
             let view = JSON.parse(reader.result.toString());
-            if (view) {
+            if (this.projectService.verifyView(view)) {
                 let idx = 1;
                 let startname = view.name;
                 let existView = null;

@@ -1578,6 +1578,7 @@
     "msg.project-save-success": "Project save successful!",
     "msg.project-save-error": "Project save failed!",
     "msg.project-format-error": "Project wrong format!",
+    "msg.view-format-error": "View wrong format!",
     "msg.project-save-unauthorized": "Project save failed! Unauthorized!",
     "msg.project-save-ask": "Do you want to leave the project?",
     "msg.login-username-required": "Enter a username",

@@ -835,10 +835,10 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        this.translateService.get(msgCode).subscribe((txt: string) => { msgCode = txt; });
+        const msg = this.translateService.instant(msgCode);
         if (msgCode) {
-            console.error(`FUXA Error: ${msgCode}`);
-            this.toastr.error(msgCode, '', {
+            console.error(`FUXA Error: ${msg}`);
+            this.toastr.error(msg, '', {
                 timeOut: 3000,
                 closeButton: true,
                 disableTimeOut: true
@@ -875,11 +875,47 @@ export class ProjectService {
      * @param prj project data to save
      */
     setProject(prj: ProjectData, skipNotification = false) {
-        this.projectData = prj;
-        if (this.appService.isClientApp) {
-            this.projectData = ResourceStorageService.defileProject(prj);
+        if (this.verifyProject(prj)) {
+            this.projectData = prj;
+            if (this.appService.isClientApp) {
+                this.projectData = ResourceStorageService.defileProject(prj);
+            }
+            this.save(skipNotification);
         }
-        this.save(skipNotification);
+    }
+
+    verifyProject(prj: ProjectData): boolean {
+        let result = true;
+        if (Utils.isNullOrUndefined(prj.version)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(prj.hmi)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(prj.devices)) {
+            result = false;
+        }
+        if (!result) {
+            this.notifyError('msg.project-format-error');
+        }
+        return result;
+    }
+
+    verifyView(view: View): boolean {
+        let result = true;
+        if (Utils.isNullOrUndefined(view.svgcontent)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.id)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.profile)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.type)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.items)) {
+            result = false;
+        }
+        if (!result) {
+            this.notifyError('msg.view-format-error');
+        }
+        return result;
     }
 
     setNewProject() {
