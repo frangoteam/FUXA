@@ -66,11 +66,19 @@ export class PermissionDialogComponent implements AfterViewInit, OnDestroy {
                 this.data.permissionRoles = { show: null, enabled: null };
             }
             this.data.permissionRoles.enabled = this.seloptions.selected?.map(role => role.id);
-            this.data.permissionRoles.show = this.seloptions.extSelected?.map(role => role.id);
+            if (this.data.mode === 'onlyShow') {
+                this.data.permissionRoles.show = this.seloptions.selected?.map(role => role.id);
+            } else {
+                this.data.permissionRoles.show = this.seloptions.extSelected?.map(role => role.id);
+            }
 
         } else {
             this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
-            this.data.permission += UserGroups.GroupsToValue(this.seloptions.extSelected, true);
+            if (this.data.mode === 'onlyShow') {
+                this.data.permission += UserGroups.GroupsToValue(this.seloptions.selected, true);
+            } else {
+                this.data.permission += UserGroups.GroupsToValue(this.seloptions.extSelected, true);
+            }
         }
         this.dialogRef.close(this.data);
     }
