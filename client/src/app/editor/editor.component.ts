@@ -38,6 +38,7 @@ import { UploadFile } from '../_models/project';
 import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
 import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.component';
 import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service';
+import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 
 declare var Gauge: any;
 
@@ -1291,8 +1292,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         } else if (dlgType === GaugeDialogType.Pipe) {
             this.gaugeDialog.type = dlgType;
-            this.gaugeDialog.data = {
-                settings: tempsettings, dlgType: dlgType, names: names
+            this.gaugeDialog.data = <PipePropertyData>{
+                settings: tempsettings,
+                dlgType: dlgType,
+                names: names,
+                withEvents: eventsSupported,
+                withActions: actionsSupported,
             };
             if (!this.sidePanel.opened) {
                 this.sidePanel.toggle();

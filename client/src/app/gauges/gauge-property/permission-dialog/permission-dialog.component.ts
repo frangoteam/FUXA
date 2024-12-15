@@ -9,7 +9,7 @@ import { Subject, map, takeUntil } from 'rxjs';
 @Component({
     selector: 'app-permission-dialog',
     templateUrl: './permission-dialog.component.html',
-    styleUrls: ['./permission-dialog.component.css']
+    styleUrls: ['./permission-dialog.component.scss']
 })
 export class PermissionDialogComponent implements AfterViewInit, OnDestroy {
     selected = [];
@@ -35,13 +35,13 @@ export class PermissionDialogComponent implements AfterViewInit, OnDestroy {
             ).subscribe((roles: Role[]) => {
                 this.options = roles?.map(role => <SelOptionType>{ id: role.id, label: role.name });
                 this.selected = this.options.filter(role => this.data.permissionRoles?.enabled?.includes(role.id));
-                this.extension = this.options.filter(role => this.data.permissionRoles?.show?.includes(role.id));
+                this.extension = this.data.mode ? null : this.options.filter(role => this.data.permissionRoles?.show?.includes(role.id));
             }, err => {
                 console.error('get Roles err: ' + err);
             });
         } else {
             this.selected = UserGroups.ValueToGroups(this.data.permission);
-            this.extension = UserGroups.ValueToGroups(this.data.permission, true);
+            this.extension = this.data.mode ? null : UserGroups.ValueToGroups(this.data.permission, true);
             this.options = UserGroups.Groups;
         }
         this.cdr.detectChanges();
@@ -82,4 +82,7 @@ export interface PermissionData {
         show: string[];
         enabled: string[];
     };
+    mode?: PermissionMode;
 }
+
+export type PermissionMode = 'onlyShow' | 'onlyEnable';

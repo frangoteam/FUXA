@@ -1,12 +1,18 @@
-import { Component, AfterViewInit, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
-import { GaugeProperty, View } from '../../../../_models/hmi';
+import { GaugeAction, GaugeProperty, View } from '../../../../_models/hmi';
 import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
-import { FlexAuthComponent } from '../../../gauge-property/flex-auth/flex-auth.component';
+import { FlexAuthComponent, FlexAuthValues } from '../../../gauge-property/flex-auth/flex-auth.component';
 import { FlexEventComponent } from '../../../gauge-property/flex-event/flex-event.component';
 import { FlexActionComponent } from '../../../gauge-property/flex-action/flex-action.component';
 import { Utils } from '../../../../_helpers/utils';
 import { PipeOptions } from '../pipe.component';
+import { GaugeDialogType } from '../../../gauge-property/gauge-property.component';
+import { ActionPropertiesData, ActionPropertiesDialogComponent } from '../../../gauge-property/action-properties-dialog/action-properties-dialog.component';
+import { ProjectService } from '../../../../_services/project.service';
+import { Device, DevicesUtils } from '../../../../_models/device';
+import { ActionPropertyService } from '../../../gauge-property/action-properties-dialog/action-property.service';
 
 declare var SVG: any;
 
@@ -15,8 +21,8 @@ declare var SVG: any;
     templateUrl: './pipe-property.component.html',
     styleUrls: ['./pipe-property.component.scss']
 })
-export class PipePropertyComponent implements OnInit, AfterViewInit {
-    @Input() data: any;
+export class PipePropertyComponent implements OnInit {
+    @Input() data: PipePropertyData;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
     @Input('reload') set reload(b: any) {
         this._reload();
@@ -30,69 +36,56 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
     options: PipeOptions;
     views: View[];
     name: string;
-	eventsSupported: boolean;
-    actionsSupported: any;
     defaultColor = Utils.defaultColor;
     pipepath = { bk: null, fg: null, hp: null };
+    devices: Device[] = [];
 
-    constructor() {
+    constructor(
+        private dialog: MatDialog,
+        private projectService: ProjectService,
+        private actionPropertyService: ActionPropertyService) {
     }
 
     ngOnInit() {
-        this.eventsSupported = this.data.withEvents;
-		this.actionsSupported = this.data.withActions;
-        this.property = <GaugeProperty>JSON.parse(JSON.stringify(this.data.settings.property));
+        this.name = this.data.settings.name;
+        this.property = this.data.settings.property || new GaugeProperty();
         if (!this.property) {
             this.property = new GaugeProperty();
         }
-        this.name = this.data.settings.name;
-        this.options = <PipeOptions>this.property.options;
-        if (!this.options) {
-            this.options = new PipeOptions();
-            this.options.borderWidth = 11;
-            this.options.border = '#3F4964';
-            this.options.pipeWidth = 6;
-            this.options.pipe = '#E79180';
-            this.options.contentWidth = 6;
-            this.options.content = '#DADADA';
-            this.options.contentSpace = 20;
-        }
-        // this.permission = this.property.permission;
+        this.options = <PipeOptions>this.property.options ?? new PipeOptions();
+        this.devices = this.projectService.getDeviceList();
     }
 
-    ngAfterViewInit() {
-        // var draw = SVG().addTo('#pipe').size('100%', '100%');
-        // this.pipepath.bk = draw.path('m 1,120 200,0');
-        // this.pipepath.fg = draw.path('m 1,120 200,0');
-        // this.pipepath.hp = draw.path('m 1,120 200,0');
-        // this.redrawPipe();
+    onFlexAuthChanged(flexAuth: FlexAuthValues) {
+        this.name = flexAuth.name;
+        this.property.permission = flexAuth.permission;
+        this.property.permissionRoles = flexAuth.permissionRoles;
+        this.onPipeChanged();
     }
 
     onPipeChanged() {
-        this.property.options = JSON.parse(JSON.stringify(this.options));
+        this.data.settings.name = this.name;
+        this.data.settings.property = this.property;
+        this.data.settings.property.options = this.options;
         this.onPropChanged.emit(this.data.settings);
     }
 
-    onOkClick(): void {
-        this.data.settings.property = this.property;
-        this.data.settings.property.permission = this.flexAuth.permission;
-        this.data.settings.property.options = this.options;
-        this.data.settings.name = this.flexAuth.name;
-		if (this.flexEvent) {
-			this.data.settings.property.events = this.flexEvent.getEvents();
-		}
-		if (this.flexAction) {
-			this.data.settings.property.actions = this.flexAction.getActions();
-		}
-    }
-    redrawPipe() {
-        this.pipepath.fg.stroke({ color: this.options.pipe, width: this.options.pipeWidth});
-        this.pipepath.fg.fill('none');
-        this.pipepath.bk.stroke({ color: this.options.border, width: this.options.borderWidth});
-        this.pipepath.bk.fill('none');
-        let space = '' + this.options.contentSpace + ' ' + this.options.contentSpace;
-        this.pipepath.hp.stroke({ color: this.options.content, width: this.options.contentWidth, dasharray: space });
-        this.pipepath.hp.fill('none');
+    onEditActions() {
+        let dialogRef = this.dialog.open(ActionPropertiesDialogComponent, {
+            disableClose: true,
+            data: <ActionPropertiesData>{
+                withActions: this.data.withActions,
+                property: JSON.parse(JSON.stringify(this.property))
+            },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe((result: ActionPropertiesData) => {
+            if (result) {
+                this.property = result.property;
+                this.onPipeChanged();
+            }
+        });
     }
 
     onChangeValue(type, value) {
@@ -111,7 +104,7 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
         } else if (type == 'contentSpace') {
             this.options.contentSpace = value;
         }
-        this.redrawPipe();
+        this.onPipeChanged();
     }
 
     onAddEvent() {
@@ -122,6 +115,14 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
 		this.flexAction.onAddAction();
 	}
 
+    getActionTag(action: GaugeAction) {
+        let tag = DevicesUtils.getTagFromTagId(this.devices, action.variableId);
+        return tag?.label || tag?.name;
+    }
+    getActionType(action: GaugeAction) {
+        return this.actionPropertyService.typeToText(action.type);
+    }
+
     private _reload() {
         this.property = this.data.settings.property;
         if (this.property) {
@@ -131,4 +132,12 @@ export class PipePropertyComponent implements OnInit, AfterViewInit {
             this.ngOnInit();
         }
     }
+}
+
+export interface PipePropertyData {
+    settings: any,
+    dlgType: GaugeDialogType,
+    names: string[],
+    withEvents: boolean,
+    withActions: any,
 }

@@ -929,6 +929,10 @@ export class ProjectService {
         return result;
     }
 
+    getDeviceList(): Device[] {
+        return Object.values(this.getDevices());
+    }
+
     getDeviceFromId(id: string): any {
         let result;
         Object.keys(this.projectData.devices).forEach(k => {

@@ -1,0 +1,18 @@
+:host {
+    .container {
+        width: 350px;
+
+        .label {
+            display: inline-block;
+        }
+
+        .label-show {
+            width: 45px;
+            text-align: center;
+        }
+
+        .label-enable {
+            width: 70px;
+        }
+    }
+}
