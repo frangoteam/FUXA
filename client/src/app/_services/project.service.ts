@@ -578,7 +578,7 @@ export class ProjectService {
                 this.projectData.notifications.push(notification);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetNotification, notification, this.projectData).subscribe(result => {
-                if (old && old.id && old.id !== notification.id) {
+                if (old?.id && old.id !== notification.id) {
                     this.removeNotification(old).subscribe(result => {
                         observer.next();
                     });

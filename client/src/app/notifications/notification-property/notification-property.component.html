@@ -1,60 +1,46 @@
-<div>
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'notification.property-title' | translate}}</h1>
+<form [formGroup]="formGroup"
+      class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'notification.property-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content *ngIf="data.editmode < 0">
-        {{'msg.notification-remove' | translate}} '{{data.notification.name}}' ?
-    </div>
-    <div mat-dialog-content *ngIf="data.editmode >= 0">
-        <div style="display: block;">
-            <div class="my-form-field">
-                <span>{{'notification.property-name' | translate}}</span>
-                <input [(ngModel)]="data.notification.name" type="text" style="width:400px">
-            </div>
+    <div mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>*{{'notification.property-name' | translate}}</span>
+            <input formControlName="name" type="text">
         </div>
-        <div style="display: block; margin-top: 10px;">
-            <div class="my-form-field">
-                <span>{{'notification.property-receiver' | translate}}</span>
-                <input [(ngModel)]="data.notification.receiver" type="text" style="width:400px">
-            </div>
+        <div class="my-form-field item-block mt10">
+            <span>*{{'notification.property-receiver' | translate}}</span>
+            <input formControlName="receiver" type="text">
         </div>
-        <div style="display: block; margin-top: 10px">
+        <div class="block mt10">
             <div class="my-form-field">
-                <span>{{'notification.property-type' | translate}}</span>
-                <mat-select [(value)]="data.notification.type" style="width: 207px" (selectionChange)="onTypeChanged(data.notification.type)">
-                    <mat-option [value]="notificationAlarm"> {{ notificationsType[notificationAlarm] }} </mat-option>                    
+                <span>*{{'notification.property-type' | translate}}</span>
+                <mat-select formControlName="type" style="width: 207px">
+                    <mat-option [value]=""> </mat-option>
+                    <mat-option [value]="notificationAlarm"> {{ notificationsType[notificationAlarm] }} </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field" style="margin-left: 10px; max-width:80px">
+            <div class="my-form-field ml15">
                 <span>{{'notification.property-delay' | translate}}</span>
-                <input numberOnly [(ngModel)]="data.notification.delay" type="number" max="60" min="1" step="1" style="width:80px">
+                <input numberOnly formControlName="delay" type="number" max="60" min="1" step="1" style="width:80px">
             </div>
-            <div class="my-form-field" style="margin-left: 16px; max-width:80px">
+            <div class="my-form-field ml15">
                 <span>{{'notification.property-interval' | translate}}</span>
-                <input numberOnly [(ngModel)]="data.notification.interval" type="number" max="60" min="0" step="1" style="width:80px">
+                <input numberOnly formControlName="interval" type="number" max="60" min="0" step="1" style="width:80px">
             </div>
-        </div>
-        <div style="display: block; margin-top: 10px">
-            <div class="my-form-field" style="float: right; margin-right: 30px;">
+            <div class="my-form-field ml20">
                 <span>{{'notification.property-enabled' | translate}}</span>
-                <mat-slide-toggle color="primary" [(ngModel)]="data.notification.enabled" style="vertical-align: middle;"></mat-slide-toggle>
+                <mat-slide-toggle color="primary" formControlName="enabled" style="vertical-align: middle;"></mat-slide-toggle>
             </div>
         </div>
-        <div style="display: block; margin-top: 10px;width: 400px">
-            <div class="my-form-field" *ngIf="data.notification.type === notificationAlarm">
-                <span>{{'notification.property-priority' | translate}}</span>
-                <mat-checkbox *ngFor="let item of alarmsType" (change)="onSubscriptionChanged(item, $event.checked)" [checked]="getTypeValue(item)" style="margin: 7px 10px 7px 10px;">
-                    {{'alarm.property-' + item | translate}}
-                </mat-checkbox>
-            </div>
-        </div>
-        <div style="display: block; margin-top: 10px; height: 20px; margin-bottom: 10px;">
-            <div class="message-error" *ngIf="errorMissingValue">
-                <span>{{'msg.notification-property-missing-value' | translate}}</span>
-            </div>
+        <div class="my-form-field block mt10" *ngIf="formGroup.value.type === notificationAlarm">
+            <span>{{'notification.property-priority' | translate}}</span>
+            <mat-checkbox *ngFor="let item of alarmsType" (change)="onSubscriptionChanged(item, $event.checked)" [checked]="getTypeValue(item)" style="margin: 7px 10px 7px 10px;">
+                {{'alarm.property-' + item | translate}}
+            </mat-checkbox>
         </div>
     </div>
-    <div mat-dialog-actions class="dialog-action">
+    <div mat-dialog-actions class="dialog-action mt10">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
     </div>
-</div>
+</form>

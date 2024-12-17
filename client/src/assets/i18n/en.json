@@ -1605,5 +1605,7 @@
     "msg.templates-exist-ask-overwrite": "The template with name '{{value}}' already exist. Do you want to overwrite it?",
     "msg.templates-save-success": "Template save successful!",
     "msg.view-name-exist": "View name exist!",
-    "msg.file-remove": "Would you like to remove '{{value}}'?"
+    "msg.notification-name-exist": "Notification name exist!",
+    "msg.file-remove": "Would you like to remove '{{value}}'?",
+    "msg.notification-remove": "Would you like to remove Notification '{{value}}'?"
 }
