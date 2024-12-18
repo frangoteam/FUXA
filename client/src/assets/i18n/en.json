@@ -1208,7 +1208,7 @@
     "notifications.list-subscriptions": "Subscriptions",
     "notification.property-title": "Notification",
     "notification.property-name": "Name",
-    "notification.property-receiver": "Receivers (Mail address ';')",
+    "notification.property-receiver": "Receivers: Address (Mail) ';' / WebApi (Telegram https://api.telegram.org/bot...${content})",
     "notification.property-type": "Type",
     "notification.property-delay": "Delay (min.)",
     "notification.property-interval": "Interval (min.)",
