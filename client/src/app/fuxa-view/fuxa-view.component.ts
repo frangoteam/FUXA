@@ -460,7 +460,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     clearTimeout(clickTimeout);
                     self.runEvents(self, ga, ev, dblclickEvents);
                     ev.preventDefault();
-                })
+                });
             }
 
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
