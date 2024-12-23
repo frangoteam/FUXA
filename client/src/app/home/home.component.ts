@@ -14,7 +14,7 @@ import { HmiService, ScriptOpenCard, ScriptSetView } from '../_services/hmi.serv
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType, LoginOverlayColorType } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType, LoginOverlayColorType, GaugeEvent } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -457,10 +457,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 this.headerItemsMap.get(sigId).push(item);
             });
-            const settingsProperty = <GaugeSettings>{
-                property: item.property,
-                type: HtmlButtonComponent.TypeTag
-            };
+            const settingsProperty = new GaugeSettings(null, HtmlButtonComponent.TypeTag);
+            settingsProperty.property = item.property;
             this.onBindMouseEvents(item.element, settingsProperty);
         });
         this.hmiService.homeTagsSubscribe(Array.from(this.headerItemsMap.keys()));
@@ -469,32 +467,51 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private onBindMouseEvents(element: HTMLElement, ga: GaugeSettings) {
         if (element) {
             let clickEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
-            if (clickEvents && clickEvents.length > 0) {
+            if (clickEvents?.length > 0) {
                 element.onclick = (ev: MouseEvent) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                    this.handleMouseEvent(ga, ev, clickEvents);
                 };
                 element.ontouchstart = (ev) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                    this.handleMouseEvent(ga, ev, clickEvents);
                 };
 
             }
             let mouseDownEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
-            if (mouseDownEvents && mouseDownEvents.length > 0) {
+            if (mouseDownEvents?.length > 0) {
                 element.onmousedown = (ev) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseDownEvents);
+                    this.handleMouseEvent(ga, ev, mouseDownEvents);
                 };
             }
             let mouseUpEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
-            if (mouseUpEvents && mouseUpEvents.length > 0) {
+            if (mouseUpEvents?.length > 0) {
                 element.onmouseup = (ev) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseUpEvents);
+                    this.handleMouseEvent(ga, ev, mouseUpEvents);
                 };
             }
         }
     }
 
+    private handleMouseEvent(
+        ga: GaugeSettings,
+        ev: Event,
+        events: GaugeEvent[]
+    ) {
+        let fuxaviewRef = this.fuxaview ?? this.cardsview.getFuxaView(0);
+        if (!fuxaviewRef) {
+            return;
+        }
+        const homeEvents = events.filter(event => event.action === 'onpage');
+        homeEvents.forEach(event => {
+            this.onGoToPage(event.actparam);
+        });
+        const fuxaViewEvents = events.filter(event => event.action !== 'onpage');
+        if (fuxaViewEvents.length > 0) {
+            fuxaviewRef.runEvents(fuxaviewRef, ga, ev, events);
+        }
+    }
+
     private setBackground() {
-        if (this.homeView && this.homeView.profile) {
+        if (this.homeView?.profile) {
             this.backgroudColor = this.homeView.profile.bkcolor;
         }
     }
