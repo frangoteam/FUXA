@@ -34,6 +34,7 @@ const appRoutes: Routes = [
     { path: 'scripts', component: ScriptListComponent, canActivate: [AuthGuard] },
     { path: 'reports', component: ReportListComponent, canActivate: [AuthGuard] },
     { path: 'text', component: TextListComponent, canActivate: [AuthGuard] },
+    { path: 'logs', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'events', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'view', component: ViewComponent },
 

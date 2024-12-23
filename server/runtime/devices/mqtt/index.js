@@ -466,7 +466,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
         var result = {};
         for (var id in data.tags) {
             if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
-                data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, varsValue[id] ? varsValue[id].value : null, data.tags[id]);
+                data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, varsValue[id] ? varsValue[id].value : null, data.tags[id], runtime);
                 if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                     result[id] = data.tags[id];
                 }

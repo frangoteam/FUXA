@@ -31,6 +31,9 @@
         <div *ngSwitchCase="gaugeDialogType.Panel">
             <app-panel-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-panel-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.Pipe">
+            <app-pipe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-pipe-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
