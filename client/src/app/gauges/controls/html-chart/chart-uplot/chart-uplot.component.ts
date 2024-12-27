@@ -298,6 +298,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                     serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
                 }
             }
+            if (line.zones) {
+                const zones = this.generateZones(line.zones, line.color);
+                if (zones) {
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                }
+            }
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
@@ -611,3 +617,5 @@ interface ValueType {
 interface ValueDictionary {
     [key: string]: ValueType[];
 }
+
+type Zone = [number, string];
