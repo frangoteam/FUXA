@@ -28,8 +28,8 @@
 			</ng-container>
 			
 			<ng-container matColumnDef="groups">
-				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'users.list-groups' | translate}} </mat-header-cell>
-				<mat-cell *matCellDef="let element"> {{groupValueToLabel(element.groups)}} </mat-cell>
+				<mat-header-cell *matHeaderCellDef mat-sort-header> {{ (isRolePermission() ? 'users.list-roles' : 'users.list-groups') | translate}} </mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{permissionValueToLabel(element)}} </mat-cell>
 			</ng-container>
 
 			<ng-container matColumnDef="start">

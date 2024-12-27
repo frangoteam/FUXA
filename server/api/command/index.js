@@ -30,10 +30,10 @@ module.exports = {
          * GET download
          */
         commandApp.get('/api/download', secureFnc, function(req, res){
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post command: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post command: Unauthorized");
             } else {
@@ -68,10 +68,10 @@ module.exports = {
          * GET get tags values
          */
         commandApp.get("/api/getTagValue", secureFnc, async function (req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get getTagValue: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api get getTagValue: Unauthorized");
             } else {
@@ -112,10 +112,10 @@ module.exports = {
          * POST set tags values
          */
         commandApp.post("/api/setTagValue", secureFnc, async function (req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post setTagValue: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post setTagValue: Unauthorized");
             } else {

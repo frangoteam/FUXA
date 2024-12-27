@@ -21,6 +21,10 @@ export enum AlarmsType {
 export class AlarmProperty {
     variableId: string;
     permission: number;
+    permissionRoles: {
+        show: string[];
+        enabled: string[];
+    };
 }
 
 export class AlarmStatus {

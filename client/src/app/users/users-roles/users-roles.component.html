@@ -1,0 +1,53 @@
+<div class="header-panel">
+    <mat-icon>groups</mat-icon>
+    {{'roles.list-title' | translate}}
+</div>
+<div class="work-panel">
+	<div class="container">
+		<mat-table #table [dataSource]="dataSource" matSort>
+			<ng-container matColumnDef="select">
+				<mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+					<button mat-icon-button (click)="onAddRole()" class="remove">
+						<mat-icon>add</mat-icon>
+					</button>
+				</mat-header-cell>
+				<mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+					<button mat-icon-button (click)="onEditRole(element)" class="remove">
+						<mat-icon>edit</mat-icon>
+					</button>
+				</mat-cell>
+			</ng-container>
+
+			<ng-container matColumnDef="index">
+				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'roles.list-index' | translate}} </mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.index}} </mat-cell>
+			</ng-container>
+
+			<ng-container matColumnDef="name">
+				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'roles.list-name' | translate}} </mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+			</ng-container>
+			
+			<ng-container matColumnDef="description">
+				<mat-header-cell *matHeaderCellDef mat-sort-header> {{'roles.list-description' | translate}} </mat-header-cell>
+				<mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+			</ng-container>
+
+			<ng-container matColumnDef="remove">
+				<mat-header-cell *matHeaderCellDef> </mat-header-cell>
+				<mat-cell *matCellDef="let element">
+					<button mat-icon-button (click)="$event.stopPropagation();onRemoveRole(element)" class="remove">
+						<mat-icon>clear</mat-icon>
+					</button>
+				</mat-cell>
+			</ng-container>
+
+			<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+			<mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+		</mat-table>
+	</div>
+</div>
+
+<button mat-fab color="primary" (click)="onAddRole()" class="fab-add">
+	<mat-icon class="">add</mat-icon>
+</button>

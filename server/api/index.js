@@ -93,10 +93,10 @@ function init(_server, _runtime) {
              * POST Server user settings
              */
             apiApp.post("/api/settings", authJwt.verifyToken, function(req, res, next) {
-                var groups = verifyGroups(req);
+                const permission = verifyGroups(req);
                 if (res.statusCode === 403) {
                     runtime.logger.error("api post settings: Tocken Expired");
-                } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+                } else if (!authJwt.haveAdminPermission(permission)) {
                     res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                     runtime.logger.error("api post settings: Unauthorized");
                 } else {
@@ -152,6 +152,7 @@ function mergeUserSettings(settings) {
     runtime.settings.broadcastAll = settings.broadcastAll;
     runtime.settings.secureEnabled = settings.secureEnabled;
     runtime.settings.logFull = settings.logFull;
+    runtime.settings.userRole = settings.userRole;
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
     }
@@ -167,7 +168,15 @@ function mergeUserSettings(settings) {
 }
 
 function verifyGroups(req) {
-    return (runtime.settings && runtime.settings.secureEnabled) ? ((req.tokenExpired) ? 0 : req.userGroups) : authJwt.adminGroups[0];
+    if (runtime.settings && runtime.settings.secureEnabled) {
+        if (req.tokenExpired) {
+            return (runtime.settings.userRole) ? null : 0;
+        }
+        const userInfo = runtime.users.getUserCache(req.userId);
+        return (runtime.settings.userRole && req.userId !== 'admin') ? userInfo : userInfo ? userInfo.groups : req.userGroups;
+    } else {
+        return authJwt.adminGroups[0];
+    }
 }
 
 function start() {

@@ -144,8 +144,9 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         let views = JSON.parse(JSON.stringify(this.data.views));
         views.unshift({id: '', name: ''});
         let dialogRef = this.dialog.open(LayoutMenuItemPropertyComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: { item: eitem, views: views, permission: eitem.permission }
+            data: { item: eitem, views: views, permission: eitem.permission, permissionRoles: eitem.permissionRoles }
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -157,6 +158,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
                     item.view = result.item.view;
                     item.link = result.item.link;
                     item.permission = result.permission;
+                    item.permissionRoles = result.permissionRoles;
                 } else {
                     let nitem = new NaviItem();
                     nitem.icon = result.item.icon;
@@ -165,6 +167,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
                     nitem.view = result.item.view;
                     nitem.link = result.item.link;
                     nitem.permission = result.permission;
+                    nitem.permissionRoles = result.permissionRoles;
                     this.draggableListLeft.push(nitem);
                 }
             }

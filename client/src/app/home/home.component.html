@@ -98,13 +98,19 @@
 		</div>
 		<div id="container"  [ngClass]="showNavigation?'home-container-nav':'home-container'" #container (click)="checkToCloseSideNav()">
 			<ng-container *ngIf="!showHomeLink && homeView">
-				<app-cards-view *ngIf="homeView.type === cardViewType" #cardsview [edit]="false" [options]="gridOptions"
-					[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
-				</app-cards-view>
-				<app-fuxa-view *ngIf="homeView.type !== cardViewType" #fuxaview class="home-body" id="home" [view]="homeView"
-					[hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)">
-				</app-fuxa-view>
-			</ng-container>
+				<ng-container [ngSwitch]="homeView.type">
+					<ng-container *ngSwitchCase="cardViewType">
+						<app-cards-view #cardsview [edit]="false" [options]="gridOptions"
+							[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
+						</app-cards-view>
+					</ng-container>
+					<ng-container *ngSwitchDefault>
+						<app-fuxa-view #fuxaview class="home-body" id="home" [view]="homeView"
+								[hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)">
+							</app-fuxa-view>
+						</ng-container>
+					</ng-container>
+				</ng-container>
 			<ng-container *ngFor="let iframe of iframes">
 				<app-iframe [link]="iframe.link" class="home-body" [style.display]="iframe.hide ? 'none' : 'block'" style="width:100%; height:100%"></app-iframe>
 			</ng-container>

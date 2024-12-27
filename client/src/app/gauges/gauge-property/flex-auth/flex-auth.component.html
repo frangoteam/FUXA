@@ -1,15 +1,16 @@
 <div class="my-form-field">
     <span>{{'gauges.property-name' | translate}}</span>
-    <input [(ngModel)]="name" style="width: 220px" type="text">
+    <input [(ngModel)]="name" style="width: 220px" type="text" (change)="onEmitValues()" (keyup.enter)="onEmitValues()">
 </div>
 <div class="my-form-field" style="vertical-align: bottom; margin-left: 13px;">
     <span>{{'gauges.property-permission' | translate}}</span>
     <div style="text-align:center;cursor:pointer;" class="my-form-field-permission" (click)="onEditPermission()">
-        <ng-container *ngIf="permission; else nothing">
-            <mat-icon  class="header-icon" style="line-height: 28px;">lock</mat-icon>
-        </ng-container>
-        <ng-template #nothing>
-            <mat-icon class="header-icon" style="line-height: 28px;">lock_open</mat-icon>
-    </ng-template>
+        <mat-icon *ngIf="havePermission(); else unlock"
+                    class="header-icon"
+                    style="line-height: 28px;">lock</mat-icon>
+        <ng-template #unlock>
+            <mat-icon class="header-icon"
+                        style="line-height: 28px;">lock_open</mat-icon>
+        </ng-template>
     </div>
 </div>

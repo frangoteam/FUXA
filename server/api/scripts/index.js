@@ -31,10 +31,11 @@ module.exports = {
          * Run script, can be call with script id or script content as test
          */
          scriptsApp.post("/api/runscript", secureFnc, function (req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runscript: Tocken Expired");
-            } else if (!runtime.scriptsMgr.isAuthorised(req.body.params.script, groups)) {
+                //runtime.settings.secureEnabled
+            } else if (!runtime.scriptsMgr.isAuthorised(req.body.params.script, permission)) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post runscript: Unauthorized");
             } else {

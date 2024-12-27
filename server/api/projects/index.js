@@ -32,8 +32,8 @@ module.exports = {
          * Take from project storage and reply 
          */
         prjApp.get("/api/project", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
-            runtime.project.getProject(req.userId, groups).then(result => {
+            const permission = checkGroupsFnc(req);
+            runtime.project.getProject(req.userId, permission).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
@@ -60,10 +60,10 @@ module.exports = {
          * Set to project storage
          */
         prjApp.post("/api/project", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post project: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post project: Unauthorized");
             } else {
@@ -88,10 +88,10 @@ module.exports = {
          * Set the value (general/view/device/...) to project storage
          */
         prjApp.post("/api/projectData", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post projectData: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post projectData: Unauthorized");
             } else {
@@ -132,10 +132,10 @@ module.exports = {
          * Take from project storage and reply 
          */
         prjApp.get("/api/device", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get device: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api get device: Unauthorized");
             } else {
@@ -164,10 +164,10 @@ module.exports = {
          * Set to project storage
          */
         prjApp.post("/api/device", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post device: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post device: Unauthorized");
             } else {

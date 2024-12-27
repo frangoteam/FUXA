@@ -241,9 +241,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         torun.outputId = this.script.id;
         torun.code = this.script.code;
         this.scriptService.runScript(torun).subscribe(result => {
-            if (result) {
-                this.console.push(JSON.stringify(result));
-            }
+            this.console.push(JSON.stringify(result));
         }, err => {
             this.console.push((err.message) ? err.message : err);
             if (err.error) {

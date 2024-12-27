@@ -7,6 +7,8 @@ declare const numeral: any;
 export class Utils {
 
     static _seed = Date.now();
+    static minDate = new Date(1970, 0, 1);
+    static maxDate = new Date(2100, 11, 31);
 
     static defaultColor = ['#FFFFFF', '#000000', '#EEECE1', '#1F497D', '#4F81BD', '#C0504D', '#9BBB59', '#8064A2', '#4BACC6',
         '#F79646', '#C00000', '#FF0000', '#FFC000', '#FFD04A', '#FFFF00', '#92D050', '#0AC97D', '#00B050', '#00B0F0', '#4484EF', '#3358C0',
@@ -135,6 +137,16 @@ export class Utils {
             result = [...result, ...idsAndTypes];
         }
         return result;
+    }
+
+    static cleanObject(object: any): any {
+        const cleanObject: any = {};
+        for (const key in object) {
+            if (object[key] != null) {
+                cleanObject[key] = object[key];
+            }
+        }
+        return cleanObject;
     }
 
     static isNullOrUndefined(ele) {

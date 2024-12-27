@@ -304,7 +304,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                     requestItemsMap[id] = [reqdata[i]];
                     reqdata[i].changed = varsValue[id] && reqdata[i].value !== varsValue[id].value;
                     if (!utils.isNullOrUndefined(reqdata[i].value)) {
-                        reqdata[i].value = await deviceUtils.tagValueCompose(reqdata[i].value, varsValue[id] ? varsValue[id].value : null, data.tags[id]);
+                        reqdata[i].value = await deviceUtils.tagValueCompose(reqdata[i].value, varsValue[id] ? varsValue[id].value : null, data.tags[id], runtime);
                         reqdata[i].timestamp = timestamp;
                         if (this.addDaq && deviceUtils.tagDaqToSave(reqdata[i], timestamp)) {
                             changed[id] = reqdata[i];
