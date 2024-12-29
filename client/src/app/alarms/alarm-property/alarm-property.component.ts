@@ -28,6 +28,7 @@ export class AlarmPropertyComponent implements OnInit {
     actionSetView = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView);
     actionSetValue = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setValue);
     actionRunScript = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.runScript);
+    actionToastMessage = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.toastmessage);
     // actionSendMsg = Utils.getEnumKey(AlarmActionsType, AlarmActionsType.sendMsg);
 
     errorExist = false;
