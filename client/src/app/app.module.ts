@@ -97,7 +97,7 @@ import { ValueComponent } from './gauges/controls/value/value.component';
 
 import { FlexVariablesMappingComponent } from './gauges/gauge-property/flex-variables-mapping/flex-variables-mapping.component';
 import { FlexVariableMapComponent } from './gauges/gauge-property/flex-variable-map/flex-variable-map.component';
-import { GaugePropertyComponent, DialogGaugePermission } from './gauges/gauge-property/gauge-property.component';
+import { GaugePropertyComponent } from './gauges/gauge-property/gauge-property.component';
 import { ChartPropertyComponent } from './gauges/controls/html-chart/chart-property/chart-property.component';
 import { FlexInputComponent } from './gauges/gauge-property/flex-input/flex-input.component';
 import { FlexAuthComponent } from './gauges/gauge-property/flex-auth/flex-auth.component';
@@ -200,6 +200,11 @@ import { ReportsService } from './_services/reports.service';
 import { ChartLinePropertyComponent } from './editor/chart-config/chart-line-property/chart-line-property.component';
 import { LayoutMenuItemPropertyComponent } from './editor/layout-property/layout-menu-item-property/layout-menu-item-property.component';
 import { LayoutHeaderItemPropertyComponent } from './editor/layout-property/layout-header-item-property/layout-header-item-property.component';
+import { PermissionDialogComponent } from './gauges/gauge-property/permission-dialog/permission-dialog.component';
+import { UsersRoleEditComponent } from './users/users-role-edit/users-role-edit.component';
+import { UsersRolesComponent } from './users/users-roles/users-roles.component';
+import { ActionPropertiesDialogComponent } from './gauges/gauge-property/action-properties-dialog/action-properties-dialog.component';
+import { ActionPropertyService } from './gauges/gauge-property/action-properties-dialog/action-property.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -263,7 +268,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GaugeProgressComponent,
         GaugeSemaphoreComponent,
         GaugePropertyComponent,
-        DialogGaugePermission,
+        PermissionDialogComponent,
+        ActionPropertiesDialogComponent,
         SvgSelectorComponent,
         ChartPropertyComponent,
         BagPropertyComponent,
@@ -324,7 +330,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ChartLinePropertyComponent,
         GraphSourceEditComponent,
         UsersComponent,
+        UsersRolesComponent,
         UserEditComponent,
+        UsersRoleEditComponent,
         LoginComponent,
         DialogUserInfo,
         ViewComponent,
@@ -423,6 +431,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ToastNotifierService,
         MyFileService,
         ReportsService,
+        ActionPropertyService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]

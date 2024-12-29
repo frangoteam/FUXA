@@ -1,0 +1,16 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.gauge-permission-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field block mb10">
+            <span *ngIf="!data.mode || data.mode === 'onlyShow'" class="label label-show">{{'dlg.gauge-permission-show' | translate}}</span>
+            <span *ngIf="!data.mode || data.mode === 'onlyEnable'" class="label label-enable">{{'dlg.gauge-permission-enabled' | translate}}</span>
+            <span class="label">{{'dlg.gauge-permission-label' | translate}}</span>
+            <sel-options class="block" #seloptions [selected]="selected" [options]="options" [extSelected]="extension"></sel-options>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

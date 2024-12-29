@@ -1,0 +1,20 @@
+:host {
+    .container {
+        .mat-dialog-content
+        {
+            width: 500px;
+            min-height: 220px;
+            overflow: hidden;
+            padding-bottom: 7px;
+            .item-block {
+                display: block;
+
+                mat-select,
+                input,
+                span {
+                    width: calc(100% - 5px);
+                }
+            }
+        }
+    }
+}

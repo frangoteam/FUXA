@@ -5,9 +5,9 @@ import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_L
 import { GaugeOptions, GaugeType, } from '../../../../gui-helpers/ngx-gauge/gaugeOptions';
 import { NgxGaugeComponent } from '../../../../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { GaugeProperty } from '../../../../_models/hmi';
-import { DialogGaugePermission } from '../../../gauge-property/gauge-property.component';
 import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
 import { Define } from '../../../../_helpers/define';
+import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 
 @Component({
     selector: 'bag-property',
@@ -78,18 +78,18 @@ export class BagPropertyComponent implements AfterViewInit {
     }
 
     onEditPermission() {
-		let permission = this.property.permission;
-		let dialogRef = this.dialog.open(DialogGaugePermission, {
-			position: { top: '60px' },
-			data: { permission: permission }
-		});
+        let dialogRef = this.dialog.open(PermissionDialogComponent, {
+            position: { top: '60px' },
+            data: <PermissionData>{ permission: this.property.permission, permissionRoles: this.property.permissionRoles }
+        });
 
-		dialogRef.afterClosed().subscribe(result => {
-			if (result) {
-				this.property.permission = result.permission;
-			}
-		});
-	}
+        dialogRef.afterClosed().subscribe((result: PermissionData) => {
+            if (result) {
+                this.property.permission = result.permission;
+                this.property.permissionRoles = result.permissionRoles;
+            }
+        });
+    }
 
     onGaugeChange(type: GaugeType) {
         if (type === GaugeType.Donut) {

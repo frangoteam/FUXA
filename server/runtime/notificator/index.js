@@ -3,6 +3,7 @@
 */
 
 'use strict';
+const axios = require('axios');
 const nodemailer = require('nodemailer');
 // const notifystorage = require('./notifystorage');
 
@@ -21,7 +22,7 @@ function NotificatorManager(_runtime) {
     var clearNotifications = false;     // Flag to clear current notifications from DB
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
     var subscriptionStatus = {};        // Status of subscription, to check if there are some change
-    var notificationsFound = 0;         // Notifications found to check 
+    var notificationsFound = 0;         // Notifications found to check
 
     /**
      * Start TimerInterval to check Notifications
@@ -217,6 +218,11 @@ function NotificatorManager(_runtime) {
         });
     }
 
+    var _isValidEmail = function (email) {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
     /**
      * Check Notifications status
      */
@@ -235,13 +241,24 @@ function NotificatorManager(_runtime) {
                                     try {
                                         // get alarms summary in text format
                                         var alarmsSummary = runtime.alarmsMgr.getAlarmsString(stkey) || 'FUXA Alarms Error!';
-                                        var mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
-                                        runtime.notificatorMgr.sendMail(mail, null).then(function () {
-                                            notification.setNotify(time, stkey);
-                                            logger.info(`notificator.notify.successful: ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
-                                        }).catch(function (senderr) {
-                                            logger.error(`notificator.notify.send.failed: ${senderr}`);
-                                        });
+                                        if (!_isValidEmail(notification.receiver)) {
+                                            // send via webapi
+                                            const url = notification.receiver.replace(/\$\{content\}/g, alarmsSummary);
+                                            runtime.notificatorMgr.postMessage(url).then(function () {
+                                                notification.setNotify(time, stkey);
+                                                logger.info(`notificator.notify.successful (url): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                            }).catch(function (senderr) {
+                                                logger.error(`notificator.notify.send.failed: ${senderr}`);
+                                            });
+                                        } else {
+                                            var mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
+                                            runtime.notificatorMgr.sendMail(mail, null).then(function () {
+                                                notification.setNotify(time, stkey);
+                                                logger.info(`notificator.notify.successful (mail): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                            }).catch(function (senderr) {
+                                                logger.error(`notificator.notify.send.failed: ${senderr}`);
+                                            });
+                                        }
                                     } catch (e) {
                                         logger.error(`notificator.notify.failed: ${err}`);
                                     }
@@ -249,7 +266,7 @@ function NotificatorManager(_runtime) {
                             }
                         }
                     } else if (subscriptionStatus[stkey]) {
-                        // to reset 
+                        // to reset
                         for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
                             var notification = notificationsSubsctiption[stkey][i];
                             notification.reset();
@@ -267,7 +284,7 @@ function NotificatorManager(_runtime) {
 
     /**
      * Send mail
-     * @returns 
+     * @returns
      */
     this.sendMail = function (msg, smtp) {
         return new Promise(async function (resolve, reject) {
@@ -295,6 +312,16 @@ function NotificatorManager(_runtime) {
             } catch (err) {
                 reject(err);
             }
+        });
+    }
+
+    this.postMessage = function (url) {
+        return new Promise(function (resolve, reject) {
+            axios.get(url).then(res => {
+                resolve(res.data);
+            }).catch(err => {
+                reject(err);
+            });
         });
     }
 

@@ -2,19 +2,19 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatSort } from '@angular/material/sort';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 import { ProjectService } from '../../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
-import { NotificationPropertyComponent } from '../notification-property/notification-property.component';
-import { Notification, NotificationsType, NOTIFY_PREFIX } from '../../_models/notification';
+import { NotificationPropertyComponent, NotificationPropertyData } from '../notification-property/notification-property.component';
+import { Notification, NotificationsType } from '../../_models/notification';
 import { AlarmsType } from '../../_models/alarm';
-import { Utils } from '../../_helpers/utils';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-notification-list',
     templateUrl: './notification-list.component.html',
-    styleUrls: ['./notification-list.component.css']
+    styleUrls: ['./notification-list.component.scss']
 })
 export class NotificationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -26,7 +26,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
     alarmsType = {};
     alarmsEnum = AlarmsType;
 
-    private subscriptionLoad: Subscription;
+    private destroy$ = new Subject<void>();
 
     @ViewChild(MatTable, {static: true}) table: MatTable<any>;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
@@ -37,11 +37,13 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
 
     ngOnInit() {
         this.loadNotifications();
-        this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(res => {
+        this.projectService.onLoadHmi.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(res => {
             this.loadNotifications();
         });
         Object.values(this.alarmsEnum).forEach(key => {
-            this.translateService.get('alarm.property-' + key).subscribe((txt: string) => { this.alarmsType[key] = txt; });
+            this.alarmsType[key] = this.translateService.instant('alarm.property-' + key);
         });
     }
 
@@ -50,44 +52,46 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     ngOnDestroy() {
-        try {
-            if (this.subscriptionLoad) {
-                this.subscriptionLoad.unsubscribe();
-            }
-        } catch (e) {
-        }
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     onAddNotification() {
-        let notification = new Notification(Utils.getGUID(NOTIFY_PREFIX));
-		this.editNotification(notification, 1);
+		this.editNotification();
     }
 
     onEditNotification(notification: Notification) {
-		this.editNotification(notification, 0);
+		this.editNotification(notification);
     }
 
     onRemoveNotification(notification: Notification) {
-		this.editNotification(notification, -1);
+        let msg = this.translateService.instant('msg.notification-remove', { value: notification.name });
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: { msg: msg },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.projectService.removeNotification(notification).subscribe(() => {
+                    this.loadNotifications();
+                });
+            }
+        });
     }
 
-    editNotification(notification: Notification, toAdd: number) {
-		let mnotification: Notification = JSON.parse(JSON.stringify(notification));
+    editNotification(notification?: Notification) {
         let dialogRef = this.dialog.open(NotificationPropertyComponent, {
-            data: { notification: mnotification, editmode: toAdd, notifications: this.dataSource.data },
+            disableClose: true,
+            data: <NotificationPropertyData> {
+                notification: notification,
+            },
             position: { top: '80px' }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                if (toAdd < 0) {
-                    this.projectService.removeNotification(result).subscribe(result => {
-                        this.loadNotifications();
-                    });
-				} else {
-                    this.projectService.setNotification(result, notification).subscribe(result => {
-                        this.loadNotifications();
-                    });
-                }
+                this.projectService.setNotification(result, notification).subscribe(() => {
+                    this.loadNotifications();
+                });
             }
         });
     }
@@ -96,7 +100,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
         if (notification) {
             if (notification.type === this.notificationAlarm) {
                 let result = '';
-                Object.keys(notification.subscriptions).forEach(key => {
+                Object.keys(notification.subscriptions ?? []).forEach(key => {
                     if (notification.subscriptions[key]) {
                         if (result) {result += ', ';}
                         result += this.alarmsType[key];

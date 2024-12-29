@@ -12,6 +12,7 @@ import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from '../../_models/user';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -149,6 +150,27 @@ export class ResWebApiService implements ResourceStorageService {
             name: fileName,
         };
         return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
+    }
+
+    getRoles(): Observable<Role[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.get<Role[]>(this.endPointConfig + '/api/roles', { headers: header });
+    }
+
+    setRoles(roles: Role[]): Observable<any> {
+        return new Observable((observer) => {
+            let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+            this.http.post<Role[]>(this.endPointConfig + '/api/roles', { headers: header, params: roles }).subscribe(result => {
+                observer.next();
+            }, err => {
+                observer.error(err);
+            });
+        });
+    }
+
+    removeRoles(roles: Role[]): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.delete<any>(this.endPointConfig + '/api/roles', { headers: header, params: { roles:  JSON.stringify(roles) } });
     }
 
     getReportsDir(report: Report): Observable<string[]> {

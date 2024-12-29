@@ -20,7 +20,6 @@ import { Define } from '../_helpers/define';
 import { LibImagesComponent } from '../resources/lib-images/lib-images.component';
 
 import { BagPropertyComponent } from '../gauges/controls/html-bag/bag-property/bag-property.component';
-import { PipePropertyComponent } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 import { SliderPropertyComponent } from '../gauges/controls/slider/slider-property/slider-property.component';
 import { HtmlInputComponent } from '../gauges/controls/html-input/html-input.component';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
@@ -39,6 +38,7 @@ import { UploadFile } from '../_models/project';
 import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-property.component';
 import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.component';
 import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service';
+import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 
 declare var Gauge: any;
 
@@ -1134,7 +1134,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         let reader = new FileReader();
         reader.onload = (data) => {
             let view = JSON.parse(reader.result.toString());
-            if (view) {
+            if (this.projectService.verifyView(view)) {
                 let idx = 1;
                 let startname = view.name;
                 let existView = null;
@@ -1291,14 +1291,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else if (dlgType === GaugeDialogType.Pipe) {
-            dialogRef = this.dialog.open(PipePropertyComponent, {
-                position: { top: '60px' },
-                data: {
-                    settings: tempsettings, devices: Object.values(this.projectService.getDevices()),
-                    withEvents: eventsSupported, withActions: actionsSupported,
-                    names: names
-                }
-            });
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = <PipePropertyData>{
+                settings: tempsettings,
+                dlgType: dlgType,
+                names: names,
+                withEvents: eventsSupported,
+                withActions: actionsSupported,
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else if (dlgType === GaugeDialogType.Slider) {
             dialogRef = this.dialog.open(SliderPropertyComponent, {
                 position: { top: '60px' },
@@ -1358,7 +1363,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 callback(result.settings);
                 this.saveView(this.currentView);
                 let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
-                if (dlgType === GaugeDialogType.Pipe && result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
+                if (result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
                     // by init a path we need to change the id
                     delete this.currentView.items[result.settings.id];
                     result.settings.id = result_gauge.element.id;
@@ -1419,24 +1424,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private getGaugeTitle(type) {
-        let msg = '';
+    private getGaugeTitle(type): string {
         if (type.startsWith(HtmlInputComponent.TypeTag)) {
-            this.translateService.get('editor.controls-input-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-input-settings');
         } else if (type.startsWith(ValueComponent.TypeTag)) {
-            this.translateService.get('editor.controls-output-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-output-settings');
         } else if (type.startsWith(HtmlButtonComponent.TypeTag)) {
-            this.translateService.get('editor.controls-button-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-button-settings');
         } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
-            this.translateService.get('editor.controls-select-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-select-settings');
         } else if (type.startsWith(GaugeProgressComponent.TypeTag)) {
-            this.translateService.get('editor.controls-progress-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-progress-settings');
         } else if (type.startsWith(GaugeSemaphoreComponent.TypeTag)) {
-            this.translateService.get('editor.controls-semaphore-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-semaphore-settings');
         } else {
-            this.translateService.get('editor.controls-shape-settings').subscribe((txt: string) => { msg = txt; });
+            return this.translateService.instant('editor.controls-shape-settings');
         }
-        return msg;
     }
 
     //#endregion
