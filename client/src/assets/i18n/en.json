@@ -248,6 +248,9 @@
     "chart.config-interpo-stepAfter": "step after",
     "chart.config-interpo-stepBefore": "step before",
     "chart.config-interpo-spline": "spline",
+    "chart.config-line-width": "Line Width",
+    "chart.config-line-gap": "Fill Gaps",
+    "chart.config-line-add-zone": "Add Zone",
 
     "chart.property-data": "Data",
     "chart.property-props": "Property",
@@ -1143,6 +1146,7 @@
     "bag.property-format-digits": "Format digits",
     "bag.property-zones": "Zones",
     "bag.property-color": "Color",
+    "bag.property-fill": "Fill",
 
     "alarms.list-title": "Alarms settings",
     "alarms.list-name": "Name",

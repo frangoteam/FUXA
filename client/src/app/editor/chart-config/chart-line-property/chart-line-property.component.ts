@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Utils } from '../../../_helpers/utils';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { ChartLine } from '../../../_models/chart';
+import { ChartLine, ChartLineZone } from '../../../_models/chart';
 
 @Component({
     selector: 'app-chart-line-property',
@@ -23,6 +23,26 @@ export class ChartLinePropertyComponent {
 
     onOkClick(): void {
         this.dialogRef.close(this.data);
+    }
+
+    onAddZone() {
+        if (!this.data.zones) {
+            this.data.zones = [];
+        }
+        this.data.zones.push(<ChartLineZone> {
+            min: 0,
+            max: 0,
+            color: '#FF2525',
+            fill:'#ffffff00'
+        });
+    }
+
+    onRemoveZone(index: number) {
+        this.data.zones.splice(index, 1);
+    }
+
+    ontoggle() {
+            this.data.spangaps = this.data.spangaps ? true : false;
     }
 }
 
