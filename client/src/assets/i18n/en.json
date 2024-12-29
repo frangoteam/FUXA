@@ -241,7 +241,8 @@
     "chart.config-interpo-stepAfter": "step after",
     "chart.config-interpo-stepBefore": "step before",
     "chart.config-interpo-spline": "spline",
-    "chart.config-line-add-zone": "Add Zone",
+    "chart.config-line-add-zone": "Add Stroke Zone",
+    "chart.config-fill-add-zone": "Add Fill Zone",
 
     "chart.property-data": "Data",
     "chart.property-props": "Property",

@@ -359,14 +359,26 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                     const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
                     let series = '';
                     for (let i = 1; i < u.series.length; i++) {
-                        let value = '';
+                        let value = 0;
+                        const chartLineZones: ChartLineZone[] = [
+                            { min: -35, max: -15, color: 'green' },
+                            { min: -15, max: 0, color: 'blue' },    //Change this with Chartline object to fetch the array of strokezone and fillzone to pdate color based on configured zones instead of a constant.
+                            { min: 0, max: 10, color: 'red' },
+                            { min: 11, max: 20, color: 'blue' },
+                            { min: 21, max: 30, color: 'green' },
+                        ];
                         try {
-                            var ydx = this._proximityIndex(u, i, idx, x);
+                            var ydx = this._proximityIndex(u, i, idx, x); 
                             if (!isNaN(u.data[i][ydx])) {
                                 value = u.data[i][ydx];
+                               
                             }
                         } catch { }
-                        series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
+                        const strokecolor = this.getColorForValue(chartLineZones, value);
+                        const fillcolor = this.getColorForValue(chartLineZones, value);
+                        series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${strokecolor} ; background: ${fillcolor};"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
+                        
+                        
                     }
                     overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
                     placement(overlay, anchor, 'right', 'start', { bound });
@@ -375,6 +387,24 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         };
     }
 
+    getColorForValue(ranges: ChartLineZone[], value: number): string {
+        // Sort ranges by the min value (just in case)
+        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
+    
+        // Iterate through the sorted ranges to find the corresponding color for the value
+        for (let i = 0; i < sortedRanges.length; i++) {
+            const range = sortedRanges[i];
+    
+            // Check if the value falls within the range
+            if (value >= range.min && value <= range.max) {
+                return range.color;  // Return the corresponding color
+            }
+        }
+    
+        // If no range was found for the value, return a default color (base color)
+        return 'red';  // Or any other default color you prefer
+    }
+      
     scaleGradient(u, scaleKey, ori, scaleStops, discrete = false) {
         let scale = u.scales[scaleKey];
 

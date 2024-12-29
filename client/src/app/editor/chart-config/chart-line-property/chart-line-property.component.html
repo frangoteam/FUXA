@@ -41,15 +41,19 @@
                     [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
                     [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 88px" [cpPosition]="'right'" />
             </div>
+        </div>
+       <div class="block mt10">
             <div class="my-form-field ml20">
-                <button mat-icon-button (click)="onAddZone()">
+                <button mat-icon-button (click)="onAddStrokeZone()">
                     {{'chart.config-line-add-zone' | translate}}
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
             </div>
         </div>
+
+
         <div class="my-form-field block-zones mt10">
-            <div *ngFor="let zone of data.zones; index as i" class="ml10 mt5">
+            <div *ngFor="let zone of data.strokezones; index as i" class="ml10 mt5">
                 <div class="my-form-field">
                     <span>{{'bag.property-min' | translate}}</span>
                     <input numberOnly [(ngModel)]="zone.min" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
@@ -66,7 +70,42 @@
                         style="width: 58px" [cpPosition]="'top'" />
                 </div>
                 <div class="my-form-field" style="line-height: 40px;">
-                    <button mat-icon-button (click)="onRemoveZone(i)" class="remove">
+                    <button mat-icon-button (click)="onRemoveStrokeZone(i)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="block mt10">
+            <div class="my-form-field ml20">
+                <button mat-icon-button (click)="onAddFillZone()">
+                    {{'chart.config-fill-add-zone' | translate}}
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+        </div>
+
+
+        <div class="my-form-field block-zones mt10">
+            <div *ngFor="let zone of data.fillzones; index as i" class="ml10 mt5">
+                <div class="my-form-field">
+                    <span>{{'bag.property-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="zone.min" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
+                </div>
+                <div class="my-form-field ml10">
+                    <span>{{'bag.property-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="zone.max" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
+                </div>
+                <div class="my-form-field ml20">
+                    <span>{{'bag.property-color' | translate}}</span>
+                    <input [cpDialogDisplay]="'popup'" [(colorPicker)]="zone.color" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="zone.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                        style="width: 58px" [cpPosition]="'top'" />
+                </div>
+                <div class="my-form-field" style="line-height: 40px;">
+                    <button mat-icon-button (click)="onRemoveFillZone(i)" class="remove">
                         <mat-icon>clear</mat-icon>
                     </button>
                 </div>

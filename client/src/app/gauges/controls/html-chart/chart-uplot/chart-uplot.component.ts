@@ -282,7 +282,21 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 serie.scale = '1';
             }
             if (line.fill) {
-                serie.fill = line.fill;
+                if (line.fillzones) {
+                    const zones = this.generateZones(line.fillzones, line.fill);
+                    if (zones) {
+                        serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                    }
+                }
+                else {
+                    serie.fill = line.fill;
+                }
+            }
+            if (line.strokezones) {
+                const zones = this.generateZones(line.strokezones, line.color);
+                if (zones) {
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                }
             }
             if (line.zones) {
                 const zones = this.generateZones(line.zones, line.color);
