@@ -166,17 +166,19 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view
      */
     public loadHmi(view: View, legacyProfile?: boolean) {
-        if (this.loadOk) {
+        if (this.loadOk || !view) {
             return;
         }
-        // Execute onClose script for last view
-        let lastView = this.getView(this.view.id);
-        if (lastView) {
-            lastView.property?.events?.forEach(event => {
-                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
-                    this.onRunScript(event);
-                }
-            });
+        if (this.view) {
+            // Execute onClose script for last view
+            let lastView = this.getView(this.view.id);
+            if (lastView) {
+                lastView.property?.events?.forEach(event => {
+                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+                        this.onRunScript(event);
+                    }
+                });
+            }
         }
         if (!this.hmi) {
             this.hmi = this.projectService.getHmi();
@@ -211,12 +213,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadWatch(this.view);
         this.onResize();
 
-        // Execute onOpen script for new current view
-        view.property?.events?.forEach(event => {
-            if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
-                this.onRunScript(event);
-            }
-        });
+        if (view) {
+            // Execute onOpen script for new current view
+            view.property?.events?.forEach(event => {
+                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
+                    this.onRunScript(event);
+                }
+            });
+        }
     }
 
 
@@ -433,17 +437,32 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private onBindMouseEvents(ga: GaugeSettings) {
         let self = this.parent || this;
         let svgele = FuxaViewComponent.getSvgElement(ga.id);
+        let clickTimeout;
+
         if (svgele) {
             let clickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
             if (clickEvents && clickEvents.length > 0) {
                 svgele.click(function(ev) {
-                    self.runEvents(self, ga, ev, clickEvents);
+                    clearTimeout(clickTimeout);
+                    clickTimeout = setTimeout(function() {
+                        self.runEvents(self, ga, ev, clickEvents);
+                    }, 200);
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                     ev.preventDefault();
                 });
             }
+
+            let dblclickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.dblclick);
+            if (dblclickEvents && dblclickEvents.length > 0) {
+                svgele.dblclick(function(ev) {
+                    clearTimeout(clickTimeout);
+                    self.runEvents(self, ga, ev, dblclickEvents);
+                    ev.preventDefault();
+                });
+            }
+
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
             if (mouseDownEvents && mouseDownEvents.length > 0) {
                 svgele.mousedown(function(ev) {
@@ -688,7 +707,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private getView(viewref: string): View {
         let view: View;
-        for (let i = 0; i < this.hmi.views.length; i++) {
+        for (let i = 0; i < this.hmi?.views?.length; i++) {
             if (this.hmi.views[i] && this.hmi.views[i].id === viewref) {
                 view = this.hmi.views[i];
                 break;

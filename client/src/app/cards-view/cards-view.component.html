@@ -1,10 +1,10 @@
 <div class="container">
     <gridster [options]="gridOptions">
-        <gridster-item [item]="item" *ngFor="let item of dashboard">
+        <gridster-item [item]="item" *ngFor="let item of dashboard; index as i">
             <div *ngIf="item.content" class="card-content">
                 <div [ngSwitch]="item.card.type"  [style.transform]="'scale(' + item.card.zoom + ')'">
                     <div *ngSwitchCase="cardType.view">
-                        <app-fuxa-view class="lab-body" id="lab" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+                        <app-fuxa-view class="lab-body" id="fuxaView{{i}}" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
                     </div>
                     <div *ngSwitchCase="cardType.alarms">
                         <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true"></app-alarm-view>
@@ -20,7 +20,7 @@
                 </div>
             </div>
             <div *ngIf="edit" class="card-tool">
-                {{'card.style-zoom' | translate}} 
+                {{'card.style-zoom' | translate}}
                 <mat-slider max="2" min="0.1" [step]="0.05" [(ngModel)]="item.card.zoom" (input)="onZoomChanged(item, $event)"
                     style="min-width: 80px" thumbLabel="true" (mousedown)="$event.stopPropagation()">
                 </mat-slider>

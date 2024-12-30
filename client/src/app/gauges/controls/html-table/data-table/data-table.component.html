@@ -74,7 +74,7 @@
     <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
         [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
     </mat-header-row>
-    <ng-container [ngSwitch]="this.type">
+    <ng-container [ngSwitch]="type">
         <ng-container *ngSwitchCase="tableType.reports">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
                     class="data-table-row"
@@ -98,6 +98,18 @@
             </mat-row>
         </ng-container>
         <ng-container *ngSwitchCase="tableType.data">
+            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                    (click)="selectRow(row)"
+                    class="data-table-row"
+                    [ngStyle]="{
+                    'cursor': isSelectable() ? 'pointer': 'unset',
+                    'height.px': tableOptions.row.height,
+                    'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
+                    'border-bottom-color': tableOptions.gridColor,
+                    'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+            </mat-row>
+        </ng-container>
+        <ng-container *ngSwitchCase="tableType.history">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
                     (click)="selectRow(row)"
                     class="data-table-row"

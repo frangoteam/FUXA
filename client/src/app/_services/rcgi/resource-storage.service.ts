@@ -7,6 +7,7 @@ import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
+import { Role } from '../../_models/user';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -46,6 +47,12 @@ export abstract class ResourceStorageService {
     public abstract heartbeat(activity: boolean): Observable<any>;
 
     public abstract downloadFile(fileName: string, type: CommanType): Observable<Blob>;
+
+    public abstract getRoles(): Observable<Role[]>;
+
+    public abstract setRoles(roles: Role[]): Observable<any>;
+
+    public abstract removeRoles(roles: Role[]): Observable<any>;
 
     public abstract endPointConfig: string;
 

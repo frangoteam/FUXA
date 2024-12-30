@@ -1,0 +1,99 @@
+:host {
+    .pipe-selection {
+        position: absolute;
+        top: 35px;
+        bottom: 0px;
+        overflow: auto;
+        width:calc(100% - 10px);
+        padding-top: 5px;
+
+        .style-size {
+            width: 80px;
+            text-align: left;
+        }
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+        min-width: 110px !important;
+        width: 110px !important;
+    }
+
+    .toolbox {
+        float: right;
+        // margin-top: 5px;
+        margin-bottom: 3px;
+    }
+
+    .toolbox button {
+        margin-right: 8px;
+        margin-left: 8px;
+    }
+
+    .action-readonly-item {
+        display: block;
+        /* min-height: 100px; */
+        width: 100%;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: 5px 0px 5px 0px;
+
+
+        .tag {
+            width: calc(100% - 5px);
+            input {
+                width: inherit;
+            }
+        }
+        .value {
+            width: calc(100% - 5px);
+
+            .number > input {
+                width: 50px;
+            }
+            .type > input {
+                width: auto;
+            }
+        }
+    }
+}
+
+
+// .toolbox-right {
+//     width: 300px;
+//     position: absolute;
+//     top: 85px;
+//     right: 20px;
+//     height: 200px;
+//     overflow: hidden;
+// }
+
+// .slider-field span {
+//     padding-left: 2px;
+//     text-overflow: clip;
+//     max-width: 125px;
+//     white-space: nowrap;
+//     overflow: hidden;
+// }
+
+// .slider-field mat-slider {
+//     background-color: var(--formSliderBackground);
+//     height: 30px;
+// }
+
+// .field-row {
+//     display: block;
+//     margin-bottom: 5px;
+// }
+
+// ::ng-deep .input-text .mat-form-field-infix {
+//     padding-top: 5px;
+//     padding-bottom: 0px;
+// }
+
+// ::ng-deep .mat-dialog-container {
+//     display: inline-table !important;
+// }
+
+// ::ng-deep .mat-tab-label {
+//     height: 34px !important;
+// }

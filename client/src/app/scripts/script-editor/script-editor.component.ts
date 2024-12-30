@@ -241,9 +241,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         torun.outputId = this.script.id;
         torun.code = this.script.code;
         this.scriptService.runScript(torun).subscribe(result => {
-            if (result) {
-                this.console.push(JSON.stringify(result));
-            }
+            this.console.push(JSON.stringify(result));
         }, err => {
             this.console.push((err.message) ? err.message : err);
             if (err.error) {
@@ -292,9 +290,11 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     private getFunctionText(sysfnc: SystemFunction): string {
-        let paramText = '\'MainView\'';
+        let paramText = '\'params\'';
         const fx = this.systemFunctions.functions.find(sf => sf.name === sysfnc.name);
-        if (fx && fx.paramsText) {
+        if (!fx?.params?.length) {
+            paramText = '';
+        } else if (fx?.paramsText) {
             paramText = this.translateService.instant(fx.paramsText) || paramText;
         }
         return `${sysfnc.name}(${paramText});`;

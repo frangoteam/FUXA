@@ -1,8 +1,8 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 
 import { environment } from '../../environments/environment';
@@ -16,6 +16,9 @@ import { HelpData, DEVICE_READONLY } from '../_models/hmi';
 import { TutorialComponent } from '../help/tutorial/tutorial.component';
 import { TranslateService } from '@ngx-translate/core';
 import { EditNameComponent } from '../gui-helpers/edit-name/edit-name.component';
+
+const editorModeRouteKey = ['/editor', '/device', '/messages', '/text', '/users', '/userRoles', '/notifications', '/scripts', '/reports', '/materials', '/logs', '/events'];
+const saveFromEditorRouteKey = ['/device', '/messages', '/text', '/users', '/userRoles', '/notifications', '/scripts', '/reports', '/materials', '/logs', '/events'];
 
 @Component({
     moduleId: module.id,
@@ -31,7 +34,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
 
     darkTheme = true;
     editorMode = false;
-    savededitor = false;
+    saveFromEditor = false;
     private subscriptionShowHelp: Subscription;
     private subscriptionLoad: Subscription;
 
@@ -39,23 +42,34 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
                 public dialog: MatDialog,
                 private translateService: TranslateService,
                 private themeService: ThemeService,
-                private projectService: ProjectService){
-
-        this.router.events.subscribe(()=> {
-            this.editorMode = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0 ||
-                                this.router.url.indexOf('users') >= 0 || this.router.url.indexOf('text') >= 0 ||
-                                this.router.url.indexOf('messages') >= 0 || this.router.url.indexOf('events') >= 0 ||
-                                this.router.url.indexOf('notifications') >= 0 || this.router.url.indexOf('scripts') >= 0 ||
-                                this.router.url.indexOf('reports') >= 0) ? true : false;
-            this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 ||
-                                this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0 ||
-                                this.router.url.indexOf('events') >= 0 || this.router.url.indexOf('notifications') >= 0 ||
-                                this.router.url.indexOf('scripts') >= 0 || this.router.url.indexOf('reports') >= 0) ? true : false;
-
+                private projectService: ProjectService
+    ) {
+        this.router.events.pipe(
+            filter(val => val instanceof NavigationEnd),
+        ).subscribe((routeKey: NavigationEnd) => {
+            const urlWithoutParams = routeKey.url.split('?')[0];
+            this.editorMode = editorModeRouteKey.includes(urlWithoutParams) ? true : false;
+            this.saveFromEditor = saveFromEditorRouteKey.includes(urlWithoutParams) ? true : false;
             if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
                 this.editorMode = false;
             }
         });
+
+        // this.router.events.subscribe(()=> {
+        //     this.editorMode = (this.router.url.indexOf('editor') >= 0 ||  this.router.url.indexOf('device') >= 0 ||
+        //                         this.router.url.indexOf('users') >= 0 || this.router.url.indexOf('text') >= 0 ||
+        //                         this.router.url.indexOf('messages') >= 0 || this.router.url.indexOf('events') >= 0 ||
+        //                         this.router.url.indexOf('notifications') >= 0 || this.router.url.indexOf('scripts') >= 0 ||
+        //                         this.router.url.indexOf('reports') >= 0) ? true : false;
+        //     this.savededitor = (this.router.url.indexOf('device') >= 0 || this.router.url.indexOf('users') >= 0 ||
+        //                         this.router.url.indexOf('text') >= 0 || this.router.url.indexOf('messages') >= 0 ||
+        //                         this.router.url.indexOf('events') >= 0 || this.router.url.indexOf('notifications') >= 0 ||
+        //                         this.router.url.indexOf('scripts') >= 0 || this.router.url.indexOf('reports') >= 0) ? true : false;
+
+        //     if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
+        //         this.editorMode = false;
+        //     }
+        // });
         this.themeService.setTheme(this.projectService.getLayoutTheme());
     }
 
@@ -149,7 +163,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
      */
     onSaveProjectAs() {
         try {
-            if (this.savededitor) {
+            if (this.saveFromEditor) {
                 this.projectService.saveAs();
             } else {
                 this.projectService.saveProject(SaveMode.SaveAs);
@@ -190,7 +204,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
      */
     onSaveProject() {
         try {
-            if (this.savededitor) {
+            if (this.saveFromEditor) {
                 this.projectService.save();
             } else {
                 this.projectService.saveProject(SaveMode.Save);

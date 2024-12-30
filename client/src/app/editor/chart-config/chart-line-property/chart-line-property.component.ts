@@ -37,34 +37,20 @@ export class ChartLinePropertyComponent implements OnInit {
         this.dialogRef.close({...this.data, ...this.formGroup.getRawValue()});
     }
 
-    onAddStrokeZone() {
-        if (!this.data.strokezones) {
-            this.data.strokezones = [];
+    onAddZone() {
+        if (!this.data.zones) {
+            this.data.zones = [];
         }
-        this.data.strokezones.push(<ChartLineZone> {
+        this.data.zones.push(<ChartLineZone> {
             min: 0,
             max: 0,
-            color: '#FF2525'
+            stroke: '#FF2525',
+            fill: '#BFCDDB'
         });
     }
 
-    onRemoveStrokeZone(index: number) {
-        this.data.strokezones.splice(index, 1);
-    }
-
-    onAddFillZone() {
-        if (!this.data.fillzones) {
-            this.data.fillzones = [];
-        }
-        this.data.fillzones.push(<ChartLineZone> {
-            min: 0,
-            max: 0,
-            color: '#FF2525'
-        });
-    }
-
-    onRemoveFillZone(index: number) {
-        this.data.fillzones.splice(index, 1);
+    onRemoveZone(index: number) {
+        this.data.zones.splice(index, 1);
     }
 }
 

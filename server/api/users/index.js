@@ -29,10 +29,10 @@ module.exports = {
          * Take from users storage and reply 
          */
         usersApp.get("/api/users", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get users: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api get users: Unauthorized!");
             } else {
@@ -60,10 +60,10 @@ module.exports = {
          * Set to users storage
          */
         usersApp.post("/api/users", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post users: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post users: Unauthorized");
             } else {
@@ -82,13 +82,13 @@ module.exports = {
         
         /**
          * DELETE User
-         * Set to project storage
+         * Delete to users storage
          */
         usersApp.delete("/api/users", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api delete users: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api delete users: Unauthorized");
             } else {
@@ -103,7 +103,86 @@ module.exports = {
                     runtime.logger.error("api delete users: " + err.message);
                 });                
             }
-        });   
+        });
+
+        /**
+         * GET Roles
+         * Take from roles storage and reply 
+         */
+        usersApp.get("/api/roles", secureFnc, function(req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get roles: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get user roles: Unauthorized!");
+            } else {
+                runtime.users.getRoles(req.query).then(result => {
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.end();
+                    }
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api get roles: " + err.message);
+                });                
+            }
+        });
+
+        /**
+         * POST Roles
+         * Set roles to users storage
+         */
+        usersApp.post("/api/roles", secureFnc, function(req, res, next) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post roles: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post roles: Unauthorized");
+            } else {
+                runtime.users.setRoles(req.body.params).then(function(data) {
+                    res.end();
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api post roles: " + err.message);
+                });                
+            }
+        });
+        
+        /**
+         * DELETE Roles
+         * Delete roles from users storage
+         */
+        usersApp.delete("/api/roles", secureFnc, function(req, res, next) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api delete roles: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api delete roles: Unauthorized");
+            } else {
+                runtime.users.removeRoles(JSON.parse(req.query.roles)).then(function(data) {
+                    res.end();
+                }).catch(function(err) {
+                    if (err.code) {
+                        res.status(400).json({error:err.code, message: err.message});
+                    } else {
+                        res.status(400).json({error:"unexpected_error", message:err.toString()});
+                    }
+                    runtime.logger.error("api delete roles: " + err.message);
+                });                
+            }
+        });
         return usersApp;
     }
 }

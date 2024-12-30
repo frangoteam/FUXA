@@ -14,14 +14,14 @@ export class ChartLine {
     fill?: string;
     yaxis: number;
     lineInterpolation?: number;
-    strokezones?: ChartLineZone[];
-    fillzones?: ChartLineZone[];
+    zones?: ChartLineZone[];
 }
 
 export interface ChartLineZone {
     min: number;
     max: number;
-    color: string;
+    stroke: string;
+    fill: string;
 }
 
 export enum ChartViewType {

@@ -7,7 +7,7 @@
     <div mat-dialog-content *ngIf="data.editmode >= 0">
         <div style="display: block;width: 680px; padding-bottom: 20px;">
             <div style="display: block;">
-                <flex-auth [name]="data.alarm.name" [permission]="property.permission" #flexauth></flex-auth>
+                <flex-auth [name]="data.alarm.name" [permission]="property.permission" [permissionRoles]="property.permissionRoles" #flexauth></flex-auth>
             </div>
             <div mat-dialog-content style="overflow: hidden; width:100%">
                 <flex-head [data]="data" [property]="property" #flexhead [withStaticValue]="false" [withBitmask]="true"></flex-head>

@@ -297,7 +297,7 @@ function EthernetIPclient(_data, _logger, _events, _runtime) {
                 var id = itemsMap[key].id;
                 var valueChanged = itemsMap[key].value !== vars[key];
                 itemsMap[key].rawValue = vars[key];
-                itemsMap[key].value = await deviceUtils.tagValueCompose(vars[key], varsValue[id] ? varsValue[id].value : null, itemsMap[key]);
+                itemsMap[key].value = await deviceUtils.tagValueCompose(vars[key], varsValue[id] ? varsValue[id].value : null, itemsMap[key], runtime);
                 varsValue[id] = { id: id, value: itemsMap[key].value, type: itemsMap[key].type, daq: itemsMap[key].daq, changed: valueChanged, timestamp: timestamp };
                 if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
                     changed[id] = varsValue[id];

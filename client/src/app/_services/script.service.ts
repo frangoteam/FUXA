@@ -10,6 +10,7 @@ import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.servi
 import { Utils } from '../_helpers/utils';
 import { DeviceType, TagDaq, TagDevice } from '../_models/device';
 import { DaqQuery } from '../_models/hmi';
+import { AlarmsType } from '../_models/alarm';
 
 @Injectable({
     providedIn: 'root'
@@ -97,6 +98,9 @@ export class ScriptService {
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
         code = code.replace(/\$sendMessage\(/g, 'this.$sendMessage(');
+        code = code.replace(/\$getAlarms\(/g, 'await this.$getAlarms(');
+        code = code.replace(/\$getAlarmsHistory\(/g, 'await this.$getAlarmsHistory(');
+        code = code.replace(/\$ackAlarm\(/g, 'await this.$ackAlarm(');
         return code;
     }
 
@@ -174,5 +178,17 @@ export class ScriptService {
 
     public async $sendMessage(to: string, subject: string, message: string) {
         return await this.projectService.runSysFunctionSync('$sendMessage', [to, subject, message]);
+    }
+
+    public async $getAlarms() {
+        return await this.projectService.runSysFunctionSync('$getAlarms', null);
+    }
+
+    public async $getAlarmsHistory(from: Date, to: Date) {
+        return await this.projectService.runSysFunctionSync('$getAlarmsHistory', [from, to]);
+    }
+
+    public async $ackAlarm(alarmName: string, types?: AlarmsType[]) {
+        return await this.projectService.runSysFunctionSync('$ackAlarm', [alarmName, types]);
     }
 }

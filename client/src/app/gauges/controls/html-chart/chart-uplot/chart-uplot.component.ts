@@ -282,8 +282,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 serie.scale = '1';
             }
             if (line.fill) {
-                if (line.fillzones) {
-                    const zones = this.generateZones(line.fillzones, line.fill);
+                if (line.zones?.some(zone => zone.fill)) {
+                    const zones = this.generateZones(line.zones, 'fill', line.fill);
                     if (zones) {
                         serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
                     }
@@ -292,14 +292,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                     serie.fill = line.fill;
                 }
             }
-            if (line.strokezones) {
-                const zones = this.generateZones(line.strokezones, line.color);
-                if (zones) {
-                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
-                }
-            }
-            if (line.zones) {
-                const zones = this.generateZones(line.zones, line.color);
+            if (line.zones?.some(zone => zone.stroke)) {
+                const zones = this.generateZones(line.zones, 'stroke', line.color);
                 if (zones) {
                     serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
                 }
@@ -317,12 +311,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private generateZones(ranges: ChartLineZone[], baseColor: string): Zone[] {
+    private generateZones(ranges: ChartLineZone[], attribute: string, baseColor: string): Zone[] {
         const result: Zone[] = [];
         const sortedRanges = ranges.sort((a, b) => a.min - b.min);
         result.push([-Infinity, baseColor]);
         sortedRanges.forEach((range, index) => {
-            result.push([range.min, range.color]);
+            result.push([range.min, range[attribute]]);
             if (index < sortedRanges.length - 1) {
                 const nextMin = sortedRanges[index + 1].min;
                 if (range.max < nextMin) {

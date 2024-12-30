@@ -578,7 +578,7 @@ export class ProjectService {
                 this.projectData.notifications.push(notification);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetNotification, notification, this.projectData).subscribe(result => {
-                if (old && old.id && old.id !== notification.id) {
+                if (old?.id && old.id !== notification.id) {
                     this.removeNotification(old).subscribe(result => {
                         observer.next();
                     });
@@ -835,10 +835,10 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        this.translateService.get(msgCode).subscribe((txt: string) => { msgCode = txt; });
+        const msg = this.translateService.instant(msgCode);
         if (msgCode) {
-            console.error(`FUXA Error: ${msgCode}`);
-            this.toastr.error(msgCode, '', {
+            console.error(`FUXA Error: ${msg}`);
+            this.toastr.error(msg, '', {
                 timeOut: 3000,
                 closeButton: true,
                 disableTimeOut: true
@@ -875,11 +875,47 @@ export class ProjectService {
      * @param prj project data to save
      */
     setProject(prj: ProjectData, skipNotification = false) {
-        this.projectData = prj;
-        if (this.appService.isClientApp) {
-            this.projectData = ResourceStorageService.defileProject(prj);
+        if (this.verifyProject(prj)) {
+            this.projectData = prj;
+            if (this.appService.isClientApp) {
+                this.projectData = ResourceStorageService.defileProject(prj);
+            }
+            this.save(skipNotification);
         }
-        this.save(skipNotification);
+    }
+
+    verifyProject(prj: ProjectData): boolean {
+        let result = true;
+        if (Utils.isNullOrUndefined(prj.version)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(prj.hmi)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(prj.devices)) {
+            result = false;
+        }
+        if (!result) {
+            this.notifyError('msg.project-format-error');
+        }
+        return result;
+    }
+
+    verifyView(view: View): boolean {
+        let result = true;
+        if (Utils.isNullOrUndefined(view.svgcontent)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.id)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.profile)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.type)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.items)) {
+            result = false;
+        }
+        if (!result) {
+            this.notifyError('msg.view-format-error');
+        }
+        return result;
     }
 
     setNewProject() {
@@ -927,6 +963,10 @@ export class ProjectService {
             }
         }
         return result;
+    }
+
+    getDeviceList(): Device[] {
+        return Object.values(this.getDevices());
     }
 
     getDeviceFromId(id: string): any {
@@ -986,6 +1026,7 @@ export class ProjectService {
         let devices = Object.values(this.projectData.devices).filter((device: Device) => device.id !== FuxaServer.id);
         let fuxaServer = <Device>this.projectData.devices[FuxaServer.id];
         if (fuxaServer) {
+            let changed = false;
             devices.forEach((device: Device) => {
                 if (!Object.values(fuxaServer.tags).find((tag: Tag) => tag.sysType === TagSystemType.deviceConnectionStatus && tag.memaddress === device.id)) {
                     let tag = new Tag(Utils.getGUID(TAG_PREFIX));
@@ -996,9 +1037,12 @@ export class ProjectService {
                     tag.sysType = TagSystemType.deviceConnectionStatus;
                     tag.init = tag.value = '';
                     fuxaServer.tags[tag.id] = tag;
+                    changed = true;
                 }
             });
-            this.setDeviceTags(fuxaServer);
+            if (changed) {
+                this.setDeviceTags(fuxaServer);
+            }
         }
         return this.getDevices();
     }
