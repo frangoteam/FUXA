@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@ang
 import { Utils } from '../../_helpers/utils';
 
 import { Series, Options, Legend } from './uPlot';
+import { ChartLineZone } from '../../_models/chart';
 
 declare const uPlot: any;
 declare const placement: any;
@@ -373,6 +374,98 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                 }
             }
         };
+    }
+
+    getColorForValue(ranges: ChartLineZone[], value: number): string {
+        // Sort ranges by the min value (just in case)
+        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
+
+        // Iterate through the sorted ranges to find the corresponding color for the value
+        for (let i = 0; i < sortedRanges.length; i++) {
+            const range = sortedRanges[i];
+
+            // Check if the value falls within the range
+            if (value >= range.min && value <= range.max) {
+                return range.stroke;  // Return the corresponding color
+            }
+        }
+
+        // If no range was found for the value, return a default color (base color)
+        return 'red';  // Or any other default color you prefer
+    }
+
+    scaleGradient(u, scaleKey, ori, scaleStops, discrete = false) {
+        let scale = u.scales[scaleKey];
+
+        // we want the stop below or at the scaleMax
+        // and the stop below or at the scaleMin, else the stop above scaleMin
+        let minStopIdx;
+        let maxStopIdx;
+
+        for (let i = 0; i < scaleStops.length; i++) {
+            let stopVal = scaleStops[i][0];
+
+            if (stopVal <= scale.min || minStopIdx == null) {
+                minStopIdx = i;
+            }
+
+            maxStopIdx = i;
+
+            if (stopVal >= scale.max) {
+                break;
+            }
+        }
+
+        if (minStopIdx == maxStopIdx) {
+            return scaleStops[minStopIdx][1];
+        }
+
+        let minStopVal = scaleStops[minStopIdx][0];
+        let maxStopVal = scaleStops[maxStopIdx][0];
+
+        if (minStopVal == -Infinity) {
+            minStopVal = scale.min;
+        }
+
+        if (maxStopVal == Infinity) {
+            maxStopVal = scale.max;
+        }
+
+        let minStopPos = u.valToPos(minStopVal, scaleKey, true);
+        let maxStopPos = u.valToPos(maxStopVal, scaleKey, true);
+
+        let range = minStopPos - maxStopPos;
+
+        let x0, y0, x1, y1;
+
+        if (ori == 1) {
+            x0 = x1 = 0;
+            y0 = minStopPos;
+            y1 = maxStopPos;
+        }
+        else {
+            y0 = y1 = 0;
+            x0 = minStopPos;
+            x1 = maxStopPos;
+        }
+
+        let grd = this.uplot.ctx.createLinearGradient(x0, y0, x1, y1);
+
+        let prevColor;
+
+        for (let i = minStopIdx; i <= maxStopIdx; i++) {
+            let s = scaleStops[i];
+
+            let stopPos = i == minStopIdx ? minStopPos : i == maxStopIdx ? maxStopPos : u.valToPos(s[0], scaleKey, true);
+            let pct = (minStopPos - stopPos) / range;
+
+            if (discrete && i > minStopIdx) {
+                grd.addColorStop(pct, prevColor);
+            }
+            grd.addColorStop(pct, prevColor = s[1]);
+        }
+
+        return grd;
     }
 
     _proximityIndex(self, seriesIdx, hoveredIdx, cursorXVal) {

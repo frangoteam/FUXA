@@ -1,34 +1,34 @@
-<div>
+<form [formGroup]="formGroup" class="container">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'chart.config-lines' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+        <div class="my-form-field block-input">
             <span>{{'chart.config-line-name' | translate}}</span>
-            <input [(ngModel)]="data.name" type="text" style="width:300px" [disabled]="true">
+            <input formControlName="name" type="text">
         </div>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+        <div class="my-form-field block-input mt10">
             <span>{{'chart.config-line-label' | translate}}</span>
-            <input [(ngModel)]="data.label" type="text" style="width:300px">
+            <input formControlName="label" type="text">
         </div>
-        <div style="display: block; margin-bottom: 8px;">
+        <div class="block mt10">
             <div class="my-form-field" style="width: 140px;">
                 <span>{{'chart.config-line-yaxis' | translate}}</span>
-                <mat-select [(value)]="data.yaxis">
+                <mat-select formControlName="yaxis">
                     <mat-option *ngFor="let yaxis of chartAxesType" [value]="yaxis">
                         {{ yaxis }}
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field" style="width: 140px; margin-left: 20px;">
+            <div class="my-form-field ml20" style="width: 140px">
                 <span>{{'chart.config-line-interpolation' | translate}}</span>
-                <mat-select [(value)]="data.lineInterpolation">
+                <mat-select formControlName="lineInterpolation">
                     <mat-option *ngFor="let interpo of data.lineInterpolationType" [value]="interpo.value">
                         {{ interpo.text }}
                     </mat-option>
                 </mat-select>
             </div>
         </div>
-        <div style="display: block;">
+        <div class="block mt10">
             <div class="my-form-field slider-field color-field">
                 <span>{{'chart.config-line-color' | translate}}</span>
                 <input [(colorPicker)]="data.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.color" [cpPresetColors]="defaultColor"
@@ -42,11 +42,85 @@
                     [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 88px" [cpPosition]="'right'" />
             </div>
         </div>
-        <div class="my-form-field" style="display: block;height: 10px;">
+       <div class="block mt10">
+            <div class="my-form-field ml20">
+                <button mat-icon-button (click)="onAddZone()">
+                    {{'chart.config-line-add-zone' | translate}}
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+        </div>
+
+
+        <div class="my-form-field block-zones mt10">
+            <div *ngFor="let zone of data.strokezones; index as i" class="ml10 mt5">
+                <div class="my-form-field">
+                    <span>{{'bag.property-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="zone.min" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
+                </div>
+                <div class="my-form-field ml10">
+                    <span>{{'bag.property-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="zone.max" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
+                </div>
+                <div class="my-form-field ml20">
+                    <span>{{'bag.property-color' | translate}}</span>
+                    <input [cpDialogDisplay]="'popup'" [(colorPicker)]="zone.stroke" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="zone.stroke" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                        style="width: 58px" [cpPosition]="'top'" />
+                </div>
+                <div class="my-form-field ml10">
+                    <span>{{'bag.property-fill' | translate}}</span>
+                    <input [cpDialogDisplay]="'popup'" [(colorPicker)]="zone.fill" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="zone.fill" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                        style="width: 58px" [cpPosition]="'top'" />
+                </div>
+                <div class="my-form-field" style="line-height: 40px;">
+                    <button mat-icon-button (click)="onRemoveZone(i)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="block mt10">
+            <div class="my-form-field ml20">
+                <button mat-icon-button (click)="onAddFillZone()">
+                    {{'chart.config-fill-add-zone' | translate}}
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+        </div>
+
+
+        <div class="my-form-field block-zones mt10">
+            <div *ngFor="let zone of data.fillzones; index as i" class="ml10 mt5">
+                <div class="my-form-field">
+                    <span>{{'bag.property-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="zone.min" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
+                </div>
+                <div class="my-form-field ml10">
+                    <span>{{'bag.property-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="zone.max" [ngModelOptions]="{ standalone: true }" style="width: 60px" type="number">
+                </div>
+                <div class="my-form-field ml20">
+                    <span>{{'bag.property-color' | translate}}</span>
+                    <input [cpDialogDisplay]="'popup'" [(colorPicker)]="zone.color" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="zone.color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
+                        style="width: 58px" [cpPosition]="'top'" />
+                </div>
+                <div class="my-form-field" style="line-height: 40px;">
+                    <button mat-icon-button (click)="onRemoveFillZone(i)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
-</div>
+</form>

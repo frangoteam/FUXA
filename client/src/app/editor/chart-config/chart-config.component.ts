@@ -162,7 +162,8 @@ export class ChartConfigComponent implements OnInit {
                 yaxis: line.yaxis,
                 lineInterpolation: line.lineInterpolation,
                 fill: line.fill,
-                lineInterpolationType: this.lineInterpolationType
+                lineInterpolationType: this.lineInterpolationType,
+                zones: line.zones,
             }
         });
         dialogRef.afterClosed().subscribe((result: ChartLine) => {
@@ -172,6 +173,7 @@ export class ChartConfigComponent implements OnInit {
                 line.yaxis = result.yaxis;
                 line.lineInterpolation = result.lineInterpolation;
                 line.fill = result.fill;
+                line.zones = result.zones;
             }
         });
     }
