@@ -178,6 +178,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public resize(height?: number, width?: number) {
+        if (!this.chartPanel) {
+            return;
+        }
         let chart = this.chartPanel.nativeElement;
         if (!height && chart.offsetParent) {
             height = chart.offsetParent.clientHeight;
@@ -281,21 +284,22 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 serie.scale = '1';
             }
-            if (line.fill) {
-                if (line.zones?.some(zone => zone.fill)) {
-                    const zones = this.generateZones(line.zones, 'fill', line.fill);
-                    if (zones) {
-                        serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
-                    }
+            if (line.zones?.some(zone => zone.fill)) {
+                const zones = this.generateZones(line.zones, 'fill', line.fill);
+                if (zones) {
+                    serie.fill = (self, seriesIndex) => {
+                        let fill = this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                        return  fill || line.fill;
+                    };
                 }
-                else {
-                    serie.fill = line.fill;
-                }
+            }
+            else if (line.fill) {
+                serie.fill = line.fill;
             }
             if (line.zones?.some(zone => zone.stroke)) {
                 const zones = this.generateZones(line.zones, 'stroke', line.color);
                 if (zones) {
-                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || line.color;
                 }
             }
             serie.lineInterpolation = line.lineInterpolation;

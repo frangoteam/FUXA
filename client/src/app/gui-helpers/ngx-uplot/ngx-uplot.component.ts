@@ -449,6 +449,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             x1 = maxStopPos;
         }
 
+        if (Number.isNaN(y0) || Number.isNaN(y1)) {
+            return null;
+        }
         let grd = this.uplot.ctx.createLinearGradient(x0, y0, x1, y1);
 
         let prevColor;
