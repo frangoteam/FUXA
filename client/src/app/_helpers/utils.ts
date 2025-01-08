@@ -42,6 +42,16 @@ export class Utils {
         return null;
     }
 
+    static childrenStartWith(element, matchingStart) {
+        let result = [];
+        for (let i = 0; i < element.children?.length; i++) {
+            if (element.children[i].id.startsWith(matchingStart)) {
+                result.push(element.children[i]);
+            }
+        }
+        return result;
+    }
+
     static searchTreeTagName(element, tagMatching: string) {
         if (element.tagName === tagMatching) {
             return element;

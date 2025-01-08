@@ -13,6 +13,7 @@ import { ActionPropertiesData, ActionPropertiesDialogComponent } from '../../../
 import { ProjectService } from '../../../../_services/project.service';
 import { Device, DevicesUtils } from '../../../../_models/device';
 import { ActionPropertyService } from '../../../gauge-property/action-properties-dialog/action-property.service';
+import { UploadFile } from '../../../../_models/project';
 
 declare var SVG: any;
 
@@ -121,6 +122,37 @@ export class PipePropertyComponent implements OnInit {
     }
     getActionType(action: GaugeAction) {
         return this.actionPropertyService.typeToText(action.type);
+    }
+
+    onSetImage(event) {
+        if (event.target.files) {
+            let filename = event.target.files[0].name;
+            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
+            let reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    fileToUpload.data = reader.result;
+                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
+                        this.options.imageAnimation = {
+                            imageUrl: result.location,
+                            delay: 3000,
+                            count: 1
+                        };
+                        this.onPipeChanged();
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            if (fileToUpload.type === 'svg') {
+                reader.readAsText(event.target.files[0]);
+            }
+        }
+    }
+
+    onClearImage() {
+        this.options.imageAnimation = null;
+        this.onPipeChanged();
     }
 
     private _reload() {

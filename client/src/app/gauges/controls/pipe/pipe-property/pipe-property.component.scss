@@ -55,45 +55,17 @@
             }
         }
     }
+
+    .image-animation {
+        mat-select, span {
+            width: calc(100% - 10px);
+        }
+
+        img {
+            max-width: 200px;
+        }
+        button {
+            float: right;
+        }
+    }
 }
-
-
-// .toolbox-right {
-//     width: 300px;
-//     position: absolute;
-//     top: 85px;
-//     right: 20px;
-//     height: 200px;
-//     overflow: hidden;
-// }
-
-// .slider-field span {
-//     padding-left: 2px;
-//     text-overflow: clip;
-//     max-width: 125px;
-//     white-space: nowrap;
-//     overflow: hidden;
-// }
-
-// .slider-field mat-slider {
-//     background-color: var(--formSliderBackground);
-//     height: 30px;
-// }
-
-// .field-row {
-//     display: block;
-//     margin-bottom: 5px;
-// }
-
-// ::ng-deep .input-text .mat-form-field-infix {
-//     padding-top: 5px;
-//     padding-bottom: 0px;
-// }
-
-// ::ng-deep .mat-dialog-container {
-//     display: inline-table !important;
-// }
-
-// ::ng-deep .mat-tab-label {
-//     height: 34px !important;
-// }

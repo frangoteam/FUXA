@@ -19,9 +19,13 @@ export class PipeComponent {
     static TypeTag = 'svg-ext-pipe'; // used to identify shapes type, binded with the library svgeditor
     static LabelTag = 'Pipe';
     static prefixB = 'PIE_';
+    static prefixC = 'cPIE_';
+    static prefixAnimation = 'aPIE_';
 
-    static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise,
-                            hidecontent: PipeActionsType.hidecontent, blink: GaugeActionsType.blink };
+    static actionsType = {
+        stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise,
+        hidecontent: PipeActionsType.hidecontent, blink: GaugeActionsType.blink
+    };
 
     static getSignals(pro: any) {
         let res: string[] = [];
@@ -116,7 +120,7 @@ export class PipeComponent {
                 if (PipeComponent.actionsType[type] === PipeComponent.actionsType.clockwise) {
                     eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
-                        if (len < 0) {len = 1000;}
+                        if (len < 0) { len = 1000; }
                         eletoanim.style.strokeDashoffset = len;
                         len--;
                     }, 20);
@@ -124,7 +128,7 @@ export class PipeComponent {
                 } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.anticlockwise) {
                     eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
-                        if (len > 1000) {len = 0;}
+                        if (len > 1000) { len = 0; }
                         eletoanim.style.strokeDashoffset = len;
                         len++;
                     }, 20);
@@ -198,9 +202,52 @@ export class PipeComponent {
         }
     }
 
-    static detectChange(gab: GaugeSettings, res: any, ref: any) {
-        let data = { id: gab.id, property: gab.property.options };
+    static initElement(gaugeSettings: GaugeSettings, isView: boolean) {
+        let ele = document.getElementById(gaugeSettings.id);
+        if (ele) {
+            // clear all children
+            let imageInPathForAnimation = Utils.searchTreeStartWith(ele, PipeComponent.prefixAnimation);
+            if (imageInPathForAnimation) {
+                ele.removeChild(imageInPathForAnimation);
+            }
+            const imagesBuffer = Utils.childrenStartWith(ele, 'svg_');
+            imagesBuffer.forEach((img) => {
+                ele.removeChild(img);
+            });
+            if (gaugeSettings.property?.options?.imageAnimation as PipeImageAnimation) {
+                let path = Utils.searchTreeStartWith(ele, PipeComponent.prefixC);
+                fetch(gaugeSettings.property.options.imageAnimation.imageUrl)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load SVG: ${response.statusText}`);
+                        }
+                        return response.text();
+                    })
+                    .then((svgContent) => {
+                        const parser = new DOMParser();
+                        const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+                        imageInPathForAnimation = svgDoc.documentElement;
+                        imageInPathForAnimation.setAttribute('id', Utils.getShortGUID('svg_'));
+                        const imageInPath = new ImageInPath(imageInPathForAnimation, path, gaugeSettings.property.options.imageAnimation.count);
+                        const anim = new ImageInPathAnimation(imageInPath, gaugeSettings.property.options.imageAnimation.delay, isView);
+                        anim.start();
+                    })
+                    .catch((error) => {
+                        console.error('Error loading SVG:', error);
+                    });
+            }
+        }
+        return ele;
+    }
+
+    static resize(gaugeSettings: GaugeSettings) {
+        PipeComponent.initElement(gaugeSettings, false);
+    }
+
+    static detectChange(gaugeSettings: GaugeSettings, res: any, ref: any) {
+        let data = { id: gaugeSettings.id, property: gaugeSettings.property.options };
         let result = ref.nativeWindow.svgEditor.runExtension('pipe', 'initPipe', data);
+        PipeComponent.initElement(gaugeSettings, false);
         return result;
     }
 }
@@ -213,9 +260,91 @@ export class PipeOptions {
     content: string = '#DADADA';
     contentWidth: number = 6;
     contentSpace: number = 20;
+    imageAnimation?: PipeImageAnimation;
 }
 
+export interface PipeImageAnimation {
+    imageUrl: string;
+    count: number;
+    delay: number;
+}
 
 class PipeStatus extends GaugeStatus {
     actionBlinkRef: GaugeActionStatus;
+}
+
+class ImageInPath {
+    private images: SVGElement[] = [];
+    private path: SVGPathElement | null = null;
+
+    constructor(_image: SVGElement | HTMLElement, _path: SVGPathElement, numImages: number) {
+        this.path = _path;
+
+        if (!_image || !this.path) {
+            throw new Error('Pipe Image or track element not found.');
+        }
+        for (let i = 0; i < numImages; i++) {
+            const clone = _image.cloneNode(true) as SVGElement;
+            this.images.push(clone);
+        }
+        this.images.forEach(image => {
+            this.path.parentElement?.appendChild(image);
+        });
+    }
+
+    move(progress: number): void {
+        if (!this.path) {
+            return;
+        }
+        const totalLength = this.path.getTotalLength();
+
+        this.images.forEach((image, index) => {
+            const u = (progress + index / this.images.length) % 1;
+            const point = this.path.getPointAtLength(u * totalLength);
+
+            const bbox = image.getBoundingClientRect();
+            const offsetX = bbox.width / 2;
+            const offsetY = bbox.height / 2;
+
+            image.setAttribute('x', `${point.x - offsetX}`);
+            image.setAttribute('y', `${point.y - offsetY}`);
+        });
+    }
+}
+
+class ImageInPathAnimation {
+    private duration: number;
+    private tZero: number = 0;
+    private multiImageInPath: ImageInPath;
+    private loop: boolean;
+
+    constructor(_multiImageInPath: ImageInPath, duration: number, loop: boolean = true) {
+        this.multiImageInPath = _multiImageInPath;
+        this.duration = duration;
+        this.loop = loop;
+    }
+
+    start(): void {
+        this.tZero = Date.now();
+        requestAnimationFrame(() => this.run());
+    }
+
+    private run(): void {
+        const elapsed = Date.now() - this.tZero;
+        const progress = (elapsed / this.duration) % 1;
+
+        this.multiImageInPath.move(progress);
+
+        if (this.loop && progress < 1) {
+            requestAnimationFrame(() => this.run());
+        } else {
+            this.onFinish();
+        }
+    }
+
+    private onFinish(): void {
+        if (this.loop) {
+            setTimeout(() => this.start(), 1000);
+        }
+    }
 }

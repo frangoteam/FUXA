@@ -834,6 +834,10 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
             let gauge = HtmlButtonComponent.initElement(ga);
             return gauge || true;
+        } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
+            let gauge = PipeComponent.initElement(ga, isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge || true;
         } else {
             let ele = document.getElementById(ga.id);
             ele?.setAttribute('data-name', ga.name);
