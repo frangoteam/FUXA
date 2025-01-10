@@ -855,7 +855,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         const height = Utils.isNumeric(options.height) ? parseInt(options.height) : 400;
         const left = Utils.isNumeric(options.left) ? parseInt(options.left) : event.clientX;
         const top = Utils.isNumeric(options.top) ? parseInt(options.top) : event.clientY;
-        window.open(link, '_blank', `height=${height},width=${width},left=${left},top=${top}`);
+        window.open(link, '_blank', options.newTab ? null : `height=${height},width=${width},left=${left},top=${top}`);
     }
 
     onCloseCard(card: CardModel) {

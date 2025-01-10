@@ -49,6 +49,7 @@ export class FlexEventComponent implements OnInit {
                          Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oniframe)];
     cardDestination = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow);
     panelDestination = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onViewToPanel);
+    eventOnWindows = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard);
     viewPanels: PanelData[];
 
     constructor(private translateService: TranslateService) {

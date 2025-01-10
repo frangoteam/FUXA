@@ -29,7 +29,7 @@
             </mat-select>
         </div>
     </div>
-    <div class="my-form-field" style="width: 240px;padding-left: 20px" *ngIf="withDestination(item.action)">
+    <div class="my-form-field" style="width: 280px;padding-left: 20px" *ngIf="withDestination(item.action)">
         <ng-container *ngIf="isWithPanel(item.action); else destination" class="inbk" style="vertical-align: top;">
             <div class="my-form-field block" style="width: 200px;">
                 <span>{{'gauges.property-event-destination-panel' | translate}}</span>
@@ -123,7 +123,11 @@
             <span>{{'gauges.property-event-address' | translate}}</span>
             <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
         </div>
-        <div style="display: table; padding-left: 20px; padding-top: 5px;" *ngIf="withAddress(item.action)">
+        <div *ngIf="eventOnWindows === item.action" class="my-form-field lbk ml20 tac" style="max-width: 70px">
+            <span>{{'gauges.property-event-newtab' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.newTab"></mat-slide-toggle>
+        </div>
+        <div *ngIf="withAddress(item.action)" style="display: table; padding-left: 20px; padding-top: 5px;">
             <div class="my-form-field">
                 <span>{{'gauges.property-event-width' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.width" type="number" style="width: 60px">
