@@ -758,6 +758,10 @@
     "pipe.property-content-color": "Content color",
     "pipe.property-content-space": "Content dash",
     "pipe.action-hide-content": "Hide content",
+    "pipe.property-style-animation": "Animation Image",
+    "pipe.property-style-animation-image": "Select Image (SVG)",
+    "pipe.property-style-animation-count": "Image count",
+    "pipe.property-style-animation-delay": "Animation delay (msec.)",
 
     "slider.property-props": "Property",
     "slider.property-horizontal": "Horizontal",
